@@ -36,7 +36,7 @@ export function SearchDropdown({
     ? "absolute top-full left-0 w-full bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 mt-1"
     : "flex bg-white rounded-lg shadow-lg border border-gray-200 p-6";
 
-  const clsgrd = "gap-x-60";
+  const clsgrd = "gap-4";
   const gridClasses = isMobile
     ? "w-full"
     : `grid grid-cols-1 sm:grid-cols-3 ${clsgrd}`;
@@ -80,12 +80,12 @@ export function SearchDropdown({
         {(activeDropdown === 'type' || (!isMobile && showResults)) && (
           <div className="w-full">
             <h3 className="font-semibold text-left text-gray-900 mb-4">Type</h3>
-            <div className="space-y-2 overflow-auto max-h-50 md:max-h-100">
+            <div className="w-full space-y-2 overflow-auto max-h-50 md:max-h-100">
               {options.map((opt) => (
                 <button
                   key={opt}
                   type="button"
-                  className="w-full text-left text-sm font-medium flex items-center gap-3 p-2 rounded hover:bg-blue-50 hover:text-blue-700 active:bg-blue-100"
+                  className="w-full text-left text-sm font-medium flex items-center gap-3 p-2 rounded hover:bg-gray-50 hover:text-black active:bg-gray-100"
                   onClick={() => handleTypeClick(opt)}
                 >
                   {opt}
@@ -98,12 +98,12 @@ export function SearchDropdown({
         {(activeDropdown === 'category' || (!isMobile && showResults)) && (
           <div className="w-full">
             <h3 className="font-semibold text-left text-gray-900 mb-4">Service Categories</h3>
-            <div className="space-y-2 overflow-auto max-h-50 md:max-h-100">
+            <div className="w-full space-y-2 overflow-auto max-h-50 md:max-h-100">
               {filteredCategories.map((specialty: string) => (
                 <button
                   key={specialty}
                   onClick={() => handleCategoryClick(specialty)}
-                  className="hover:bg-blue-50 hover:text-blue-700 active:bg-blue-100 text-left text-sm font-medium w-full flex items-center gap-3 p-2 rounded"
+                  className="hover:bg-gray-50 hover:text-black active:bg-gray-100 text-left text-sm font-medium w-full flex items-center gap-3 p-2 rounded"
                 >
                   {specialty}
                 </button>
@@ -115,13 +115,13 @@ export function SearchDropdown({
         {(activeDropdown === 'location' || (!isMobile && showResults)) && (
           <div className="w-full">
             <h3 className="font-semibold text-left text-gray-900 mb-4">Location</h3>
-            <div className="space-y-2 overflow-auto max-h-50 md:max-h-100">
+            <div className="w-full space-y-2 overflow-auto max-h-50 md:max-h-100">
               {filteredLocations.length > 0 ? (
                 filteredLocations.map((loc: string) => (
                   <button
                     key={loc}
                     onClick={() => handleLocationClick(loc)}
-                    className="text-left text-sm font-medium w-full flex items-center gap-3 hover:bg-blue-50 hover:text-blue-700 active:bg-blue-100 p-2 rounded"
+                    className="text-left text-sm font-medium w-full flex items-center gap-3 hover:bg-gray-50 hover:text-black active:bg-gray-100 p-2 rounded"
                   >
                     {loc}
                   </button>

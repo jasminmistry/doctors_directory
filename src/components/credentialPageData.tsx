@@ -39,7 +39,7 @@ export function CredentialPageData({ credentialSlug, credentialData }: Credentia
 
   return (
     <>
-      <div className="bg-white rounded p-4">
+      <div className="bg-white rounded p-4 mb-4">
         {/* Credential Header with Image */}
         <section className="mb-8 pb-6 border-b border-gray-200">
           <div className="flex flex-col md:flex-row gap-6 items-start">

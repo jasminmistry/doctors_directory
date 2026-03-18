@@ -24,7 +24,7 @@ export function PractitionerFilters({ filters, onChange, onClear, setIsFilterAct
         Filters
       </section>
 
-      <div className="mb-6 min-w-60">
+      <div className="mb-6">
         <label htmlFor="practitioners-search" className="sr-only">
           Search
         </label>

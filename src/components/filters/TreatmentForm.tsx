@@ -20,7 +20,7 @@ export function TreatmentForm({ filters, onChange, onClear }: FilterFormProps) {
         Filters
       </section>
 
-      <div className="mb-6 min-w-60">
+      <div className="mb-6">
         <label className="block text-base font-medium text-black mb-2">
           Concern:
           <Select

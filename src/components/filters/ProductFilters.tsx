@@ -23,7 +23,7 @@ export function ProductFilters({ filters, onChange, onClear, setIsFilterActive }
         Filters
       </section>
 
-      <div className="mb-6 min-w-60">
+      <div className="mb-6">
         <label htmlFor="products-search" className="sr-only">
           Search
         </label>
