@@ -106,7 +106,7 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
       <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-7 ">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
-            <Link href="/" prefetch={false}>
+            <Link className="mb-2 inline-block" href="/" prefetch={false}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -156,9 +156,9 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
               href={`/accredited/${accreditation}/practitioners/${city.toLowerCase()}`}
               className="block"
             >
-              <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg hover:border-blue-500">
+              <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg ">
                 <CardHeader className="pb-4">
-                  <h3 className="mb-2 flex font-semibold text-md md:text-lg transition-colors text-balance group-hover:text-blue-600">
+                  <h3 className="mb-2 flex font-semibold text-md md:text-lg transition-colors text-balance group-hover:text-black">
                     {city}
                   </h3>
                 </CardHeader>

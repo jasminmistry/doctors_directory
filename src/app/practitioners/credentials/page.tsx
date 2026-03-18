@@ -48,7 +48,7 @@ export default async function ProfilePage() {
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
-            <Link href="/" prefetch={false}>
+            <Link className="mb-2 inline-block" href="/" prefetch={false}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -113,7 +113,7 @@ export default async function ProfilePage() {
                   />
                 </div>
                 <CardHeader className="pb-4">
-                  <h3 className="mb-2 flex font-semibold text-md md:text-lg transition-colors text-balance group-hover:text-blue-600">
+                  <h3 className="mb-2 flex font-semibold text-md md:text-lg transition-colors text-balance group-hover:text-black">
                     {credential.name}
                   </h3>
                 </CardHeader>
@@ -122,7 +122,7 @@ export default async function ProfilePage() {
                     Browse practitioners with {credential.name} credentials.
                   </p>
                   <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-sm font-medium flex items-center gap-2">
                         <Users className="h-4 w-4" />
                         {practitionerCount} Practitioner{practitionerCount !== 1 ? 's' : ''}

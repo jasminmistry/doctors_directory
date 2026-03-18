@@ -462,7 +462,7 @@ console.log(failedTestMessages)
                       </ul>
 
                       <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-                        <p className="text-blue-900 font-medium">
+                        <p className="text-black font-medium">
                           If we have 500 clinics, we automatically run 500 page render tests.
                         </p>
                       </div>
