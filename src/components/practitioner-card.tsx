@@ -1,10 +1,15 @@
-"use client"
+"use client";
 import Link from "next/link";
-import { Star, MapPin,  } from "lucide-react";
+import { Star, MapPin } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Practitioner, Clinic, Product } from "@/lib/types";
-import { decodeUnicodeEscapes, fixMojibake, isAward, isCity } from "@/lib/utils";
+import {
+  decodeUnicodeEscapes,
+  fixMojibake,
+  isAward,
+  isCity,
+} from "@/lib/utils";
 import ClinicLabels from "./Clinic/clinicLabels";
 import { locations, TreatmentMap } from "@/lib/data";
 import { Button } from "./ui/button";
@@ -24,11 +29,10 @@ for (const p of practitionersData) {
     practitionersIndex.set(clinic, bucket);
   }
 }
-type PractitionerOrClinic = Practitioner | Clinic | Product | string
+type PractitionerOrClinic = Practitioner | Clinic | Product | string;
 interface PractitionerCardProps {
   practitioner: PractitionerOrClinic;
-  customLink?:string
-  
+  customLink?: string;
 }
 
 const formatSlugText = (value: string): string =>
@@ -45,7 +49,9 @@ const formatTreatmentText = (value: string): string =>
     .replace("Hifu", "HIFU")
     .replace("Coolsculpting", "CoolSculpting");
 
-function getPractitionerName(practitioner: Practitioner | Clinic | Product | string): string {
+function getPractitionerName(
+  practitioner: Practitioner | Clinic | Product | string,
+): string {
   if (isPractitioner(practitioner)) {
     if (practitioner.practitioner_name) {
       return formatSlugText(practitioner.practitioner_name);
@@ -61,7 +67,9 @@ function getPractitionerName(practitioner: Practitioner | Clinic | Product | str
   return "";
 }
 
-function getClinicPractitioners(practitioner: Practitioner | Clinic | Product | string): Practitioner[] {
+function getClinicPractitioners(
+  practitioner: Practitioner | Clinic | Product | string,
+): Practitioner[] {
   if (!isClinic(practitioner)) {
     return [];
   }
@@ -69,7 +77,9 @@ function getClinicPractitioners(practitioner: Practitioner | Clinic | Product | 
   return practitionersIndex.get(practitioner.slug as string) ?? [];
 }
 
-function getPractitionerOrClinicAriaPrefix(practitioner: Practitioner | Clinic | Product | string): string {
+function getPractitionerOrClinicAriaPrefix(
+  practitioner: Practitioner | Clinic | Product | string,
+): string {
   if (isPractitioner(practitioner)) {
     return "practitioner";
   }
@@ -83,7 +93,7 @@ function getPractitionerOrClinicAriaPrefix(practitioner: Practitioner | Clinic |
 
 function getPractitionerOrClinicHref(
   practitioner: Practitioner | Clinic | Product | string,
-  customLink?: string
+  customLink?: string,
 ): string {
   if (customLink) {
     return customLink;
@@ -102,12 +112,17 @@ function getPractitionerOrClinicHref(
   return "#";
 }
 
-function getProfileImageSrc(practitioner: Practitioner | Clinic | Product | string): string {
+function getProfileImageSrc(
+  practitioner: Practitioner | Clinic | Product | string,
+): string {
   if (isPractitioner(practitioner)) {
     return "/directory/images/default-dr-profile-1.webp";
   }
 
-  if ((isPractitioner(practitioner) || isClinic(practitioner)) && practitioner.image) {
+  if (
+    (isPractitioner(practitioner) || isClinic(practitioner)) &&
+    practitioner.image
+  ) {
     return practitioner.image.replace("&w=256&q=75", "") || "/placeholder.svg";
   }
 
@@ -117,7 +132,7 @@ function getProfileImageSrc(practitioner: Practitioner | Clinic | Product | stri
 function getCityHref(
   practitioner: Practitioner | Clinic | Product | string,
   customLink: string | undefined,
-  path: string
+  path: string,
 ): string {
   if (!isCity(practitioner)) {
     return "";
@@ -142,7 +157,7 @@ function getCityHref(
 
 function getProductHref(
   practitioner: Practitioner | Clinic | Product | string,
-  customLink?: string
+  customLink?: string,
 ): string {
   if (customLink) {
     return customLink;
@@ -155,7 +170,9 @@ function getProductHref(
   return "#";
 }
 
-function getTreatmentName(practitioner: Practitioner | Clinic | Product | string): string {
+function getTreatmentName(
+  practitioner: Practitioner | Clinic | Product | string,
+): string {
   if (!isTreatment(practitioner)) {
     return "";
   }
@@ -166,7 +183,7 @@ function getTreatmentName(practitioner: Practitioner | Clinic | Product | string
 function getTreatmentHref(
   practitioner: Practitioner | Clinic | Product | string,
   customLink: string | undefined,
-  treatmentName: string
+  treatmentName: string,
 ): string {
   if (!isTreatment(practitioner)) {
     return "#";
@@ -189,242 +206,289 @@ function getTreatmentImageSrc(treatmentName: string): string {
 
 function getAwardHref(
   practitioner: Practitioner | Clinic | Product | string,
-  customLink?: string
+  customLink?: string,
 ): string {
   if (customLink) {
     return customLink;
   }
 
   if (isAward(practitioner)) {
-    return `/practitioners/credentials/${(practitioner as {slug: string; image_url: string}).slug}`;
+    return `/practitioners/credentials/${(practitioner as { slug: string; image_url: string }).slug}`;
   }
 
   return "#";
 }
 
-export function PractitionerCard({ practitioner, customLink }: PractitionerCardProps) {
-  const Router = useRouter()
-  const path = usePathname()
-  const practitionerName = getPractitionerName(practitioner)
-  const practitioners = getClinicPractitioners(practitioner)
-  const cityHref = getCityHref(practitioner, customLink, path)
-  const practitionerOrClinicHref = getPractitionerOrClinicHref(practitioner, customLink)
-  const practitionerOrClinicAriaPrefix = getPractitionerOrClinicAriaPrefix(practitioner)
-  const profileImageSrc = getProfileImageSrc(practitioner)
-  const productHref = getProductHref(practitioner, customLink)
-  const treatmentName = getTreatmentName(practitioner)
-  const treatmentHref = getTreatmentHref(practitioner, customLink, treatmentName)
-  const treatmentImageSrc = getTreatmentImageSrc(treatmentName)
-  const awardHref = getAwardHref(practitioner, customLink)
-
-
+export function PractitionerCard({
+  practitioner,
+  customLink,
+}: PractitionerCardProps) {
+  const Router = useRouter();
+  const path = usePathname();
+  const practitionerName = getPractitionerName(practitioner);
+  const practitioners = getClinicPractitioners(practitioner);
+  const cityHref = getCityHref(practitioner, customLink, path);
+  const practitionerOrClinicHref = getPractitionerOrClinicHref(
+    practitioner,
+    customLink,
+  );
+  const practitionerOrClinicAriaPrefix =
+    getPractitionerOrClinicAriaPrefix(practitioner);
+  const profileImageSrc = getProfileImageSrc(practitioner);
+  const productHref = getProductHref(practitioner, customLink);
+  const treatmentName = getTreatmentName(practitioner);
+  const treatmentHref = getTreatmentHref(
+    practitioner,
+    customLink,
+    treatmentName,
+  );
+  const treatmentImageSrc = getTreatmentImageSrc(treatmentName);
+  const awardHref = getAwardHref(practitioner, customLink);
 
   return (
     <>
       {(isPractitioner(practitioner) || isClinic(practitioner)) && (
-        
+        <article
+          className=" relative mb-2 bg-white border-b border-t-0 border-[#C4C4C4] md:border-t rounded-md md:border md:border-(--alto)"
+          aria-labelledby={`${practitionerOrClinicAriaPrefix}-name-${practitioner.slug}`}
+        >
+          <Card
+            asChild
+            className="mt-2 gap-4 md:px-0 shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border-t rounded-27 md:border md:border-(--alto) cursor-pointer"
+            data-testid="practitioner-card"
+          >
+            <>
+              <Link
+                href={practitionerOrClinicHref}
+                prefetch={false}
+                className="z-10"
+              >
+                <header>
+                  <CardHeader className="pb-4 px-2">
+                    <h2
+                      id={`practitioner-name-${practitioner.slug} `}
+                      className="sr-only"
+                    >
+                      {practitionerName}
+                    </h2>
 
-        <article className=' relative mb-12 bg-white border-b border-t-0 border-[#C4C4C4] md:border-t rounded-md md:border md:border-(--alto)' aria-labelledby={`${practitionerOrClinicAriaPrefix}-name-${practitioner.slug}`}>
-          
-          <Card asChild className="mt-2 gap-4 md:px-0 shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border-t rounded-27 md:border md:border-(--alto) cursor-pointer" data-testid="practitioner-card">
-          <><Link
-              href={practitionerOrClinicHref}
-            prefetch={false}
-            className='z-10'
-            >
-          <header>
-             <CardHeader className="pb-4 px-2">
-            
-            <h2 id={`practitioner-name-${practitioner.slug} `} className="sr-only">
-              {practitionerName}
-            </h2>
-            
-            <div className="flex items-start gap-4">
-              <div className="flex flex-col flex-1 min-w-0 text-left items-stretch">
+                    <div className="flex items-start gap-4">
+                      <div className="flex flex-col flex-1 min-w-0 text-left items-stretch">
+                        <div className="flex w-full flex-row items-start md:border-0 md:flex-col md:items-center">
+                          <div className="mt-2 relative w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-full bg-gray-300 md:mb-3 mr-0">
+                            <img
+                              src={profileImageSrc}
+                              alt="Profile"
+                              className="object-cover rounded-full min-w-full min-h-full"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null; // prevent infinite loop
+                                e.currentTarget.src =
+                                  "/directory/images/default-dr-profile-1.webp";
+                              }}
+                            />
+                          </div>
 
-                <div className="flex w-full flex-row items-start md:border-0 md:flex-col md:items-center">
-                  <div className="mt-2 relative w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-full bg-gray-300 md:mb-3 mr-0">
-                    
-                    <img
-                      src={profileImageSrc}
-                      alt="Profile"
-                      className="object-cover rounded-full min-w-full min-h-full"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null; // prevent infinite loop
-                        e.currentTarget.src = "/directory/images/default-dr-profile-1.webp"
-                      }}
+                          <div className="text-center flex-1 min-w-0 items-start sm:items-center flex flex-col">
+                            <div className="text-base font-semibold text-primary truncate ml-4 sm:ml-0">
+                              {practitionerName
+                                .split(" ")
+                                .slice(0, 4)
+                                .map(
+                                  (word) =>
+                                    word.charAt(0).toUpperCase() +
+                                    word.slice(1),
+                                )
+                                .join(" ")}
+                            </div>
+
+                            <div className="absolute top-2 -right-4 text-white text-xs font-semibold px-6 py-1">
+                              <ClinicLabels clinic={practitioner as Clinic} />
+                            </div>
+
+                            {"practitioner_name" in practitioner && (
+                              <p className="text-muted-foreground mb-2 font-semibold leading-tight truncate ml-4 sm:ml-0">
+                                {practitioner.practitioner_title
+                                  ?.split(",")[0]
+                                  .split(" ")
+                                  .slice(0, 4)
+                                  .map(
+                                    (word: string) =>
+                                      word.charAt(0).toUpperCase() +
+                                      word.slice(1),
+                                  )
+                                  .join(" ")}
+                              </p>
+                            )}
+
+                            {!("practitioner_name" in practitioner) &&
+                              practitioner.category && (
+                                <p className="text-muted-foreground mb-2 font-semibold leading-tight truncate ml-4 sm:ml-0">
+                                  {practitioner.category.trim()}
+                                </p>
+                              )}
+                          </div>
+                        </div>
+
+                        <div className="sr-only">Rating</div>
+                        <div
+                          className="flex flex-row gap-2 pt-3 items-center justify-start md:justify-center w-full text-sm"
+                          aria-label={`Rating: ${practitioner.rating} out of 5 stars, ${practitioner.reviewCount} reviews`}
+                        >
+                          <div className="inline-flex items-center gap-1">
+                            <div className="flex items-center">
+                              {Array.from({ length: 5 }, (_, i) => (
+                                <Star
+                                  key={i}
+                                  aria-hidden="true"
+                                  className={`h-4 w-4 ${
+                                    i < practitioner.rating!
+                                      ? "fill-black text-black"
+                                      : "text-muted-foreground/30"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <span className="border-l border-black pl-2 underline">
+                            ({practitioner.reviewCount} reviews)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </header>
+
+                <CardContent className="pt-0 px-2 md:px-4 space-y-4">
+                  <div className="sr-only">Location</div>
+                  <div className="flex items-start gap-2 text-sm text-muted-foreground/80">
+                    <MapPin
+                      className="h-4 w-4 mt-0 shrink-0"
+                      aria-hidden="true"
                     />
+                    <span className="leading-snug truncate">
+                      {practitioner.gmapsAddress!.split(",")[
+                        practitioner.gmapsAddress!.split(",").length - 2
+                      ] +
+                        ", " +
+                        practitioner.gmapsAddress!.split(",")[
+                          practitioner.gmapsAddress!.split(",").length - 1
+                        ]}
+                    </span>
                   </div>
 
-                  <div className="text-center flex-1 min-w-0 items-start sm:items-center flex flex-col">
+                  <Button className="mt-4 mb-0 w-full flex border rounded-lg font-weight px-4 py-2 bg-black align-items-center cursor-pointer justify-center text-white hover:bg-white hover:text-black">
+                    Contact
+                  </Button>
 
-
-                    <div className="text-base font-semibold text-primary truncate ml-4 sm:ml-0">
-                      {practitionerName.split(" ").slice(0,4).map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
-                    </div>
-
-                  
-                  <div className="absolute top-2 -right-4 text-white text-xs font-semibold px-6 py-1">
-                    <ClinicLabels clinic={practitioner as Clinic} />
-                  </div>
-             
-
-
-                    {"practitioner_name" in practitioner && (
-                      
-                        <p className="text-muted-foreground mb-2 font-semibold leading-tight truncate ml-4 sm:ml-0">
-
-                          {
-                            practitioner.practitioner_title?.split(",")[0].split(" ").slice(0,4).map((word:string) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
-                            }
-                        </p>
-                      )}
-
-                    {!("practitioner_name" in practitioner) &&
-                      practitioner.category && (
-                        <p className="text-muted-foreground mb-2 font-semibold leading-tight truncate ml-4 sm:ml-0">
-
-                          {practitioner.category.trim()}
-                        </p>
-                      )}
-                   </div>
-                 </div>
-
-                 <div className="sr-only">Rating</div>
-                 <div className="flex flex-row gap-2 pt-3 items-center justify-start md:justify-center w-full text-sm" aria-label={`Rating: ${practitioner.rating} out of 5 stars, ${practitioner.reviewCount} reviews`}>
-                  <div className="inline-flex items-center gap-1">
-                    <div className="flex items-center">
-                      {Array.from({ length: 5 }, (_, i) => (
-                        <Star
-                          key={i}
-                          aria-hidden="true"
-                          className={`h-4 w-4 ${
-                            i < practitioner.rating!
-                              ? "fill-black text-black"
-                              : "text-muted-foreground/30"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <span className="border-l border-black pl-2 underline">
-                    ({practitioner.reviewCount} reviews)
-                  </span>
-                </div>
-              </div>
-            </div>
-            </CardHeader>
-           </header>
-
-           <CardContent className="pt-0 px-0 md:px-4 space-y-4">
-             <div className="sr-only">Location</div>
-             <div className="flex items-start gap-2 text-sm text-muted-foreground/80">
-              <MapPin className="h-4 w-4 mt-0 shrink-0" aria-hidden="true" />
-              <span className="leading-snug truncate">
-                {practitioner.gmapsAddress!.split(",")[
-                  practitioner.gmapsAddress!.split(",").length - 2
-                ] +
-                  ", " +
-                  practitioner.gmapsAddress!.split(",")[
-                    practitioner.gmapsAddress!.split(",").length - 1
-                  ]}
-              </span>
-            </div>
-
-            <Button
-              
-              className="mt-4 mb-0 w-full flex border rounded-lg font-weight px-4 py-2 bg-black align-items-center cursor-pointer justify-center text-white hover:bg-white hover:text-black"
-        
-            >
-              Contact
-             </Button>
-
-             {practitioner.Treatments?.length! > 0 && null}
-
-             
-
-            
-            </CardContent>
-                </Link>
-                <div className="md:px-4 space-y-4 pb-4">
+                  {practitioner.Treatments?.length! > 0 && null}
+                </CardContent>
+              </Link>
+              <div className="px-2 md:px-4 space-y-4 pb-4">
                 <div className="sr-only">Treatments offered</div>
-              <ul className="flex flex-wrap gap-1 pt-4" aria-label="Treatments offered">
-                {practitioner.Treatments &&
-                  practitioner.Treatments.sort((a,b) => a.length - b.length).slice(0, 2)
-                    .map((modality, index) => (
-                      <li key={index}>
+                <ul
+                  className="flex flex-wrap gap-1 pt-4"
+                  aria-label="Treatments offered"
+                >
+                  {practitioner.Treatments &&
+                    practitioner.Treatments.sort((a, b) => a.length - b.length)
+                      .slice(0, 2)
+                      .map((modality, index) => (
+                        <li key={index}>
+                          <Badge variant="outline" className="text-xs">
+                            <Link
+                              href={`/directory/treatments/${modality}`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {modality
+                                .split(" ") // split into words
+                                .map(
+                                  (word) =>
+                                    word.charAt(0).toUpperCase() +
+                                    word.slice(1),
+                                ) // capitalize each
+                                .join(" ")}
+                            </Link>
+                          </Badge>
+                        </li>
+                      ))}
+                  {practitioner.Treatments &&
+                    practitioner.Treatments.length > 2 && (
+                      <li>
                         <Badge variant="outline" className="text-xs">
                           <Link
-                            href={`/directory/treatments/${modality}`}
-                            onClick={(e) => e.stopPropagation()}
-                          >{modality
-                            .split(" ") // split into words
-                            .map(
-                              (word) =>
-                                word.charAt(0).toUpperCase() + word.slice(1)
-                            ) // capitalize each
-                            .join(" ")}</Link>
-                          
-                        </Badge>
-                      </li>
-                    ))}
-                {practitioner.Treatments &&
-                  practitioner.Treatments.length > 2 && (
-                    <li>
-                      <Badge variant="outline" className="text-xs">
-                        <Link
                             href={`/directory/treatments`}
                             onClick={(e) => e.stopPropagation()}
                           >
-                        +
-                        {practitioner.Treatments.length - 2}{" "}
-                        more</Link>
-                      </Badge>
-                    </li>
-                  )}
-              </ul>
-            </div>
-            <div className="w-full overflow-x-auto hidden">
-            <div className="flex flex-row gap-4">
-              {practitioners.map((p: any, idx: number) => (
-                <Card 
-                  asChild
-                  key={p.practitioner_name+p.practitioner_title}
-                  className="min-w-full max-h-30 group relative overflow-hidden rounded-xl border border-border/80 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98] cursor-pointer">
+                            +{practitioner.Treatments.length - 2} more
+                          </Link>
+                        </Badge>
+                      </li>
+                    )}
+                </ul>
+              </div>
+              <div className="w-full overflow-x-auto hidden">
+                <div className="flex flex-row gap-4">
+                  {practitioners.map((p: any, idx: number) => (
+                    <Card
+                      asChild
+                      key={p.practitioner_name + p.practitioner_title}
+                      className="min-w-full max-h-30 group relative overflow-hidden rounded-xl border border-border/80 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98] cursor-pointer"
+                    >
                       <div className="p-6">
-                      <div className="flex items-start gap-4 mb-6">
-                        
-                        <div className="flex-1 min-w-0 pt-1">
-                          <h3 className="text-xl font-semibold text-balance leading-tight group-hover:text-primary transition-colors truncate">
-                             <a
-                            href={`/directory/practitioners/${(practitioner.City ?? "").toLowerCase()}/profile/${p.practitioner_name}`}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {p.practitioner_name.split('-').map((word:string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                          </a></h3>
-                          <p className="text-sm font-medium text-secondary-foreground mt-1 truncate">
-                            {p.Title.split(",")[0].split(" ").slice(0,4).map((word:string) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
-                          </p>
+                        <div className="flex items-start gap-4 mb-6">
+                          <div className="flex-1 min-w-0 pt-1">
+                            <h3 className="text-xl font-semibold text-balance leading-tight group-hover:text-primary transition-colors truncate">
+                              <a
+                                href={`/directory/practitioners/${(practitioner.City ?? "").toLowerCase()}/profile/${p.practitioner_name}`}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {p.practitioner_name
+                                  .split("-")
+                                  .map(
+                                    (word: string) =>
+                                      word.charAt(0).toUpperCase() +
+                                      word.slice(1),
+                                  )
+                                  .join(" ")}
+                              </a>
+                            </h3>
+                            <p className="text-sm font-medium text-secondary-foreground mt-1 truncate">
+                              {p.Title.split(",")[0]
+                                .split(" ")
+                                .slice(0, 4)
+                                .map(
+                                  (word: string) =>
+                                    word.charAt(0).toUpperCase() +
+                                    word.slice(1),
+                                )
+                                .join(" ")}
+                            </p>
+                          </div>
                         </div>
-                      </div></div>
-                    
-    
-                  </Card>))}</div></div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
             </>
-
-        </Card>
+          </Card>
         </article>
       )}
       {isProduct(practitioner) && (
-          <Card asChild className="gap-0 h-full relative px-4 md:px-0 shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border-t rounded-27 md:border md:border-(--alto) cursor-pointer" aria-labelledby={`product-name-${practitioner.slug}`} data-testid="practitioner-card">
-            <Link href={productHref} className="block" prefetch={false}>
-        <CardHeader className="pb-2 px-2">
+        <Card
+          asChild
+          className="gap-0 h-full relative px-4 md:px-0 shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border-t rounded-27 md:border md:border-(--alto) cursor-pointer"
+          aria-labelledby={`product-name-${practitioner.slug}`}
+          data-testid="practitioner-card"
+        >
+          <Link href={productHref} className="block" prefetch={false}>
+            <CardHeader className="pb-2 px-2">
               <h2 id={`product-name-${practitioner.slug}`} className="sr-only">
                 {decodeUnicodeEscapes(practitioner.product_name)}
               </h2>
               <div className="flex items-start gap-4">
                 <div className="text-center flex-1 min-w-0 items-center flex flex-col">
-                  <div className="flex w-full flex-row items-start border-b border-[#C4C4C4] md:border-0 md:flex-col md:items-center">
+                  <div className="flex w-full flex-row items-start md:border-0 md:flex-col md:items-center">
                     <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg bg-gray-300 md:mb-4 mr-0">
                       <img
                         src={
@@ -439,7 +503,9 @@ export function PractitionerCard({ practitioner, customLink }: PractitionerCardP
                     <div className="flex items-start md:items-center flex-col pl-4 md:pl-0 w-[calc(100%-80px)] md:w-full">
                       {practitioner.product_name && (
                         <p className="flex items-center gap-1 rounded-full bg-green-100 text-green-800 border border-gray-200 text-[10px] px-3 py-1 mb-2">
-                          {decodeUnicodeEscapes(practitioner?.distributor_cleaned.trim())}
+                          {decodeUnicodeEscapes(
+                            practitioner?.distributor_cleaned.trim(),
+                          )}
                         </p>
                       )}
 
@@ -452,40 +518,59 @@ export function PractitionerCard({ practitioner, customLink }: PractitionerCardP
               </div>
             </CardHeader>
 
-            <CardContent className="pt-0 px-0 md:px-4 space-y-4">
+            <CardContent className="pt-0 px-2 md:px-4 space-y-4">
               <div className="flex md:items-center md:justify-center gap-2 text-[11px] text-gray-600">
                 <span className="text-pretty text-center">
                   {decodeUnicodeEscapes(practitioner.category.trim())}
                 </span>
               </div>
               <div>
-                <ul className="flex flex-wrap md:items-center md:justify-center gap-1 text-center" aria-label="Product prices">
+                <ul
+                  className="flex flex-wrap md:items-center md:justify-center gap-1 text-center"
+                  aria-label="Product prices"
+                >
                   {practitioner.all_prices &&
-                    practitioner.all_prices.slice(0,2).map((value: any, index: number) => (
-                      <li key={index}>
-                        <Badge variant="outline" className="text-[11px] font-normal text-gray-500">
-                          {value.price}
-                        </Badge>
-                      </li>
-                    ))}
-                    {practitioner.all_prices && 
+                    practitioner.all_prices
+                      .slice(0, 2)
+                      .map((value: any, index: number) => (
+                        <li key={index}>
+                          <Badge
+                            variant="outline"
+                            className="text-[11px] font-normal text-gray-500"
+                          >
+                            {value.price}
+                          </Badge>
+                        </li>
+                      ))}
+                  {practitioner.all_prices && (
                     <li>
-                      <Badge variant="outline" className="text-[11px] font-normal text-gray-500">
-                        {practitioner.all_prices.length -2} more
-                      </Badge></li>}
-                 
-              
+                      <Badge
+                        variant="outline"
+                        className="text-[11px] font-normal text-gray-500"
+                      >
+                        {practitioner.all_prices.length - 2} more
+                      </Badge>
+                    </li>
+                  )}
                 </ul>
               </div>
-            </CardContent></Link>
-          </Card>
-        
+            </CardContent>
+          </Link>
+        </Card>
       )}
       {isTreatment(practitioner) === true && (
-      
-          <Card asChild className="gap-0 h-full relative bg-transparent px-4 md:px-0 shadow-none md:border-0 duration-300 cursor-pointer" aria-labelledby={`treatment-name-${practitioner}`} data-testid="practitioner-card">
-            <Link href={treatmentHref} className="block border-0" prefetch={false}>
-        <CardHeader className="px-2 border-0">
+        <Card
+          asChild
+          className="gap-0 h-full relative px-4 md:px-0 shadow-none md:border-0 duration-300 cursor-pointer"
+          aria-labelledby={`treatment-name-${practitioner}`}
+          data-testid="practitioner-card"
+        >
+          <Link
+            href={treatmentHref}
+            className="block border-0"
+            prefetch={false}
+          >
+            <CardHeader className="px-2 border-0">
               <h2 id={`treatment-name-${treatmentName}`} className="sr-only">
                 {treatmentName}
               </h2>
@@ -494,9 +579,7 @@ export function PractitionerCard({ practitioner, customLink }: PractitionerCardP
                   <div className="flex w-full flex-row items-start border-0 md:flex-col md:items-center">
                     <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden md:mb-3 mr-0">
                       <img
-                        src={
-                          treatmentImageSrc
-                        }
+                        src={treatmentImageSrc}
                         alt="Treatment"
                         className="object-cover rounded-full w-full h-full"
                       />
@@ -508,64 +591,72 @@ export function PractitionerCard({ practitioner, customLink }: PractitionerCardP
                   </div>
                 </div>
               </div>
-              
-            </CardHeader>  </Link>
-          </Card>
-      
+            </CardHeader>{" "}
+          </Link>
+        </Card>
       )}
-      {isCity(practitioner) === true && 
-        (
-
-  
-                        <Card asChild className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg hover:border-blue-500">
-                <Link href={cityHref}>
-                <div className='mt-2 flex flex-col items-center gap-2'>
-                  
-                  <Button
-              
-              className="w-1/2 text-center font-semibold text-md md:text-lg transition-colors text-balance bg-black cursor-pointer hover:bg-white hover:text-black"
-        
-            >
-              {practitioner}
-             </Button>
+      {isCity(practitioner) === true && (
+        <Card
+          asChild
+          className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg "
+        >
+          <Link href={cityHref}>
+            <div className="mt-2 flex flex-col items-center gap-2">
+              <Button className="w-1/2 text-center font-semibold text-md md:text-lg transition-colors text-balance bg-black cursor-pointer hover:bg-white hover:text-black">
+                {practitioner}
+              </Button>
+            </div>
+          </Link>
+        </Card>
+      )}
+      {isAward(practitioner) && (
+        <Link
+          key={
+            (
+              practitioner as unknown as {
+                name: string;
+                slug: string;
+                image_url: string;
+              }
+            ).slug
+          }
+          href={awardHref}
+          className="block"
+        >
+          <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg ">
+            <CardHeader className=" h-55 pb-4 px-2">
+              <div className="flex justify-center mb-4">
+                <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg bg-gray-300">
+                  <img
+                    src={
+                      (
+                        practitioner as unknown as {
+                          name: string;
+                          slug: string;
+                          image_url: string;
+                        }
+                      ).image_url
+                    }
+                    alt={`${(practitioner as unknown as { name: string; slug: string; image_url: string }).name} credential`}
+                    className="object-cover w-full h-full"
+                  />
                 </div>
-                </Link>
-              </Card>
-
-                        
-              
-                
-   
-      )
-        }
-        {isAward(practitioner) && (
-            <Link
-                          key={(practitioner as unknown as {name:string, slug: string; image_url: string}).slug}
-                          href={awardHref}
-                          className="block"
-                        >
-                          <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg hover:border-blue-500">
-                            <CardHeader className=" h-55 pb-4 px-2">
-                              <div className="flex justify-center mb-4">
-                                <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg bg-gray-300">
-                                  <img
-                                    src={(practitioner as unknown as {name:string, slug: string; image_url: string}).image_url}
-                                    alt={`${(practitioner as unknown as {name:string, slug: string; image_url: string}).name} credential`}
-                                    className="object-cover w-full h-full"
-                                
-                                  />
-                                </div>
-                              </div>
-                              <h3 className="mb-2 font-semibold transition-colors text-balance group-hover:text-blue-600 text-center text-md">
-                                {(practitioner as unknown as {name:string, slug: string; image_url: string}).name}
-                              </h3>
-                            </CardHeader>
-                           
-                          </Card>
-                        </Link>
-        )
-      }
-          
+              </div>
+              <h3 className="mb-2 font-semibold transition-colors text-balance group-hover:text-black text-center text-md">
+                {
+                  (
+                    practitioner as unknown as {
+                      name: string;
+                      slug: string;
+                      image_url: string;
+                    }
+                  ).name
+                }
+              </h3>
+            </CardHeader>
+          </Card>
+        </Link>
+      )}
     </>
   );
 }

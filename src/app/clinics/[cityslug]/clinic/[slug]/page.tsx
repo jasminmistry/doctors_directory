@@ -91,7 +91,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
       {/* Navigation */}
       <div className="bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
-          <Link href="/" prefetch={false}>
+          <Link className="mb-2 inline-block" href="/" prefetch={false}>
             <Button
               variant="ghost"
               size="sm"

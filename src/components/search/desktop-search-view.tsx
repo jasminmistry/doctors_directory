@@ -53,7 +53,7 @@ export function DesktopSearchView({
             <Input
               value={localFilters.type}
               readOnly
-              className="border-0 p-0 h-auto w-23 sm:w-30 text-base text-black cursor-pointer focus-visible:ring-offset-0"
+              className="border-0 p-0 h-auto w-23 sm:w-30 text-base text-black cursor-pointer focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus-visible:ring-offset-0"
             />
             <div className="pointer-events-none absolute top-1/2 right-3 w-1.5 h-1.5 border-b-[1.5px] border-r-[1.5px] border-black transform rotate-45 -translate-y-1/2"></div>
           </button>
