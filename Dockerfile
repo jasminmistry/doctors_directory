@@ -32,7 +32,7 @@ COPY --from=builder /app/next.config.js ./next.config.js
 USER appuser
 EXPOSE 3000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-	CMD wget --quiet --tries=1 --spider http://localhost:3000/api/healthz || exit 1
+HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=12 \
+	CMD wget --quiet --tries=1 --spider http://localhost:3000/api/healthz || wget --quiet --tries=1 --spider http://localhost:3000/directory/api/healthz || exit 1
 
 CMD ["npm", "run", "start"]
