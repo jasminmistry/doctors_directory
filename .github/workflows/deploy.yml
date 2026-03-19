@@ -85,13 +85,28 @@ jobs:
             # Wait for new container health
             echo "Waiting for container to be healthy..."
             for i in {1..30}; do
-              if docker exec "$CONTAINER_NEW" wget --quiet --tries=1 --spider http://localhost:3000/healthz 2>/dev/null; then
+              HEALTH_STATUS=$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER_NEW" 2>/dev/null || echo "starting")
+              if [ "$HEALTH_STATUS" = "healthy" ]; then
                 echo "Container is healthy"
                 break
               fi
-              echo "Health check attempt $i/30..."
+              if [ "$HEALTH_STATUS" = "unhealthy" ]; then
+                echo "ERROR: Container became unhealthy"
+                docker logs --tail 100 "$CONTAINER_NEW" || true
+                docker rm -f "$CONTAINER_NEW" 2>/dev/null || true
+                exit 1
+              fi
+              echo "Health check attempt $i/30 (status: $HEALTH_STATUS)..."
               sleep 2
             done
+
+            FINAL_HEALTH_STATUS=$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER_NEW" 2>/dev/null || echo "unknown")
+            if [ "$FINAL_HEALTH_STATUS" != "healthy" ]; then
+              echo "ERROR: Container did not become healthy in time"
+              docker logs --tail 100 "$CONTAINER_NEW" || true
+              docker rm -f "$CONTAINER_NEW" 2>/dev/null || true
+              exit 1
+            fi
 
             # Verify container still running
             if ! docker ps | grep -q "$CONTAINER_NEW"; then
