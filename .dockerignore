@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.github
+coverage
+test-reports
+run_tests
+run_tests.py
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+.env
+.env.*
+*.local
