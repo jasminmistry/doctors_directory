@@ -40,8 +40,8 @@ jobs:
         with:
           context: .
           push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=min
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
@@ -65,15 +65,68 @@ jobs:
           script: |
             set -euo pipefail
 
+            CONTAINER_NEW="${CONTAINER_NAME}-new"
+            CONTAINER_OLD="${CONTAINER_NAME}-old"
+
             docker login ghcr.io -u "$GHCR_USERNAME" -p "$GHCR_TOKEN"
             docker pull "$IMAGE_NAME:latest"
 
-            docker stop "$CONTAINER_NAME" || true
-            docker rm "$CONTAINER_NAME" || true
-
+            echo "Starting blue-green deployment..."
+            # Run new container (blue)
             docker run -d \
-              --name "$CONTAINER_NAME" \
+              --name "$CONTAINER_NEW" \
               --restart unless-stopped \
               -p "127.0.0.1:$APP_PORT:3000" \
+              --memory="512m" \
+              --cpus="1.0" \
               -e NEXT_PUBLIC_BASE_URL="$NEXT_PUBLIC_BASE_URL" \
               "$IMAGE_NAME:latest"
+
+            # Wait for new container health
+            echo "Waiting for container to be healthy..."
+            for i in {1..30}; do
+              if docker exec "$CONTAINER_NEW" wget --quiet --tries=1 --spider http://localhost:3000/healthz 2>/dev/null; then
+                echo "Container is healthy"
+                break
+              fi
+              echo "Health check attempt $i/30..."
+              sleep 2
+            done
+
+            # Verify container still running
+            if ! docker ps | grep -q "$CONTAINER_NEW"; then
+              echo "ERROR: New container failed to start"
+              docker rm "$CONTAINER_NEW" 2>/dev/null || true
+              exit 1
+            fi
+
+            # Switch: rename old to backup, new to primary
+            if docker ps -a | grep -q "^$(docker ps -a | grep "$CONTAINER_NAME" | grep -v "$CONTAINER_NEW" | awk '{print $1}')" 2>/dev/null; then
+              OLD_ID=$(docker ps -a | grep "$CONTAINER_NAME" | grep -v "$CONTAINER_NEW" | awk '{print $1}' | head -1)
+              if [ -n "$OLD_ID" ]; then
+                docker stop "$OLD_ID" 2>/dev/null || true
+                docker rename "$OLD_ID" "$CONTAINER_OLD" 2>/dev/null || true
+              fi
+            fi
+
+            # Rename new container to primary name
+            docker rename "$CONTAINER_NEW" "$CONTAINER_NAME" 2>/dev/null || true
+
+            echo "Blue-green deployment completed successfully"
+
+      - name: Cleanup Docker resources
+        uses: appleboy/ssh-action@v1.2.0
+        if: always()
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || '22' }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            echo "Cleaning up Docker resources..."
+            docker image prune -af --filter "until=72h"
+            docker container prune -f
+            docker volume prune -f
+            echo "Docker cleanup completed"
