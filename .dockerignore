@@ -3,7 +3,6 @@ node_modules
 .git
 .github
 coverage
-test-reports
 run_tests
 run_tests.py
 npm-debug.log*
