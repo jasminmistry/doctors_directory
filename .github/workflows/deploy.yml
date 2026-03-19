@@ -108,24 +108,29 @@ jobs:
               exit 1
             fi
 
-            # Verify container still running
-            if ! docker ps | grep -q "$CONTAINER_NEW"; then
-              echo "ERROR: New container failed to start"
-              docker rm "$CONTAINER_NEW" 2>/dev/null || true
+            # Verify new container is still running
+            if [ "$(docker inspect -f '{{.State.Running}}' "$CONTAINER_NEW" 2>/dev/null || echo false)" != "true" ]; then
+              echo "ERROR: New container is not running"
+              docker logs --tail 100 "$CONTAINER_NEW" || true
+              docker rm -f "$CONTAINER_NEW" 2>/dev/null || true
               exit 1
             fi
 
-            # Switch: rename old to backup, new to primary
-            if docker ps -a | grep -q "^$(docker ps -a | grep "$CONTAINER_NAME" | grep -v "$CONTAINER_NEW" | awk '{print $1}')" 2>/dev/null; then
-              OLD_ID=$(docker ps -a | grep "$CONTAINER_NAME" | grep -v "$CONTAINER_NEW" | awk '{print $1}' | head -1)
-              if [ -n "$OLD_ID" ]; then
-                docker stop "$OLD_ID" 2>/dev/null || true
-                docker rename "$OLD_ID" "$CONTAINER_OLD" 2>/dev/null || true
-              fi
+            # Switch: move current primary to backup (if present), then promote new.
+            PRIMARY_ID=$(docker ps -aq -f "name=^/${CONTAINER_NAME}$" || true)
+            if [ -n "$PRIMARY_ID" ]; then
+              docker rm -f "$CONTAINER_OLD" 2>/dev/null || true
+              docker rename "$CONTAINER_NAME" "$CONTAINER_OLD" 2>/dev/null || true
             fi
 
-            # Rename new container to primary name
-            docker rename "$CONTAINER_NEW" "$CONTAINER_NAME" 2>/dev/null || true
+            docker rename "$CONTAINER_NEW" "$CONTAINER_NAME"
+
+            # Confirm promoted container is running under primary name.
+            if [ "$(docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" 2>/dev/null || echo false)" != "true" ]; then
+              echo "ERROR: Promoted container is not running"
+              docker logs --tail 100 "$CONTAINER_NAME" || true
+              exit 1
+            fi
 
             echo "Blue-green deployment completed successfully"
 
