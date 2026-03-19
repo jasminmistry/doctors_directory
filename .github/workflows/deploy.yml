@@ -72,6 +72,10 @@ jobs:
             docker pull "$IMAGE_NAME:latest"
 
             echo "Starting blue-green deployment..."
+            # Clean up any leftover containers from a previous failed deploy
+            docker rm -f "$CONTAINER_NEW" 2>/dev/null || true
+            docker rm -f "$CONTAINER_OLD" 2>/dev/null || true
+
             # Run new container (blue)
             docker run -d \
               --name "$CONTAINER_NEW" \
