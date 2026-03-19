@@ -77,17 +77,20 @@ jobs:
             docker rm -f "$CONTAINER_NEW" 2>/dev/null || true
             docker rm -f "$CONTAINER_OLD" 2>/dev/null || true
 
-            # Run new container (blue)
+            # Use a temp port for health checking to avoid conflict with live container.
+            TEMP_PORT=$((APP_PORT + 1))
+
+            # Run new container on temp port so live port stays up during health check.
             docker run -d \
               --name "$CONTAINER_NEW" \
-              --restart unless-stopped \
-              -p "127.0.0.1:$APP_PORT:3000" \
+              --restart no \
+              -p "127.0.0.1:$TEMP_PORT:3000" \
               --memory="512m" \
               --cpus="1.0" \
               "$IMAGE_NAME:latest"
 
-            # Wait for new container health
-            echo "Waiting for container to be healthy..."
+            # Wait for new container health on temp port.
+            echo "Waiting for container to be healthy (temp port $TEMP_PORT)..."
             for i in {1..90}; do
               HEALTH_STATUS=$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER_NEW" 2>/dev/null || echo "starting")
               if [ "$HEALTH_STATUS" = "healthy" ]; then
@@ -112,26 +115,24 @@ jobs:
               exit 1
             fi
 
-            # Verify new container is still running
-            if [ "$(docker inspect -f '{{.State.Running}}' "$CONTAINER_NEW" 2>/dev/null || echo false)" != "true" ]; then
-              echo "ERROR: New container is not running"
-              docker logs --tail 100 "$CONTAINER_NEW" || true
-              docker rm -f "$CONTAINER_NEW" 2>/dev/null || true
-              exit 1
-            fi
+            # New container is healthy — stop and remove temp instance.
+            docker rm -f "$CONTAINER_NEW"
 
-            # Switch: move current primary to backup (if present), then promote new.
-            PRIMARY_ID=$(docker ps -aq -f "name=^/${CONTAINER_NAME}$" || true)
-            if [ -n "$PRIMARY_ID" ]; then
-              docker rm -f "$CONTAINER_OLD" 2>/dev/null || true
-              docker rename "$CONTAINER_NAME" "$CONTAINER_OLD" 2>/dev/null || true
-            fi
+            # Stop old container (frees the live port), then start new on primary port.
+            echo "Switching traffic to new container..."
+            docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
 
-            docker rename "$CONTAINER_NEW" "$CONTAINER_NAME"
+            docker run -d \
+              --name "$CONTAINER_NAME" \
+              --restart unless-stopped \
+              -p "127.0.0.1:$APP_PORT:3000" \
+              --memory="512m" \
+              --cpus="1.0" \
+              "$IMAGE_NAME:latest"
 
-            # Confirm promoted container is running under primary name.
+            # Confirm final container is running.
             if [ "$(docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" 2>/dev/null || echo false)" != "true" ]; then
-              echo "ERROR: Promoted container is not running"
+              echo "ERROR: Final container failed to start"
               docker logs --tail 100 "$CONTAINER_NAME" || true
               exit 1
             fi
