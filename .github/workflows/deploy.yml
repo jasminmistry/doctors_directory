@@ -42,6 +42,8 @@ jobs:
           push: true
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=min
+          build-args: |
+            NEXT_PUBLIC_BASE_URL=${{ vars.NEXT_PUBLIC_BASE_URL }}
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
@@ -52,7 +54,6 @@ jobs:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
           CONTAINER_NAME: ${{ vars.CONTAINER_NAME || env.CONTAINER_NAME }}
           APP_PORT: ${{ vars.APP_PORT || env.APP_PORT }}
-          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL || vars.NEXT_PUBLIC_BASE_URL }}
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         with:
@@ -60,7 +61,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || '22' }}
-          envs: IMAGE_NAME,CONTAINER_NAME,APP_PORT,NEXT_PUBLIC_BASE_URL,GHCR_USERNAME,GHCR_TOKEN
+          envs: IMAGE_NAME,CONTAINER_NAME,APP_PORT,GHCR_USERNAME,GHCR_TOKEN
           script_stop: true
           script: |
             set -euo pipefail
@@ -83,7 +84,6 @@ jobs:
               -p "127.0.0.1:$APP_PORT:3000" \
               --memory="512m" \
               --cpus="1.0" \
-              -e NEXT_PUBLIC_BASE_URL="$NEXT_PUBLIC_BASE_URL" \
               "$IMAGE_NAME:latest"
 
             # Wait for new container health

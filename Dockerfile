@@ -10,6 +10,9 @@ RUN --mount=type=cache,target=/root/.npm \
 	if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
 FROM base AS builder
+# Declare build-time variable so Next.js bakes it into the bundle.
+ARG NEXT_PUBLIC_BASE_URL
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
