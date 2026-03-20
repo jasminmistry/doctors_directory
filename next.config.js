@@ -12,7 +12,7 @@ const nextConfig = {
     
   },
   basePath: '/',
-    assetPrefix: '/',
+    assetPrefix: '/directory/',
 };
 
 module.exports = nextConfig;
