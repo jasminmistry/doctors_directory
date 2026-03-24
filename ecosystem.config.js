@@ -35,10 +35,10 @@ module.exports = {
     // -----------------------------------------------------------------------
     {
       name: 'doctors-directory',
-      script: 'npm',
-      args: 'run start',
-      // Disable PM2's automatic .env file loading — all env vars are
-      // injected explicitly via the `env` block below.
+      // cluster mode requires a direct Node.js script — npm/shell wrappers
+      // break PM2's fork IPC and mangle the argument list.
+      script: 'node_modules/.bin/next',
+      args: 'start',
       env_file: '',
 
       // --- Scaling ---
