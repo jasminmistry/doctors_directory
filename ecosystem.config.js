@@ -4,9 +4,9 @@ module.exports = {
       name: 'doctors-directory',
       script: './server.js',          // plain Node.js file — required for cluster mode
       exec_mode: 'cluster',
-      instances: process.env.PM2_INSTANCES || '4', // all CPUs; override e.g. PM2_INSTANCES=2
+      instances: process.env.PM2_INSTANCES || '2', // safe default; override e.g. PM2_INSTANCES=4
       wait_ready: true,               // wait for process.send('ready') before routing traffic
-      listen_timeout: 30000,
+      listen_timeout: 120000,         // 2 min — allows app.prepare() on slow/low-memory hosts
       kill_timeout: 10000,            // drain in-flight requests before killing a worker
       max_memory_restart: '4096M',
       restart_delay: 1000,
