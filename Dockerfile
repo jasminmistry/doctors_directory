@@ -25,7 +25,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 
 # Install PM2 globally before switching to non-root user
-RUN npm install -g pm2
+RUN npm install -g pm2 && apk add --no-cache curl
 
 # Use non-root runtime user for safer container execution.
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
@@ -41,7 +41,7 @@ COPY server.js ./server.js
 USER appuser
 EXPOSE 3000
 
-HEALTHCHECK --interval=10s --timeout=10s --start-period=90s --retries=5 \
-	CMD node -e "require('http').get('http://localhost:3000/directory/api/healthz',r=>{process.exit(r.statusCode===200?0:1)}).on('error',()=>process.exit(1))"
+HEALTHCHECK --interval=10s --timeout=10s --start-period=60s --retries=5 \
+	CMD ["curl", "-fLs", "http://localhost:3000/directory/api/healthz/"]
 
 CMD ["pm2-runtime", "start", "ecosystem.config.js"]
