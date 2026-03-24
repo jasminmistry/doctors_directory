@@ -234,131 +234,130 @@ export function PractitionerCard({
             data-testid="practitioner-card"
           >
             <>
-              <Link
-                href={practitionerOrClinicHref}
-                prefetch={false}
-                className="z-10"
-              >
-                <header>
-                  <CardHeader className="pb-4 px-2">
-                    <h2
-                      id={`practitioner-name-${practitioner.slug} `}
-                      className="sr-only"
-                    >
-                      {practitionerName}
-                    </h2>
+              <header>
+                <CardHeader className="pb-4 px-2">
+                  <h2
+                    id={`practitioner-name-${practitioner.slug} `}
+                    className="sr-only"
+                  >
+                    {practitionerName}
+                  </h2>
 
-                    <div className="flex items-start gap-4">
-                      <div className="flex flex-col flex-1 min-w-0 text-left items-stretch">
-                        <div className="flex w-full flex-row items-start md:border-0 md:flex-col md:items-center">
-                          <div className="mt-2 relative w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-full bg-gray-300 md:mb-3 mr-0">
-                            <img
-                              src={profileImageSrc}
-                              alt="Profile"
-                              className="object-cover rounded-full min-w-full min-h-full"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null; // prevent infinite loop
-                                e.currentTarget.src =
-                                  "/directory/images/default-dr-profile-1.webp";
-                              }}
-                            />
+                  <div className="flex items-start gap-4">
+                    <div className="flex flex-col flex-1 min-w-0 text-left items-stretch">
+                      <div className="flex w-full flex-row items-start md:border-0 md:flex-col md:items-center">
+                        <div className="mt-2 relative w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-full bg-gray-300 md:mb-3 mr-0">
+                          <img
+                            src={profileImageSrc}
+                            alt="Profile"
+                            className="object-cover rounded-full min-w-full min-h-full"
+                            onError={(e) => {
+                              e.currentTarget.onerror = null; // prevent infinite loop
+                              e.currentTarget.src =
+                                "/directory/images/default-dr-profile-1.webp";
+                            }}
+                          />
+                        </div>
+
+                        <div className="text-center flex-1 min-w-0 items-start sm:items-center flex flex-col">
+                          <div className="text-base font-semibold text-primary truncate ml-4 sm:ml-0">
+                            {practitionerName
+                              .split(" ")
+                              .slice(0, 4)
+                              .map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() + word.slice(1),
+                              )
+                              .join(" ")}
                           </div>
 
-                          <div className="text-center flex-1 min-w-0 items-start sm:items-center flex flex-col">
-                            <div className="text-base font-semibold text-primary truncate ml-4 sm:ml-0">
-                              {practitionerName
+                          <div className="absolute top-2 -right-4 text-white text-xs font-semibold px-6 py-1">
+                            <ClinicLabels clinic={practitioner as Clinic} />
+                          </div>
+
+                          {"practitioner_name" in practitioner && (
+                            <p className="text-muted-foreground mb-2 font-semibold leading-tight truncate ml-4 sm:ml-0">
+                              {practitioner.practitioner_title
+                                ?.split(",")[0]
                                 .split(" ")
                                 .slice(0, 4)
                                 .map(
-                                  (word) =>
+                                  (word: string) =>
                                     word.charAt(0).toUpperCase() +
                                     word.slice(1),
                                 )
                                 .join(" ")}
-                            </div>
+                            </p>
+                          )}
 
-                            <div className="absolute top-2 -right-4 text-white text-xs font-semibold px-6 py-1">
-                              <ClinicLabels clinic={practitioner as Clinic} />
-                            </div>
-
-                            {"practitioner_name" in practitioner && (
+                          {!("practitioner_name" in practitioner) &&
+                            practitioner.category && (
                               <p className="text-muted-foreground mb-2 font-semibold leading-tight truncate ml-4 sm:ml-0">
-                                {practitioner.practitioner_title
-                                  ?.split(",")[0]
-                                  .split(" ")
-                                  .slice(0, 4)
-                                  .map(
-                                    (word: string) =>
-                                      word.charAt(0).toUpperCase() +
-                                      word.slice(1),
-                                  )
-                                  .join(" ")}
+                                {practitioner.category.trim()}
                               </p>
                             )}
-
-                            {!("practitioner_name" in practitioner) &&
-                              practitioner.category && (
-                                <p className="text-muted-foreground mb-2 font-semibold leading-tight truncate ml-4 sm:ml-0">
-                                  {practitioner.category.trim()}
-                                </p>
-                              )}
-                          </div>
-                        </div>
-
-                        <div className="sr-only">Rating</div>
-                        <div
-                          className="flex flex-row gap-2 pt-3 items-center justify-start md:justify-center w-full text-sm"
-                          aria-label={`Rating: ${practitioner.rating} out of 5 stars, ${practitioner.reviewCount} reviews`}
-                        >
-                          <div className="inline-flex items-center gap-1">
-                            <div className="flex items-center">
-                              {Array.from({ length: 5 }, (_, i) => (
-                                <Star
-                                  key={i}
-                                  aria-hidden="true"
-                                  className={`h-4 w-4 ${
-                                    i < practitioner.rating!
-                                      ? "fill-black text-black"
-                                      : "text-muted-foreground/30"
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          <span className="border-l border-black pl-2 underline">
-                            ({practitioner.reviewCount} reviews)
-                          </span>
                         </div>
                       </div>
+
+                      <div className="sr-only">Rating</div>
+                      <div
+                        className="flex flex-row gap-2 pt-3 items-center justify-start md:justify-center w-full text-sm"
+                        aria-label={`Rating: ${practitioner.rating} out of 5 stars, ${practitioner.reviewCount} reviews`}
+                      >
+                        <div className="inline-flex items-center gap-1">
+                          <div className="flex items-center">
+                            {Array.from({ length: 5 }, (_, i) => (
+                              <Star
+                                key={i}
+                                aria-hidden="true"
+                                className={`h-4 w-4 ${
+                                  i < practitioner.rating!
+                                    ? "fill-black text-black"
+                                    : "text-muted-foreground/30"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <span className="border-l border-black pl-2 underline">
+                          ({practitioner.reviewCount} reviews)
+                        </span>
+                      </div>
                     </div>
-                  </CardHeader>
-                </header>
-
-                <CardContent className="pt-0 px-2 md:px-4 space-y-4">
-                  <div className="sr-only">Location</div>
-                  <div className="flex items-start gap-2 text-sm text-muted-foreground/80">
-                    <MapPin
-                      className="h-4 w-4 mt-0 shrink-0"
-                      aria-hidden="true"
-                    />
-                    <span className="leading-snug truncate">
-                      {practitioner.gmapsAddress!.split(",")[
-                        practitioner.gmapsAddress!.split(",").length - 2
-                      ] +
-                        ", " +
-                        practitioner.gmapsAddress!.split(",")[
-                          practitioner.gmapsAddress!.split(",").length - 1
-                        ]}
-                    </span>
                   </div>
+                </CardHeader>
+              </header>
 
+              <CardContent className="pt-0 px-2 md:px-4 space-y-4">
+                <div className="sr-only">Location</div>
+                <div className="flex items-start gap-2 text-sm text-muted-foreground/80">
+                  <MapPin
+                    className="h-4 w-4 mt-0 shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span className="leading-snug truncate">
+                    {practitioner.gmapsAddress!.split(",")[
+                      practitioner.gmapsAddress!.split(",").length - 2
+                    ] +
+                      ", " +
+                      practitioner.gmapsAddress!.split(",")[
+                        practitioner.gmapsAddress!.split(",").length - 1
+                      ]}
+                  </span>
+                </div>
+
+                <Link
+                  href={practitionerOrClinicHref}
+                  prefetch={false}
+                  className="z-10"
+                >
                   <Button className="mt-4 mb-0 w-full flex border rounded-lg font-weight px-4 py-2 bg-black align-items-center cursor-pointer justify-center text-white hover:bg-white hover:text-black">
                     Contact
                   </Button>
+                </Link>
 
-                  {practitioner.Treatments?.length! > 0 && null}
-                </CardContent>
-              </Link>
+                {practitioner.Treatments?.length! > 0 && null}
+              </CardContent>
               <div className="px-2 md:px-4 space-y-4 pb-4">
                 <div className="sr-only">Treatments offered</div>
                 <ul
@@ -402,7 +401,6 @@ export function PractitionerCard({
                     )}
                 </ul>
               </div>
-
             </>
           </Card>
         </article>
