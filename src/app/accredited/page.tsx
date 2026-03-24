@@ -12,8 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Clinic, Practitioner } from "@/lib/types"
-import fs from "fs"
-import path from "path"
+import { readJsonFileSync } from "@/lib/json-cache"
 import clinicsJson from "@/../public/clinics_processed_new_data.json";
 const accreditations = ["CQC", "JCCP", "HIW", "HIS", "RQIA", "SaveFace"]
 
@@ -54,9 +53,7 @@ export default async function AccreditedPage() {
     clinics.map(c => [c.slug!, c])
   )
 
-  const practitionerFilePath = path.join(process.cwd(), "public", "derms_processed_new_5403.json")
-  const practitionerFileContents = fs.readFileSync(practitionerFilePath, "utf-8")
-  const practitioners: Practitioner[] = JSON.parse(practitionerFileContents)
+  const practitioners: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
 
   const enrichedPractitioners = practitioners
     .map(p => {

@@ -9,8 +9,7 @@ import { BoxPlotDatum, ItemMeta } from "@/lib/types";
 import { Stats } from "@/components/visx-donut";
 import ClinicDetailsMarkdown from "@/components/Clinic/clinicDetailsMD";
 import { Clinic } from "@/lib/types";
-import fs from "fs";
-import path from "path";
+import { readJsonFileSync } from "@/lib/json-cache";
 import ClinicTabs from "@/components/Clinic/clinicTabs";
 import {
   Breadcrumb,
@@ -261,9 +260,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 // }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
-  const filePath = path.join(process.cwd(), "public", "clinics_processed_new_data.json");
-  const fileContents = fs.readFileSync(filePath, "utf-8");
-  const clinics: Clinic[] = JSON.parse(fileContents);
+  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const clinic = clinics.find((p) => p.slug === params.slug);
 
   if (!clinic) {

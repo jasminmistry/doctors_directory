@@ -13,8 +13,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Clinic, Practitioner } from "@/lib/types"
-import fs from "fs"
-import path from "path"
+import { readJsonFileSync } from "@/lib/json-cache"
 import clinicsJson from "@/../public/clinics_processed_new_data.json";
 import { accreditations } from "@/lib/data"
 import { PractitionerCard } from "@/components/practitioner-card"
@@ -59,9 +58,7 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
     clinics.map(c => [c.slug!, c])
   )
 
-  const practitionerFilePath = path.join(process.cwd(), "public", "derms_processed_new_5403.json")
-  const practitionerFileContents = fs.readFileSync(practitionerFilePath, "utf-8")
-  const practitioners: Practitioner[] = JSON.parse(practitionerFileContents)
+  const practitioners: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
 
   const { accreditation, cityslug } = params
   const accreditationField = mapAccreditationToField(accreditation)

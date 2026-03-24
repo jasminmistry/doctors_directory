@@ -14,8 +14,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import fs from "fs";
-import path from "path";
+import { readJsonFileSync } from "@/lib/json-cache";
 
 const clinicsData = clinicsJson as unknown as Clinic[];
 const clinics = clinicsData
@@ -24,9 +23,7 @@ const clinics = clinicsData
 )
 
 export default async function ProfilePage() {
-  const filePath = path.join(process.cwd(), "public", "derms_processed_new_5403.json");
-  const fileContents = fs.readFileSync(filePath, "utf-8");
-  const practitionersData: Practitioner[] = JSON.parse(fileContents);
+  const practitionersData: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const recognitionsWithImages = getAccreditationImages(accreditationsJson);
   
   const practitioners = practitionersData

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/components/Product/profile-header";
 import ClinicDetailsMarkdown from "@/components/Product/ProductDetailsMD";
 import { Product } from "@/lib/types";
-import fs from "fs";
+import { readJsonFileSync } from "@/lib/json-cache";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,7 +14,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import path from "path";
 import PractitionerTabs from "@/components/Product/ProductTabs";
 import ItemsGrid from "@/components/collectionGrid";
 import { MoreItems } from "@/components/MoreItems";
@@ -30,9 +29,7 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const filePath = path.join(process.cwd(), "public", "products_processed_new.json");
-  const fileContents = fs.readFileSync(filePath, "utf-8");
-  const clinics: Product[] = JSON.parse(fileContents);
+  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   const { slug } = params;
 
   const clinic = clinics.find((p) => p.slug === slug);
