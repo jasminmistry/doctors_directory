@@ -5,28 +5,28 @@ import LogoLoop from "./LogoLoop";
 export function HeroSection() {
   const imageLogos = [
     {
-      src: "directory/images/Aesthetic-Medicine.webp",
+      src: "/directory/images/Aesthetic-Medicine.webp",
       alt: "",
       href: "",
 
     },
     {
-      src: "directory/images/Galderma.webp",
+      src: "/directory/images/Galderma.webp",
       alt: "",
       href: "",
     },
     {
-      src: "directory/images/Save Face.webp",
+      src: "/directory/images/Save Face.webp",
       alt: "",
       href: "",
     },
     {
-      src: "directory/images/Awards.webp",
+      src: "/directory/images/Awards.webp",
       alt: "",
       href: "",
     },
     {
-      src: "directory/images/Prime.webp",
+      src: "/directory/images/Prime.webp",
       alt: "",
       href: "",
     },

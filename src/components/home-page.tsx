@@ -766,7 +766,7 @@ const cityItems: {
 
 const imageLogos = [
   {
-    src: "directory/HIS.jpg",
+    src: "/directory/HIS.jpg",
     alt: "HIS",
     href: "https://www.healthcareimprovementscotland.scot/",
   },
@@ -775,7 +775,7 @@ const imageLogos = [
   { src: "/directory/qcc.jpg", alt: "CQC", href: "https://cqc.org.uk" },
   { src: "/directory/rqia.jpg", alt: "RQIA", href: "https://www.rqia.org.uk/" },
   {
-    src: "directory/save-face-partner.jpg",
+    src: "/directory/save-face-partner.jpg",
     alt: "Save Face",
     href: "https://www.saveface.co.uk/",
   },
@@ -821,19 +821,19 @@ const blogs = [
   {
     id: 1,
     title: "10 Best HIPAA Compliant Medical Spa Software in 2025",
-    img: "directory/images/HIPAA-Compliant-Medical-Spa-Software-768x432.webp",
+    img: "/directory/images/HIPAA-Compliant-Medical-Spa-Software-768x432.webp",
     link: "https://www.consentz.com/hipaa-compliant-medical-spa-software",
   },
   {
     id: 2,
     title: "Top 10 Clinical Data Management Software Solutions in the USA",
-    img: "directory/images/Top-Clinical-Data-Management-Software-in-the-USA.webp",
+    img: "/directory/images/Top-Clinical-Data-Management-Software-in-the-USA.webp",
     link: "https://www.consentz.com/clinical-data-management-software",
   },
   {
     id: 3,
     title: "Aesthetic Clinic Marketing: Complete Guide [2025]",
-    img: "directory/images/Aesthetic-Clinic-Marketing-Guide-1536x864.webp",
+    img: "/directory/images/Aesthetic-Clinic-Marketing-Guide-1536x864.webp",
     link: "https://www.consentz.com/aesthetic-clinic-marketing",
   },
 ];
@@ -1069,7 +1069,7 @@ export default function HomePage() {
             </div>
             <div className="flex justify-center">
               <img
-                src="directory/images/Aesthetic Software Interface.webp"
+                src="/directory/images/Aesthetic Software Interface.webp"
                 alt="Healthcare dashboard on laptop"
                 className="max-w-full"
               />

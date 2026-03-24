@@ -163,8 +163,6 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
     window.scrollTo({ top: 0, behavior: "smooth" });
     void loadResults(page, "replace");
   };
-
-  console.log(filters)
   return (
     <main className="min-h-screen bg-[var(--primary-bg-color)]">
       <div className="bg-[var(--primary-bg-color)] backdrop-blur-sm sticky top-0 z-10">

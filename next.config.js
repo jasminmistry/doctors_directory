@@ -13,6 +13,39 @@ const nextConfig = {
   },
   basePath: '/directory',
   trailingSlash: true,
+  async headers() {
+    return [
+      {
+        // Next.js static assets are content-hashed — safe to cache forever
+        source: '/_next/static/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      {
+        // Optimised images served by Next.js image endpoint
+        source: '/_next/image',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
+        ],
+      },
+      {
+        // Public static files (images, JSON data, etc.)
+        source: '/:path((?!_next).*)',
+        has: [{ type: 'header', key: 'accept', value: '.*image.*' }],
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
+        ],
+      },
+      {
+        // All HTML pages — short CDN cache with background revalidation
+        source: '/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=300, stale-while-revalidate=86400' },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

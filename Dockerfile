@@ -24,6 +24,9 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 
+# Install PM2 globally before switching to non-root user
+RUN npm install -g pm2
+
 # Use non-root runtime user for safer container execution.
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
@@ -32,11 +35,12 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/next.config.js ./next.config.js
+COPY ecosystem.config.js ./ecosystem.config.js
 
 USER appuser
 EXPOSE 3000
 
-HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=12 \
+HEALTHCHECK --interval=5s --timeout=3s --start-period=15s --retries=12 \
 	CMD wget --quiet --tries=1 --spider http://localhost:3000/api/healthz || wget --quiet --tries=1 --spider http://localhost:3000/directory/api/healthz || exit 1
 
-CMD ["npm", "run", "start"]
+CMD ["pm2-runtime", "start", "ecosystem.config.js"]
