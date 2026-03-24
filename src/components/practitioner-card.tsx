@@ -13,22 +13,9 @@ import {
 import ClinicLabels from "./Clinic/clinicLabels";
 import { locations, TreatmentMap } from "@/lib/data";
 import { Button } from "./ui/button";
-import practitionersJson from "@/../public/derms_processed_new_5403.json";
 import { isClinic, isPractitioner, isProduct, isTreatment } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-const practitionersData = practitionersJson as unknown as Practitioner[];
-const practitionersIndex = new Map<string, Practitioner[]>();
-
-for (const p of practitionersData) {
-  const clinics = JSON.parse(p.Associated_Clinics as string) as string[];
-
-  for (const clinic of clinics) {
-    const bucket = practitionersIndex.get(clinic) ?? [];
-    bucket.push(p);
-    practitionersIndex.set(clinic, bucket);
-  }
-}
 type PractitionerOrClinic = Practitioner | Clinic | Product | string;
 interface PractitionerCardProps {
   practitioner: PractitionerOrClinic;
@@ -65,16 +52,6 @@ function getPractitionerName(
   }
 
   return "";
-}
-
-function getClinicPractitioners(
-  practitioner: Practitioner | Clinic | Product | string,
-): Practitioner[] {
-  if (!isClinic(practitioner)) {
-    return [];
-  }
-
-  return practitionersIndex.get(practitioner.slug as string) ?? [];
 }
 
 function getPractitionerOrClinicAriaPrefix(
@@ -226,7 +203,6 @@ export function PractitionerCard({
   const Router = useRouter();
   const path = usePathname();
   const practitionerName = getPractitionerName(practitioner);
-  const practitioners = getClinicPractitioners(practitioner);
   const cityHref = getCityHref(practitioner, customLink, path);
   const practitionerOrClinicHref = getPractitionerOrClinicHref(
     practitioner,
@@ -426,50 +402,7 @@ export function PractitionerCard({
                     )}
                 </ul>
               </div>
-              <div className="w-full overflow-x-auto hidden">
-                <div className="flex flex-row gap-4">
-                  {practitioners.map((p: any, idx: number) => (
-                    <Card
-                      asChild
-                      key={p.practitioner_name + p.practitioner_title}
-                      className="min-w-full max-h-30 group relative overflow-hidden rounded-xl border border-border/80 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98] cursor-pointer"
-                    >
-                      <div className="p-6">
-                        <div className="flex items-start gap-4 mb-6">
-                          <div className="flex-1 min-w-0 pt-1">
-                            <h3 className="text-xl font-semibold text-balance leading-tight group-hover:text-primary transition-colors truncate">
-                              <a
-                                href={`/directory/practitioners/${(practitioner.City ?? "").toLowerCase()}/profile/${p.practitioner_name}`}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                {p.practitioner_name
-                                  .split("-")
-                                  .map(
-                                    (word: string) =>
-                                      word.charAt(0).toUpperCase() +
-                                      word.slice(1),
-                                  )
-                                  .join(" ")}
-                              </a>
-                            </h3>
-                            <p className="text-sm font-medium text-secondary-foreground mt-1 truncate">
-                              {p.Title.split(",")[0]
-                                .split(" ")
-                                .slice(0, 4)
-                                .map(
-                                  (word: string) =>
-                                    word.charAt(0).toUpperCase() +
-                                    word.slice(1),
-                                )
-                                .join(" ")}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
+
             </>
           </Card>
         </article>

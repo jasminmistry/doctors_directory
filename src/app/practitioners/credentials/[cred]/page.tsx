@@ -23,7 +23,6 @@ import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
 import { CredentialPageData } from "@/components/credentialPageData";
-import { readJsonFileSync } from "@/lib/json-cache"
 const credentialsData: Accreditation[] = readJsonFileSync('accreditations_processed_new.json')
 const credentialIndex = new Map(
   credentialsData.map(c => [c.slug!, c])
