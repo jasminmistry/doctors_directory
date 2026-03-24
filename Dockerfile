@@ -36,11 +36,12 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/next.config.js ./next.config.js
 COPY ecosystem.config.js ./ecosystem.config.js
+COPY server.js ./server.js
 
 USER appuser
 EXPOSE 3000
 
-HEALTHCHECK --interval=5s --timeout=3s --start-period=15s --retries=12 \
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=5 \
 	CMD wget --quiet --tries=1 --spider http://localhost:3000/api/healthz || wget --quiet --tries=1 --spider http://localhost:3000/directory/api/healthz || exit 1
 
 CMD ["pm2-runtime", "start", "ecosystem.config.js"]

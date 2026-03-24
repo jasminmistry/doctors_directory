@@ -2,15 +2,16 @@ module.exports = {
   apps: [
     {
       name: 'doctors-directory',
-      script: 'npm',
-      args: 'run start',
-      exec_mode: 'fork',
-      instances: 2,
-      max_memory_restart: '1G',
+      script: './server.js',          // plain Node.js file — required for cluster mode
+      exec_mode: 'cluster',
+      instances: process.env.PM2_INSTANCES || '4', // all CPUs; override e.g. PM2_INSTANCES=2
+      wait_ready: true,               // wait for process.send('ready') before routing traffic
+      listen_timeout: 30000,
+      kill_timeout: 10000,            // drain in-flight requests before killing a worker
+      max_memory_restart: '4096M',
       restart_delay: 1000,
       max_restarts: 10,
       min_uptime: '5s',
-      kill_timeout: 10000,
       env: {
         NODE_ENV: 'production',
         PORT: 3000,
