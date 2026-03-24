@@ -41,7 +41,7 @@ COPY server.js ./server.js
 USER appuser
 EXPOSE 3000
 
-HEALTHCHECK --interval=10s --timeout=5s --start-period=90s --retries=5 \
-	CMD wget --quiet --tries=1 --spider http://localhost:3000/api/healthz || wget --quiet --tries=1 --spider http://localhost:3000/directory/api/healthz || exit 1
+HEALTHCHECK --interval=10s --timeout=10s --start-period=90s --retries=5 \
+	CMD node -e "require('http').get('http://localhost:3000/directory/api/healthz',r=>{process.exit(r.statusCode===200?0:1)}).on('error',()=>process.exit(1))"
 
 CMD ["pm2-runtime", "start", "ecosystem.config.js"]
