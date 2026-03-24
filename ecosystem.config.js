@@ -12,6 +12,7 @@ module.exports = {
       exec_mode: 'fork',
       autorestart: true,
       watch: false,
+      env_file: '',
       env: {
         NODE_ENV: 'production',
         // Tune these without changing code:
@@ -34,8 +35,11 @@ module.exports = {
     // -----------------------------------------------------------------------
     {
       name: 'doctors-directory',
-      script: 'node_modules/.bin/next',
-      args: 'start',
+      script: 'npm',
+      args: 'run start',
+      // Disable PM2's automatic .env file loading — all env vars are
+      // injected explicitly via the `env` block below.
+      env_file: '',
 
       // --- Scaling ---
       // 'max' uses all available CPUs. Override via PM2_INSTANCES env var
