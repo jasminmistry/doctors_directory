@@ -22,8 +22,7 @@ import { MoreItems } from "@/components/MoreItems";
 import treatment_content from "@//../public/treatments.json";
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
-import cityJson from "@/../public/city_data_processed.json"
-import clinicsJSON from "@/../public/clinics_processed_new_data.json";
+import { readJsonFileSync } from "@/lib/json-cache"
 import { locations } from "@/lib/data";
 interface ProfilePageProps {
   params: {
@@ -36,11 +35,11 @@ type TreatmentSlug = keyof typeof treatment_content
 //   console.log(Object.entries(treatment_content[key as TreatmentSlug])[10])
 // })
 export default function ProfilePage({ params }: ProfilePageProps) {
-  const clinics = clinicsJSON as unknown as Clinic[];
+  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const { cityslug, serviceslug } = params;
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
   const normalizedServiceName = serviceslug.replaceAll("%20", " ");
-  const cityData: City = (cityJson as unknown as City[]).find(
+  const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   )!;
   const treatmentslug = serviceslug.replaceAll("%20", " ").charAt(0).toUpperCase() + serviceslug.replaceAll("%20", " ").slice(1)

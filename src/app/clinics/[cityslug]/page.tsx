@@ -15,14 +15,10 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react"
 import  ItemsGrid  from "@/components/collectionGrid";
-import cityJson from "../../../../public/city_data_processed.json"
+import { readJsonFileSync } from "@/lib/json-cache"
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
-import practitionerJson from "../../../../public/derms_processed_new_5403.json"
-import { fixMojibake, decodeUnicodeEscapes } from "@/lib/utils"
-import { CityPageData } from "@/components/cityPageData";
 import { cityMap, locations } from "@/lib/data";
-import clinicsJSON from "@/../public/clinics_processed_new_data.json";
 import { MoreItems } from "@/components/MoreItems";
 interface ProfilePageProps {
   params: {
@@ -31,7 +27,7 @@ interface ProfilePageProps {
   };
 }
 
-const clinics = clinicsJSON as unknown as Clinic[];
+const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
 //   const practitioners = (practitionerJson as unknown as Practitioner[])
 //   const clinicIndex = new Map(
 //   clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
@@ -67,7 +63,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const cityClinics: Clinic[] = clinics.filter(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );
-  const cityData: City = (cityJson as unknown as City[]).find(
+  const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   )!;
   const uniqueTreatments = [

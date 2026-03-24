@@ -17,10 +17,9 @@ import {
 import path from "path";
 import PractitionerTabs from "@/components/Product/ProductTabs";
 import ItemsGrid from "@/components/collectionGrid";
-import productsJSON from "@/../public/products_processed_new.json";
+import { readJsonFileSync } from "@/lib/json-cache";
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
-import clinicsJSON from "@/../public/clinics_processed_new_data.json";
 import { Clinic } from "@/lib/types";
 
 interface ProfilePageProps {
@@ -30,14 +29,14 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics = productsJSON as unknown as Product[];
+  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   const { slug } = params;
   console.log(slug)
   const clinic = clinics.find((p) => p.slug === slug);
 
   const similarProducts = clinics.filter((p) => p.category === clinic?.category && p.slug !== slug);
 
-  const allClinics = clinicsJSON as unknown as Clinic[];
+  const allClinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const uniqueTreatments = [
     ...new Set(
       allClinics

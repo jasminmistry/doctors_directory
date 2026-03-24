@@ -12,11 +12,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Clinic } from "@/lib/types"
-import fs from "fs"
-import path from "path"
+import { readJsonFileSync } from "@/lib/json-cache"
 import { PractitionerCard } from "@/components/practitioner-card";
-import { SearchBar } from "@/components/search/search-bar";
-import clinicsJSON from "@/../public/clinics_processed_new_data.json";
 function mapAccreditationToField(accreditation: string): keyof Clinic {
   const mapping: Record<string, keyof Clinic> = {
     cqc: 'isCQC',
@@ -50,7 +47,7 @@ interface AccreditedClinicsPageProps {
 }
 
 export default async function AccreditedClinicsPage({ params }: Readonly<AccreditedClinicsPageProps>) {
-  const clinics = clinicsJSON as unknown as Clinic[];
+  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
   const { accreditation } = params
   const accreditationField = mapAccreditationToField(accreditation)
 

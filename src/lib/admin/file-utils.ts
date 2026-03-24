@@ -19,6 +19,12 @@ export async function readJsonFile(filename: string): Promise<any> {
   return parsed
 }
 
+/** Called by server.js at startup to populate the cache before first request. */
+export function prewarmFile(filename: string, data: unknown): void {
+  fileCache.set(filename, data)
+  jsonCache.set(filename, data)
+}
+
 export async function writeJsonFile(filename: string, data: any): Promise<void> {
   const filePath = path.join(DATA_DIR, filename)
   const content = JSON.stringify(data, null, 2)

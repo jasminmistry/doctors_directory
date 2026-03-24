@@ -1,14 +1,12 @@
 'use server'
 import { cache } from "react";
 import { Clinic, Practitioner, Product, SearchFilters } from "@/lib/types"
-import clinicsJson from "../../../public/clinics_processed_new_data.json";
-import practitionersJson from "../../../public/derms_processed_new_5403.json";
-import productsJson from "../../../public/products_processed_new.json";
+import { readJsonFileSync } from "@/lib/json-cache"
 import { modalities } from "@/lib/data";
 export const loadData = cache(() => {
-  const clinicsData = clinicsJson as unknown as Clinic[];
-  const practitionersData = practitionersJson as unknown as Practitioner[];
-  const productsData = productsJson as unknown as Product[];
+  const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
+  const practitionersData: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
+  const productsData: Product[] = readJsonFileSync('products_processed_new.json')
   const treatments = modalities;
   const clinics = clinicsData.map(
     (

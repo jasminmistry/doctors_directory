@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Section } from "../ui/section";
 import { decodeUnicodeEscapes,fixMojibake } from "@/lib/utils";
-import practitionersJson from "@/../public/derms_processed_new_5403.json";
-const practitionersData = practitionersJson as unknown as Practitioner[];
+import { readJsonFileSync } from "@/lib/json-cache";
+const practitionersData: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
 const practitionersIndex = new Map<string, Practitioner[]>();
 
 for (const p of practitionersData) {

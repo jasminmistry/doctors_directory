@@ -4,10 +4,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { Clinic, Practitioner, City } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Star, MapPin } from "lucide-react";
-import fs from "fs";
-import path from "path";
-import clinicsJson from "@/../public/clinics_processed_new_data.json";
-import cityJson from "@/../public/city_data_processed.json";
+import { readJsonFileSync } from "@/lib/json-cache";
 import { CityPageData } from "@/components/cityPageData";
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
@@ -24,14 +21,12 @@ import { ArrowLeft } from "lucide-react"
 import ItemsGrid from "@/components/collectionGrid";
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
-const clinicsData = clinicsJson as unknown as Clinic[];
+const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
   const clinicIndex = new Map(
   clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
 )
-const filePath = path.join(process.cwd(), "public", "derms_processed_new_5403.json");
-     const fileContents = fs.readFileSync(filePath, "utf-8");
-     const all_practitioners: Practitioner[] = JSON.parse(fileContents);
+const all_practitioners: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
        const practitioners = all_practitioners
     .map(p => {
       const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0])
@@ -60,7 +55,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   
   const citySlug = params.cityslug;
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
-  const cityData: City = (cityJson as unknown as City[]).find(
+  const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   )!;
   const cityClinics: Practitioner[] = practitioners.filter(

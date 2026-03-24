@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Clinic, Practitioner } from "@/lib/types"
 import { readJsonFileSync } from "@/lib/json-cache"
-import clinicsJson from "@/../public/clinics_processed_new_data.json";
+
 import { accreditations } from "@/lib/data"
 import { PractitionerCard } from "@/components/practitioner-card"
 
@@ -52,7 +52,7 @@ interface AccreditedPractitionersPageProps {
 }
 
 export default async function AccreditedPractitionersPage({ params }: Readonly<AccreditedPractitionersPageProps>) {
-  const clinicsData = clinicsJson as unknown as Clinic[];
+  const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
   const clinics = clinicsData.filter(c => c.slug !== undefined)
   const clinicIndex = new Map(
     clinics.map(c => [c.slug!, c])

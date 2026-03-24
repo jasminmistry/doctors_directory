@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { Clinic, Practitioner } from "@/lib/types";
 import { getAccreditationImages } from "@/lib/utils";
-import clinicsJson from "@/../public/clinics_processed_new_data.json";
-import accreditationsJson from "@/../public/accreditations_processed_new.json";
+import { readJsonFileSync } from "@/lib/json-cache";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,9 +13,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { readJsonFileSync } from "@/lib/json-cache";
 
-const clinicsData = clinicsJson as unknown as Clinic[];
+const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
   const clinicIndex = new Map(
   clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
@@ -24,6 +22,7 @@ const clinics = clinicsData
 
 export default async function ProfilePage() {
   const practitionersData: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
+  const accreditationsJson = readJsonFileSync('accreditations_processed_new.json');
   const recognitionsWithImages = getAccreditationImages(accreditationsJson);
   
   const practitioners = practitionersData

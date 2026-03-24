@@ -4,9 +4,6 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { Clinic, Practitioner, City } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Star, MapPin } from "lucide-react";
-import clinicsJson from "@/../public/clinics_processed_new_data.json";
-import fs, { cp } from "fs";
-import path from "path";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,17 +16,16 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import { PractitionerCard } from "@/components/practitioner-card";
 import { CityTreatmentPage } from "@/components/cityxTreatmentPage";
-import cityJson from "@/../public/city_data_processed.json"
 import treatment_content from "@//../public/treatments.json";
 import ItemsGrid from "@/components/collectionGrid";
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
-import PractitionersJSON from "@/../public/derms_processed_new_5403.json";
+import { readJsonFileSync } from "@/lib/json-cache"
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
 type TreatmentSlug = keyof typeof treatment_content
 
-const clinicsData = clinicsJson as unknown as Clinic[];
+const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
   const clinicIndex = new Map(
   clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
@@ -43,7 +39,7 @@ interface ProfilePageProps {
 
 export default function ProfilePage({ params }: ProfilePageProps) {
   
-  const clinics = PractitionersJSON as unknown as Practitioner[];
+  const clinics: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
 
      const practitioners = clinics
   .map(p => {
@@ -63,7 +59,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
   const { cityslug, treatmentslug } = params;
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
-  const cityData: City = (cityJson as unknown as City[]).find(
+  const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   )!;
    const decodedCitySlug = decodeURIComponent(cityslug)

@@ -1,4 +1,3 @@
-import productsJson from '@/../public/products_processed_new.json'
 import {
   buildUrlSetXml,
   encodeSegment,
@@ -6,9 +5,10 @@ import {
   xmlResponse,
 } from '@/lib/sitemap'
 import { Product } from '@/lib/types'
+import { readJsonFileSync } from '@/lib/json-cache'
 
 export async function GET() {
-  const products = productsJson as unknown as Product[]
+  const products: Product[] = readJsonFileSync('products_processed_new.json')
 
   const paths = products
     .filter((product) => Boolean(product.slug) && Boolean(product.category))

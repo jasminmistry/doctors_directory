@@ -22,7 +22,6 @@ import {
 import ItemsGrid from "@/components/collectionGrid";
 import { flattenObject } from "@/lib/utils";
 import { Section } from "@/components/ui/section";
-import clinicsJson from "@/../public/clinics_processed_new_data.json";
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
 function mergeBoxplotDataFromDict(
@@ -45,7 +44,7 @@ interface ProfilePageProps {
 
 
 export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics = clinicsJson as unknown as Clinic[];
+  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const { cityslug,slug } = params;
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
   const cityClinics: Clinic[] = clinics.filter(

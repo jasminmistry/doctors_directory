@@ -9,19 +9,16 @@ import { BoxPlotDatum, ItemMeta } from "@/lib/types";
 import { Stats } from "@/components/visx-donut";
 import ClinicDetailsMarkdown from "@/components/Practitioner/practitionerDetailsMD";
 import { Practitioner } from "@/lib/types";
-import fs from "fs";
-import path from "path";
 import PractitionerTabs from "@/components/Practitioner/PractitionerTabs";
 import { flattenObject } from "@/lib/utils";
 import { Section } from "@/components/ui/section";
-import clinicsJson from "@/../public/clinics_processed_new_data.json";
 import { Clinic } from "@/lib/types";
 import ItemsGrid from "@/components/collectionGrid";
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
-import PractitionersJSON from "@/../public/derms_processed_new_5403.json";
+import { readJsonFileSync } from "@/lib/json-cache";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-const clinicsData = clinicsJson as unknown as Clinic[];
+const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
   const clinicIndex = new Map(
   clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
@@ -45,7 +42,7 @@ interface ProfilePageProps {
 }
 
 export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics = PractitionersJSON as unknown as Practitioner[];
+  const clinics: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const { slug } = params;
   const clinic = clinics.find((p) => p.practitioner_name === slug);
   const k = clinicIndex.get(JSON.parse(clinic!.Associated_Clinics!)[0])
@@ -247,9 +244,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 // }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
-  const filePath = path.join(process.cwd(), "public", "derms_processed_new_5403.json");
-  const fileContents = fs.readFileSync(filePath, "utf-8");
-  const clinics: Practitioner[] = JSON.parse(fileContents);
+  const clinics: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const clinic = clinics.find((p) => p.practitioner_name === params.slug);
 
   if (!clinic) {

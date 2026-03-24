@@ -1,9 +1,9 @@
 import { Clinic } from '@/lib/types'
-import clinicsJson from "@/../public/clinics_processed_new_data.json"
+import { readJsonFileSync } from '@/lib/json-cache'
 import { buildUrlSetXml, encodeCitySegment, encodeSegment, mapPathsToSitemapUrls, xmlResponse } from '@/lib/sitemap'
 
 export async function GET() {
-  const clinics = clinicsJson as unknown as Clinic[]
+  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 
   const paths = clinics
     .filter((clinic) => Boolean(clinic.slug) && Boolean(clinic.City))

@@ -4,9 +4,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { Clinic, Practitioner, Accreditation } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Star, MapPin } from "lucide-react";
-import clinicsJson from "@/../public/clinics_processed_new_data.json";
-import fs from "fs";
-import path from "path";
+import { readJsonFileSync } from "@/lib/json-cache"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,16 +20,15 @@ import { Item } from "@radix-ui/react-accordion";
 import ItemsGrid from "@/components/collectionGrid";
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
-import practitionersJSON from "@/../public/derms_processed_new_5403.json";
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
 import { CredentialPageData } from "@/components/credentialPageData";
-import credentialJSON from "@/../public/accreditations_processed_new.json";
-const credentialsData = credentialJSON as unknown as Accreditation[];
+import { readJsonFileSync } from "@/lib/json-cache"
+const credentialsData: Accreditation[] = readJsonFileSync('accreditations_processed_new.json')
 const credentialIndex = new Map(
   credentialsData.map(c => [c.slug!, c])
 )
-const clinicsData = clinicsJson as unknown as Clinic[];
+const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
   const clinicIndex = new Map(
   clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
@@ -43,7 +40,7 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
-  const clinics = practitionersJSON as unknown as Practitioner[];
+  const clinics: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
      const practitioners = clinics
   .map(p => {
     const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0])

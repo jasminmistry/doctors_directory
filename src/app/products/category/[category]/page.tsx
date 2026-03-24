@@ -15,8 +15,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import path from "path";
-import productsJSON from "@/../public/products_processed_new.json";
+import { readJsonFileSync } from "@/lib/json-cache"
 
 interface ProfilePageProps {
   params: {
@@ -25,7 +24,7 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics = productsJSON as unknown as Product[];
+  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   let { category } = params;
   category = category.replaceAll('%20', " ");
   const similarProducts = clinics.filter((p) => p.category === category );
@@ -195,9 +194,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 // }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
-  const filePath = path.join(process.cwd(), "public", "products_processed_new.json");
-  const fileContents = fs.readFileSync(filePath, "utf-8");
-  const clinics: Product[] = JSON.parse(fileContents);
+  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
 const { category } = params;
   const similarProducts = clinics.filter((p) => p.product_category === category );
 

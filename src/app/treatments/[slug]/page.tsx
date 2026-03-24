@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Clinic } from "@/lib/types";
 import type { Metadata } from "next";
-import fs from "fs";
-import path from "path";
+import { readJsonFileSync } from "@/lib/json-cache";
 import treatment_content from "../../../../public/treatments.json";
 import { stripContentReferencesDeep } from "@/lib/utils";
 import { TreatmentDetail } from "@/components/treatment-detail";
@@ -12,8 +11,6 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ItemsGrid from "@/components/collectionGrid";
-import clinicsJSON from "@/../public/clinics_processed_new_data.json";
-
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
 
 type TreatmentContent = Record<string, any>;
@@ -135,7 +132,7 @@ const getTreatmentCategory = (treatmentName: string): string => {
 };
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics = clinicsJSON as unknown as Clinic[];
+  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const { slug } = params;
 
   // Get treatment data from treatment_content

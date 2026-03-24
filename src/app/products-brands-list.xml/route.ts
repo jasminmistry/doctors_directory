@@ -1,4 +1,3 @@
-import productsJson from '@/../public/products_processed_new.json'
 import { Product } from '@/lib/types'
 import {
   buildUrlSetXml,
@@ -7,9 +6,10 @@ import {
   uniqueStrings,
   xmlResponse,
 } from '@/lib/sitemap'
+import { readJsonFileSync } from '@/lib/json-cache'
 
 export async function GET() {
-  const products = productsJson as unknown as Product[]
+  const products: Product[] = readJsonFileSync('products_processed_new.json')
   const brands = uniqueStrings(products.map((product) => product.brand))
   const paths = brands.map(
     (brand) => `/products/brands/${encodeSegmentForRouteParam(brand)}`

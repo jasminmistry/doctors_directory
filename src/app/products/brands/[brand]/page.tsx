@@ -15,8 +15,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import path from "path";
-import productsJSON from "@/../public/products_processed_new.json";
+import { readJsonFileSync } from "@/lib/json-cache"
 
 interface ProfilePageProps {
   params: {
@@ -25,7 +24,7 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics = productsJSON as unknown as Product[];
+  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   let { brand } = params;
   brand = decodeURIComponent(brand).replaceAll('%20', " ");
   const similarProducts = clinics.filter((p) => p.brand === brand );

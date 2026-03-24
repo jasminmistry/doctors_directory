@@ -4,17 +4,14 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { Product } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Star, MapPin } from "lucide-react";
-import clinicsJson from "@/../public/clinics_processed_new_data.json";
-import fs from "fs";
-import path from "path";
+import { readJsonFileSync } from "@/lib/json-cache";
 import { product_categories } from "@/lib/data";
 import { decodeUnicodeEscapes } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft} from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-import productsJSON from "@/../public/products_processed_new.json";
 export default async function ProfilePage() {
-  const clinics = productsJSON as unknown as Product[];
+  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
  
  
 

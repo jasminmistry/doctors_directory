@@ -20,9 +20,7 @@ import ItemsGrid from "@/components/collectionGrid";
 import { MoreItems } from "@/components/MoreItems";
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
-import cityJson from "@/../public/city_data_processed.json"
-import clinicsJSON from "@/../public/clinics_processed_new_data.json";
-import productsJSON from "@/../public/products_processed_new.json";
+import { readJsonFileSync } from "@/lib/json-cache"
 import { locations } from "@/lib/data";
 
 interface PageProps {
@@ -32,12 +30,12 @@ interface PageProps {
 }
 
 export default function CityServicesPage({ params }: PageProps) {
-  const clinics = clinicsJSON as unknown as Clinic[];
-  const products = productsJSON as unknown as Array<{ product_category: string; category: string }>;
+  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
+  const products: Array<{ product_category: string; category: string }> = readJsonFileSync('products_processed_new.json');
 
   const { cityslug } = params;
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
-  const cityData: City = (cityJson as unknown as City[]).find(
+  const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   )!;
   const decodedCitySlug = decodeURIComponent(cityslug)
