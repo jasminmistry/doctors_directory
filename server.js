@@ -16,8 +16,6 @@ app.prepare().then(() => {
     const parsedUrl = parse(req.url, true);
     handle(req, res, parsedUrl);
   }).listen(port, '0.0.0.0', () => {
-    console.log(`> Ready on http://0.0.0.0:${port}`);
-    // Signal PM2 that the worker is ready (used with wait_ready: true)
     if (process.send) process.send('ready');
   });
 });
