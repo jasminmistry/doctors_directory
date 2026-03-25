@@ -1,9 +1,5 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { Clinic, Practitioner, City } from "@/lib/types";
-import { Badge } from "@/components/ui/badge";
-import { Star, MapPin } from "lucide-react";
 import { readJsonFileSync } from "@/lib/json-cache";
 import { CityPageData } from "@/components/cityPageData";
 import { MoreItems } from "@/components/MoreItems";
@@ -21,6 +17,7 @@ import { ArrowLeft } from "lucide-react"
 import ItemsGrid from "@/components/collectionGrid";
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
+import { EmptyCityState } from "@/components/empty-city-state";
 const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
   const clinicIndex = new Map(
@@ -42,6 +39,21 @@ const all_practitioners: Practitioner[] = readJsonFileSync('derms_processed_new_
     
     })
     .filter((item) => item !==null).filter(Boolean)
+
+function getPopularTreatments(items: Clinic[]): string[] {
+  const counts = new Map<string, number>();
+
+  for (const clinic of items) {
+    for (const treatment of clinic.Treatments ?? []) {
+      counts.set(treatment, (counts.get(treatment) ?? 0) + 1);
+    }
+  }
+
+  return [...counts.entries()]
+    .sort((left, right) => right[1] - left[1])
+    .slice(0, 15)
+    .map(([treatment]) => treatment);
+}
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -55,12 +67,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   
   const citySlug = params.cityslug;
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
-  const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
+  const cityData = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
-  )!;
+  );
   const cityClinics: Practitioner[] = practitioners.filter(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );
+  const hasCityPractitioners = cityClinics.length > 0;
     const uniqueTreatments = [
   ...new Set(
     cityClinics
@@ -70,6 +83,14 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 ];
 
   const defaultClinics: Practitioner[] = practitioners.filter((p) => p.City === "London");
+  const popularClinics = [...clinics]
+    .filter((clinic) => clinic.slug)
+    .sort((left, right) => right.reviewCount - left.reviewCount || right.rating - left.rating)
+    .slice(0, 6);
+  const popularPractitioners = [...practitioners]
+    .sort((left, right) => right.reviewCount - left.reviewCount || right.rating - left.rating)
+    .slice(0, 6);
+  const popularTreatments = getPopularTreatments(clinics);
   const defaultTreatments = [
   ...new Set(
       defaultClinics
@@ -77,10 +98,6 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
   )
 ];
-  if (!cityClinics) {
-    notFound();
-  }
-
   return (
     <main className="bg-(--primary-bg-color)">
       <SearchBar />
@@ -123,10 +140,21 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
         <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
           <CollectionsFilter pageType="Practitioner" />
           <div className="flex-1 min-w-0">
-            <ItemsGrid items={cityClinics} />
+            {hasCityPractitioners ? (
+              <ItemsGrid items={cityClinics} />
+            ) : (
+              <EmptyCityState
+                citySlug={citySlug}
+                pageLabel="practitioners"
+                popularClinics={popularClinics}
+                popularPractitioners={popularPractitioners}
+                popularTreatments={popularTreatments}
+              />
+            )}
           </div>
         </div>
 
+        {hasCityPractitioners && (
         <div className="px-4 md:px-0 space-y-6">
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${citySlug}`}</h3>
           <MoreItems
@@ -139,12 +167,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
           <MoreItems items={locations} />
         </div>
-        <CityPageData
+        )}
+        {cityData && hasCityPractitioners && <CityPageData
           cityData={cityData}
           uniqueTreatments={uniqueTreatments as string[]}
           citySlug={citySlug}
           cityClinics={cityClinics}
-        />
+        />}
       </div>
     </main>
   );

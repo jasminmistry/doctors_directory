@@ -280,3 +280,148 @@ export async function searchPractitioners(
     currentPage: page
   }
 }
+
+export async function getSearchDiscoveryData(filters: SearchFilters) {
+  const { clinics, practitioners, products } = await loadData();
+
+  const normalizedQuery = filters.query.trim().toLowerCase();
+  const normalizedLocation = filters.location.trim().toLowerCase();
+  const normalizedServices = filters.services.map((service) => service.toLowerCase());
+
+  const clinicScore = (clinic: typeof clinics[number]) => {
+    let score = 0;
+    const searchable = [
+      clinic.slug,
+      clinic.category,
+      clinic.gmapsAddress,
+      ...(clinic.Treatments || []),
+    ].join(" ").toLowerCase();
+
+    if (!normalizedQuery || searchable.includes(normalizedQuery)) {
+      score += normalizedQuery ? 3 : 1;
+    }
+
+    if (!normalizedLocation || clinic.gmapsAddress.toLowerCase().includes(normalizedLocation)) {
+      score += normalizedLocation ? 2 : 1;
+    }
+
+    if (
+      normalizedServices.length === 0 ||
+      normalizedServices.some((service) =>
+        (clinic.Treatments || []).some((treatment) => treatment.includes(service))
+      )
+    ) {
+      score += normalizedServices.length > 0 ? 2 : 1;
+    }
+
+    return score;
+  };
+
+  const practitionerScore = (practitioner: typeof practitioners[number]) => {
+    let score = 0;
+    const searchable = [
+      practitioner.practitioner_name,
+      practitioner.practitioner_title,
+      practitioner.practitioner_qualifications,
+      practitioner.practitioner_awards,
+      practitioner.gmapsAddress,
+      ...(practitioner.Treatments || []),
+    ].join(" ").toLowerCase();
+
+    if (!normalizedQuery || searchable.includes(normalizedQuery)) {
+      score += normalizedQuery ? 3 : 1;
+    }
+
+    if (!normalizedLocation || String(practitioner.gmapsAddress).toLowerCase().includes(normalizedLocation)) {
+      score += normalizedLocation ? 2 : 1;
+    }
+
+    if (
+      normalizedServices.length === 0 ||
+      normalizedServices.some((service) => searchable.includes(service))
+    ) {
+      score += normalizedServices.length > 0 ? 2 : 1;
+    }
+
+    return score;
+  };
+
+  const suggestedClinics = [...clinics]
+    .map((clinic) => ({ clinic, score: clinicScore(clinic) }))
+    .filter(({ score }) => score > 0)
+    .sort(
+      (left, right) =>
+        right.score - left.score ||
+        right.clinic.reviewCount - left.clinic.reviewCount ||
+        right.clinic.rating - left.clinic.rating
+    )
+    .slice(0, 6)
+    .map(({ clinic }) => clinic);
+
+  const suggestedPractitioners = [...practitioners]
+    .map((practitioner) => ({ practitioner, score: practitionerScore(practitioner) }))
+    .filter(({ score }) => score > 0)
+    .sort(
+      (left, right) =>
+        right.score - left.score ||
+        right.practitioner.reviewCount - left.practitioner.reviewCount ||
+        right.practitioner.rating - left.practitioner.rating
+    )
+    .slice(0, 6)
+    .map(({ practitioner }) => practitioner);
+
+  const suggestedProducts = [...products]
+    .map((product) => {
+      const searchable = [
+        product.product_name,
+        product.brand,
+        product.manufacturer,
+        product.category,
+      ].join(" ").toLowerCase();
+
+      let score = 0;
+      if (!normalizedQuery || searchable.includes(normalizedQuery)) {
+        score += normalizedQuery ? 3 : 1;
+      }
+
+      if (
+        normalizedServices.length === 0 ||
+        normalizedServices.some((service) => searchable.includes(service))
+      ) {
+        score += normalizedServices.length > 0 ? 2 : 1;
+      }
+
+      if (!filters.category || filters.category === "All Categories" || searchable.includes(filters.category.toLowerCase())) {
+        score += filters.category && filters.category !== "All Categories" ? 2 : 1;
+      }
+
+      return { product, score };
+    })
+    .filter(({ score }) => score > 0)
+    .sort(
+      (left, right) =>
+        right.score - left.score ||
+        left.product.product_name.localeCompare(right.product.product_name)
+    )
+    .slice(0, 6)
+    .map(({ product }) => product);
+
+  const treatmentCounts = new Map<string, number>();
+  for (const clinic of clinics) {
+    for (const treatment of clinic.Treatments || []) {
+      treatmentCounts.set(treatment, (treatmentCounts.get(treatment) ?? 0) + 1);
+    }
+  }
+
+  const popularTreatments = [...treatmentCounts.entries()]
+    .sort((left, right) => right[1] - left[1])
+    .slice(0, 15)
+    .map(([treatment]) => treatment);
+
+  return {
+    suggestedClinics,
+    suggestedPractitioners,
+    suggestedProducts,
+    popularTreatments,
+  };
+}

@@ -1,8 +1,5 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Clinic, City,Practitioner } from "@/lib/types";
-import fs from "fs";
-import path from "path";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,9 +16,10 @@ import { readJsonFileSync } from "@/lib/json-cache"
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { cityMap, locations } from "@/lib/data";
-import { decodeUnicodeEscapes, fixMojibake } from "@/lib/utils";
+import { decodeUnicodeEscapes } from "@/lib/utils";
 import { MoreItems } from "@/components/MoreItems";
 import { CityPageData } from "@/components/cityPageData";
+import { EmptyCityState } from "@/components/empty-city-state";
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -30,44 +28,61 @@ interface ProfilePageProps {
 }
 
 const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
-//   const practitioners = (practitionerJson as unknown as Practitioner[])
-//   const clinicIndex = new Map(
-//   clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
-// )
-//  const all_practitioners: Practitioner[] =
-//   practitioners.map((p) => {
-//     const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0]);
-//     return { ...p, ...clinic };
-//   });
+const clinicIndex = new Map(
+  clinics.filter((clinic) => clinic.slug !== undefined).map((clinic) => [clinic.slug!, clinic])
+);
+const practitionerDirectory: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
+const practitionerCards = practitionerDirectory
+  .map((practitioner) => {
+    try {
+      const clinicSlug = JSON.parse(practitioner.Associated_Clinics || '[]')[0] as string | undefined;
+      if (!clinicSlug) {
+        return null;
+      }
 
-  function createBullets(text:string){
-    const spliText = text.split(";")
-    if(spliText.length <= 1) {
-      return decodeUnicodeEscapes(text)
+      const clinic = clinicIndex.get(clinicSlug);
+      if (!clinic) {
+        return null;
+      }
+
+      return {
+        ...clinic,
+        practitioner_name: practitioner.practitioner_name,
+        practitioner_title: practitioner.practitioner_title,
+        practitioner_qualifications: practitioner.practitioner_qualifications,
+        practitioner_awards: practitioner.practitioner_awards,
+      };
+    } catch {
+      return null;
     }
-    else {
-      return (
-        <div className='mt-2 space-y-2'>
-         <ul className="list-disc list-inside pl-6 space-y-1">
-          {spliText.map((item, key)=>
-          {const clened_item = decodeUnicodeEscapes(fixMojibake(fixMojibake(fixMojibake(item.trim()))));
-            return (
-          <li className="text-sm leading-relaxed" key={key} > {clened_item.trim().charAt(0).toUpperCase() + clened_item.trim().slice(1)}</li>)})}
-  </ul></div>
-      )
+  })
+  .filter((item) => item !== null);
+
+function getPopularTreatments(items: Clinic[]): string[] {
+  const counts = new Map<string, number>();
+
+  for (const clinic of items) {
+    for (const treatment of clinic.Treatments ?? []) {
+      counts.set(treatment, (counts.get(treatment) ?? 0) + 1);
     }
   }
+
+  return [...counts.entries()]
+    .sort((left, right) => right[1] - left[1])
+    .slice(0, 15)
+    .map(([treatment]) => treatment);
+}
 
 export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const citySlug = params.cityslug;
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
-  // const city_practitioners: Practitioner[] = all_practitioners.filter(p=>p.City === citySlug) 
   const cityClinics: Clinic[] = clinics.filter(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );
-  const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
+  const cityData = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
-  )!;
+  );
+  const hasCityClinics = cityClinics.length > 0;
   const uniqueTreatments = [
   ...new Set(
     cityClinics
@@ -75,10 +90,15 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
       .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
   )
 ];
-  if (!cityClinics) {
-    notFound();
-  }
   const defaultClinics: Clinic[] = clinics.filter((p) => p.City === "London");
+  const popularClinics = [...clinics]
+    .filter((clinic) => clinic.slug)
+    .sort((left, right) => right.reviewCount - left.reviewCount || right.rating - left.rating)
+    .slice(0, 6);
+  const popularPractitioners = [...practitionerCards]
+    .sort((left, right) => right.reviewCount - left.reviewCount || right.rating - left.rating)
+    .slice(0, 6);
+  const popularTreatments = getPopularTreatments(clinics);
   const defaultTreatments = [
   ...new Set(
       defaultClinics
@@ -139,11 +159,22 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
             <CollectionsFilter pageType="Clinic" />
           </div>
           <div className="flex-1 min-w-0">
-            <ItemsGrid items={cityClinics} />
+            {hasCityClinics ? (
+              <ItemsGrid items={cityClinics} />
+            ) : (
+              <EmptyCityState
+                citySlug={citySlug}
+                pageLabel="clinics"
+                popularClinics={popularClinics}
+                popularPractitioners={popularPractitioners}
+                popularTreatments={popularTreatments}
+              />
+            )}
           </div>
         </div>
         {/* City Overview */}
 
+        {hasCityClinics && (
         <div className="px-4 md:px-0 space-y-6">
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${citySlug}`}</h3>
           <MoreItems
@@ -156,12 +187,13 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
           <MoreItems items={locations} />
         </div>
-        <CityPageData
+        )}
+        {cityData && hasCityClinics && <CityPageData
           cityData={cityData}
           uniqueTreatments={uniqueTreatments as string[]}
           cityClinics={cityClinics}
           citySlug={citySlug}
-        />
+        />}
       </div>
     </main>
   );

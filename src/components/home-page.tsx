@@ -954,7 +954,7 @@ export default function HomePage() {
             <Button
   asChild
   className="bg-[var(--text-color)] hover:bg-black
-             h-auto rounded-lg text-lg px-7 py-3 text-white"
+                         h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
 >
   <Link href="/treatments">
     See all Treatments
@@ -1145,7 +1145,10 @@ export default function HomePage() {
           ))}
         </div>
         <div className="flex align-items-center justify-center pt-6 mt-6 mb-4">
-          <Button onClick={() => globalThis.location.href='https://www.consentz.com/blog'} className="font-base text-lg border-1 px-4 py-3 md:px-7 md:py-3 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white cursor-pointer">
+          <Button
+            onClick={() => globalThis.location.href='https://www.consentz.com/blog'}
+            className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
+          >
             View All Blogs
           </Button>
         </div>
@@ -1174,7 +1177,7 @@ export default function HomePage() {
                   <span className="text-2xl font-normal text-center w-7 h-7 rounded-full leading-6 text-black transition-all select-none bg-black text-white absolute left-0">
                     {isOpen ? "−" : "+"}
                   </span>
-                  <span className="font-medium underline">{item.q}</span>
+                  <span className="font-medium">{item.q}</span>
                 </summary>
 
                 <div className="mt-4">
@@ -1185,7 +1188,10 @@ export default function HomePage() {
           })}
         </div>
         <div className="flex align-items-center justify-center pt-6 mt-6 mb-4">
-          <Button className="font-base text-lg border-1 px-4 py-3 md:px-7 md:py-3 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white">
+          <Button
+            onClick={() => globalThis.location.href='https://www.consentz.com/faqs/'}
+            className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
+          >
             Read All FAQ'S
           </Button>
         </div>

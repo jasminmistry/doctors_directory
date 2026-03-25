@@ -2,23 +2,44 @@ import { City, Practitioner } from "@/lib/types";
 import { decodeUnicodeEscapes, fixMojibake } from "@/lib/utils";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-function createBullets(text:string){
-    const spliText = text.split(";")
-    if(spliText.length <= 1) {
-      return decodeUnicodeEscapes(text)
-    }
-    else {
-      return (
-        <div className='mt-2 space-y-2'>
-         <ul className="list-disc list-inside pl-6 space-y-1">
-          {spliText.map((item, key)=>
-          {const clened_item = decodeUnicodeEscapes(fixMojibake(fixMojibake(fixMojibake(item.trim()))));
-            return (
-          <li className="text-sm leading-relaxed" key={key} > {clened_item.trim().charAt(0).toUpperCase() + clened_item.trim().slice(1)}</li>)})}
-  </ul></div>
-      )
-    }
+function createBullets(text: unknown) {
+  const normalizedText = Array.isArray(text)
+    ? text.filter((item): item is string => typeof item === "string").join("; ")
+    : typeof text === "string"
+      ? text
+      : "";
+
+  if (!normalizedText.trim()) {
+    return null;
   }
+
+  const splitText = normalizedText
+    .split(";")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  if (splitText.length <= 1) {
+    return decodeUnicodeEscapes(normalizedText);
+  }
+
+  return (
+    <div className='mt-2 space-y-2'>
+      <ul className="list-disc list-inside pl-6 space-y-1">
+        {splitText.map((item, key) => {
+          const cleanedItem = decodeUnicodeEscapes(
+            fixMojibake(fixMojibake(fixMojibake(item)))
+          );
+
+          return (
+            <li className="text-sm leading-relaxed" key={key}>
+              {cleanedItem.trim().charAt(0).toUpperCase() + cleanedItem.trim().slice(1)}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
 type CityPageDataProps = {
     citySlug: string,cityData: City, cityClinics: Practitioner[], uniqueTreatments: string[]
 }

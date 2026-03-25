@@ -417,5 +417,468 @@
       "lips"
     ],
     "status": "pending"
+  },
+  {
+    "slug": "dr-majid-akram",
+    "image": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=CAjbe1AZhoLDjr6kl4uoUA&cb_client=search.gws-prod.gps&w=408&h=240&yaw=289.981&pitch=0&thumbfov=100",
+    "url": "https://www.google.com/maps/place/Dr+Majid+Akram/data=!4m7!3m6!1s0x4877f42046175983:0xc3b3fe5badcf283!8m2!3d52.6398546!4d-0.2969388!16s%2Fg%2F12qgffnyz!19sChIJg1kXRiD0d0gRg_LcuuU_Oww?authuser=0&hl=en&rclk=1",
+    "rating": 1,
+    "reviewCount": 1,
+    "category": "Doctor",
+    "gmapsAddress": "3-4 The Grn, Glinton, Peterborough PE6 7JN, United Kingdom",
+    "gmapsPhone": "+44 1733 252246",
+    "reviewAnalysis": {
+      "practitioners": [],
+      "procedures_offered": {
+        "categories": []
+      },
+      "clinic_environment": [],
+      "professionalism_safety": [],
+      "treatment_outcomes": [],
+      "referrals_recommendations": [],
+      "negative_keywords": [
+        "doctors don't listen",
+        "doctor doesn't listen",
+        "cannot see doctor"
+      ]
+    },
+    "weighted_analysis": {
+      "Clinical Expertise": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Communication": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Treatment Results": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Bedside Manner": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Trust & Safety": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Environment": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Personalization": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Post-Care": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Professionalism": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Staff Support": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Value & Transparency": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Pain Management & Comfort": {
+        "weighted_score": 1.828259825706482,
+        "confidence": 0.3656519651412964,
+        "num_mentions": 1,
+        "top_sentence": []
+      },
+      "Anxiety & Nervousness Management": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Booking & Accessibility": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Honesty & Realistic Expectations": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Long-term Relationship & Loyalty": {
+        "weighted_score": 0,
+        "confidence": 0,
+        "num_mentions": 0,
+        "top_sentence": []
+      },
+      "Clinic Visibility": {
+        "weighted_score": 50,
+        "confidence": 0.4,
+        "num_mentions": 2,
+        "top_sentence": [
+          "Doctor/credentials/practitioner info publicly present",
+          "Google Maps URL and address present"
+        ]
+      },
+      "Pricing Transparency": {
+        "weighted_score": 68,
+        "confidence": 0.4,
+        "num_mentions": 3,
+        "top_sentence": [
+          "Fee list detected",
+          "Consultation/telehealth signal found",
+          "Avg fee £162 vs city median £162"
+        ]
+      },
+      "Safety and Trust": {
+        "weighted_score": 47,
+        "confidence": 0.4,
+        "num_mentions": 2,
+        "top_sentence": [
+          "Regulatory or award indicators found",
+          "Practitioner/governance signal found"
+        ]
+      },
+      "Overall Aggregation": {
+        "weighted_score": 55,
+        "confidence": 0.4,
+        "num_mentions": 0,
+        "top_sentence": [
+          "Visibility 50/100",
+          "Pricing 68/100",
+          "Safety 47/100"
+        ]
+      }
+    },
+    "City": "Peterborough",
+    "x_twitter": "",
+    "facebook": "",
+    "instagram": "",
+    "twitter": "",
+    "youtube": "",
+    "Linkedin": "",
+    "website": "https://www.nhs.uk/services/gp-surgery/the-glinton-surgery/C83026002",
+    "email": "",
+    "isSaveFace": false,
+    "isDoctor": true,
+    "isJCCP": [
+      false,
+      ""
+    ],
+    "isCQC": [
+      true,
+      "https://www.cqc.org.uk/location/1-558330283"
+    ],
+    "isHIW": [
+      false,
+      ""
+    ],
+    "isHIS": [
+      false,
+      ""
+    ],
+    "isRQIA": [
+      false,
+      ""
+    ],
+    "about_section": "The Glinton Surgery (part of The Deepings Practice / South Lincolnshire Rural Primary Care Network) is an NHS GP surgery providing general practice services to Glinton and surrounding areas from 3-4 The Green, Glinton, Peterborough PE6 7JN. It offers core GP services, anticoagulation (INR) monitoring, chronic disease clinics (diabetes, COPD), childhood immunisations, sexual health services, and acts as a GP training practice.",
+    "accreditations": "['Accredited GP Training Practice (listed on The Deepings Practice website).', 'Armed Forces Veteran Friendly Accredited GP Practice (listed on The Deepings Practice website).', 'Member practice of South Lincolnshire Rural Primary Care Network (SLR-PCN).']",
+    "hours": {
+      "Monday": "08:00-18:30 (general practice opening hours as listed by The Deepings Practice; verify specific clinician clinics on practice site).",
+      "Tuesday": "08:00-18:30 (general practice opening hours).",
+      "Wednesday": "08:00-18:30 (general practice opening hours).",
+      "Thursday": "08:00-18:30 (general practice opening hours).",
+      "Friday": "08:00-18:30 (general practice opening hours).",
+      "Saturday": "Not publicly listed (some services/clinics may operate on selected Saturdays - check practice site).",
+      "Sunday": "Not publicly listed"
+    },
+    "Practitioners": [
+      {
+        "Full Name": "Dr Majid Akram",
+        "Title": "GP Partner, GP Trainer",
+        "Specialty": "General Practice (Primary Care), GP education and practice leadership; lead for community ultrasound, community surgical scheme, anticoagulation (INR) and enhanced services at the practice.",
+        "Educational Credentials": "Not publicly listed",
+        "Professional Affiliations": "Partner at The Deepings Practice; GP Trainer; Clinical Entrepreneur cohort member; associated with South Lincolnshire Rural Primary Care Network and Lincolnshire ICB activities.",
+        "LinkedInURL": "https://uk.linkedin.com/in/majid-akram-946455156",
+        "ProfileURL": "https://deepingspractice.co.uk/about-us/meet-team/doctors"
+      }
+    ],
+    "Insurace": [
+      "NHS-funded services (core GP services)",
+      "Private services: Not publicly listed (check practice for private fee-bearing services and insurer acceptance)."
+    ],
+    "Payments": [
+      "NHS (for NHS-commissioned services)",
+      "Private pay: Not publicly listed"
+    ],
+    "Fees": [
+      {
+        "treatment": "Japanese facial (1 hr)",
+        "price": "£95 (listed price on site)"
+      },
+      {
+        "treatment": "Foot reflexology (1 hr)",
+        "price": "£45 (listed price on site)"
+      },
+      {
+        "treatment": "Anti-wrinkle injections (from)",
+        "price": "£160 (industry/booking listings show similar starting prices — see SOURCE_LINKS)"
+      },
+      {
+        "treatment": "Dermal fillers (from)",
+        "price": "£230 (industry/booking listings show similar starting prices — see SOURCE_LINKS)"
+      },
+      {
+        "treatment": "Botox (lines & wrinkles)",
+        "price": "£225 - £325"
+      },
+      {
+        "treatment": "Dermal Fillers (from)",
+        "price": "From ~£325"
+      },
+      {
+        "treatment": "Lip Filler",
+        "price": "£300 - £350"
+      },
+      {
+        "treatment": "Hyperhidrosis (excessive sweating, medical botox)",
+        "price": "From ~£449"
+      },
+      {
+        "treatment": "Non-surgical facelift",
+        "price": "From ~£800"
+      },
+      {
+        "treatment": "Anti-wrinkle (example pricing listed on booking page)",
+        "price": "1 area £180, 2 areas £220, 3 areas £250 (prices quoted on booking profile — may vary)"
+      },
+      {
+        "treatment": "Bespoke Facial 60 mins",
+        "price": "£80 "
+      },
+      {
+        "treatment": "Skin Consultation 30 mins",
+        "price": "£10 "
+      },
+      {
+        "treatment": "Japanese Head Spa 1 hr",
+        "price": "£60 "
+      },
+      {
+        "treatment": "Glow & Go facial",
+        "price": "£35"
+      },
+      {
+        "treatment": "Lash Lift & Tint",
+        "price": "£35"
+      },
+      {
+        "treatment": "Consultation",
+        "price": "£30 "
+      },
+      {
+        "treatment": "Anti‐Wrinkle Injections",
+        "price": "From £175 "
+      },
+      {
+        "treatment": "Dermal Fillers",
+        "price": "From £170 "
+      },
+      {
+        "treatment": "Fat Dissolving Injection",
+        "price": "From £125 "
+      },
+      {
+        "treatment": "Skin Tag / Mole Removal Consultation (15 mins)",
+        "price": "£10 "
+      },
+      {
+        "treatment": "SQT Bio Microneedling (50‐90 mins)",
+        "price": "from £199 "
+      },
+      {
+        "treatment": "The Signature Peel (30‐60 mins)",
+        "price": "from £85 "
+      },
+      {
+        "treatment": "Skin Consultation",
+        "price": "£10 for 25 minutes (redeemable against treatment) "
+      }
+    ],
+    "Treatments": [
+      "anti wrinkle treatment",
+      "skin booster",
+      "facial treatments",
+      "aesthetic skin consultation"
+    ],
+    "criteria_breakdown": {
+      "Clinic Visibility": [
+        {
+          "name": "Social media presence",
+          "met": false,
+          "score_contribution": 0,
+          "evidence": "No social channels detected",
+          "source": "clinic social fields"
+        },
+        {
+          "name": "Online booking and payment",
+          "met": false,
+          "score_contribution": 10,
+          "evidence": "Booking/payment indicators found in website or payment fields",
+          "source": "website/payments/about"
+        },
+        {
+          "name": "Transparent practitioner credentials",
+          "met": true,
+          "score_contribution": 20,
+          "evidence": "Doctor/credentials/practitioner info publicly present",
+          "source": "Practitioners/accreditations/awards/isDoctor"
+        },
+        {
+          "name": "Google business profile with directions",
+          "met": true,
+          "score_contribution": 20,
+          "evidence": "Google Maps URL and address present",
+          "source": "url/gmapsAddress"
+        },
+        {
+          "name": "Multiple branches",
+          "met": false,
+          "score_contribution": 0,
+          "evidence": "No clear multi-branch evidence",
+          "source": "about_section"
+        }
+      ],
+      "Pricing Transparency": [
+        {
+          "name": "Transparent pricing",
+          "met": true,
+          "score_contribution": 20,
+          "evidence": "Fee list detected",
+          "source": "Fees"
+        },
+        {
+          "name": "Wide variety of treatments",
+          "met": false,
+          "score_contribution": 8,
+          "evidence": "4 listed treatments",
+          "source": "Treatments"
+        },
+        {
+          "name": "Aftercare",
+          "met": false,
+          "score_contribution": 0,
+          "evidence": "No explicit aftercare evidence",
+          "source": "about_section/weighted_analysis"
+        },
+        {
+          "name": "Free consultation and telehealth",
+          "met": true,
+          "score_contribution": 20,
+          "evidence": "Consultation/telehealth signal found",
+          "source": "about_section/Fees"
+        },
+        {
+          "name": "Pricing competitive in city",
+          "met": true,
+          "score_contribution": 20,
+          "evidence": "Avg fee £162 vs city median £162",
+          "source": "Fees + city baseline"
+        }
+      ],
+      "Safety and Trust": [
+        {
+          "name": "Accreditations / Awards",
+          "met": true,
+          "score_contribution": 20,
+          "evidence": "Regulatory or award indicators found",
+          "source": "isCQC/isJCCP/isHIW/isHIS/isRQIA/isSaveFace/accreditations/awards"
+        },
+        {
+          "name": "Location aesthetics",
+          "met": false,
+          "score_contribution": 0,
+          "evidence": "No clear environment quality signal",
+          "source": "reviewAnalysis.clinic_environment/about_section"
+        },
+        {
+          "name": "Adverse reviews risk",
+          "met": false,
+          "score_contribution": 7,
+          "evidence": "Rating 1/5 with 3 negative keyword signals",
+          "source": "rating/reviewAnalysis.negative_keywords"
+        },
+        {
+          "name": "Governance and practitioner transparency",
+          "met": true,
+          "score_contribution": 20,
+          "evidence": "Practitioner/governance signal found",
+          "source": "Practitioners/isDoctor"
+        },
+        {
+          "name": "Safety language in reviews",
+          "met": false,
+          "score_contribution": 0,
+          "evidence": "No professionalism/safety mentions found",
+          "source": "reviewAnalysis.professionalism_safety"
+        }
+      ]
+    },
+    "advice": {
+      "strengths": [
+        "Transparent practitioner credentials",
+        "Google business profile with directions",
+        "Transparent pricing"
+      ],
+      "gaps": [
+        "Social media presence",
+        "Online booking and payment",
+        "Multiple branches"
+      ],
+      "priority_actions_30d": [
+        "Improve: Social media presence",
+        "Improve: Online booking and payment"
+      ],
+      "priority_actions_90d": [
+        "Implement and monitor: Multiple branches",
+        "Implement and monitor: Wide variety of treatments",
+        "Implement and monitor: Aftercare"
+      ]
+    },
+    "ranking": {
+      "city_rank": 31,
+      "city_total": 31,
+      "score_out_of_100": 55,
+      "subtitle_text": "55/100 in Peterborough"
+    },
+    "status": "pending"
   }
 ]

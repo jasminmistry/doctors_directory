@@ -6,7 +6,7 @@ export default function ClinicEditor() {
     <AdminForm
       entityType="clinics"
       apiBasePath="/directory/api/admin/pending/clinics"
-      redirectPath="/"
+      redirectPath="/admin/clinics"
     />
   );
 }
