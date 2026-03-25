@@ -6,10 +6,49 @@ import { PractitionerCard } from "@/components/practitioner-card";
 import { locations } from "@/lib/data";
 import type { Clinic, Practitioner, Product } from "@/lib/types";
 
+type SearchClinicResult = Pick<
+  Clinic,
+  | "slug"
+  | "image"
+  | "rating"
+  | "reviewCount"
+  | "category"
+  | "gmapsAddress"
+  | "City"
+  | "isSaveFace"
+  | "isDoctor"
+  | "isJCCP"
+  | "isCQC"
+  | "isHIW"
+  | "isHIS"
+  | "isRQIA"
+  | "Treatments"
+>;
+
+type SearchPractitionerResult = SearchClinicResult &
+  Pick<
+    Practitioner,
+    | "practitioner_name"
+    | "practitioner_title"
+    | "practitioner_qualifications"
+    | "practitioner_awards"
+  >;
+
+type SearchProductResult = Pick<
+  Product,
+  | "category"
+  | "product_name"
+  | "brand"
+  | "manufacturer"
+  | "distributor_cleaned"
+  | "image_url"
+  | "slug"
+>;
+
 interface SearchDiscoveryData {
-  suggestedClinics: Clinic[];
-  suggestedPractitioners: Practitioner[];
-  suggestedProducts: Product[];
+  suggestedClinics: SearchClinicResult[];
+  suggestedPractitioners: SearchPractitionerResult[];
+  suggestedProducts: SearchProductResult[];
   popularTreatments: string[];
 }
 
@@ -84,7 +123,10 @@ export function SearchEmptyState({
           <h3 className="text-lg font-semibold text-foreground">Popular products to explore</h3>
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {discoveryData.suggestedProducts.map((product) => (
-              <PractitionerCard key={product.slug} practitioner={product} />
+              <PractitionerCard
+                key={product.slug}
+                practitioner={product as Product}
+              />
             ))}
           </div>
         </section>
@@ -95,7 +137,10 @@ export function SearchEmptyState({
           <h3 className="text-lg font-semibold text-foreground">Highest reviewed clinics right now</h3>
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {discoveryData.suggestedClinics.map((clinic) => (
-              <PractitionerCard key={clinic.slug} practitioner={clinic} />
+              <PractitionerCard
+                key={clinic.slug}
+                practitioner={clinic as Clinic}
+              />
             ))}
           </div>
         </section>
@@ -110,7 +155,7 @@ export function SearchEmptyState({
             {discoveryData.suggestedPractitioners.map((practitioner) => (
               <PractitionerCard
                 key={`${practitioner.practitioner_name}-${practitioner.practitioner_title}`}
-                practitioner={practitioner}
+                practitioner={practitioner as Practitioner}
               />
             ))}
           </div>

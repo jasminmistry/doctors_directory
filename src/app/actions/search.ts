@@ -4,7 +4,33 @@ import { Clinic, Practitioner, Product, SearchFilters } from "@/lib/types"
 import { readJsonFileSync } from "@/lib/json-cache"
 import { modalities } from "@/lib/data";
 
-type SearchPractitioner = Practitioner & Pick<Clinic, "rating" | "reviewCount" | "gmapsAddress" | "Treatments">;
+type SearchClinicResult = Pick<
+  Clinic,
+  | "slug"
+  | "image"
+  | "rating"
+  | "reviewCount"
+  | "category"
+  | "gmapsAddress"
+  | "City"
+  | "isSaveFace"
+  | "isDoctor"
+  | "isJCCP"
+  | "isCQC"
+  | "isHIW"
+  | "isHIS"
+  | "isRQIA"
+  | "Treatments"
+>;
+
+type SearchPractitioner = SearchClinicResult &
+  Pick<
+    Practitioner,
+    | "practitioner_name"
+    | "practitioner_title"
+    | "practitioner_qualifications"
+    | "practitioner_awards"
+  >;
 export const loadData = cache(() => {
   const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
   const practitionersData: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
@@ -36,21 +62,23 @@ export const loadData = cache(() => {
 )
 
 
-  const practitioners: SearchPractitioner[] = practitionersData
-  .map(p => {
-    const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0])
-    
-    if (!clinic) return null
-    return {
-      ...clinic,
-      practitioner_name: p.practitioner_name,
-      practitioner_title: p.practitioner_title,
-      practitioner_qualifications: p.practitioner_qualifications,
-      practitioner_awards: p.practitioner_awards,
+  const practitioners = practitionersData.reduce<SearchPractitioner[]>((accumulator, practitioner) => {
+    const clinic = clinicIndex.get(JSON.parse(practitioner.Associated_Clinics!)[0])
+
+    if (!clinic) {
+      return accumulator
     }
-  
-  })
-  .filter((practitioner): practitioner is SearchPractitioner => practitioner !== null)
+
+    accumulator.push({
+      ...clinic,
+      practitioner_name: practitioner.practitioner_name,
+      practitioner_title: practitioner.practitioner_title,
+      practitioner_qualifications: practitioner.practitioner_qualifications,
+      practitioner_awards: practitioner.practitioner_awards,
+    })
+
+    return accumulator
+  }, [])
 
 
   const products = productsData.map(
