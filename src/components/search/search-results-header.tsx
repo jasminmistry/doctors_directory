@@ -54,7 +54,7 @@ export function SearchResultsHeader({
         <div className="flex items-center gap-4 text-sm">
           {totalResults > 0 ? (
             <span>
-              Showing {startIndex}-{endIndex} of {totalResults} {filters.type}s
+              Showing {startIndex}-{endIndex} of {totalResults} {filters.type === "treatments" ? "treatments" : (filters.type + 's')}
             </span>
           ) : (
             <div className="col-span-1 md:col-span-8">

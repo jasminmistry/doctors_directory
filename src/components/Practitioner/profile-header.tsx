@@ -15,6 +15,7 @@ import ClinicLabels from "./clinicLabels";
 import ClinicTabsHeader from "./clinicTabsHeader";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import  Link  from "next/link"
+import { usePathname, useSearchParams } from "next/navigation"
 import { Link as LinkIcon} from "lucide-react"
 interface ProfileHeaderProps {
   clinic: Practitioner;
@@ -24,6 +25,10 @@ interface ProfileHeaderProps {
 
 export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileHeaderProps>) {
   const [selectedClinic, setSelectedClinic] = useState(clinic_list[0])
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const queryString = searchParams.toString()
+  const returnTo = queryString ? `${pathname}?${queryString}` : pathname
   const practitionerName = clinic.practitioner_name!
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -37,7 +42,10 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
     <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-xl px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t-[1px] md:border md:border-[var(--alto)] bg-white md:bg-[var(--primary-bg-color)]">
       <Link
         prefetch={false}
-        href={`/admin/practitioners/${clinic.practitioner_name}`}
+        href={{
+          pathname: `/admin/practitioners/${clinic.practitioner_name}`,
+          query: { returnTo },
+        }}
       >
         <Badge
           variant="outline"

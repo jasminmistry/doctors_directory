@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function Header() {
@@ -20,7 +21,14 @@ export default function Header() {
     <header className="bg-[var(--primary-bg-color)]">
       <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-center md:justify-between">
         <div className="font-bold text-xl">
-          <img src="/directory/images/Consentz Logo.webp" alt="Logo" width={180} />
+          <Link href="/" className="inline-block cursor-pointer" aria-label="Go to directory home">
+            <img
+              src="/directory/images/Consentz Logo.webp"
+              alt="Logo"
+              width={180}
+              className="cursor-pointer"
+            />
+          </Link>
         </div>
 
         <div className="nav-drop hidden md:flex gap-8 items-center w-full justify-between">

@@ -1,19 +1,28 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { searchPractitioners } from "@/app/actions/search";
+import { getSearchDiscoveryData, searchPractitioners } from "@/app/actions/search";
 import { SearchBar } from "@/components/search/search-bar";
 import { PractitionerCard } from "@/components/practitioner-card";
 import { SearchResultsHeader } from "@/components/search/search-results-header";
 import { AdvancedFilterSidebar } from "@/components/filters/filterSidebar";
-import {
-  PractitionerCardSkeleton,
-} from "@/components/loading-skeleton";
+import { PractitionerCardSkeleton } from "@/components/loading-skeleton";
 import { Button } from "@/components/ui/button";
 import { useSearchStore } from "@/app/stores/datastore";
 import {
-  ArrowLeft
-} from "lucide-react";
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { SearchEmptyState } from "@/components/search/search-empty-state";
+
+// Set to false to revert to infinite scroll
+const USE_PAGINATION = true;
 
 const ITEMS_PER_PAGE = 9;
 type SearchType = "Clinic" | "Practitioner" | "Product" | "Treatments";
@@ -33,6 +42,9 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
   const [totalPages, setTotalPages] = useState(0);
   const [isInitialLoading, setIsInitialLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [discoveryData, setDiscoveryData] = useState<Awaited<
+    ReturnType<typeof getSearchDiscoveryData>
+  > | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const isAppendingRef = useRef(false);
   const requestIdRef = useRef(0);
@@ -56,44 +68,21 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
   }, [forcedType, setFilters]);
 
   const loadResults = useCallback(
-    async (page: number, mode: "replace" | "append") => {
-      if (mode === "append" && isAppendingRef.current) {
-        return;
-      }
+    async (page: number, mode: "replace" | "append" = "replace") => {
+      if (mode === "append" && isAppendingRef.current) return;
+      if (!isTypeReady) return;
+      if (mode === "append") isAppendingRef.current = true;
 
-      if (!isTypeReady) {
-        return;
-      }
-
-      if (mode === "append") {
-        isAppendingRef.current = true;
-      }
       const requestId = ++requestIdRef.current;
-      if (mode === "replace") {
-        setIsInitialLoading(true);
-      } else {
-        setIsLoadingMore(true);
-      }
+      if (mode === "replace") setIsInitialLoading(true);
+      else setIsLoadingMore(true);
 
       try {
-        const start = performance.now();
-        const result = await searchPractitioners(
-          filters,
-          page,
-          sortBy
-        );
+        const result = await searchPractitioners(filters, page, sortBy);
 
-        // Ignore results from stale requests after type/filter transitions.
-        if (requestId !== requestIdRef.current) {
-          return;
-        }
+        if (requestId !== requestIdRef.current) return;
 
-        const end = performance.now();
-        console.log(`Search took ${end - start} ms`);
-
-        setData((prev) =>
-          mode === "replace" ? result.data : [...prev, ...result.data]
-        );
+        setData((prev) => mode === "replace" ? result.data : [...prev, ...result.data]);
         setTotalCount(result.totalCount);
         setTotalPages(result.totalPages);
       } finally {
@@ -114,7 +103,6 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
     setData([]);
     setTotalPages(0);
     setTotalCount(0);
-    // Invalidate any in-flight response before starting a fresh search request.
     requestIdRef.current += 1;
     void loadResults(1, "replace");
   }, [filters, isTypeReady, loadResults, sortBy]);
@@ -124,48 +112,72 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
       return;
     }
 
+    let isMounted = true;
+
+    void getSearchDiscoveryData(filters).then((result) => {
+      if (isMounted) {
+        setDiscoveryData(result);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [filters, isTypeReady]);
+
+  // Infinite scroll observer — active when USE_PAGINATION = false
+  useEffect(() => {
+    if (USE_PAGINATION || !isTypeReady) return;
     const node = sentinelRef.current;
-    if (!node) {
-      return;
-    }
+    if (!node) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (!entries[0]?.isIntersecting || isAppendingRef.current) {
-          return;
-        }
-
-        if (currentPage >= totalPages) {
-          return;
-        }
-
+        if (!entries[0]?.isIntersecting || isAppendingRef.current || currentPage >= totalPages) return;
         const nextPage = currentPage + 1;
         setCurrentPage(nextPage);
         void loadResults(nextPage, "append");
       },
-      {
-        root: null,
-        rootMargin: "200px 0px",
-        threshold: 0,
-      }
+      { rootMargin: "200px 0px", threshold: 0 }
     );
-
     observer.observe(node);
-
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, [currentPage, isTypeReady, loadResults, totalPages]);
-
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
     void loadResults(page, "replace");
   };
+
+  const getPageNumbers = () => {
+    const pages: (number | "ellipsis")[] = [];
+    const VISIBLE = 4;
+    if (totalPages <= VISIBLE + 2) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (currentPage <= VISIBLE) {
+      // Near the start: show first VISIBLE pages, ellipsis, last
+      for (let i = 1; i <= VISIBLE; i++) pages.push(i);
+      pages.push("ellipsis");
+      pages.push(totalPages);
+    } else if (currentPage >= totalPages - 1) {
+      // Near the end: show first, ellipsis, last VISIBLE pages
+      pages.push(1);
+      pages.push("ellipsis");
+      for (let i = totalPages - VISIBLE + 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      // Middle: show first, ellipsis, window around current, ellipsis, last
+      pages.push(1);
+      pages.push("ellipsis");
+      for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+      pages.push("ellipsis");
+      pages.push(totalPages);
+    }
+    return pages;
+  };
   return (
-    <main className="min-h-screen bg-[var(--primary-bg-color)]">
-      <div className="bg-[var(--primary-bg-color)] backdrop-blur-sm sticky top-0 z-10">
+    <main className="min-h-screen bg-(--primary-bg-color)">
+      <div className="bg-(--primary-bg-color) backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-0 py-2">
           <Link href="/" prefetch={false}>
             <Button
@@ -186,7 +198,7 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
         </div>
       </div>
 
-      <section className="pt-2 py-10 md:px-4 bg-white md:bg-[var(--primary-bg-color)]">
+      <section className="pt-2 py-10 md:px-4 bg-white md:bg-(--primary-bg-color)">
         <div className="container mx-auto max-w-6xl space-y-8">
           <div className="m-0 md:mb-4">
             <SearchResultsHeader
@@ -228,12 +240,13 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
                       : "space-y-4"
                   }
                 >
-                  {data.length === 0 && (
-                    <p className="text-center col-span-1 md:col-span-8">
-                      No results found.
-                    </p>
-                  )}
-                  {data.map((item) => {
+                  {data.length === 0 ? (
+                    <SearchEmptyState
+                      query={filters.query}
+                      resultType={filters.type}
+                      discoveryData={discoveryData}
+                    />
+                  ) : data.map((item) => {
                     if (typeof item === "string") {
                       return (
                         <PractitionerCard key={item} practitioner={item} />
@@ -263,10 +276,45 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
                     }
                   })}
                 </div>
-                {currentPage < totalPages && (
-                  <div ref={sentinelRef} className="py-6 text-center text-sm text-gray-600">
-                    {isLoadingMore ? "Loading more results..." : ""}
+                {USE_PAGINATION ? totalPages > 1 && (
+                  <div className="mt-6">
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                            disabled={currentPage === 1}
+                          />
+                        </PaginationItem>
+                        {getPageNumbers().map((page, idx) => (
+                          <PaginationItem key={idx}>
+                            {page === "ellipsis" ? (
+                              <PaginationEllipsis />
+                            ) : (
+                              <PaginationLink
+                                isActive={page === currentPage}
+                                onClick={() => handlePageChange(page)}
+                              >
+                                {page}
+                              </PaginationLink>
+                            )}
+                          </PaginationItem>
+                        ))}
+                        <PaginationItem>
+                          <PaginationNext
+                            onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                            disabled={currentPage === totalPages}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
                   </div>
+                ) : (
+                  currentPage < totalPages && (
+                    <div ref={sentinelRef} className="py-6 text-center text-sm text-gray-600">
+                      {isLoadingMore ? "Loading more results..." : ""}
+                    </div>
+                  )
                 )}
               </div>
             )}

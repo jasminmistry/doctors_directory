@@ -6,7 +6,7 @@ export default function PractitionerEditor() {
     <AdminForm
       entityType="practitioners"
       apiBasePath="/directory/api/admin/pending/practitioners"
-      redirectPath="/"
+      redirectPath="/admin/practitioners"
     />
   )
 }

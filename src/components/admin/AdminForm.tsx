@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +24,7 @@ export default function AdminForm({
   const [isNew, setIsNew] = useState(false);
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (params.slug === "new") {
@@ -62,14 +64,19 @@ export default function AdminForm({
       });
 
       if (res.ok) {
-        router.push(`/`);
+        const returnTo = searchParams.get("returnTo");
+        const destination = returnTo || redirectPath || `/admin/${entityType}`;
+        toast.success("Changes saved successfully.");
+        setTimeout(() => {
+          router.push(destination);
+        }, 350);
       } else {
-        const error = await res.json();
-        alert(error.error || "Failed to save");
+        const error = await res.json().catch(() => ({}));
+        toast.error(error.error || "Failed to save");
       }
     } catch (error) {
       console.error(`Failed to save ${entityType}:`, error);
-      alert("Failed to save");
+      toast.error("Failed to save");
     }
   };
 
