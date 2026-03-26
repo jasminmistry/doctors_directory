@@ -87,7 +87,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   const practitionerDirectory: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
 
   const practitioners = practitionerDirectory
-    .map((practitioner) => {
+    .map((practitioner): Practitioner | null => {
       try {
         const clinicSlug = JSON.parse(practitioner.Associated_Clinics ?? "[]")[0] as string | undefined
         if (!clinicSlug) return null
@@ -141,7 +141,11 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
   const cityPractitioners = practitioners
     .filter((practitioner) => practitioner.City?.toLowerCase() === decodedCitySlug.toLowerCase())
-    .sort((left, right) => right.reviewCount - left.reviewCount || right.rating - left.rating)
+    .sort(
+      (left, right) =>
+        (right.reviewCount ?? 0) - (left.reviewCount ?? 0) ||
+        (right.rating ?? 0) - (left.rating ?? 0)
+    )
 
   const nearbyPractitioners = cityPractitioners.slice(0, 6)
 
