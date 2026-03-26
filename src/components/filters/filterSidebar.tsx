@@ -376,7 +376,7 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
           className={`
           bg-transparent h-[460px] shadow-none border border-transparent rounded-0 pb-[145px] px-4 md:px-0 md:py-0 relative
           md:relative md:block md:h-auto w-full md:bg-transparent md:translate-x-0
-          fixed top-0 left-0 bg-white z-[1] transition-transform duration-300 ease-in-out
+          fixed top-0 left-0 bg-white z-[99999] transition-transform duration-300 ease-in-out
           ${isFilterActive ? "translate-x-0" : "-translate-x-full"} ${isOpen ? "block" : "hidden"}
         `}
         >
@@ -440,7 +440,7 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
               />
             )}
 
-            <div className="bg-white md:bg-transparent space-y-2 px-4 w-full absolute py-2 md:py-0 md:px-0 md:static bottom-0 left-0 righ-0">
+            <div className="bg-white md:bg-transparent space-y-2 px-4 w-full absolute py-2 md:py-0 md:px-0 md:static bottom-0 left-0 right-0">
               <Button
                 variant="default"
                 onClick={handleApplyFilters}

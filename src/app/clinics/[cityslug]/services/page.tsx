@@ -137,7 +137,9 @@ export default function CityServicesPage({ params }: PageProps) {
         </div>
 
         <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
-          <CollectionsFilter pageType="Treatments" />
+          <div className="sm:min-w-[230px] sm:w-[230px] sm:shrink-0">
+            <CollectionsFilter pageType="Treatments" />
+          </div>
           <div className="flex-1 min-w-0">
             <ItemsGrid items={uniqueTreatments.length === 0 ? defaultTreatments : uniqueTreatments} customLink={`/clinics/${normalizedCitySlug}/services`} />
           </div>
