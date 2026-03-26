@@ -529,13 +529,11 @@ export function PractitionerCard({
       {isCity(practitioner) === true && (
         <Card
           asChild
-          className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg "
+          className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-sm "
         >
           <Link href={cityHref}>
             <div className="mt-2 flex flex-col items-center gap-2">
-              <Button className="w-1/2 text-center font-semibold text-md md:text-lg transition-colors text-balance bg-black cursor-pointer hover:bg-white hover:text-black">
-                {practitioner}
-              </Button>
+              {practitioner}
             </div>
           </Link>
         </Card>
