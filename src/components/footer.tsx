@@ -12,6 +12,8 @@ import {
 
 export function Footer() {
   const recognitions = [...accreditations, ...edu];
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
   return (
     <>
       <footer className="bg-[var(--dune)] py-16 text-white">
@@ -27,7 +29,7 @@ export function Footer() {
             </div>
             <div className="flex justify-start w-full md:w-auto pt-10 md:pt-0">
               <a
-                href="https://www.consentz.com/book-demo/?source=https://www.consentz.com/"
+                href={`${baseUrl}/book-demo/?source=${baseUrl}/`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -71,52 +73,114 @@ export function Footer() {
               <h3 className="font-bold text-lg text-white mb-6">Consentz vs</h3>
               <ul className="space-y-3 text-sm">
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/zenoti-alternative/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Zenoti
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/aestheticspro-alternatives/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     AestheticsPro
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/pabau-alternatives/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Pabau
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/aesthetic-record-alternatives/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Aesthetic Record
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/consentz-vs-clinicsense/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
-                    ClinicsEnse
-                  </button>
+                    Clinicsense
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/consentz-vs-nextech/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Nextech
-                  </button>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`${baseUrl}/vagaro-alternative/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-left w-full hover:text-white transition"
+                  >
+                    Vagaro
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`${baseUrl}/glowdaypro-alternative/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-left w-full hover:text-white transition"
+                  >
+                    GlowdayPRO
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`${baseUrl}/patientnow-alternative/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-left w-full hover:text-white transition"
+                  >
+                    PatientNow
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`${baseUrl}/mangomint-alternative/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-left w-full hover:text-white transition"
+                  >
+                    Mangomint
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`${baseUrl}/boulevard-alternative/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-left w-full hover:text-white transition"
+                  >
+                    Boulevard
+                  </a>
                 </li>
               </ul>
             </div>
@@ -126,115 +190,159 @@ export function Footer() {
               <h3 className="font-bold text-lg text-white mb-6">Features</h3>
               <ul className="space-y-3 text-sm">
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/clinic-management-software/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Clinic Management
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/what-is-patient-management-software/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Patient Engagement
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/photos-records/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Photos and Records
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/personalise/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Personalise
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/analytics/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Analytics
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/stock-and-billing/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Stock and Billing
-                  </button>
+                  </a>
                 </li>
               </ul>
             </div>
 
-            {/* Marketing Column */}
+            {/* Useful Links Column */}
             <div>
               <h3 className="font-bold text-lg text-white mb-6">Marketing</h3>
               <ul className="space-y-3 text-sm">
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/healthcare-marketing-software/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
+                  >
+                    Marketing
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`${baseUrl}/medical-templates/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-left w-full hover:text-white transition"
+                  >
+                    Medical Templates
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`${baseUrl}/faqs/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-left w-full hover:text-white transition"
                   >
                     FAQs
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/blog/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Blog
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/category/articles/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Articles
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href="mailto:care@consentz.com"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Support
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/terms/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Terms & Conditions
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/partners/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Partners
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
+                  <a
+                    href={`${baseUrl}/privacy-policy/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-left w-full hover:text-white transition"
-                    type="button"
                   >
                     Privacy Policy
-                  </button>
+                  </a>
                 </li>
               </ul>
             </div>

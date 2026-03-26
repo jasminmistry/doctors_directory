@@ -46,9 +46,12 @@ export default function Header() {
               FAQS
             </a>
           </nav>
-          <Button className="font-bold border-2 py-2 px-5 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white">
+          <a
+            href={`${baseUrl}/book-demo`}
+            className="font-bold rounded-lg border-2 py-2 px-5 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white"
+          >
             BOOK DEMO
-          </Button>
+          </a>
         </div>
 
         <div className="md:hidden">

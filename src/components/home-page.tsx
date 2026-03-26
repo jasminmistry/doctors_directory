@@ -1062,8 +1062,17 @@ export default function HomePage() {
                 </li>
               </ul>
               <div className="text-center md:text-left mb-10 md:mb-0">
-                <Button className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white">
-                  Learn More
+                <Button
+                  asChild
+                  className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white"
+                >
+                  <a
+                    href="https://www.consentz.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Learn More
+                  </a>
                 </Button>
               </div>
             </div>

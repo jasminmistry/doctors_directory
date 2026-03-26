@@ -84,7 +84,7 @@ export default function SocialMediaIcons({ clinic }: Readonly<{ readonly clinic:
       )}
       {clinic.website && (
         <a
-          href={clinic.website}
+          href={clinic.website.replace(/^\.+|\.+$/g, '')}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Website"

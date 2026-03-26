@@ -460,19 +460,19 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
               </div>
 
               <div className="text-center p-4 border-0 md:border-0 bg-transparent">
-                <dt className="sr-only">Number of Google Reviews</dt>
+                <dt className="sr-only">Number of Reviews</dt>
                 <div 
                   itemProp="aggregateRating" 
                   itemScope 
                   itemType="https://schema.org/AggregateRating"
                   role="img" 
-                  aria-label={`${treatment.reviews} reviews on Google`}
+                  aria-label={`${treatment.reviews} reviews`}
                 >
                   <Camera className="h-6 w-6 mx-auto mb-2 text-black" aria-hidden="true" />
                   <dd className="text-2xl font-bold" itemProp="reviewCount">
                     {treatment.reviews}
                   </dd>
-                  <div className="text-sm text-gray-600">Reviews on Google</div>
+                  <div className="text-sm text-gray-600">Reviews</div>
                 </div>
               </div>
 

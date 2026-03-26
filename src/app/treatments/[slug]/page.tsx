@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Clinic } from "@/lib/types";
+import type { Practitioner } from "@/lib/types";
 import type { Metadata } from "next";
 import { readJsonFileSync } from "@/lib/json-cache";
 import treatment_content from "../../../../public/treatments.json";
@@ -131,8 +132,245 @@ const getTreatmentCategory = (treatmentName: string): string => {
   return 'Dermatology';
 };
 
+const getTreatmentContentValue = (
+  treatmentData: Record<string, unknown> | undefined,
+  candidateKeys: readonly string[],
+) => {
+  if (!treatmentData) {
+    return null;
+  }
+
+  for (const key of candidateKeys) {
+    if (Object.prototype.hasOwnProperty.call(treatmentData, key)) {
+      return treatmentData[key];
+    }
+  }
+
+  return null;
+};
+
+const getAverageCost = (
+  treatmentName: string,
+  treatmentData: Record<string, unknown> | undefined,
+) => {
+  const normalizedName = treatmentName.replaceAll(/\s+/g, '_');
+  const costData = getTreatmentContentValue(treatmentData, [
+    `Cost_of_${normalizedName}_in_UK_and_Variations`,
+    `Cost_of_${treatmentName}_in_UK_and_Variations`,
+  ]);
+
+  if (!costData) {
+    return 'Cost varies by clinic';
+  }
+
+  if (typeof costData === 'string') {
+    const match = costData.match(/GBP\s*[0-9,]+(?:\s*(?:to|[-–])\s*GBP\s*[0-9,]+)?/i);
+    if (match) {
+      return match[0].replaceAll(/GBP/gi, 'GBP ').replaceAll(/\s+/g, ' ').trim();
+    }
+
+    const poundMatch = costData.match(/£\s*[0-9,]+(?:\s*(?:to|[-–])\s*£?\s*[0-9,]+)?/i);
+    if (poundMatch) {
+      return poundMatch[0].replaceAll(/\s+/g, ' ').trim();
+    }
+
+    return 'See provider pricing';
+  }
+
+  if (Array.isArray(costData)) {
+    return costData[0] ?? 'Cost varies by clinic';
+  }
+
+  if (typeof costData === 'object') {
+    const typedCostData = costData as Record<string, unknown>;
+    const typicalPrices =
+      typedCostData.Typical_prices ??
+      typedCostData['Typical UK costs'] ??
+      typedCostData.typicalCosts ??
+      typedCostData.typical_costs ??
+      typedCostData.Typical_Costs ??
+      typedCostData.typicalRange ??
+      typedCostData.Typical_Range;
+
+    if (typeof typicalPrices === 'string') {
+      const match = typicalPrices.match(/GBP\s*[0-9,]+(?:\s*(?:to|[-–])\s*GBP\s*[0-9,]+)?/i);
+      if (match) {
+        return match[0].replaceAll(/GBP/gi, 'GBP ').replaceAll(/\s+/g, ' ').trim();
+      }
+
+      const poundMatch = typicalPrices.match(/£\s*[0-9,]+(?:\s*(?:to|[-–])\s*£?\s*[0-9,]+)?/i);
+      if (poundMatch) {
+        return poundMatch[0].replaceAll(/\s+/g, ' ').trim();
+      }
+
+      return 'See provider pricing';
+    }
+
+    if (Array.isArray(typicalPrices) && typicalPrices.length > 0) {
+      return String(typicalPrices[0]);
+    }
+  }
+
+  return 'See provider pricing';
+};
+
+const getDowntime = (
+  treatmentName: string,
+  treatmentData: Record<string, unknown> | undefined,
+) => {
+  const normalizedName = treatmentName.replaceAll(/\s+/g, '_');
+  const recoveryData = getTreatmentContentValue(treatmentData, [
+    'Recovery_Process_Downtime_Possible_Side_Effects',
+    `What_is_the_recovery_process,_downtime,_and_possible_side_effects_of_${normalizedName}_treatment?`,
+  ]);
+
+  if (!recoveryData) {
+    return 'Varies by treatment';
+  }
+
+  if (typeof recoveryData === 'string') {
+    return recoveryData;
+  }
+
+  if (Array.isArray(recoveryData)) {
+    return recoveryData[0] ?? 'Varies by treatment';
+  }
+
+  if (typeof recoveryData === 'object') {
+    const typedRecoveryData = recoveryData as Record<string, unknown>;
+    const recovery =
+      typedRecoveryData.Recover ??
+      typedRecoveryData.Recovery ??
+      typedRecoveryData.recovery ??
+      typedRecoveryData.answer;
+
+    if (typeof recovery === 'string') {
+      const normalizedRecovery = recovery.toLowerCase();
+
+      if (normalizedRecovery.includes('no real downtime') || normalizedRecovery.includes('no downtime')) {
+        return 'None';
+      }
+
+      if (normalizedRecovery.includes('minimal downtime') || normalizedRecovery.includes('minimal')) {
+        return 'Minimal';
+      }
+
+      if (normalizedRecovery.includes('few days')) {
+        return 'A few days';
+      }
+
+      if (normalizedRecovery.includes('1-2 weeks') || normalizedRecovery.includes('1 to 2 weeks')) {
+        return '1-2 weeks';
+      }
+
+      if (normalizedRecovery.includes('1-2 days') || normalizedRecovery.includes('1 to 2 days')) {
+        return '1-2 days';
+      }
+
+      return 'Varies';
+    }
+  }
+
+  return 'Varies';
+};
+
+const getSatisfaction = (reviewCount: number) => {
+  if (reviewCount >= 100) {
+    return 95;
+  }
+
+  if (reviewCount >= 50) {
+    return 91;
+  }
+
+  if (reviewCount >= 20) {
+    return 87;
+  }
+
+  return 82;
+};
+
+const normalizeTreatmentToken = (value: string) =>
+  value
+    .toLowerCase()
+    .normalize('NFKD')
+    .replaceAll(/[\u2010-\u2015]/g, '-')
+    .replaceAll(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+const getTreatmentAliases = (treatmentName: string, slug: string) => {
+  const normalizedName = normalizeTreatmentToken(treatmentName);
+  const normalizedSlug = normalizeTreatmentToken(slug.replaceAll('%20', ' '));
+  const aliasMap: Record<string, string[]> = {
+    'anti wrinkle treatment': [
+      'anti wrinkle treatment',
+      'anti wrinkle',
+      'anti wrinkle injections',
+      'anti wrinkle injection',
+      'botox',
+      'lines wrinkles',
+    ],
+    microneedling: ['microneedling', 'micro needling', 'micro-needling'],
+  };
+
+  const aliases = new Set([normalizedName, normalizedSlug]);
+
+  for (const [key, values] of Object.entries(aliasMap)) {
+    if (normalizedName === key || normalizedSlug === key) {
+      values.forEach((value) => aliases.add(value));
+    }
+  }
+
+  return aliases;
+};
+
+const clinicMatchesTreatment = (
+  clinic: Clinic,
+  treatmentAliases: Set<string>,
+) => {
+  const treatments = Array.isArray(clinic.Treatments) ? clinic.Treatments : [];
+  const treatmentMatch = treatments.some((entry) =>
+    treatmentAliases.has(normalizeTreatmentToken(String(entry))),
+  );
+
+  const feeEntries = Array.isArray(clinic.Fees) ? clinic.Fees : [];
+  const feeMatch = feeEntries.some((entry) => {
+    if (!entry || typeof entry !== 'object') {
+      return false;
+    }
+
+    const treatmentLabel = 'treatment' in entry ? String(entry.treatment ?? '') : '';
+    const normalizedLabel = normalizeTreatmentToken(treatmentLabel);
+
+    return treatmentAliases.has(normalizedLabel);
+  });
+
+  const categoryEntries = clinic.reviewAnalysis?.procedures_offered?.categories ?? [];
+  const categoryMatch = categoryEntries.some((entry) => {
+    const normalizedEntry = normalizeTreatmentToken(String(entry));
+
+    return treatmentAliases.has(normalizedEntry);
+  });
+
+  return treatmentMatch || feeMatch || categoryMatch;
+};
+
+const getPractitionerCount = (practitioners: Clinic['Practitioners']) => {
+  if (Array.isArray(practitioners)) {
+    return practitioners.length;
+  }
+
+  if (typeof practitioners === 'string') {
+    const parsedCount = Number.parseInt(practitioners, 10);
+    return Number.isNaN(parsedCount) ? 0 : parsedCount;
+  }
+
+  return 0;
+};
+
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
+  const practitionerProfiles: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const { slug } = params;
 
   // Get treatment data from treatment_content
@@ -157,25 +395,74 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   // Get treatment category
   const treatmentCategory = getTreatmentCategory(treatment.name);
 
-  const filteredClinics = clinics.filter((clinic) => {
+  const treatmentAliases = getTreatmentAliases(treatment.name, slug);
 
+  const filteredClinics = clinics.filter((clinic) =>
+    clinicMatchesTreatment(clinic, treatmentAliases),
+  );
 
-    // Filter by offerged service category
-    const categories =
-      clinic.Treatments ?? [];
+  const clinicSlugs = new Set(
+    filteredClinics
+      .map((clinic) => clinic.slug)
+      .filter((clinicSlug): clinicSlug is string => Boolean(clinicSlug)),
+  );
 
-    
+  const practitioners = new Set(
+    practitionerProfiles
+      .filter((practitioner) => {
+        const associatedClinics = practitioner.Associated_Clinics;
 
-    const serviceMatch = categories.some(
-      (cat: string) => cat.replaceAll(" ","").toLowerCase() === slug.replaceAll("%20","").toLowerCase()
-    );
+        if (Array.isArray(associatedClinics)) {
+          return associatedClinics.some(
+            (clinicSlug) => typeof clinicSlug === 'string' && clinicSlugs.has(clinicSlug),
+          );
+        }
 
-    return serviceMatch;
-  });
+        if (typeof associatedClinics !== 'string') {
+          return false;
+        }
+
+        try {
+          const parsedClinics = JSON.parse(associatedClinics) as unknown;
+
+          if (Array.isArray(parsedClinics)) {
+            return parsedClinics.some(
+              (clinicSlug) => typeof clinicSlug === 'string' && clinicSlugs.has(clinicSlug),
+            );
+          }
+        } catch {
+          return clinicSlugs.has(associatedClinics);
+        }
+
+        return false;
+      })
+      .map((practitioner) => practitioner.practitioner_name)
+      .filter((practitionerName): practitionerName is string => Boolean(practitionerName)),
+  ).size;
+
+  const reviews = filteredClinics.reduce((total, clinic) => {
+    const reviewCount = Number.parseInt(String(clinic.reviewCount ?? '0'), 10);
+
+    if (Number.isNaN(reviewCount)) {
+      return total;
+    }
+
+    return total + reviewCount;
+  }, 0);
+
+  const averageCost = getAverageCost(treatment.name, treatmentData);
+  const downtime = getDowntime(treatment.name, treatmentData);
+  const satisfaction = getSatisfaction(reviews);
 
   if (!filteredClinics) {
     notFound();
   }
+
+  treatment.satisfaction = satisfaction;
+  treatment.averageCost = averageCost;
+  treatment.reviews = reviews;
+  treatment.downtime = downtime;
+  treatment.practitioners = practitioners;
 
   // Generate structured data for SEO
   const whatIsPropertyName = `What_is_${treatmentSlug.replaceAll(/\s+/g, '_')}_How_does_it_work`;
