@@ -4,7 +4,7 @@ import type { Practitioner } from "@/lib/types";
 import type { Metadata } from "next";
 import { readJsonFileSync } from "@/lib/json-cache";
 import treatment_content from "../../../../public/treatments.json";
-import { stripContentReferencesDeep } from "@/lib/utils";
+import { stripContentReferencesDeep, toUrlSlug } from "@/lib/utils";
 import { TreatmentDetail } from "@/components/treatment-detail";
 import Script from "next/script";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
@@ -373,8 +373,16 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const practitionerProfiles: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const { slug } = params;
 
+  // Resolve original treatment name from either new hyphenated slug or old %20-encoded slug
+  const resolvedTreatmentName =
+    Object.keys(TreatmentMap).find((name) => toUrlSlug(name) === slug) ??
+    (() => {
+      const decoded = slug.replaceAll('%20', ' ');
+      return Object.keys(TreatmentMap).find((name) => name === decoded) ?? decoded;
+    })();
+
   // Get treatment data from treatment_content
-  const treatmentSlug = slug.replaceAll("%20", " ");
+  const treatmentSlug = resolvedTreatmentName;
   const treatmentData = stripContentReferencesDeep(treatments[treatmentSlug]);
   
   // Create treatment object for TreatmentDetail component

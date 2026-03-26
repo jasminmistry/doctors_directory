@@ -23,7 +23,8 @@ import treatment_content from "@//../public/treatments.json";
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { readJsonFileSync } from "@/lib/json-cache"
-import { locations } from "@/lib/data";
+import { locations, modalities } from "@/lib/data";
+import { toUrlSlug } from "@/lib/utils";
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -38,18 +39,21 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const { cityslug, serviceslug } = params;
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
-  const normalizedServiceName = serviceslug.replaceAll("%20", " ");
+  const normalizedServiceName =
+    modalities.find((m) => toUrlSlug(m) === serviceslug) ??
+    (() => {
+      const decoded = serviceslug.replaceAll('%20', ' ');
+      return modalities.find((m) => m === decoded) ?? decoded;
+    })();
   const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   )!;
-  const treatmentslug = serviceslug.replaceAll("%20", " ").charAt(0).toUpperCase() + serviceslug.replaceAll("%20", " ").slice(1)
+  const treatmentslug = normalizedServiceName.charAt(0).toUpperCase() + normalizedServiceName.slice(1);
   const treatment = treatment_content[treatmentslug as TreatmentSlug] as Record<string, any>;
   const decodedCitySlug = decodeURIComponent(cityslug)
   .toLowerCase()
   .replace(/\s+/g, "");
-  const decodedServiceSlug = decodeURIComponent(serviceslug)
-  .toLowerCase()
-  .replace(/\s+/g, "");
+  const decodedServiceSlug = normalizedServiceName.toLowerCase().replace(/[\s-]+/g, "");
   const filteredClinics = clinics.filter((clinic) => {
     // Filter by city
     
@@ -64,7 +68,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
     
 
 const serviceMatch = categories.some((cat: string) =>
-  cat.toLowerCase().replace(/\s+/g, "") === decodedServiceSlug
+  cat.toLowerCase().replace(/[\s-]+/g, "") === decodedServiceSlug
 );
 
 

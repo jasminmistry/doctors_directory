@@ -1,5 +1,5 @@
 import { City, Practitioner } from "@/lib/types";
-import { decodeUnicodeEscapes, fixMojibake } from "@/lib/utils";
+import { decodeUnicodeEscapes, fixMojibake, toUrlSlug } from "@/lib/utils";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 function createBullets(text: unknown) {
@@ -133,7 +133,7 @@ export function CityPageData({citySlug, cityData, uniqueTreatments}: CityPageDat
                   
                   return (
                   
-                <Link data-testid="treatment-link" key={modality} href={`/treatments/${treatments}`}>
+                <Link data-testid="treatment-link" key={modality} href={`/treatments/${toUrlSlug(modality)}`}>
                   <Badge variant="outline" className="text-md bg-gray-100 border-0">
                     {treatments}
                   </Badge>

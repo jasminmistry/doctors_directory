@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toUrlSlug } from "@/lib/utils";
 import {
   modalities,
   edu,
@@ -424,7 +425,7 @@ export function Footer() {
                     <li key={index_t}>
                       <Link
                         prefetch={false}
-                        href={`/practitioners/${city}/treatments/${treatment}`}
+                        href={`/practitioners/${toUrlSlug(city)}/treatments/${toUrlSlug(treatment)}`}
                         className="block text-sm"
                       >
                         {treatment} in {city}

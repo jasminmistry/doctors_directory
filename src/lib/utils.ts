@@ -107,6 +107,18 @@ export function cleanRouteSlug(slug: string) {
   }
 }
 
+export function toUrlSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replaceAll(/&|\+/g, ' and ')
+    .replaceAll(/[\/\\]+/g, ' ')
+    .replaceAll(/[^a-z0-9\s-]/g, '')
+    .replaceAll(/\s+/g, '-')
+    .replaceAll(/-+/g, '-')
+    .replaceAll(/^-|-$/g, '')
+}
+
 export function parseLabels(label: string): [boolean, string] | null {
   try {
     const jsonReady = label

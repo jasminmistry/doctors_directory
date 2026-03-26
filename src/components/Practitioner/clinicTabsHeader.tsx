@@ -20,13 +20,13 @@ export default function ClinicTabsHeader({k_value, clinic_list, selected, onSele
   return (
     <Tabs
       defaultValue="roles"
-      className="w-full sticky top-0 bg-(--primary-bg-color) z-10 border-0 mt-4"
+      className="w-full sticky top-0 bg-(--primary-bg-color) z-10 border-0 mt-4 overflow-hidden"
     >
-      <TabsList className="bg-(--primary-bg-color) flex flex-nowrap gap-2 overflow-x-auto">
+      <TabsList className="bg-(--primary-bg-color) flex flex-nowrap gap-2 ">
         {sections.map((s) => (
           <Link href={`/clinics/${k_value.City.toLowerCase()}/clinic/${s.id}`} className="text-xs text-white hover:text-gray-700 transition-colors">
        
-          <div key={s.id} className=" mb-2 bg-(--primary-bg-color) flex flex-colmin-w-max">
+          <div key={s.id} className=" mb-2 bg-(--primary-bg-color) flex flex-colmin-w-max overflow-hidden">
             
             <TabsTrigger
               value={s.id.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
@@ -37,7 +37,7 @@ export default function ClinicTabsHeader({k_value, clinic_list, selected, onSele
                 });
                 onSelect?.(s.id)
               }}
-              className="bg-purple-100 text-sm font-medium text-black hover:text-black transition-colors cursor-pointer"
+              className="bg-purple-100 text-sm font-medium text-black hover:text-black transition-colors cursor-pointer overflow-hidden"
             >
               {s.label.split("-").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
             </TabsTrigger>

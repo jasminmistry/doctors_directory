@@ -13,7 +13,7 @@ import {
 import ClinicLabels from "./Clinic/clinicLabels";
 import { locations, TreatmentMap } from "@/lib/data";
 import { Button } from "./ui/button";
-import { isClinic, isPractitioner, isProduct, isTreatment } from "@/lib/utils";
+import { isClinic, isPractitioner, isProduct, isTreatment, toUrlSlug } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 type PractitionerOrClinic = Practitioner | Clinic | Product | string;
@@ -167,10 +167,10 @@ function getTreatmentHref(
   }
 
   if (customLink) {
-    return `${customLink}/${practitioner}`;
+    return `${customLink}/${toUrlSlug(typeof practitioner === 'string' ? practitioner : treatmentName)}`;
   }
 
-  return `/treatments/${treatmentName}`;
+  return `/treatments/${toUrlSlug(treatmentName)}`;
 }
 
 function getTreatmentImageSrc(treatmentName: string): string {
@@ -371,7 +371,7 @@ export function PractitionerCard({
                         <li key={index}>
                           <Badge variant="outline" className="text-xs">
                             <Link
-                              href={`/directory/treatments/${modality}`}
+                              href={`/directory/treatments/${toUrlSlug(modality)}`}
                               onClick={(e) => e.stopPropagation()}
                             >
                               {modality

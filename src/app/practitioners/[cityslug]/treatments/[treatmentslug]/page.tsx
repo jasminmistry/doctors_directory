@@ -1,15 +1,11 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { Clinic, Practitioner, City } from "@/lib/types";
-import { Badge } from "@/components/ui/badge";
-import { Star, MapPin } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
@@ -22,14 +18,63 @@ import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { readJsonFileSync } from "@/lib/json-cache"
 import { MoreItems } from "@/components/MoreItems";
-import { locations } from "@/lib/data";
+import { locations, modalities } from "@/lib/data";
+import { toUrlSlug } from "@/lib/utils";
+
 type TreatmentSlug = keyof typeof treatment_content
 
 const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
-  const clinicIndex = new Map(
+const clinicIndex = new Map(
   clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
 )
+
+const popularPages = [
+  { label: "Top clinics in the UK", href: "/directory/clinics" },
+  { label: "Top practitioners in the UK", href: "/directory/practitioners" },
+  { label: "Browse all treatments", href: "/directory/treatments" },
+  { label: "Accredited clinics and practitioners", href: "/directory/accredited" },
+]
+
+const blogLinks = [
+  {
+    title: "10 Best HIPAA Compliant Medical Spa Software in 2025",
+    href: "https://www.consentz.com/hipaa-compliant-medical-spa-software",
+  },
+  {
+    title: "Top 10 Clinical Data Management Software Solutions in the USA",
+    href: "https://www.consentz.com/clinical-data-management-software",
+  },
+  {
+    title: "Aesthetic Clinic Marketing: Complete Guide [2025]",
+    href: "https://www.consentz.com/aesthetic-clinic-marketing",
+  },
+]
+
+function getPopularTreatments(items: Clinic[]): string[] {
+  const counts = new Map<string, number>()
+
+  for (const clinic of items) {
+    for (const treatment of clinic.Treatments ?? []) {
+      counts.set(treatment, (counts.get(treatment) ?? 0) + 1)
+    }
+  }
+
+  return [...counts.entries()]
+    .sort((left, right) => right[1] - left[1])
+    .slice(0, 18)
+    .map(([treatment]) => treatment)
+}
+
+function formatDisplayText(value: string): string {
+  return value
+    .replaceAll("-", " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+}
+
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -39,23 +84,29 @@ interface ProfilePageProps {
 
 export default function ProfilePage({ params }: ProfilePageProps) {
   
-  const clinics: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
+  const practitionerDirectory: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
 
-     const practitioners = clinics
-  .map(p => {
-    const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0])
-    
-    if (!clinic) return null
-    return {
-      ...clinic,
-      practitioner_name: p.practitioner_name,
-      practitioner_title: p.practitioner_title,
-      practitioner_qualifications: p.practitioner_qualifications,
-      practitioner_awards: p.practitioner_awards,
-    }
-  
-  })
-  .filter((item) => item !==null).filter(Boolean)
+  const practitioners = practitionerDirectory
+    .map((practitioner) => {
+      try {
+        const clinicSlug = JSON.parse(practitioner.Associated_Clinics ?? "[]")[0] as string | undefined
+        if (!clinicSlug) return null
+
+        const clinic = clinicIndex.get(clinicSlug)
+        if (!clinic) return null
+
+        return {
+          ...clinic,
+          practitioner_name: practitioner.practitioner_name,
+          practitioner_title: practitioner.practitioner_title,
+          practitioner_qualifications: practitioner.practitioner_qualifications,
+          practitioner_awards: practitioner.practitioner_awards,
+        }
+      } catch {
+        return null
+      }
+    })
+    .filter((item): item is Practitioner => item !== null)
 
   const { cityslug, treatmentslug } = params;
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
@@ -67,25 +118,47 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   .replace(/\s+/g, "");
   const decodedTreatmentSlug = decodeURIComponent(treatmentslug)
   .toLowerCase()
-  .replace(/\s+/g, "");
+  .replace(/[\s-]+/g, "");
+  const cityDisplayName = formatDisplayText(cityslug);
 
-  const filteredClinics = practitioners.filter((clinic) => {
+  const filteredClinics = practitioners.filter((practitioner) => {
     // Filter by city
-    const cityMatch = clinic.City?.toLowerCase() === decodedCitySlug.toLowerCase();
+    const cityMatch = practitioner.City?.toLowerCase() === decodedCitySlug.toLowerCase();
     // Filter by offered service category
     const categories =
-      clinic.Treatments ?? [];
+      practitioner.Treatments ?? [];
     
   
 
 
     const serviceMatch = categories.some(
-      (cat: string) => cat.replaceAll(" ","").toLowerCase() === decodedTreatmentSlug.replaceAll("%20","").toLowerCase()
+      (cat: string) => cat.replaceAll(" ","").replaceAll("-","").toLowerCase() === decodedTreatmentSlug.replaceAll("%20","").toLowerCase()
     );
 
 
     return cityMatch && serviceMatch
   });
+
+  const cityPractitioners = practitioners
+    .filter((practitioner) => practitioner.City?.toLowerCase() === decodedCitySlug.toLowerCase())
+    .sort((left, right) => right.reviewCount - left.reviewCount || right.rating - left.rating)
+
+  const nearbyPractitioners = cityPractitioners.slice(0, 6)
+
+  const cityClinics = clinics
+    .filter((clinic) => clinic.City?.toLowerCase() === decodedCitySlug.toLowerCase())
+    .sort((left, right) => right.reviewCount - left.reviewCount || right.rating - left.rating)
+
+  const nearbyClinics = cityClinics.slice(0, 6)
+
+  const popularClinics = [...clinics]
+    .filter((clinic) => clinic.slug)
+    .sort((left, right) => right.reviewCount - left.reviewCount || right.rating - left.rating)
+    .slice(0, 6)
+
+  const highestReviewedClinic = cityClinics[0] ?? popularClinics[0]
+
+  const popularTreatments = getPopularTreatments(clinics)
 
   const uniqueTreatments = [
     ...new Set(
@@ -95,10 +168,13 @@ export default function ProfilePage({ params }: ProfilePageProps) {
     )
   ];
 
-  if (!filteredClinics) {
-    notFound();
-  }
-  const treatmentSlug = treatmentslug.replaceAll("%20", " ").charAt(0).toUpperCase() + treatmentslug.replaceAll("%20", " ").slice(1)
+  const resolvedTreatmentName =
+    modalities.find((name) => toUrlSlug(name) === treatmentslug) ??
+    (() => {
+      const decoded = treatmentslug.replaceAll('%20', ' ');
+      return modalities.find((name) => name === decoded) ?? decoded;
+    })();
+  const treatmentSlug = resolvedTreatmentName.charAt(0).toUpperCase() + resolvedTreatmentName.slice(1);
   const treatment = treatment_content[treatmentSlug as TreatmentSlug] as Record<string, any>;
   
   
@@ -156,7 +232,102 @@ export default function ProfilePage({ params }: ProfilePageProps) {
         <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
           <CollectionsFilter pageType="Practitioner" />
           <div className="flex-1 min-w-0">
-            <ItemsGrid items={filteredClinics} />
+            {filteredClinics.length > 0 ? (
+              <ItemsGrid items={filteredClinics} />
+            ) : (
+              <div className="space-y-8 px-4 md:px-0">
+                <Card className="border-dashed bg-white">
+                  <CardHeader className="space-y-3">
+                    <h2 className="text-xl font-semibold">No live listings for this treatment in {cityDisplayName} yet</h2>
+                    <p className="text-sm text-muted-foreground max-w-3xl">
+                      We do not have practitioner profiles for {resolvedTreatmentName} in {cityDisplayName} right now.
+                      You can still discover nearby options, highest reviewed clinics, and high-intent pages below.
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-wrap gap-3">
+                    <Link href={`/directory/practitioners/${normalizedCitySlug}`} prefetch={false}>
+                      <Button variant="outline">Browse practitioners in {cityDisplayName}</Button>
+                    </Link>
+                    <Link href={`/directory/clinics/${normalizedCitySlug}`} prefetch={false}>
+                      <Button variant="outline">Browse clinics in {cityDisplayName}</Button>
+                    </Link>
+                    <Link href="/directory/search" prefetch={false}>
+                      <Button>Search the directory</Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                {highestReviewedClinic && (
+                  <Card className="bg-white">
+                    <CardHeader>
+                      <h3 className="text-lg font-semibold text-foreground">Highest reviewed clinic near {cityDisplayName}</h3>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        {formatDisplayText(highestReviewedClinic.slug ?? "top clinic")} has {highestReviewedClinic.reviewCount} reviews and a {highestReviewedClinic.rating.toFixed(1)} average rating.
+                      </p>
+                      <Link
+                        href={`/directory/clinics/${highestReviewedClinic.City.toLowerCase()}/clinic/${highestReviewedClinic.slug}`}
+                        prefetch={false}
+                      >
+                        <Button variant="outline">View clinic profile</Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                )}
+
+                <section className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">Nearest practitioners</h3>
+                  <ItemsGrid
+                    items={nearbyPractitioners.length > 0 ? nearbyPractitioners : cityPractitioners.slice(0, 6)}
+                  />
+                </section>
+
+                <section className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">Nearest clinics</h3>
+                  <ItemsGrid
+                    items={nearbyClinics.length > 0 ? nearbyClinics : popularClinics}
+                  />
+                </section>
+
+                <section className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">Most popular treatment pages</h3>
+                  <MoreItems items={popularTreatments} />
+                </section>
+
+                <section className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">Most popular directory pages</h3>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {popularPages.map((page) => (
+                      <Link key={page.href} href={page.href} prefetch={false}>
+                        <Card className="bg-white transition-colors hover:bg-neutral-50">
+                          <CardContent className="py-4 text-sm font-medium">{page.label}</CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+
+                <section className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">Latest blog guides</h3>
+                  <div className="grid gap-3 md:grid-cols-3">
+                    {blogLinks.map((blog) => (
+                      <a
+                        key={blog.href}
+                        href={blog.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block"
+                      >
+                        <Card className="h-full bg-white transition-colors hover:bg-neutral-50">
+                          <CardContent className="py-4 text-sm font-medium">{blog.title}</CardContent>
+                        </Card>
+                      </a>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            )}
           </div>
         </div>
         <CityTreatmentPage

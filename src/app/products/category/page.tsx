@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, MapPin } from "lucide-react";
 import { readJsonFileSync } from "@/lib/json-cache";
 import { product_categories } from "@/lib/data";
-import { decodeUnicodeEscapes } from "@/lib/utils";
+import { decodeUnicodeEscapes, toUrlSlug } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft} from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
@@ -68,7 +68,7 @@ export default async function ProfilePage() {
             );
             return (
               <div key={brand} style={{ animationDelay: `${index * 50}ms` }}>
-                <Link href={`/products/category/${brand}`} className="block">
+                <Link href={`/products/category/${toUrlSlug(brand)}`} className="block">
                   <Card className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
                     <CardHeader className="pb-2 px-2">
                       <h2 id={`brand-${brand}`} className="text-center">

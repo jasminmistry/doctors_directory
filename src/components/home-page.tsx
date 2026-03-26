@@ -785,36 +785,36 @@ const specialists = [
   {
     name: "Facial Aesthetics",
     image: "directory/images/Facial Aesthetics Specialist.webp",
-    url: "/treatments/Facial%20Treatments",
+    url: "/treatments/facial-treatments",
   },
   {
     name: "Cosmetology",
     image: "directory/images/Cosmetology Specialist.webp",
-    url: "/treatments/Lips",
+    url: "/treatments/lips",
   },
   {
     name: "Hair & Scalp",
     image: "directory/images/Hair & Scalp Specialist.webp",
-    url: "/treatments/Hair%20Treatments",
+    url: "/treatments/hair-treatments",
   },
   {
     name: "Skin Technology & Laser",
     image: "directory/images/Skin Technology & Laser Specialist.webp",
-    url: "/treatments/Skin%20Booster",
+    url: "/treatments/skin-booster",
   },
   {
     name: "Wellness",
     image: "directory/images/Wellness Specialist.webp",
-    url: "/treatments/Massage",
+    url: "/treatments/massage",
   },
 ];
 
 const treatments = [
-  { name: "Facial", image: "directory/images/Facial Treatment.webp", url: "/treatments/Facial%20Treatments" },
-  { name: "Massage", image: "directory/treatments/massage.webp", url: "/treatments/Massage" },
-  { name: "Lips", image: "directory/treatments/lips.webp", url: "/treatments/Lips" },
-  { name: "Skin", image: "directory/images/Skin Treatment.webp", url: "/treatments/Skin%20Booster" },
-  { name: "Hairline", image: "directory/images/Hairline Treatment.webp", url: "/treatments/Hair%20Treatments" },
+  { name: "Facial", image: "directory/images/Facial Treatment.webp", url: "/treatments/facial-treatments" },
+  { name: "Massage", image: "directory/treatments/massage.webp", url: "/treatments/massage" },
+  { name: "Lips", image: "directory/treatments/lips.webp", url: "/treatments/lips" },
+  { name: "Skin", image: "directory/images/Skin Treatment.webp", url: "/treatments/skin-booster" },
+  { name: "Hairline", image: "directory/images/Hairline Treatment.webp", url: "/treatments/hair-treatments" },
 ];
 
 const blogs = [

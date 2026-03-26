@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { toUrlSlug } from '@/lib/utils'
 
 const DEFAULT_BASE_URL = 'https://staging.consentz.com'
 
@@ -20,10 +21,10 @@ export const toDirectoryUrl = (pathname: string): string => {
 }
 
 export const encodeSegment = (value: string): string =>
-  encodeURIComponent(value.trim())
+  encodeURIComponent(toUrlSlug(value))
 
 export const encodeCitySegment = (value: string): string =>
-  encodeSegment(value.toLowerCase())
+  encodeSegment(value)
 
 // Keep dynamic route params as a single path segment even when source text contains slash-like chars.
 export const encodeSegmentForRouteParam = (value: string): string =>

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { ArrowLeft} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { decodeUnicodeEscapes } from "@/lib/utils";
+import { decodeUnicodeEscapes, toUrlSlug } from "@/lib/utils";
+import { product_categories } from "@/lib/data";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Product } from "@/lib/types";
 import fs from "fs";
@@ -26,8 +27,14 @@ interface ProfilePageProps {
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   let { category } = params;
-  category = category.replaceAll('%20', " ");
-  const similarProducts = clinics.filter((p) => p.category === category );
+  const resolvedCategory =
+    product_categories.find((c) => toUrlSlug(c) === category) ??
+    (() => {
+      const decoded = category.replaceAll('%20', ' ');
+      return product_categories.find((c) => c === decoded) ?? decoded;
+    })();
+  category = resolvedCategory;
+  const similarProducts = clinics.filter((p) => p.category === category);
 
 
 
@@ -73,7 +80,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink
-                href={`/directory/products/category/${category}`}
+                href={`/directory/products/category/${toUrlSlug(category)}`}
               >{`${category}`}</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -93,7 +100,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
             >
               <Link
                 prefetch={false}
-                href={`/products/category/${category}/${practitioner.slug}`}
+                href={`/products/category/${toUrlSlug(category)}/${practitioner.slug}`}
                 className="block"
               >
                 <Card className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">

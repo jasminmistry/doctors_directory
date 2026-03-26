@@ -21,6 +21,7 @@ import { readJsonFileSync } from "@/lib/json-cache";
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
 import { Clinic } from "@/lib/types";
+import { toUrlSlug } from "@/lib/utils";
 
 interface ProfilePageProps {
   params: {
@@ -87,7 +88,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink
-                href={`/directory/products/category/${clinic.category}`}
+                href={`/directory/products/category/${toUrlSlug(clinic.category)}`}
               >{`${clinic.category}`}</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
