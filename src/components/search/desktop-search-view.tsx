@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { Locate, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { SearchDropdown } from "./search-dropdown";
@@ -30,15 +31,25 @@ export function DesktopSearchView({
   handlePageChange
 }: DesktopSearchViewProps) {
   const { filters } = useSearchStore();
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const scheduleClose = () => {
+    closeTimeoutRef.current = setTimeout(() => setShowResults(false), 200);
+  };
+
+  const cancelClose = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
 
   const clearQuery = () => {
     setLocalFilters((prev) => ({ ...prev, query: "" }));
-    setShowResults(false);
   };
 
   const clearLocation = () => {
     setLocalFilters((prev) => ({ ...prev, location: "" }));
-    setShowResults(false);
   };
 
   return (
@@ -47,8 +58,8 @@ export function DesktopSearchView({
         <div className="relative">
           <button
             className="flex-1 bg-white border border-r-0 border-gray-300 px-4 py-3 rounded-l-lg"
-            onClick={() => setShowResults(!showResults)}
-            onBlur={() => setTimeout(() => setShowResults(false), 350)}
+            onClick={() => { cancelClose(); setShowResults(!showResults); }}
+            onBlur={scheduleClose}
           >
             <Input
               value={localFilters.type}
@@ -67,9 +78,9 @@ export function DesktopSearchView({
               setLocalFilters((prev) => ({ ...prev, query: e.target.value }))
             }
             className="border-0 shadow-none p-0 pr-7 h-auto w-full text-base placeholder:text-gray-500 focus:outline-none focus:ring-0 focus:border-0 active:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0 active:ring-0"
-            onFocus={() => filters.query && setShowResults(true)}
-            onClick={() => setShowResults(true)}
-            onBlur={() => setTimeout(() => setShowResults(false), 350)}
+            onFocus={() => { cancelClose(); setShowResults(true); }}
+            onClick={() => { cancelClose(); setShowResults(true); }}
+            onBlur={scheduleClose}
           />
           {localFilters.query && (
             <button
@@ -97,9 +108,9 @@ export function DesktopSearchView({
             }
             className="border-0 min-w-[80px] shadow-none p-0 pr-7 h-6 text-base placeholder:text-gray-500 focus:outline-none focus:ring-0 focus:border-0 active:outline-none active:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0"
             onKeyDown={(e) => e.key === "Enter"}
-            onFocus={() => filters.location && setShowResults(true)}
-            onBlur={() => setTimeout(() => setShowResults(false), 350)}
-            onClick={() => setShowResults(true)}
+            onFocus={() => { cancelClose(); setShowResults(true); }}
+            onBlur={scheduleClose}
+            onClick={() => { cancelClose(); setShowResults(true); }}
           />
           {localFilters.location && (
             <button

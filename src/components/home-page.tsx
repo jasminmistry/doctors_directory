@@ -1067,7 +1067,7 @@ export default function HomePage() {
                   className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white"
                 >
                   <a
-                    href="https://www.consentz.com/"
+                    href="https://www.consentz.com/features/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
