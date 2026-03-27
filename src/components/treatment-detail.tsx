@@ -451,8 +451,8 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
                   aria-label={`Average cost ${treatment.averageCost}`}
                 >
                   <Database className="h-6 w-6 mx-auto mb-2 text-black" aria-hidden="true" />
-                  <dd className="text-lg font-bold" itemProp="value">
-                    {treatment.averageCost}
+                  <dd className="text-lg font-bold truncate max-w-[140px] mx-auto" itemProp="value" title={treatment.averageCost}>
+                    {treatment.averageCost.length > 20 ? 'See provider pricing' : treatment.averageCost}
                   </dd>
                   <div className="text-sm text-gray-600">Average Cost</div>
                   <meta itemProp="currency" content="GBP" />

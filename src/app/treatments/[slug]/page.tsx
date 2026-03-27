@@ -178,7 +178,21 @@ const getAverageCost = (
   }
 
   if (Array.isArray(costData)) {
-    return costData[0] ?? 'Cost varies by clinic';
+    for (const item of costData) {
+      if (typeof item === 'string') {
+        const match = item.match(/GBP\s*[0-9,]+(?:\s*(?:to|[-\u2013])\s*GBP\s*[0-9,]+)?/i);
+        if (match) {
+          return match[0].replaceAll(/GBP/gi, 'GBP ').replaceAll(/\s+/g, ' ').trim();
+        }
+
+        const poundMatch = item.match(/£\s*[0-9,]+(?:\s*(?:to|[-\u2013])\s*£?\s*[0-9,]+)?/i);
+        if (poundMatch) {
+          return poundMatch[0].replaceAll(/\s+/g, ' ').trim();
+        }
+      }
+    }
+
+    return 'Cost varies by clinic';
   }
 
   if (typeof costData === 'object') {
