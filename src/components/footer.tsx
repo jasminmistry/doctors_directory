@@ -483,36 +483,44 @@ export function Footer() {
               </h3>
               <ul className="space-y-2">
                 <li>
-                  <button
-                    className="text-left w-full hover:text-white transition"
-                    type="button"
+                  <Link
+                    href="https://v3.consentz.com/admin/registration"
+                    className="block text-sm hover:text-white transition"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     Join Directory
-                  </button>
+                  </Link>
                 </li>
                 <li>
-                  <button
-                    className="text-left w-full hover:text-white transition"
-                    type="button"
+                  <Link
+                    href="https://v3.consentz.com/admin/registration"
+                    className="block text-sm hover:text-white transition"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     Update Profile
-                  </button>
+                  </Link>
                 </li>
                 <li>
-                  <button
-                    className="text-left w-full hover:text-white transition"
-                    type="button"
+                  <Link
+                    href={`${baseUrl}/clinic-management-software/`}
+                    className="block text-sm hover:text-white transition"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     Verification Process
-                  </button>
+                  </Link>
                 </li>
                 <li>
-                  <button
-                    className="text-left w-full hover:text-white transition"
-                    type="button"
+                  <Link
+                    href={`mailto:care@consentz.com`}
+                    className="block text-sm hover:text-white transition"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     Support
-                  </button>
+                  </Link>
                 </li>
               </ul>
             </div>

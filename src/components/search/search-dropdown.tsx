@@ -168,7 +168,7 @@ export function SearchDropdown({
                         locationItemRefs.current[loc] = element;
                       }}
                       onClick={() => handleLocationClick(loc)}
-                      className="text-left text-sm font-medium w-full flex items-center gap-3 hover:bg-gray-50 hover:text-black active:bg-gray-100 p-2 rounded"
+                      className="text-left text-sm font-medium w-full flex items-center gap-3 hover:bg-gray-50 hover:text-black active:bg-gray-100 p-2 rounded overflow-x-hidden whitespace-nowrap"
                     >
                       {loc}
                     </button>
