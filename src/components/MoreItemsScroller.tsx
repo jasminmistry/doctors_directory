@@ -46,26 +46,32 @@ export function MoreItemsScroller({
   }, []);
 
   return (
-    <div className="relative">
-        <div className='w-[80%] mx-auto'>
-      <div
-        ref={scrollContainerRef}
-        className="flex overflow-x-auto gap-4 pb-4 no-scrollbar scroll-smooth"
+    <div className="relative mt-4 pt-2">
+      <div className="w-[90%] mx-auto">
+        <div
+          ref={scrollContainerRef}
+          className="flex overflow-x-auto gap-4 pb-4 no-scrollbar scroll-smooth"
+        >
+          {children}
+        </div>
+      </div>
+
+      {/* Always visible arrows */}
+      <Button
+        onClick={scrollLeft}
+        className="absolute left-0 top-1/2 -translate-y-1/2"
+        disabled={!canScrollLeft} // optional: disables button if cannot scroll
       >
-        {children}
-      </div></div>
+        <ChevronLeft />
+      </Button>
 
-      {canScrollLeft && (
-        <Button onClick={scrollLeft} className="absolute left-0 top-1/2">
-          <ChevronLeft />
-        </Button>
-      )}
-
-      {canScrollRight && (
-        <Button onClick={scrollRight} className="absolute right-0 top-1/2">
-          <ChevronRight />
-        </Button>
-      )}
+      <Button
+        onClick={scrollRight}
+        className="absolute right-0 top-1/2 -translate-y-1/2"
+        disabled={!canScrollRight} // optional
+      >
+        <ChevronRight />
+      </Button>
     </div>
   );
 }
