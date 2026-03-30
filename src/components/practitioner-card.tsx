@@ -533,7 +533,7 @@ export function PractitionerCard({
         >
           <Link href={cityHref}>
             <div className="mt-2 flex flex-col items-center gap-2">
-              {practitioner}
+              <span className="font-bold">{practitioner}</span>
             </div>
           </Link>
         </Card>
