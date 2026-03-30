@@ -11,7 +11,7 @@ module.exports = {
       wait_ready: true,               // wait for process.send('ready') before routing traffic
       listen_timeout: 120000,         // 2 min — allows app.prepare() on slow/low-memory hosts
       kill_timeout: 10000,            // drain in-flight requests before killing a worker
-      max_memory_restart: '1800M',
+      max_memory_restart: '2048M',
       restart_delay: 1000,
       max_restarts: 10,
       min_uptime: '5s',

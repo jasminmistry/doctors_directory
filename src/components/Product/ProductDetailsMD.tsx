@@ -14,22 +14,21 @@ export default function PractitionerDetailsSections({
 
   function renderList(val: any) {
   if (!val) return "Not publicly listed";
-  
 
-  const list = parseList(fixPythonArrayString(val));
-  if (!list.length) return "Not publicly listed";
-
-  return (
-    <ul className="list-disc ml-6 space-y-1">
-      {list.map((a: string, i: number) => (
-        <li key={i}>{a}</li>
-      ))}
-    </ul>
-  );
+    let list = parseList(fixPythonArrayString(val));
+    if (!list.length) return "Not publicly listed";
+    // If first element is an object, convert its key-value pairs to array of strings
+    if (typeof list[0] === "object" && !Array.isArray(list[0])) {
+      list = Object.entries(list[0]).map(([key, value]) => `${key.replace(/_/g, ' ')}: ${String(value)}`);
+    }
+    return (
+      <ul className="list-disc ml-6 space-y-1">
+        {list.map((a: string, i: number) => (
+          <li key={i}>{a}</li>
+        ))}
+      </ul>
+    );
 }
-
-
-
 
   return (
     <div>
