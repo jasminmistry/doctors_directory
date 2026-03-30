@@ -6,12 +6,12 @@ module.exports = {
       exec_mode: 'cluster',
       // node_args is the correct way to pass V8 flags in PM2 cluster mode.
       // NODE_OPTIONS in env: is not inherited by cluster workers.
-      node_args: '--max-old-space-size=2048',
+      node_args: '--max-old-space-size=4096',
       instances: process.env.PM2_INSTANCES || '4', // safe default; override e.g. PM2_INSTANCES=4
       wait_ready: true,               // wait for process.send('ready') before routing traffic
       listen_timeout: 120000,         // 2 min — allows app.prepare() on slow/low-memory hosts
       kill_timeout: 10000,            // drain in-flight requests before killing a worker
-      max_memory_restart: '2048M',
+      max_memory_restart: '4096M', // restart if memory exceeds 4GB
       restart_delay: 1000,
       max_restarts: 10,
       min_uptime: '5s',
