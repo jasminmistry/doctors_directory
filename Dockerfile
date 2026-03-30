@@ -23,7 +23,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
-ENV NODE_OPTIONS=--max-old-space-size=3072
+ENV NODE_OPTIONS=--max-old-space-size=1024
 
 # Install PM2 globally before switching to non-root user
 RUN npm install -g pm2 && apk add --no-cache curl

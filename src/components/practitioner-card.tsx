@@ -141,7 +141,7 @@ function getProductHref(
   }
 
   if (isProduct(practitioner)) {
-    return `/products/category/${practitioner.category}/${practitioner.slug}`;
+    return `/products/category/${toUrlSlug(practitioner.category)}/${practitioner.slug}`;
   }
 
   return "#";

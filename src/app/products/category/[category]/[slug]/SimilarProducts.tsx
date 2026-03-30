@@ -8,8 +8,6 @@ interface SimilarProductsProps {
 }
 
 export default async function SimilarProducts({ category, slug }: SimilarProductsProps) {
-  // Simulate async loading
-  await new Promise((resolve) => setTimeout(resolve, 0));
   const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   const similarProducts = clinics.filter((p) => p.category === category && p.slug !== slug).slice(0, 6);
   return <ItemsGrid items={similarProducts} />;

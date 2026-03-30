@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft} from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       return product_categories.find((c) => c === decoded) ?? decoded;
     })();
   category = resolvedCategory;
+
+  // Redirect if URL segment is not in lowercase-slug form (e.g. "Aesthetic Injectables" → "aesthetic-injectables")
+  const categorySlug = toUrlSlug(resolvedCategory);
+  if (params.category !== categorySlug) {
+    redirect(`/products/category/${categorySlug}`);
+  }
+
   const similarProducts = clinics.filter((p) => p.category === category);
 
 

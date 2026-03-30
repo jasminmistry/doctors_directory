@@ -8,6 +8,8 @@ on:
 
 env:
   CONTAINER_NAME: doctors-directory
+  REDIS_CONTAINER: doctors-directory-redis
+  APP_NETWORK: doctors-directory-net
   APP_PORT: "3000"
 
 jobs:
@@ -53,6 +55,8 @@ jobs:
         env:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
           CONTAINER_NAME: ${{ vars.CONTAINER_NAME || env.CONTAINER_NAME }}
+          REDIS_CONTAINER: ${{ env.REDIS_CONTAINER }}
+          APP_NETWORK: ${{ env.APP_NETWORK }}
           APP_PORT: ${{ vars.APP_PORT || env.APP_PORT }}
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
@@ -61,35 +65,67 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || '22' }}
-          envs: IMAGE_NAME,CONTAINER_NAME,APP_PORT,GHCR_USERNAME,GHCR_TOKEN
+          envs: IMAGE_NAME,CONTAINER_NAME,REDIS_CONTAINER,APP_NETWORK,APP_PORT,GHCR_USERNAME,GHCR_TOKEN
           script_stop: true
           script: |
             set -euo pipefail
 
             CONTAINER_NEW="${CONTAINER_NAME}-new"
             CONTAINER_OLD="${CONTAINER_NAME}-old"
+            REDIS_URL="redis://redis:6379"
 
             docker login ghcr.io -u "$GHCR_USERNAME" -p "$GHCR_TOKEN"
             docker pull "$IMAGE_NAME:latest"
 
+            # ----------------------------------------------------------------
+            # Ensure shared Docker network exists
+            # ----------------------------------------------------------------
+            docker network create "$APP_NETWORK" 2>/dev/null || true
+
+            # ----------------------------------------------------------------
+            # Ensure Redis is running (idempotent — survives app deploys).
+            # Data persists in a named volume across container recreates.
+            # Reachable by the app containers via the network alias "redis".
+            # ----------------------------------------------------------------
+            REDIS_RUNNING=$(docker inspect -f '{{.State.Running}}' "$REDIS_CONTAINER" 2>/dev/null || echo "false")
+            if [ "$REDIS_RUNNING" != "true" ]; then
+              echo "Starting Redis container..."
+              docker rm -f "$REDIS_CONTAINER" 2>/dev/null || true
+              docker run -d \
+                --name "$REDIS_CONTAINER" \
+                --restart unless-stopped \
+                --network "$APP_NETWORK" \
+                --network-alias redis \
+                -v doctors-directory-redis-data:/data \
+                --memory="256m" \
+                redis:8-alpine \
+                redis-server --appendonly yes
+              echo "Redis started"
+            else
+              echo "Redis already running — ensuring it is on $APP_NETWORK..."
+              docker network connect "$APP_NETWORK" "$REDIS_CONTAINER" 2>/dev/null || true
+            fi
+
+            # ----------------------------------------------------------------
+            # Blue-green deployment
+            # ----------------------------------------------------------------
             echo "Starting blue-green deployment..."
-            # Clean up any leftover containers from a previous failed deploy
             docker rm -f "$CONTAINER_NEW" 2>/dev/null || true
             docker rm -f "$CONTAINER_OLD" 2>/dev/null || true
 
-            # Use a temp port for health checking to avoid conflict with live container.
+            # Use a temp port for health checking while live port stays up.
             TEMP_PORT=$((APP_PORT + 1))
 
-            # Run new container on temp port so live port stays up during health check.
             docker run -d \
               --name "$CONTAINER_NEW" \
               --restart no \
+              --network "$APP_NETWORK" \
               -p "127.0.0.1:$TEMP_PORT:3000" \
-              --memory="512m" \
-              --cpus="1.0" \
+              --memory="2248m" \
+              --cpus="2.0" \
+              -e "REDIS_URL=$REDIS_URL" \
               "$IMAGE_NAME:latest"
 
-            # Wait for new container health on temp port.
             echo "Waiting for container to be healthy (temp port $TEMP_PORT)..."
             for i in {1..90}; do
               HEALTH_STATUS=$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER_NEW" 2>/dev/null || echo "starting")
@@ -115,22 +151,23 @@ jobs:
               exit 1
             fi
 
-            # New container is healthy — stop and remove temp instance.
+            # New container is healthy — remove temp instance.
             docker rm -f "$CONTAINER_NEW"
 
-            # Stop old container (frees the live port), then start new on primary port.
+            # Stop old container (frees the live port), start new on live port.
             echo "Switching traffic to new container..."
             docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
 
             docker run -d \
               --name "$CONTAINER_NAME" \
               --restart unless-stopped \
+              --network "$APP_NETWORK" \
               -p "127.0.0.1:$APP_PORT:3000" \
-              --memory="512m" \
-              --cpus="1.0" \
+              --memory="2248m" \
+              --cpus="2.0" \
+              -e "REDIS_URL=$REDIS_URL" \
               "$IMAGE_NAME:latest"
 
-            # Confirm final container is running.
             if [ "$(docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" 2>/dev/null || echo false)" != "true" ]; then
               echo "ERROR: Final container failed to start"
               docker logs --tail 100 "$CONTAINER_NAME" || true
@@ -153,5 +190,4 @@ jobs:
             echo "Cleaning up Docker resources..."
             docker image prune -af --filter "until=72h"
             docker container prune -f
-            docker volume prune -f
             echo "Docker cleanup completed"

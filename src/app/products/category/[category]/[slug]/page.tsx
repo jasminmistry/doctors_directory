@@ -1,12 +1,11 @@
 
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/components/Product/profile-header";
 import ClinicDetailsMarkdown from "@/components/Product/ProductDetailsMD";
 import { Product } from "@/lib/types";
-import fs from "fs";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,28 +17,32 @@ import {
 import PractitionerTabs from "@/components/Product/ProductTabs";
 import { toUrlSlug } from "@/lib/utils";
 import { Suspense } from "react";
+import { readJsonFileSync } from "@/lib/json-cache";
 const SimilarProducts = (await import("./SimilarProducts")).default;
 const UniqueTreatments = (await import("./UniqueTreatments")).default;
 const Locations = (await import("./Locations")).default;
 
-// Preload products at build time (SSG/ISR safe)
-import productsData from "@/../public/products_processed_new.json";
-import path from "path";
-const products: Product[] = productsData as unknown as Product[];
-
+const products: Product[] = readJsonFileSync('products_processed_new.json');
 
 interface ProfilePageProps {
   params: {
+    category: string;
     slug: string;
   };
 }
 
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const { slug } = params;
+  const { slug, category } = params;
   const clinic = products.find((p) => p.slug === slug);
   if (!clinic) {
     notFound();
+  }
+
+  // Redirect if category URL segment is not in lowercase-slug form
+  const expectedCategorySlug = toUrlSlug(clinic.category);
+  if (category !== expectedCategorySlug) {
+    redirect(`/products/category/${expectedCategorySlug}/${slug}`);
   }
 
   return (
@@ -134,10 +137,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 // }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
-  const filePath = path.join(process.cwd(), "public", "products_processed_new.json");
-  const fileContents = fs.readFileSync(filePath, "utf-8");
-  const clinics: Product[] = JSON.parse(fileContents);
-  const clinic = clinics.find((p) => p.slug === params.slug);
+  const clinic = products.find((p) => p.slug === params.slug);
 
   if (!clinic) {
     return {
