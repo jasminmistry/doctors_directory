@@ -68,7 +68,7 @@ jobs:
           envs: IMAGE_NAME,CONTAINER_NAME,REDIS_CONTAINER,APP_NETWORK,APP_PORT,GHCR_USERNAME,GHCR_TOKEN
           script_stop: true
           script: |
-            set -euo pipefail
+            set -euxo pipefail
 
             CONTAINER_NEW="${CONTAINER_NAME}-new"
             CONTAINER_OLD="${CONTAINER_NAME}-old"
