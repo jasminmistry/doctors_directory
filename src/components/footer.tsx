@@ -383,97 +383,26 @@ export function Footer() {
             {/* Column 2: Clinics */}
             {/* Quick Links */}
             <div className="space-y-4">
-              <h4 className="font-semibold">
-                  <Link
-                    prefetch={false}
-                    href="/practitioners"
-                    className="block text-sm"
-                  >
-                    Top Practitioners in {locations.length} cities
-                  </Link>
-              </h4>
-              <h4 className="font-semibold">
-                  <Link prefetch={false} href="/clinics" className="block text-sm">
-                    {" "}
-                    Top Clinics in {locations.length} cities
-                  </Link>
-              </h4>
-              <h4 className="font-semibold">
-                {" "}
-                <Link
-                  prefetch={false}
-                  href={`/clinics/treatment-by-city`}
-                  className="block text-sm"
-                >
-                  Treatments by City (Clinics)
-                </Link>
-              </h4>
-              <h4 className="font-semibold">
-                {" "}
-                <Link
-                  prefetch={false}
-                  href={`/practitioners/treatment-by-city`}
-                  className="block text-sm"
-                >
-                  Treatments by City (Practitioner)
-                </Link>
-              </h4>
-
-              <ul className="gap-2 max-h-[100px] overflow-auto [&>li]:flex [&>li]:before:content-['-'] [&>li]:before:mr-2">
-                {locations.slice(0, 1).map((city, index) => {
-                  return modalities.slice(0, 5).map((treatment, index_t) => (
-                    <li key={index_t}>
-                      <Link
-                        prefetch={false}
-                        href={`/practitioners/${toUrlSlug(city)}/treatments/${toUrlSlug(treatment)}`}
-                        className="block text-sm"
-                      >
-                        {treatment} in {city}
-                      </Link>
-                    </li>
-                  ));
-                })}
-              </ul>
-              <h4 className="font-semibold">
-                {" "}
-                <Link
-                  prefetch={false}
-                  href={`/accredited`}
-                  className="block text-sm"
-                >
-                  Accredited Clinics & Practitioners
-                </Link>
-              </h4>
-              <h4 className="font-semibold">
-                <Link
-                  prefetch={false}
-                  href="/practitioners/credentials"
-                  className="block text-sm"
-                >
-                  {" "}
-                  Awards and Acolades
-                </Link>
-              </h4>
-
-              <h4 className="font-semibold">
-                <Link
-                  prefetch={false}
-                  href={`/products/brands/`}
-                  className="block text-sm"
-                >
-                  Products by Brand
-                </Link>
-              </h4>
-
-              <h4 className="font-semibold">
-                <Link
-                  prefetch={false}
-                  href={`/products/category/`}
-                  className="block text-sm"
-                >
-                  Products by Category
-                </Link>
-              </h4>
+              <div className="">
+                <h3 className="font-bold text-lg text-white mb-4">Directory</h3>
+                <ul className="space-y-3">
+                  <li><Link prefetch={false} href="/treatments" className="block text-sm">Aesthetic Treatments</Link></li>
+                  <li><Link prefetch={false} href="/practitioners" className="block text-sm">Top Aesthetic Practitioners</Link></li>
+                  <li><Link prefetch={false} href="/clinics" className="block text-sm">Top Aesthetic Clinics</Link></li>
+                  <li><Link prefetch={false} href="/accredited" className="block text-sm">Accredited Clinics</Link></li>
+                  <li><Link prefetch={false} href="/clinics/treatment-by-city/" className="block text-sm">Top Clinics by Treatment & City</Link></li>
+                  <li><Link prefetch={false} href="/practitioners/treatment-by-city/" className="block text-sm">Top Practitioners by Treatment & City</Link></li>
+                </ul>
+                <h3 className="font-bold text-lg text-white mt-4 mb-4">Clinics by Accreditation</h3>
+                <ul className="space-y-3">
+                  <li><Link prefetch={false} href="/accredited/cqc/clinics" className="block text-sm">CQC Accredited Clinics</Link></li>
+                  <li><Link prefetch={false} href="/accredited/his/clinics" className="block text-sm">HIS Accredited Clinics</Link></li>
+                  <li><Link prefetch={false} href="/accredited/hiw/clinics" className="block text-sm">HIW Accredited Clinics</Link></li>
+                  <li><Link prefetch={false} href="/accredited/jccp/clinics" className="block text-sm">JCCP Accredited Clinics</Link></li>
+                  <li><Link prefetch={false} href="/accredited/rqia/clinics" className="block text-sm">RQIA Accredited Clinics</Link></li>
+                  <li><Link prefetch={false} href="/accredited/saveface/clinics" className="block text-sm">Save Face Accredited Clinics</Link></li>
+                </ul>
+              </div>
             </div>
 
             {/* Column 3: For Practitioners */}
@@ -481,7 +410,7 @@ export function Footer() {
               <h3 className="font-bold text-lg text-white mb-4">
                 For Practitioners
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 <li>
                   <Link
                     href="https://v3.consentz.com/admin/registration"

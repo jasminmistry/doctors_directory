@@ -16,12 +16,11 @@ import {
 } from "@/components/ui/breadcrumb"
 import path from "path";
 import PractitionerTabs from "@/components/Product/ProductTabs";
-import ItemsGrid from "@/components/collectionGrid";
-import { readJsonFileSync } from "@/lib/json-cache";
-import { MoreItems } from "@/components/MoreItems";
-import { locations } from "@/lib/data";
-import { Clinic } from "@/lib/types";
 import { toUrlSlug } from "@/lib/utils";
+import { Suspense } from "react";
+const SimilarProducts = (await import("./SimilarProducts")).default;
+const UniqueTreatments = (await import("./UniqueTreatments")).default;
+const Locations = (await import("./Locations")).default;
 
 interface ProfilePageProps {
   params: {
@@ -30,23 +29,9 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
+  const clinics: Product[] = (await import("@/lib/json-cache")).readJsonFileSync('products_processed_new.json');
   const { slug } = params;
-  console.log(slug)
   const clinic = clinics.find((p) => p.slug === slug);
-
-  const similarProducts = clinics.filter((p) => p.category === clinic?.category && p.slug !== slug);
-
-  const allClinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
-  const uniqueTreatments = [
-    ...new Set(
-      allClinics
-        .filter(c => Array.isArray(c.Treatments))
-        .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
-    )
-  ];
-  
-
   if (!clinic) {
     notFound();
   }
@@ -114,12 +99,18 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           </div>
         </div>
         <h2 className="text-lg font-semibold text-foreground mb-2">{`Browse more ${clinic.product_category}`}</h2>
-        <ItemsGrid items={similarProducts} />
+        <Suspense fallback={<div className="h-32 bg-muted animate-pulse rounded mb-4" />}> 
+          <SimilarProducts category={clinic.category} slug={clinic.slug} />
+        </Suspense>
         <div className="px-4 md:px-0 space-y-6">
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments`}</h3>
-          <MoreItems items={uniqueTreatments} />
+          <Suspense fallback={<div className="h-24 bg-muted animate-pulse rounded mb-2" />}> 
+            <UniqueTreatments />
+          </Suspense>
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
-          <MoreItems items={locations} />
+          <Suspense fallback={<div className="h-24 bg-muted animate-pulse rounded mb-2" />}> 
+            <Locations />
+          </Suspense>
         </div>
       </div>
     </main>
