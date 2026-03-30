@@ -1,3 +1,4 @@
+
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -13,8 +14,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import path from "path";
+} from "@/components/ui/breadcrumb";
 import PractitionerTabs from "@/components/Product/ProductTabs";
 import { toUrlSlug } from "@/lib/utils";
 import { Suspense } from "react";
@@ -22,16 +22,22 @@ const SimilarProducts = (await import("./SimilarProducts")).default;
 const UniqueTreatments = (await import("./UniqueTreatments")).default;
 const Locations = (await import("./Locations")).default;
 
+// Preload products at build time (SSG/ISR safe)
+import productsData from "@/../public/products_processed_new.json";
+import path from "path";
+const products: Product[] = productsData as unknown as Product[];
+
+
 interface ProfilePageProps {
   params: {
     slug: string;
   };
 }
 
+
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics: Product[] = (await import("@/lib/json-cache")).readJsonFileSync('products_processed_new.json');
   const { slug } = params;
-  const clinic = clinics.find((p) => p.slug === slug);
+  const clinic = products.find((p) => p.slug === slug);
   if (!clinic) {
     notFound();
   }
