@@ -66,9 +66,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || '22' }}
           envs: IMAGE_NAME,CONTAINER_NAME,REDIS_CONTAINER,APP_NETWORK,APP_PORT,GHCR_USERNAME,GHCR_TOKEN
-          script_stop: true
           script: |
-            set -euxo pipefail
+            set -euo pipefail
 
             CONTAINER_NEW="${CONTAINER_NAME}-new"
             CONTAINER_OLD="${CONTAINER_NAME}-old"
