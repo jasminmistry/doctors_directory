@@ -80,21 +80,21 @@ jobs:
             # ----------------------------------------------------------------
             # Ensure shared Docker network exists
             # ----------------------------------------------------------------
-            docker network create "$APP_NETWORK" 2>/dev/null || true
+            docker network create "${APP_NETWORK:-doctors-directory-net}" 2>/dev/null || true
 
             # ----------------------------------------------------------------
             # Ensure Redis is running (idempotent — survives app deploys).
             # Data persists in a named volume across container recreates.
             # Reachable by the app containers via the network alias "redis".
             # ----------------------------------------------------------------
-            REDIS_RUNNING=$(docker inspect -f '{{.State.Running}}' "$REDIS_CONTAINER" 2>/dev/null || echo "false")
+            REDIS_RUNNING=$(docker inspect -f '{{.State.Running}}' "${REDIS_CONTAINER:-doctors-directory-redis}" 2>/dev/null || echo "false")
             if [ "$REDIS_RUNNING" != "true" ]; then
               echo "Starting Redis container..."
-              docker rm -f "$REDIS_CONTAINER" 2>/dev/null || true
+              docker rm -f "${REDIS_CONTAINER:-doctors-directory-redis}" 2>/dev/null || true
               docker run -d \
-                --name "$REDIS_CONTAINER" \
+                --name "${REDIS_CONTAINER:-doctors-directory-redis}" \
                 --restart unless-stopped \
-                --network "$APP_NETWORK" \
+                --network "${APP_NETWORK:-doctors-directory-net}" \
                 --network-alias redis \
                 -v doctors-directory-redis-data:/data \
                 --memory="256m" \
@@ -102,8 +102,8 @@ jobs:
                 redis-server --appendonly yes
               echo "Redis started"
             else
-              echo "Redis already running — ensuring it is on $APP_NETWORK..."
-              docker network connect "$APP_NETWORK" "$REDIS_CONTAINER" 2>/dev/null || true
+              echo "Redis already running — ensuring it is on ${APP_NETWORK:-doctors-directory-net}..."
+              docker network connect "${APP_NETWORK:-doctors-directory-net}" "${REDIS_CONTAINER:-doctors-directory-redis}" 2>/dev/null || true
             fi
 
             # ----------------------------------------------------------------
