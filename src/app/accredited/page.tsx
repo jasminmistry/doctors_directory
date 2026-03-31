@@ -168,9 +168,8 @@ export default async function AccreditedPage() {
                       </span>
                       <Link href={`/accredited/${accreditation}/clinics`}>
                         <Button
-                          variant="outline"
                           size="sm"
-                          className="cursor-pointer"
+                          className="cursor-pointer bg-black text-white hover:bg-white hover:text-black"
                         >
                           View Clinics
                         </Button>
@@ -184,9 +183,8 @@ export default async function AccreditedPage() {
                       </span>
                       <Link href={`/accredited/${accreditation}/practitioners`}>
                         <Button
-                          variant="outline"
                           size="sm"
-                          className="cursor-pointer"
+                          className="cursor-pointer bg-black text-white hover:bg-white hover:text-black"
                         >
                           View Practitioners
                         </Button>

@@ -158,9 +158,10 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                       : "0"}
                   </span>
                 </div>
-                <div className="border-t border-gray-300 my-6"></div>
+                <div className="border-t border-gray-300 my-4"></div>
+                <h3 className="text-lg font-semibold text-foreground mb-4 text-center">Consentz® Clinic Score</h3>
                 <Stats data={boxplotData} />
-                <p className="mt-3 text-xs text-gray-600">{rankingSubtitle}</p>
+                <p className="mt-3 text-xs font-bold text-black">{rankingSubtitle}</p>
               </div>
               {/* HOURS */}
               {flatHours && (

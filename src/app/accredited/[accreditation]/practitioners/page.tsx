@@ -171,7 +171,7 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
                       : ""}{" "}
                     found
                   </p>
-                  <Button variant="outline" className="w-full">
+                  <Button className="w-full bg-black text-white hover:bg-white hover:text-black">
                     View Practitioners
                   </Button>
                 </CardContent>

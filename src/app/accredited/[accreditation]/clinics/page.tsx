@@ -139,7 +139,7 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
                       : ""}{" "}
                     found
                   </p>
-                  <Button variant="outline" className="w-full">
+                  <Button className="w-full bg-black text-white hover:bg-white hover:text-black">
                     View Clinics
                   </Button>
                 </CardContent>
