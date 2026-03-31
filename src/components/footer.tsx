@@ -17,7 +17,7 @@ export function Footer() {
     process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
   return (
     <>
-      <footer className="bg-[var(--dune)] py-16 text-white">
+      <footer className="bg-[var(--dune)] py-8 md:py-16 text-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center flex-col md:flex-row justify-between">
             <div className="w-full md:w-auto">
@@ -40,11 +40,11 @@ export function Footer() {
               </a>
             </div>
           </div>
-          <div className="border-t border-white my-12"></div>
+          <div className="border-t border-white my-6 md:my-12"></div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 mb-12">
             {/* CONSENTZ + Contact */}
-            <div>
+            <div className="col-span-2 md:col-span-1">
               <div className="font-bold text-lg mb-6">
                 <img
                   src="/directory/images/Consentz Logo light.svg"
@@ -367,11 +367,11 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="border-t border-white my-8"></div>
+          <div className="border-t border-white my-6 md:my-8"></div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 text-sm">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 text-sm">
             {/* Column 1: Description */}
-            <div>
+            <div className="col-span-2 md:col-span-1">
               <h3 className="sr-only">About the Directory</h3>
               <p className=" text-white mb-3">
                 Find qualified healthcare and aesthetic practitioners in your
@@ -382,7 +382,7 @@ export function Footer() {
 
             {/* Column 2: Clinics */}
             {/* Quick Links */}
-            <div className="space-y-4">
+            <div className="col-span-2 md:col-span-1 space-y-4">
               <div className="">
                 <h3 className="font-bold text-lg text-white mb-4">Directory</h3>
                 <ul className="space-y-3">
