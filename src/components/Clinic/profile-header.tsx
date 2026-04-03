@@ -20,6 +20,16 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
   const returnTo = queryString ? `${pathname}?${queryString}` : pathname;
+  const normalizeExternalUrl = (value?: string) => {
+    if (!value) return null;
+    const cleaned = value.trim().replace(/^\.+|\.+$/g, "");
+    if (!cleaned) return null;
+    if (/^https?:\/\//i.test(cleaned)) return cleaned;
+    return `https://${cleaned}`;
+  };
+
+  const consultationHref =
+    normalizeExternalUrl(clinic.website) ?? normalizeExternalUrl(clinic.url);
   const practitionerName = clinic.slug!
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -113,17 +123,31 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
         </div>
 
         <div className="flex flex-col gap-3 justify-center">
+          {consultationHref ? (
+            <Button
+              asChild
+              variant="default"
+              className="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
+            >
+              <a href={consultationHref} target="_blank" rel="noopener noreferrer">
+                Request Consultation
+              </a>
+            </Button>
+          ) : (
+            <Button
+              variant="default"
+              disabled
+              className="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white"
+            >
+              Request Consultation
+            </Button>
+          )}
           <Button
-            variant="default"
-            className="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
-          >
-            Request Consultation
-          </Button>
-          <Button
+            asChild
             variant="outline"
             className="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
           >
-            Request Pricing
+            <a href="#fees">Request Pricing</a>
           </Button>
           <SocialMediaIcons clinic={clinic} />
         </div>
