@@ -4,6 +4,7 @@ import type { Practitioner } from "@/lib/types";
 import type { Metadata } from "next";
 import { readJsonFileSync } from "@/lib/json-cache";
 import treatment_content from "../../../../public/treatments.json";
+import { getTreatmentCategory, getTreatmentCategorySlug } from "@/lib/treatment-categories";
 import { stripContentReferencesDeep, toUrlSlug } from "@/lib/utils";
 import { TreatmentDetail } from "@/components/treatment-detail";
 import Script from "next/script";
@@ -100,36 +101,6 @@ const TreatmentMap: Record<string, string> = {
   "Vitamin Therapy": "/directory/treatments/vitamin-therapy.webp",
   "Vulval Dermatology": "/directory/treatments/vulval-dermatology.webp",
   "Weight Loss": "/directory/treatments/weight-loss.webp",
-};
-
-const getTreatmentCategory = (treatmentName: string): string => {
-  const hairTreatments = ['Alopecia', 'Hair Treatments'];
-  const skinTreatments = ['Acne', 'Eczema Treatment', 'Psoriasis', 'Rosacea Treatment', 'Melasma Treatment', 'Contact Dermatitis', 'Dermatitis Treatment', 'Seborrhoeic Dermatitis'];
-  const aestheticTreatments = ['Botox', 'Anti Wrinkle Treatment', 'Fillers', 'Lips', 'Cheek Enhancement', 'Chin Enhancement', 'Tear Trough Treatment', 'Marionettes'];
-  const bodyTreatments = ['Liposuction', 'CoolSculpting', 'Aqualyx', 'Weight Loss', 'Breast Augmentation', 'Rhinoplasty'];
-  const laserTreatments = ['Tattoo Removal', 'Laser Treatments', 'IPL Treatment', 'Photodynamic Therapy (PDT)'];
-  const skincareTreatments = ['Chemical Peel', 'Microneedling', 'Dermapen Treatment', 'Profhilo', 'Skin Booster', 'Polynucleotide Treatment'];
-  
-  if (hairTreatments.some(t => treatmentName.toLowerCase().includes(t.toLowerCase()))) {
-    return 'Hair Treatments';
-  }
-  if (skinTreatments.some(t => treatmentName.toLowerCase().includes(t.toLowerCase()))) {
-    return 'Skin Conditions';
-  }
-  if (aestheticTreatments.some(t => treatmentName.toLowerCase().includes(t.toLowerCase()))) {
-    return 'Aesthetic Treatments';
-  }
-  if (bodyTreatments.some(t => treatmentName.toLowerCase().includes(t.toLowerCase()))) {
-    return 'Body Treatments';
-  }
-  if (laserTreatments.some(t => treatmentName.toLowerCase().includes(t.toLowerCase()))) {
-    return 'Laser Treatments';
-  }
-  if (skincareTreatments.some(t => treatmentName.toLowerCase().includes(t.toLowerCase()))) {
-    return 'Skincare Treatments';
-  }
-  
-  return 'Dermatology';
 };
 
 const getTreatmentContentValue = (
@@ -416,6 +387,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
   // Get treatment category
   const treatmentCategory = getTreatmentCategory(treatment.name);
+  const treatmentCategorySlug = getTreatmentCategorySlug(treatmentCategory);
 
   const treatmentAliases = getTreatmentAliases(treatment.name, slug);
 
@@ -558,7 +530,11 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
-                  <BreadcrumbItem>{treatmentCategory}</BreadcrumbItem>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href={`/directory/treatments/category/${treatmentCategorySlug}`}>
+                      {treatmentCategory}
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
                     <BreadcrumbPage>{`${treatment.name}`}</BreadcrumbPage>
