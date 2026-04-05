@@ -22,6 +22,7 @@ import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { readJsonFileSync } from "@/lib/json-cache"
 import { locations } from "@/lib/data";
+import { capitalize } from "@/lib/utils";
 
 interface PageProps {
   params: {
@@ -34,6 +35,7 @@ export default function CityServicesPage({ params }: PageProps) {
   const products: Array<{ product_category: string; category: string }> = readJsonFileSync('products_processed_new.json');
 
   const { cityslug } = params;
+  const displayCityName = capitalize(cityslug);
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
   const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
@@ -117,7 +119,7 @@ export default function CityServicesPage({ params }: PageProps) {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/directory/clinics/${normalizedCitySlug}`}>{cityslug.charAt(0).toUpperCase() + cityslug.slice(1)}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/directory/clinics/${normalizedCitySlug}`}>{displayCityName}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
@@ -132,7 +134,7 @@ export default function CityServicesPage({ params }: PageProps) {
 
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">
-            Aesthetic Injectables Clinics in {cityslug}
+            Aesthetic Injectables Clinics in {displayCityName}
           </h1>
         </div>
 

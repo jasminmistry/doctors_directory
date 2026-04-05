@@ -24,7 +24,9 @@ import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { readJsonFileSync } from "@/lib/json-cache"
 import { locations, modalities } from "@/lib/data";
-import { toUrlSlug } from "@/lib/utils";
+import { capitalize, toUrlSlug } from "@/lib/utils";
+import { BestRankedBlock } from "@/components/best-ranked-block";
+import { buildClinicRankedEntries } from "@/lib/best-ranked";
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -38,6 +40,7 @@ type TreatmentSlug = keyof typeof treatment_content
 export default function ProfilePage({ params }: ProfilePageProps) {
   const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const { cityslug, serviceslug } = params;
+  const cityDisplayName = capitalize(cityslug);
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
   const normalizedServiceName =
     modalities.find((m) => toUrlSlug(m) === serviceslug) ??
@@ -75,6 +78,7 @@ const serviceMatch = categories.some((cat: string) =>
 
     return cityMatch && serviceMatch
   });
+  const rankedClinics = buildClinicRankedEntries(filteredClinics, 5);
   const cityClinics = clinics.filter(
     (clinic) => clinic.City?.toLowerCase() === decodedCitySlug.toLowerCase()
   );
@@ -136,7 +140,7 @@ const serviceMatch = categories.some((cat: string) =>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                  <BreadcrumbItem>
-                  <BreadcrumbLink href={`/directory/clinics/${normalizedCitySlug}`}>{cityslug.charAt(0).toUpperCase() + cityslug.slice(1)}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/directory/clinics/${normalizedCitySlug}`}>{cityDisplayName}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
@@ -152,9 +156,18 @@ const serviceMatch = categories.some((cat: string) =>
         </div>
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">
-            Top {serviceslug.replaceAll("%20", " ")} Providers in {cityslug}
+            Top {serviceslug.replaceAll("%20", " ")} Providers in {cityDisplayName}
           </h1>
         </div>
+
+        {filteredClinics.length > 0 && (
+          <div className="px-4 md:px-0 pb-4">
+            <BestRankedBlock
+              title={`Best ${normalizedServiceName} Clinics in ${cityDisplayName}`}
+              entries={rankedClinics}
+            />
+          </div>
+        )}
 
         <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
           <CollectionsFilter pageType="Clinic" />
@@ -166,16 +179,16 @@ const serviceMatch = categories.some((cat: string) =>
                 <CardHeader>
                   <h2 className="text-lg font-semibold">No clinics listed yet</h2>
                   <p className="text-sm text-muted-foreground">
-                    We do not have any clinics for {normalizedServiceName} in {cityslug} right now.
+                    We do not have any clinics for {normalizedServiceName} in {cityDisplayName} right now.
                     You can still explore nearby and popular options below.
                   </p>
                 </CardHeader>
                 <CardContent className="flex flex-wrap gap-3">
                   <Link href={`/clinics/${normalizedCitySlug}`} prefetch={false}>
-                    <Button variant="outline">Browse clinics in {cityslug}</Button>
+                    <Button variant="outline">Browse clinics in {cityDisplayName}</Button>
                   </Link>
                   <Link href={`/practitioners/${normalizedCitySlug}`} prefetch={false}>
-                    <Button variant="outline">Browse practitioners in {cityslug}</Button>
+                    <Button variant="outline">Browse practitioners in {cityDisplayName}</Button>
                   </Link>
                   <Link href="/clinics" prefetch={false}>
                     <Button>View all clinics</Button>
@@ -187,7 +200,7 @@ const serviceMatch = categories.some((cat: string) =>
         </div>
 
         <div className="px-4 md:px-0 space-y-6">
-          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${cityslug}`}</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${cityDisplayName}`}</h3>
           <MoreItems
             items={
               uniqueTreatments.length === 0

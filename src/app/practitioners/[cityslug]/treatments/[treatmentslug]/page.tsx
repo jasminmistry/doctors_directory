@@ -19,7 +19,9 @@ import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper
 import { readJsonFileSync } from "@/lib/json-cache"
 import { MoreItems } from "@/components/MoreItems";
 import { locations, modalities } from "@/lib/data";
-import { toUrlSlug } from "@/lib/utils";
+import { capitalize, toUrlSlug } from "@/lib/utils";
+import { BestRankedBlock } from "@/components/best-ranked-block";
+import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 
 type TreatmentSlug = keyof typeof treatment_content
 
@@ -66,15 +68,6 @@ function getPopularTreatments(items: Clinic[]): string[] {
     .map(([treatment]) => treatment)
 }
 
-function formatDisplayText(value: string): string {
-  return value
-    .replaceAll("-", " ")
-    .split(" ")
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ")
-}
-
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -119,7 +112,8 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   const decodedTreatmentSlug = decodeURIComponent(treatmentslug)
   .toLowerCase()
   .replace(/[\s-]+/g, "");
-  const cityDisplayName = formatDisplayText(cityslug);
+  const cityDisplayName = capitalize(decodeURIComponent(cityslug));
+  const treatmentDisplayName = capitalize(decodeURIComponent(treatmentslug));
 
   const filteredClinics = practitioners.filter((practitioner) => {
     // Filter by city
@@ -138,6 +132,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
     return cityMatch && serviceMatch
   });
+  const rankedPractitioners = buildPractitionerRankedEntries(filteredClinics, 5);
 
   const cityPractitioners = practitioners
     .filter((practitioner) => practitioner.City?.toLowerCase() === decodedCitySlug.toLowerCase())
@@ -211,11 +206,11 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}`}>{cityslug.charAt(0).toUpperCase() + cityslug.slice(1)}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}`}>{cityDisplayName}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}/treatments/${treatmentslug}`}>{treatmentslug.replace("%20", " ").split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}/treatments/${treatmentslug}`}>{treatmentDisplayName}</BreadcrumbLink>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -223,15 +218,19 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
           <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
             <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">
-              Top{" "}
-              {treatmentslug
-                .replace("%20", " ")
-                .split(" ")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" ")}{" "}
-              Providers in {cityslug}
+              Top {treatmentDisplayName} Providers in {cityDisplayName}
             </h1>
           </div>
+
+          {filteredClinics.length > 0 && (
+            <div className="px-4 md:px-0 pb-4">
+              <BestRankedBlock
+                title={`Best ${treatmentDisplayName} Practitioners in ${cityDisplayName}`}
+                entries={rankedPractitioners}
+              />
+            </div>
+          )}
+
         </div>
         <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
           <CollectionsFilter pageType="Practitioner" />
@@ -268,7 +267,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <p className="text-sm text-muted-foreground">
-                        {formatDisplayText(highestReviewedClinic.slug ?? "top clinic")} has {highestReviewedClinic.reviewCount} reviews and a {highestReviewedClinic.rating.toFixed(1)} average rating.
+                        {capitalize(highestReviewedClinic.slug ?? "top clinic")} has {highestReviewedClinic.reviewCount} reviews and a {highestReviewedClinic.rating.toFixed(1)} average rating.
                       </p>
                       <Link
                         href={`/directory/clinics/${highestReviewedClinic.City.toLowerCase()}/clinic/${highestReviewedClinic.slug}`}
@@ -340,7 +339,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
           slug={treatmentslug.replaceAll("%20", " ")}
         />
         <div className="px-4 md:px-0 space-y-6">
-          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${cityslug}`}</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${cityDisplayName}`}</h3>
           <MoreItems items={uniqueTreatments} />
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
           <MoreItems items={locations} />

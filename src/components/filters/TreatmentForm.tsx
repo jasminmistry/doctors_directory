@@ -1,5 +1,4 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 
 interface TreatmentFilters {
   concern: string;
@@ -86,12 +85,6 @@ export function TreatmentForm({ filters, onChange, onClear }: FilterFormProps) {
         </Select>
       </div>
 
-      <Button
-        onClick={onClear}
-        className="w-full border border-black bg-transparent text-black hover:bg-white hover:text-black cursor-pointer"
-      >
-        Clear All
-      </Button>
     </>
   );
 }

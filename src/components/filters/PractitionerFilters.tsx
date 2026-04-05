@@ -1,5 +1,4 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import {edu, spec, locations, accreditations} from "@/lib/data";
 
 interface PractitionerFilters {
@@ -150,12 +149,6 @@ export function PractitionerFilters({ filters, onChange, onClear, setIsFilterAct
         </Select>
       </div>
 
-      <Button
-        onClick={onClear}
-        className="w-full border border-black bg-transparent text-black hover:bg-white hover:text-black cursor-pointer"
-      >
-        Clear All
-      </Button>
     </>
   );
 }

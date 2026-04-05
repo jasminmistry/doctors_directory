@@ -13,6 +13,8 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ItemsGrid from "@/components/collectionGrid";
+import { BestRankedBlock } from "@/components/best-ranked-block";
+import { buildClinicRankedEntries } from "@/lib/best-ranked";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
 
 type TreatmentContent = Record<string, any>;
@@ -447,6 +449,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const averageCost = getAverageCost(treatment.name, treatmentData);
   const downtime = getDowntime(treatment.name, treatmentData);
   const satisfaction = getSatisfaction(reviews);
+  const rankedTreatmentClinics = buildClinicRankedEntries(filteredClinics, 5);
 
   if (!filteredClinics) {
     notFound();
@@ -547,6 +550,12 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
             treatment={treatment}
             treatmentData={treatmentData}
           />
+          <div className="container mx-auto max-w-7xl px-4 pt-2 pb-2">
+            <BestRankedBlock
+              title={`Best ${treatment.name} Clinics`}
+              entries={rankedTreatmentClinics}
+            />
+          </div>
           {/* Similar Clinics Section */}
           <div className="container mx-auto max-w-7xl px-4 py-4">
             <div className="px-4 md:px-0 space-y-6 mt-8">

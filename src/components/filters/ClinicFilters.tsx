@@ -1,5 +1,4 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { modalities, locations } from "@/lib/data";
 interface ClinicFilters {
   servicesOffered: string;
@@ -128,12 +127,6 @@ export function ClinicFilters({ filters, onChange, onClear, setIsFilterActive }:
         </Select>
       </div>
 
-      <Button
-        onClick={onClear}
-        className="w-full border border-black bg-transparent text-black hover:bg-white hover:text-black cursor-pointer"
-      >
-        Clear All
-      </Button>
     </>
   );
 }

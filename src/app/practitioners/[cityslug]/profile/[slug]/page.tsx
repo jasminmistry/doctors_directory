@@ -18,6 +18,9 @@ import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
 import { readJsonFileSync } from "@/lib/json-cache";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
+import { ScoreInfoTooltip } from "@/components/score-info-tooltip";
+import { BestRankedBlock } from "@/components/best-ranked-block";
+import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
   const clinicIndex = new Map(
@@ -51,6 +54,14 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     hoursObj["Typical_hours_listed_in_directories"] ?? k?.hours;
   const flatHours = typeof hoursObj === 'object' ? flattenObject(hours) : hours
   const practitioner = {...k,...clinic}
+  const rankedCityPractitioners = buildPractitionerRankedEntries(
+    clinics.filter(
+      (entry) =>
+        entry.City?.toLowerCase() === practitioner.City?.toLowerCase() &&
+        entry.practitioner_name !== clinic?.practitioner_name
+    ),
+    5
+  )
   const cityClinics = Array.from(clinicIndex.values())
   .filter(clinic => clinic.City === practitioner.City)
   const uniqueTreatments = [
@@ -113,7 +124,14 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
        <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
                {/* Profile Header */}
                <ProfileHeader clinic={clinic} k_value={k} clinic_list ={JSON.parse(clinic!.Associated_Clinics!)} />
-       
+
+               <div className="px-4 md:px-0">
+                 <BestRankedBlock
+                   title={`Best Practitioners in ${practitioner.City}`}
+                   entries={rankedCityPractitioners}
+                 />
+               </div>
+
                <div className="px-4 md:px-0">
                  <PractitionerTabs />
        
@@ -146,9 +164,16 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                          </span>
                        </div>
                        <div className="border-t border-gray-300 my-4"></div>
-                       <h3 className="text-lg font-semibold text-foreground mb-4 text-center">Consentz® Practitioner Score</h3>
+                       <div className="mb-4 flex items-center justify-center gap-2">
+                         <h3 className="text-center text-lg font-semibold text-foreground">
+                           Consentz® Practitioner Score
+                         </h3>
+                         <ScoreInfoTooltip entityLabel="practitioner" />
+                       </div>
                        <Stats data={boxplotData} />
-                       <p className="mt-3 text-xs font-bold text-black">{rankingSubtitle}</p>
+                       <p className="mt-3 text-xs font-bold text-black">
+                         {rankingSubtitle}
+                       </p>
                      </div>
                      {/* HOURS */}
               {flatHours && (

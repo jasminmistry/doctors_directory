@@ -18,6 +18,9 @@ import ItemsGrid from "@/components/collectionGrid";
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { EmptyCityState } from "@/components/empty-city-state";
+import { BestRankedBlock } from "@/components/best-ranked-block";
+import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
+import { capitalize } from "@/lib/utils";
 const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
   const clinicIndex = new Map(
@@ -35,6 +38,8 @@ const all_practitioners: Practitioner[] = readJsonFileSync('derms_processed_new_
         practitioner_title: p.practitioner_title,
         practitioner_qualifications: p.practitioner_qualifications,
         practitioner_awards: p.practitioner_awards,
+        weighted_analysis: p.weighted_analysis,
+        ranking: p.ranking,
       }
     
     })
@@ -66,6 +71,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   
   
   const citySlug = params.cityslug;
+  const displayCityName = capitalize(citySlug);
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
   const cityData = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
@@ -74,6 +80,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );
   const hasCityPractitioners = cityClinics.length > 0;
+  const rankedCityPractitioners = buildPractitionerRankedEntries(cityClinics, 5);
     const uniqueTreatments = [
   ...new Set(
     cityClinics
@@ -127,7 +134,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}`}>{citySlug.charAt(0).toUpperCase() + citySlug.slice(1)}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}`}>{displayCityName}</BreadcrumbLink>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -135,7 +142,16 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           
          
           <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
-            <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">Top Aesthetic Practitioners in {citySlug}</h1></div>
+            <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">Top Aesthetic Practitioners in {displayCityName}</h1></div>
+
+        {hasCityPractitioners && (
+          <div className="px-4 md:px-0 pb-4">
+            <BestRankedBlock
+              title={`Best Practitioners in ${displayCityName}`}
+              entries={rankedCityPractitioners}
+            />
+          </div>
+        )}
 
         <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
           <CollectionsFilter pageType="Practitioner" />
@@ -156,7 +172,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
         {hasCityPractitioners && (
         <div className="px-4 md:px-0 space-y-6">
-          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${citySlug}`}</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${displayCityName}`}</h3>
           <MoreItems
             items={
               uniqueTreatments.length === 0

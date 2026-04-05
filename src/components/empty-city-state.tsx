@@ -5,6 +5,7 @@ import ItemsGrid from "@/components/collectionGrid";
 import { MoreItems } from "@/components/MoreItems";
 import type { Clinic, Practitioner } from "@/lib/types";
 import { locations } from "@/lib/data";
+import { capitalize } from "@/lib/utils";
 
 type DiscoveryItem = Clinic | Practitioner;
 
@@ -45,7 +46,7 @@ export function EmptyCityState({
   popularPractitioners,
   popularTreatments,
 }: Readonly<EmptyCityStateProps>) {
-  const cityName = citySlug.charAt(0).toUpperCase() + citySlug.slice(1);
+  const cityName = capitalize(citySlug);
 
   return (
     <div className="px-4 md:px-0 space-y-8">

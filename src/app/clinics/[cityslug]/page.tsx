@@ -16,10 +16,14 @@ import { readJsonFileSync } from "@/lib/json-cache"
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { cityMap, locations } from "@/lib/data";
-import { decodeUnicodeEscapes } from "@/lib/utils";
+import { capitalize, decodeUnicodeEscapes } from "@/lib/utils";
 import { MoreItems } from "@/components/MoreItems";
 import { CityPageData } from "@/components/cityPageData";
 import { EmptyCityState } from "@/components/empty-city-state";
+import { BestRankedBlock } from "@/components/best-ranked-block";
+import { CityPricingContext } from "@/components/city-pricing-context";
+import { buildClinicRankedEntries } from "@/lib/best-ranked";
+import { buildCityTreatmentPriceInsights } from "@/lib/city-pricing";
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -75,6 +79,7 @@ function getPopularTreatments(items: Clinic[]): string[] {
 
 export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const citySlug = params.cityslug;
+  const displayCityName = capitalize(citySlug);
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
   const cityClinics: Clinic[] = clinics.filter(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
@@ -83,6 +88,8 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );
   const hasCityClinics = cityClinics.length > 0;
+  const rankedCityClinics = buildClinicRankedEntries(cityClinics, 5);
+  const cityPricingInsights = buildCityTreatmentPriceInsights(cityClinics, displayCityName, 3);
   const uniqueTreatments = [
   ...new Set(
     cityClinics
@@ -142,7 +149,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbPage>
-                    {citySlug.charAt(0).toUpperCase() + citySlug.slice(1)}
+                    {displayCityName}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -151,8 +158,23 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
         </div>
 
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
-          <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">Top Aesthetic Clinics in {citySlug}</h1>
+          <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">Top Aesthetic Clinics in {displayCityName}</h1>
+        </div>
+
+        {hasCityClinics && (
+          <div className="px-4 md:px-0 pb-4">
+            <BestRankedBlock
+              title={`Best Clinics in ${displayCityName}`}
+              entries={rankedCityClinics}
+            />
           </div>
+        )}
+
+        {hasCityClinics && cityPricingInsights.length > 0 && (
+          <div className="px-4 md:px-0 pb-4">
+            <CityPricingContext city={displayCityName} insights={cityPricingInsights} />
+          </div>
+        )}
 
         <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
           <div className="hidden sm:block">
@@ -176,7 +198,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 
         {hasCityClinics && (
         <div className="px-4 md:px-0 space-y-6">
-          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${citySlug}`}</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${displayCityName}`}</h3>
           <MoreItems
             items={
               uniqueTreatments.length === 0
@@ -208,12 +230,13 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 
 export async function generateMetadata({ params }: ProfilePageProps) {
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
+  const displayCityName = capitalize(citySlug);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
   const canonicalUrl = `${baseUrl}/directory/clinics/${citySlug}`;
 
   return {
-    title: `List of Top Aesthetic Clinics in ${citySlug} - Healthcare Directory`,
-    description: `Looking for the best aesthetic clinics in ${citySlug}? Browse our comprehensive guide to top-rated cosmetic clinics, read expert reviews, and book with confidence.`,
+    title: `List of Top Aesthetic Clinics in ${displayCityName} - Healthcare Directory`,
+    description: `Looking for the best aesthetic clinics in ${displayCityName}? Browse our comprehensive guide to top-rated cosmetic clinics, read expert reviews, and book with confidence.`,
     alternates: {
       canonical: canonicalUrl,
     },

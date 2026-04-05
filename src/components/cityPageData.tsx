@@ -1,5 +1,5 @@
 import { City, Practitioner } from "@/lib/types";
-import { decodeUnicodeEscapes, fixMojibake, toUrlSlug } from "@/lib/utils";
+import { capitalize, decodeUnicodeEscapes, fixMojibake, toUrlSlug } from "@/lib/utils";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 function createBullets(text: unknown) {
@@ -44,11 +44,12 @@ type CityPageDataProps = {
     citySlug: string,cityData: City, cityClinics: Practitioner[], uniqueTreatments: string[]
 }
 export function CityPageData({citySlug, cityData, uniqueTreatments}: CityPageDataProps) {
+  const cityName = capitalize(citySlug);
     return (
         <>
-        <div className='bg-white rounded p-4 mb-4 mt-4'>
+        <div className='bg-white rounded rounded-lg p-4 mb-4 mt-4'>
         <section className="mb-8">
-        <h2 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">About {citySlug}</h2>
+    <h2 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">About {cityName}</h2>
         <section className="space-y-6 text-muted-foreground">
   {/* Overview Section */}
   <div>

@@ -156,7 +156,7 @@ export function CityTreatmentPage({ cityData, treatment, slug }: PageProps) {
     return (
         <>
   {/* ================= HERO ================= */}
-    <div className='bg-white p-4 rounded mb-4'> 
+    <div className='bg-white p-4 rounded rounded-lg mb-4'> 
   
     <h2 className="text-sm md:text-2xl font-semibold mb-1 md:mb-2 mt-2">{treatmentName} Treatment in {cityData.City}</h2>
     <section className='text-muted-foreground gap-2 space-y-2'>

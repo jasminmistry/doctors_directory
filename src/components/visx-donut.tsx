@@ -1,11 +1,28 @@
 "use client";
 import type { BoxPlotDatum } from "@/lib/data";
 import { useMemo } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 export interface VisxDonutChartProps {
   data: BoxPlotDatum[];
 }
 
 export function Stats({ data }: Readonly<VisxDonutChartProps>) {
+  const scoreExplanationByLabel: Record<string, string> = {
+    "Clinic Visibility":
+      "Clinic Visibility: reflects how easy it is for patients to discover and verify this provider through presence, booking signals, and profile evidence.",
+    "Pricing Transparency":
+      "Pricing Transparency: reflects how clearly fees, treatment options, and consultation details are communicated to help patients make informed choices.",
+    "Safety and Trust":
+      "Safety and Trust: reflects accreditation, credibility signals, safety-related review evidence, and trust indicators in the profile.",
+    "Overall Aggregation":
+      "Overall Aggregation: combined summary of visibility, pricing transparency, and safety and trust for quick comparison.",
+  };
+
   const categoryColorByLabel: Record<string, string> = {
     "Clinic Visibility": "#C7EAEF",
     Communication: "#F2B26E",
@@ -46,33 +63,50 @@ export function Stats({ data }: Readonly<VisxDonutChartProps>) {
       0,
       Math.min(100, (30 * d.item.weighted_score) / max + 70)
     );
+    const roundedPercentage = Math.round(percentage);
+    const scoreExplanation =
+      scoreExplanationByLabel[d.label] ??
+      `Consentz score component for ${d.label}.`;
+
     return {
       label: d.label,
       percentage,
+      roundedPercentage,
       color: categoryColorFor(d.label),
+      scoreExplanation,
     };
   });
 
   return (
-    <div className="space-y-3">
-      {rows.map((row) => (
-        <div key={row.label} className="bg-white p-0">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-800">{row.label}</p>
-            <span className="text-sm font-semibold">
-              {Math.round(row.percentage)}%
-            </span>
-          </div>
+    <TooltipProvider>
+      <div className="space-y-3">
+        {rows.map((row) => (
+          <Tooltip key={row.label}>
+            <TooltipTrigger asChild>
+              <div className="bg-white p-0 cursor-help">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium text-gray-800">{row.label}</p>
+                  <span className="text-sm font-semibold">{row.roundedPercentage}%</span>
+                </div>
 
-          {/* shadcn style progress bar */}
-          <div className="w-full h-10 border border-gray-200 rounded-lg overflow-hidden">
-            <div
-              className="h-full rounded-lg transition-all"
-              style={{ width: `${row.percentage}%`, background: row.color }}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
+                {/* shadcn style progress bar */}
+                <div className="w-full h-10 border border-gray-200 rounded-lg overflow-hidden">
+                  <div
+                    className="h-full rounded-lg transition-all"
+                    style={{ width: `${row.percentage}%`, background: row.color }}
+                  />
+                </div>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent
+              side="top"
+              className="max-w-[320px] rounded-xl border border-gray-200 bg-white px-4 py-3 text-xs leading-relaxed text-gray-700 shadow-xl"
+            >
+              {row.scoreExplanation}
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
+    </TooltipProvider>
   );
 }

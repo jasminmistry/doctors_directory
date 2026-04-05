@@ -374,8 +374,8 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
         </div>
         <Card
           className={`
-          bg-transparent h-[460px] shadow-none border border-transparent rounded-0 pb-[145px] px-4 md:px-0 md:py-0 relative
-          md:relative md:block md:h-auto w-full md:bg-transparent md:translate-x-0
+          bg-transparent h-dvh md:h-[560px] shadow-none border border-transparent rounded-0 px-4 md:px-0 md:py-0
+          relative md:relative md:block w-full md:bg-transparent md:translate-x-0
           fixed top-0 left-0 bg-white z-[99999] transition-transform duration-300 ease-in-out
           ${isFilterActive ? "translate-x-0" : "-translate-x-full"} ${isOpen ? "block" : "hidden"}
         `}
@@ -392,62 +392,71 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
             </Button>
           </CardHeader>
 
-          <CardContent className="p-0 w-full h-full space-y-4 static">
-            {filters.type === "Treatments" && (
-              <TreatmentForm
-                filters={treatmentFilters}
-                onChange={handleTreatmentFilterChange}
-                onClear={() => {
-                  setTreatmentFilters(defaultTreatmentFilters);
-                  setFilters(createEmptySearchFilters());
-                }}
-              />
-            )}
+          <CardContent className="p-0 w-full h-full flex flex-col min-h-0">
+            <div className="space-y-4 flex-1 overflow-y-auto min-h-0 pr-1 pb-4">
+              {filters.type === "Treatments" && (
+                <TreatmentForm
+                  filters={treatmentFilters}
+                  onChange={handleTreatmentFilterChange}
+                  onClear={() => {
+                    setTreatmentFilters(defaultTreatmentFilters);
+                    setFilters(createEmptySearchFilters());
+                  }}
+                />
+              )}
 
-            {filters.type === "Clinic" && (
-              <ClinicFilters
-                filters={clinicFilters}
-                onChange={handleClinicFilterChange}
-                onClear={() => {
-                  setClinicFilters(defaultClinicOnClearFilters);
-                  setFilters(createEmptySearchFilters());
-                }}
-                setIsFilterActive={setIsFilterActive}
-              />
-            )}
+              {filters.type === "Clinic" && (
+                <ClinicFilters
+                  filters={clinicFilters}
+                  onChange={handleClinicFilterChange}
+                  onClear={() => {
+                    setClinicFilters(defaultClinicOnClearFilters);
+                    setFilters(createEmptySearchFilters());
+                  }}
+                  setIsFilterActive={setIsFilterActive}
+                />
+              )}
 
-            {filters.type === "Practitioner" && (
-              <PractitionerFilters
-                filters={practitionerFilters}
-                onChange={handlePractitionerFilterChange}
-                onClear={() => {
-                  setPractitionerFilters(defaultPractitionerFilters);
-                  setFilters(createEmptySearchFilters());
-                }}
-                setIsFilterActive={setIsFilterActive}
-              />
-            )}
+              {filters.type === "Practitioner" && (
+                <PractitionerFilters
+                  filters={practitionerFilters}
+                  onChange={handlePractitionerFilterChange}
+                  onClear={() => {
+                    setPractitionerFilters(defaultPractitionerFilters);
+                    setFilters(createEmptySearchFilters());
+                  }}
+                  setIsFilterActive={setIsFilterActive}
+                />
+              )}
 
-            {filters.type === "Product" && (
-              <ProductFilters
-                filters={productFilters}
-                onChange={handleProductFilterChange}
-                onClear={() => {
-                  setProductFilters(defaultProductFilters);
-                  setFilters(createEmptySearchFilters());
-                }}
-                setIsFilterActive={setIsFilterActive}
-              />
-            )}
+              {filters.type === "Product" && (
+                <ProductFilters
+                  filters={productFilters}
+                  onChange={handleProductFilterChange}
+                  onClear={() => {
+                    setProductFilters(defaultProductFilters);
+                    setFilters(createEmptySearchFilters());
+                  }}
+                  setIsFilterActive={setIsFilterActive}
+                />
+              )}
 
-            <div className="bg-white md:bg-transparent space-y-2 px-4 w-full absolute py-2 md:py-0 md:px-0 md:static bottom-0 left-0 right-0">
-              <Button
-                variant="default"
-                onClick={handleApplyFilters}
-                className="w-full bg-black border border-black hover:bg-black text-white hover:cursor-pointer hover:bg-white hover:text-black"
-              >
-                Apply Filters
-              </Button>
+              <div className="bg-white md:bg-transparent space-y-2 px-4 md:px-0 py-2 md:py-0 w-full border-t border-gray-100 md:border-0">
+                <Button
+                  variant="outline"
+                  onClick={handleClearFilters}
+                  className="w-full border border-black bg-transparent text-black hover:bg-white hover:text-black"
+                >
+                  Clear All
+                </Button>
+                <Button
+                  variant="default"
+                  onClick={handleApplyFilters}
+                  className="w-full bg-black border border-black hover:bg-black text-white hover:cursor-pointer hover:bg-white hover:text-black"
+                >
+                  Apply Filters
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

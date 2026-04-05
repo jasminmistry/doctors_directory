@@ -119,6 +119,15 @@ export function toUrlSlug(value: string): string {
     .replaceAll(/^-|-$/g, '')
 }
 
+export function capitalize(value: string): string {
+  return value
+    .trim()
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+}
+
 export function parseLabels(label: string): [boolean, string] | null {
   try {
     const jsonReady = label

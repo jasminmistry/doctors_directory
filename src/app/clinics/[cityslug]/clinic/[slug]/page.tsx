@@ -20,10 +20,15 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import ItemsGrid from "@/components/collectionGrid";
-import { flattenObject } from "@/lib/utils";
+import { capitalize, flattenObject } from "@/lib/utils";
 import { Section } from "@/components/ui/section";
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
+import { ScoreInfoTooltip } from "@/components/score-info-tooltip";
+import { BestRankedBlock } from "@/components/best-ranked-block";
+import { buildClinicRankedEntries } from "@/lib/best-ranked";
+import { CityPricingContext } from "@/components/city-pricing-context";
+import { buildCityTreatmentPriceInsights } from "@/lib/city-pricing";
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
   incoming: Record<string, ItemMeta>
@@ -46,9 +51,15 @@ interface ProfilePageProps {
 export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const { cityslug,slug } = params;
+  const displayCityName = capitalize(cityslug);
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
   const cityClinics: Clinic[] = clinics.filter(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
+  );
+  const clinic = clinics.find((p) => p.slug === slug);
+  const rankedCityClinics = buildClinicRankedEntries(
+    cityClinics.filter((cityClinic) => cityClinic.slug !== clinic?.slug),
+    5
   );
   const uniqueTreatments = [
   ...new Set(
@@ -57,9 +68,6 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
       .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
   )
 ];
-
-  const clinic = clinics.find((p) => p.slug === slug);
-
   const hoursObj = clinic?.hours as unknown as Record<string, any>;
 
   const hours = 
@@ -78,7 +86,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     boxplotData.find((datum) => datum.label === "Overall Aggregation")?.item.weighted_score ?? 0
   );
   const rankingSubtitle =
-    clinic?.ranking?.subtitle_text ?? `${overallScore}/100 in ${clinic?.City ?? cityslug}`;
+    clinic?.ranking?.subtitle_text ?? `${overallScore}/100 in ${clinic?.City ?? displayCityName}`;
 
   if (!clinic) {
     notFound();
@@ -112,7 +120,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/directory/clinics/${normalizedCitySlug}`}>{`${cityslug}`}</BreadcrumbLink>
+              <BreadcrumbLink href={`/directory/clinics/${normalizedCitySlug}`}>{displayCityName}</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -125,6 +133,20 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 
       <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
         <ProfileHeader clinic={clinic} />
+
+        <div className="px-4 md:px-0 space-y-4">
+          <BestRankedBlock
+            title={`Best Clinics in ${clinic.City}`}
+            entries={rankedCityClinics}
+          />
+          {cityClinics.length > 0 && (
+            <CityPricingContext
+              city={displayCityName}
+              insights={buildCityTreatmentPriceInsights(cityClinics, displayCityName, 1)}
+              variant="light"
+            />
+          )}
+        </div>
 
         <div className="px-4 md:px-0">
           <ClinicTabs />
@@ -159,9 +181,16 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                   </span>
                 </div>
                 <div className="border-t border-gray-300 my-4"></div>
-                <h3 className="text-lg font-semibold text-foreground mb-4 text-center">Consentz® Clinic Score</h3>
+                <div className="mb-4 flex items-center justify-center gap-2">
+                  <h3 className="text-center text-lg font-semibold text-foreground">
+                    Consentz® Clinic Score
+                  </h3>
+                  <ScoreInfoTooltip entityLabel="clinic" />
+                </div>
                 <Stats data={boxplotData} />
-                <p className="mt-3 text-xs font-bold text-black">{rankingSubtitle}</p>
+                <p className="mt-3 text-xs font-bold text-black">
+                  {rankingSubtitle}
+                </p>
               </div>
               {/* HOURS */}
               {flatHours && (
@@ -238,7 +267,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
           </div>
         </div>
         <div className="px-4 md:px-0 space-y-6">
-          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${cityslug}`}</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${displayCityName}`}</h3>
           <MoreItems items={uniqueTreatments} />
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
           <MoreItems items={locations} />
