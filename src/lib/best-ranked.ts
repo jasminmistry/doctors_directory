@@ -167,10 +167,10 @@ const buildEntries = (
     const href =
       kind === "clinic"
         ? clinicSlug
-          ? `/directory/clinics/${city}/clinic/${clinicSlug}`
+          ? `/clinics/${city}/clinic/${clinicSlug}`
           : "#"
         : practitionerName
-          ? `/directory/practitioners/${city}/profile/${practitionerName}`
+          ? `/practitioners/${city}/profile/${practitionerName}`
           : "#"
 
     return {
