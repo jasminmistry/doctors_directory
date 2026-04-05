@@ -60,15 +60,15 @@ export function EmptyCityState({
           </p>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
-          <Link href={pageLabel === "clinics" ? "/directory/practitioners" : "/directory/clinics"} prefetch={false}>
+          <Link href={pageLabel === "clinics" ? "/practitioners" : "/clinics"} prefetch={false}>
             <Button variant="outline">
               {pageLabel === "clinics" ? "Browse practitioners" : "Browse clinics"}
             </Button>
           </Link>
-          <Link href="/directory/treatments" prefetch={false}>
+          <Link href="/treatments" prefetch={false}>
             <Button variant="outline">Browse treatments</Button>
           </Link>
-          <Link href="/directory/search" prefetch={false}>
+          <Link href="/search" prefetch={false}>
             <Button>Search the directory</Button>
           </Link>
         </CardContent>

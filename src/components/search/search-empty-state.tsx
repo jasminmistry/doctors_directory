@@ -106,13 +106,13 @@ export function SearchEmptyState({
           </p>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
-          <Link href="/directory/search" prefetch={false}>
+          <Link href="/search" prefetch={false}>
             <Button variant="outline">Reset search</Button>
           </Link>
-          <Link href="/directory/treatments" prefetch={false}>
+          <Link href="/treatments" prefetch={false}>
             <Button variant="outline">Browse treatments</Button>
           </Link>
-          <Link href="/directory/clinics" prefetch={false}>
+          <Link href="/clinics" prefetch={false}>
             <Button>Browse all clinics</Button>
           </Link>
         </CardContent>
