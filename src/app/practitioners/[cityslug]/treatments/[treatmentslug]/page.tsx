@@ -200,17 +200,17 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory/practitioners">
+                  <BreadcrumbLink href="/practitioners">
                     Practitioners
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}`}>{cityDisplayName}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/practitioners/${normalizedCitySlug}`}>{cityDisplayName}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}/treatments/${treatmentslug}`}>{treatmentDisplayName}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/practitioners/${normalizedCitySlug}/treatments/${treatmentslug}`}>{treatmentDisplayName}</BreadcrumbLink>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -248,13 +248,13 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                     </p>
                   </CardHeader>
                   <CardContent className="flex flex-wrap gap-3">
-                    <Link href={`/directory/practitioners/${normalizedCitySlug}`} prefetch={false}>
+                    <Link href={`/practitioners/${normalizedCitySlug}`} prefetch={false}>
                       <Button variant="outline">Browse practitioners in {cityDisplayName}</Button>
                     </Link>
-                    <Link href={`/directory/clinics/${normalizedCitySlug}`} prefetch={false}>
+                    <Link href={`/clinics/${normalizedCitySlug}`} prefetch={false}>
                       <Button variant="outline">Browse clinics in {cityDisplayName}</Button>
                     </Link>
-                    <Link href="/directory/search" prefetch={false}>
+                    <Link href="/search" prefetch={false}>
                       <Button>Search the directory</Button>
                     </Link>
                   </CardContent>
@@ -270,7 +270,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
                         {capitalize(highestReviewedClinic.slug ?? "top clinic")} has {highestReviewedClinic.reviewCount} reviews and a {highestReviewedClinic.rating.toFixed(1)} average rating.
                       </p>
                       <Link
-                        href={`/directory/clinics/${highestReviewedClinic.City.toLowerCase()}/clinic/${highestReviewedClinic.slug}`}
+                        href={`/clinics/${highestReviewedClinic.City.toLowerCase()}/clinic/${highestReviewedClinic.slug}`}
                         prefetch={false}
                       >
                         <Button variant="outline">View clinic profile</Button>
