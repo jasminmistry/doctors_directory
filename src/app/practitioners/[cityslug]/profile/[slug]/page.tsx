@@ -54,12 +54,20 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     hoursObj["Typical_hours_listed_in_directories"] ?? k?.hours;
   const flatHours = typeof hoursObj === 'object' ? flattenObject(hours) : hours
   const practitioner = {...k,...clinic}
+  const currentCity = practitioner.City?.toLowerCase()
   const rankedCityPractitioners = buildPractitionerRankedEntries(
-    clinics.filter(
-      (entry) =>
-        entry.City?.toLowerCase() === practitioner.City?.toLowerCase() &&
-        entry.practitioner_name !== clinic?.practitioner_name
-    ),
+    clinics
+      .filter((entry) => entry.practitioner_name !== clinic?.practitioner_name)
+      .map((entry) => {
+        try {
+          const assocSlug = JSON.parse(entry.Associated_Clinics ?? "[]")[0]
+          const assocClinic = clinicIndex.get(assocSlug)
+          return assocClinic ? { ...assocClinic, ...entry } : entry
+        } catch {
+          return entry
+        }
+      })
+      .filter((entry) => entry.City?.toLowerCase() === currentCity),
     5
   )
   const cityClinics = Array.from(clinicIndex.values())
@@ -124,13 +132,6 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
        <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
                {/* Profile Header */}
                <ProfileHeader clinic={clinic} k_value={k} clinic_list ={JSON.parse(clinic!.Associated_Clinics!)} />
-
-               <div className="px-4 md:px-0">
-                 <BestRankedBlock
-                   title={`Best Practitioners in ${practitioner.City}`}
-                   entries={rankedCityPractitioners}
-                 />
-               </div>
 
                <div className="px-4 md:px-0">
                  <PractitionerTabs />
@@ -251,7 +252,12 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                    <MoreItems items={uniqueTreatments} />
                    <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
                    <MoreItems items={locations} />
-
+                 </div>
+                 <div className="px-4 md:px-0 space-y-4">
+                   <BestRankedBlock
+                     title={`Best Practitioners in ${practitioner.City}`}
+                     entries={rankedCityPractitioners}
+                   />
                  </div>
               </div>
 

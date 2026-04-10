@@ -134,19 +134,6 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
       <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
         <ProfileHeader clinic={clinic} />
 
-        <div className="px-4 md:px-0 space-y-4">
-          <BestRankedBlock
-            title={`Best Clinics in ${clinic.City}`}
-            entries={rankedCityClinics}
-          />
-          {cityClinics.length > 0 && (
-            <CityPricingContext
-              city={displayCityName}
-              insights={buildCityTreatmentPriceInsights(cityClinics, displayCityName, 1)}
-              variant="light"
-            />
-          )}
-        </div>
 
         <div className="px-4 md:px-0">
           <ClinicTabs />
@@ -272,6 +259,20 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
           <MoreItems items={locations} />
         </div>
+        <div className="px-4 md:px-0 space-y-4">
+          <BestRankedBlock
+            title={`Best Clinics in ${clinic.City}`}
+            entries={rankedCityClinics}
+          />
+          {cityClinics.length > 0 && (
+            <CityPricingContext
+              city={displayCityName}
+              insights={buildCityTreatmentPriceInsights(cityClinics, displayCityName, 1)}
+              variant="light"
+            />
+          )}
+        </div>
+
       </div>
     </main>
   );

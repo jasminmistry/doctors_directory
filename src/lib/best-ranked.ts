@@ -146,6 +146,14 @@ const buildEntries = (
         return right.score - left.score
       }
 
+      // Tiebreak 1: more reviews = more credible score → ranked higher
+      const reviewDiff =
+        Number(right.item.reviewCount ?? 0) - Number(left.item.reviewCount ?? 0)
+      if (reviewDiff !== 0) {
+        return reviewDiff
+      }
+
+      // Tiebreak 2: rating
       return (right.item.rating ?? 0) - (left.item.rating ?? 0)
     })
     .slice(0, limit)

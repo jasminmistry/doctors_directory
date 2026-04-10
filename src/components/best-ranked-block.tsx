@@ -1,10 +1,25 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { RankedEntry } from "@/lib/best-ranked"
+
+const DEFAULT_IMAGE = "/directory/images/default-dr-profile-1.webp"
+
+function EntryImage({ src, alt }: { src: string; alt: string }) {
+  const [imgSrc, setImgSrc] = useState(src || DEFAULT_IMAGE)
+  return (
+    <img
+      src={imgSrc}
+      alt={alt}
+      className="object-cover rounded-full min-w-full min-h-full"
+      onError={() => setImgSrc(DEFAULT_IMAGE)}
+    />
+  )
+}
 
 interface BestRankedBlockProps {
   title: string
@@ -63,8 +78,15 @@ const pickIndex = (
 const pickPriceIndex = (
   entries: RankedEntry[],
   used: Set<number>,
-  mode: "max" | "min"
+  mode: "max" | "min",
+  allPrices: number[]
 ): number | null => {
+  // Only assign a price label if there is meaningful price spread (>10% difference)
+  if (allPrices.length < 2) return null
+  const minP = Math.min(...allPrices)
+  const maxP = Math.max(...allPrices)
+  if (maxP - minP < minP * 0.1) return null
+
   let chosen: number | null = null
 
   for (let index = 0; index < entries.length; index += 1) {
@@ -109,9 +131,13 @@ const buildCardLabels = (entries: RankedEntry[]): CardLabel[] => {
     used.add(index)
   }
 
+  const allPrices = entries
+    .map((e) => e.averagePrice)
+    .filter((p): p is number => p !== null)
+
   assign(pickIndex(entries, (entry) => entry.scoreValue, used, "max"), "🥇 Best Overall")
-  assign(pickPriceIndex(entries, used, "min"), "💰 Best Value")
-  assign(pickPriceIndex(entries, used, "max"), "🏆 Premium Choice")
+  assign(pickPriceIndex(entries, used, "min", allPrices), "💰 Best Value")
+  assign(pickPriceIndex(entries, used, "max", allPrices), "🏆 Premium Choice")
   assign(
     pickIndex(entries, (entry) => entry.reviewCount, used, "max"),
     "⭐ Most Reviewed"
@@ -156,16 +182,7 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
             {/* Image + rank badge + name + score + price */}
             <div className="flex flex-col items-center text-center px-3 pt-4 pb-2">
               <div className="relative w-[80px] h-[80px] flex items-center justify-center overflow-visible rounded-full bg-gray-300 mb-3">
-                <img
-                  src={entry.image}
-                  alt="Profile"
-                  className="object-cover rounded-full min-w-full min-h-full"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null
-                    e.currentTarget.src = "/directory/images/default-dr-profile-1.webp"
-                  }}
-                />
-                <span className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-black text-white text-[10px] font-bold flex items-center justify-center leading-none">{index + 1}</span>
+                <EntryImage src={entry.image} alt={entry.name} />
               </div>
               <Link
                 href={entry.href}

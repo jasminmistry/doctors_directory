@@ -73,13 +73,12 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
           <div className="flex flex-row flex-wrap items-start md:items-center">
             <div className="w-[80px] h-[80px] md:w-[160px] md:h-[160px] flex items-center justify-center overflow-hidden rounded-full bg-grey-300 mr-4">
               <img
-                src={"/directory/images/doc.png"}
-                alt={"/placeholder.svg"}
-                className="object-cover rounded-full min-w- min-h-full"
+                src={clinic.practitioner_image_link ?? "/directory/images/default-dr-profile-1.webp"}
+                alt={practitionerName}
+                className="object-cover rounded-full min-w-full min-h-full"
                 onError={(e) => {
-                  e.currentTarget.onerror = null; // prevent infinite loop
-                  e.currentTarget.src =
-                    "/directory/images/default-dr-profile-1.webp";
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/directory/images/default-dr-profile-1.webp";
                 }}
               />
             </div>

@@ -17,7 +17,7 @@ function Card({
     <Comp
       data-slot="card"
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 border-t border-b md:border md:rounded-lg py-6 shadow-none",
+        "bg-card text-card-foreground flex flex-col gap-6 border-t border-b md:border rounded-lg py-6 shadow-none",
         className
       )}
       {...props}
