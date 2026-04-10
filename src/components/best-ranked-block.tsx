@@ -1,25 +1,11 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { FallbackImage } from "@/components/ui/fallback-image"
 import type { RankedEntry } from "@/lib/best-ranked"
-
-const DEFAULT_IMAGE = "/directory/images/default-dr-profile-1.webp"
-
-function EntryImage({ src, alt }: { src: string; alt: string }) {
-  const [imgSrc, setImgSrc] = useState(src || DEFAULT_IMAGE)
-  return (
-    <img
-      src={imgSrc}
-      alt={alt}
-      className="object-cover rounded-full min-w-full min-h-full"
-      onError={() => setImgSrc(DEFAULT_IMAGE)}
-    />
-  )
-}
 
 interface BestRankedBlockProps {
   title: string
@@ -182,7 +168,7 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
             {/* Image + rank badge + name + score + price */}
             <div className="flex flex-col items-center text-center px-3 pt-4 pb-2">
               <div className="relative w-[80px] h-[80px] flex items-center justify-center overflow-visible rounded-full bg-gray-300 mb-3">
-                <EntryImage src={entry.image} alt={entry.name} />
+                <FallbackImage src={entry.image} alt={entry.name} className="object-cover rounded-full min-w-full min-h-full" />
               </div>
               <Link
                 href={entry.href}

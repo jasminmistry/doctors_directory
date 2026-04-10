@@ -7,6 +7,7 @@ import { Star, MapPin } from "lucide-react";
 import { readJsonFileSync } from "@/lib/json-cache";
 import { product_categories } from "@/lib/data";
 import { decodeUnicodeEscapes, toUrlSlug } from "@/lib/utils";
+import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft} from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
@@ -78,13 +79,11 @@ export default async function ProfilePage() {
                         <div className="text-center flex-1 min-w-0 items-center flex flex-col">
                           <div className="flex w-full flex-row items-start border-b border-[#C4C4C4] md:border-0 md:flex-col md:items-center">
                             <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg md:mb-4 mr-0">
-                              <img
-                                src={
-                                  itemDetail?.image_url?.replaceAll('"', "") ||
-                                  "/placeholder.svg"
-                                }
-                                alt="Product"
+                              <FallbackImage
+                                src={itemDetail?.image_url?.replaceAll('"', "")}
+                                alt={itemDetail?.product_name ?? "Product"}
                                 className="object-cover rounded-full min-w-full min-h-full"
+                                fallback={DEFAULT_PRODUCT}
                               />
                             </div>
                           </div>

@@ -11,6 +11,7 @@ import {
   isCity,
 } from "@/lib/utils";
 import ClinicLabels from "./Clinic/clinicLabels";
+import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
 import { locations, TreatmentMap } from "@/lib/data";
 import { Button } from "./ui/button";
 import { isClinic, isPractitioner, isProduct, isTreatment, toUrlSlug } from "@/lib/utils";
@@ -92,18 +93,15 @@ function getPractitionerOrClinicHref(
 function getProfileImageSrc(
   practitioner: Practitioner | Clinic | Product | string,
 ): string {
-  if (isPractitioner(practitioner)) {
-    return "/directory/images/default-dr-profile-1.webp";
+  if (isPractitioner(practitioner) && practitioner.practitioner_image_link) {
+    return practitioner.practitioner_image_link;
   }
 
-  if (
-    (isPractitioner(practitioner) || isClinic(practitioner)) &&
-    practitioner.image
-  ) {
-    return practitioner.image.replace("&w=256&q=75", "") || "/placeholder.svg";
+  if ((isPractitioner(practitioner) || isClinic(practitioner)) && practitioner.image) {
+    return practitioner.image.replace("&w=256&q=75", "");
   }
 
-  return "/placeholder.svg";
+  return "/directory/images/default-dr-profile-1.webp";
 }
 
 function getCityHref(
@@ -174,11 +172,7 @@ function getTreatmentHref(
 }
 
 function getTreatmentImageSrc(treatmentName: string): string {
-  if (!treatmentName) {
-    return "/placeholder.svg";
-  }
-
-  return TreatmentMap[treatmentName] || "/placeholder.svg";
+  return TreatmentMap[treatmentName] || "/directory/images/default-dr-profile-1.webp";
 }
 
 function getAwardHref(
@@ -247,15 +241,10 @@ export function PractitionerCard({
                     <div className="flex flex-col flex-1 min-w-0 text-left items-stretch">
                       <div className="flex w-full flex-row items-start md:border-0 md:flex-col md:items-center">
                         <div className="mt-2 relative w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-full bg-gray-300 md:mb-3 mr-0">
-                          <img
+                          <FallbackImage
                             src={profileImageSrc}
                             alt="Profile"
                             className="object-cover rounded-full min-w-full min-h-full"
-                            onError={(e) => {
-                              e.currentTarget.onerror = null; // prevent infinite loop
-                              e.currentTarget.src =
-                                "/directory/images/default-dr-profile-1.webp";
-                            }}
                           />
                         </div>
 
@@ -421,13 +410,11 @@ export function PractitionerCard({
                 <div className="text-center flex-1 min-w-0 items-center flex flex-col">
                   <div className="flex w-full flex-row items-start md:border-0 md:flex-col md:items-center">
                     <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg bg-gray-300 md:mb-4 mr-0">
-                      <img
-                        src={
-                          practitioner.image_url?.replaceAll('"', "") ||
-                          "/placeholder.svg"
-                        }
-                        alt="Product"
+                      <FallbackImage
+                        src={practitioner.image_url?.replaceAll('"', "")}
+                        alt={practitioner.product_name ?? "Product"}
                         className="object-cover rounded-lg min-w-full min-h-full"
+                        fallback={DEFAULT_PRODUCT}
                       />
                     </div>
 
@@ -509,9 +496,9 @@ export function PractitionerCard({
                 <div className="text-center flex-1 min-w-0 items-center flex flex-col">
                   <div className="flex w-full flex-row items-start border-0 md:flex-col md:items-center">
                     <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden md:mb-3 mr-0">
-                      <img
+                      <FallbackImage
                         src={treatmentImageSrc}
-                        alt="Treatment"
+                        alt={treatmentName}
                         className="object-cover rounded-full w-full h-full"
                       />
                     </div>
@@ -556,16 +543,8 @@ export function PractitionerCard({
             <CardHeader className=" h-55 pb-4 px-2">
               <div className="flex justify-center mb-4">
                 <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg bg-gray-300">
-                  <img
-                    src={
-                      (
-                        practitioner as unknown as {
-                          name: string;
-                          slug: string;
-                          image_url: string;
-                        }
-                      ).image_url
-                    }
+                  <FallbackImage
+                    src={(practitioner as unknown as { name: string; slug: string; image_url: string }).image_url}
                     alt={`${(practitioner as unknown as { name: string; slug: string; image_url: string }).name} credential`}
                     className="object-cover w-full h-full"
                   />

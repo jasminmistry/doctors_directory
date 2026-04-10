@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { Clinic, Practitioner } from "@/lib/types";
 import { getAccreditationImages } from "@/lib/utils";
+import { FallbackImage } from "@/components/ui/fallback-image";
 import { readJsonFileSync } from "@/lib/json-cache";
 import {
   Breadcrumb,
@@ -101,7 +102,7 @@ export default async function ProfilePage() {
                 className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border-0 md:border-(--alto) cursor-pointer hover:shadow-lg"
               >
                 <div className="relative w-full h-36 overflow-hidden rounded-t-md bg-white">
-                  <img
+                  <FallbackImage
                     src={credential.image_url}
                     alt={credential.name}
                     className="h-full w-full object-contain p-4"

@@ -4,6 +4,7 @@ import { ArrowLeft} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { decodeUnicodeEscapes, toUrlSlug } from "@/lib/utils";
+import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
 import { product_categories } from "@/lib/data";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Product } from "@/lib/types";
@@ -122,13 +123,11 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                       <div className="text-center flex-1 min-w-0 items-center flex flex-col">
                         <div className="flex w-full flex-row items-start border-b border-[#C4C4C4] md:border-0 md:flex-col md:items-center">
                           <div className="w-[80px] h-[80px] md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg bg-gray-300 md:mb-4 mr-0">
-                            <img
-                              src={
-                                practitioner.image_url?.replaceAll('"', "") ||
-                                "/placeholder.svg"
-                              }
-                              alt="Product"
+                            <FallbackImage
+                              src={practitioner.image_url?.replaceAll('"', "")}
+                              alt={practitioner.product_name ?? "Product"}
                               className="object-cover rounded-lg min-w-full min-h-full"
+                              fallback={DEFAULT_PRODUCT}
                             />
                           </div>
 
