@@ -1,5 +1,14 @@
 import type { Clinic, Practitioner } from "@/lib/types"
 
+export interface ClinicComparisonEntry {
+  category: "Best value" | "Premium" | "Budget"
+  href: string
+  name: string
+  scoreLabel: string
+  displayPrice: string
+  cityRank?: number | null
+}
+
 export interface RankedEntry {
   name: string
   href: string
