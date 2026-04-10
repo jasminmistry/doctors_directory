@@ -17,10 +17,24 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { readJsonFileSync } from "@/lib/json-cache"
+import { toDirectoryCanonical } from "@/lib/seo";
 
 interface ProfilePageProps {
   params: {
     brand: string;
+  };
+}
+
+export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
+  const brandSlug = decodeURIComponent(params.brand).toLowerCase();
+  const brandName = decodeURIComponent(params.brand).replaceAll("-", " ");
+
+  return {
+    title: `${brandName} Products - Healthcare Directory`,
+    description: `Explore products from ${brandName} and compare categories, pricing context, and distributor information.`,
+    alternates: {
+      canonical: toDirectoryCanonical(`/products/brands/${brandSlug}`),
+    },
   };
 }
 

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Clinic, Practitioner } from "@/lib/types"
 import { readJsonFileSync } from "@/lib/json-cache"
+import { toDirectoryCanonical } from "@/lib/seo"
 const accreditations = ["CQC", "JCCP", "HIW", "HIS", "RQIA", "SaveFace"]
 
 function mapAccreditationToFieldClinic(accreditation: string): keyof Clinic {
@@ -205,6 +206,9 @@ export async function generateMetadata() {
   return {
     title: 'Accredited Clinics & Practitioners - Healthcare Directory',
     description: 'Find accredited clinics and practitioners by regulatory bodies including CQC, JCCP, HIW, HIS, RQIA, and Save Face. Compare ratings, reviews, and book appointments.',
+    alternates: {
+      canonical: toDirectoryCanonical('/accredited'),
+    },
     openGraph: {
       title: 'Accredited Clinics & Practitioners - Healthcare Directory',
       description: 'Find accredited clinics and practitioners by regulatory bodies including CQC, JCCP, HIW, HIS, RQIA, and Save Face.',

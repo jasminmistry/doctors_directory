@@ -18,6 +18,7 @@ import PractitionerTabs from "@/components/Product/ProductTabs";
 import { toUrlSlug } from "@/lib/utils";
 import { Suspense } from "react";
 import { readJsonFileSync } from "@/lib/json-cache";
+import { toDirectoryCanonical } from "@/lib/seo";
 const SimilarProducts = (await import("./SimilarProducts")).default;
 const UniqueTreatments = (await import("./UniqueTreatments")).default;
 const Locations = (await import("./Locations")).default;
@@ -138,10 +139,18 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
 export async function generateMetadata({ params }: ProfilePageProps) {
   const clinic = products.find((p) => p.slug === params.slug);
+  const canonicalCategory = decodeURIComponent(params.category).toLowerCase();
+  const canonicalSlug = decodeURIComponent(params.slug).toLowerCase();
+  const canonicalUrl = toDirectoryCanonical(
+    `/products/category/${canonicalCategory}/${canonicalSlug}`
+  );
 
   if (!clinic) {
     return {
       title: "Practitioner Not Found",
+      alternates: {
+        canonical: canonicalUrl,
+      },
     };
   }
 
@@ -150,6 +159,9 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   return {
     title: `${clinicName.replaceAll("-", " ")}`,
     description: `View ${clinicName}, a product of ${clinic.brand} in the ${clinic.product_category} segment.`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: `${clinicName} - Consentz`,
       description: `View ${clinicName}, a product of ${clinic.brand} in the ${clinic.product_category} segment.`,

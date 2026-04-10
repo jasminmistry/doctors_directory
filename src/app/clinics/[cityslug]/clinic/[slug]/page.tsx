@@ -292,10 +292,16 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 export async function generateMetadata({ params }: ProfilePageProps) {
   const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const clinic = clinics.find((p) => p.slug === params.slug);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
+  const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
+  const canonicalUrl = `${baseUrl}/directory/clinics/${citySlug}/clinic/${params.slug}`;
 
   if (!clinic) {
     return {
       title: "Practitioner Not Found",
+      alternates: {
+        canonical: canonicalUrl,
+      },
     };
   }
 
@@ -304,9 +310,13 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   return {
     title: `${clinicName} - Healthcare Directory`,
     description: `View the profile of ${clinicName}, a qualified ${clinic.category} offering professional healthcare services. Read reviews and book appointments.`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: `${clinicName} - Consentz`,
       description: `View the profile of ${clinicName}, a qualified ${clinic.category} offering professional healthcare services. Read reviews and book appointments.`,
+      url: canonicalUrl,
       images: [
         {
           url: clinic.image,

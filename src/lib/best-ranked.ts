@@ -114,7 +114,11 @@ const toClinicName = (item: Clinic): string =>
   item.slug ? capitalizeWords(item.slug) : "Clinic"
 
 const toPractitionerName = (item: Practitioner): string =>
-  item.practitioner_name ? item.practitioner_name : item.slug ? capitalizeWords(item.slug) : "Practitioner"
+  item.practitioner_name
+    ? capitalizeWords(item.practitioner_name)
+    : item.slug
+      ? capitalizeWords(item.slug)
+      : "Practitioner"
 
 const valueLabel = (
   avgPrice: number | null,

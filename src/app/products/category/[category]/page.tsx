@@ -18,6 +18,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { readJsonFileSync } from "@/lib/json-cache"
+import { toDirectoryCanonical } from "@/lib/seo";
 
 interface ProfilePageProps {
   params: {
@@ -208,7 +209,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
 export async function generateMetadata({ params }: ProfilePageProps) {
   const clinics: Product[] = readJsonFileSync('products_processed_new.json');
-const { category } = params;
+  const { category } = params;
+  const canonicalCategory = decodeURIComponent(category).toLowerCase();
   const similarProducts = clinics.filter((p) => p.product_category === category );
 
 
@@ -223,6 +225,9 @@ const { category } = params;
   return {
     title: `${category} - Healthcare Directory`,
     description: `View the best prices in the ${category} segment.}`,
+    alternates: {
+      canonical: toDirectoryCanonical(`/products/category/${canonicalCategory}`),
+    },
     openGraph: {
       title: `${category} - Consentz`,
       description: `View the best prices in the ${category} segment.`,

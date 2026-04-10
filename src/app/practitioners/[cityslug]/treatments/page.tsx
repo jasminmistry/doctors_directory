@@ -23,10 +23,24 @@ import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper
 import { readJsonFileSync } from "@/lib/json-cache"
 import { locations } from "@/lib/data";
 import { capitalize } from "@/lib/utils";
+import { toDirectoryCanonical } from "@/lib/seo";
 
 interface PageProps {
   params: {
     cityslug: string;
+  };
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
+  const displayCityName = capitalize(citySlug);
+
+  return {
+    title: `Aesthetic Treatments in ${displayCityName} - Healthcare Directory`,
+    description: `Browse aesthetic treatments available in ${displayCityName} from top practitioners and clinics.`,
+    alternates: {
+      canonical: toDirectoryCanonical(`/practitioners/${citySlug}/treatments`),
+    },
   };
 }
 

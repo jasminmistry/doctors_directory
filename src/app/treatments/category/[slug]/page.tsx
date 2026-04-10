@@ -19,6 +19,7 @@ import {
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PractitionerCard } from "@/components/practitioner-card";
+import { toDirectoryCanonical } from "@/lib/seo";
 
 interface CategoryPageProps {
   params: {
@@ -42,16 +43,24 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const categoryLabel = getTreatmentCategoryFromSlug(params.slug);
+  const canonicalSlug = decodeURIComponent(params.slug).toLowerCase();
+  const canonicalUrl = toDirectoryCanonical(`/treatments/category/${canonicalSlug}`);
 
   if (!categoryLabel) {
     return {
       title: "Treatments | Healthcare Directory",
+      alternates: {
+        canonical: canonicalUrl,
+      },
     };
   }
 
   return {
     title: `${categoryLabel} | Treatments | Healthcare Directory`,
     description: `Browse ${categoryLabel.toLowerCase()} and find relevant treatment details in our directory.`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
   };
 }
 

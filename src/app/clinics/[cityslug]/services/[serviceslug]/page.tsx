@@ -27,6 +27,7 @@ import { locations, modalities } from "@/lib/data";
 import { capitalize, toUrlSlug } from "@/lib/utils";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
+import { toDirectoryCanonical } from "@/lib/seo";
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -246,4 +247,18 @@ const serviceMatch = categories.some((cat: string) =>
 //     title: `${clinicName} - Healthcare Directory`,
 //     description: `View the profile of ${clinicName}, a qualified ${clinic.category} offering professional healthcare services. Read reviews and book appointments.`,
 //   }
+export async function generateMetadata({ params }: ProfilePageProps) {
+  const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
+  const serviceSlug = decodeURIComponent(params.serviceslug).toLowerCase();
+  const displayCityName = capitalize(citySlug);
+  const displayServiceName = capitalize(serviceSlug);
+
+  return {
+    title: `${displayServiceName} Clinics in ${displayCityName} - Healthcare Directory`,
+    description: `Find clinics offering ${displayServiceName} in ${displayCityName}. Compare ratings, services, and locations.`,
+    alternates: {
+      canonical: toDirectoryCanonical(`/clinics/${citySlug}/services/${serviceSlug}`),
+    },
+  };
+}
 // }

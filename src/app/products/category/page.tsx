@@ -11,6 +11,14 @@ import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft} from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
+import { toDirectoryCanonical } from "@/lib/seo";
+
+export const metadata = {
+  alternates: {
+    canonical: toDirectoryCanonical("/products/category"),
+  },
+};
+
 export default async function ProfilePage() {
   const clinics: Product[] = readJsonFileSync('products_processed_new.json');
  

@@ -21,6 +21,7 @@ import { EmptyCityState } from "@/components/empty-city-state";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { capitalize } from "@/lib/utils";
+import { toDirectoryCanonical } from "@/lib/seo";
 const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
   const clinicIndex = new Map(
@@ -219,3 +220,16 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 //     description: `View the profile of ${clinicName}, a qualified ${clinic.category} offering professional healthcare services. Read reviews and book appointments.`,
 //   }
 // }
+
+export async function generateMetadata({ params }: ProfilePageProps) {
+  const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
+  const displayCityName = capitalize(citySlug);
+
+  return {
+    title: `Top Aesthetic Practitioners in ${displayCityName} - Healthcare Directory`,
+    description: `Explore leading aesthetic practitioners in ${displayCityName}. Compare qualifications, patient reviews, and services in one place.`,
+    alternates: {
+      canonical: toDirectoryCanonical(`/practitioners/${citySlug}`),
+    },
+  };
+}

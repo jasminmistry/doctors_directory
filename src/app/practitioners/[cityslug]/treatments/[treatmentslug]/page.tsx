@@ -22,6 +22,7 @@ import { locations, modalities } from "@/lib/data";
 import { capitalize, toUrlSlug } from "@/lib/utils";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
+import { toDirectoryCanonical } from "@/lib/seo";
 
 type TreatmentSlug = keyof typeof treatment_content
 
@@ -373,3 +374,20 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 //     description: `View the profile of ${clinicName}, a qualified ${clinic.category} offering professional healthcare services. Read reviews and book appointments.`,
 //   }
 // }
+
+export async function generateMetadata({ params }: ProfilePageProps) {
+  const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
+  const treatmentSlug = decodeURIComponent(params.treatmentslug).toLowerCase();
+  const displayCityName = capitalize(citySlug);
+  const displayTreatmentName = capitalize(treatmentSlug);
+
+  return {
+    title: `${displayTreatmentName} Practitioners in ${displayCityName} - Healthcare Directory`,
+    description: `Find practitioners offering ${displayTreatmentName} in ${displayCityName}. Compare profiles, expertise, and reviews.`,
+    alternates: {
+      canonical: toDirectoryCanonical(
+        `/practitioners/${citySlug}/treatments/${treatmentSlug}`
+      ),
+    },
+  };
+}

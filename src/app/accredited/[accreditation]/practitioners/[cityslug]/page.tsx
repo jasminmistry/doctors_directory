@@ -17,6 +17,7 @@ import { readJsonFileSync } from "@/lib/json-cache"
 
 import { accreditations } from "@/lib/data"
 import { PractitionerCard } from "@/components/practitioner-card"
+import { toDirectoryCanonical } from "@/lib/seo"
 
 function mapAccreditationToField(accreditation: string): keyof Practitioner {
   const mapping: Record<string, keyof Practitioner> = {
@@ -165,10 +166,15 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
 export async function generateMetadata({ params }: AccreditedPractitionersPageProps) {
   const { accreditation, cityslug } = params
   const accreditationName = getAccreditationName(accreditation)
+  const canonicalAccreditation = decodeURIComponent(accreditation).toLowerCase()
+  const canonicalCity = decodeURIComponent(cityslug).toLowerCase()
 
   return {
     title: `Accredited ${accreditationName} Practitioners in ${cityslug}`,
     description: `Find ${accreditationName} accredited practitioners in ${cityslug}. Compare ratings, reviews, and book appointments with verified healthcare providers.`,
+    alternates: {
+      canonical: toDirectoryCanonical(`/accredited/${canonicalAccreditation}/practitioners/${canonicalCity}`),
+    },
     openGraph: {
       title: `Accredited ${accreditationName} Practitioners in ${cityslug}`,
       description: `Find ${accreditationName} accredited practitioners in ${cityslug}. Compare ratings and reviews.`,

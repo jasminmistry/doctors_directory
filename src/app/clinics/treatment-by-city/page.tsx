@@ -14,6 +14,14 @@ import {cityMap} from "@/lib/data"
 import ItemsGrid from "@/components/collectionGrid"
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
+import { toDirectoryCanonical } from "@/lib/seo";
+
+export const metadata = {
+  alternates: {
+    canonical: toDirectoryCanonical("/clinics/treatment-by-city"),
+  },
+};
+
 export default function TreatmentByCityPage() {
   
     return (

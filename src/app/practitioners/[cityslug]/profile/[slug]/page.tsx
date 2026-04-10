@@ -21,6 +21,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { ScoreInfoTooltip } from "@/components/score-info-tooltip";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
+import { toDirectoryCanonical } from "@/lib/seo";
 const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
   const clinicIndex = new Map(
@@ -40,6 +41,7 @@ function mergeBoxplotDataFromDict(
 
 interface ProfilePageProps {
   params: {
+    cityslug: string;
     slug: string;
   };
 }
@@ -278,10 +280,18 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 export async function generateMetadata({ params }: ProfilePageProps) {
   const clinics: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const clinic = clinics.find((p) => p.practitioner_name === params.slug);
+  const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
+  const canonicalSlug = decodeURIComponent(params.slug).toLowerCase();
+  const canonicalUrl = toDirectoryCanonical(
+    `/practitioners/${citySlug}/profile/${canonicalSlug}`
+  );
 
   if (!clinic) {
     return {
       title: "Practitioner Not Found",
+      alternates: {
+        canonical: canonicalUrl,
+      },
     };
   }
 
@@ -290,5 +300,8 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   return {
     title: `${clinicName} - Healthcare Directory`,
     description: `View the profile of ${clinicName}, a qualified ${clinic.practitioner_title} offering professional healthcare services. Read reviews and book appointments.`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
   };
 }

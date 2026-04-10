@@ -19,10 +19,12 @@ import ItemsGrid from "@/components/collectionGrid";
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
 import { Clinic } from "@/lib/types";
+import { toDirectoryCanonical } from "@/lib/seo";
 
 
 interface ProfilePageProps {
   params: {
+    brand: string;
     slug: string;
   };
 }
@@ -159,3 +161,42 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 //     },
 //   };
 // }
+
+export async function generateMetadata({ params }: ProfilePageProps) {
+  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
+  const clinic = clinics.find((p) => p.slug === params.slug);
+  const brandSlug = decodeURIComponent(params.brand).toLowerCase();
+  const productSlug = decodeURIComponent(params.slug).toLowerCase();
+  const canonicalUrl = toDirectoryCanonical(`/products/brands/${brandSlug}/${productSlug}`);
+
+  if (!clinic) {
+    return {
+      title: "Product Not Found",
+      alternates: {
+        canonical: canonicalUrl,
+      },
+    };
+  }
+
+  const clinicName = clinic.slug;
+
+  return {
+    title: `${clinicName.replaceAll("-", " ")}`,
+    description: `View ${clinicName}, a product of ${clinic.brand} in the ${clinic.product_category} segment.`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${clinicName} - Consentz`,
+      description: `View ${clinicName}, a product of ${clinic.brand} in the ${clinic.product_category} segment.`,
+      images: [
+        {
+          url: clinic.image_url || "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: `${clinicName} profile picture`,
+        },
+      ],
+    },
+  };
+}

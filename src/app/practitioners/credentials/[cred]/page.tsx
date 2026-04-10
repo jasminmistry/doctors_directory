@@ -23,6 +23,7 @@ import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
 import { CredentialPageData } from "@/components/credentialPageData";
+import { toDirectoryCanonical } from "@/lib/seo";
 const credentialsData: Accreditation[] = readJsonFileSync('accreditations_processed_new.json')
 const credentialIndex = new Map(
   credentialsData.map(c => [c.slug!, c])
@@ -197,3 +198,16 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 //     description: `View the profile of ${clinicName}, a qualified ${clinic.category} offering professional healthcare services. Read reviews and book appointments.`,
 //   }
 // }
+
+export async function generateMetadata({ params }: ProfilePageProps) {
+  const credSlug = decodeURIComponent(params.cred).toLowerCase();
+  const displayCredential = decodeURIComponent(params.cred).replaceAll("-", " ");
+
+  return {
+    title: `${displayCredential} Practitioners - Healthcare Directory`,
+    description: `Browse practitioners with ${displayCredential} credentials and compare profiles, services, and reviews.`,
+    alternates: {
+      canonical: toDirectoryCanonical(`/practitioners/credentials/${credSlug}`),
+    },
+  };
+}

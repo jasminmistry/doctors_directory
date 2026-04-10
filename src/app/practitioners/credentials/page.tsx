@@ -6,6 +6,7 @@ import type { Clinic, Practitioner } from "@/lib/types";
 import { getAccreditationImages } from "@/lib/utils";
 import { FallbackImage } from "@/components/ui/fallback-image";
 import { readJsonFileSync } from "@/lib/json-cache";
+import { toDirectoryCanonical } from "@/lib/seo";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -145,6 +146,9 @@ export async function generateMetadata() {
   return {
     title: 'Credentialed Practitioners - Healthcare Directory',
     description: 'Find healthcare practitioners by professional credentials and qualifications. Browse medical degrees, certifications, and specializations. Compare ratings, reviews, and book appointments.',
+    alternates: {
+      canonical: toDirectoryCanonical('/practitioners/credentials'),
+    },
     openGraph: {
       title: 'Credentialed Practitioners - Healthcare Directory',
       description: 'Find healthcare practitioners by professional credentials and qualifications.',
