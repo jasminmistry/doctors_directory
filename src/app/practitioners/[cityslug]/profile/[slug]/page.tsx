@@ -10,7 +10,7 @@ import { Stats } from "@/components/visx-donut";
 import ClinicDetailsMarkdown from "@/components/Practitioner/practitionerDetailsMD";
 import { Practitioner } from "@/lib/types";
 import PractitionerTabs from "@/components/Practitioner/PractitionerTabs";
-import { flattenObject } from "@/lib/utils";
+import { flattenObject, capitalize } from "@/lib/utils";
 import { Section } from "@/components/ui/section";
 import { Clinic } from "@/lib/types";
 import ItemsGrid from "@/components/collectionGrid";
@@ -295,11 +295,19 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     };
   }
 
-  const clinicName = clinic.practitioner_name;
+  const practitionerDisplayName = capitalize(clinic.practitioner_name!);
+  const city = capitalize(citySlug);
+  const treatments = Array.isArray(clinic.Treatments) && clinic.Treatments.length >= 2
+    ? `${clinic.Treatments[0]}, ${clinic.Treatments[1]} & Reviews`
+    : Array.isArray(clinic.Treatments) && clinic.Treatments.length === 1
+    ? `${clinic.Treatments[0]} & Reviews`
+    : "Aesthetic Treatments & Reviews";
+  const title = `${practitionerDisplayName} ${city} | ${treatments}`;
+  const description = `Compare ${practitionerDisplayName} in ${city}. See prices, reviews, treatments, and book consultations instantly.`;
 
   return {
-    title: `${clinicName} - Healthcare Directory`,
-    description: `View the profile of ${clinicName}, a qualified ${clinic.practitioner_title} offering professional healthcare services. Read reviews and book appointments.`,
+    title,
+    description,
     alternates: {
       canonical: canonicalUrl,
     },

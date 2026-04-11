@@ -46,6 +46,11 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+  const DEFAULT_IMG = "/directory/images/default-dr-profile-1.webp";
+  const proxyUrl = clinic.practitioner_image_link
+    ? `/directory/api/img?url=${encodeURIComponent(clinic.practitioner_image_link)}`
+    : DEFAULT_IMG;
+  const [imgSrc, setImgSrc] = useState(proxyUrl);
   let sections: {id: string,label: string}[] = []
   clinic_list.forEach((clinic: string) => {
     sections.push({ id: clinic, label: clinic })
@@ -73,13 +78,10 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
           <div className="flex flex-row flex-wrap items-start md:items-center">
             <div className="w-[80px] h-[80px] md:w-[160px] md:h-[160px] flex items-center justify-center overflow-hidden rounded-full bg-grey-300 mr-4">
               <img
-                src={clinic.practitioner_image_link ?? "/directory/images/default-dr-profile-1.webp"}
+                src={imgSrc}
                 alt={practitionerName}
                 className="object-cover rounded-full min-w-full min-h-full"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = "/directory/images/default-dr-profile-1.webp";
-                }}
+                onError={() => setImgSrc(DEFAULT_IMG)}
               />
             </div>
 

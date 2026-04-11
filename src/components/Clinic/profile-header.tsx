@@ -1,4 +1,5 @@
 "use client"
+import { useState } from "react";
 import {
   MapPin,
   Phone,
@@ -35,6 +36,11 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
   const roleTitle = clinic.category;
+  const DEFAULT_IMG = "/directory/images/default-dr-profile-1.webp";
+  const proxyUrl = clinic.image
+    ? `/directory/api/img?url=${encodeURIComponent(clinic.image)}`
+    : DEFAULT_IMG;
+  const [imgSrc, setImgSrc] = useState(proxyUrl);
 
   return (
     <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-xl px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t md:border md:border-(--alto) bg-white md:bg-(--primary-bg-color)">
@@ -57,16 +63,10 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
           <div className="flex flex-row flex-wrap items-start md:items-center">
             <div className="relative w-[80px] h-[80px] md:w-[160px] md:h-[160px] flex items-center justify-center overflow-hidden rounded-full bg-grey-300 mr-4">
               <img
-                src={
-                  clinic.image.replace("&w=256&q=75", "") || "/placeholder.svg"
-                }
-                alt={"/placeholder.svg"}
+                src={imgSrc}
+                alt={practitionerName}
                 className="object-cover rounded-full min-w-full min-h-full"
-                onError={(e) => {
-                  e.currentTarget.onerror = null; // prevent infinite loop
-                  e.currentTarget.src =
-                    "/directory/images/default-dr-profile-1.webp";
-                }}
+                onError={() => setImgSrc(DEFAULT_IMG)}
               />
             </div>
 

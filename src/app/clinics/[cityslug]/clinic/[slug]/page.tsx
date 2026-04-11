@@ -124,7 +124,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{`${clinic.slug}`}</BreadcrumbPage>
+              <BreadcrumbPage>{capitalize(clinic.slug!)}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           </Breadcrumb>
@@ -298,31 +298,34 @@ export async function generateMetadata({ params }: ProfilePageProps) {
 
   if (!clinic) {
     return {
-      title: "Practitioner Not Found",
+      title: "Clinic Not Found",
       alternates: {
         canonical: canonicalUrl,
       },
     };
   }
 
-  const clinicName = clinic.slug;
+  const clinicDisplayName = capitalize(clinic.slug!);
+  const city = capitalize(params.cityslug);
+  const title = `${clinicDisplayName} ${city} | Reviews, Prices & Booking`;
+  const description = `Compare ${clinicDisplayName} in ${city}. See prices, reviews, treatments, and book consultations instantly.`;
 
   return {
-    title: `${clinicName} - Healthcare Directory`,
-    description: `View the profile of ${clinicName}, a qualified ${clinic.category} offering professional healthcare services. Read reviews and book appointments.`,
+    title,
+    description,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${clinicName} - Consentz`,
-      description: `View the profile of ${clinicName}, a qualified ${clinic.category} offering professional healthcare services. Read reviews and book appointments.`,
+      title,
+      description,
       url: canonicalUrl,
       images: [
         {
           url: clinic.image,
           width: 1200,
           height: 630,
-          alt: `${clinicName} profile picture`,
+          alt: `${clinicDisplayName} profile picture`,
         },
       ],
     },
