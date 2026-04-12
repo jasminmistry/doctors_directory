@@ -297,10 +297,27 @@ export async function generateMetadata({ params }: ProfilePageProps) {
 
   const practitionerDisplayName = capitalize(clinic.practitioner_name!);
   const city = capitalize(citySlug);
-  const treatments = Array.isArray(clinic.Treatments) && clinic.Treatments.length >= 2
-    ? `${clinic.Treatments[0]}, ${clinic.Treatments[1]} & Reviews`
-    : Array.isArray(clinic.Treatments) && clinic.Treatments.length === 1
-    ? `${clinic.Treatments[0]} & Reviews`
+
+  // Derive top treatments from the practitioner's associated clinic
+  let topTreatments: string[] = [];
+  const assocClinics: string[] = Array.isArray(clinic.Associated_Clinics)
+    ? clinic.Associated_Clinics
+    : JSON.parse((clinic.Associated_Clinics as string) || '[]');
+  if (assocClinics.length > 0) {
+    const allClinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
+    for (const slug of assocClinics) {
+      const assocClinic = allClinics.find(c => c.slug === slug);
+      if (assocClinic && Array.isArray(assocClinic.Treatments) && assocClinic.Treatments.length > 0) {
+        topTreatments = assocClinic.Treatments.slice(0, 2).map(t => capitalize(t));
+        break;
+      }
+    }
+  }
+
+  const treatments = topTreatments.length >= 2
+    ? `${topTreatments[0]}, ${topTreatments[1]} & Reviews`
+    : topTreatments.length === 1
+    ? `${topTreatments[0]} & Reviews`
     : "Aesthetic Treatments & Reviews";
   const title = `${practitionerDisplayName} ${city} | ${treatments}`;
   const description = `Compare ${practitionerDisplayName} in ${city}. See prices, reviews, treatments, and book consultations instantly.`;

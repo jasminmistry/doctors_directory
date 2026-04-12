@@ -307,7 +307,15 @@ export async function generateMetadata({ params }: ProfilePageProps) {
 
   const clinicDisplayName = capitalize(clinic.slug!);
   const city = capitalize(params.cityslug);
-  const title = `${clinicDisplayName} ${city} | Reviews, Prices & Booking`;
+  const topTreatments = Array.isArray(clinic.Treatments) ? clinic.Treatments.slice(0, 3).map(t => capitalize(t)) : [];
+  const treatmentSuffix = topTreatments.length >= 3
+    ? `${topTreatments[0]}, ${topTreatments[1]} & ${topTreatments[2]}`
+    : topTreatments.length === 2
+    ? `${topTreatments[0]} & ${topTreatments[1]}`
+    : topTreatments.length === 1
+    ? topTreatments[0]
+    : 'Botox, Fillers & Skin Treatments';
+  const title = `${clinicDisplayName} ${city} | Reviews, Prices & Booking - ${treatmentSuffix}`;
   const description = `Compare ${clinicDisplayName} in ${city}. See prices, reviews, treatments, and book consultations instantly.`;
 
   return {

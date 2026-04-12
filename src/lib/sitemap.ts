@@ -17,7 +17,11 @@ export const getBaseUrl = (): string =>
 
 export const toDirectoryUrl = (pathname: string): string => {
   const normalized = pathname.startsWith('/') ? pathname : `/${pathname}`
-  return `${getBaseUrl()}/directory${normalized}`
+  const withSlash =
+    normalized.endsWith('/') || normalized.endsWith('.xml')
+      ? normalized
+      : `${normalized}/`
+  return `${getBaseUrl()}/directory${withSlash}`
 }
 
 export const encodeSegment = (value: string): string =>
