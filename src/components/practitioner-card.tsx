@@ -337,7 +337,6 @@ export function PractitionerCard({
 
                 <Link
                   href={practitionerOrClinicHref}
-                  prefetch={false}
                   className="z-10"
                 >
                   <Button className="mt-4 mb-0 w-full flex border rounded-lg font-weight px-4 py-2 bg-black align-items-center cursor-pointer justify-center text-white hover:bg-white hover:text-black">
@@ -360,7 +359,7 @@ export function PractitionerCard({
                         <li key={index}>
                           <Badge variant="outline" className="text-xs">
                             <Link
-                              href={`/directory/treatments/${toUrlSlug(modality)}`}
+                              href={`/treatments/${toUrlSlug(modality)}`}
                               onClick={(e) => e.stopPropagation()}
                             >
                               {modality
@@ -380,7 +379,7 @@ export function PractitionerCard({
                       <li>
                         <Badge variant="outline" className="text-xs">
                           <Link
-                            href={`/directory/treatments`}
+                            href={`/treatments`}
                             onClick={(e) => e.stopPropagation()}
                           >
                             +{practitioner.Treatments.length - 2} more

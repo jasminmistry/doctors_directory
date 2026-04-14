@@ -24,9 +24,10 @@ import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { toDirectoryCanonical } from "@/lib/seo";
 const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
 const clinics = clinicsData
-  const clinicIndex = new Map(
+const clinicIndex = new Map(
   clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
 )
+const allPractitioners: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
 
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
@@ -47,9 +48,8 @@ interface ProfilePageProps {
 }
 
 export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const { slug } = params;
-  const clinic = clinics.find((p) => p.practitioner_name === slug);
+  const clinic = allPractitioners.find((p) => p.practitioner_name === slug);
   const k = clinicIndex.get(JSON.parse(clinic!.Associated_Clinics!)[0])
   const hoursObj = k?.hours as unknown as Record<string, any>;
   const hours =
@@ -58,7 +58,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const practitioner = {...k,...clinic}
   const currentCity = practitioner.City?.toLowerCase()
   const rankedCityPractitioners = buildPractitionerRankedEntries(
-    clinics
+    allPractitioners
       .filter((entry) => entry.practitioner_name !== clinic?.practitioner_name)
       .map((entry) => {
         try {

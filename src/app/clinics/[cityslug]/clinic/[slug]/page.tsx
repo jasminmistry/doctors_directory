@@ -40,6 +40,8 @@ function mergeBoxplotDataFromDict(
   });
 }
 
+const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
+
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -49,7 +51,6 @@ interface ProfilePageProps {
 
 
 export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const { cityslug,slug } = params;
   const displayCityName = capitalize(cityslug);
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
@@ -290,7 +291,6 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 // }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
-  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const clinic = clinics.find((p) => p.slug === params.slug);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();

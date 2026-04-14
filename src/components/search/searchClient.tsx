@@ -85,6 +85,15 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
         setData((prev) => mode === "replace" ? result.data : [...prev, ...result.data]);
         setTotalCount(result.totalCount);
         setTotalPages(result.totalPages);
+
+        // Only fetch discovery/suggestion data when results are empty
+        if (result.data.length === 0) {
+          getSearchDiscoveryData(filters).then((discoveryResult) => {
+            if (requestId === requestIdRef.current) {
+              setDiscoveryData(discoveryResult);
+            }
+          });
+        }
       } finally {
         isAppendingRef.current = false;
         setIsInitialLoading(false);
@@ -106,24 +115,6 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
     requestIdRef.current += 1;
     void loadResults(1, "replace");
   }, [filters, isTypeReady, loadResults, sortBy]);
-
-  useEffect(() => {
-    if (!isTypeReady) {
-      return;
-    }
-
-    let isMounted = true;
-
-    void getSearchDiscoveryData(filters).then((result) => {
-      if (isMounted) {
-        setDiscoveryData(result);
-      }
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [filters, isTypeReady]);
 
   // Infinite scroll observer — active when USE_PAGINATION = false
   useEffect(() => {

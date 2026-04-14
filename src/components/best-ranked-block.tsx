@@ -167,8 +167,8 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
           >
             {/* Image + rank badge + name + score + price */}
             <div className="flex flex-col items-center text-center px-3 pt-4 pb-2">
-              <div className="relative w-[80px] h-[80px] flex items-center justify-center overflow-visible rounded-full bg-gray-300 mb-3">
-                <FallbackImage src={entry.image} alt={entry.name} className="object-cover rounded-full min-w-full min-h-full" />
+              <div className="relative w-[80px] h-[80px] flex items-center justify-center overflow-hidden rounded-full bg-gray-300 mb-3">
+                <FallbackImage src={entry.image} alt={entry.name} className="object-cover w-full h-full" />
               </div>
               <Link
                 href={entry.href}
