@@ -13,6 +13,30 @@ const nextConfig = {
   },
   basePath: '/directory',
   trailingSlash: true,
+  async redirects() {
+    return [
+      {
+        source: '/clinics/middlesbrough/clinic/the-skin-clinic-5',
+        destination: '/clinics/middlesbrough/clinic/the-skin-clinic',
+        permanent: true,
+      },
+      {
+        source: '/clinics/middlesbrough/clinic/the-skin-clinic-5/',
+        destination: '/clinics/middlesbrough/clinic/the-skin-clinic/',
+        permanent: true,
+      },
+      {
+        source: '/clinics/keighley/clinic/the-skin-clinic',
+        destination: '/clinics/keighley/clinic/the-skin-clinic-keighley',
+        permanent: true,
+      },
+      {
+        source: '/clinics/keighley/clinic/the-skin-clinic/',
+        destination: '/clinics/keighley/clinic/the-skin-clinic-keighley/',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

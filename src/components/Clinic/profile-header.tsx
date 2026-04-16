@@ -147,7 +147,7 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
             variant="outline"
             className="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
           >
-            <a href="#fees">Request Pricing</a>
+            <a href={consultationHref ?? "#fees"} target={consultationHref ? "_blank" : undefined} rel={consultationHref ? "noopener noreferrer" : undefined}>Request Pricing</a>
           </Button>
           <SocialMediaIcons clinic={clinic} />
         </div>
