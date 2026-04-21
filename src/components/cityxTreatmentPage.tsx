@@ -122,7 +122,7 @@ function toText(value: unknown, preferredKeys: readonly string[] = []): string {
 }
 
 export function CityTreatmentPage({ cityData, treatment, slug }: PageProps) {
-    const sections = Object.entries(deepClean(treatment))
+    const sections = Object.entries(deepClean(treatment ?? {}))
     const getSection = (...phrases: readonly string[]) =>
       sections.find(([key]) =>
         phrases.some((phrase) => key.toLowerCase().includes(phrase.toLowerCase()))
