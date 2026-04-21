@@ -1,0 +1,502 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum DayOfWeek {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
+}
+
+enum AdviceItemType {
+  strength
+  gap
+  priority_30d
+  priority_90d
+}
+
+enum PendingStatus {
+  pending
+  approved
+  rejected
+}
+
+// ============================================================
+// CITIES
+// ============================================================
+
+model City {
+  id   Int    @id @default(autoincrement())
+  slug String @unique @db.VarChar(120)
+  name String @db.VarChar(120)
+
+  // Overview
+  populationEstimate            String? @db.VarChar(255)
+  lifestyleCharacteristics      String? @db.Text
+  medicalInfrastructurePresence String? @db.Text
+
+  // Market Size
+  numClinics              Int?     @default(0)
+  reviewVolumeTotal       Int?     @default(0)
+  averageRatingCitywide   Decimal? @db.Decimal(3, 2)
+  estimatedMarketStrength String?  @db.Text
+
+  // Competitor Landscape
+  nhsPresence String? @db.Text
+
+  // Regulatory Environment
+  primaryRegulator        String? @db.Text
+  prescribingRequirements String? @db.Text
+  inspectionFramework     String? @db.Text
+
+  // Insurance & Financing
+  privateInsuranceUsage       String? @db.Text
+  cosmeticFinanceAvailability String? @db.Text
+
+  // Referral Networks
+  teachingHospitalLinks String? @db.Text
+
+  // Accessibility
+  publicTransportProximity   String? @db.Text
+  parkingAvailability        String? @db.Text
+  cityVsSuburbanDistribution String? @db.Text
+
+  // Medical Tourism
+  tourismVolumeIndicator  String? @db.Text
+  hotelDensityNearClinics String? @db.Text
+  airportProximity        String? @db.Text
+  medicalTourismViability String? @db.Text
+
+  // Beauty Spend
+  marketMaturityLevel String? @db.Text
+
+  // JSON — display-only arrays, never filtered in SQL
+  specializations    Json? // string[]
+  peakBookingPeriods Json? // string[]
+  socialMediaTrends  Json? // string[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clinics Clinic[]
+
+  @@map("cities")
+}
+
+// ============================================================
+// CLINICS
+// ============================================================
+
+model Clinic {
+  id     Int    @id @default(autoincrement())
+  slug   String @unique @db.VarChar(255)
+  cityId Int?
+
+  // Identity
+  name         String? @db.VarChar(255)
+  image        String? @db.Text
+  gmapsUrl     String? @db.Text
+  gmapsAddress String? @db.VarChar(500)
+  gmapsPhone   String? @db.VarChar(200)
+  category     String? @db.VarChar(100)
+
+  // Reputation
+  rating      Decimal? @db.Decimal(3, 2)
+  reviewCount Int?     @default(0)
+
+  // About
+  aboutSection   String? @db.Text
+  accreditations String? @db.Text
+  awards         String? @db.Text
+  affiliations   String? @db.Text
+
+  // Contact / Social
+  website   String? @db.VarChar(500)
+  email     String? @db.VarChar(255)
+  facebook  String? @db.VarChar(500)
+  twitter   String? @db.VarChar(500)
+  xTwitter  String? @db.VarChar(500)
+  instagram String? @db.VarChar(500)
+  youtube   String? @db.VarChar(500)
+  linkedin  String? @db.VarChar(500)
+
+  // Regulatory Flags
+  isSaveFace Boolean @default(false)
+  isDoctor   Boolean @default(false)
+  isJccp     Boolean @default(false)
+  jccpUrl    String? @db.VarChar(500)
+  isCqc      Boolean @default(false)
+  cqcUrl     String? @db.VarChar(500)
+  isHiw      Boolean @default(false)
+  hiwUrl     String? @db.VarChar(500)
+  isHis      Boolean @default(false)
+  hisUrl     String? @db.VarChar(500)
+  isRqia     Boolean @default(false)
+  rqiaUrl    String? @db.VarChar(500)
+
+  // JSON — display-only, not queried with SQL predicates
+  insuranceInfo      Json? // string[]
+  paymentMethods     Json? // string[]
+  reviewAnalysis     Json? // ReviewAnalysis object
+  weightedAnalysis   Json? // { [category]: ItemMeta }
+  criteriaBreakdown  Json? // { [category]: CriteriaItem[] }
+  advice             Json? // { strengths, gaps, priority_30d, priority_90d }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  city                     City?                          @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  hours                    ClinicHour[]
+  fees                     ClinicFee[]
+  reviews                  ClinicReview[]
+  ranking                  ClinicRanking?
+  treatments               ClinicTreatment[]
+  staff                    ClinicStaff[]
+  practitionerAssociations PractitionerClinicAssociation[]
+
+  @@index([cityId])
+  @@index([rating])
+  @@index([category])
+  @@map("clinics")
+}
+
+model ClinicHour {
+  id        Int       @id @default(autoincrement())
+  clinicId  Int
+  dayOfWeek DayOfWeek
+  hours     String?   @db.VarChar(100)
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@unique([clinicId, dayOfWeek])
+  @@map("clinic_hours")
+}
+
+model ClinicFee {
+  id            Int     @id @default(autoincrement())
+  clinicId      Int
+  treatmentName String  @db.VarChar(255)
+  price         String? @db.VarChar(500)
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@map("clinic_fees")
+}
+
+model ClinicReview {
+  id            Int      @id @default(autoincrement())
+  clinicId      Int
+  reviewerName  String?  @db.VarChar(255)
+  rating        Decimal? @db.Decimal(2, 1)
+  reviewDate    String?  @db.VarChar(100)
+  reviewText    String?  @db.Text
+  ownerResponse String?  @db.Text
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@map("clinic_reviews")
+}
+
+model ClinicRanking {
+  id            Int     @id @default(autoincrement())
+  clinicId      Int     @unique
+  cityRank      Int?    @db.SmallInt
+  cityTotal     Int?    @db.SmallInt
+  scoreOutOf100 Int?    @db.TinyInt
+  subtitleText  String? @db.VarChar(255)
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@map("clinic_rankings")
+}
+
+model ClinicStaff {
+  id             Int     @id @default(autoincrement())
+  clinicId       Int
+  fullName       String? @db.VarChar(255)
+  title          String? @db.Text
+  specialty      String? @db.Text
+  linkedinUrl    String? @db.VarChar(500)
+  profileUrl     String? @db.Text
+  practitionerId Int?    // FK set when this staff entry resolves to a Practitioner row
+
+  clinic       Clinic        @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  practitioner Practitioner? @relation(fields: [practitionerId], references: [id], onDelete: SetNull)
+
+  @@index([clinicId])
+  @@map("clinic_staff")
+}
+
+model ClinicTreatment {
+  clinicId    Int
+  treatmentId Int
+
+  clinic    Clinic    @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  treatment Treatment @relation(fields: [treatmentId], references: [id], onDelete: Cascade)
+
+  @@id([clinicId, treatmentId])
+  @@map("clinic_treatments")
+}
+
+// ============================================================
+// TREATMENTS
+// ============================================================
+
+model Treatment {
+  id          Int     @id @default(autoincrement())
+  slug        String  @unique @db.VarChar(255)
+  name        String  @db.VarChar(255)
+  description String? @db.Text
+
+  // JSON — display-only goal list
+  goals Json? // string[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clinicTreatments       ClinicTreatment[]
+  practitionerTreatments PractitionerTreatment[]
+
+  @@map("treatments")
+}
+
+// ============================================================
+// PRACTITIONERS
+// ============================================================
+
+model Practitioner {
+  id          Int     @id @default(autoincrement())
+  slug        String  @unique @db.VarChar(255)
+  displayName String? @db.Text
+  title       String? @db.Text
+  specialty   String? @db.VarChar(255)
+  imageUrl    String? @db.Text
+
+  // JSON — profile display arrays, never used as SQL filter
+  qualifications   Json? // string[]
+  roles            Json? // string[]
+  awards           Json? // string[]
+  media            Json? // string[]
+  experience       Json? // string[]
+  weightedAnalysis Json? // { [category]: ItemMeta }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ranking            PractitionerRanking?
+  clinicAssociations PractitionerClinicAssociation[]
+  treatments         PractitionerTreatment[]
+  staffEntries       ClinicStaff[]
+
+  @@index([displayName(length: 191)])
+  @@index([specialty])
+  @@map("practitioners")
+}
+
+model PractitionerRanking {
+  id             Int     @id @default(autoincrement())
+  practitionerId Int     @unique
+  cityRank       Int?    @db.SmallInt
+  cityTotal      Int?    @db.SmallInt
+  scoreOutOf100  Int?    @db.TinyInt
+  subtitleText   String? @db.VarChar(255)
+
+  practitioner Practitioner @relation(fields: [practitionerId], references: [id], onDelete: Cascade)
+
+  @@map("practitioner_rankings")
+}
+
+model PractitionerClinicAssociation {
+  practitionerId Int
+  clinicId       Int
+
+  practitioner Practitioner @relation(fields: [practitionerId], references: [id], onDelete: Cascade)
+  clinic       Clinic       @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@id([practitionerId, clinicId])
+  @@map("practitioner_clinic_associations")
+}
+
+model PractitionerTreatment {
+  practitionerId Int
+  treatmentId    Int
+
+  practitioner Practitioner @relation(fields: [practitionerId], references: [id], onDelete: Cascade)
+  treatment    Treatment    @relation(fields: [treatmentId], references: [id], onDelete: Cascade)
+
+  @@id([practitionerId, treatmentId])
+  @@map("practitioner_treatments")
+}
+
+// ============================================================
+// PRODUCTS
+// ============================================================
+
+model Product {
+  id                 Int     @id @default(autoincrement())
+  slug               String  @unique @db.VarChar(255)
+  productName        String  @db.VarChar(255)
+  productCategory    String? @db.VarChar(255)
+  productSubcategory String? @db.VarChar(255)
+  category           String? @db.VarChar(100)
+
+  // Commercial
+  brand              String? @db.VarChar(255)
+  manufacturer       String? @db.Text
+  distributor        String? @db.VarChar(500)
+  distributorCleaned String? @db.VarChar(255)
+  sku                String? @db.VarChar(255)
+
+  // Media
+  imageUrl       String? @db.Text
+  documentPdfUrl String? @db.Text
+
+  // Content
+  description       String? @db.Text
+  treatmentDuration String? @db.Text
+  onsetOfEffect     String? @db.Text
+
+  // Compliance
+  mhraApproved String? @db.VarChar(255)
+  ceMarked     String? @db.VarChar(255)
+  mhraLink     String?  @db.VarChar(500)
+
+  // About
+  brandAbout  String? @db.Text
+  sellerAbout String? @db.Text
+
+  // Verification
+  sourceVerifiedOn               DateTime? @db.Date
+  dataConfidenceScore            Decimal?  @db.Decimal(5, 2)
+  isAestheticsDermatologyRelated Boolean?
+
+  // JSON — product detail page arrays, never used as SQL filters
+  keyBenefits         Json? // string[]
+  indications         Json? // string[]
+  composition         Json? // string[]
+  formulation         Json? // string[]
+  packaging           Json? // string[]
+  usageInstructions   Json? // string[]
+  contraindications   Json? // string[]
+  adverseEffects      Json? // string[]
+  storageConditions   Json? // string[]
+  certifications      Json? // string[]
+  verificationSources Json? // string[]
+  allPrices           Json? // price map / array
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([brand])
+  @@index([productCategory])
+  @@map("products")
+}
+
+// ============================================================
+// ACCREDITATION BODIES
+// ============================================================
+
+model AccreditationBody {
+  id    Int     @id @default(autoincrement())
+  slug  String  @unique @db.VarChar(255)
+  image String? @db.MediumText // base64 string or image URL
+
+  // Overview
+  overviewDescription String? @db.Text
+  foundedYear         String? @db.VarChar(255)
+  founder             String? @db.VarChar(255)
+  purpose             String? @db.Text
+
+  // Governing Body
+  governingOrgName String? @db.VarChar(255)
+  companyStatus    String? @db.Text
+  regulatoryStatus String? @db.Text
+  industryStanding String? @db.Text
+
+  // Eligibility
+  eligibilityWhoCanApply String? @db.Text
+
+  // Accreditation Requirements
+  inspectionRequired String? @db.Text
+
+  // Verification Process
+  publicRegister              String? @db.VarChar(255)
+  certificateValidationMethod String? @db.Text
+
+  // Renewal & Compliance
+  renewalFrequency String? @db.Text
+  cpdRequirements  String? @db.Text
+  auditProcess     String? @db.Text
+
+  // Benefits
+  reputation         String? @db.Text
+  patientTrustImpact String? @db.Text
+
+  // Government Regulation
+  statutoryBacking String? @db.Text
+  regulatedBy      String? @db.VarChar(255)
+  legalStatus      String? @db.Text
+
+  // JSON — static reference arrays, rendered on detail page only
+  eligibilityRequirements Json? // string[]
+  eligibilityRestrictions Json? // string[]
+  evaluationFactors       Json? // string[]
+  availableCategories     Json? // string[]
+  documentationRequired   Json? // string[]
+  complianceStandards     Json? // string[]
+  protectionMechanisms    Json? // string[]
+  limitations             Json? // string[]
+  comparableEntities      Json? // string[]
+  keyDifferences          Json? // string[]
+  mediaMentions           Json? // string[]
+  endorsements            Json? // string[]
+  credibilitySignals      Json? // string[]
+  faqs                    Json? // { question: string, answer: string }[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("accreditation_bodies")
+}
+
+// ============================================================
+// ADMIN — PENDING SUBMISSIONS
+// ============================================================
+
+model PendingClinic {
+  id            Int           @id @default(autoincrement())
+  submittedData String        @db.LongText // raw JSON string until reviewed
+  status        PendingStatus @default(pending)
+  submittedAt   DateTime      @default(now())
+  reviewedAt    DateTime?
+  reviewerNotes String?       @db.Text
+
+  @@index([status])
+  @@map("pending_clinics")
+}
+
+model PendingPractitioner {
+  id            Int           @id @default(autoincrement())
+  submittedData String        @db.LongText // raw JSON string until reviewed
+  status        PendingStatus @default(pending)
+  submittedAt   DateTime      @default(now())
+  reviewedAt    DateTime?
+  reviewerNotes String?       @db.Text
+
+  @@index([status])
+  @@map("pending_practitioners")
+}

@@ -7,6 +7,10 @@
     "build": "next build",
     "start": "NODE_OPTIONS='--max-old-space-size=4096' next start",
     "lint": "next lint",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio",
     "test": "node --enable-source-maps=false --max-old-space-size=16384 --expose-gc node_modules/jest/bin/jest.js --no-bail --silent --coverage=false --no-cache",
     "test:batches": "node --expose-gc --enable-source-maps=false --max-old-space-size=16384 node_modules/jest/bin/jest.js src/__tests__/tests-batch-1.test.tsx --runInBand --no-bail --silent --coverage=false --no-cache --json --outputFile=./test-reports/batch-1.json & node --expose-gc --enable-source-maps=false --max-old-space-size=16384 node_modules/jest/bin/jest.js src/__tests__/tests-batch-2.test.tsx --runInBand --no-bail --silent --coverage=false --no-cache --json --outputFile=./test-reports/batch-2.json & node --expose-gc --enable-source-maps=false --max-old-space-size=16384 node_modules/jest/bin/jest.js src/__tests__/tests-batch-3.test.tsx --runInBand --no-bail --silent --coverage=false --no-cache --json --outputFile=./test-reports/batch-3.json",
     "test:e2e": "playwright test",
@@ -17,6 +21,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
+    "@prisma/adapter-mariadb": "^7.7.0",
+    "@prisma/client": "^7.7.0",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
     "@radix-ui/react-aspect-ratio": "1.1.1",
@@ -59,6 +65,7 @@
     "input-otp": "1.4.1",
     "ioredis": "^5.10.1",
     "lucide-react": "^0.454.0",
+    "mariadb": "^3.5.2",
     "next": "14.2.25",
     "next-themes": "^0.4.6",
     "node-cache": "^5.1.2",
@@ -82,6 +89,9 @@
     "zod": "3.25.67",
     "zustand": "^5.0.8"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.1.17",
@@ -100,6 +110,7 @@
     "jest-stare": "^2.5.3",
     "jsdom": "^23.2.0",
     "postcss": "^8.5",
+    "prisma": "^7.7.0",
     "tailwindcss": "^4.1.9",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
