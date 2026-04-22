@@ -1,6 +1,6 @@
 import fs from "fs/promises"
 import path from "path"
-import { createClient } from "@supabase/supabase-js"
+import mysql from "mysql2/promise"
 import type { CtaClickPayload, LeadPayload } from "@/lib/tracking/types"
 
 interface PersistContext {
@@ -9,13 +9,44 @@ interface PersistContext {
 }
 
 const LOCAL_TRACKING_DIR = path.join(process.cwd(), ".data", "tracking")
+let mariaPool: mysql.Pool | null = null
 
-function getSupabaseClient() {
-  const url = process.env.SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+function formatTimestampForMariaDb(value: string): string {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) {
+    return new Date().toISOString().slice(0, 23).replace("T", " ")
+  }
+  return date.toISOString().slice(0, 23).replace("T", " ")
+}
 
-  if (!url || !serviceKey) return null
-  return createClient(url, serviceKey, { auth: { persistSession: false } })
+function toSafeTableName(input: string | undefined, fallback: string): string {
+  if (!input) return fallback
+  return /^[a-zA-Z0-9_]+$/.test(input) ? input : fallback
+}
+
+function getMariaDbPool() {
+  const host = process.env.MARIADB_HOST
+  const user = process.env.MARIADB_USER
+  const password = process.env.MARIADB_PASSWORD
+  const database = process.env.MARIADB_DATABASE
+  const port = Number.parseInt(process.env.MARIADB_PORT || "3306", 10)
+
+  if (!host || !user || !password || !database) return null
+
+  if (!mariaPool) {
+    mariaPool = mysql.createPool({
+      host,
+      user,
+      password,
+      database,
+      port: Number.isNaN(port) ? 3306 : port,
+      waitForConnections: true,
+      connectionLimit: 5,
+      queueLimit: 0,
+    })
+  }
+
+  return mariaPool
 }
 
 async function appendLine(fileName: string, payload: unknown) {
@@ -26,7 +57,7 @@ async function appendLine(fileName: string, payload: unknown) {
 
 export async function persistEvent(payload: CtaClickPayload, context: PersistContext): Promise<void> {
   const row = {
-    timestamp: payload.timestamp,
+    timestamp: formatTimestampForMariaDb(payload.timestamp),
     page_url: payload.pageUrl,
     page_type: payload.pageType,
     referrer: payload.referrer,
@@ -36,13 +67,30 @@ export async function persistEvent(payload: CtaClickPayload, context: PersistCon
     cta_target_url: payload.ctaTargetUrl ?? null,
   }
 
-  const supabase = getSupabaseClient()
-  const tableName = process.env.SUPABASE_EVENTS_TABLE || "directory_events"
+  const mariaDb = getMariaDbPool()
+  const tableName = toSafeTableName(process.env.MARIADB_EVENTS_TABLE, "directory_events")
 
-  if (supabase) {
-    const { error } = await supabase.from(tableName).insert(row)
-    if (!error) return
-    console.warn("[tracking] failed to insert event into supabase:", error.message)
+  if (mariaDb) {
+    try {
+      await mariaDb.execute(
+        `INSERT INTO \`${tableName}\`
+          (timestamp, page_url, page_type, referrer, country, device_type, cta_label, cta_target_url)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          row.timestamp,
+          row.page_url,
+          row.page_type,
+          row.referrer,
+          row.country,
+          row.device_type,
+          row.cta_label,
+          row.cta_target_url,
+        ]
+      )
+      return
+    } catch (error) {
+      console.warn("[tracking] failed to insert event into mariadb:", error)
+    }
   }
 
   await appendLine("events.ndjson", row)
@@ -50,7 +98,7 @@ export async function persistEvent(payload: CtaClickPayload, context: PersistCon
 
 export async function persistLead(payload: LeadPayload, context: PersistContext): Promise<void> {
   const row = {
-    timestamp: payload.timestamp,
+    timestamp: formatTimestampForMariaDb(payload.timestamp),
     page_url: payload.pageUrl,
     page_type: payload.pageType,
     referrer: payload.referrer,
@@ -63,13 +111,33 @@ export async function persistLead(payload: LeadPayload, context: PersistContext)
     budget: payload.budget ?? null,
   }
 
-  const supabase = getSupabaseClient()
-  const tableName = process.env.SUPABASE_LEADS_TABLE || "directory_leads"
+  const mariaDb = getMariaDbPool()
+  const tableName = toSafeTableName(process.env.MARIADB_LEADS_TABLE, "directory_leads")
 
-  if (supabase) {
-    const { error } = await supabase.from(tableName).insert(row)
-    if (!error) return
-    console.warn("[tracking] failed to insert lead into supabase:", error.message)
+  if (mariaDb) {
+    try {
+      await mariaDb.execute(
+        `INSERT INTO \`${tableName}\`
+          (timestamp, page_url, page_type, referrer, country, device_type, name, contact, treatment, location, budget)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          row.timestamp,
+          row.page_url,
+          row.page_type,
+          row.referrer,
+          row.country,
+          row.device_type,
+          row.name,
+          row.contact,
+          row.treatment,
+          row.location,
+          row.budget,
+        ]
+      )
+      return
+    } catch (error) {
+      console.warn("[tracking] failed to insert lead into mariadb:", error)
+    }
   }
 
   await appendLine("leads.ndjson", row)

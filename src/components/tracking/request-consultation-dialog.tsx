@@ -81,6 +81,7 @@ export function RequestConsultationDialog({
         type="button"
         onClick={() => handleOpen(true)}
         className={buttonClassName}
+        data-no-auto-track="true"
       >
         Request Consultation
       </Button>

@@ -418,23 +418,26 @@ This project includes a lightweight tracking + lead capture layer for directory 
 cp .env.local.example .env.local
 ```
 
-2. (Optional, recommended) create Supabase tables using:
+2. (Optional, recommended) create MariaDB tables using:
 
 ```bash
-supabase/tracking-schema.sql
+mariadb/tracking-schema.sql
 ```
 
 3. Set these values in `.env.local` for hosted storage:
 
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `MARIADB_HOST`
+- `MARIADB_PORT` (default `3306`)
+- `MARIADB_USER`
+- `MARIADB_PASSWORD`
+- `MARIADB_DATABASE`
 
 Optional (only if you want custom table names):
 
-- `SUPABASE_EVENTS_TABLE` (default fallback: `directory_events`)
-- `SUPABASE_LEADS_TABLE` (default fallback: `directory_leads`)
+- `MARIADB_EVENTS_TABLE` (default fallback: `directory_events`)
+- `MARIADB_LEADS_TABLE` (default fallback: `directory_leads`)
 
-If Supabase is not configured, events/leads are written locally to:
+If MariaDB is not configured, events/leads are written locally to:
 
 ```bash
 .data/tracking/events.ndjson

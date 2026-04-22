@@ -22,6 +22,7 @@ function shouldTrackElement(pathname: string, element: HTMLElement): boolean {
   const pageType = getPageTypeFromPath(pathname)
   if (pageType === "other") return false
 
+  if (element.dataset.noAutoTrack === "true") return false
   if (element.dataset.trackCta === "true") return true
 
   const label = normalizeLabel(element.textContent || "").toLowerCase()
