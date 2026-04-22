@@ -14,7 +14,32 @@ const nextConfig = {
   basePath: '/directory',
   trailingSlash: true,
   async redirects() {
+    // Bare-path redirects (basePath: false) catch old indexed / external URLs
+    // that are missing the /directory prefix and send them to the correct location.
+    const barePaths = [
+      'accredited',
+      'clinics',
+      'practitioners',
+      'treatments',
+      'products',
+      'search',
+    ].flatMap((section) => [
+      {
+        source: `/${section}`,
+        destination: `/directory/${section}`,
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: `/${section}/:path*`,
+        destination: `/directory/${section}/:path*`,
+        permanent: true,
+        basePath: false,
+      },
+    ]);
+
     return [
+      ...barePaths,
       {
         source: '/clinics/middlesbrough/clinic/the-skin-clinic-5',
         destination: '/clinics/middlesbrough/clinic/the-skin-clinic',

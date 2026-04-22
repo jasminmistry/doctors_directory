@@ -87,7 +87,7 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
 
                 <BreadcrumbItem>
                   <BreadcrumbLink
-                    href={`/directory /accredited/${accreditationSlug}/practitioners`}
+                    href={`/directory/accredited/${accreditationSlug}/practitioners`}
                   >
                     {accreditationSlug}
                   </BreadcrumbLink>
