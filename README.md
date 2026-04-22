@@ -408,4 +408,37 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Lead Tracking Setup
+
+This project includes a lightweight tracking + lead capture layer for directory CTAs.
+
+1. Copy env defaults:
+
+```bash
+cp .env.local.example .env.local
+```
+
+2. (Optional, recommended) create Supabase tables using:
+
+```bash
+supabase/tracking-schema.sql
+```
+
+3. Set these values in `.env.local` for hosted storage:
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+Optional (only if you want custom table names):
+
+- `SUPABASE_EVENTS_TABLE` (default fallback: `directory_events`)
+- `SUPABASE_LEADS_TABLE` (default fallback: `directory_leads`)
+
+If Supabase is not configured, events/leads are written locally to:
+
+```bash
+.data/tracking/events.ndjson
+.data/tracking/leads.ndjson
+```
+
 # Deployed to https://staging.consentz.com/directory/

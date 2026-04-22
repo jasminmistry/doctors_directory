@@ -17,6 +17,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import  Link  from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
 import { Link as LinkIcon} from "lucide-react"
+import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 interface ProfileHeaderProps {
   clinic: Practitioner;
   k_value: any;
@@ -144,31 +145,19 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
         </div>
 
         <div className="flex flex-col gap-3 justify-center">
-          {consultationHref ? (
-            <Button
-              asChild
-              variant="default"
-              className="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
-            >
-              <a href={consultationHref} target="_blank" rel="noopener noreferrer">
-                Request Consultation
-              </a>
-            </Button>
-          ) : (
-            <Button
-              variant="default"
-              disabled
-              className="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white"
-            >
-              Request Consultation
-            </Button>
-          )}
+          <RequestConsultationDialog
+            pageType="practitioner_page"
+            treatment={Array.isArray(k_value?.Treatments) ? k_value.Treatments[0] : clinic.Treatments?.[0]}
+            location={k_value?.City || clinic.City}
+            consultationHref={consultationHref}
+            buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
+          />
           <Button
             asChild
             variant="outline"
             className="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
           >
-            <a href="#fees">Request Pricing</a>
+            <a href="#fees" data-track-cta="true">Request Pricing</a>
           </Button>
           <SocialMediaIcons clinic={k_value} />
         </div>

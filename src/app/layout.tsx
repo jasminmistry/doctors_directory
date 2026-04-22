@@ -9,6 +9,7 @@ import { Toaster } from "sonner";
 import Header from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ScrollToTop } from "@/components/scroll-to-top";
+import { CtaClickTracker } from "@/components/tracking/cta-click-tracker";
 
 import "./globals.css";
 
@@ -69,6 +70,7 @@ export default async function RootLayout({
           <Footer />
           <Toaster position="top-right" richColors className="site-toaster" />
           <ScrollToTop />
+          <CtaClickTracker />
           <Analytics />
         </div>
       </body>

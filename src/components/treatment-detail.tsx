@@ -381,7 +381,10 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
 
         {/* Book Consultation Button */}
         <div className="mt-6">
-          <Button className="w-full bg-black text-white hover:bg-gray-800 rounded-xl py-3 text-lg font-medium">
+          <Button
+            className="w-full bg-black text-white hover:bg-gray-800 rounded-xl py-3 text-lg font-medium"
+            data-track-cta="true"
+          >
             Book Consultation
           </Button>
         </div>
