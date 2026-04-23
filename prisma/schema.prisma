@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model DirectoryEvent {
+  id           BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  timestamp    DateTime @db.DateTime(3)
+  pageUrl      String   @map("page_url") @db.Text
+  pageType     String   @map("page_type") @db.VarChar(64)
+  referrer     String   @db.Text
+  country      String   @default("unknown") @db.VarChar(8)
+  deviceType   String   @map("device_type") @default("desktop") @db.VarChar(16)
+  ctaLabel     String   @map("cta_label") @db.VarChar(255)
+  ctaTargetUrl String?  @map("cta_target_url") @db.Text
+
+  @@index([pageType], map: "idx_directory_events_page_type")
+  @@index([timestamp], map: "idx_directory_events_timestamp")
+  @@map("directory_events")
+}
+
+model DirectoryLead {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  timestamp  DateTime @db.DateTime(3)
+  pageUrl    String   @map("page_url") @db.Text
+  pageType   String   @map("page_type") @db.VarChar(64)
+  referrer   String   @db.Text
+  country    String   @default("unknown") @db.VarChar(8)
+  deviceType String   @map("device_type") @default("desktop") @db.VarChar(16)
+  name       String   @db.VarChar(255)
+  contact    String   @db.VarChar(255)
+  treatment  String?  @db.VarChar(255)
+  location   String?  @db.VarChar(255)
+  budget     String?  @db.VarChar(255)
+
+  @@index([pageType], map: "idx_directory_leads_page_type")
+  @@index([timestamp], map: "idx_directory_leads_timestamp")
+  @@map("directory_leads")
+}

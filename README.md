@@ -408,4 +408,48 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Lead Tracking Setup
+
+This project includes a lightweight tracking + lead capture layer for directory CTAs.
+
+1. Copy env defaults:
+
+```bash
+cp .env.local.example .env.local
+```
+
+2. Run Prisma migrations (automated deployment compatible):
+
+```bash
+npx prisma migrate deploy
+```
+
+3. Set this value in `.env.local` for hosted storage:
+
+- `DATABASE_URL` (MariaDB/MySQL connection string for Prisma)
+
+If `DATABASE_URL` is not configured, events/leads are written locally to:
+
+```bash
+.data/tracking/events.ndjson
+.data/tracking/leads.ndjson
+```
+
+### Prisma setup
+
+- Schema: `prisma/schema.prisma`
+- Config: `prisma.config.ts`
+- Migration: `prisma/migrations/20260423070000_tracking_init/migration.sql`
+- Generate client: `npx prisma generate`
+
+### Tracking dashboard (admin)
+
+- UI: `/admin/tracking` (filters are stored in the query string so views are shareable).
+- API: `GET /api/admin/tracking` (same query params as the UI).
+- Optional gate: set `TRACKING_DASHBOARD_TOKEN` in `.env.local` / server env, then pass `?token=…` on the dashboard URL and in API calls (the UI “Copy link” includes it when present).
+
+### Google Analytics (measurement ID)
+
+Set `NEXT_PUBLIC_GA_MEASUREMENT_ID` to your GA4 property ID when available. If unset, the app keeps the existing default measurement ID in `src/app/layout.tsx`.
+
 # Deployed to https://staging.consentz.com/directory/

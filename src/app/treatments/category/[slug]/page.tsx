@@ -77,7 +77,7 @@ export default function TreatmentCategoryPage({ params }: Readonly<CategoryPageP
     <main className="min-h-screen bg-(--primary-bg-color)">
       <div className="bg-(--primary-bg-color) backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-0 py-2">
-          <Link href="/directory/treatments" prefetch={false}>
+          <Link href="/treatments" prefetch={false}>
             <Button
               variant="ghost"
               size="sm"

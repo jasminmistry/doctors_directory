@@ -59,10 +59,10 @@ interface SearchEmptyStateProps {
 }
 
 const popularPages = [
-  { label: "Top clinics in the UK", href: "/directory/clinics" },
-  { label: "Top practitioners in the UK", href: "/directory/practitioners" },
-  { label: "Browse all treatments", href: "/directory/treatments" },
-  { label: "Accredited clinics and practitioners", href: "/directory/accredited" },
+  { label: "Top clinics in the UK", href: "/clinics" },
+  { label: "Top practitioners in the UK", href: "/practitioners" },
+  { label: "Browse all treatments", href: "/treatments" },
+  { label: "Accredited clinics and practitioners", href: "/accredited" },
 ];
 
 const blogLinks = [

@@ -214,11 +214,13 @@ const serviceMatch = categories.some((cat: string) =>
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
           <MoreItems items={locations} />
         </div>
-        <CityTreatmentPage
-          cityData={cityData}
-          treatment={treatment}
-          slug={serviceslug.replaceAll("%20", " ")}
-        />
+        {treatment && cityData && (
+          <CityTreatmentPage
+            cityData={cityData}
+            treatment={treatment}
+            slug={serviceslug.replaceAll("%20", " ")}
+          />
+        )}
       </div>
     </main>
   );
