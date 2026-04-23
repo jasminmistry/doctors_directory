@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server'
-import { readJsonFile, writeJsonFile } from '@/lib/admin/file-utils'
+import { getAllClinics, createClinic } from '@/lib/data-access/clinics'
 import { validateClinic } from '@/lib/admin/validators'
 
 export async function GET() {
   try {
-    const clinics = await readJsonFile('clinics_processed_new_data.json')
-
+    const clinics = await getAllClinics()
     return NextResponse.json(clinics)
   } catch (error) {
     console.error('Failed to read clinics:', error)
@@ -23,11 +22,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid clinic data', details: validation.error.errors }, { status: 400 })
     }
 
-    const clinics = await readJsonFile('clinics_processed_new_data.json')
-    const updated = [...clinics, validation.data]
-    await writeJsonFile('clinics_processed_new_data.json', updated)
-
-    return NextResponse.json(validation.data, { status: 201 })
+    const clinic = await createClinic(validation.data)
+    return NextResponse.json(clinic, { status: 201 })
   } catch (error) {
     console.error('Failed to create clinic:', error)
     return NextResponse.json({ error: 'Failed to create clinic' }, { status: 500 })

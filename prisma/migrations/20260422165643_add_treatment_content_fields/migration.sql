@@ -1,0 +1,16 @@
+-- AlterTable
+ALTER TABLE `treatments` ADD COLUMN `alternatives` JSON NULL,
+    ADD COLUMN `choosingDoctor` JSON NULL,
+    ADD COLUMN `cost` JSON NULL,
+    ADD COLUMN `goodCandidate` JSON NULL,
+    ADD COLUMN `howLongResultsLast` JSON NULL,
+    ADD COLUMN `maintenance` JSON NULL,
+    ADD COLUMN `mildVsSevere` JSON NULL,
+    ADD COLUMN `niceGuidelines` JSON NULL,
+    ADD COLUMN `preparation` JSON NULL,
+    ADD COLUMN `prosAndCons` JSON NULL,
+    ADD COLUMN `qualifications` JSON NULL,
+    ADD COLUMN `recovery` JSON NULL,
+    ADD COLUMN `regulation` JSON NULL,
+    ADD COLUMN `safetyAndPain` JSON NULL,
+    ADD COLUMN `whatHappensDuring` JSON NULL;

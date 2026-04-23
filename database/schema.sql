@@ -197,10 +197,10 @@ CREATE TABLE IF NOT EXISTS clinic_staff (
   id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   clinic_id       INT UNSIGNED NOT NULL,
   full_name       VARCHAR(255),
-  title           TEXT,
-  specialty       TEXT,
+  title           VARCHAR(300),
+  specialty       JSON,
   linkedin_url    VARCHAR(500),
-  profile_url     TEXT,
+  profile_url     JSON,
   practitioner_id INT UNSIGNED NULL, -- FK set when resolved to a practitioners row
 
   FOREIGN KEY (clinic_id)       REFERENCES clinics(id)       ON DELETE CASCADE,
@@ -218,8 +218,23 @@ CREATE TABLE IF NOT EXISTS treatments (
   name        VARCHAR(255) NOT NULL,
   description TEXT,
 
-  -- JSON: display-only goal list
-  goals JSON, -- string[]
+  -- JSON: all 17 semantic content fields from treatments.json
+  goals               JSON, -- string[] or { goals, notes }
+  pros_and_cons       JSON, -- { pros: string[], cons: string[] }
+  cost                JSON, -- { typicalCosts, whyItVaries } — shape varies
+  choosing_doctor     JSON, -- string[] or { advice, notes }
+  alternatives        JSON, -- string[] or { comparison, notes }
+  good_candidate      JSON, -- string[] or { typical, notIdeal, notes }
+  preparation         JSON, -- string[] or { advice }
+  safety_and_pain     JSON, -- { safety: string|string[], pain: string }
+  how_long_results_last JSON, -- string, array, or { duration }
+  mild_vs_severe      JSON, -- { mildCases, severeCases, limitations }
+  what_happens_during JSON, -- string, array, or { process, duration }
+  recovery            JSON, -- { recovery, sideEffects } — shape varies
+  regulation          JSON, -- string[] or { regulation, ifSomethingGoesWrong }
+  maintenance         JSON, -- string or { maintenance }
+  qualifications      JSON, -- string[] or { whatToSeek, notes }
+  nice_guidelines     JSON, -- { guidelines } or { UK, USA }
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -259,7 +274,7 @@ CREATE TABLE IF NOT EXISTS practitioners (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-  INDEX idx_display_name (display_name),
+  INDEX idx_display_name (display_name(191)),
   INDEX idx_specialty    (specialty)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

@@ -9,7 +9,7 @@ import { BoxPlotDatum, ItemMeta } from "@/lib/types";
 import { Stats } from "@/components/visx-donut";
 import ClinicDetailsMarkdown from "@/components/Clinic/clinicDetailsMD";
 import { Clinic } from "@/lib/types";
-import { readJsonFileSync } from "@/lib/json-cache";
+import { getClinicBySlug, getClinicsByCity } from "@/lib/data-access/clinics";
 import ClinicTabs from "@/components/Clinic/clinicTabs";
 import {
   Breadcrumb,
@@ -40,8 +40,6 @@ function mergeBoxplotDataFromDict(
   });
 }
 
-const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
-
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -49,34 +47,95 @@ interface ProfilePageProps {
   };
 }
 
+// Helper to convert DB clinic to old Clinic type format
+function convertDbClinicToOldType(dbClinic: any): Clinic {
+  return {
+    slug: dbClinic.slug || undefined,
+    image: dbClinic.image || '',
+    url: dbClinic.gmapsUrl || undefined,
+    rating: dbClinic.rating ? Number(dbClinic.rating) : 0,
+    reviewCount: dbClinic.reviewCount || 0,
+    category: dbClinic.category || '',
+    gmapsAddress: dbClinic.gmapsAddress || '',
+    gmapsPhone: dbClinic.gmapsPhone || '',
+    gmapsReviews: dbClinic.reviews?.map((r: any) => ({
+      reviewer_name: r.reviewerName,
+      rating: r.rating ? Number(r.rating) : 0,
+      review_date: r.reviewDate,
+      review_text: r.reviewText,
+      owner_response: r.ownerResponse,
+    })),
+    reviewAnalysis: dbClinic.reviewAnalysis as any,
+    weighted_analysis: dbClinic.weightedAnalysis as any,
+    ranking: dbClinic.ranking ? {
+      city_rank: dbClinic.ranking.cityRank,
+      city_total: dbClinic.ranking.cityTotal,
+      score_out_of_100: dbClinic.ranking.scoreOutOf100,
+      subtitle_text: dbClinic.ranking.subtitleText,
+    } : undefined,
+    City: dbClinic.city?.name || '',
+    facebook: dbClinic.facebook || '',
+    twitter: dbClinic.twitter || '',
+    Linkedin: dbClinic.linkedin || '',
+    instagram: dbClinic.instagram || '',
+    youtube: dbClinic.youtube || '',
+    website: dbClinic.website || '',
+    email: dbClinic.email || '',
+    isSaveFace: dbClinic.isSaveFace,
+    isDoctor: dbClinic.isDoctor,
+    isJCCP: dbClinic.isJccp ? [dbClinic.isJccp, dbClinic.jccpUrl] : null,
+    isCQC: dbClinic.isCqc ? [dbClinic.isCqc, dbClinic.cqcUrl] : null,
+    isHIW: dbClinic.isHiw ? [dbClinic.isHiw, dbClinic.hiwUrl] : null,
+    isHIS: dbClinic.isHis ? [dbClinic.isHis, dbClinic.hisUrl] : null,
+    isRQIA: dbClinic.isRqia ? [dbClinic.isRqia, dbClinic.rqiaUrl] : null,
+    about_section: dbClinic.aboutSection || '',
+    accreditations: dbClinic.accreditations || '',
+    awards: dbClinic.awards || '',
+    affiliations: dbClinic.affiliations || '',
+    hours: dbClinic.hours?.reduce((acc: any, h: any) => {
+      acc[h.dayOfWeek] = h.hours;
+      return acc;
+    }, {}) || '',
+    Practitioners: dbClinic.staff?.map((s: any) => s.fullName).join(', ') || '',
+    Insurace: JSON.stringify(dbClinic.insuranceInfo || []),
+    Payments: JSON.stringify(dbClinic.paymentMethods || []),
+    Fees: JSON.stringify(dbClinic.fees?.map((f: any) => ({
+      treatment: f.treatmentName,
+      price: f.price,
+    })) || []),
+    x_twitter: dbClinic.xTwitter || '',
+    Treatments: dbClinic.treatments?.map((t: any) => t.treatment.name) || [],
+  } as Clinic;
+}
 
-export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const { cityslug,slug } = params;
+export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+  const { cityslug, slug } = params;
   const displayCityName = capitalize(cityslug);
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
-  const cityClinics: Clinic[] = clinics.filter(
-    (p) => p.City?.toLowerCase() === normalizedCitySlug
-  );
-  const clinic = clinics.find((p) => p.slug === slug);
-  const rankedCityClinics = buildClinicRankedEntries(
-    cityClinics.filter((cityClinic) => cityClinic.slug !== clinic?.slug),
-    5
-  );
+
+  const dbClinic = await getClinicBySlug(slug);
+  if (!dbClinic) {
+    notFound();
+  }
+
+  const dbCityClinics = await getClinicsByCity(normalizedCitySlug);
+  const clinic = convertDbClinicToOldType(dbClinic);
+  const cityClinics = dbCityClinics
+    .filter(c => c.slug !== slug)
+    .map(convertDbClinicToOldType);
+  const rankedCityClinics = buildClinicRankedEntries(cityClinics, 5);
   const uniqueTreatments = [
-  ...new Set(
-    cityClinics
-      .filter(c => Array.isArray(c.Treatments))
-      .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
-  )
-];
+    ...new Set(
+      cityClinics
+        .filter(c => Array.isArray(c.Treatments))
+        .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
+    )
+  ];
   const hoursObj = clinic?.hours as unknown as Record<string, any>;
 
-  const hours = 
+  const hours =
     (hoursObj && typeof hoursObj === 'object' && hoursObj["Typical_hours_listed_in_directories"]) ?? clinic?.hours;
   const flatHours = typeof hoursObj === 'object' && hoursObj !== null ? flattenObject(hours) : hours
-
- 
-
 
   const boxplotData = mergeBoxplotDataFromDict(
     boxplotDatas_clinic,
@@ -88,10 +147,6 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   );
   const rankingSubtitle =
     clinic?.ranking?.subtitle_text ?? `${overallScore}/100 in ${clinic?.City ?? displayCityName}`;
-
-  if (!clinic) {
-    notFound();
-  }
 
   return (
     <main className="min-h-screen bg-background">

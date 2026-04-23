@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { readJsonFile, writeJsonFile } from '@/lib/admin/file-utils'
+import { getClinicBySlug, updateClinic, deleteClinic } from '@/lib/data-access/clinics'
 import { validateClinic } from '@/lib/admin/validators'
 
 export async function GET(
@@ -7,8 +7,7 @@ export async function GET(
   { params }: { params: { slug: string } }
 ) {
   try {
-    const clinics = await readJsonFile('clinics_processed_new_data.json')
-    const clinic = clinics.find((c: any) => c.slug === params.slug)
+    const clinic = await getClinicBySlug(params.slug)
 
     if (!clinic) {
       return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
@@ -34,20 +33,13 @@ export async function PUT(
       return NextResponse.json({ error: 'Invalid clinic data', details: validation.error.errors }, { status: 400 })
     }
 
-    const clinics = await readJsonFile('clinics_processed_new_data.json')
-    const index = clinics.findIndex((c: any) => c.slug === params.slug)
-
-    if (index === -1) {
-      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
-    }
-
-    const updated = [...clinics]
-    updated[index] = validation.data
-    await writeJsonFile('clinics_processed_new_data.json', updated)
-
-    return NextResponse.json(validation.data)
+    const clinic = await updateClinic(params.slug, validation.data)
+    return NextResponse.json(clinic)
   } catch (error) {
     console.error('Failed to update clinic:', error)
+    if ((error as any).code === 'P2025') {
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
+    }
     return NextResponse.json({ error: 'Failed to update clinic' }, { status: 500 })
   }
 }
@@ -57,17 +49,13 @@ export async function DELETE(
   { params }: { params: { slug: string } }
 ) {
   try {
-    const clinics = await readJsonFile('clinics_processed_new_data.json')
-    const filtered = clinics.filter((c: any) => c.slug !== params.slug)
-
-    if (clinics.length === filtered.length) {
-      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
-    }
-
-    await writeJsonFile('clinics_processed_new_data.json', filtered)
+    await deleteClinic(params.slug)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Failed to delete clinic:', error)
+    if ((error as any).code === 'P2025') {
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
+    }
     return NextResponse.json({ error: 'Failed to delete clinic' }, { status: 500 })
   }
 }

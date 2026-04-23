@@ -55,6 +55,75 @@ function uniqueSlug(base: string, used: Set<string>): string {
   return slug
 }
 
+/** Convert a kebab-case slug to a title-cased display name, e.g. "dr-rose-keating" → "Dr Rose Keating" */
+function slugToDisplayName(slug: string): string {
+  return (slug ?? '')
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
+    .trim()
+}
+
+/** Truncate to max chars, returning null for empty values */
+function trunc(s: string | null | undefined, max: number): string | null {
+  if (!s) return null
+  return s.length > max ? s.slice(0, max) : s
+}
+
+// ============================================================
+// Treatment field extraction helpers
+// ============================================================
+
+// Pattern-based key lookup — returns the raw value for the first matching key
+function findField(obj: Record<string, unknown>, pattern: RegExp, exclude?: RegExp): unknown {
+  const key = Object.keys(obj).find(k => pattern.test(k) && (!exclude || !exclude.test(k)))
+  return key !== undefined ? obj[key] : null
+}
+
+// Description needs special handling: try "how does it work" keys first,
+// then fall back to bare "What is/are X" keys that aren't other fields
+function findDescription(obj: Record<string, unknown>): unknown {
+  const withHow = Object.keys(obj).find(k => /what.is.*how.does|what.are.*how.does|how.they.work/i.test(k))
+  if (withHow) return obj[withHow]
+  const EXCLUDE = /goals|pros|cons|cost|look.for|choos|candidate|prepar|safety|how.long|duration|mild|during|recover|regulat|qualif|nice|mhra|fda|mainten/i
+  const bare = Object.keys(obj).find(k => /^what.is|^what.are/i.test(k) && !EXCLUDE.test(k))
+  return bare ? obj[bare] : null
+}
+
+// Extract the best text string from a description value (string or object)
+function extractDescriptionText(val: unknown): string | null {
+  if (!val) return null
+  if (typeof val === 'string') return val
+  if (typeof val === 'object' && !Array.isArray(val)) {
+    const v = val as Record<string, unknown>
+    const primary = v.description ?? v.summary ?? v.text ?? v.content
+    if (typeof primary === 'string') return primary
+    const parts = Object.values(v).filter((s): s is string => typeof s === 'string')
+    return parts.length ? parts.join('\n\n') : null
+  }
+  return null
+}
+
+// Regex patterns for each of the 16 non-description semantic fields
+const FIELD_PATTERNS: Record<string, RegExp> = {
+  goals:             /^goals.of|what.are.the.goals/i,
+  prosAndCons:       /pros.and.cons|pros_and_cons/i,
+  cost:              /^cost.of|^cost.in|what.is.the.cost|cost.in.the.uk/i,
+  choosingDoctor:    /look.for.*choos|what.*look.*choos|^choos/i,
+  alternatives:      /^compar|compairs|compare.*with/i,
+  goodCandidate:     /good.candidate/i,
+  preparation:       /prepar/i,
+  safetyAndPain:     /safety.consider|safety.and.pain|safety_consider/i,
+  howLongResultsLast:/how.long.*result|duration.of.result/i,
+  mildVsSevere:      /mild.v[se]|mild_vs|mild.versus/i,
+  whatHappensDuring: /what.happens.during|what_happens_during|^during/i,
+  recovery:          /recovery.process|recovery_process|recovery.*downtime|recovery.and.side/i,
+  regulation:        /regulated.*uk|is.*regulated|regulated_in|^regulation.in/i,
+  maintenance:       /require.maintenance|maintenance.session|maintenance.and.frequen|maintenance_and_frequen|maintenance.and.repeat/i,
+  qualifications:    /qualifications/i,
+  niceGuidelines:    /nice|mhra|fda/i,
+}
+
 /** Runs fn for each item, logs progress, never throws on individual failures */
 async function processAll<T>(
   label: string,
@@ -163,25 +232,60 @@ async function seedTreatments(clinicsData: any[]): Promise<Map<string, number>> 
     if (!slug || slug === 'unknown') return
 
     // Try exact key match, then case-insensitive match
-    const jsonEntry =
+    const jsonEntry: Record<string, unknown> | undefined =
       treatmentsJson[name] ??
       treatmentsJson[Object.keys(treatmentsJson).find((k) => k.toLowerCase() === name.toLowerCase()) ?? '']
 
-    const descKey  = `What_is_${name.replace(/\s+/g, '_')}_And_How_does_it_work`
-    const goalsKey = `Goals_of_${name.replace(/\s+/g, '_')}_treatment`
-
-    const description = jsonEntry?.[descKey] ?? null
-    const goals       = safeParse<string[]>(jsonEntry?.[goalsKey], [])
+    // Extract all 17 semantic fields using pattern-based key lookup
+    const rawDesc   = jsonEntry ? findDescription(jsonEntry) : null
+    const content   = jsonEntry
+      ? Object.fromEntries(
+          Object.entries(FIELD_PATTERNS).map(([field, rx]) => [field, findField(jsonEntry, rx)])
+        )
+      : {}
 
     const record = await prisma.treatment.upsert({
       where: { slug },
       create: {
         slug,
         name,
-        description,
-        goals: Array.isArray(goals) ? goals : [],
+        description:       extractDescriptionText(rawDesc),
+        goals:             content.goals             ?? null,
+        prosAndCons:       content.prosAndCons       ?? null,
+        cost:              content.cost              ?? null,
+        choosingDoctor:    content.choosingDoctor    ?? null,
+        alternatives:      content.alternatives      ?? null,
+        goodCandidate:     content.goodCandidate     ?? null,
+        preparation:       content.preparation       ?? null,
+        safetyAndPain:     content.safetyAndPain     ?? null,
+        howLongResultsLast:content.howLongResultsLast ?? null,
+        mildVsSevere:      content.mildVsSevere      ?? null,
+        whatHappensDuring: content.whatHappensDuring ?? null,
+        recovery:          content.recovery          ?? null,
+        regulation:        content.regulation        ?? null,
+        maintenance:       content.maintenance       ?? null,
+        qualifications:    content.qualifications    ?? null,
+        niceGuidelines:    content.niceGuidelines    ?? null,
       },
-      update: {},
+      update: {
+        description:       extractDescriptionText(rawDesc),
+        goals:             content.goals             ?? null,
+        prosAndCons:       content.prosAndCons       ?? null,
+        cost:              content.cost              ?? null,
+        choosingDoctor:    content.choosingDoctor    ?? null,
+        alternatives:      content.alternatives      ?? null,
+        goodCandidate:     content.goodCandidate     ?? null,
+        preparation:       content.preparation       ?? null,
+        safetyAndPain:     content.safetyAndPain     ?? null,
+        howLongResultsLast:content.howLongResultsLast ?? null,
+        mildVsSevere:      content.mildVsSevere      ?? null,
+        whatHappensDuring: content.whatHappensDuring ?? null,
+        recovery:          content.recovery          ?? null,
+        regulation:        content.regulation        ?? null,
+        maintenance:       content.maintenance       ?? null,
+        qualifications:    content.qualifications    ?? null,
+        niceGuidelines:    content.niceGuidelines    ?? null,
+      },
     })
 
     treatmentMap.set(name.toLowerCase(), record.id)
@@ -318,11 +422,11 @@ async function seedClinics(
         .filter((p) => p && typeof p === 'object')
         .map((p) => ({
           clinicId:    record.id,
-          fullName:    p['Full Name']  || null,
-          title:       p.Title        || null,
-          specialty:   Array.isArray(p.Specialty)  ? p.Specialty.join(', ')  || null : p.Specialty  || null,
-          linkedinUrl: p.LinkedInURL  || null,
-          profileUrl:  Array.isArray(p.ProfileURL) ? p.ProfileURL.join('\n') || null : p.ProfileURL || null,
+          fullName:    trunc(p['Full Name'], 255),
+          title:       trunc(p.Title, 300),
+          specialty:   Array.isArray(p.Specialty) ? p.Specialty : (p.Specialty ? [p.Specialty] : []),
+          linkedinUrl: trunc(p.LinkedInURL, 500),
+          profileUrl:  Array.isArray(p.ProfileURL) ? p.ProfileURL : (p.ProfileURL ? [p.ProfileURL] : []),
         }))
       if (staffData.length) {
         await prisma.clinicStaff.deleteMany({ where: { clinicId: record.id } })
@@ -373,9 +477,11 @@ async function seedPractitioners(
       where: { slug },
       create: {
         slug,
-        displayName:     p.Title                    || null,
-        title:           p.practitioner_title       || null,
-        specialty:       p.practitioner_specialty   || null,
+        displayName:     p.practitioner_name
+          ? slugToDisplayName(p.practitioner_name)
+          : (p.Title || null),
+        title:           p.practitioner_title || p.Title || null,
+        specialty:       p.practitioner_specialty || null,
         imageUrl:        p.practitioner_image_link  || null,
         qualifications:  Array.isArray(qualifications) ? qualifications : [],
         roles:           Array.isArray(roles)          ? roles          : [],

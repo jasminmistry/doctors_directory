@@ -228,10 +228,10 @@ model ClinicStaff {
   id             Int     @id @default(autoincrement())
   clinicId       Int
   fullName       String? @db.VarChar(255)
-  title          String? @db.Text
-  specialty      String? @db.Text
+  title          String? @db.VarChar(300)
+  specialty      Json?
   linkedinUrl    String? @db.VarChar(500)
-  profileUrl     String? @db.Text
+  profileUrl     Json?
   practitionerId Int?    // FK set when this staff entry resolves to a Practitioner row
 
   clinic       Clinic        @relation(fields: [clinicId], references: [id], onDelete: Cascade)
@@ -262,8 +262,23 @@ model Treatment {
   name        String  @db.VarChar(255)
   description String? @db.Text
 
-  // JSON — display-only goal list
-  goals Json? // string[]
+  // JSON — rich content, all 17 semantic fields from treatments.json
+  goals              Json? // string[] or { goals, notes }
+  prosAndCons        Json? // { pros: string[], cons: string[] }
+  cost               Json? // { typicalCosts, whyItVaries } — shape varies
+  choosingDoctor     Json? // string[] or { advice, notes }
+  alternatives       Json? // string[] or { comparison, notes }
+  goodCandidate      Json? // string[] or { typical, notIdeal, notes }
+  preparation        Json? // string[] or { advice }
+  safetyAndPain      Json? // { safety: string|string[], pain: string }
+  howLongResultsLast Json? // string, array, or { duration }
+  mildVsSevere       Json? // { mildCases, severeCases, limitations }
+  whatHappensDuring  Json? // string, array, or { process, duration }
+  recovery           Json? // { recovery, sideEffects } — shape varies
+  regulation         Json? // string[] or { regulation, ifSomethingGoesWrong }
+  maintenance        Json? // string or { maintenance }
+  qualifications     Json? // string[] or { whatToSeek, notes }
+  niceGuidelines     Json? // { guidelines } or { UK, USA }
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
