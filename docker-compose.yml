@@ -32,7 +32,7 @@ services:
     ports:
       - "127.0.0.1:${APP_PORT:-3000}:3000"
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: mysql://root:${DB_ROOT_PASSWORD}@db:3306/doctor_directory
       REDIS_URL: redis://redis:6379
       NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
       NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID}
