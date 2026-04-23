@@ -14,9 +14,10 @@
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:install": "playwright install",
     "test:sitemap": "node run_tests/sitemap-integrity-check.mjs",
-    "prisma:generate": "prisma generate",
-    "prisma:dbpull": "prisma db pull",
-    "prisma:migrate:deploy": "prisma migrate deploy"
+    "db:seed": "prisma generate && tsx prisma/seed.ts",
+    "db:migrate": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
