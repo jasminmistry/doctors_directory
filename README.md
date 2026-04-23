@@ -418,10 +418,10 @@ This project includes a lightweight tracking + lead capture layer for directory 
 cp .env.local.example .env.local
 ```
 
-2. (Optional, recommended) create MariaDB tables using:
+2. Run Prisma migrations (automated deployment compatible):
 
 ```bash
-mariadb/tracking-schema.sql
+npx prisma migrate deploy
 ```
 
 3. Set this value in `.env.local` for hosted storage:
@@ -439,6 +439,7 @@ If `DATABASE_URL` is not configured, events/leads are written locally to:
 
 - Schema: `prisma/schema.prisma`
 - Config: `prisma.config.ts`
+- Migration: `prisma/migrations/20260423070000_tracking_init/migration.sql`
 - Generate client: `npx prisma generate`
 
 ### Tracking dashboard (admin)
