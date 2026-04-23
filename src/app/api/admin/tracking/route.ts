@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { listTrackingRows, type TrackingTab } from "@/lib/tracking/dashboard-queries"
-import { trackingDashboardTokenOk } from "@/lib/tracking/mariadb-pool"
+import { trackingDashboardTokenOk } from "@/lib/tracking/access"
 
 function parseTab(value: string | null): TrackingTab {
   return value === "leads" ? "leads" : "events"

@@ -424,25 +424,22 @@ cp .env.local.example .env.local
 mariadb/tracking-schema.sql
 ```
 
-3. Set these values in `.env.local` for hosted storage:
+3. Set this value in `.env.local` for hosted storage:
 
-- `MARIADB_HOST`
-- `MARIADB_PORT` (default `3306`)
-- `MARIADB_USER`
-- `MARIADB_PASSWORD`
-- `MARIADB_DATABASE`
+- `DATABASE_URL` (MariaDB/MySQL connection string for Prisma)
 
-Optional (only if you want custom table names):
-
-- `MARIADB_EVENTS_TABLE` (default fallback: `directory_events`)
-- `MARIADB_LEADS_TABLE` (default fallback: `directory_leads`)
-
-If MariaDB is not configured, events/leads are written locally to:
+If `DATABASE_URL` is not configured, events/leads are written locally to:
 
 ```bash
 .data/tracking/events.ndjson
 .data/tracking/leads.ndjson
 ```
+
+### Prisma setup
+
+- Schema: `prisma/schema.prisma`
+- Config: `prisma.config.ts`
+- Generate client: `npx prisma generate`
 
 ### Tracking dashboard (admin)
 

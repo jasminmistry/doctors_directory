@@ -1,13 +1,7 @@
-import type { RowDataPacket } from "mysql2"
-import { getTrackingMariaPool, toSafeTableName } from "@/lib/tracking/mariadb-pool"
+import { Prisma } from "@prisma/client"
+import { hasTrackingDatabaseConfig, prisma } from "@/lib/prisma"
 
-const PAGE_TYPES = [
-  "practitioner_page",
-  "clinic_page",
-  "collection_page",
-  "other",
-] as const
-
+const PAGE_TYPES = ["practitioner_page", "clinic_page", "collection_page", "other"] as const
 const DEVICE_TYPES = ["mobile", "desktop"] as const
 
 export type TrackingTab = "events" | "leads"
@@ -36,85 +30,148 @@ function normalizeDeviceType(value: string): string | null {
   return DEVICE_TYPES.includes(v as (typeof DEVICE_TYPES)[number]) ? v : null
 }
 
-function escapeLike(value: string): string {
-  return value.replace(/\\/g, "\\\\").replace(/%/g, "\\%").replace(/_/g, "\\_")
+function parseDateValue(value: string): Date | null {
+  const raw = value.trim()
+  if (!raw) return null
+  const normalized = raw.includes("T") ? raw : raw.replace(" ", "T")
+  const date = new Date(normalized)
+  if (Number.isNaN(date.getTime())) return null
+  return date
+}
+
+function buildTimestampFilter(from: Date | null, to: Date | null) {
+  if (!from && !to) return undefined
+  if (from && to) return { gte: from, lte: to }
+  if (from) return { gte: from }
+  return { lte: to as Date }
+}
+
+function mapEventRow(row: {
+  id: bigint
+  timestamp: Date
+  pageUrl: string
+  pageType: string
+  referrer: string
+  country: string
+  deviceType: string
+  ctaLabel: string
+  ctaTargetUrl: string | null
+}) {
+  return {
+    id: row.id.toString(),
+    timestamp: row.timestamp.toISOString(),
+    page_url: row.pageUrl,
+    page_type: row.pageType,
+    referrer: row.referrer,
+    country: row.country,
+    device_type: row.deviceType,
+    cta_label: row.ctaLabel,
+    cta_target_url: row.ctaTargetUrl,
+  }
+}
+
+function mapLeadRow(row: {
+  id: bigint
+  timestamp: Date
+  pageUrl: string
+  pageType: string
+  referrer: string
+  country: string
+  deviceType: string
+  name: string
+  contact: string
+  treatment: string | null
+  location: string | null
+  budget: string | null
+}) {
+  return {
+    id: row.id.toString(),
+    timestamp: row.timestamp.toISOString(),
+    page_url: row.pageUrl,
+    page_type: row.pageType,
+    referrer: row.referrer,
+    country: row.country,
+    device_type: row.deviceType,
+    name: row.name,
+    contact: row.contact,
+    treatment: row.treatment,
+    location: row.location,
+    budget: row.budget,
+  }
 }
 
 export async function listTrackingRows(
   params: TrackingListParams
-): Promise<{ rows: RowDataPacket[]; total: number }> {
-  const pool = getTrackingMariaPool()
-  if (!pool) {
+): Promise<{ rows: Record<string, unknown>[]; total: number }> {
+  if (!hasTrackingDatabaseConfig) {
     return { rows: [], total: 0 }
   }
 
-  const eventsTable = toSafeTableName(process.env.MARIADB_EVENTS_TABLE, "directory_events")
-  const leadsTable = toSafeTableName(process.env.MARIADB_LEADS_TABLE, "directory_leads")
-  const table = params.tab === "leads" ? leadsTable : eventsTable
-
-  const where: string[] = ["1=1"]
-  const values: unknown[] = []
-
   const pageType = normalizePageType(params.pageType)
-  if (pageType) {
-    where.push("page_type = ?")
-    values.push(pageType)
-  }
-
   const deviceType = normalizeDeviceType(params.deviceType)
-  if (deviceType) {
-    where.push("device_type = ?")
-    values.push(deviceType)
-  }
-
-  const country = params.country.trim()
-  if (country) {
-    where.push("country = ?")
-    values.push(country.toUpperCase())
-  }
-
-  const from = params.from.trim()
-  if (from) {
-    where.push("timestamp >= ?")
-    values.push(from.replace("T", " ").slice(0, 23))
-  }
-
-  const to = params.to.trim()
-  if (to) {
-    where.push("timestamp <= ?")
-    values.push(to.replace("T", " ").slice(0, 23))
-  }
-
+  const country = params.country.trim().toUpperCase()
+  const from = parseDateValue(params.from)
+  const to = parseDateValue(params.to)
+  const timestamp = buildTimestampFilter(from, to)
   const q = params.q.trim()
-  if (q) {
-    const like = `%${escapeLike(q)}%`
-    if (params.tab === "leads") {
-      where.push(
-        "(page_url LIKE ? ESCAPE '\\\\' OR referrer LIKE ? ESCAPE '\\\\' OR name LIKE ? ESCAPE '\\\\' OR contact LIKE ? ESCAPE '\\\\' OR treatment LIKE ? ESCAPE '\\\\' OR location LIKE ? ESCAPE '\\\\' OR budget LIKE ? ESCAPE '\\\\')"
-      )
-      values.push(like, like, like, like, like, like, like)
-    } else {
-      where.push(
-        "(page_url LIKE ? ESCAPE '\\\\' OR referrer LIKE ? ESCAPE '\\\\' OR cta_label LIKE ? ESCAPE '\\\\' OR cta_target_url LIKE ? ESCAPE '\\\\')"
-      )
-      values.push(like, like, like, like)
+
+  const skip = Math.max(0, (params.page - 1) * params.pageSize)
+  const take = Math.min(100, Math.max(1, params.pageSize))
+
+  if (params.tab === "events") {
+    const where: Prisma.DirectoryEventWhereInput = {}
+    if (pageType) where.pageType = pageType
+    if (deviceType) where.deviceType = deviceType
+    if (country) where.country = country
+    if (timestamp) where.timestamp = timestamp
+    if (q) {
+      where.OR = [
+        { pageUrl: { contains: q } },
+        { referrer: { contains: q } },
+        { ctaLabel: { contains: q } },
+        { ctaTargetUrl: { contains: q } },
+      ]
     }
+
+    const [items, total] = await prisma.$transaction([
+      prisma.directoryEvent.findMany({
+        where,
+        orderBy: { timestamp: "desc" },
+        skip,
+        take,
+      }),
+      prisma.directoryEvent.count({ where }),
+    ])
+
+    return { rows: items.map(mapEventRow), total }
   }
 
-  const whereSql = where.join(" AND ")
-  const offset = Math.max(0, (params.page - 1) * params.pageSize)
-  const limit = Math.min(100, Math.max(1, params.pageSize))
+  const where: Prisma.DirectoryLeadWhereInput = {}
+  if (pageType) where.pageType = pageType
+  if (deviceType) where.deviceType = deviceType
+  if (country) where.country = country
+  if (timestamp) where.timestamp = timestamp
+  if (q) {
+    where.OR = [
+      { pageUrl: { contains: q } },
+      { referrer: { contains: q } },
+      { name: { contains: q } },
+      { contact: { contains: q } },
+      { treatment: { contains: q } },
+      { location: { contains: q } },
+      { budget: { contains: q } },
+    ]
+  }
 
-  const [countRows] = await pool.query<RowDataPacket[]>(
-    `SELECT COUNT(*) AS total FROM \`${table}\` WHERE ${whereSql}`,
-    values
-  )
-  const total = Number(countRows[0]?.total ?? 0)
+  const [items, total] = await prisma.$transaction([
+    prisma.directoryLead.findMany({
+      where,
+      orderBy: { timestamp: "desc" },
+      skip,
+      take,
+    }),
+    prisma.directoryLead.count({ where }),
+  ])
 
-  const [rows] = await pool.query<RowDataPacket[]>(
-    `SELECT * FROM \`${table}\` WHERE ${whereSql} ORDER BY timestamp DESC LIMIT ? OFFSET ?`,
-    [...values, limit, offset]
-  )
-
-  return { rows, total }
+  return { rows: items.map(mapLeadRow), total }
 }

@@ -1,7 +1,7 @@
 import fs from "fs/promises"
 import path from "path"
+import { hasTrackingDatabaseConfig, prisma } from "@/lib/prisma"
 import type { CtaClickPayload, LeadPayload } from "@/lib/tracking/types"
-import { getTrackingMariaPool, toSafeTableName } from "@/lib/tracking/mariadb-pool"
 
 interface PersistContext {
   country: string
@@ -10,12 +10,10 @@ interface PersistContext {
 
 const LOCAL_TRACKING_DIR = path.join(process.cwd(), ".data", "tracking")
 
-function formatTimestampForMariaDb(value: string): string {
+function toDate(value: string): Date {
   const date = new Date(value)
-  if (Number.isNaN(date.getTime())) {
-    return new Date().toISOString().slice(0, 23).replace("T", " ")
-  }
-  return date.toISOString().slice(0, 23).replace("T", " ")
+  if (Number.isNaN(date.getTime())) return new Date()
+  return date
 }
 
 async function appendLine(fileName: string, payload: unknown) {
@@ -26,53 +24,39 @@ async function appendLine(fileName: string, payload: unknown) {
 
 export async function persistEvent(payload: CtaClickPayload, context: PersistContext): Promise<void> {
   const row = {
-    timestamp: formatTimestampForMariaDb(payload.timestamp),
-    page_url: payload.pageUrl,
-    page_type: payload.pageType,
+    timestamp: toDate(payload.timestamp),
+    pageUrl: payload.pageUrl,
+    pageType: payload.pageType,
     referrer: payload.referrer,
     country: context.country,
-    device_type: context.deviceType,
-    cta_label: payload.ctaLabel,
-    cta_target_url: payload.ctaTargetUrl ?? null,
+    deviceType: context.deviceType,
+    ctaLabel: payload.ctaLabel,
+    ctaTargetUrl: payload.ctaTargetUrl ?? null,
   }
 
-  const mariaDb = getTrackingMariaPool()
-  const tableName = toSafeTableName(process.env.MARIADB_EVENTS_TABLE, "directory_events")
-
-  if (mariaDb) {
+  if (hasTrackingDatabaseConfig) {
     try {
-      await mariaDb.execute(
-        `INSERT INTO \`${tableName}\`
-          (timestamp, page_url, page_type, referrer, country, device_type, cta_label, cta_target_url)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          row.timestamp,
-          row.page_url,
-          row.page_type,
-          row.referrer,
-          row.country,
-          row.device_type,
-          row.cta_label,
-          row.cta_target_url,
-        ]
-      )
+      await prisma.directoryEvent.create({ data: row })
       return
     } catch (error) {
-      console.warn("[tracking] failed to insert event into mariadb:", error)
+      console.warn("[tracking] failed to insert event via prisma:", error)
     }
   }
 
-  await appendLine("events.ndjson", row)
+  await appendLine("events.ndjson", {
+    ...row,
+    timestamp: row.timestamp.toISOString(),
+  })
 }
 
 export async function persistLead(payload: LeadPayload, context: PersistContext): Promise<void> {
   const row = {
-    timestamp: formatTimestampForMariaDb(payload.timestamp),
-    page_url: payload.pageUrl,
-    page_type: payload.pageType,
+    timestamp: toDate(payload.timestamp),
+    pageUrl: payload.pageUrl,
+    pageType: payload.pageType,
     referrer: payload.referrer,
     country: context.country,
-    device_type: context.deviceType,
+    deviceType: context.deviceType,
     name: payload.name,
     contact: payload.contact,
     treatment: payload.treatment ?? null,
@@ -80,36 +64,19 @@ export async function persistLead(payload: LeadPayload, context: PersistContext)
     budget: payload.budget ?? null,
   }
 
-  const mariaDb = getTrackingMariaPool()
-  const tableName = toSafeTableName(process.env.MARIADB_LEADS_TABLE, "directory_leads")
-
-  if (mariaDb) {
+  if (hasTrackingDatabaseConfig) {
     try {
-      await mariaDb.execute(
-        `INSERT INTO \`${tableName}\`
-          (timestamp, page_url, page_type, referrer, country, device_type, name, contact, treatment, location, budget)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          row.timestamp,
-          row.page_url,
-          row.page_type,
-          row.referrer,
-          row.country,
-          row.device_type,
-          row.name,
-          row.contact,
-          row.treatment,
-          row.location,
-          row.budget,
-        ]
-      )
+      await prisma.directoryLead.create({ data: row })
       return
     } catch (error) {
-      console.warn("[tracking] failed to insert lead into mariadb:", error)
+      console.warn("[tracking] failed to insert lead via prisma:", error)
     }
   }
 
-  await appendLine("leads.ndjson", row)
+  await appendLine("leads.ndjson", {
+    ...row,
+    timestamp: row.timestamp.toISOString(),
+  })
 }
 
 export function resolveCountry(headerValue: string | null): string {
