@@ -38,6 +38,12 @@ export default function AdminDashboard() {
           >
             QA Test Report
           </Link>
+          <Link
+            href="/admin/tracking"
+            className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            Tracking
+          </Link>
         </nav>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

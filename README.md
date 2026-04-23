@@ -444,4 +444,14 @@ If MariaDB is not configured, events/leads are written locally to:
 .data/tracking/leads.ndjson
 ```
 
+### Tracking dashboard (admin)
+
+- UI: `/admin/tracking` (filters are stored in the query string so views are shareable).
+- API: `GET /api/admin/tracking` (same query params as the UI).
+- Optional gate: set `TRACKING_DASHBOARD_TOKEN` in `.env.local` / server env, then pass `?token=…` on the dashboard URL and in API calls (the UI “Copy link” includes it when present).
+
+### Google Analytics (measurement ID)
+
+Set `NEXT_PUBLIC_GA_MEASUREMENT_ID` to your GA4 property ID when available. If unset, the app keeps the existing default measurement ID in `src/app/layout.tsx`.
+
 # Deployed to https://staging.consentz.com/directory/

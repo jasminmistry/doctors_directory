@@ -1,7 +1,7 @@
 import fs from "fs/promises"
 import path from "path"
-import mysql from "mysql2/promise"
 import type { CtaClickPayload, LeadPayload } from "@/lib/tracking/types"
+import { getTrackingMariaPool, toSafeTableName } from "@/lib/tracking/mariadb-pool"
 
 interface PersistContext {
   country: string
@@ -9,7 +9,6 @@ interface PersistContext {
 }
 
 const LOCAL_TRACKING_DIR = path.join(process.cwd(), ".data", "tracking")
-let mariaPool: mysql.Pool | null = null
 
 function formatTimestampForMariaDb(value: string): string {
   const date = new Date(value)
@@ -17,36 +16,6 @@ function formatTimestampForMariaDb(value: string): string {
     return new Date().toISOString().slice(0, 23).replace("T", " ")
   }
   return date.toISOString().slice(0, 23).replace("T", " ")
-}
-
-function toSafeTableName(input: string | undefined, fallback: string): string {
-  if (!input) return fallback
-  return /^[a-zA-Z0-9_]+$/.test(input) ? input : fallback
-}
-
-function getMariaDbPool() {
-  const host = process.env.MARIADB_HOST
-  const user = process.env.MARIADB_USER
-  const password = process.env.MARIADB_PASSWORD
-  const database = process.env.MARIADB_DATABASE
-  const port = Number.parseInt(process.env.MARIADB_PORT || "3306", 10)
-
-  if (!host || !user || !password || !database) return null
-
-  if (!mariaPool) {
-    mariaPool = mysql.createPool({
-      host,
-      user,
-      password,
-      database,
-      port: Number.isNaN(port) ? 3306 : port,
-      waitForConnections: true,
-      connectionLimit: 5,
-      queueLimit: 0,
-    })
-  }
-
-  return mariaPool
 }
 
 async function appendLine(fileName: string, payload: unknown) {
@@ -67,7 +36,7 @@ export async function persistEvent(payload: CtaClickPayload, context: PersistCon
     cta_target_url: payload.ctaTargetUrl ?? null,
   }
 
-  const mariaDb = getMariaDbPool()
+  const mariaDb = getTrackingMariaPool()
   const tableName = toSafeTableName(process.env.MARIADB_EVENTS_TABLE, "directory_events")
 
   if (mariaDb) {
@@ -111,7 +80,7 @@ export async function persistLead(payload: LeadPayload, context: PersistContext)
     budget: payload.budget ?? null,
   }
 
-  const mariaDb = getMariaDbPool()
+  const mariaDb = getTrackingMariaPool()
   const tableName = toSafeTableName(process.env.MARIADB_LEADS_TABLE, "directory_leads")
 
   if (mariaDb) {
