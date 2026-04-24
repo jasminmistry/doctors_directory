@@ -5,11 +5,11 @@ import {
   uniqueStrings,
   xmlResponse,
 } from '@/lib/sitemap'
-import { getEnrichedPractitioners } from '@/lib/sitemap-data'
+import { getEnrichedPractitionersFromDb } from '@/lib/sitemap-data'
 
 export async function GET() {
   const cities = uniqueStrings(
-    getEnrichedPractitioners()
+    (await getEnrichedPractitionersFromDb())
       .filter(
         (entry) => Array.isArray(entry.Treatments) && entry.Treatments.length > 0
       )

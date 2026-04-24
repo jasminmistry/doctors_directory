@@ -1,15 +1,14 @@
 import { NextResponse } from 'next/server'
-import { readJsonFile, writeJsonFile } from '@/lib/admin/file-utils'
 import { validatePractitioner } from '@/lib/admin/validators'
+import { prisma } from '@/lib/db'
+import { getPractitionerBySlug, convertDbPractitionerToOldType } from '@/lib/data-access/practitioners'
 
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
   try {
-    const practitioners = await readJsonFile('derms_processed_new_5403.json')
-    
-    const practitioner = practitioners.find((p: any) => p.practitioner_name === params.slug)
+    const practitioner = await getPractitionerBySlug(params.slug)
 
     if (!practitioner) {
       return NextResponse.json({ error: 'Practitioner not found' }, { status: 404 })
@@ -35,18 +34,32 @@ export async function PUT(
       return NextResponse.json({ error: 'Invalid practitioner data', details: validation.error.errors }, { status: 400 })
     }
 
-    const practitioners = await readJsonFile('derms_processed_new_5403.json')
-    const index = practitioners.findIndex((p: any) => p.slug === params.slug)
+    const d = validation.data as any
 
-    if (index === -1) {
-      return NextResponse.json({ error: 'Practitioner not found' }, { status: 404 })
-    }
+    const record = await prisma.practitioner.update({
+      where: { slug: params.slug },
+      data: {
+        displayName: d.practitioner_name ?? undefined,
+        title: d.practitioner_title ?? undefined,
+        specialty: d.practitioner_specialty ?? undefined,
+        imageUrl: d.practitioner_image_link ?? undefined,
+        qualifications: d.practitioner_qualifications ?? undefined,
+        awards: d.practitioner_awards ?? undefined,
+        roles: d.practitioner_roles ?? undefined,
+        media: d.practitioner_media ?? undefined,
+        experience: d.practitioner_experience ?? undefined,
+      },
+      include: {
+        ranking: true,
+        treatments: { select: { treatment: { select: { name: true } } } },
+        clinicAssociations: {
+          orderBy: { clinicId: 'asc' },
+          include: { clinic: { select: { id: true, slug: true, image: true, rating: true, reviewCount: true, gmapsAddress: true, gmapsUrl: true, category: true, isSaveFace: true, isDoctor: true, isJccp: true, isCqc: true, isHiw: true, isHis: true, isRqia: true, paymentMethods: true, city: { select: { name: true } }, treatments: { select: { treatment: { select: { name: true } } } }, hours: { select: { dayOfWeek: true, hours: true } } } } },
+        },
+      },
+    })
 
-    const updated = [...practitioners]
-    updated[index] = validation.data
-    await writeJsonFile('derms_processed_new_5403.json', updated)
-
-    return NextResponse.json(validation.data)
+    return NextResponse.json(convertDbPractitionerToOldType(record))
   } catch (error) {
     console.error('Failed to update practitioner:', error)
     return NextResponse.json({ error: 'Failed to update practitioner' }, { status: 500 })
@@ -58,16 +71,12 @@ export async function DELETE(
   { params }: { params: { slug: string } }
 ) {
   try {
-    const practitioners = await readJsonFile('derms_processed_new_5403.json')
-    const filtered = practitioners.filter((p: any) => p.slug !== params.slug)
-
-    if (practitioners.length === filtered.length) {
+    await prisma.practitioner.delete({ where: { slug: params.slug } })
+    return NextResponse.json({ success: true })
+  } catch (error: any) {
+    if (error?.code === 'P2025') {
       return NextResponse.json({ error: 'Practitioner not found' }, { status: 404 })
     }
-
-    await writeJsonFile('derms_processed_new_5403.json', filtered)
-    return NextResponse.json({ success: true })
-  } catch (error) {
     console.error('Failed to delete practitioner:', error)
     return NextResponse.json({ error: 'Failed to delete practitioner' }, { status: 500 })
   }

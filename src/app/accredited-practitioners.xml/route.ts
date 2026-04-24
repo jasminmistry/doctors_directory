@@ -5,12 +5,12 @@ import {
 } from '@/lib/sitemap'
 import {
   ACCREDITATION_KEYS,
-  getEnrichedPractitioners,
+  getEnrichedPractitionersFromDb,
   hasAccreditation,
 } from '@/lib/sitemap-data'
 
 export async function GET() {
-  const practitioners = getEnrichedPractitioners()
+  const practitioners = await getEnrichedPractitionersFromDb()
   const paths = ACCREDITATION_KEYS.filter((accreditation) =>
     practitioners.some((entry) => hasAccreditation(entry, accreditation))
   ).map((accreditation) => `/accredited/${accreditation}/practitioners`)

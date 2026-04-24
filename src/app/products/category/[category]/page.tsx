@@ -8,7 +8,6 @@ import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
 import { product_categories } from "@/lib/data";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Product } from "@/lib/types";
-import fs from "fs";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,7 +16,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { readJsonFileSync } from "@/lib/json-cache"
+import { getProductsByCategory } from "@/lib/data-access/products";
 import { toDirectoryCanonical } from "@/lib/seo";
 
 interface ProfilePageProps {
@@ -27,7 +26,6 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   let { category } = params;
   const resolvedCategory =
     product_categories.find((c) => toUrlSlug(c) === category) ??
@@ -43,7 +41,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     redirect(`/products/category/${categorySlug}`);
   }
 
-  const similarProducts = clinics.filter((p) => p.category === category);
+  const similarProducts = await getProductsByCategory(category);
 
 
 
@@ -208,10 +206,9 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 // }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
-  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   const { category } = params;
   const canonicalCategory = decodeURIComponent(category).toLowerCase();
-  const similarProducts = clinics.filter((p) => p.product_category === category );
+  const similarProducts = await getProductsByCategory(category);
 
 
   if (!similarProducts) {

@@ -7,7 +7,6 @@ import { decodeUnicodeEscapes } from "@/lib/utils";
 import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Product } from "@/lib/types";
-import fs from "fs";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,7 +15,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { readJsonFileSync } from "@/lib/json-cache"
+import { getProductsByBrand } from "@/lib/data-access/products";
 import { toDirectoryCanonical } from "@/lib/seo";
 
 interface ProfilePageProps {
@@ -39,10 +38,9 @@ export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   let { brand } = params;
   brand = decodeURIComponent(brand).replaceAll('%20', " ");
-  const similarProducts = clinics.filter((p) => p.brand === brand );
+  const similarProducts = await getProductsByBrand(brand);
 
   if (!similarProducts) {
     notFound();

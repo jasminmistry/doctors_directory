@@ -1,5 +1,6 @@
 import { Clinic, Practitioner } from '@/lib/types'
 import { readJsonFileSync } from '@/lib/json-cache'
+import { getAllPractitionersForSearch } from '@/lib/data-access/practitioners'
 
 export const ACCREDITATION_KEYS = [
   'cqc',
@@ -24,6 +25,14 @@ const ACCREDITATION_FIELD_MAP: Record<AccreditationKey, keyof Clinic> = {
 export const getClinics = (): Clinic[] => readJsonFileSync('clinics_processed_new_data.json')
 
 export const getPractitioners = (): Practitioner[] => readJsonFileSync('derms_processed_new_5403.json')
+
+export const getPractitionersFromDb = (): Promise<Practitioner[]> =>
+  getAllPractitionersForSearch()
+
+export const getEnrichedPractitionersFromDb = async (): Promise<Array<Clinic & Practitioner>> => {
+  const practitioners = await getAllPractitionersForSearch()
+  return practitioners as unknown as Array<Clinic & Practitioner>
+}
 
 const parsePrimaryAssociatedClinic = (
   associatedClinics: Practitioner['Associated_Clinics']

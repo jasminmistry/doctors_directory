@@ -12,9 +12,9 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Clinic, Practitioner } from "@/lib/types"
-import { readJsonFileSync } from "@/lib/json-cache"
 import { SearchBar } from "@/components/search/search-bar";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 
 function mapAccreditationToFieldPractitioner(accreditation: string): keyof Practitioner {
   const mapping: Record<string, keyof Practitioner> = {
@@ -49,24 +49,10 @@ interface AccreditedPractitionersPageProps {
 }
 
 export default async function AccreditedPractitionersPage({ params }: Readonly<AccreditedPractitionersPageProps>) {
-  const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
-  const clinics = clinicsData.filter(c => c.slug !== undefined)
-  const clinicIndex = new Map(
-    clinics.map(c => [c.slug!, c])
-  )
-
-  const practitioners: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
+  const enrichedPractitioners = await getAllPractitionersForSearch()
 
   const { accreditation } = params
   const accreditationField = mapAccreditationToFieldPractitioner(accreditation)
-
-  const enrichedPractitioners = practitioners
-    .map(p => {
-      const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0])
-      if (!clinic) return null
-      return { ...clinic, ...p }
-    })
-    .filter(Boolean)
 
   const filteredPractitioners = enrichedPractitioners.filter(practitioner => {
     const accreditationValue = (practitioner as any)[accreditationField]
@@ -91,7 +77,7 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
     notFound()
   }
 
-  const cities = [...new Set(filteredPractitioners.map(p => p!.City))].sort((a, b) => a.localeCompare(b))
+  const cities = [...new Set(filteredPractitioners.map(p => p!.City).filter((c): c is string => Boolean(c)))].sort((a, b) => a.localeCompare(b))
   const accreditationName = getAccreditationName(accreditation)
   const accreditationSlug =
   accreditationName.split("(")[1]?.replace(")", "") ?? accreditationName;

@@ -4,11 +4,10 @@ import {
   mapPathsToSitemapUrls,
   xmlResponse,
 } from '@/lib/sitemap'
-import { Product } from '@/lib/types'
-import { readJsonFileSync } from '@/lib/json-cache'
+import { getAllProducts } from '@/lib/data-access/products'
 
 export async function GET() {
-  const products: Product[] = readJsonFileSync('products_processed_new.json')
+  const products = await getAllProducts()
 
   const paths = products
     .filter((product) => Boolean(product.slug) && Boolean(product.category))

@@ -12,10 +12,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Clinic, Practitioner } from "@/lib/types"
-import { readJsonFileSync } from "@/lib/json-cache"
-
+import { Practitioner } from "@/lib/types"
 import { accreditations } from "@/lib/data"
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import { PractitionerCard } from "@/components/practitioner-card"
 import { toDirectoryCanonical } from "@/lib/seo"
 
@@ -53,24 +52,10 @@ interface AccreditedPractitionersPageProps {
 }
 
 export default async function AccreditedPractitionersPage({ params }: Readonly<AccreditedPractitionersPageProps>) {
-  const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
-  const clinics = clinicsData.filter(c => c.slug !== undefined)
-  const clinicIndex = new Map(
-    clinics.map(c => [c.slug!, c])
-  )
-
-  const practitioners: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
+  const enrichedPractitioners = await getAllPractitionersForSearch()
 
   const { accreditation, cityslug } = params
   const accreditationField = mapAccreditationToField(accreditation)
-
-  const enrichedPractitioners = practitioners
-    .map(p => {
-      const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0])
-      if (!clinic) return null
-      return { ...clinic, ...p }
-    })
-    .filter(Boolean)
 
   const filteredPractitioners = enrichedPractitioners.filter(practitioner => {
     if (!practitioner) return false

@@ -1,8 +1,8 @@
 import { buildUrlSetXml, encodeCitySegment, mapPathsToSitemapUrls, uniqueStrings, xmlResponse } from '@/lib/sitemap'
-import { getEnrichedPractitioners } from '@/lib/sitemap-data'
+import { getEnrichedPractitionersFromDb } from '@/lib/sitemap-data'
 
 export async function GET() {
-  const cities = uniqueStrings(getEnrichedPractitioners().map((entry) => entry.City))
+  const cities = uniqueStrings((await getEnrichedPractitionersFromDb()).map((entry) => entry.City))
   const paths = cities.map((city) => `/practitioners/${encodeCitySegment(city)}`)
 
   const xml = buildUrlSetXml(mapPathsToSitemapUrls(paths))

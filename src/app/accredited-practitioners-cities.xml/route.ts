@@ -7,12 +7,12 @@ import {
 } from '@/lib/sitemap'
 import {
   ACCREDITATION_KEYS,
-  getEnrichedPractitioners,
+  getEnrichedPractitionersFromDb,
   hasAccreditationArrayFlag,
 } from '@/lib/sitemap-data'
 
 export async function GET() {
-  const practitioners = getEnrichedPractitioners()
+  const practitioners = await getEnrichedPractitionersFromDb()
   const paths: string[] = []
 
   for (const accreditation of ACCREDITATION_KEYS) {

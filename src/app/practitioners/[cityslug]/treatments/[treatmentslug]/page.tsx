@@ -23,14 +23,10 @@ import { capitalize, toUrlSlug } from "@/lib/utils";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
+import { getAllClinicsForSearch } from "@/lib/data-access/clinics";
 
 type TreatmentSlug = keyof typeof treatment_content
-
-const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
-const clinics = clinicsData
-const clinicIndex = new Map(
-  clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
-)
 
 const popularPages = [
   { label: "Top clinics in the UK", href: "/directory/clinics" },
@@ -76,31 +72,12 @@ interface ProfilePageProps {
   };
 }
 
-export default function ProfilePage({ params }: ProfilePageProps) {
-  
-  const practitionerDirectory: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
-
-  const practitioners = practitionerDirectory
-    .map((practitioner): Practitioner | null => {
-      try {
-        const clinicSlug = JSON.parse(practitioner.Associated_Clinics ?? "[]")[0] as string | undefined
-        if (!clinicSlug) return null
-
-        const clinic = clinicIndex.get(clinicSlug)
-        if (!clinic) return null
-
-        return {
-          ...clinic,
-          practitioner_name: practitioner.practitioner_name,
-          practitioner_title: practitioner.practitioner_title,
-          practitioner_qualifications: practitioner.practitioner_qualifications,
-          practitioner_awards: practitioner.practitioner_awards,
-        }
-      } catch {
-        return null
-      }
-    })
-    .filter((item): item is Practitioner => item !== null)
+export default async function ProfilePage({ params }: ProfilePageProps) {
+  const [practitioners, clinicsFromDb] = await Promise.all([
+    getAllPractitionersForSearch(),
+    getAllClinicsForSearch(),
+  ])
+  const clinics = clinicsFromDb as any[]
 
   const { cityslug, treatmentslug } = params;
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();

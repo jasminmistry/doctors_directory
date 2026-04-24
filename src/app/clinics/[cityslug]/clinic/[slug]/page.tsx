@@ -47,6 +47,33 @@ interface ProfilePageProps {
   };
 }
 
+// Lightweight converter for SearchClinic (city sidebar / related clinics)
+function convertSearchClinicToOldType(clinic: any): Clinic {
+  return {
+    slug: clinic.slug || undefined,
+    image: clinic.image || '',
+    url: undefined,
+    rating: clinic.rating ? Number(clinic.rating) : 0,
+    reviewCount: clinic.reviewCount || 0,
+    category: clinic.category || '',
+    gmapsAddress: clinic.gmapsAddress || '',
+    gmapsPhone: '',
+    City: clinic.City || '',
+    isSaveFace: clinic.isSaveFace,
+    isDoctor: clinic.isDoctor,
+    isJCCP: clinic.isJccp ? [true, ''] : null,
+    isCQC: clinic.isCqc ? [true, ''] : null,
+    isHIW: clinic.isHiw ? [true, ''] : null,
+    isHIS: clinic.isHis ? [true, ''] : null,
+    isRQIA: clinic.isRqia ? [true, ''] : null,
+    Treatments: clinic.Treatments || [],
+    facebook: '', twitter: '', Linkedin: '', instagram: '', youtube: '',
+    website: '', email: '', about_section: '', accreditations: '',
+    awards: '', affiliations: '', hours: '', Practitioners: '',
+    Insurace: '' as any, Payments: '' as any, Fees: [] as any, x_twitter: '',
+  } as Clinic;
+}
+
 // Helper to convert DB clinic to old Clinic type format
 function convertDbClinicToOldType(dbClinic: any): Clinic {
   return {
@@ -97,12 +124,12 @@ function convertDbClinicToOldType(dbClinic: any): Clinic {
       return acc;
     }, {}) || '',
     Practitioners: dbClinic.staff?.map((s: any) => s.fullName).join(', ') || '',
-    Insurace: JSON.stringify(dbClinic.insuranceInfo || []),
-    Payments: JSON.stringify(dbClinic.paymentMethods || []),
-    Fees: JSON.stringify(dbClinic.fees?.map((f: any) => ({
+    Insurace: (dbClinic.insuranceInfo || []) as any,
+    Payments: (dbClinic.paymentMethods || []) as any,
+    Fees: (dbClinic.fees?.map((f: any) => ({
       treatment: f.treatmentName,
       price: f.price,
-    })) || []),
+    })) || []) as any,
     x_twitter: dbClinic.xTwitter || '',
     Treatments: dbClinic.treatments?.map((t: any) => t.treatment.name) || [],
   } as Clinic;
@@ -122,7 +149,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const clinic = convertDbClinicToOldType(dbClinic);
   const cityClinics = dbCityClinics
     .filter(c => c.slug !== slug)
-    .map(convertDbClinicToOldType);
+    .map(convertSearchClinicToOldType);
   const rankedCityClinics = buildClinicRankedEntries(cityClinics, 5);
   const uniqueTreatments = [
     ...new Set(
@@ -346,12 +373,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 // }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
-  const clinic = clinics.find((p) => p.slug === params.slug);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const canonicalUrl = `${baseUrl}/directory/clinics/${citySlug}/clinic/${params.slug}`;
 
-  if (!clinic) {
+  const dbClinic = await getClinicBySlug(params.slug);
+
+  if (!dbClinic) {
     return {
       title: "Clinic Not Found",
       alternates: {
@@ -360,9 +388,10 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     };
   }
 
+  const clinic = convertDbClinicToOldType(dbClinic);
   const clinicDisplayName = capitalize(clinic.slug!);
   const city = capitalize(params.cityslug);
-  const topTreatments = Array.isArray(clinic.Treatments) ? clinic.Treatments.slice(0, 3).map(t => capitalize(t)) : [];
+  const topTreatments = Array.isArray(clinic.Treatments) ? clinic.Treatments.slice(0, 3).map((t: string) => capitalize(t)) : [];
   const treatmentSuffix = topTreatments.length >= 3
     ? `${topTreatments[0]}, ${topTreatments[1]} & ${topTreatments[2]}`
     : topTreatments.length === 2

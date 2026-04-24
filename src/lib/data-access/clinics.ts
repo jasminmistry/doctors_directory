@@ -135,7 +135,6 @@ export const getClinicsByCity = cache(
         city: {
           name: {
             equals: cityName,
-            mode: 'insensitive',
           },
         },
       },
@@ -247,9 +246,9 @@ export async function searchClinics(params: {
   // Text search across name and address
   if (params.query) {
     where.OR = [
-      { name: { contains: params.query, mode: 'insensitive' } },
-      { gmapsAddress: { contains: params.query, mode: 'insensitive' } },
-      { slug: { contains: params.query, mode: 'insensitive' } },
+      { name: { contains: params.query } },
+      { gmapsAddress: { contains: params.query } },
+      { slug: { contains: params.query } },
     ]
   }
 
@@ -262,7 +261,6 @@ export async function searchClinics(params: {
   if (params.location) {
     where.gmapsAddress = {
       contains: params.location,
-      mode: 'insensitive',
     }
   }
 
