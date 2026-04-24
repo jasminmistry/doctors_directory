@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import { Prisma } from '@prisma/client'
 import { cache } from 'react'
 import type { Practitioner, RankingMeta, ItemMeta } from '@/lib/types'
 
@@ -167,3 +168,7 @@ export const getPractitionerBySlug = cache(async (slug: string): Promise<Practit
 
   return p ? convertDbPractitionerToOldType(p) : null
 })
+
+export async function updatePractitioner(slug: string, data: Prisma.PractitionerUpdateInput) {
+  return await prisma.practitioner.update({ where: { slug }, data })
+}

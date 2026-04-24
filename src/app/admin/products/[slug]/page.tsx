@@ -1,11 +1,12 @@
 'use client'
-import AdminForm from "@/components/admin/AdminForm"
+
+import { AdminLayout } from '@/components/admin/AdminLayout'
+import { ProductForm } from '@/components/admin/forms/ProductForm'
+
 export default function ProductEditor() {
   return (
-    <AdminForm
-      entityType="products"
-      apiBasePath="/api/admin/products"
-      redirectPath="/admin/products"
-    />
-  );
+    <AdminLayout title="Products">
+      <ProductForm />
+    </AdminLayout>
+  )
 }

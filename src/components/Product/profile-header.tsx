@@ -1,6 +1,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DEFAULT_PRODUCT, FallbackImage } from "@/components/ui/fallback-image";
 import type { Product } from "@/lib/types";
 import { decodeUnicodeEscapes } from "@/lib/utils";
 
@@ -60,12 +61,11 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
               {/* Elegant frame with shadow */}
               <div className="absolute -inset-1 rounded-full blur opacity-25 transition duration-300" />
               <div className="w-[80px] h-[80px] md:w-[200px] md:h-[200px] flex items-center justify-center overflow-hidden rounded-lg bg-grey-300">
-                <img
-                  src={
-                    clinic.image_url?.replaceAll('"', "") || "/placeholder.svg"
-                  }
+                <FallbackImage
+                  src={clinic.image_url?.replaceAll('"', "")}
                   alt={practitionerName}
                   className="object-cover rounded-lg min-w-full min-h-full"
+                  fallback={DEFAULT_PRODUCT}
                 />
               </div>
             </div>

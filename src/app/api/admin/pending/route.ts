@@ -1,14 +1,28 @@
 import { NextResponse } from 'next/server'
-import { readJsonFile } from '@/lib/admin/file-utils'
+import { prisma } from '@/lib/db'
 
 export async function GET() {
   try {
-    const pending_practitioners = await readJsonFile('pending_practitioners.json')
-    const pending_clinics = await readJsonFile('pending_clinics.json')
-    const pending = { ...pending_practitioners, ...pending_clinics }
-    return NextResponse.json(pending)
+    const [pendingClinics, pendingPractitioners] = await Promise.all([
+      prisma.pendingClinic.findMany({ where: { status: 'pending' }, orderBy: { submittedAt: 'desc' } }),
+      prisma.pendingPractitioner.findMany({ where: { status: 'pending' }, orderBy: { submittedAt: 'desc' } }),
+    ])
+
+    const clinics = pendingClinics.map((r) => ({
+      ...JSON.parse(r.submittedData),
+      _pendingId: r.id,
+      _type: 'clinic',
+    }))
+
+    const practitioners = pendingPractitioners.map((r) => ({
+      ...JSON.parse(r.submittedData),
+      _pendingId: r.id,
+      _type: 'practitioner',
+    }))
+
+    return NextResponse.json([...clinics, ...practitioners])
   } catch (error) {
-    console.error('Failed to read pending practitioners:', error)
-    return NextResponse.json({ error: 'Failed to read pending practitioners' }, { status: 500 })
+    console.error('Failed to read pending:', error)
+    return NextResponse.json({ error: 'Failed to read pending' }, { status: 500 })
   }
 }

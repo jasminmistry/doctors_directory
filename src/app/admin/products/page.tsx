@@ -1,51 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable } from '@/components/admin/DataTable'
-import type { Product } from '@/lib/types'
-import productsJson from '@/../public/products_processed_new.json';
-const productsJsonData = productsJson as unknown as Product[];
+import { DEFAULT_PRODUCT, FallbackImage } from '@/components/ui/fallback-image'
 
 const columns = [
-  { key: 'image_url' as any, label: 'Image',
+  {
+    key: 'imageUrl',
+    label: 'Image',
+    sortable: false,
     render: (value: string) => (
-      <img src={value} alt="" className="w-10 h-10 rounded-full object-cover" />
-    )
-   },
-  { key: 'product_name' as any, label: 'Product Name' },
-  { key: 'product_category' as any, label: 'Category' },
-  { key: 'brand' as any, label: 'Brand' },
+      value
+        ? <FallbackImage src={value.replaceAll('"', '')} alt="Product" className="w-9 h-9 rounded-lg object-cover" fallback={DEFAULT_PRODUCT} />
+        : <div className="w-9 h-9 rounded-lg bg-gray-100" />
+    ),
+  },
+  { key: 'productName', label: 'Product Name' },
+  { key: 'slug', label: 'Slug' },
+  { key: 'productCategory', label: 'Category' },
+  { key: 'brand', label: 'Brand', render: (value: string) => value || <span className="text-gray-300">—</span> },
 ]
 
 export default function ProductsList() {
-  const [products, setProducts] = useState<Product[]>(productsJsonData)
-
-
+  const [products, setProducts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
-  
 
-  
-    
- 
-    
-    
-
-
-
+  useEffect(() => {
+    fetch('/directory/api/admin/products')
+      .then((r) => r.json())
+      .then((data) => { setProducts(Array.isArray(data) ? data : []); setLoading(false) })
+      .catch(() => setLoading(false))
+  }, [])
 
   return (
-    <DataTable
-      data={products}
-      columns={columns}
-      onEdit={(product) => router.push(`/admin/products/${product.slug}`)}
-      onDelete={async (product) => {
-        if (confirm(`Delete product "${product.product_name}"?`)) {
-          await fetch(`/directory/api/admin/products/${product.slug}`, { method: 'DELETE' })
-          setProducts(products.filter(p => p.slug !== product.slug))
-        }
-      }}
-      onAdd={() => router.push('/admin/products/new')}
-    />
+    <AdminLayout title="Products">
+      <DataTable
+        data={products}
+        columns={columns}
+        loading={loading}
+        onEdit={(p) => router.push(`/admin/products/${p.slug}`)}
+        onDelete={async (p) => {
+          if (!confirm(`Delete product "${p.productName || p.slug}"?`)) return
+          await fetch(`/directory/api/admin/products/${p.slug}`, { method: 'DELETE' })
+          setProducts((prev) => prev.filter((r) => r.slug !== p.slug))
+        }}
+        onAdd={() => router.push('/admin/products/new')}
+        addLabel="Add Product"
+      />
+    </AdminLayout>
   )
 }

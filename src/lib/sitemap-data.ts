@@ -1,6 +1,7 @@
 import { Clinic, Practitioner } from '@/lib/types'
 import { readJsonFileSync } from '@/lib/json-cache'
 import { getAllPractitionersForSearch } from '@/lib/data-access/practitioners'
+import { getAllClinicsForSearch } from '@/lib/data-access/clinics'
 
 export const ACCREDITATION_KEYS = [
   'cqc',
@@ -28,6 +29,8 @@ export const getPractitioners = (): Practitioner[] => readJsonFileSync('derms_pr
 
 export const getPractitionersFromDb = (): Promise<Practitioner[]> =>
   getAllPractitionersForSearch()
+
+export const getClinicsFromDb = () => getAllClinicsForSearch()
 
 export const getEnrichedPractitionersFromDb = async (): Promise<Array<Clinic & Practitioner>> => {
   const practitioners = await getAllPractitionersForSearch()
