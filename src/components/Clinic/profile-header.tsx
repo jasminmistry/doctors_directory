@@ -12,6 +12,7 @@ import ClinicLabels from "./clinicLabels";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 interface ProfileHeaderProps {
   clinic: Clinic;
 }
@@ -123,31 +124,26 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
         </div>
 
         <div className="flex flex-col gap-3 justify-center">
-          {consultationHref ? (
-            <Button
-              asChild
-              variant="default"
-              className="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
-            >
-              <a href={consultationHref} target="_blank" rel="noopener noreferrer">
-                Request Consultation
-              </a>
-            </Button>
-          ) : (
-            <Button
-              variant="default"
-              disabled
-              className="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white"
-            >
-              Request Consultation
-            </Button>
-          )}
+          <RequestConsultationDialog
+            pageType="clinic_page"
+            treatment={clinic.Treatments?.[0]}
+            location={clinic.City}
+            consultationHref={consultationHref}
+            buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
+          />
           <Button
             asChild
             variant="outline"
             className="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
           >
-            <a href={consultationHref ?? "#fees"} target={consultationHref ? "_blank" : undefined} rel={consultationHref ? "noopener noreferrer" : undefined}>Request Pricing</a>
+            <a
+              href={consultationHref ?? "#fees"}
+              target={consultationHref ? "_blank" : undefined}
+              rel={consultationHref ? "noopener noreferrer" : undefined}
+              data-track-cta="true"
+            >
+              Request Pricing
+            </a>
           </Button>
           <SocialMediaIcons clinic={clinic} />
         </div>

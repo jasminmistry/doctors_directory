@@ -13,10 +13,12 @@ FROM base AS builder
 # Declare build-time variable so Next.js bakes it into the bundle.
 ARG NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
+ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=$NEXT_PUBLIC_GA_MEASUREMENT_ID
 ENV NODE_OPTIONS=--max-old-space-size=4096
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN npx prisma generate && npm run build
 
 FROM node:lts-alpine3.23 AS runner
 WORKDIR /app
@@ -36,13 +38,17 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/next.config.js ./next.config.js
+COPY --from=builder /app/prisma ./prisma
 COPY ecosystem.config.js ./ecosystem.config.js
 COPY server.js ./server.js
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x docker-entrypoint.sh
 
 USER appuser
 EXPOSE 3000
 
-HEALTHCHECK --interval=10s --timeout=10s --start-period=60s --retries=5 \
+HEALTHCHECK --interval=10s --timeout=10s --start-period=120s --retries=5 \
 	CMD ["curl", "-fLs", "http://localhost:3000/directory/api/healthz/"]
 
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["pm2-runtime", "start", "ecosystem.config.js"]
