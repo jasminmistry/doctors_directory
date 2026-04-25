@@ -44,11 +44,15 @@ COPY --from=builder /app/.next/static ./.next/static
 # Public directory: JSON data files + images served at /directory/…
 COPY --from=builder /app/public ./public
 
-# prisma CLI is a devDependency so it is not in the standalone bundle, but the
-# entrypoint runs `prisma migrate deploy` before starting the server.  Copy only
-# the CLI package and its binary — a few MB, not the full node_modules.
+# Prisma CLI + all @prisma/* packages are needed at runtime:
+#   - `prisma` CLI (devDep) runs migrations via the entrypoint
+#   - `@prisma/engines` supplies the native migration + query engine binaries
+#   - `@prisma/client` and sibling packages handle DB access at request time
+# Copying the full @prisma scope (~206 MB) is the reliable approach; the
+# standalone bundle alone does not include the migration engine.
 COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 # PM2 process-manager config and custom pre-warming server.
 # server.js intentionally overwrites the default Next.js standalone server so
