@@ -15,7 +15,7 @@
     "test:e2e:install": "playwright install",
     "test:sitemap": "node run_tests/sitemap-integrity-check.mjs",
     "db:seed": "prisma generate && tsx prisma/seed.ts",
-    "db:migrate": "prisma migrate deploy",
+    "db:migrate": "node_modules/.bin/prisma migrate deploy",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio"
   },
