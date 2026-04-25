@@ -109,17 +109,17 @@ export default function HtmlSitemapPage() {
         <SitemapSection title="Site Pages">
           <ul className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {[
-              ['/directory', 'Home'],
-              ['/directory/clinics', 'All Clinics'],
-              ['/directory/practitioners', 'All Practitioners'],
-              ['/directory/search', 'Search'],
-              ['/directory/treatments', 'Treatments'],
-              ['/directory/products', 'Products'],
-              ['/directory/products/brands', 'Product Brands'],
-              ['/directory/products/category', 'Product Categories'],
-              ['/directory/accredited', 'Accredited Providers'],
-              ['/directory/practitioners/credentials', 'Practitioner Credentials'],
-              ['/directory/sitemap', 'HTML Sitemap'],
+              ['/', 'Home'],
+              ['/clinics', 'All Clinics'],
+              ['/practitioners', 'All Practitioners'],
+              ['/search', 'Search'],
+              ['/treatments', 'Treatments'],
+              ['/products', 'Products'],
+              ['/products/brands', 'Product Brands'],
+              ['/products/category', 'Product Categories'],
+              ['/accredited', 'Accredited Providers'],
+              ['/practitioners/credentials', 'Practitioner Credentials'],
+              ['/sitemap', 'HTML Sitemap'],
             ].map(([href, label]) => (
               <li key={href}>
                 <Link href={href} className="text-sm text-blue-700 hover:underline">{label}</Link>
@@ -132,13 +132,13 @@ export default function HtmlSitemapPage() {
         <SitemapSection title="XML Sitemaps (machine-readable)">
           <p className="text-sm text-muted-foreground mb-4">
             These feeds are consumed by search engines. All feeds are referenced from the{' '}
-            <Link href="/directory/sitemap.xml" className="text-blue-700 hover:underline font-mono text-xs">sitemap.xml</Link>
+            <Link href="/sitemap.xml" className="text-blue-700 hover:underline font-mono text-xs">sitemap.xml</Link>
             {' '}index.
           </p>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {XML_SITEMAPS.map(({ file, label }) => (
               <li key={file} className="flex items-baseline gap-2">
-                <Link href={`/directory/${file}`} className="text-sm text-blue-700 hover:underline">{label}</Link>
+                <Link href={`/${file}`} className="text-sm text-blue-700 hover:underline">{label}</Link>
                 <span className="text-xs text-gray-400 font-mono">{file}</span>
               </li>
             ))}
