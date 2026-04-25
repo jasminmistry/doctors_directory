@@ -13,7 +13,9 @@ const COOKIE_OPTS = {
 }
 
 function clearAuthAndRedirect(request: NextRequest, pathname: string) {
-  const loginUrl = new URL('/admin/login', request.url)
+  const loginUrl = request.nextUrl.clone()
+  loginUrl.pathname = '/admin/login'
+  loginUrl.search = ''
   loginUrl.searchParams.set('next', pathname)
   const res = NextResponse.redirect(loginUrl)
   res.cookies.delete(COOKIE_TOKEN)

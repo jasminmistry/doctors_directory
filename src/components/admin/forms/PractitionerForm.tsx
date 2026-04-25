@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, User, Award, Save } from 'lucide-react'
+import { ArrowLeft, Award, Plus, Save, User, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@/components/ui/badge'
 import { FormSection, Field } from './FormSection'
 
 type PractitionerData = {
@@ -15,27 +15,96 @@ type PractitionerData = {
   title: string | null
   specialty: string | null
   imageUrl: string | null
-  qualifications: unknown
-  awards: unknown
-  roles: unknown
-  media: unknown
-  experience: unknown
+  qualifications: string[]
+  awards: string[]
+  roles: string[]
+  media: string[]
+  experience: string[]
 }
 
 const EMPTY: PractitionerData = {
   slug: '', displayName: null, title: null, specialty: null, imageUrl: null,
-  qualifications: null, awards: null, roles: null, media: null, experience: null,
+  qualifications: [], awards: [], roles: [], media: [], experience: [],
 }
 
-function toJsonText(value: unknown): string {
-  if (value == null) return ''
-  if (typeof value === 'string') return value
-  return JSON.stringify(value, null, 2)
+function toStringArray(value: unknown): string[] {
+  if (!value) return []
+  if (Array.isArray(value)) return value.filter((v) => typeof v === 'string')
+  if (typeof value === 'string') {
+    try { const p = JSON.parse(value); if (Array.isArray(p)) return p } catch {}
+  }
+  return []
 }
 
-function fromJsonText(text: string): unknown {
-  if (!text.trim()) return null
-  try { return JSON.parse(text) } catch { return text }
+function StringArrayField({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string[]
+  onChange: (next: string[]) => void
+  placeholder?: string
+}) {
+  const [draft, setDraft] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  function add() {
+    const trimmed = draft.trim()
+    if (!trimmed || value.includes(trimmed)) return
+    onChange([...value, trimmed])
+    setDraft('')
+    inputRef.current?.focus()
+  }
+
+  function remove(idx: number) {
+    onChange(value.filter((_, i) => i !== idx))
+  }
+
+  return (
+    <div className="space-y-2">
+      {value.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {value.map((item, idx) => (
+            <Badge
+              key={idx}
+              variant="secondary"
+              className="gap-1 pr-1 text-xs font-normal max-w-full"
+            >
+              <span className="truncate max-w-[220px]">{item}</span>
+              <button
+                type="button"
+                onClick={() => remove(idx)}
+                className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 focus:outline-none"
+                aria-label={`Remove ${item}`}
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+      <div className="flex gap-2">
+        <Input
+          ref={inputRef}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add() } }}
+          placeholder={placeholder}
+          className="h-8 text-sm"
+        />
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="h-8 px-2.5 shrink-0"
+          onClick={add}
+          disabled={!draft.trim()}
+        >
+          <Plus className="h-3.5 w-3.5" />
+        </Button>
+      </div>
+    </div>
+  )
 }
 
 export function PractitionerForm() {
@@ -55,7 +124,21 @@ export function PractitionerForm() {
     }
     fetch(`/directory/api/admin/practitioners/${slug}`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json() })
-      .then((d) => { setData(d); setLoading(false) })
+      .then((d) => {
+        setData({
+          slug: d.slug ?? '',
+          displayName: d.displayName ?? null,
+          title: d.title ?? null,
+          specialty: d.specialty ?? null,
+          imageUrl: d.imageUrl ?? null,
+          qualifications: toStringArray(d.qualifications),
+          awards: toStringArray(d.awards),
+          roles: toStringArray(d.roles),
+          media: toStringArray(d.media),
+          experience: toStringArray(d.experience),
+        })
+        setLoading(false)
+      })
       .catch(() => router.push('/admin/practitioners'))
   }, [slug, router])
 
@@ -150,7 +233,7 @@ export function PractitionerForm() {
           <Field label="Specialty">
             <Input value={data.specialty ?? ''} onChange={(e) => set('specialty', e.target.value || null)} placeholder="e.g. Aesthetic Medicine" />
           </Field>
-          <Field label="Image URL">
+          <Field label="Image URL" fullWidth>
             <div className="flex gap-3 items-start">
               <Input
                 value={data.imageUrl ?? ''}
@@ -167,41 +250,49 @@ export function PractitionerForm() {
       </FormSection>
 
       {/* Credentials */}
-      <FormSection title="Credentials" icon={Award} description={'Enter as JSON arrays, e.g. ["MBBS", "FRCS"]'}>
-        <div className="grid grid-cols-1 gap-5">
-          {[
-            { key: 'qualifications' as const, label: 'Qualifications', placeholder: '["MBBS", "FRCS"]' },
-            { key: 'awards' as const, label: 'Awards', placeholder: '["Best Clinic 2023"]' },
-            { key: 'roles' as const, label: 'Roles', placeholder: '["Clinical Lead", "Trainer"]' },
-          ].map(({ key, label, placeholder }) => (
-            <Field key={key} label={label}>
-              <Textarea
-                value={toJsonText(data[key])}
-                onChange={(e) => set(key, fromJsonText(e.target.value))}
-                placeholder={placeholder}
-                className="font-mono text-sm min-h-[80px]"
-              />
-            </Field>
-          ))}
+      <FormSection title="Credentials" icon={Award}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <Field label="Qualifications" hint='e.g. MBBS, FRCS'>
+            <StringArrayField
+              value={data.qualifications}
+              onChange={(v) => set('qualifications', v)}
+              placeholder="Add qualification…"
+            />
+          </Field>
+          <Field label="Awards" hint='e.g. Best Clinic 2023'>
+            <StringArrayField
+              value={data.awards}
+              onChange={(v) => set('awards', v)}
+              placeholder="Add award…"
+            />
+          </Field>
+          <Field label="Roles" hint='e.g. Clinical Lead, Trainer'>
+            <StringArrayField
+              value={data.roles}
+              onChange={(v) => set('roles', v)}
+              placeholder="Add role…"
+            />
+          </Field>
         </div>
       </FormSection>
 
       {/* Experience & Media */}
-      <FormSection title="Experience & Media" description="Additional profile content as JSON arrays">
-        <div className="grid grid-cols-1 gap-5">
-          {[
-            { key: 'experience' as const, label: 'Experience', placeholder: '["10 years in aesthetics", "Former NHS consultant"]' },
-            { key: 'media' as const, label: 'Media', placeholder: '["https://example.com/video"]' },
-          ].map(({ key, label, placeholder }) => (
-            <Field key={key} label={label}>
-              <Textarea
-                value={toJsonText(data[key])}
-                onChange={(e) => set(key, fromJsonText(e.target.value))}
-                placeholder={placeholder}
-                className="font-mono text-sm min-h-[80px]"
-              />
-            </Field>
-          ))}
+      <FormSection title="Experience & Media">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <Field label="Experience" hint='e.g. 10 years in aesthetics'>
+            <StringArrayField
+              value={data.experience}
+              onChange={(v) => set('experience', v)}
+              placeholder="Add experience…"
+            />
+          </Field>
+          <Field label="Media URLs" hint='Links to videos, articles, etc.'>
+            <StringArrayField
+              value={data.media}
+              onChange={(v) => set('media', v)}
+              placeholder="https://…"
+            />
+          </Field>
         </div>
       </FormSection>
 
