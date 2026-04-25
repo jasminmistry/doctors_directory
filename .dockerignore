@@ -1,14 +1,33 @@
+# Build artefacts
 node_modules
 .next
+
+# Version control
 .git
 .github
+.gitignore
+
+# Tests
 coverage
+tests
+__tests__
 run_tests
 run_tests.py
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+playwright-report
+test-results
+
+# Docs & editor files
+*.md
 .DS_Store
+.vscode
+.idea
+
+# Env files (never bake secrets into the image)
 .env
 .env.*
 *.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
