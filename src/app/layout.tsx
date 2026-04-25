@@ -9,8 +9,12 @@ import { Toaster } from "sonner";
 import Header from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ScrollToTop } from "@/components/scroll-to-top";
+import { CtaClickTracker } from "@/components/tracking/cta-click-tracker";
 
 import "./globals.css";
+
+const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() || "G-QTXQ1H7HG2";
 
 export const metadata: Metadata = {
   title: "Aesthetic Directory - List Your Clinic & Grow Your Practice",
@@ -37,7 +41,7 @@ export default async function RootLayout({
       <head>
         {/* Google Analytics */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-QTXQ1H7HG2"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -45,7 +49,7 @@ export default async function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-QTXQ1H7HG2');
+            gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
         {/* Microsoft Clarity */}
@@ -69,6 +73,7 @@ export default async function RootLayout({
           <Footer />
           <Toaster position="top-right" richColors className="site-toaster" />
           <ScrollToTop />
+          <CtaClickTracker />
           <Analytics />
         </div>
       </body>

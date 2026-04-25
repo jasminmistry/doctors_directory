@@ -7,17 +7,17 @@
     "build": "next build",
     "start": "NODE_OPTIONS='--max-old-space-size=4096' next start",
     "lint": "next lint",
-    "db:seed": "prisma generate && tsx prisma/seed.ts",
-    "db:migrate": "prisma migrate dev",
-    "db:generate": "prisma generate",
-    "db:studio": "prisma studio",
     "test": "node --enable-source-maps=false --max-old-space-size=16384 --expose-gc node_modules/jest/bin/jest.js --no-bail --silent --coverage=false --no-cache",
     "test:batches": "node --expose-gc --enable-source-maps=false --max-old-space-size=16384 node_modules/jest/bin/jest.js src/__tests__/tests-batch-1.test.tsx --runInBand --no-bail --silent --coverage=false --no-cache --json --outputFile=./test-reports/batch-1.json & node --expose-gc --enable-source-maps=false --max-old-space-size=16384 node_modules/jest/bin/jest.js src/__tests__/tests-batch-2.test.tsx --runInBand --no-bail --silent --coverage=false --no-cache --json --outputFile=./test-reports/batch-2.json & node --expose-gc --enable-source-maps=false --max-old-space-size=16384 node_modules/jest/bin/jest.js src/__tests__/tests-batch-3.test.tsx --runInBand --no-bail --silent --coverage=false --no-cache --json --outputFile=./test-reports/batch-3.json",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:install": "playwright install",
-    "test:sitemap": "node run_tests/sitemap-integrity-check.mjs"
+    "test:sitemap": "node run_tests/sitemap-integrity-check.mjs",
+    "db:seed": "prisma generate && tsx prisma/seed.ts",
+    "db:migrate": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

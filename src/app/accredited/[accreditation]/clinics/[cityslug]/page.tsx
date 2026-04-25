@@ -1,9 +1,6 @@
-import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, Star, MapPin } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -45,13 +42,13 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
   const filteredClinics = clinics.filter(clinic => {
     const cityMatch = clinic.City?.toLowerCase() === cityslug.toLowerCase()
     const accreditationValue = clinic[accreditationField]
-    const accreditationMatch = Array.isArray(accreditationValue) && accreditationValue[0] === true
+    const accreditationMatch = accreditationValue === true || (Array.isArray(accreditationValue) && accreditationValue[0] === true)
     return cityMatch && accreditationMatch
   })
 
-  if (!filteredClinics.length) {
-    notFound()
-  }
+  const cityClinics = clinics.filter(c => c.City?.toLowerCase() === cityslug.toLowerCase())
+  const displayClinics = filteredClinics.length ? filteredClinics : cityClinics
+  const isFallback = filteredClinics.length === 0
 
   const accreditationName = accreditation.charAt(0).toUpperCase() + accreditation.slice(1)
   const accreditationSlug =
@@ -87,7 +84,7 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
 
                 <BreadcrumbItem>
                   <BreadcrumbLink
-                    href={`/directory /accredited/${accreditationSlug}/practitioners`}
+                    href={`/directory/accredited/${accreditationSlug}/practitioners`}
                   >
                     {accreditationSlug}
                   </BreadcrumbLink>
@@ -106,13 +103,23 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
 
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">
-            Top {accreditationName} Accredited Clinics in{" "}
-            {cityslug.charAt(0).toUpperCase() + cityslug.slice(1)}
+            {isFallback
+              ? `Top Clinics in ${cityslug.charAt(0).toUpperCase() + cityslug.slice(1)}`
+              : `Top ${accreditationName} Accredited Clinics in ${cityslug.charAt(0).toUpperCase() + cityslug.slice(1)}`}
           </h1>
+          {isFallback && (
+            <p className="text-sm text-muted-foreground mb-4">
+              No {accreditationName} accredited clinics found in {cityslug.charAt(0).toUpperCase() + cityslug.slice(1)}.{" "}
+              Showing all clinics in this area instead.{" "}
+              <Link href={`/accredited/${accreditation}/clinics`} className="underline">
+                Browse all {accreditationName} accredited cities
+              </Link>
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 animate-fade-in">
-          {filteredClinics.map((clinic, index) => (
+          {displayClinics.map((clinic) => (
             <PractitionerCard key={clinic.slug} practitioner={clinic} />
           ))}
         </div>

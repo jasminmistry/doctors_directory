@@ -8,8 +8,8 @@ on:
 
 env:
   CONTAINER_NAME: doctors-directory-staging
-  APP_NETWORK: doctors-directory-staging-net
   APP_PORT: "3000"
+  DEPLOY_DIR: /opt/doctors-directory-staging
 
 jobs:
   build-and-deploy:
@@ -42,113 +42,52 @@ jobs:
           context: .
           push: true
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-staging
-          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-staging,mode=min
+          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-staging,mode=max
           build-args: |
             NEXT_PUBLIC_BASE_URL=${{ vars.STAGING_NEXT_PUBLIC_BASE_URL }}
+            NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ vars.STAGING_NEXT_PUBLIC_GA_MEASUREMENT_ID }}
           tags: |
             ${{ env.IMAGE_NAME }}:staging
             ${{ env.IMAGE_NAME }}:staging-${{ github.sha }}
 
-      - name: Deploy on server over SSH
-        uses: appleboy/ssh-action@v1.2.0
-        env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          CONTAINER_NAME: ${{ vars.STAGING_CONTAINER_NAME || env.CONTAINER_NAME }}
-          APP_NETWORK: ${{ env.APP_NETWORK }}
-          APP_PORT: ${{ vars.STAGING_APP_PORT || env.APP_PORT }}
-          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      - name: Copy compose file to server
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.STAGING_SSH_HOST }}
           username: ${{ secrets.STAGING_SSH_USER }}
           key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
           port: ${{ secrets.STAGING_SSH_PORT || '22' }}
-          envs: IMAGE_NAME,CONTAINER_NAME,APP_NETWORK,APP_PORT,GHCR_USERNAME,GHCR_TOKEN
-          script_stop: true
+          source: docker-compose.yml
+          target: ${{ env.DEPLOY_DIR }}
+
+      - name: Deploy on server over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}:staging
+          DEPLOY_DIR: ${{ env.DEPLOY_DIR }}
+          COMPOSE_PROJECT_NAME: ${{ env.CONTAINER_NAME }}
+          APP_PORT: ${{ vars.STAGING_APP_PORT || env.APP_PORT }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          DB_ROOT_PASSWORD: ${{ secrets.STAGING_DB_ROOT_PASSWORD }}
+          NEXT_PUBLIC_BASE_URL: ${{ vars.STAGING_NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.STAGING_NEXT_PUBLIC_GA_MEASUREMENT_ID }}
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || '22' }}
+          envs: IMAGE_NAME,DEPLOY_DIR,COMPOSE_PROJECT_NAME,APP_PORT,GHCR_USERNAME,GHCR_TOKEN,DB_ROOT_PASSWORD,NEXT_PUBLIC_BASE_URL,NEXT_PUBLIC_GA_MEASUREMENT_ID
           script: |
             set -euo pipefail
 
-            CONTAINER_NEW="${CONTAINER_NAME}-new"
-            CONTAINER_OLD="${CONTAINER_NAME}-old"
-            REDIS_URL="redis://redis:6379"
-
             docker login ghcr.io -u "$GHCR_USERNAME" -p "$GHCR_TOKEN"
-            docker pull "$IMAGE_NAME:staging"
 
-            # ----------------------------------------------------------------
-            # Ensure shared Docker network exists
-            # ----------------------------------------------------------------
-            docker network create "$APP_NETWORK" 2>/dev/null || true
+            cd "$DEPLOY_DIR"
+            docker compose pull
+            docker compose up -d --remove-orphans
 
-            # ----------------------------------------------------------------
-            # Blue-green deployment
-            # ----------------------------------------------------------------
-            echo "Starting blue-green deployment..."
-            docker rm -f "$CONTAINER_NEW" 2>/dev/null || true
-            docker rm -f "$CONTAINER_OLD" 2>/dev/null || true
-
-            # Use a temp port for health checking while live port stays up.
-            TEMP_PORT=$((APP_PORT + 1))
-
-            docker run -d \
-              --name "$CONTAINER_NEW" \
-              --restart no \
-              --network "$APP_NETWORK" \
-              -p "127.0.0.1:$TEMP_PORT:3000" \
-              --memory="2248m" \
-              --cpus="2.0" \
-              -e "REDIS_URL=$REDIS_URL" \
-              "$IMAGE_NAME:staging"
-
-            echo "Waiting for container to be healthy (temp port $TEMP_PORT)..."
-            for i in {1..90}; do
-              HEALTH_STATUS=$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER_NEW" 2>/dev/null || echo "starting")
-              if [ "$HEALTH_STATUS" = "healthy" ]; then
-                echo "Container is healthy"
-                break
-              fi
-              if [ "$HEALTH_STATUS" = "unhealthy" ]; then
-                echo "ERROR: Container became unhealthy"
-                docker logs --tail 100 "$CONTAINER_NEW" || true
-                docker rm -f "$CONTAINER_NEW" 2>/dev/null || true
-                exit 1
-              fi
-              echo "Health check attempt $i/90 (status: $HEALTH_STATUS)..."
-              sleep 2
-            done
-
-            FINAL_HEALTH_STATUS=$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER_NEW" 2>/dev/null || echo "unknown")
-            if [ "$FINAL_HEALTH_STATUS" != "healthy" ]; then
-              echo "ERROR: Container did not become healthy in time"
-              docker logs --tail 100 "$CONTAINER_NEW" || true
-              docker rm -f "$CONTAINER_NEW" 2>/dev/null || true
-              exit 1
-            fi
-
-            # New container is healthy — remove temp instance.
-            docker rm -f "$CONTAINER_NEW"
-
-            # Stop old container (frees the live port), start new on live port.
-            echo "Switching traffic to new container..."
-            docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
-
-            docker run -d \
-              --name "$CONTAINER_NAME" \
-              --restart unless-stopped \
-              --network "$APP_NETWORK" \
-              -p "127.0.0.1:$APP_PORT:3000" \
-              --memory="2248m" \
-              --cpus="2.0" \
-              -e "REDIS_URL=$REDIS_URL" \
-              "$IMAGE_NAME:staging"
-
-            if [ "$(docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" 2>/dev/null || echo false)" != "true" ]; then
-              echo "ERROR: Final container failed to start"
-              docker logs --tail 100 "$CONTAINER_NAME" || true
-              exit 1
-            fi
-
-            echo "Blue-green deployment completed successfully"
+            echo "Deployment completed successfully"
 
       - name: Cleanup Docker resources
         uses: appleboy/ssh-action@v1.2.0
@@ -161,7 +100,6 @@ jobs:
           script_stop: true
           script: |
             set -euo pipefail
-            echo "Cleaning up Docker resources..."
             docker image prune -af --filter "until=72h"
             docker container prune -f
             echo "Docker cleanup completed"

@@ -338,6 +338,7 @@ export function PractitionerCard({
                 <Link
                   href={practitionerOrClinicHref}
                   className="z-10"
+                  data-track-cta="true"
                 >
                   <Button className="mt-4 mb-0 w-full flex border rounded-lg font-weight px-4 py-2 bg-black align-items-center cursor-pointer justify-center text-white hover:bg-white hover:text-black">
                     Contact

@@ -29,10 +29,10 @@ import { getAllClinicsForSearch } from "@/lib/data-access/clinics";
 type TreatmentSlug = keyof typeof treatment_content
 
 const popularPages = [
-  { label: "Top clinics in the UK", href: "/directory/clinics" },
-  { label: "Top practitioners in the UK", href: "/directory/practitioners" },
-  { label: "Browse all treatments", href: "/directory/treatments" },
-  { label: "Accredited clinics and practitioners", href: "/directory/accredited" },
+  { label: "Top clinics in the UK", href: "/clinics" },
+  { label: "Top practitioners in the UK", href: "/practitioners" },
+  { label: "Browse all treatments", href: "/treatments" },
+  { label: "Accredited clinics and practitioners", href: "/accredited" },
 ]
 
 const blogLinks = [
@@ -178,17 +178,17 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/practitioners">
+                  <BreadcrumbLink href="/directory/practitioners">
                     Practitioners
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/practitioners/${normalizedCitySlug}`}>{cityDisplayName}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}`}>{cityDisplayName}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/practitioners/${normalizedCitySlug}/treatments/${treatmentslug}`}>{treatmentDisplayName}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}/treatments/${treatmentslug}`}>{treatmentDisplayName}</BreadcrumbLink>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>

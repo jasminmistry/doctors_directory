@@ -27,7 +27,7 @@ import { toDirectoryCanonical } from "@/lib/seo";
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 const credentialsData: Accreditation[] = readJsonFileSync('accreditations_processed_new.json')
 const credentialIndex = new Map(
-  credentialsData.map(c => [c.slug!, c])
+  credentialsData.map(c => [c.slug!.replace(/[^a-z0-9-]/g, ''), c])
 )
 interface ProfilePageProps {
   params: {
@@ -39,18 +39,13 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const practitioners = await getAllPractitionersForSearch();
 
   const { cred } = params;
-  console.log(cred)
-  const credslug = decodeURIComponent(cred).toLowerCase().replace(/\s+/g, "");
+  const credslug = decodeURIComponent(cred).toLowerCase().replace(/[\s()\-]/g, "");
+  const normalizedCredKey = cred.replaceAll("%20", "-").replace(/[^a-z0-9-]/g, '');
+  const credentialData = credentialIndex.get(normalizedCredKey);
   const filteredClinics = practitioners.filter((clinic) => {
-    // Filter by city
-    const qualifications = clinic.practitioner_qualifications
-    const awards = clinic.practitioner_awards
-    const qMatch = qualifications?.toLowerCase().replace(/\s+/g, "").includes(credslug)
-    const aMatch = awards?.toLowerCase().replace(/\s+/g, "").includes(credslug)
-
-
-
-    return qMatch || aMatch
+    const qualifications = clinic.practitioner_qualifications?.toLowerCase().replace(/[\s()-]/g, "") ?? "";
+    const awards = clinic.practitioner_awards?.toLowerCase().replace(/[\s()-]/g, "") ?? "";
+    return qualifications.includes(credslug) || awards.includes(credslug);
   });
   console.log(filteredClinics.length)
 
@@ -140,10 +135,12 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             <ItemsGrid items={filteredClinics} />
           </div>
         </div>
-        <CredentialPageData
-          credentialSlug={cred.replaceAll("%20", "-")}
-          credentialData={credentialIndex.get(cred.replaceAll("%20", "-"))!}
-        />
+        {credentialData && (
+          <CredentialPageData
+            credentialSlug={cred.replaceAll("%20", "-")}
+            credentialData={credentialData}
+          />
+        )}
         <div className="px-4 md:px-0 space-y-6">
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments`}</h3>
           <MoreItems items={uniqueTreatments} />
