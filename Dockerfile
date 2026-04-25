@@ -4,11 +4,18 @@ FROM node:lts-alpine3.23 AS base
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# ── deps: install all dependencies (cached layer) ─────────────────────────────
+# ── deps: all dependencies for the build ──────────────────────────────────────
 FROM base AS deps
 COPY package.json package-lock.json* ./
 RUN --mount=type=cache,target=/root/.npm \
-	if [ -f package-lock.json ]; then npm ci; else npm install; fi
+	npm ci
+
+# ── prod-deps: production-only dependencies for the runtime image ──────────────
+# Excludes @playwright/test (browsers), jest, typescript, @types/*, etc.
+FROM base AS prod-deps
+COPY package.json package-lock.json* ./
+RUN --mount=type=cache,target=/root/.npm \
+	npm ci --omit=dev
 
 # ── builder: compile the app ──────────────────────────────────────────────────
 FROM base AS builder
@@ -21,7 +28,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npx prisma generate && npm run build
 
-# ── runner: minimal production image ──────────────────────────────────────────
+# ── runner: production image ──────────────────────────────────────────────────
 FROM node:lts-alpine3.23 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
@@ -33,30 +40,13 @@ RUN npm install -g pm2 && apk add --no-cache curl
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Standalone bundle — only the node_modules actually used at runtime (~100-200 MB
-# instead of the full 1.3 GB).  Next.js writes this to .next/standalone/ when
-# output: 'standalone' is set in next.config.js.
-COPY --from=builder /app/.next/standalone ./
-
-# Static assets are not included in the standalone bundle.
-COPY --from=builder /app/.next/static ./.next/static
-
-# Public directory: JSON data files + images served at /directory/…
 COPY --from=builder /app/public ./public
-
-# Prisma CLI + all @prisma/* packages are needed at runtime:
-#   - `prisma` CLI (devDep) runs migrations via the entrypoint
-#   - `@prisma/engines` supplies the native migration + query engine binaries
-#   - `@prisma/client` and sibling packages handle DB access at request time
-# Copying the full @prisma scope (~206 MB) is the reliable approach; the
-# standalone bundle alone does not include the migration engine.
-COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-
-# PM2 process-manager config and custom pre-warming server.
-# server.js intentionally overwrites the default Next.js standalone server so
-# that PM2 cluster mode + Redis-backed JSON pre-warming is preserved.
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/next.config.js ./next.config.js
+COPY --from=builder /app/prisma ./prisma
+# Production-only node_modules — dev deps (Playwright, Jest, TypeScript …) excluded
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY ecosystem.config.js ./ecosystem.config.js
 COPY server.js ./server.js
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
