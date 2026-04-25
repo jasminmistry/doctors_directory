@@ -8,7 +8,7 @@ import {
 import {
   ACCREDITATION_KEYS,
   getClinics,
-  hasAccreditationArrayFlag,
+  hasAccreditation,
 } from '@/lib/sitemap-data'
 
 export async function GET() {
@@ -18,7 +18,7 @@ export async function GET() {
   for (const accreditation of ACCREDITATION_KEYS) {
     const cities = uniqueStrings(
       clinics
-        .filter((clinic) => hasAccreditationArrayFlag(clinic, accreditation))
+        .filter((clinic) => hasAccreditation(clinic, accreditation))
         .map((clinic) => clinic.City)
     )
 

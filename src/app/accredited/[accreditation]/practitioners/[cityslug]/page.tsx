@@ -75,7 +75,7 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
     if (!practitioner) return false
     const cityMatch = practitioner.City?.toLowerCase() === cityslug.toLowerCase()
     const accreditationValue = practitioner[accreditationField]
-    const accreditationMatch = Array.isArray(accreditationValue) && accreditationValue[0] === true
+    const accreditationMatch = accreditationValue === true || (Array.isArray(accreditationValue) && accreditationValue[0] === true)
     return cityMatch && accreditationMatch
   })
 

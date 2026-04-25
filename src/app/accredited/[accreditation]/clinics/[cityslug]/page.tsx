@@ -42,7 +42,7 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
   const filteredClinics = clinics.filter(clinic => {
     const cityMatch = clinic.City?.toLowerCase() === cityslug.toLowerCase()
     const accreditationValue = clinic[accreditationField]
-    const accreditationMatch = Array.isArray(accreditationValue) && accreditationValue[0] === true
+    const accreditationMatch = accreditationValue === true || (Array.isArray(accreditationValue) && accreditationValue[0] === true)
     return cityMatch && accreditationMatch
   })
 
