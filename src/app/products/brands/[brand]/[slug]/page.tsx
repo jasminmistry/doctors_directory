@@ -183,14 +183,14 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const category = clinic.product_category ?? clinic.category ?? "Aesthetic";
 
   return {
-    title: `${productName} by ${brandName} - Reviews, Prices & Details`,
-    description: `View ${productName} by ${brandName} — a verified ${category} product. Compare pricing, formulation and distributor details.`,
+    title: `${productName} by ${brandName}: Pricing and Specs`,
+    description: `Get pricing and specs for ${productName} by ${brandName}. Compare wholesale costs and availability from verified medical suppliers in our healthcare directory.`,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${productName} by ${brandName} - Consentz`,
-      description: `View ${productName} by ${brandName} — a verified ${category} product. Compare pricing, formulation and distributor details.`,
+      title: `${productName} by ${brandName}: Pricing and Specs`,
+      description: `Get pricing and specs for ${productName} by ${brandName}. Compare wholesale costs and availability from verified medical suppliers in our healthcare directory.`,
       images: [
         {
           url: clinic.image_url || "/og-image.png",
