@@ -196,7 +196,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
           url: clinic.image_url || "/og-image.png",
           width: 1200,
           height: 630,
-          alt: `${clinicName} profile picture`,
+          alt: `${productName} product image`,
         },
       ],
     },
