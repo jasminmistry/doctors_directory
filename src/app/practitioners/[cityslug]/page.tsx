@@ -15,7 +15,6 @@ import {
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import ItemsGrid from "@/components/collectionGrid";
-import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { EmptyCityState } from "@/components/empty-city-state";
 import { BestRankedBlock } from "@/components/best-ranked-block";
@@ -108,7 +107,6 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 ];
   return (
     <main className="bg-(--primary-bg-color)">
-      <SearchBar />
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
@@ -226,8 +224,8 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const displayCityName = capitalize(citySlug);
 
   return {
-    title: `Top Aesthetic Practitioners in ${displayCityName} - Healthcare Directory`,
-    description: `Explore leading aesthetic practitioners in ${displayCityName}. Compare qualifications, patient reviews, and services in one place.`,
+    title: `Best Verified Aesthetic Practitioners in ${displayCityName} | Reviews & Booking`,
+    description: `Find the best verified aesthetic practitioners in ${displayCityName}. Compare qualifications, real patient reviews and book your consultation.`,
     alternates: {
       canonical: toDirectoryCanonical(`/practitioners/${citySlug}`),
     },
