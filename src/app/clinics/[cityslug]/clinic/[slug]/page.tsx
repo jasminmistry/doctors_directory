@@ -152,11 +152,12 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     .map(convertSearchClinicToOldType);
   const rankedCityClinics = buildClinicRankedEntries(cityClinics, 5);
   const uniqueTreatments = [
-    ...new Set(
-      cityClinics
+    ...new Set([
+      ...(Array.isArray(clinic.Treatments) ? clinic.Treatments.filter((t): t is string => typeof t === "string") : []),
+      ...cityClinics
         .filter(c => Array.isArray(c.Treatments))
-        .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
-    )
+        .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string"),
+    ])
   ];
   const hoursObj = clinic?.hours as unknown as Record<string, any>;
 

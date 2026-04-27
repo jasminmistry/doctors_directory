@@ -79,7 +79,12 @@ export function convertDbPractitionerToOldType(p: any): Practitioner {
     weighted_analysis: (p.weightedAnalysis as Record<string, ItemMeta>) ?? undefined,
     Associated_Clinics: JSON.stringify(allClinicSlugs),
     ranking,
-    Treatments: (p.treatments ?? []).map((t: any) => t.treatment.name),
+    Treatments: [
+      ...new Set([
+        ...(p.treatments ?? []).map((t: any) => t.treatment.name),
+        ...(primaryClinic?.treatments ?? []).map((t: any) => t.treatment.name),
+      ])
+    ],
     Title: p.title ?? undefined,
   }
 }

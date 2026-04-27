@@ -15,6 +15,7 @@ if (process.env.DATABASE_URL) {
     user: username,
     password: decodeURIComponent(password),
     database: pathname.slice(1),
+    allowPublicKeyRetrieval: true,
   })
 
   prisma = globalForPrisma.prisma ?? new PrismaClient({
