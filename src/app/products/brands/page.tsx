@@ -2,6 +2,8 @@ import SearchPage from "@/components/search/searchClient";
 import { toDirectoryCanonical } from "@/lib/seo";
 
 export const metadata = {
+  title: "Top Aesthetic Product Brands UK - Compare Prices & Reviews",
+  description: "Browse verified aesthetic product brands available in the UK. Compare formulations, pricing and distributor information from a trusted directory.",
   alternates: {
     canonical: toDirectoryCanonical("/products/brands"),
   },

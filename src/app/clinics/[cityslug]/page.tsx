@@ -233,7 +233,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const canonicalUrl = `${baseUrl}/directory/clinics/${citySlug}`;
 
   return {
-    title: `Top Rated Aesthetic Clinics in ${displayCityName} | Reviews, Prices & Booking`,
+    title: `Top Rated Aesthetic Clinics in ${displayCityName} - Reviews, Prices & Booking`,
     description: `Find the best verified aesthetic clinics in ${displayCityName}. Compare real patient reviews, treatment prices and book with confidence.`,
     alternates: {
       canonical: canonicalUrl,

@@ -382,7 +382,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const displayTreatmentName = capitalize(treatmentSlug);
 
   return {
-    title: `Best ${displayTreatmentName} Practitioners in ${displayCityName} | Reviews, Prices & Booking`,
+    title: `Best ${displayTreatmentName} Practitioners in ${displayCityName} - Reviews, Prices & Booking`,
     description: `Find the best verified ${displayTreatmentName} practitioners in ${displayCityName}. Compare qualifications, real patient reviews and book your consultation.`,
     alternates: {
       canonical: toDirectoryCanonical(

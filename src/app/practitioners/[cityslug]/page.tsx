@@ -224,7 +224,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const displayCityName = capitalize(citySlug);
 
   return {
-    title: `Best Verified Aesthetic Practitioners in ${displayCityName} | Reviews & Booking`,
+    title: `Best Verified Aesthetic Practitioners in ${displayCityName} - Reviews & Booking`,
     description: `Find the best verified aesthetic practitioners in ${displayCityName}. Compare qualifications, real patient reviews and book your consultation.`,
     alternates: {
       canonical: toDirectoryCanonical(`/practitioners/${citySlug}`),

@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps) {
   const displayCityName = capitalize(citySlug);
 
   return {
-    title: `Top Aesthetic Treatments & Clinics in ${displayCityName} | Reviews & Booking`,
+    title: `Top Aesthetic Treatments & Clinics in ${displayCityName} - Reviews & Booking`,
     description: `Browse top rated aesthetic treatments available in ${displayCityName}. Find verified clinics, compare prices and book with confidence.`,
     alternates: {
       canonical: toDirectoryCanonical(`/clinics/${citySlug}/services`),

@@ -178,17 +178,19 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     };
   }
 
-  const clinicName = clinic.slug;
+  const productName = clinic.product_name ?? clinic.slug.replaceAll("-", " ");
+  const brandName = clinic.brand ?? decodeURIComponent(params.brand).replaceAll("-", " ");
+  const category = clinic.product_category ?? clinic.category ?? "Aesthetic";
 
   return {
-    title: `${clinicName.replaceAll("-", " ")}`,
-    description: `View ${clinicName}, a product of ${clinic.brand} in the ${clinic.product_category} segment.`,
+    title: `${productName} by ${brandName} - Reviews, Prices & Details`,
+    description: `View ${productName} by ${brandName} — a verified ${category} product. Compare pricing, formulation and distributor details.`,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${clinicName} - Consentz`,
-      description: `View ${clinicName}, a product of ${clinic.brand} in the ${clinic.product_category} segment.`,
+      title: `${productName} by ${brandName} - Consentz`,
+      description: `View ${productName} by ${brandName} — a verified ${category} product. Compare pricing, formulation and distributor details.`,
       images: [
         {
           url: clinic.image_url || "/og-image.png",
