@@ -7,7 +7,6 @@ import { decodeUnicodeEscapes } from "@/lib/utils";
 import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Product } from "@/lib/types";
-import fs from "fs";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { readJsonFileSync } from "@/lib/json-cache"
 import { toDirectoryCanonical } from "@/lib/seo";
+import { toUrlSlug } from "@/lib/utils";
 
 interface ProfilePageProps {
   params: {
@@ -30,8 +30,8 @@ export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
   const brandName = decodeURIComponent(params.brand).replaceAll("-", " ");
 
   return {
-    title: `${brandName} Products - Healthcare Directory`,
-    description: `Explore products from ${brandName} and compare categories, pricing context, and distributor information.`,
+    title: `Top ${brandName} Aesthetic Products - Compare Prices & Reviews`,
+    description: `Browse verified ${brandName} aesthetic products. Compare formulations, pricing and distributor information from a trusted UK directory.`,
     alternates: {
       canonical: toDirectoryCanonical(`/products/brands/${brandSlug}`),
     },
@@ -40,11 +40,13 @@ export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const clinics: Product[] = readJsonFileSync('products_processed_new.json');
-  let { brand } = params;
-  brand = decodeURIComponent(brand).replaceAll('%20', " ");
-  const similarProducts = clinics.filter((p) => p.brand === brand );
+  const brandSlug = decodeURIComponent(params.brand);
+  const similarProducts = clinics.filter(
+    (p) => p.brand != null && toUrlSlug(p.brand) === brandSlug
+  );
+  const brand = similarProducts[0]?.brand ?? decodeURIComponent(params.brand).replaceAll("-", " ");
 
-  if (!similarProducts) {
+  if (similarProducts.length === 0) {
     notFound();
   }
 
@@ -151,27 +153,26 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                         className="flex flex-wrap md:items-center md:justify-center gap-1 text-center"
                         aria-label="Product prices"
                       >
-                        {practitioner &&
-                          practitioner?.all_prices
-                            ?.slice(0, 3)
-                            .map((value: any, index: number) => (
-                              <li key={index}>
-                                <Badge
-                                  variant="outline"
-                                  className="text-[11px] font-normal text-gray-500"
-                                >
-                                  {value.price}
-                                </Badge>
-                              </li>
-                            ))}
+                        {practitioner?.all_prices
+                          ?.slice(0, 3)
+                          .map((value: any, i: number) => (
+                            <li key={i}>
+                              <Badge
+                                variant="outline"
+                                className="text-[11px] font-normal text-gray-500"
+                              >
+                                {value.price}
+                              </Badge>
+                            </li>
+                          ))}
 
-                        {practitioner && (
-                          <li key={index}>
+                        {(practitioner?.all_prices?.length ?? 0) > 3 && (
+                          <li>
                             <Badge
                               variant="outline"
                               className="text-[11px] font-normal text-gray-500"
                             >
-                              + {practitioner?.all_prices?.length - 3} more
+                              + {practitioner.all_prices.length - 3} more
                             </Badge>
                           </li>
                         )}

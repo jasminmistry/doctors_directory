@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { SearchBar } from "@/components/search/search-bar";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (menuOpen) {
@@ -15,11 +18,22 @@ export default function Header() {
     }
   }, [menuOpen]);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com';
+
+  const normalizedPath = pathname.replace(/\/$/, "") || "/";
+  const showSearch =
+    normalizedPath !== "/" &&
+    !normalizedPath.startsWith("/admin") &&
+    !normalizedPath.includes("/search") &&
+    normalizedPath !== "/clinics" &&
+    normalizedPath !== "/practitioners" &&
+    normalizedPath !== "/products" &&
+    normalizedPath !== "/treatments" &&
+    !normalizedPath.startsWith("/accredited");
 
   return (
-    <header className="bg-[var(--primary-bg-color)]">
-      <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-center md:justify-between">
+    <header className="bg-[var(--primary-bg-color)] sticky top-0 z-40 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-center md:justify-between">
         <div className="font-bold text-xl">
           <Link href="/" className="inline-block cursor-pointer" aria-label="Go to directory home">
             <img
@@ -94,6 +108,14 @@ export default function Header() {
           </button>
         </div>
       </div>
+
+      {showSearch && (
+        <div className="border-t border-gray-200 px-6 py-3">
+          <div className="max-w-6xl mx-auto">
+            <SearchBar />
+          </div>
+        </div>
+      )}
 
       {menuOpen && (
         <div className="md:hidden px-6 py-4">

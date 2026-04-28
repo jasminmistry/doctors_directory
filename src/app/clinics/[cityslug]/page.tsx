@@ -13,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react"
 import  ItemsGrid  from "@/components/collectionGrid";
 import { readJsonFileSync } from "@/lib/json-cache"
-import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { cityMap, locations } from "@/lib/data";
 import { capitalize, decodeUnicodeEscapes } from "@/lib/utils";
@@ -118,8 +117,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 
   return (
     <main className="bg-(--primary-bg-color)">
-      <SearchBar />
-      <div className="sm:hidden">
+      <div className="sm:hidden px-4 md:px-0">
         <CollectionsFilter pageType="Clinic" />
       </div>
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
@@ -176,7 +174,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
           </div>
         )}
 
-        <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
+        <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10 px-4 md:px-0">
           <div className="hidden sm:block">
             <CollectionsFilter pageType="Clinic" />
           </div>
@@ -235,8 +233,8 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const canonicalUrl = `${baseUrl}/directory/clinics/${citySlug}`;
 
   return {
-    title: `List of Top Aesthetic Clinics in ${displayCityName} - Healthcare Directory`,
-    description: `Looking for the best aesthetic clinics in ${displayCityName}? Browse our comprehensive guide to top-rated cosmetic clinics, read expert reviews, and book with confidence.`,
+    title: `Top Rated Aesthetic Clinics in ${displayCityName} - Reviews, Prices & Booking`,
+    description: `Find the best verified aesthetic clinics in ${displayCityName}. Compare real patient reviews, treatment prices and book with confidence.`,
     alternates: {
       canonical: canonicalUrl,
     },

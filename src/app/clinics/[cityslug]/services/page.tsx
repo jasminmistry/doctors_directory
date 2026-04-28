@@ -1,11 +1,5 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import type { Clinic, City } from "@/lib/types";
-import { Badge } from "@/components/ui/badge";
-import { Star, MapPin } from "lucide-react";
-import fs from "fs";
-import path from "path";
+import type { Clinic } from "@/lib/types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,11 +11,9 @@ import {
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import ItemsGrid from "@/components/collectionGrid";
-import { MoreItems } from "@/components/MoreItems";
 import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { readJsonFileSync } from "@/lib/json-cache"
-import { locations } from "@/lib/data";
 import { capitalize } from "@/lib/utils";
 import { toDirectoryCanonical } from "@/lib/seo";
 
@@ -36,8 +28,8 @@ export async function generateMetadata({ params }: PageProps) {
   const displayCityName = capitalize(citySlug);
 
   return {
-    title: `Clinic Services in ${displayCityName} - Healthcare Directory`,
-    description: `Explore clinic services and treatments available in ${displayCityName}.`,
+    title: `Top Aesthetic Treatments & Clinics in ${displayCityName} - Reviews & Booking`,
+    description: `Browse top rated aesthetic treatments available in ${displayCityName}. Find verified clinics, compare prices and book with confidence.`,
     alternates: {
       canonical: toDirectoryCanonical(`/clinics/${citySlug}/services`),
     },
@@ -51,9 +43,6 @@ export default function CityServicesPage({ params }: PageProps) {
   const { cityslug } = params;
   const displayCityName = capitalize(cityslug);
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
-  const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
-    (p) => p.City?.toLowerCase() === normalizedCitySlug
-  )!;
   const decodedCitySlug = decodeURIComponent(cityslug)
     .toLowerCase()
     .replace(/\s+/g, "");
@@ -99,10 +88,6 @@ export default function CityServicesPage({ params }: PageProps) {
         .flatMap(c => c.Treatments || []).filter((t): t is string => typeof t === "string")
     )
   ];
-
-  if (!cityData) {
-    notFound();
-  }
 
   return (
     <main className="bg-(--primary-bg-color)">

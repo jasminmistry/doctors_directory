@@ -107,8 +107,9 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
               <ClinicDetailsMarkdown clinic={clinic} />
             </div>
           </div>
+          <h2 className="text-lg font-semibold text-foreground mb-2">{`Browse more ${clinic.product_category}`}</h2>
+        
         </div>
-        <h2 className="text-lg font-semibold text-foreground mb-2">{`Browse more ${clinic.product_category}`}</h2>
         <Suspense fallback={<div className="h-32 bg-muted animate-pulse rounded mb-4" />}> 
           <SimilarProducts category={clinic.category} slug={clinic.slug} />
         </Suspense>
@@ -154,23 +155,24 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     };
   }
 
-  const clinicName = clinic.slug;
+  const productName = clinic.product_name ?? clinic.slug.replaceAll("-", " ");
+  const category = clinic.product_category ?? clinic.category ?? "Aesthetic";
 
   return {
-    title: `${clinicName.replaceAll("-", " ")}`,
-    description: `View ${clinicName}, a product of ${clinic.brand} in the ${clinic.product_category} segment.`,
+    title: `${productName} - Buy ${category} for Aesthetic Clinics`,
+    description: `Compare ${productName} prices from verified UK suppliers. Trusted by aesthetic & medical clinics. Browse the Consentz directory today.`,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${clinicName} - Consentz`,
-      description: `View ${clinicName}, a product of ${clinic.brand} in the ${clinic.product_category} segment.`,
+      title: `${productName} - Buy ${category} for Aesthetic Clinics`,
+      description: `Compare ${productName} prices from verified UK suppliers. Trusted by aesthetic & medical clinics. Browse the Consentz directory today.`,
       images: [
         {
           url: clinic.image_url || "/og-image.png",
           width: 1200,
           height: 630,
-          alt: `${clinicName} profile picture`,
+          alt: `${productName} product image`,
         },
       ],
     },

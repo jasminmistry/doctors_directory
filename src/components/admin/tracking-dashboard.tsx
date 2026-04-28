@@ -22,6 +22,31 @@ interface ApiResponse {
   page_size: number
 }
 
+interface OverviewItem {
+  label: string
+  value: number
+}
+
+interface OverviewResponse {
+  windowDays: number | null
+  from: string | null
+  to: string | null
+  totalClicks: number
+  totalLeads: number
+  conversionRate: number
+  pricingClicks: number
+  consultationClicks: number
+  topPagesByClicks: OverviewItem[]
+  topPagesByLeads: OverviewItem[]
+  topCitiesByLeads: OverviewItem[]
+  deviceBreakdown: OverviewItem[]
+  pageTypeBreakdown: OverviewItem[]
+  referrerBreakdown: OverviewItem[]
+  trend: Array<{ date: string; clicks: number; leads: number }>
+}
+
+type OverviewWindow = "7" | "30" | "all"
+
 function apiBase(): string {
   if (typeof window === "undefined") return "/directory"
   return window.location.pathname.startsWith("/directory") ? "/directory" : ""
@@ -29,6 +54,12 @@ function apiBase(): string {
 
 function parseTab(value: string | null): TrackingTab {
   return value === "leads" ? "leads" : "events"
+}
+
+function parseOverviewWindow(value: string | null): OverviewWindow {
+  if (value === "30") return "30"
+  if (value === "all") return "all"
+  return "7"
 }
 
 export function TrackingDashboard() {
@@ -57,6 +88,13 @@ export function TrackingDashboard() {
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [overviewWindow, setOverviewWindow] = useState<OverviewWindow>(() =>
+    parseOverviewWindow(searchParams.get("window_days"))
+  )
+  const [overviewFrom, setOverviewFrom] = useState(() => searchParams.get("overview_from") ?? "")
+  const [overviewTo, setOverviewTo] = useState(() => searchParams.get("overview_to") ?? "")
+  const [overview, setOverview] = useState<OverviewResponse | null>(null)
+  const [overviewLoading, setOverviewLoading] = useState(true)
 
   const token = searchParams.get("token")
 
@@ -78,6 +116,9 @@ export function TrackingDashboard() {
     setDeviceType(searchParams.get("device_type") ?? "")
     setFrom(searchParams.get("from") ?? "")
     setTo(searchParams.get("to") ?? "")
+    setOverviewWindow(parseOverviewWindow(searchParams.get("window_days")))
+    setOverviewFrom(searchParams.get("overview_from") ?? "")
+    setOverviewTo(searchParams.get("overview_to") ?? "")
   }, [searchParams])
 
   useEffect(() => {
@@ -119,9 +160,42 @@ export function TrackingDashboard() {
     }
   }, [searchKey])
 
+  useEffect(() => {
+    let cancelled = false
+    const loadOverview = async () => {
+      setOverviewLoading(true)
+      try {
+        const sp = new URLSearchParams()
+        if (token) sp.set("token", token)
+        sp.set("view", "overview")
+        sp.set("window_days", overviewWindow)
+        if (overviewFrom) sp.set("overview_from", overviewFrom)
+        if (overviewTo) sp.set("overview_to", overviewTo)
+        const res = await fetch(`${apiBase()}/api/admin/tracking/?${sp.toString()}`)
+        if (!res.ok) {
+          if (!cancelled) setOverview(null)
+          return
+        }
+        const data = (await res.json()) as OverviewResponse
+        if (!cancelled) setOverview(data)
+      } catch {
+        if (!cancelled) setOverview(null)
+      } finally {
+        if (!cancelled) setOverviewLoading(false)
+      }
+    }
+    void loadOverview()
+    return () => {
+      cancelled = true
+    }
+  }, [token, overviewWindow, overviewFrom, overviewTo])
+
   const applyFilters = () => {
     const sp = new URLSearchParams()
     if (token) sp.set("token", token)
+    sp.set("window_days", overviewWindow)
+    if (overviewFrom) sp.set("overview_from", overviewFrom)
+    if (overviewTo) sp.set("overview_to", overviewTo)
     sp.set("tab", tab)
     if (q.trim()) sp.set("q", q.trim())
     if (pageType) sp.set("page_type", pageType)
@@ -167,6 +241,179 @@ export function TrackingDashboard() {
           <code className="text-xs">TRACKING_DASHBOARD_TOKEN</code> set, add the same value as{" "}
           <code className="text-xs">?token=…</code> in the URL (including when you use Copy link).
         </p>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm text-gray-600">Overview window:</span>
+          <Button
+            type="button"
+            variant={overviewWindow === "7" ? "default" : "outline"}
+            onClick={() => {
+              const sp = new URLSearchParams(searchParams.toString())
+              sp.set("window_days", "7")
+              pushUrl(sp)
+            }}
+          >
+            7 days
+          </Button>
+          <Button
+            type="button"
+            variant={overviewWindow === "30" ? "default" : "outline"}
+            onClick={() => {
+              const sp = new URLSearchParams(searchParams.toString())
+              sp.set("window_days", "30")
+              pushUrl(sp)
+            }}
+          >
+            30 days
+          </Button>
+          <Button
+            type="button"
+            variant={overviewWindow === "all" ? "default" : "outline"}
+            onClick={() => {
+              const sp = new URLSearchParams(searchParams.toString())
+              sp.set("window_days", "all")
+              pushUrl(sp)
+            }}
+          >
+            All time
+          </Button>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-3 bg-white p-4 rounded-lg border border-gray-200">
+          <Input
+            type="date"
+            value={overviewFrom}
+            onChange={(e) => {
+              const value = e.target.value
+              setOverviewFrom(value)
+              const sp = new URLSearchParams(searchParams.toString())
+              if (value) sp.set("overview_from", value)
+              else sp.delete("overview_from")
+              pushUrl(sp)
+            }}
+          />
+          <Input
+            type="date"
+            value={overviewTo}
+            onChange={(e) => {
+              const value = e.target.value
+              setOverviewTo(value)
+              const sp = new URLSearchParams(searchParams.toString())
+              if (value) sp.set("overview_to", value)
+              else sp.delete("overview_to")
+              pushUrl(sp)
+            }}
+          />
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setOverviewFrom("")
+                setOverviewTo("")
+                const sp = new URLSearchParams(searchParams.toString())
+                sp.delete("overview_from")
+                sp.delete("overview_to")
+                pushUrl(sp)
+              }}
+            >
+              Reset
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="text-xs uppercase text-gray-500">Total CTA clicks</div>
+            <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.totalClicks ?? 0}</div>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="text-xs uppercase text-gray-500">Total leads</div>
+            <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.totalLeads ?? 0}</div>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="text-xs uppercase text-gray-500">Conversion rate</div>
+            <div className="mt-2 text-2xl font-semibold">
+              {overviewLoading ? "…" : `${(overview?.conversionRate ?? 0).toFixed(1)}%`}
+            </div>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="text-xs uppercase text-gray-500">Pricing vs consultation</div>
+            <div className="mt-2 text-2xl font-semibold">
+              {overviewLoading
+                ? "…"
+                : `${overview?.pricingClicks ?? 0} / ${overview?.consultationClicks ?? 0}`}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="mb-4 text-sm font-medium text-gray-700">Daily trend (clicks vs leads)</div>
+            <div className="max-h-[420px] overflow-y-auto overflow-x-auto">
+              <div className="space-y-2 min-w-[640px]">
+              {(overview?.trend ?? []).map((point) => {
+                const maxValue = Math.max(
+                  1,
+                  ...(overview?.trend ?? []).map((item) => Math.max(item.clicks, item.leads))
+                )
+                const clicksWidth = Math.max(4, (point.clicks / maxValue) * 100)
+                const leadsWidth = Math.max(4, (point.leads / maxValue) * 100)
+                return (
+                  <div key={point.date} className="space-y-1">
+                    <div className="text-xs text-gray-500">{point.date}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-12 text-xs text-gray-500">Clicks</span>
+                      <div className="h-2 flex-1 rounded bg-gray-100">
+                        <div className="h-2 rounded bg-blue-500" style={{ width: `${clicksWidth}%` }} />
+                      </div>
+                      <span className="w-8 text-right text-xs">{point.clicks}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-12 text-xs text-gray-500">Leads</span>
+                      <div className="h-2 flex-1 rounded bg-gray-100">
+                        <div className="h-2 rounded bg-emerald-500" style={{ width: `${leadsWidth}%` }} />
+                      </div>
+                      <span className="w-8 text-right text-xs">{point.leads}</span>
+                    </div>
+                  </div>
+                )
+              })}
+              {!overviewLoading && (overview?.trend.length ?? 0) === 0 && (
+                <div className="text-sm text-gray-500">No activity in this range.</div>
+              )}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 max-h-[420px] overflow-y-auto overflow-x-auto pr-1">
+            {[
+              ["Top pages by clicks", overview?.topPagesByClicks ?? []],
+              ["Top pages by leads", overview?.topPagesByLeads ?? []],
+              ["Top cities by leads", overview?.topCitiesByLeads ?? []],
+              ["Device breakdown", overview?.deviceBreakdown ?? []],
+              ["Page type breakdown", overview?.pageTypeBreakdown ?? []],
+              ["Referrer/source", overview?.referrerBreakdown ?? []],
+            ].map(([title, items]) => (
+              <div key={title as string} className="rounded-lg border border-gray-200 bg-white p-4">
+                <div className="mb-2 text-sm font-medium text-gray-700">{title as string}</div>
+                <div className="space-y-1">
+                  {(items as OverviewItem[]).slice(0, 5).map((item) => (
+                    <div key={`${title as string}-${item.label}`} className="flex items-start justify-between gap-3 text-sm">
+                      <span className="max-w-[220px] truncate text-gray-600" title={item.label}>
+                        {item.label || "unknown"}
+                      </span>
+                      <span className="font-medium">{item.value}</span>
+                    </div>
+                  ))}
+                  {!overviewLoading && (items as OverviewItem[]).length === 0 && (
+                    <div className="text-sm text-gray-500">No data</div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-4">
           <Button
