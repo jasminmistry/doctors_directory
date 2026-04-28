@@ -117,7 +117,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 
   return (
     <main className="bg-(--primary-bg-color)">
-      <div className="sm:hidden">
+      <div className="sm:hidden px-4 md:px-0">
         <CollectionsFilter pageType="Clinic" />
       </div>
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
@@ -174,7 +174,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
           </div>
         )}
 
-        <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
+        <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10 px-4 md:px-0">
           <div className="hidden sm:block">
             <CollectionsFilter pageType="Clinic" />
           </div>
