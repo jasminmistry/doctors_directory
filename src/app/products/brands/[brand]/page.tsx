@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { getProductsByBrand } from "@/lib/data-access/products";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { toUrlSlug } from "@/lib/utils";
 
 interface ProfilePageProps {
   params: {
@@ -29,8 +30,8 @@ export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
   const brandName = decodeURIComponent(params.brand).replaceAll("-", " ");
 
   return {
-    title: `${brandName} Products - Healthcare Directory`,
-    description: `Explore products from ${brandName} and compare categories, pricing context, and distributor information.`,
+    title: `Top ${brandName} Aesthetic Products - Compare Prices & Reviews`,
+    description: `Browse verified ${brandName} aesthetic products. Compare formulations, pricing and distributor information from a trusted UK directory.`,
     alternates: {
       canonical: toDirectoryCanonical(`/products/brands/${brandSlug}`),
     },
@@ -42,7 +43,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   brand = decodeURIComponent(brand).replaceAll('%20', " ");
   const similarProducts = await getProductsByBrand(brand);
 
-  if (!similarProducts) {
+  if (similarProducts.length === 0) {
     notFound();
   }
 
@@ -149,27 +150,26 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                         className="flex flex-wrap md:items-center md:justify-center gap-1 text-center"
                         aria-label="Product prices"
                       >
-                        {practitioner &&
-                          practitioner?.all_prices
-                            ?.slice(0, 3)
-                            .map((value: any, index: number) => (
-                              <li key={index}>
-                                <Badge
-                                  variant="outline"
-                                  className="text-[11px] font-normal text-gray-500"
-                                >
-                                  {value.price}
-                                </Badge>
-                              </li>
-                            ))}
+                        {practitioner?.all_prices
+                          ?.slice(0, 3)
+                          .map((value: any, i: number) => (
+                            <li key={i}>
+                              <Badge
+                                variant="outline"
+                                className="text-[11px] font-normal text-gray-500"
+                              >
+                                {value.price}
+                              </Badge>
+                            </li>
+                          ))}
 
-                        {practitioner && (
-                          <li key={index}>
+                        {(practitioner?.all_prices?.length ?? 0) > 3 && (
+                          <li>
                             <Badge
                               variant="outline"
                               className="text-[11px] font-normal text-gray-500"
                             >
-                              + {practitioner?.all_prices?.length - 3} more
+                              + {practitioner.all_prices.length - 3} more
                             </Badge>
                           </li>
                         )}

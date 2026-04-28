@@ -400,7 +400,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     : topTreatments.length === 1
     ? topTreatments[0]
     : 'Botox, Fillers & Skin Treatments';
-  const title = `${clinicDisplayName} ${city} | Reviews, Prices & Booking - ${treatmentSuffix}`;
+  const title = `${clinicDisplayName} ${city} - Reviews, Prices & Booking - ${treatmentSuffix}`;
   const description = `Compare ${clinicDisplayName} in ${city}. See prices, reviews, treatments, and book consultations instantly.`;
 
   return {

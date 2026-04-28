@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Award, Plus, Save, User, X } from 'lucide-react'
+import { ArrowLeft, Award, ExternalLink, Plus, Save, User, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -191,10 +191,24 @@ export function PractitionerForm() {
             <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
           </div>
         </div>
-        <Button size="sm" onClick={handleSave} disabled={saving} className="shrink-0">
-          <Save className="h-3.5 w-3.5 mr-1.5" />
-          {saving ? 'Saving…' : 'Save'}
-        </Button>
+        <div className="flex items-center gap-2 shrink-0">
+          {!isNew && data.slug && (
+            <a
+              href={`/directory/search?type=Practitioner&q=${encodeURIComponent(data.displayName || data.slug)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline" size="sm">
+                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                Preview
+              </Button>
+            </a>
+          )}
+          <Button size="sm" onClick={handleSave} disabled={saving}>
+            <Save className="h-3.5 w-3.5 mr-1.5" />
+            {saving ? 'Saving…' : 'Save'}
+          </Button>
+        </div>
       </div>
 
       {/* Profile */}

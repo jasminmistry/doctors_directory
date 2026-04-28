@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Building2, MapPin, Star, Share2, ShieldCheck, FileText, Save } from 'lucide-react'
+import { ArrowLeft, Building2, ExternalLink, MapPin, Star, Share2, ShieldCheck, FileText, Save, Wand2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -12,6 +12,7 @@ import { FormSection, Field } from './FormSection'
 
 type ClinicData = {
   slug: string
+  citySlug: string | null
   name: string | null
   image: string | null
   gmapsUrl: string | null
@@ -47,7 +48,7 @@ type ClinicData = {
 }
 
 const EMPTY: ClinicData = {
-  slug: '', name: null, image: null, gmapsUrl: null, gmapsAddress: null, gmapsPhone: null,
+  slug: '', citySlug: null, name: null, image: null, gmapsUrl: null, gmapsAddress: null, gmapsPhone: null,
   category: null, rating: null, reviewCount: null, aboutSection: null, accreditations: null,
   awards: null, affiliations: null, website: null, email: null, facebook: null, twitter: null,
   xTwitter: null, instagram: null, youtube: null, linkedin: null,
@@ -80,7 +81,13 @@ export function ClinicForm() {
     }
     fetch(`/directory/api/admin/clinics/${slug}`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json() })
-      .then((d) => { setData(d); setLoading(false) })
+      .then((d) => {
+        if (!d.name) {
+          d.name = d.slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+        }
+        setData(d)
+        setLoading(false)
+      })
       .catch(() => router.push('/admin/clinics'))
   }, [slug, router])
 
@@ -133,26 +140,59 @@ export function ClinicForm() {
             <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
           </div>
         </div>
-        <Button size="sm" onClick={handleSave} disabled={saving} className="shrink-0">
-          <Save className="h-3.5 w-3.5 mr-1.5" />
-          {saving ? 'Saving…' : 'Save'}
-        </Button>
+        <div className="flex items-center gap-2 shrink-0">
+          {!isNew && (
+            <a
+              href={
+                data.citySlug
+                  ? `/directory/clinics/${data.citySlug}/clinic/${data.slug}`
+                  : `/directory/search?type=Clinic&q=${encodeURIComponent(data.name || data.slug)}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline" size="sm">
+                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                Preview
+              </Button>
+            </a>
+          )}
+          <Button size="sm" onClick={handleSave} disabled={saving}>
+            <Save className="h-3.5 w-3.5 mr-1.5" />
+            {saving ? 'Saving…' : 'Save'}
+          </Button>
+        </div>
       </div>
 
       {/* Basic Info */}
       <FormSection title="Basic Info" icon={Building2}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Clinic Name" required>
-            <Input
-              value={data.name ?? ''}
-              onChange={(e) => {
-                set('name', e.target.value || null)
-                if (isNew) {
-                  set('slug', e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''))
-                }
-              }}
-              placeholder="e.g. The Dermatology Clinic"
-            />
+            <div className="flex gap-2">
+              <Input
+                value={data.name ?? ''}
+                onChange={(e) => {
+                  set('name', e.target.value || null)
+                  if (isNew) {
+                    set('slug', e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''))
+                  }
+                }}
+                placeholder="e.g. The Dermatology Clinic"
+                className="flex-1"
+              />
+              {!data.name && data.slug && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0 h-9"
+                  title="Fill name from slug"
+                  onClick={() => set('name', data.slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '))}
+                >
+                  <Wand2 className="h-3.5 w-3.5" />
+                </Button>
+              )}
+            </div>
           </Field>
           {isNew ? (
             <Field label="Slug" required hint="Auto-filled from name — editable">

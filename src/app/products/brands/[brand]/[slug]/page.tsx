@@ -170,23 +170,25 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     };
   }
 
-  const clinicName = clinic.slug;
+  const productName = clinic.product_name ?? clinic.slug.replaceAll("-", " ");
+  const brandName = clinic.brand ?? decodeURIComponent(params.brand).replaceAll("-", " ");
+  const category = clinic.product_category ?? clinic.category ?? "Aesthetic";
 
   return {
-    title: `${clinicName.replaceAll("-", " ")}`,
-    description: `View ${clinicName}, a product of ${clinic.brand} in the ${clinic.product_category} segment.`,
+    title: `${productName} by ${brandName}: Pricing and Specs`,
+    description: `Get pricing and specs for ${productName} by ${brandName}. Compare wholesale costs and availability from verified medical suppliers in our healthcare directory.`,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${clinicName} - Consentz`,
-      description: `View ${clinicName}, a product of ${clinic.brand} in the ${clinic.product_category} segment.`,
+      title: `${productName} by ${brandName}: Pricing and Specs`,
+      description: `Get pricing and specs for ${productName} by ${brandName}. Compare wholesale costs and availability from verified medical suppliers in our healthcare directory.`,
       images: [
         {
           url: clinic.image_url || "/og-image.png",
           width: 1200,
           height: 630,
-          alt: `${clinicName} profile picture`,
+          alt: `${productName} product image`,
         },
       ],
     },

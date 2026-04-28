@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Package, FileText, FlaskConical, ShieldCheck, Save, Plus, X } from 'lucide-react'
+import { ArrowLeft, ExternalLink, Package, FileText, FlaskConical, ShieldCheck, Save, Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -175,10 +175,24 @@ export function ProductForm() {
             <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
           </div>
         </div>
-        <Button size="sm" onClick={handleSave} disabled={saving} className="shrink-0">
-          <Save className="h-3.5 w-3.5 mr-1.5" />
-          {saving ? 'Saving…' : 'Save'}
-        </Button>
+        <div className="flex items-center gap-2 shrink-0">
+          {!isNew && data.slug && data.category && (
+            <a
+              href={`/directory/products/category/${encodeURIComponent(data.category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''))}/${data.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline" size="sm">
+                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                Preview
+              </Button>
+            </a>
+          )}
+          <Button size="sm" onClick={handleSave} disabled={saving}>
+            <Save className="h-3.5 w-3.5 mr-1.5" />
+            {saving ? 'Saving…' : 'Save'}
+          </Button>
+        </div>
       </div>
 
       {/* Basic Info */}

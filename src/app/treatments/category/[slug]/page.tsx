@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
   if (!categoryLabel) {
     return {
-      title: "Treatments | Healthcare Directory",
+      title: "Aesthetic Treatments Guide - Prices, Reviews & Book",
       alternates: {
         canonical: canonicalUrl,
       },
@@ -56,8 +56,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   }
 
   return {
-    title: `${categoryLabel} | Treatments | Healthcare Directory`,
-    description: `Browse ${categoryLabel.toLowerCase()} and find relevant treatment details in our directory.`,
+    title: `Top ${categoryLabel} Treatments - Reviews, Prices & Booking`,
+    description: `Browse top rated ${categoryLabel.toLowerCase()} treatments. Compare practitioners, prices and book with confidence.`,
     alternates: {
       canonical: canonicalUrl,
     },

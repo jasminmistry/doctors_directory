@@ -6,6 +6,7 @@ import { deleteClinic } from '@/lib/data-access/clinics'
 const CLINIC_EDIT_SELECT = {
   slug: true,
   name: true,
+  city: { select: { slug: true } },
   image: true,
   gmapsUrl: true,
   gmapsAddress: true,
@@ -51,8 +52,8 @@ export async function GET(
     if (!clinic) {
       return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
     }
-    // Convert Decimal to number for JSON serialisation
-    return NextResponse.json({ ...clinic, rating: clinic.rating ? Number(clinic.rating) : null })
+    const { city, ...rest } = clinic
+    return NextResponse.json({ ...rest, citySlug: city?.slug ?? null, rating: rest.rating ? Number(rest.rating) : null })
   } catch (error) {
     console.error('Failed to read clinic:', error)
     return NextResponse.json({ error: 'Failed to read clinic' }, { status: 500 })

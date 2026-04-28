@@ -2,22 +2,18 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { decodeUnicodeEscapes, toUrlSlug } from "@/lib/utils";
-import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
+import { toUrlSlug } from "@/lib/utils";
 import { product_categories } from "@/lib/data";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Product } from "@/lib/types";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { getProductsByCategory } from "@/lib/data-access/products";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { CategoryProductsGrid } from "./CategoryProductsGrid";
 
 interface ProfilePageProps {
   params: {
@@ -41,12 +37,12 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     redirect(`/products/category/${categorySlug}`);
   }
 
-  const similarProducts = await getProductsByCategory(category);
+  const allProducts = await getProductsByCategory(resolvedCategory);
 
 
 
 
-  if (!similarProducts) {
+  if (allProducts.length === 0) {
     notFound();
   }
 
@@ -99,97 +95,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
         {/* Profile Header */}
 
         <h3 className="bg--(--primary-bg-color) text-lg font-semibold text-foreground mb-2">{`${category}`}</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {similarProducts.map((practitioner, index) => (
-            <div
-              key={practitioner.slug}
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <Link
-                prefetch={false}
-                href={`/products/category/${toUrlSlug(category)}/${practitioner.slug}`}
-                className="block"
-              >
-                <Card className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
-                  <CardHeader className="pb-2 px-2">
-                    <h2
-                      id={`product-name-${practitioner.slug}`}
-                      className="sr-only"
-                    >
-                      {decodeUnicodeEscapes(practitioner.product_name)}
-                    </h2>
-                    <div className="flex items-start gap-4">
-                      <div className="text-center flex-1 min-w-0 items-center flex flex-col">
-                        <div className="flex w-full flex-row items-start border-b border-[#C4C4C4] md:border-0 md:flex-col md:items-center">
-                          <div className="w-[80px] h-[80px] md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg bg-gray-300 md:mb-4 mr-0">
-                            <FallbackImage
-                              src={practitioner.image_url?.replaceAll('"', "")}
-                              alt={practitioner.product_name ?? "Product"}
-                              className="object-cover rounded-lg min-w-full min-h-full"
-                              fallback={DEFAULT_PRODUCT}
-                            />
-                          </div>
-
-                          <div className="flex items-start md:items-center flex-col pl-4 md:pl-0 w-[calc(100%-80px)] md:w-full">
-                            {practitioner.product_name && (
-                              <p className="flex items-center gap-1 rounded-full bg-green-100 text-green-800 border border-gray-200 text-[10px] px-3 py-1 mb-2">
-                                {decodeUnicodeEscapes(
-                                  practitioner?.distributor_cleaned.trim(),
-                                )}
-                              </p>
-                            )}
-
-                            <h3 className="mb-2 md:mb-0 flex text-left md:text-center md:align-items-center md:justify-center font-semibold text-xs md:text-md leading-relaxed text-balance line-clamp-2">
-                              {decodeUnicodeEscapes(practitioner.product_name)}
-                            </h3>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="pt-0 px-0 md:px-4 space-y-4">
-                    <div className="flex md:items-center md:justify-center gap-2 text-[11px] text-gray-600">
-                      <span className="text-pretty text-center">
-                        {decodeUnicodeEscapes(practitioner.category.trim())}
-                      </span>
-                    </div>
-                    <div>
-                      <ul
-                        className="flex flex-wrap md:items-center md:justify-center gap-1 text-center"
-                        aria-label="Product prices"
-                      >
-                        {practitioner &&
-                          practitioner?.all_prices
-                            ?.slice(0, 3)
-                            .map((value: any, index: number) => (
-                              <li key={index}>
-                                <Badge
-                                  variant="outline"
-                                  className="text-[11px] font-normal text-gray-500"
-                                >
-                                  {value.price}
-                                </Badge>
-                              </li>
-                            ))}
-                        {practitioner && (
-                          <li key={index}>
-                            <Badge
-                              variant="outline"
-                              className="text-[11px] font-normal text-gray-500"
-                            >
-                              + {practitioner?.all_prices?.length - 3} more
-                            </Badge>
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </div>
-          ))}
-        </div>
+        <CategoryProductsGrid products={allProducts} category={category} />
       </div>
     </main>
   );
@@ -208,32 +114,45 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 export async function generateMetadata({ params }: ProfilePageProps) {
   const { category } = params;
   const canonicalCategory = decodeURIComponent(category).toLowerCase();
-  const similarProducts = await getProductsByCategory(category);
 
+  const resolvedCategory =
+    product_categories.find((c) => toUrlSlug(c) === category) ??
+    (() => {
+      const decoded = category.replaceAll('%20', ' ');
+      return product_categories.find((c) => c === decoded) ?? decodeURIComponent(category).replaceAll("-", " ");
+    })();
 
-  if (!similarProducts) {
-    return {
-      title: "Product Cateogry Not Found",
-    };
+  const categoryProducts = await getProductsByCategory(resolvedCategory);
+
+  if (categoryProducts.length === 0) {
+    return { title: "Product Category Not Found" };
   }
 
+  const sampleNames = categoryProducts
+    .slice(0, 2)
+    .map((p) => p.product_name)
+    .filter(Boolean)
+    .join(" and ");
 
+  const description = sampleNames
+    ? `Compare prices for ${sampleNames} and more. Access verified medical supplies and bulk pricing from multiple clinic distributors.`
+    : `Explore the ${resolvedCategory} range. View pricing and find verified medical distributors for your clinic.`;
 
   return {
-    title: `${category} - Healthcare Directory`,
-    description: `View the best prices in the ${category} segment.}`,
+    title: `${resolvedCategory}: Compare Brands and Pricing`,
+    description,
     alternates: {
       canonical: toDirectoryCanonical(`/products/category/${canonicalCategory}`),
     },
     openGraph: {
-      title: `${category} - Consentz`,
-      description: `View the best prices in the ${category} segment.`,
+      title: `${resolvedCategory}: Compare Brands and Pricing`,
+      description,
       images: [
         {
-          url: similarProducts[0]?.image_url || "/og-image.png",
+          url: categoryProducts[0]?.image_url || "/og-image.png",
           width: 1200,
           height: 630,
-          alt: `${category} profile picture`,
+          alt: `${resolvedCategory} products`,
         },
       ],
     },

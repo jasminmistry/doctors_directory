@@ -36,7 +36,14 @@ export default function ClinicsList() {
   useEffect(() => {
     fetch('/directory/api/admin/clinics')
       .then((r) => r.json())
-      .then((data) => { setClinics(Array.isArray(data) ? data : []); setLoading(false) })
+      .then((data) => {
+        const rows = Array.isArray(data) ? data : []
+        setClinics(rows.map((c) => ({
+          ...c,
+          name: c.name || c.slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        })))
+        setLoading(false)
+      })
       .catch(() => setLoading(false))
   }, [])
 
