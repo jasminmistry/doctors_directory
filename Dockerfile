@@ -47,6 +47,9 @@ COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/prisma ./prisma
 # Production-only node_modules — dev deps (Playwright, Jest, TypeScript …) excluded
 COPY --from=prod-deps /app/node_modules ./node_modules
+# Prisma generates its client into node_modules/.prisma at build time — copy it over
+# since prod-deps never ran `prisma generate`
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY ecosystem.config.js ./ecosystem.config.js
 COPY server.js ./server.js
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
