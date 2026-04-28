@@ -99,8 +99,9 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
               <ClinicDetailsMarkdown clinic={clinic} />
             </div>
           </div>
+          <h2 className="text-lg font-semibold text-foreground mb-2">{`Browse more ${clinic.product_category}`}</h2>
+        
         </div>
-        <h2 className="text-lg font-semibold text-foreground mb-2">{`Browse more ${clinic.product_category}`}</h2>
         <ItemsGrid items={similarProducts} />
         <div className="px-4 md:px-0 space-y-6">
           <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments`}</h3>
