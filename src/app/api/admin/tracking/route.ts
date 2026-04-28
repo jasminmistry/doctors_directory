@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { listTrackingRows, type TrackingTab } from "@/lib/tracking/dashboard-queries"
+import { getTrackingOverview, listTrackingRows, type TrackingTab } from "@/lib/tracking/dashboard-queries"
 import { trackingDashboardTokenOk } from "@/lib/tracking/access"
 
 function parseTab(value: string | null): TrackingTab {
@@ -12,6 +12,12 @@ function parseIntParam(value: string | null, fallback: number, max: number): num
   return Math.min(max, n)
 }
 
+function parseOverviewWindow(value: string | null): number | null {
+  if (value === "all") return null
+  if (value === "30") return 30
+  return 7
+}
+
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get("token")
   if (!trackingDashboardTokenOk(token)) {
@@ -19,6 +25,21 @@ export async function GET(request: NextRequest) {
   }
 
   const sp = request.nextUrl.searchParams
+  const view = sp.get("view")
+  const windowDays = parseOverviewWindow(sp.get("window_days"))
+  const overviewFrom = sp.get("overview_from") ?? ""
+  const overviewTo = sp.get("overview_to") ?? ""
+
+  if (view === "overview") {
+    try {
+      const overview = await getTrackingOverview({ windowDays, from: overviewFrom, to: overviewTo })
+      return NextResponse.json(overview)
+    } catch (error) {
+      console.error("[tracking dashboard] overview failed:", error)
+      return NextResponse.json({ error: "Overview query failed" }, { status: 500 })
+    }
+  }
+
   const tab = parseTab(sp.get("tab"))
   const q = sp.get("q") ?? ""
   const pageType = sp.get("page_type") ?? ""
