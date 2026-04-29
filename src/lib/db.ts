@@ -27,14 +27,16 @@ if (process.env.DATABASE_URL) {
     globalForPrisma.prisma = prisma
   }
 } else {
-  // Fallback for environments without DATABASE_URL (should not happen in production)
-  prisma = globalForPrisma.prisma ?? new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+  // No DATABASE_URL — return a proxy that throws on first use rather than at
+  // import time so that build-time static routes that import this module but
+  // never call the DB can still compile successfully.
+  prisma = new Proxy({} as PrismaClient, {
+    get(_, prop) {
+      throw new Error(
+        `DATABASE_URL is not configured — cannot call prisma.${String(prop)}()`
+      )
+    },
   })
-
-  if (process.env.NODE_ENV !== 'production') {
-    globalForPrisma.prisma = prisma
-  }
 }
 
 export { prisma }
