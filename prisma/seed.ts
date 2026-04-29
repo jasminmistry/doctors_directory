@@ -64,6 +64,32 @@ function slugToDisplayName(slug: string): string {
     .trim()
 }
 
+/**
+ * Sanitise a product name from raw JSON data.
+ * Falls back to a slug-derived name for Excel formula errors (#NAME?, #REF!, …)
+ * or purely-numeric values (e.g. "0") that indicate bad source data.
+ */
+function cleanProductName(name: string | null | undefined, slug: string): string {
+  if (!name) return slugToDisplayName(slug) || 'Unknown'
+  if (/^#[A-Z]/.test(name)) return slugToDisplayName(slug) || 'Unknown'
+  if (/^\d+$/.test(name))   return slugToDisplayName(slug) || 'Unknown'
+  return name
+}
+
+const SEARCH_ENGINE_HOSTS = ['google.com', 'yahoo.com', 'bing.com']
+
+/** Returns null for search-engine page URLs that are not real images */
+function cleanImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null
+  try {
+    const { hostname } = new URL(url)
+    if (SEARCH_ENGINE_HOSTS.some(h => hostname.includes(h))) return null
+  } catch {
+    return null
+  }
+  return url
+}
+
 /** Truncate to max chars, returning null for empty values */
 function trunc(s: string | null | undefined, max: number): string | null {
   if (!s) return null
@@ -482,7 +508,7 @@ async function seedPractitioners(
           : (p.Title || null),
         title:           p.practitioner_title || p.Title || null,
         specialty:       p.practitioner_specialty || null,
-        imageUrl:        p.practitioner_image_link  || null,
+        imageUrl:        cleanImageUrl(p.practitioner_image_link),
         qualifications:  Array.isArray(qualifications) ? qualifications : [],
         roles:           Array.isArray(roles)          ? roles          : [],
         awards:          Array.isArray(awards)         ? awards         : [],
@@ -551,7 +577,7 @@ async function seedProducts(): Promise<void> {
       where: { slug },
       create: {
         slug,
-        productName:        prod.product_name        || 'Unknown',
+        productName:        cleanProductName(prod.product_name, slug),
         productCategory:    prod.product_category    || null,
         productSubcategory: prod.product_subcategory || null,
         category:           prod.category            || null,

@@ -90,11 +90,24 @@ function getPractitionerOrClinicHref(
   return "#";
 }
 
+const SEARCH_ENGINE_HOSTS = ["google.com", "yahoo.com", "bing.com"];
+
+function isDirectImageUrl(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    if (SEARCH_ENGINE_HOSTS.some((h) => hostname.includes(h))) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function getProfileImageSrc(
   practitioner: Practitioner | Clinic | Product | string,
 ): string {
   if (isPractitioner(practitioner) && practitioner.practitioner_image_link) {
-    return practitioner.practitioner_image_link;
+    const link = practitioner.practitioner_image_link;
+    if (isDirectImageUrl(link)) return link;
   }
 
   if ((isPractitioner(practitioner) || isClinic(practitioner)) && practitioner.image) {
