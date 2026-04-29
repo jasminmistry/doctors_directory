@@ -40,7 +40,9 @@ export interface TrackingOverview {
   consultationClicks: number
   topPagesByClicks: TrackingOverviewItem[]
   topPagesByLeads: TrackingOverviewItem[]
+  topCitiesByClicks: TrackingOverviewItem[]
   topCitiesByLeads: TrackingOverviewItem[]
+  topSearches: TrackingOverviewItem[]
   deviceBreakdown: TrackingOverviewItem[]
   pageTypeBreakdown: TrackingOverviewItem[]
   referrerBreakdown: TrackingOverviewItem[]
@@ -101,7 +103,9 @@ function blankOverview(windowDays: number | null, from: string | null, to: strin
     consultationClicks: 0,
     topPagesByClicks: [],
     topPagesByLeads: [],
+    topCitiesByClicks: [],
     topCitiesByLeads: [],
+    topSearches: [],
     deviceBreakdown: [],
     pageTypeBreakdown: [],
     referrerBreakdown: [],
@@ -139,6 +143,25 @@ function toOverviewItems(rows: Array<{ key: string; value: number }>): TrackingO
   return rows.map((row) => ({ label: row.key, value: row.value }))
 }
 
+function parseSearchQuery(ctaTargetUrl: string | null): string | null {
+  if (!ctaTargetUrl) return null
+  try {
+    let params: URLSearchParams
+    if (ctaTargetUrl.startsWith("http://") || ctaTargetUrl.startsWith("https://")) {
+      params = new URL(ctaTargetUrl).searchParams
+    } else {
+      params = new URLSearchParams(ctaTargetUrl)
+    }
+    const query = (params.get("query") || "").trim()
+    if (query) return query
+    const category = (params.get("category") || "").trim()
+    if (category) return category
+    return null
+  } catch {
+    return null
+  }
+}
+
 function buildEndOfDay(date: Date): Date {
   const d = new Date(date)
   d.setHours(23, 59, 59, 999)
@@ -163,6 +186,7 @@ function mapEventRow(row: {
   ctaLabel: string
   ctaTargetUrl: string | null
 }) {
+  const searchDetails = row.ctaLabel === "search_used" ? parseSearchParams(row.ctaTargetUrl) : null
   return {
     id: row.id.toString(),
     timestamp: row.timestamp.toISOString(),
@@ -173,6 +197,33 @@ function mapEventRow(row: {
     device_type: row.deviceType,
     cta_label: row.ctaLabel,
     cta_target_url: row.ctaTargetUrl,
+    search_query: searchDetails?.query ?? null,
+    search_category: searchDetails?.category ?? null,
+    search_location: searchDetails?.location ?? null,
+    search_type: searchDetails?.type ?? null,
+  }
+}
+
+function parseSearchParams(ctaTargetUrl: string | null): {
+  query: string | null
+  category: string | null
+  location: string | null
+  type: string | null
+} | null {
+  if (!ctaTargetUrl) return null
+  try {
+    const params =
+      ctaTargetUrl.startsWith("http://") || ctaTargetUrl.startsWith("https://")
+        ? new URL(ctaTargetUrl).searchParams
+        : new URLSearchParams(ctaTargetUrl)
+
+    const query = (params.get("query") || "").trim() || null
+    const category = (params.get("category") || "").trim() || null
+    const location = (params.get("location") || "").trim() || null
+    const type = (params.get("type") || "").trim() || null
+    return { query, category, location, type }
+  } catch {
+    return null
   }
 }
 
@@ -316,7 +367,9 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
     referrerRaw,
     eventTrendRows,
     leadTrendRows,
+    eventPagesForCities,
     leadPagesForCities,
+    searchEventRows,
   ] = await prisma.$transaction([
     prisma.directoryEvent.count({ where: whereWithTimestamp }),
     prisma.directoryLead.count({ where: whereLeadWithTimestamp }),
@@ -375,10 +428,23 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
       select: { timestamp: true },
       orderBy: { timestamp: "asc" },
     }),
+    prisma.directoryEvent.findMany({
+      where: whereWithTimestamp,
+      select: { pageUrl: true },
+      take: 3000,
+    }),
     prisma.directoryLead.findMany({
       where: whereLeadWithTimestamp,
       select: { pageUrl: true },
       take: 2000,
+    }),
+    prisma.directoryEvent.findMany({
+      where: {
+        ...whereWithTimestamp,
+        ctaLabel: "search_used",
+      },
+      select: { ctaTargetUrl: true },
+      take: 3000,
     }),
   ])
 
@@ -415,6 +481,17 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
     if (item) item.leads += 1
   }
 
+  const clickCityCount = new Map<string, number>()
+  for (const row of eventPagesForCities) {
+    const city = extractCity(row.pageUrl)
+    if (!city) continue
+    clickCityCount.set(city, (clickCityCount.get(city) || 0) + 1)
+  }
+  const topCitiesByClicks = [...clickCityCount.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([key, value]) => ({ key, value }))
+
   const cityCount = new Map<string, number>()
   for (const row of leadPagesForCities) {
     const city = extractCity(row.pageUrl)
@@ -422,6 +499,17 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
     cityCount.set(city, (cityCount.get(city) || 0) + 1)
   }
   const topCitiesByLeads = [...cityCount.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([key, value]) => ({ key, value }))
+
+  const searchCount = new Map<string, number>()
+  for (const row of searchEventRows) {
+    const key = parseSearchQuery(row.ctaTargetUrl)
+    if (!key) continue
+    searchCount.set(key, (searchCount.get(key) || 0) + 1)
+  }
+  const topSearches = [...searchCount.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
     .map(([key, value]) => ({ key, value }))
@@ -443,7 +531,9 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
     topPagesByLeads: toOverviewItems(
       topPagesLeadsRaw.map((row) => ({ key: row.pageUrl, value: (row as any)._count?.pageUrl ?? 0 }))
     ),
+    topCitiesByClicks: toOverviewItems(topCitiesByClicks),
     topCitiesByLeads: toOverviewItems(topCitiesByLeads),
+    topSearches: toOverviewItems(topSearches),
     deviceBreakdown: toOverviewItems(
       deviceRaw.map((row) => ({ key: row.deviceType, value: (row as any)._count?.deviceType ?? 0 }))
     ),

@@ -3,6 +3,7 @@
 import { useState, useEffect, startTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSearchStore } from "@/app/stores/datastore";
+import { trackSearchUsage } from "@/lib/tracking/client";
 
 export function useSearchLogic() {
   const pathname = usePathname();
@@ -57,6 +58,12 @@ export function useSearchLogic() {
 
   const handleSearch = async () => {
     setIsLoading(true);
+    void trackSearchUsage({
+      query: localFilters.query,
+      type: localFilters.type,
+      category: localFilters.category,
+      location: localFilters.location,
+    });
     setFilters(localFilters);
     setShowResults(false);
     setIsExpanded(false);
