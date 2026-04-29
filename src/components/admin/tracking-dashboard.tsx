@@ -38,7 +38,9 @@ interface OverviewResponse {
   consultationClicks: number
   topPagesByClicks: OverviewItem[]
   topPagesByLeads: OverviewItem[]
+  topCitiesByClicks: OverviewItem[]
   topCitiesByLeads: OverviewItem[]
+  topSearches: OverviewItem[]
   deviceBreakdown: OverviewItem[]
   pageTypeBreakdown: OverviewItem[]
   referrerBreakdown: OverviewItem[]
@@ -232,6 +234,8 @@ export function TrackingDashboard() {
   }
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const getOverviewLimit = (title: string): number =>
+    title === "Top cities by clicks" || title === "Top cities by leads" ? 10 : 5
 
   return (
     <AdminLayout title="Directory tracking">
@@ -279,7 +283,7 @@ export function TrackingDashboard() {
           </Button>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-3 bg-white p-4 rounded-lg border border-gray-200">
+        <div className="grid gap-3 md:grid-cols-3 bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
           <Input
             type="date"
             value={overviewFrom}
@@ -304,7 +308,7 @@ export function TrackingDashboard() {
               pushUrl(sp)
             }}
           />
-          <div className="flex gap-2">
+          <div className="flex gap-2 md:justify-end">
             <Button
               type="button"
               variant="outline"
@@ -322,7 +326,7 @@ export function TrackingDashboard() {
           </div>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-xs uppercase text-gray-500">Total CTA clicks</div>
             <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.totalClicks ?? 0}</div>
@@ -345,13 +349,19 @@ export function TrackingDashboard() {
                 : `${overview?.pricingClicks ?? 0} / ${overview?.consultationClicks ?? 0}`}
             </div>
           </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="text-xs uppercase text-gray-500">Most searched term</div>
+            <div className="mt-2 text-sm font-semibold truncate" title={overview?.topSearches?.[0]?.label || ""}>
+              {overviewLoading ? "…" : overview?.topSearches?.[0]?.label || "No search data"}
+            </div>
+          </div>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-2">
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
+        <div className="grid gap-4 xl:grid-cols-2">
+          <div className="rounded-lg border border-gray-200 bg-white p-4 lg:h-[460px] flex flex-col">
             <div className="mb-4 text-sm font-medium text-gray-700">Daily trend (clicks vs leads)</div>
-            <div className="max-h-[420px] overflow-y-auto overflow-x-auto">
-              <div className="space-y-2 min-w-[640px]">
+            <div className="flex-1 overflow-y-auto overflow-x-auto">
+              <div className="space-y-2 min-w-[300px] sm:min-w-[520px] lg:min-w-[640px]">
               {(overview?.trend ?? []).map((point) => {
                 const maxValue = Math.max(
                   1,
@@ -386,21 +396,24 @@ export function TrackingDashboard() {
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 max-h-[420px] overflow-y-auto overflow-x-auto pr-1">
+          <div className="w-full min-w-0 overflow-y-auto overflow-x-hidden pr-1 lg:h-[460px]">
+            <div className="grid w-full min-w-0 gap-4 sm:grid-cols-2">
             {[
               ["Top pages by clicks", overview?.topPagesByClicks ?? []],
               ["Top pages by leads", overview?.topPagesByLeads ?? []],
+              ["Top cities by clicks", overview?.topCitiesByClicks ?? []],
               ["Top cities by leads", overview?.topCitiesByLeads ?? []],
+              ["Top 5 searches (from search_used)", overview?.topSearches ?? []],
               ["Device breakdown", overview?.deviceBreakdown ?? []],
               ["Page type breakdown", overview?.pageTypeBreakdown ?? []],
               ["Referrer/source", overview?.referrerBreakdown ?? []],
             ].map(([title, items]) => (
-              <div key={title as string} className="rounded-lg border border-gray-200 bg-white p-4">
+              <div key={title as string} className="w-full min-w-0 rounded-lg border border-gray-200 bg-white p-4">
                 <div className="mb-2 text-sm font-medium text-gray-700">{title as string}</div>
                 <div className="space-y-1">
-                  {(items as OverviewItem[]).slice(0, 5).map((item) => (
+                  {(items as OverviewItem[]).slice(0, getOverviewLimit(String(title))).map((item) => (
                     <div key={`${title as string}-${item.label}`} className="flex items-start justify-between gap-3 text-sm">
-                      <span className="max-w-[220px] truncate text-gray-600" title={item.label}>
+                      <span className="min-w-0 flex-1 truncate text-gray-600" title={item.label}>
                         {item.label || "unknown"}
                       </span>
                       <span className="font-medium">{item.value}</span>
@@ -412,6 +425,7 @@ export function TrackingDashboard() {
                 </div>
               </div>
             ))}
+            </div>
           </div>
         </div>
 
@@ -445,8 +459,12 @@ export function TrackingDashboard() {
           </Link>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 bg-white p-4 rounded-lg border border-gray-200">
-          <Input placeholder="Search (URL, label, referrer…)" value={q} onChange={(e) => setQ(e.target.value)} />
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+          <Input
+            placeholder="Search (URL, CTA label, referrer, target...)"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
           <select
             className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
             value={pageType}
@@ -501,6 +519,7 @@ export function TrackingDashboard() {
                     <th className="px-3 py-2">Country</th>
                     <th className="px-3 py-2">Device</th>
                     <th className="px-3 py-2">CTA</th>
+                    <th className="px-3 py-2">Search terms</th>
                     <th className="px-3 py-2">Target</th>
                   </>
                 ) : (
@@ -536,6 +555,18 @@ export function TrackingDashboard() {
                       <td className="px-3 py-2">{String(row.country)}</td>
                       <td className="px-3 py-2">{String(row.device_type)}</td>
                       <td className="px-3 py-2">{String(row.cta_label)}</td>
+                      <td className="px-3 py-2 max-w-[220px] truncate" title={String(
+                        [row.search_query, row.search_category, row.search_location]
+                          .filter((value) => typeof value === "string" && value.trim().length > 0)
+                          .join(" | ")
+                      )}>
+                        {(() => {
+                          const parts = [row.search_query, row.search_category, row.search_location]
+                            .filter((value) => typeof value === "string" && value.trim().length > 0)
+                            .map((value) => String(value))
+                          return parts.length ? parts.join(" | ") : "—"
+                        })()}
+                      </td>
                       <td className="px-3 py-2 max-w-[180px] truncate" title={row.cta_target_url ? String(row.cta_target_url) : ""}>
                         {row.cta_target_url ? String(row.cta_target_url) : "—"}
                       </td>
@@ -563,7 +594,7 @@ export function TrackingDashboard() {
               ))}
               {!loading && rows.length === 0 && (
                 <tr>
-                  <td className="px-3 py-6 text-center text-gray-500" colSpan={tab === "events" ? 8 : 11}>
+                  <td className="px-3 py-6 text-center text-gray-500" colSpan={tab === "events" ? 9 : 11}>
                     No rows match these filters.
                   </td>
                 </tr>
