@@ -46,11 +46,11 @@ function convertDbClinicToOldFormat(clinic: SearchClinic): SearchClinicResult {
     City: clinic.City || '',
     isSaveFace: clinic.isSaveFace,
     isDoctor: clinic.isDoctor,
-    isJCCP: clinic.isJccp ? [clinic.isJccp, null] : null,
-    isCQC: clinic.isCqc ? [clinic.isCqc, null] : null,
-    isHIW: clinic.isHiw ? [clinic.isHiw, null] : null,
-    isHIS: clinic.isHis ? [clinic.isHis, null] : null,
-    isRQIA: clinic.isRqia ? [clinic.isRqia, null] : null,
+    isJCCP: clinic.isJccp ? [clinic.isJccp, ''] : null,
+    isCQC: clinic.isCqc ? [clinic.isCqc, ''] : null,
+    isHIW: clinic.isHiw ? [clinic.isHiw, ''] : null,
+    isHIS: clinic.isHis ? [clinic.isHis, ''] : null,
+    isRQIA: clinic.isRqia ? [clinic.isRqia, ''] : null,
     Treatments: clinic.Treatments || [],
   }
 }
