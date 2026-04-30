@@ -10,6 +10,7 @@ env:
   CONTAINER_NAME: doctors-directory
   APP_PORT: "3000"
   DEPLOY_DIR: /opt/doctors-directory
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build-and-deploy:
