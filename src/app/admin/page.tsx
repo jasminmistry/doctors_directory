@@ -44,6 +44,12 @@ export default function AdminDashboard() {
           >
             Tracking
           </Link>
+          <Link
+            href="/admin/main-site-tracking"
+            className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            Main Site Tracking
+          </Link>
         </nav>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
