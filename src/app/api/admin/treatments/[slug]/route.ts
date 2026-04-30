@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { getTreatmentBySlug, updateTreatment, deleteTreatment } from '@/lib/data-access/treatments'
 import { validateTreatment } from '@/lib/admin/validators'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } }

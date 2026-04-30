@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 const productEditSchema = z.object({
   productName: z.string().min(1).optional(),
   productCategory: z.string().optional().nullable(),

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { updatePractitioner } from '@/lib/data-access/practitioners'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const records = await prisma.pendingPractitioner.findMany({

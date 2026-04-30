@@ -7,6 +7,8 @@ import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable } from '@/components/admin/DataTable'
 import { DEFAULT_PERSON, FallbackImage } from '@/components/ui/fallback-image'
 
+export const dynamic = 'force-dynamic'
+
 const STATUS_COLORS: Record<string, string> = {
   pending: 'bg-amber-100 text-amber-800',
   approved: 'bg-emerald-100 text-emerald-800',

@@ -4,6 +4,8 @@ import { useState, FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 
+export const dynamic = 'force-dynamic'
+
 export default function AdminLoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()

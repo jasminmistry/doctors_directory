@@ -4,6 +4,8 @@ import type { TestReport } from '@/components/admin/QAClient'
 import fs from 'fs'
 import path from 'path'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Page() {
   const filePath = path.join(process.cwd(), 'test-reports', 'output.json')
   const fileContents = fs.readFileSync(filePath, 'utf-8')

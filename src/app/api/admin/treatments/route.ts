@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getAllTreatments, createTreatment } from '@/lib/data-access/treatments'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const treatments = await getAllTreatments()

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 const practitionerEditSchema = z.object({
   displayName: z.string().optional().nullable(),
   title: z.string().optional().nullable(),

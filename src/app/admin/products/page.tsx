@@ -6,6 +6,8 @@ import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable } from '@/components/admin/DataTable'
 import { DEFAULT_PRODUCT, FallbackImage } from '@/components/ui/fallback-image'
 
+export const dynamic = 'force-dynamic'
+
 const columns = [
   {
     key: 'imageUrl',

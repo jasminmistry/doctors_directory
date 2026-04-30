@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { Building2, Clock, Package, Stethoscope, Users } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 interface Stats {
   clinics: number
   practitioners: number

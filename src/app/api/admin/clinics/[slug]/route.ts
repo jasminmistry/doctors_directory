@@ -3,6 +3,8 @@ import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
 import { prisma } from '@/lib/db'
 import { deleteClinic } from '@/lib/data-access/clinics'
 
+export const dynamic = 'force-dynamic'
+
 const CLINIC_EDIT_SELECT = {
   slug: true,
   name: true,
