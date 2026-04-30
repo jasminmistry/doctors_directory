@@ -5,7 +5,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { submitLead, trackCtaClick } from "@/lib/tracking/client"
+import { trackCtaClick } from "@/lib/tracking/client"
 import type { DirectoryPageType } from "@/lib/tracking/types"
 
 interface RequestConsultationDialogProps {
@@ -52,20 +52,12 @@ export function RequestConsultationDialog({
     if (isDisabled) return
 
     setIsSubmitting(true)
-    const success = await submitLead({
-      name,
-      contact,
-      treatment: leadTreatment,
-      location: leadLocation,
-      budget,
+    await trackCtaClick({
+      ctaLabel: "Request Consultation Form Submit",
+      ctaTargetUrl: consultationHref ?? undefined,
       pageType,
     })
     setIsSubmitting(false)
-
-    if (!success) {
-      toast.error("Could not save your details. Please try again.")
-      return
-    }
 
     toast.success("Thanks! Your consultation request is submitted.")
     setOpen(false)
