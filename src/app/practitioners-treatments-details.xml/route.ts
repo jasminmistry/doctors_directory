@@ -7,6 +7,8 @@ import {
 } from '@/lib/sitemap'
 import { getEnrichedPractitionersFromDb } from '@/lib/sitemap-data'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const pairs = new Set<string>()
 

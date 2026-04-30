@@ -6,6 +6,8 @@ import {
 } from '@/lib/sitemap'
 import { getAllCategorySlugs } from '@/lib/data-access/products'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const categories = await getAllCategorySlugs()
   const paths = categories.map(

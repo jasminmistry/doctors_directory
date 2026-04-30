@@ -446,7 +446,7 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
               <Button
                 variant="outline"
                 onClick={handleClearFilters}
-                className="w-full border border-black bg-transparent text-black hover:bg-white hover:text-black"
+                className="w-full border border-black bg-transparent text-black hover:bg-white hover:text-black hover:cursor-pointer"
               >
                 Clear All
               </Button>

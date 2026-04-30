@@ -5,6 +5,9 @@ import { getAllClinicsForSearch, type SearchClinic } from "@/lib/data-access/cli
 import { getAllTreatmentNames } from "@/lib/data-access/treatments"
 import { getAllProducts as getAllProductsFromDb } from "@/lib/data-access/products"
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
+import { modalities } from "@/lib/data"
+
+const modalitiesSet = new Set(modalities.map((m) => m.toLowerCase()))
 
 type SearchClinicResult = Pick<
   Clinic,
@@ -59,7 +62,8 @@ export const loadData = cache(async () => {
   const clinicsDataFromDb = await getAllClinicsForSearch()
   const practitionersFromDb = await getAllPractitionersForSearch()
   const productsData = await getAllProductsFromDb()
-  const treatments = await getAllTreatmentNames();
+  const allTreatments = await getAllTreatmentNames();
+  const treatments = allTreatments.filter((t) => modalitiesSet.has(t.toLowerCase()));
 
   const clinics = clinicsDataFromDb.map(convertDbClinicToOldFormat);
 

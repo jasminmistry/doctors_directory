@@ -7,6 +7,8 @@ import {
 } from '@/lib/sitemap'
 import { getAllProducts } from '@/lib/data-access/products'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const products = await getAllProducts()
 

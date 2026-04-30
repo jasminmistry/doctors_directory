@@ -9,6 +9,8 @@ import {
   hasAccreditation,
 } from '@/lib/sitemap-data'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const practitioners = await getEnrichedPractitionersFromDb()
   const paths = ACCREDITATION_KEYS.filter((accreditation) =>

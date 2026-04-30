@@ -1,6 +1,8 @@
 import { getClinicsFromDb } from '@/lib/sitemap-data'
 import { buildUrlSetXml, encodeCitySegment, encodeSegment, mapPathsToSitemapUrls, xmlResponse } from '@/lib/sitemap'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const clinics = await getClinicsFromDb()
 
