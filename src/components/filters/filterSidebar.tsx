@@ -11,6 +11,7 @@ import { PractitionerFilters } from "@/components/filters/PractitionerFilters";
 import { ProductFilters } from "@/components/filters/ProductFilters";
 import { useSearchStore } from "@/app/stores/datastore";
 import {usePathname, useRouter } from "next/navigation";
+import { trackSearchUsage } from "@/lib/tracking/client";
 interface AdvancedFiltersProps {
   pageType?: string
 }
@@ -313,6 +314,12 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
     }
     
     setFilters(updatedFilters);
+    void trackSearchUsage({
+      query: updatedFilters.query,
+      type: updatedFilters.type,
+      category: updatedFilters.category,
+      location: updatedFilters.location,
+    });
 
     if (pathname !== "/search") {
       Router.push("/search");
