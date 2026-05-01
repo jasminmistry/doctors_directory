@@ -54,7 +54,8 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY ecosystem.config.js ./ecosystem.config.js
 COPY server.js ./server.js
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
-RUN chmod +x docker-entrypoint.sh
+RUN chmod +x docker-entrypoint.sh && \
+    chown -R appuser:appgroup /app/node_modules/.prisma
 
 USER appuser
 EXPOSE 3000
