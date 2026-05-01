@@ -43,7 +43,7 @@ jobs:
           context: .
           push: true
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=min
+          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=min,compression=zstd
           build-args: |
             NEXT_PUBLIC_BASE_URL=${{ vars.NEXT_PUBLIC_BASE_URL }}
             NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
