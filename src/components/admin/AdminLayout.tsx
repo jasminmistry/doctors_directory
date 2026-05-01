@@ -170,9 +170,12 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
 
       {/* Main */}
         <div className="min-w-0 flex-1 flex flex-col bg-gray-50">
-          <header className="sticky top-0 z-10 hidden border-b border-gray-200 bg-white px-6 py-3.5 lg:block">
+          <div
+            role="banner"
+            className="sticky top-0 z-10 hidden border-b border-gray-200 bg-white px-6 py-3.5 lg:block"
+          >
             <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
-          </header>
+          </div>
           <main className="flex-1 p-4 sm:p-6">
             {children}
           </main>
