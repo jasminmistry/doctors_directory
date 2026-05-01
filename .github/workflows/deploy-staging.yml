@@ -10,6 +10,7 @@ env:
   CONTAINER_NAME: doctors-directory-staging
   APP_PORT: "3000"
   DEPLOY_DIR: /opt/doctors-directory-staging
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build-and-deploy:
@@ -42,7 +43,7 @@ jobs:
           context: .
           push: true
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-staging
-          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-staging,mode=max
+          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-staging,mode=min,compression=zstd
           build-args: |
             NEXT_PUBLIC_BASE_URL=${{ vars.STAGING_NEXT_PUBLIC_BASE_URL }}
             NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ vars.STAGING_NEXT_PUBLIC_GA_MEASUREMENT_ID }}
@@ -72,12 +73,14 @@ jobs:
           DB_ROOT_PASSWORD: ${{ secrets.STAGING_DB_ROOT_PASSWORD }}
           NEXT_PUBLIC_BASE_URL: ${{ vars.STAGING_NEXT_PUBLIC_BASE_URL }}
           NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.STAGING_NEXT_PUBLIC_GA_MEASUREMENT_ID }}
+          CONSENTZ_AUTH_API_URL: ${{ secrets.STAGING_CONSENTZ_AUTH_API_URL }}
+          CONSENTZ_APPLICATION_ID: ${{ vars.STAGING_CONSENTZ_APPLICATION_ID }}
         with:
           host: ${{ secrets.STAGING_SSH_HOST }}
           username: ${{ secrets.STAGING_SSH_USER }}
           key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
           port: ${{ secrets.STAGING_SSH_PORT || '22' }}
-          envs: IMAGE_NAME,DEPLOY_DIR,COMPOSE_PROJECT_NAME,APP_PORT,GHCR_USERNAME,GHCR_TOKEN,DB_ROOT_PASSWORD,NEXT_PUBLIC_BASE_URL,NEXT_PUBLIC_GA_MEASUREMENT_ID
+          envs: IMAGE_NAME,DEPLOY_DIR,COMPOSE_PROJECT_NAME,APP_PORT,GHCR_USERNAME,GHCR_TOKEN,DB_ROOT_PASSWORD,NEXT_PUBLIC_BASE_URL,NEXT_PUBLIC_GA_MEASUREMENT_ID,CONSENTZ_AUTH_API_URL,CONSENTZ_APPLICATION_ID
           script: |
             set -euo pipefail
 
@@ -100,6 +103,6 @@ jobs:
           script_stop: true
           script: |
             set -euo pipefail
-            docker image prune -af --filter "until=72h"
+            docker image prune -af --filter "until=24h"
             docker container prune -f
             echo "Docker cleanup completed"

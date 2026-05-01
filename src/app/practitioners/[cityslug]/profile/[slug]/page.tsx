@@ -12,22 +12,16 @@ import { Practitioner } from "@/lib/types";
 import PractitionerTabs from "@/components/Practitioner/PractitionerTabs";
 import { flattenObject, capitalize } from "@/lib/utils";
 import { Section } from "@/components/ui/section";
-import { Clinic } from "@/lib/types";
 import ItemsGrid from "@/components/collectionGrid";
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
-import { readJsonFileSync } from "@/lib/json-cache";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { ScoreInfoTooltip } from "@/components/score-info-tooltip";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { toDirectoryCanonical } from "@/lib/seo";
-const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
-const clinics = clinicsData
-const clinicIndex = new Map(
-  clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
-)
-const allPractitioners: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
+import { getPractitionerBySlug, getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
+import { getAllTreatmentNames } from "@/lib/data-access/treatments";
 
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
@@ -47,41 +41,32 @@ interface ProfilePageProps {
   };
 }
 
-export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const { slug } = params;
-  const clinic = allPractitioners.find((p) => p.practitioner_name === slug);
-  const k = clinicIndex.get(JSON.parse(clinic!.Associated_Clinics!)[0])
-  const hoursObj = k?.hours as unknown as Record<string, any>;
-  const hours =
-    hoursObj["Typical_hours_listed_in_directories"] ?? k?.hours;
-  const flatHours = typeof hoursObj === 'object' ? flattenObject(hours) : hours
-  const practitioner = {...k,...clinic}
+
+  const [clinic, allPractitioners, uniqueTreatments] = await Promise.all([
+    getPractitionerBySlug(slug),
+    getAllPractitionersForSearch(),
+    getAllTreatmentNames(),
+  ])
+
+  if (!clinic) {
+    notFound();
+  }
+
+  const hoursObj = clinic.hours as unknown as Record<string, any>;
+  const hours = hoursObj?.["Typical_hours_listed_in_directories"] ?? clinic.hours;
+  const flatHours = typeof hours === 'object' ? flattenObject(hours) : hours
+
+  const practitioner = clinic
   const currentCity = practitioner.City?.toLowerCase()
+
   const rankedCityPractitioners = buildPractitionerRankedEntries(
     allPractitioners
-      .filter((entry) => entry.practitioner_name !== clinic?.practitioner_name)
-      .map((entry) => {
-        try {
-          const assocSlug = JSON.parse(entry.Associated_Clinics ?? "[]")[0]
-          const assocClinic = clinicIndex.get(assocSlug)
-          return assocClinic ? { ...assocClinic, ...entry } : entry
-        } catch {
-          return entry
-        }
-      })
+      .filter((entry) => entry.practitioner_name !== clinic.practitioner_name)
       .filter((entry) => entry.City?.toLowerCase() === currentCity),
     5
   )
-  const cityClinics = Array.from(clinicIndex.values())
-  .filter(clinic => clinic.City === practitioner.City)
-  const uniqueTreatments = [
-  ...new Set(
-    cityClinics
-      .filter(c => Array.isArray(c.Treatments))
-      .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
-  )
-];
-  
 
   const boxplotData = mergeBoxplotDataFromDict(
     boxplotDatas_clinic,
@@ -94,9 +79,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const rankingSubtitle =
     practitioner?.ranking?.subtitle_text ?? `${overallScore}/100 in ${practitioner?.City ?? "City"}`;
 
-  if (!clinic) {
-    notFound();
-  }
+  const associatedClinics: string[] = JSON.parse(clinic.Associated_Clinics ?? '[]')
 
   return (
     <main className="min-h-screen bg-background">
@@ -133,11 +116,11 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 
        <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
                {/* Profile Header */}
-               <ProfileHeader clinic={clinic} k_value={k} clinic_list ={JSON.parse(clinic!.Associated_Clinics!)} />
+               <ProfileHeader clinic={clinic} k_value={practitioner as any} clinic_list={associatedClinics} />
 
                <div className="px-4 md:px-0">
                  <PractitionerTabs />
-       
+
                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-10 mb-4">
                    <div className="order-2 lg:order-1 col-span-1 lg:col-span-6">
                      <ClinicDetailsMarkdown clinic={practitioner} />
@@ -151,7 +134,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                                <Star
                                  key={i}
                                  className={`h-4 w-4 ${
-                                   i < k!.rating
+                                   i < (practitioner.rating ?? 0)
                                      ? "fill-black text-black"
                                      : "/30"
                                  }`}
@@ -200,19 +183,19 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                 </Section>
               )}
               {/* PAYMENTS */}
-              {k?.Payments && (
+              {practitioner.Payments && (
               <Section title="Payment Options" id="payments">
-                {Array.isArray(k?.Payments) ? (
+                {Array.isArray(practitioner.Payments) ? (
                   <ul className="list-disc ml-6 space-y-1" data-testid="payments">
-                    {k?.Payments.map((p: any, idx: number) => (
+                    {(practitioner.Payments as any[]).map((p: any, idx: number) => (
                       <li key={idx}>{p}</li>
                     ))}
                   </ul>
-                ) : k?.Payments && typeof k?.Payments === "object" ? (
+                ) : practitioner.Payments && typeof practitioner.Payments === "object" ? (
                   <div className="overflow-x-auto shadow-none">
                     <table className="w-full text-sm bg-white">
                       <tbody>
-                        {Object.entries(k?.Payments).map(
+                        {Object.entries(practitioner.Payments as any).map(
                           ([k, v]) =>
                             k !== "Source" && (
                               <tr key={k}>
@@ -220,7 +203,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                                   {k?.toString()}
                                 </td>
                                 <td className="border-0 px-4 py-2">
-                                  {v?.toString()}
+                                  {(v as any)?.toString()}
                                 </td>
                               </tr>
                             )
@@ -229,24 +212,24 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                     </table>
                   </div>
                 ) : (
-                  k?.Payments || "Not listed"
+                  String(practitioner.Payments) || "Not listed"
                 )}
               </Section>)}
               <div className='flex flex-col sm:flex-row gap-2'>
-                   
-                
+
+
                      <GoogleMapsEmbed
                  url={practitioner.url}
-                 
+
                  className="w-full h-auto md:h-80"
-               />  
-               
+               />
+
              </div>
-                   
+
                    </div>
                  </div>
-                 
-       
+
+
 
                 </div>
                  <div className="px-4 md:px-0 space-y-6">
@@ -267,19 +250,8 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   );
 }
 
-// export async function generateStaticParams() {
-
-//   const filePath = path.join(process.cwd(), 'public', 'derms_processed.json');
-//   const fileContents = fs.readFileSync(filePath, 'utf-8');
-//   const clinics: Practitioner[] = JSON.parse(fileContents);
-//   return clinics.map((clinic) => ({
-//     slug: clinic.practitioner_name,
-//   }));
-// }
-
 export async function generateMetadata({ params }: ProfilePageProps) {
-  const clinics: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
-  const clinic = clinics.find((p) => p.practitioner_name === params.slug);
+  const clinic = await getPractitionerBySlug(params.slug)
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const canonicalSlug = decodeURIComponent(params.slug).toLowerCase();
   const canonicalUrl = toDirectoryCanonical(
@@ -289,29 +261,16 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   if (!clinic) {
     return {
       title: "Practitioner Not Found",
-      alternates: {
-        canonical: canonicalUrl,
-      },
+      alternates: { canonical: canonicalUrl },
     };
   }
 
   const practitionerDisplayName = capitalize(clinic.practitioner_name!);
   const city = capitalize(citySlug);
 
-  // Derive top treatments from the practitioner's associated clinic
   let topTreatments: string[] = [];
-  const assocClinics: string[] = Array.isArray(clinic.Associated_Clinics)
-    ? clinic.Associated_Clinics
-    : JSON.parse((clinic.Associated_Clinics as string) || '[]');
-  if (assocClinics.length > 0) {
-    const allClinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
-    for (const slug of assocClinics) {
-      const assocClinic = allClinics.find(c => c.slug === slug);
-      if (assocClinic && Array.isArray(assocClinic.Treatments) && assocClinic.Treatments.length > 0) {
-        topTreatments = assocClinic.Treatments.slice(0, 2).map(t => capitalize(t));
-        break;
-      }
-    }
+  if (Array.isArray(clinic.Treatments) && clinic.Treatments.length > 0) {
+    topTreatments = clinic.Treatments.slice(0, 2).map(t => capitalize(t));
   }
 
   const treatments = topTreatments.length >= 2
@@ -325,8 +284,6 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   return {
     title,
     description,
-    alternates: {
-      canonical: canonicalUrl,
-    },
+    alternates: { canonical: canonicalUrl },
   };
 }

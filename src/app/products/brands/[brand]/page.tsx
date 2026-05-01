@@ -15,7 +15,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { readJsonFileSync } from "@/lib/json-cache"
+import { getProductsByBrand } from "@/lib/data-access/products";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { toUrlSlug } from "@/lib/utils";
 
@@ -39,12 +39,9 @@ export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
-  const brandSlug = decodeURIComponent(params.brand);
-  const similarProducts = clinics.filter(
-    (p) => p.brand != null && toUrlSlug(p.brand) === brandSlug
-  );
-  const brand = similarProducts[0]?.brand ?? decodeURIComponent(params.brand).replaceAll("-", " ");
+  let { brand } = params;
+  brand = decodeURIComponent(brand).replaceAll('%20', " ");
+  const similarProducts = await getProductsByBrand(brand);
 
   if (similarProducts.length === 0) {
     notFound();

@@ -47,3 +47,41 @@ export const clinicSchema = z.object({
 })
 
 export type ClinicInput = z.infer<typeof clinicSchema>
+
+// Admin edit schema — uses Prisma field names directly, all fields optional
+export const clinicEditSchema = z.object({
+  name: z.string().optional().nullable(),
+  image: z.string().optional().nullable(),
+  gmapsUrl: z.string().optional().nullable(),
+  gmapsAddress: z.string().optional().nullable(),
+  gmapsPhone: z.string().optional().nullable(),
+  category: z.string().optional().nullable(),
+  rating: z.coerce.number().min(0).max(5).optional().nullable(),
+  reviewCount: z.coerce.number().int().min(0).optional().nullable(),
+  aboutSection: z.string().optional().nullable(),
+  accreditations: z.string().optional().nullable(),
+  awards: z.string().optional().nullable(),
+  affiliations: z.string().optional().nullable(),
+  website: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  facebook: z.string().optional().nullable(),
+  twitter: z.string().optional().nullable(),
+  xTwitter: z.string().optional().nullable(),
+  instagram: z.string().optional().nullable(),
+  youtube: z.string().optional().nullable(),
+  linkedin: z.string().optional().nullable(),
+  isSaveFace: z.boolean().optional(),
+  isDoctor: z.boolean().optional(),
+  isJccp: z.boolean().optional().nullable(),
+  jccpUrl: z.string().optional().nullable(),
+  isCqc: z.boolean().optional().nullable(),
+  cqcUrl: z.string().optional().nullable(),
+  isHiw: z.boolean().optional().nullable(),
+  hiwUrl: z.string().optional().nullable(),
+  isHis: z.boolean().optional().nullable(),
+  hisUrl: z.string().optional().nullable(),
+  isRqia: z.boolean().optional().nullable(),
+  rqiaUrl: z.string().optional().nullable(),
+})
+
+export type ClinicEditInput = z.infer<typeof clinicEditSchema>

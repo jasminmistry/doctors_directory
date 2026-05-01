@@ -1,16 +1,15 @@
-import { Product } from '@/lib/types'
 import {
   buildUrlSetXml,
   encodeSegmentForRouteParam,
   mapPathsToSitemapUrls,
-  uniqueStrings,
   xmlResponse,
 } from '@/lib/sitemap'
-import { readJsonFileSync } from '@/lib/json-cache'
+import { getAllBrands } from '@/lib/data-access/products'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const products: Product[] = readJsonFileSync('products_processed_new.json')
-  const brands = uniqueStrings(products.map((product) => product.brand))
+  const brands = await getAllBrands()
   const paths = brands.map(
     (brand) => `/products/brands/${encodeSegmentForRouteParam(brand)}`
   )

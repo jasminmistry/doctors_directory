@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/components/Product/profile-header";
 import ClinicDetailsMarkdown from "@/components/Product/ProductDetailsMD";
 import { Product } from "@/lib/types";
-import { readJsonFileSync } from "@/lib/json-cache";
+import { getProductBySlug, getProductsByBrand } from "@/lib/data-access/products";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,7 +18,8 @@ import PractitionerTabs from "@/components/Product/ProductTabs";
 import ItemsGrid from "@/components/collectionGrid";
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
-import { Clinic } from "@/lib/types";
+import { getAllClinicsForSearch } from "@/lib/data-access/clinics";
+import { getAllTreatmentNames } from "@/lib/data-access/treatments";
 import { toDirectoryCanonical } from "@/lib/seo";
 
 
@@ -30,26 +31,18 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   const { slug } = params;
 
-  const clinic = clinics.find((p) => p.slug === slug);
-
-  const similarProducts = clinics.filter((p) => p.brand === clinic?.brand && p.slug !== slug);
-
-  const allClinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
-  const uniqueTreatments = [
-    ...new Set(
-      allClinics
-        .filter(c => Array.isArray(c.Treatments))
-        .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
-    )
-  ];
-  
-
+  const clinic = await getProductBySlug(slug);
   if (!clinic) {
     notFound();
   }
+
+  const [brandProducts, uniqueTreatments] = await Promise.all([
+    getProductsByBrand(clinic.brand || ''),
+    getAllTreatmentNames(),
+  ]);
+  const similarProducts = brandProducts.filter((p) => p.slug !== slug);
 
   return (
     <main className="min-h-screen bg-(--primary-bg-color)">
@@ -164,8 +157,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 // }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
-  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
-  const clinic = clinics.find((p) => p.slug === params.slug);
+  const clinic = await getProductBySlug(params.slug);
   const brandSlug = decodeURIComponent(params.brand).toLowerCase();
   const productSlug = decodeURIComponent(params.slug).toLowerCase();
   const canonicalUrl = toDirectoryCanonical(`/products/brands/${brandSlug}/${productSlug}`);

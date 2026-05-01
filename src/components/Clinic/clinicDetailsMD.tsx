@@ -5,7 +5,7 @@ import { Clinic, Practitioner } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Section } from "../ui/section";
-import { decodeUnicodeEscapes,fixMojibake } from "@/lib/utils";
+import { decodeUnicodeEscapes,fixMojibake, toUrlSlug } from "@/lib/utils";
 import { readJsonFileSync } from "@/lib/json-cache";
 const practitionersData: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
 const practitionersIndex = new Map<string, Practitioner[]>();
@@ -104,10 +104,10 @@ export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
               (modality, index) => 
                 { 
                   const treatments = modality.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
-                  
+
                   return (
-                  
-                <Link key={modality} href={`/treatments/${treatments}`}>
+
+                <Link key={modality} href={`/treatments/${toUrlSlug(modality)}`}>
                   <Badge variant="outline" className="text-md bg-gray-100 border-0">
                     {treatments}
                   </Badge>

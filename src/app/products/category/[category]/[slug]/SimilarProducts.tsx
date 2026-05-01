@@ -1,6 +1,5 @@
 import ItemsGrid from '@/components/collectionGrid';
-import { Product } from '@/lib/types';
-import { readJsonFileSync } from '@/lib/json-cache';
+import { getProductsByCategory } from '@/lib/data-access/products';
 
 interface SimilarProductsProps {
   category: string;
@@ -8,7 +7,7 @@ interface SimilarProductsProps {
 }
 
 export default async function SimilarProducts({ category, slug }: SimilarProductsProps) {
-  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
-  const similarProducts = clinics.filter((p) => p.category === category && p.slug !== slug).slice(0, 6);
+  const products = await getProductsByCategory(category);
+  const similarProducts = products.filter((p) => p.slug !== slug).slice(0, 6);
   return <ItemsGrid items={similarProducts} />;
 }

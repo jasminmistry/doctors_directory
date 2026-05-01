@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `clinic_staff` MODIFY `title` TEXT NULL,
+    MODIFY `profileUrl` TEXT NULL;

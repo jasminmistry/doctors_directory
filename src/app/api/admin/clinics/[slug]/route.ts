@@ -1,20 +1,61 @@
 import { NextResponse } from 'next/server'
-import { readJsonFile, writeJsonFile } from '@/lib/admin/file-utils'
-import { validateClinic } from '@/lib/admin/validators'
+import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
+import { prisma } from '@/lib/db'
+import { deleteClinic } from '@/lib/data-access/clinics'
+
+export const dynamic = 'force-dynamic'
+
+const CLINIC_EDIT_SELECT = {
+  slug: true,
+  name: true,
+  city: { select: { slug: true } },
+  image: true,
+  gmapsUrl: true,
+  gmapsAddress: true,
+  gmapsPhone: true,
+  category: true,
+  rating: true,
+  reviewCount: true,
+  aboutSection: true,
+  accreditations: true,
+  awards: true,
+  affiliations: true,
+  website: true,
+  email: true,
+  facebook: true,
+  twitter: true,
+  xTwitter: true,
+  instagram: true,
+  youtube: true,
+  linkedin: true,
+  isSaveFace: true,
+  isDoctor: true,
+  isJccp: true,
+  jccpUrl: true,
+  isCqc: true,
+  cqcUrl: true,
+  isHiw: true,
+  hiwUrl: true,
+  isHis: true,
+  hisUrl: true,
+  isRqia: true,
+  rqiaUrl: true,
+}
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: { slug: string } }
 ) {
   try {
-    const clinics = await readJsonFile('clinics_processed_new_data.json')
-    const clinic = clinics.find((c: any) => c.slug === params.slug)
-
+    const clinic = await prisma.clinic.findUnique({
+      where: { slug: params.slug },
+      select: CLINIC_EDIT_SELECT,
+    })
     if (!clinic) {
       return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
     }
-
-    return NextResponse.json(clinic)
+    const { city, ...rest } = clinic
+    return NextResponse.json({ ...rest, citySlug: city?.slug ?? null, rating: rest.rating ? Number(rest.rating) : null })
   } catch (error) {
     console.error('Failed to read clinic:', error)
     return NextResponse.json({ error: 'Failed to read clinic' }, { status: 500 })
@@ -26,48 +67,40 @@ export async function PUT(
   { params }: { params: { slug: string } }
 ) {
   try {
-    const data = await request.json()
-    const validation = validateClinic(data)
-
+    const body = await request.json()
+    // Strip the slug from body (comes from form but we use URL param)
+    const { slug: _slug, ...rest } = body
+    const validation = clinicEditSchema.safeParse(rest)
     if (!validation.success) {
-      console.error('Validation error:', validation.error.errors)
-      return NextResponse.json({ error: 'Invalid clinic data', details: validation.error.errors }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid data', details: validation.error.errors }, { status: 400 })
     }
-
-    const clinics = await readJsonFile('clinics_processed_new_data.json')
-    const index = clinics.findIndex((c: any) => c.slug === params.slug)
-
-    if (index === -1) {
-      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
-    }
-
-    const updated = [...clinics]
-    updated[index] = validation.data
-    await writeJsonFile('clinics_processed_new_data.json', updated)
-
-    return NextResponse.json(validation.data)
+    const clinic = await prisma.clinic.update({
+      where: { slug: params.slug },
+      data: validation.data as any,
+      select: CLINIC_EDIT_SELECT,
+    })
+    return NextResponse.json({ ...clinic, rating: clinic.rating ? Number(clinic.rating) : null })
   } catch (error) {
     console.error('Failed to update clinic:', error)
+    if ((error as any).code === 'P2025') {
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
+    }
     return NextResponse.json({ error: 'Failed to update clinic' }, { status: 500 })
   }
 }
 
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: { slug: string } }
 ) {
   try {
-    const clinics = await readJsonFile('clinics_processed_new_data.json')
-    const filtered = clinics.filter((c: any) => c.slug !== params.slug)
-
-    if (clinics.length === filtered.length) {
-      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
-    }
-
-    await writeJsonFile('clinics_processed_new_data.json', filtered)
+    await deleteClinic(params.slug)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Failed to delete clinic:', error)
+    if ((error as any).code === 'P2025') {
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
+    }
     return NextResponse.json({ error: 'Failed to delete clinic' }, { status: 500 })
   }
 }

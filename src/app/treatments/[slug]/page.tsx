@@ -3,9 +3,10 @@ import type { Clinic } from "@/lib/types";
 import type { Practitioner } from "@/lib/types";
 import type { Metadata } from "next";
 import { readJsonFileSync } from "@/lib/json-cache";
-import treatment_content from "../../../../public/treatments.json";
+import { getTreatmentBySlug } from "@/lib/data-access/treatments";
+import { getAllClinicsForSearch, type SearchClinic } from "@/lib/data-access/clinics";
 import { getTreatmentCategory, getTreatmentCategorySlug } from "@/lib/treatment-categories";
-import { stripContentReferencesDeep, toUrlSlug } from "@/lib/utils";
+import { toUrlSlug } from "@/lib/utils";
 import { TreatmentDetail } from "@/components/treatment-detail";
 import Script from "next/script";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
@@ -17,8 +18,6 @@ import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
 
-type TreatmentContent = Record<string, any>;
-const treatments = treatment_content as TreatmentContent;
 interface ProfilePageProps {
   params: {
     slug: string;
@@ -106,7 +105,7 @@ const TreatmentMap: Record<string, string> = {
 };
 
 const getTreatmentContentValue = (
-  treatmentData: Record<string, unknown> | undefined,
+  treatmentData: Record<string, unknown> | undefined | null,
   candidateKeys: readonly string[],
 ) => {
   if (!treatmentData) {
@@ -124,7 +123,7 @@ const getTreatmentContentValue = (
 
 const getAverageCost = (
   treatmentName: string,
-  treatmentData: Record<string, unknown> | undefined,
+  treatmentData: Record<string, unknown> | undefined | null,
 ) => {
   const normalizedName = treatmentName.replaceAll(/\s+/g, '_');
   const costData = getTreatmentContentValue(treatmentData, [
@@ -153,12 +152,12 @@ const getAverageCost = (
   if (Array.isArray(costData)) {
     for (const item of costData) {
       if (typeof item === 'string') {
-        const match = item.match(/GBP\s*[0-9,]+(?:\s*(?:to|[-\u2013])\s*GBP\s*[0-9,]+)?/i);
+        const match = item.match(/GBP\s*[0-9,]+(?:\s*(?:to|[-–])\s*GBP\s*[0-9,]+)?/i);
         if (match) {
           return match[0].replaceAll(/GBP/gi, 'GBP ').replaceAll(/\s+/g, ' ').trim();
         }
 
-        const poundMatch = item.match(/£\s*[0-9,]+(?:\s*(?:to|[-\u2013])\s*£?\s*[0-9,]+)?/i);
+        const poundMatch = item.match(/£\s*[0-9,]+(?:\s*(?:to|[-–])\s*£?\s*[0-9,]+)?/i);
         if (poundMatch) {
           return poundMatch[0].replaceAll(/\s+/g, ' ').trim();
         }
@@ -203,7 +202,7 @@ const getAverageCost = (
 
 const getDowntime = (
   treatmentName: string,
-  treatmentData: Record<string, unknown> | undefined,
+  treatmentData: Record<string, unknown> | undefined | null,
 ) => {
   const normalizedName = treatmentName.replaceAll(/\s+/g, '_');
   const recoveryData = getTreatmentContentValue(treatmentData, [
@@ -281,7 +280,7 @@ const normalizeTreatmentToken = (value: string) =>
   value
     .toLowerCase()
     .normalize('NFKD')
-    .replaceAll(/[\u2010-\u2015]/g, '-')
+    .replaceAll(/[‐-―]/g, '-')
     .replaceAll(/[^a-z0-9]+/g, ' ')
     .trim();
 
@@ -312,35 +311,54 @@ const getTreatmentAliases = (treatmentName: string, slug: string) => {
 };
 
 const clinicMatchesTreatment = (
-  clinic: Clinic,
+  clinic: SearchClinic,
   treatmentAliases: Set<string>,
 ) => {
   const treatments = Array.isArray(clinic.Treatments) ? clinic.Treatments : [];
-  const treatmentMatch = treatments.some((entry) =>
+  return treatments.some((entry) =>
     treatmentAliases.has(normalizeTreatmentToken(String(entry))),
   );
-
-  const feeEntries = Array.isArray(clinic.Fees) ? clinic.Fees : [];
-  const feeMatch = feeEntries.some((entry) => {
-    if (!entry || typeof entry !== 'object') {
-      return false;
-    }
-
-    const treatmentLabel = 'treatment' in entry ? String(entry.treatment ?? '') : '';
-    const normalizedLabel = normalizeTreatmentToken(treatmentLabel);
-
-    return treatmentAliases.has(normalizedLabel);
-  });
-
-  const categoryEntries = clinic.reviewAnalysis?.procedures_offered?.categories ?? [];
-  const categoryMatch = categoryEntries.some((entry) => {
-    const normalizedEntry = normalizeTreatmentToken(String(entry));
-
-    return treatmentAliases.has(normalizedEntry);
-  });
-
-  return treatmentMatch || feeMatch || categoryMatch;
 };
+
+// Convert SearchClinic to Clinic-compatible shape for components
+function searchClinicToClinic(clinic: SearchClinic): Clinic {
+  return {
+    slug: clinic.slug || undefined,
+    image: clinic.image || '',
+    url: undefined,
+    rating: clinic.rating ? Number(clinic.rating) : 0,
+    reviewCount: clinic.reviewCount || 0,
+    category: clinic.category || '',
+    gmapsAddress: clinic.gmapsAddress || '',
+    gmapsPhone: '',
+    City: clinic.City || '',
+    isSaveFace: clinic.isSaveFace,
+    isDoctor: clinic.isDoctor,
+    isJCCP: clinic.isJccp ? [true, ''] : null,
+    isCQC: clinic.isCqc ? [true, ''] : null,
+    isHIW: clinic.isHiw ? [true, ''] : null,
+    isHIS: clinic.isHis ? [true, ''] : null,
+    isRQIA: clinic.isRqia ? [true, ''] : null,
+    facebook: '',
+    twitter: '',
+    Linkedin: '',
+    instagram: '',
+    youtube: '',
+    website: '',
+    email: '',
+    about_section: '',
+    accreditations: '',
+    awards: '',
+    affiliations: '',
+    hours: '',
+    Practitioners: '',
+    Insurace: '',
+    Payments: '',
+    Fees: '',
+    x_twitter: '',
+    Treatments: clinic.Treatments || [],
+  } as Clinic;
+}
 
 const getPractitionerCount = (practitioners: Clinic['Practitioners']) => {
   if (Array.isArray(practitioners)) {
@@ -355,8 +373,32 @@ const getPractitionerCount = (practitioners: Clinic['Practitioners']) => {
   return 0;
 };
 
+// Build treatmentData in the keyed format that TreatmentDetail's findProperty() expects
+function buildTreatmentData(dbTreatment: NonNullable<Awaited<ReturnType<typeof getTreatmentBySlug>>>, treatmentName: string): Record<string, unknown> {
+  const n = treatmentName.replaceAll(/\s+/g, '_');
+  return {
+    [`What_is_${n}_How_does_it_work`]: dbTreatment.description,
+    [`Goals_of_${n}_treatment`]: dbTreatment.goals,
+    [`Pros_and_Cons_of_${n}_Treatments`]: dbTreatment.prosAndCons,
+    [`Cost_of_${n}_in_UK_and_Variations`]: dbTreatment.cost,
+    'What_to_Look_for_Choosing_Doctor_or_Clinic': dbTreatment.choosingDoctor,
+    [`How_${n}_Compairs_with_Non_surgical_or_Alternative_Options`]: dbTreatment.alternatives,
+    [`Who_is_a_Good_Candidate_for_${n}_Treatment`]: dbTreatment.goodCandidate,
+    [`How_to_Prepare_for_${n}_Appointment`]: dbTreatment.preparation,
+    'Safety_Considerations_and_Pain': dbTreatment.safetyAndPain,
+    'What_Happens_During_Appointment_and_Duration': dbTreatment.whatHappensDuring,
+    'Recovery_Process_Downtime_Possible_Side_Effects': dbTreatment.recovery,
+    'How_Long_Results_Last': dbTreatment.howLongResultsLast,
+    [`Mild_vs_Severe_${n}_and_Limits`]: dbTreatment.mildVsSevere,
+    [`Does_${n}_Require_Maintenance_and_How_Often`]: dbTreatment.maintenance,
+    'Qualifications_Practitioner_Should_Have': dbTreatment.qualifications,
+    [`Is_${n}_Regulated_in_UK_and_What_To_Do_If_Something_Goes_Wrong`]: dbTreatment.regulation,
+    'Are_There_NICE_FDA_MHRA_Guidelines': dbTreatment.niceGuidelines,
+  };
+}
+
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
+  const allClinics = await getAllClinicsForSearch();
   const practitionerProfiles: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const { slug } = params;
 
@@ -368,23 +410,25 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       return Object.keys(TreatmentMap).find((name) => name === decoded) ?? decoded;
     })();
 
-  // Get treatment data from treatment_content
-  const treatmentSlug = resolvedTreatmentName;
-  const treatmentData = stripContentReferencesDeep(treatments[treatmentSlug]);
-  
+  // Get treatment data from DB
+  const dbSlug = toUrlSlug(resolvedTreatmentName);
+  const dbTreatment = await getTreatmentBySlug(dbSlug);
+
+  const treatmentData = dbTreatment ? buildTreatmentData(dbTreatment, resolvedTreatmentName) : null;
+
   // Create treatment object for TreatmentDetail component
   const treatment = {
-    name: treatmentSlug.charAt(0).toUpperCase() + treatmentSlug.slice(1),
-    image: TreatmentMap[treatmentSlug], // You can map this to actual images
+    name: resolvedTreatmentName.charAt(0).toUpperCase() + resolvedTreatmentName.slice(1),
+    image: TreatmentMap[resolvedTreatmentName],
     satisfaction: 82,
     averageCost: "£300-£1,200+",
     reviews: 47,
     downtime: "Minimal",
     practitioners: 101,
-    overview: treatmentData?.content || `${treatmentSlug} is a common treatment that helps address various skin and aesthetic concerns. Treatment options vary based on severity and individual needs.`,
-    symptoms: treatmentData?.symptoms || "Symptoms and severity information for this treatment.",
-    treatmentOptions: treatmentData?.options || "Various treatment options are available depending on your specific needs.",
-    results: treatmentData?.results || "Results vary based on individual factors and treatment approach.",
+    overview: dbTreatment?.description || `${resolvedTreatmentName} is a common treatment that helps address various skin and aesthetic concerns. Treatment options vary based on severity and individual needs.`,
+    symptoms: "Symptoms and severity information for this treatment.",
+    treatmentOptions: "Various treatment options are available depending on your specific needs.",
+    results: "Results vary based on individual factors and treatment approach.",
   };
 
   // Get treatment category
@@ -393,12 +437,14 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
   const treatmentAliases = getTreatmentAliases(treatment.name, slug);
 
-  const filteredClinics = clinics.filter((clinic) =>
+  const filteredSearchClinics = allClinics.filter((clinic) =>
     clinicMatchesTreatment(clinic, treatmentAliases),
   );
 
+  const filteredClinics = filteredSearchClinics.map(searchClinicToClinic);
+
   const clinicSlugs = new Set(
-    filteredClinics
+    filteredSearchClinics
       .map((clinic) => clinic.slug)
       .filter((clinicSlug): clinicSlug is string => Boolean(clinicSlug)),
   );
@@ -436,7 +482,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       .filter((practitionerName): practitionerName is string => Boolean(practitionerName)),
   ).size;
 
-  const reviews = filteredClinics.reduce((total, clinic) => {
+  const reviews = filteredSearchClinics.reduce((total, clinic) => {
     const reviewCount = Number.parseInt(String(clinic.reviewCount ?? '0'), 10);
 
     if (Number.isNaN(reviewCount)) {
@@ -451,10 +497,6 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const satisfaction = getSatisfaction(reviews);
   const rankedTreatmentClinics = buildClinicRankedEntries(filteredClinics, 5);
 
-  if (!filteredClinics) {
-    notFound();
-  }
-
   treatment.satisfaction = satisfaction;
   treatment.averageCost = averageCost;
   treatment.reviews = reviews;
@@ -462,13 +504,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   treatment.practitioners = practitioners;
 
   // Generate structured data for SEO
-  const whatIsPropertyName = `What_is_${treatmentSlug.replaceAll(/\s+/g, '_')}_How_does_it_work`;
+  const whatIsKey = `What_is_${resolvedTreatmentName.replaceAll(/\s+/g, '_')}_How_does_it_work`;
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "MedicalProcedure",
     name: treatment.name,
     description:
-      treatmentData?.[whatIsPropertyName] ||
+      (treatmentData?.[whatIsKey] as string | undefined) ||
       `${treatment.name} is a medical treatment that helps address various skin and aesthetic concerns.`,
     url: `${baseUrl}/directory/treatments/${params.slug}`,
     image: treatment.image,
@@ -571,27 +613,26 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   );
 }
 
-// export async function generateStaticParams() {
-//   // Generate static params for all treatments
-//   const treatmentSlugs = Object.keys(treatment_content);
-//   return treatmentSlugs.map((slug) => ({
-//     slug: slug.toLowerCase().replaceAll(" ", "%20"),
-//   }));
-// }
-
 export async function generateMetadata({ params }: ProfilePageProps): Promise<Metadata> {
   const { slug } = params;
-  const treatmentSlug = slug.replaceAll("%20", " ");
-  const treatmentData = (treatment_content as TreatmentContent)[treatmentSlug];
-  
-  const treatmentName = treatmentSlug.charAt(0).toUpperCase() + treatmentSlug.slice(1);
-  const whatIsPropertyName = `What_is_${treatmentSlug.replaceAll(/\s+/g, '_')}_How_does_it_work`;
-  const description = treatmentData?.[whatIsPropertyName] 
-    ? `${treatmentData[whatIsPropertyName].substring(0, 155)}...`
+
+  const resolvedTreatmentName =
+    Object.keys(TreatmentMap).find((name) => toUrlSlug(name) === slug) ??
+    (() => {
+      const decoded = slug.replaceAll('%20', ' ');
+      return Object.keys(TreatmentMap).find((name) => name === decoded) ?? decoded;
+    })();
+
+  const dbSlug = toUrlSlug(resolvedTreatmentName);
+  const dbTreatment = await getTreatmentBySlug(dbSlug);
+
+  const treatmentName = resolvedTreatmentName.charAt(0).toUpperCase() + resolvedTreatmentName.slice(1);
+  const description = dbTreatment?.description
+    ? `${String(dbTreatment.description).substring(0, 155)}...`
     : `Find qualified practitioners for ${treatmentName} treatment. Compare providers, read reviews, and book consultations for professional ${treatmentName} services.`;
-  
+
   const title = `${treatmentName} Treatment - Find Qualified Practitioners | Healthcare Directory`;
-  const image = TreatmentMap[treatmentSlug] || '/directory/treatments/default-treatment.webp';
+  const image = TreatmentMap[resolvedTreatmentName] || '/directory/treatments/default-treatment.webp';
   const url = `${baseUrl}/directory/treatments/${slug}`;
 
   return {

@@ -1,12 +1,14 @@
 'use client'
-import AdminForm from "@/components/admin/AdminForm"
+
+import { AdminLayout } from '@/components/admin/AdminLayout'
+import { PractitionerForm } from '@/components/admin/forms/PractitionerForm'
+
+export const dynamic = 'force-dynamic'
 
 export default function PractitionerEditor() {
   return (
-    <AdminForm
-      entityType="practitioners"
-      apiBasePath="/directory/api/admin/pending/practitioners"
-      redirectPath="/admin/practitioners"
-    />
+    <AdminLayout title="Practitioners">
+      <PractitionerForm />
+    </AdminLayout>
   )
 }

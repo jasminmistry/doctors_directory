@@ -5,12 +5,14 @@ import {
   mapPathsToSitemapUrls,
   xmlResponse,
 } from '@/lib/sitemap'
-import { getEnrichedPractitioners } from '@/lib/sitemap-data'
+import { getEnrichedPractitionersFromDb } from '@/lib/sitemap-data'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
   const pairs = new Set<string>()
 
-  for (const entry of getEnrichedPractitioners()) {
+  for (const entry of await getEnrichedPractitionersFromDb()) {
     if (!entry.City || !Array.isArray(entry.Treatments)) continue
 
     for (const treatment of entry.Treatments) {

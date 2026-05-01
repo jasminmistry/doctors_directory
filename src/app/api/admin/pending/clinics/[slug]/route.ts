@@ -1,30 +1,31 @@
 import { NextResponse } from 'next/server'
-import { readJsonFile, writeJsonFile } from '@/lib/admin/file-utils'
+import { prisma } from '@/lib/db'
 
-
+export const dynamic = 'force-dynamic'
 
 export async function PUT(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
   try {
-    console.log('Received update request for clinic:', params.slug)
     const data = await request.json()
-    const newData = { ...data, status: "pending" }
+    const submittedData = JSON.stringify({ ...data, status: 'pending' })
 
-    const clinics = await readJsonFile('pending_clinics.json')
-    const index = clinics.findIndex((c: any) => c.slug === params.slug)
+    const allPending = await prisma.pendingClinic.findMany()
+    const existing = allPending.find((r) => {
+      try { return JSON.parse(r.submittedData).slug === params.slug } catch { return false }
+    })
 
-    if (index === -1) {
-      const updated = [...clinics, newData]
-      await writeJsonFile('pending_clinics.json', updated)
-      return NextResponse.json({ success: true })
+    if (existing) {
+      await prisma.pendingClinic.update({
+        where: { id: existing.id },
+        data: { submittedData, status: 'pending' },
+      })
+    } else {
+      await prisma.pendingClinic.create({
+        data: { submittedData, status: 'pending' },
+      })
     }
-    
-    const updated = [...clinics]
-    updated[index] = newData
-    await writeJsonFile('pending_clinics.json', updated)
-    
 
     return NextResponse.json({ success: true })
   } catch (error) {

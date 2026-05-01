@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { Accreditation, Clinic, Practitioner, Product } from "./types"
-import { modalities, locations, accreditations } from "./data"
+import { modalities, locations, accreditations, cityMap } from "./data"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -236,7 +236,9 @@ export function isAward(obj: unknown): obj is {name:string; slug: string; image_
 }
 
 export function isCity(obj: unknown): obj is string {
-  return typeof obj === "string" && locations.includes(obj.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" "));
+  if (typeof obj !== "string") return false;
+  const normalized = obj.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+  return locations.includes(normalized) || normalized in cityMap;
 }
 export function isTreatment(obj:unknown): obj is string{
     return typeof obj === "string" && modalities.includes(obj.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ").replace("Hifu", "HIFU").replace("Coolsculpting", "CoolSculpting"));

@@ -1,13 +1,19 @@
-import { getTestReport } from "@/lib/testReport"
-import QAClient from "@/components/admin/QAClient"
-import type { TestReport } from "@/components/admin/QAClient"
-import fs from "fs"
-import path from "path"
-const filePath = path.join(process.cwd(), "test-reports", "output.json")
+import { AdminLayout } from '@/components/admin/AdminLayout'
+import QAClient from '@/components/admin/QAClient'
+import type { TestReport } from '@/components/admin/QAClient'
+import fs from 'fs'
+import path from 'path'
 
-const fileContents = fs.readFileSync(filePath, "utf-8")
-const testReport: TestReport = JSON.parse(fileContents)
+export const dynamic = 'force-dynamic'
 
 export default async function Page() {
-  return <QAClient report={testReport} />
+  const filePath = path.join(process.cwd(), 'test-reports', 'output.json')
+  const fileContents = fs.readFileSync(filePath, 'utf-8')
+  const testReport: TestReport = JSON.parse(fileContents)
+
+  return (
+    <AdminLayout title="QA Report">
+      <QAClient report={testReport} />
+    </AdminLayout>
+  )
 }

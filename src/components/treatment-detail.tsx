@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ThumbsUp, DollarSign, Star, Clock, Users, Database, Camera } from "lucide-react";
+import { DEFAULT_PERSON, FallbackImage } from "@/components/ui/fallback-image";
 
 interface TreatmentDetailProps {
   treatment: {
@@ -329,11 +330,12 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
         <div className="flex gap-6">
           {/* Treatment Image */}
           <div className="flex-shrink-0">
-            <div className="relative">
-              <img
+            <div className="w-28 h-28 rounded-full overflow-hidden">
+              <FallbackImage
                 src={treatment.image}
                 alt={`${treatment.name} treatment procedure - before and after results`}
-                className="w-28 h-28 object-cover rounded-full"
+                className="w-full h-full object-cover"
+                fallback={DEFAULT_PERSON}
               />
             </div>
           </div>
@@ -393,12 +395,13 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
       {/* Desktop Layout - Original Design */}
       <div className="hidden lg:flex flex-col lg:flex-row gap-8 mb-8 p-5 rounded-2xl bg-[#F2EDE6]">
         {/* Treatment Image */}
-        <div className="">
-          <div className="relative">
-            <img
+        <div className="shrink-0">
+          <div className="w-48 h-48 rounded-full overflow-hidden">
+            <FallbackImage
               src={treatment.image}
               alt={treatment.name}
-              className="w-48 h-48 object-cover rounded-full"
+              className="w-full h-full object-cover"
+              fallback={DEFAULT_PERSON}
             />
           </div>
         </div>

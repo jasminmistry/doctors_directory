@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { getTrackingOverview, listTrackingRows, type TrackingTab } from "@/lib/tracking/dashboard-queries"
 import { trackingDashboardTokenOk } from "@/lib/tracking/access"
 
+export const dynamic = 'force-dynamic'
+
 function parseTab(value: string | null): TrackingTab {
   return value === "leads" ? "leads" : "events"
 }
