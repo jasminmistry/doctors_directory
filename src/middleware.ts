@@ -18,8 +18,8 @@ function clearAuthAndRedirect(request: NextRequest, pathname: string) {
   loginUrl.search = ''
   loginUrl.searchParams.set('next', pathname)
   const res = NextResponse.redirect(loginUrl)
-  res.cookies.delete(COOKIE_TOKEN)
-  res.cookies.delete(COOKIE_REFRESH)
+  res.cookies.set(COOKIE_TOKEN, '', { path: COOKIE_PATH, maxAge: 0 })
+  res.cookies.set(COOKIE_REFRESH, '', { path: COOKIE_PATH, maxAge: 0 })
   return res
 }
 
