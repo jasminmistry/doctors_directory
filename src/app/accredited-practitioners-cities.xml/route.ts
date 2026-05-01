@@ -7,12 +7,14 @@ import {
 } from '@/lib/sitemap'
 import {
   ACCREDITATION_KEYS,
-  getEnrichedPractitioners,
+  getEnrichedPractitionersFromDb,
   hasAccreditation,
 } from '@/lib/sitemap-data'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
-  const practitioners = getEnrichedPractitioners()
+  const practitioners = await getEnrichedPractitionersFromDb()
   const paths: string[] = []
 
   for (const accreditation of ACCREDITATION_KEYS) {

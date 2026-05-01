@@ -17,13 +17,11 @@ import {
 import PractitionerTabs from "@/components/Product/ProductTabs";
 import { toUrlSlug } from "@/lib/utils";
 import { Suspense } from "react";
-import { readJsonFileSync } from "@/lib/json-cache";
+import { getProductBySlug } from "@/lib/data-access/products";
 import { toDirectoryCanonical } from "@/lib/seo";
 const SimilarProducts = (await import("./SimilarProducts")).default;
 const UniqueTreatments = (await import("./UniqueTreatments")).default;
 const Locations = (await import("./Locations")).default;
-
-const products: Product[] = readJsonFileSync('products_processed_new.json');
 
 interface ProfilePageProps {
   params: {
@@ -35,7 +33,7 @@ interface ProfilePageProps {
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const { slug, category } = params;
-  const clinic = products.find((p) => p.slug === slug);
+  const clinic = await getProductBySlug(slug);
   if (!clinic) {
     notFound();
   }
@@ -139,7 +137,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 // }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
-  const clinic = products.find((p) => p.slug === params.slug);
+  const clinic = await getProductBySlug(params.slug);
   const canonicalCategory = decodeURIComponent(params.category).toLowerCase();
   const canonicalSlug = decodeURIComponent(params.slug).toLowerCase();
   const canonicalUrl = toDirectoryCanonical(

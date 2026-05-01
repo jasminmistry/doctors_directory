@@ -14,7 +14,7 @@ import ClinicLabels from "./Clinic/clinicLabels";
 import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
 import { locations, TreatmentMap } from "@/lib/data";
 import { Button } from "./ui/button";
-import { isClinic, isPractitioner, isProduct, isTreatment, toUrlSlug } from "@/lib/utils";
+import { isClinic, isPractitioner, isProduct, toUrlSlug } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 type PractitionerOrClinic = Practitioner | Clinic | Product | string;
@@ -90,11 +90,24 @@ function getPractitionerOrClinicHref(
   return "#";
 }
 
+const SEARCH_ENGINE_HOSTS = ["google.com", "yahoo.com", "bing.com"];
+
+function isDirectImageUrl(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    if (SEARCH_ENGINE_HOSTS.some((h) => hostname.includes(h))) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function getProfileImageSrc(
   practitioner: Practitioner | Clinic | Product | string,
 ): string {
   if (isPractitioner(practitioner) && practitioner.practitioner_image_link) {
-    return practitioner.practitioner_image_link;
+    const link = practitioner.practitioner_image_link;
+    if (isDirectImageUrl(link)) return link;
   }
 
   if ((isPractitioner(practitioner) || isClinic(practitioner)) && practitioner.image) {
@@ -148,7 +161,7 @@ function getProductHref(
 function getTreatmentName(
   practitioner: Practitioner | Clinic | Product | string,
 ): string {
-  if (!isTreatment(practitioner)) {
+  if (typeof practitioner !== "string") {
     return "";
   }
 
@@ -160,7 +173,7 @@ function getTreatmentHref(
   customLink: string | undefined,
   treatmentName: string,
 ): string {
-  if (!isTreatment(practitioner)) {
+  if (typeof practitioner !== "string") {
     return "#";
   }
 
@@ -476,7 +489,7 @@ export function PractitionerCard({
           </Link>
         </Card>
       )}
-      {isTreatment(practitioner) === true && (
+      {typeof practitioner === "string" && !isCity(practitioner) && (
         <Card
           asChild
           className="gap-0 h-full relative px-4 md:px-0 shadow-none md:border-0 duration-300 cursor-pointer"

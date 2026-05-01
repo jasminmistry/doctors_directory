@@ -1,8 +1,13 @@
 'use server'
 import { cache } from "react";
 import { Clinic, Practitioner, Product, SearchFilters } from "@/lib/types"
-import { readJsonFileSync } from "@/lib/json-cache"
-import { modalities } from "@/lib/data";
+import { getAllClinicsForSearch, type SearchClinic } from "@/lib/data-access/clinics"
+import { getAllTreatmentNames } from "@/lib/data-access/treatments"
+import { getAllProducts as getAllProductsFromDb } from "@/lib/data-access/products"
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
+import { modalities } from "@/lib/data"
+
+const modalitiesSet = new Set(modalities.map((m) => m.toLowerCase()))
 
 type SearchClinicResult = Pick<
   Clinic,
@@ -31,54 +36,58 @@ type SearchPractitioner = SearchClinicResult &
     | "practitioner_qualifications"
     | "practitioner_awards"
   >;
-export const loadData = cache(() => {
-  const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
-  const practitionersData: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
-  const productsData: Product[] = readJsonFileSync('products_processed_new.json')
-  const treatments = modalities;
-  const clinics = clinicsData.map(
-    (
-      clinic,
-    ): Pick<Clinic, "slug" | "City" | "image" | "category" | "gmapsAddress" | "Treatments" | "rating" | "reviewCount" | "isCQC" | "isHIW" | "isJCCP" | "isDoctor" | "isHIS" | "isRQIA" | "isSaveFace"> => ({
-      slug: clinic.slug,
-      image: clinic.image,
-      category: clinic.category,
-      gmapsAddress: clinic.gmapsAddress,
-      Treatments: clinic.Treatments,
-      rating: clinic.rating,
-      reviewCount: clinic.reviewCount,
-      isCQC: clinic.isCQC,
-      isHIW: clinic.isHIW,
-      isHIS: clinic.isHIS,
-      isJCCP: clinic.isJCCP,
-      isDoctor: clinic.isDoctor,
-      isSaveFace: clinic.isSaveFace,
-      isRQIA: clinic.isRQIA,
-      City: clinic.City,
-    }),
-  );
-  const clinicIndex = new Map(
-  clinics.map(c => [c.slug, c])
-)
 
+// Helper to convert database clinic to old format for compatibility
+function convertDbClinicToOldFormat(clinic: SearchClinic): SearchClinicResult {
+  return {
+    slug: clinic.slug || undefined,
+    image: clinic.image || '',
+    rating: clinic.rating ? Number(clinic.rating) : 0,
+    reviewCount: clinic.reviewCount || 0,
+    category: clinic.category || '',
+    gmapsAddress: clinic.gmapsAddress || '',
+    City: clinic.City || '',
+    isSaveFace: clinic.isSaveFace,
+    isDoctor: clinic.isDoctor,
+    isJCCP: clinic.isJccp ? [clinic.isJccp, ''] : null,
+    isCQC: clinic.isCqc ? [clinic.isCqc, ''] : null,
+    isHIW: clinic.isHiw ? [clinic.isHiw, ''] : null,
+    isHIS: clinic.isHis ? [clinic.isHis, ''] : null,
+    isRQIA: clinic.isRqia ? [clinic.isRqia, ''] : null,
+    Treatments: clinic.Treatments || [],
+  }
+}
 
-  const practitioners = practitionersData.reduce<SearchPractitioner[]>((accumulator, practitioner) => {
-    const clinic = clinicIndex.get(JSON.parse(practitioner.Associated_Clinics!)[0])
+export const loadData = cache(async () => {
+  const clinicsDataFromDb = await getAllClinicsForSearch()
+  const practitionersFromDb = await getAllPractitionersForSearch()
+  const productsData = await getAllProductsFromDb()
+  const allTreatments = await getAllTreatmentNames();
+  const treatments = allTreatments.filter((t) => modalitiesSet.has(t.toLowerCase()));
 
-    if (!clinic) {
-      return accumulator
-    }
+  const clinics = clinicsDataFromDb.map(convertDbClinicToOldFormat);
 
-    accumulator.push({
-      ...clinic,
-      practitioner_name: practitioner.practitioner_name,
-      practitioner_title: practitioner.practitioner_title,
-      practitioner_qualifications: practitioner.practitioner_qualifications,
-      practitioner_awards: practitioner.practitioner_awards,
-    })
-
-    return accumulator
-  }, [])
+  const practitioners: SearchPractitioner[] = practitionersFromDb.map((p) => ({
+    slug: p.slug,
+    image: p.image || '',
+    rating: typeof p.rating === 'number' ? p.rating : 0,
+    reviewCount: p.reviewCount || 0,
+    category: p.category || '',
+    gmapsAddress: p.gmapsAddress || '',
+    City: p.City || '',
+    isSaveFace: p.isSaveFace ?? false,
+    isDoctor: p.isDoctor ?? false,
+    isJCCP: p.isJCCP ?? null,
+    isCQC: p.isCQC ?? null,
+    isHIW: p.isHIW ?? null,
+    isHIS: p.isHIS ?? null,
+    isRQIA: p.isRQIA ?? null,
+    Treatments: p.Treatments || [],
+    practitioner_name: p.practitioner_name,
+    practitioner_title: p.practitioner_title,
+    practitioner_qualifications: p.practitioner_qualifications,
+    practitioner_awards: p.practitioner_awards,
+  }))
 
 
   const products = productsData.map(

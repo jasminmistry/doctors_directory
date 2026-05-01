@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import type { Clinic, Practitioner } from "@/lib/types";
+import type { Practitioner } from "@/lib/types";
 import { getAccreditationImages } from "@/lib/utils";
 import { FallbackImage } from "@/components/ui/fallback-image";
 import { readJsonFileSync } from "@/lib/json-cache";
@@ -15,31 +15,16 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 
-const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
-const clinics = clinicsData
-  const clinicIndex = new Map(
-  clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
-)
+export const dynamic = 'force-dynamic'
 
 export default async function ProfilePage() {
-  const practitionersData: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
-  const accreditationsJson = readJsonFileSync('accreditations_processed_new.json');
+  const [practitioners, accreditationsJson] = await Promise.all([
+    getAllPractitionersForSearch(),
+    Promise.resolve(readJsonFileSync('accreditations_processed_new.json')),
+  ])
   const recognitionsWithImages = getAccreditationImages(accreditationsJson);
-  
-  const practitioners = practitionersData
-    .map(p => {
-      const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0])
-      if (!clinic) return null
-      return {
-        ...clinic,
-        practitioner_name: p.practitioner_name,
-        practitioner_title: p.practitioner_title,
-        practitioner_qualifications: p.practitioner_qualifications,
-        practitioner_awards: p.practitioner_awards,
-      }
-    })
-    .filter((item) => item !== null).filter(Boolean)
 
   return (
     <main className="bg-(--primary-bg-color)">

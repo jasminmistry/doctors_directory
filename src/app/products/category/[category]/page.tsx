@@ -2,9 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { decodeUnicodeEscapes, toUrlSlug } from "@/lib/utils";
+import { toUrlSlug } from "@/lib/utils";
 import { product_categories } from "@/lib/data";
-import { Product } from "@/lib/types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,7 +11,7 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { readJsonFileSync } from "@/lib/json-cache"
+import { getProductsByCategory } from "@/lib/data-access/products";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { CategoryProductsGrid } from "./CategoryProductsGrid";
 
@@ -23,7 +22,6 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   let { category } = params;
   const resolvedCategory =
     product_categories.find((c) => toUrlSlug(c) === category) ??
@@ -39,7 +37,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     redirect(`/products/category/${categorySlug}`);
   }
 
-  const allProducts = clinics.filter((p) => p.category === category);
+  const allProducts = await getProductsByCategory(resolvedCategory);
 
 
 
@@ -114,7 +112,6 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 // }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
-  const clinics: Product[] = readJsonFileSync('products_processed_new.json');
   const { category } = params;
   const canonicalCategory = decodeURIComponent(category).toLowerCase();
 
@@ -125,7 +122,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
       return product_categories.find((c) => c === decoded) ?? decodeURIComponent(category).replaceAll("-", " ");
     })();
 
-  const categoryProducts = clinics.filter((p) => p.category === resolvedCategory);
+  const categoryProducts = await getProductsByCategory(resolvedCategory);
 
   if (categoryProducts.length === 0) {
     return { title: "Product Category Not Found" };

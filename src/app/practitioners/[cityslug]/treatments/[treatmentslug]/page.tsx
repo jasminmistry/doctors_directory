@@ -14,7 +14,6 @@ import { PractitionerCard } from "@/components/practitioner-card";
 import { CityTreatmentPage } from "@/components/cityxTreatmentPage";
 import treatment_content from "@//../public/treatments.json";
 import ItemsGrid from "@/components/collectionGrid";
-import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { readJsonFileSync } from "@/lib/json-cache"
 import { MoreItems } from "@/components/MoreItems";
@@ -23,14 +22,10 @@ import { capitalize, toUrlSlug } from "@/lib/utils";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
+import { getAllClinicsForSearch } from "@/lib/data-access/clinics";
 
 type TreatmentSlug = keyof typeof treatment_content
-
-const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
-const clinics = clinicsData
-const clinicIndex = new Map(
-  clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
-)
 
 const popularPages = [
   { label: "Top clinics in the UK", href: "/clinics" },
@@ -76,31 +71,12 @@ interface ProfilePageProps {
   };
 }
 
-export default function ProfilePage({ params }: ProfilePageProps) {
-  
-  const practitionerDirectory: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
-
-  const practitioners = practitionerDirectory
-    .map((practitioner): Practitioner | null => {
-      try {
-        const clinicSlug = JSON.parse(practitioner.Associated_Clinics ?? "[]")[0] as string | undefined
-        if (!clinicSlug) return null
-
-        const clinic = clinicIndex.get(clinicSlug)
-        if (!clinic) return null
-
-        return {
-          ...clinic,
-          practitioner_name: practitioner.practitioner_name,
-          practitioner_title: practitioner.practitioner_title,
-          practitioner_qualifications: practitioner.practitioner_qualifications,
-          practitioner_awards: practitioner.practitioner_awards,
-        }
-      } catch {
-        return null
-      }
-    })
-    .filter((item): item is Practitioner => item !== null)
+export default async function ProfilePage({ params }: ProfilePageProps) {
+  const [practitioners, clinicsFromDb] = await Promise.all([
+    getAllPractitionersForSearch(),
+    getAllClinicsForSearch(),
+  ])
+  const clinics = clinicsFromDb as any[]
 
   const { cityslug, treatmentslug } = params;
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
@@ -180,7 +156,6 @@ export default function ProfilePage({ params }: ProfilePageProps) {
   
   return (
     <main className="bg-(--primary-bg-color)">
-      <SearchBar />
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">

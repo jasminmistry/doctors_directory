@@ -4,8 +4,6 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { Clinic, City, Practitioner } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Star, MapPin } from "lucide-react";
-import fs from "fs";
-import path from "path";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,12 +16,13 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import ItemsGrid from "@/components/collectionGrid";
 import { MoreItems } from "@/components/MoreItems";
-import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { readJsonFileSync } from "@/lib/json-cache"
 import { locations } from "@/lib/data";
 import { capitalize } from "@/lib/utils";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
+import { getAllProducts as getAllProductsFromDb } from "@/lib/data-access/products";
 
 interface PageProps {
   params: {
@@ -44,10 +43,11 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-export default function CityTreatmentsPage({ params }: PageProps) {
-  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
-  const practitioners: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
-  const products: Array<{ product_category: string; category: string }> = readJsonFileSync('products_processed_new.json');
+export default async function CityTreatmentsPage({ params }: PageProps) {
+  const [enrichedPractitioners, productsData] = await Promise.all([
+    getAllPractitionersForSearch(),
+    getAllProductsFromDb(),
+  ])
 
   const { cityslug } = params;
   const displayCityName = capitalize(cityslug);
@@ -59,34 +59,8 @@ export default function CityTreatmentsPage({ params }: PageProps) {
     .toLowerCase()
     .replace(/\s+/g, "");
 
-  const aestheticInjectableProducts = products.filter(p => p.category === "Aesthetic Injectables");
+  const aestheticInjectableProducts = productsData.filter(p => p.category === "Aesthetic Injectables");
   const aestheticProductCategories = [...new Set(aestheticInjectableProducts.map(p => p.product_category.toLowerCase()))];
-
-  const clinicIndex = new Map(
-    clinics.filter(c => c.slug !== undefined).map(c => [c.slug!, c])
-  );
-
-  const enrichedPractitioners = practitioners
-    .map(p => {
-      try {
-        const clinicSlugs = JSON.parse(p.Associated_Clinics || '[]') as string[];
-        const clinicSlug = clinicSlugs?.[0];
-        if (!clinicSlug) return null;
-        const clinic = clinicIndex.get(clinicSlug);
-        if (!clinic) return null;
-        return {
-          ...clinic,
-          practitioner_name: p.practitioner_name,
-          practitioner_title: p.practitioner_title,
-          practitioner_qualifications: p.practitioner_qualifications,
-          practitioner_awards: p.practitioner_awards,
-        };
-      } catch (error) {
-        console.error('Failed to parse Associated_Clinics:', p.Associated_Clinics, error);
-        return null;
-      }
-    })
-    .filter(Boolean);
 
   const filteredPractitioners = (enrichedPractitioners as Array<Clinic & { practitioner_name: string; practitioner_title: string }>).filter((practitioner) => {
     const cityMatch = practitioner.City?.toLowerCase() === decodedCitySlug.toLowerCase();
@@ -133,7 +107,6 @@ export default function CityTreatmentsPage({ params }: PageProps) {
 
   return (
     <main className="bg-(--primary-bg-color)">
-      <SearchBar />
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">

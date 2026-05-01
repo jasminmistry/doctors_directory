@@ -20,7 +20,6 @@ import { CityTreatmentPage } from "@/components/cityxTreatmentPage";
 import  ItemsGrid  from "@/components/collectionGrid";
 import { MoreItems } from "@/components/MoreItems";
 import treatment_content from "@//../public/treatments.json";
-import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { readJsonFileSync } from "@/lib/json-cache"
 import { locations, modalities } from "@/lib/data";
@@ -114,7 +113,6 @@ const serviceMatch = categories.some((cat: string) =>
 
   return (
     <main className="bg-(--primary-bg-color)">
-      <SearchBar />
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">

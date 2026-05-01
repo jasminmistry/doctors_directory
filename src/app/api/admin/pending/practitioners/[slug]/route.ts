@@ -1,34 +1,35 @@
 import { NextResponse } from 'next/server'
-import { readJsonFile, writeJsonFile } from '@/lib/admin/file-utils'
+import { prisma } from '@/lib/db'
 
-
+export const dynamic = 'force-dynamic'
 
 export async function PUT(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
   try {
-
     const data = await request.json()
-    const newData = { ...data, status: "pending" }
+    const submittedData = JSON.stringify({ ...data, status: 'pending' })
 
-    const practitioners = await readJsonFile('pending_practitioners.json')
-    const index = practitioners.findIndex((p: any) => p.practitioner_name === params.slug)
+    const allPending = await prisma.pendingPractitioner.findMany()
+    const existing = allPending.find((r) => {
+      try { return JSON.parse(r.submittedData).slug === params.slug } catch { return false }
+    })
 
-    if (index === -1) {
-      const updated = [...practitioners, newData]
-      await writeJsonFile('pending_practitioners.json', updated)
-      return NextResponse.json({ success: true })
+    if (existing) {
+      await prisma.pendingPractitioner.update({
+        where: { id: existing.id },
+        data: { submittedData, status: 'pending' },
+      })
+    } else {
+      await prisma.pendingPractitioner.create({
+        data: { submittedData, status: 'pending' },
+      })
     }
-    
-    const updated = [...practitioners]
-    updated[index] = newData
-    await writeJsonFile('pending_practitioners.json', updated)
-    
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Failed to update clinic:', error)
-    return NextResponse.json({ error: 'Failed to update clinic' }, { status: 500 })
+    console.error('Failed to update practitioner:', error)
+    return NextResponse.json({ error: 'Failed to update practitioner' }, { status: 500 })
   }
 }

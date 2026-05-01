@@ -5,10 +5,12 @@ import {
   mapPathsToSitemapUrls,
   xmlResponse,
 } from '@/lib/sitemap'
-import { getEnrichedPractitioners } from '@/lib/sitemap-data'
+import { getEnrichedPractitionersFromDb } from '@/lib/sitemap-data'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const paths = getEnrichedPractitioners()
+  const paths = (await getEnrichedPractitionersFromDb())
     .filter(
       (entry) =>
         typeof entry.practitioner_name === 'string' &&

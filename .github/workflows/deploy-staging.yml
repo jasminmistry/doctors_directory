@@ -10,6 +10,7 @@ env:
   CONTAINER_NAME: doctors-directory-staging
   APP_PORT: "3000"
   DEPLOY_DIR: /opt/doctors-directory-staging
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build-and-deploy:
@@ -100,6 +101,6 @@ jobs:
           script_stop: true
           script: |
             set -euo pipefail
-            docker image prune -af --filter "until=72h"
+            docker image prune -af --filter "until=24h"
             docker container prune -f
             echo "Docker cleanup completed"

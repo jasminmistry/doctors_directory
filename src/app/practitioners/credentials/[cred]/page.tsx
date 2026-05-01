@@ -18,20 +18,15 @@ import { ArrowLeft } from "lucide-react"
 import { PractitionerCard } from "@/components/practitioner-card";
 import { Item } from "@radix-ui/react-accordion";
 import ItemsGrid from "@/components/collectionGrid";
-import { SearchBar } from "@/components/search/search-bar";
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
 import { CredentialPageData } from "@/components/credentialPageData";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 const credentialsData: Accreditation[] = readJsonFileSync('accreditations_processed_new.json')
 const credentialIndex = new Map(
   credentialsData.map(c => [c.slug!.replace(/[^a-z0-9-]/g, ''), c])
-)
-const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
-const clinics = clinicsData
-  const clinicIndex = new Map(
-  clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
 )
 interface ProfilePageProps {
   params: {
@@ -40,22 +35,7 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
-  const clinics: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
-     const practitioners = clinics
-  .map(p => {
-    const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0])
-    
-    if (!clinic) return null
-    return {
-      ...clinic,
-      practitioner_name: p.practitioner_name,
-      practitioner_title: p.practitioner_title,
-      practitioner_qualifications: p.practitioner_qualifications,
-      practitioner_awards: p.practitioner_awards,
-    }
-  
-  })
-  .filter((item) => item !==null).filter(Boolean)
+  const practitioners = await getAllPractitionersForSearch();
 
   const { cred } = params;
   const credslug = decodeURIComponent(cred).toLowerCase().replace(/[\s()\-]/g, "");
@@ -82,7 +62,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   return (
     <main className="bg-(--primary-bg-color)">
-      <SearchBar />
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
