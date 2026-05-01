@@ -23,14 +23,10 @@ import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
 import { CredentialPageData } from "@/components/credentialPageData";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 const credentialsData: Accreditation[] = readJsonFileSync('accreditations_processed_new.json')
 const credentialIndex = new Map(
   credentialsData.map(c => [c.slug!.replace(/[^a-z0-9-]/g, ''), c])
-)
-const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
-const clinics = clinicsData
-  const clinicIndex = new Map(
-  clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
 )
 interface ProfilePageProps {
   params: {
@@ -39,22 +35,7 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
-  const clinics: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
-     const practitioners = clinics
-  .map(p => {
-    const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0])
-    
-    if (!clinic) return null
-    return {
-      ...clinic,
-      practitioner_name: p.practitioner_name,
-      practitioner_title: p.practitioner_title,
-      practitioner_qualifications: p.practitioner_qualifications,
-      practitioner_awards: p.practitioner_awards,
-    }
-  
-  })
-  .filter((item) => item !==null).filter(Boolean)
+  const practitioners = await getAllPractitionersForSearch();
 
   const { cred } = params;
   const credslug = decodeURIComponent(cred).toLowerCase().replace(/[\s()\-]/g, "");

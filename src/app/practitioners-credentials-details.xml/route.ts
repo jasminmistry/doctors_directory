@@ -5,10 +5,12 @@ import {
   mapPathsToSitemapUrls,
   xmlResponse,
 } from '@/lib/sitemap'
-import { getEnrichedPractitioners, normalizeCredentialToken } from '@/lib/sitemap-data'
+import { getEnrichedPractitionersFromDb, normalizeCredentialToken } from '@/lib/sitemap-data'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const practitioners = getEnrichedPractitioners()
+  const practitioners = await getEnrichedPractitionersFromDb()
 
   const paths = accreditations
     .filter((credential) => {

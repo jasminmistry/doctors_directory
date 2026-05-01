@@ -21,29 +21,8 @@ import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { capitalize } from "@/lib/utils";
 import { toDirectoryCanonical } from "@/lib/seo";
-const clinicsData: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
-const clinics = clinicsData
-  const clinicIndex = new Map(
-  clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
-)
-const all_practitioners: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
-       const practitioners = all_practitioners
-    .map(p => {
-      const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0])
-      
-      if (!clinic) return null
-      return {
-        ...clinic,
-        practitioner_name: p.practitioner_name,
-        practitioner_title: p.practitioner_title,
-        practitioner_qualifications: p.practitioner_qualifications,
-        practitioner_awards: p.practitioner_awards,
-        weighted_analysis: p.weighted_analysis,
-        ranking: p.ranking,
-      }
-    
-    })
-    .filter((item) => item !==null).filter(Boolean)
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
+import { getAllClinicsForSearch } from "@/lib/data-access/clinics";
 
 function getPopularTreatments(items: Clinic[]): string[] {
   const counts = new Map<string, number>();
@@ -67,9 +46,12 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  
-  
-  
+  const [practitioners, clinicsFromDb] = await Promise.all([
+    getAllPractitionersForSearch(),
+    getAllClinicsForSearch(),
+  ])
+  const clinics = clinicsFromDb as unknown as Clinic[]
+
   const citySlug = params.cityslug;
   const displayCityName = capitalize(citySlug);
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
@@ -81,30 +63,30 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   );
   const hasCityPractitioners = cityClinics.length > 0;
   const rankedCityPractitioners = buildPractitionerRankedEntries(cityClinics, 5);
-    const uniqueTreatments = [
-  ...new Set(
-    cityClinics
-      .filter(c => Array.isArray(c.Treatments))
-      .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
-  )
-];
+  const uniqueTreatments = [
+    ...new Set(
+      cityClinics
+        .filter(c => Array.isArray(c.Treatments))
+        .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
+    )
+  ];
 
   const defaultClinics: Practitioner[] = practitioners.filter((p) => p.City === "London");
   const popularClinics = [...clinics]
     .filter((clinic) => clinic.slug)
-    .sort((left, right) => right.reviewCount - left.reviewCount || right.rating - left.rating)
+    .sort((left, right) => (right.reviewCount || 0) - (left.reviewCount || 0) || (Number(right.rating) || 0) - (Number(left.rating) || 0))
     .slice(0, 6);
   const popularPractitioners = [...practitioners]
-    .sort((left, right) => right.reviewCount - left.reviewCount || right.rating - left.rating)
+    .sort((left, right) => (right.reviewCount || 0) - (left.reviewCount || 0) || (Number(right.rating) || 0) - (Number(left.rating) || 0))
     .slice(0, 6);
   const popularTreatments = getPopularTreatments(clinics);
   const defaultTreatments = [
-  ...new Set(
+    ...new Set(
       defaultClinics
-      .filter(c => Array.isArray(c.Treatments))
-      .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
-  )
-];
+        .filter(c => Array.isArray(c.Treatments))
+        .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
+    )
+  ];
   return (
     <main className="bg-(--primary-bg-color)">
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">

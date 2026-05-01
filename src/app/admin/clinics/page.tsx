@@ -1,42 +1,69 @@
 'use client'
 
-import {  useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable } from '@/components/admin/DataTable'
-import type { Clinic } from '@/lib/types'
-import clinicsJson from "@/../public/clinics_processed_new_data.json";
-const clinicsJsonData = clinicsJson as unknown as Clinic[];
+import { DEFAULT_PERSON, FallbackImage } from '@/components/ui/fallback-image'
+
+export const dynamic = 'force-dynamic'
+
 const columns = [
   {
-    key: 'image' as any,
+    key: 'image',
     label: 'Image',
+    sortable: false,
     render: (value: string) => (
-      <img src={value} alt="" className="w-10 h-10 rounded-full object-cover" />
-    )
+      value
+        ? <FallbackImage src={value.replaceAll('"', '')} alt="Clinic" className="w-9 h-9 rounded-lg object-cover" fallback={DEFAULT_PERSON} />
+        : <div className="w-9 h-9 rounded-lg bg-gray-100" />
+    ),
   },
-  { key: 'slug' as any, label: 'Slug' },
-  { key: 'category' as any, label: 'Category' },
-  { key: 'City' as any, label: 'City' },
-  { key: 'rating' as any, label: 'Rating' },
+  { key: 'name', label: 'Name' },
+  { key: 'slug', label: 'Slug' },
+  { key: 'category', label: 'Category' },
+  { key: 'gmapsAddress', label: 'Address', render: (value: string) => value ? <span className="block max-w-xs truncate text-gray-500">{value}</span> : <span className="text-gray-300">—</span> },
+  {
+    key: 'rating',
+    label: 'Rating',
+    render: (value: number) => value ? <span className="text-amber-600 font-medium">{value}</span> : <span className="text-gray-300">—</span>,
+  },
 ]
 
 export default function ClinicsList() {
-  const [clinics, setClinics] = useState<Clinic[]>(clinicsJsonData)
+  const [clinics, setClinics] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
- 
+
+  useEffect(() => {
+    fetch('/directory/api/admin/clinics')
+      .then((r) => r.json())
+      .then((data) => {
+        const rows = Array.isArray(data) ? data : []
+        setClinics(rows.map((c) => ({
+          ...c,
+          name: c.name || c.slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        })))
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [])
 
   return (
-    <DataTable
-      data={clinics}
-      columns={columns}
-      onEdit={(clinic) => router.push(`/admin/clinics/${clinic.slug}`)}
-      onDelete={async (clinic) => {
-        if (confirm(`Delete clinic "${clinic.slug}"?`)) {
+    <AdminLayout title="Clinics">
+      <DataTable
+        data={clinics}
+        columns={columns}
+        loading={loading}
+        onEdit={(clinic) => router.push(`/admin/clinics/${clinic.slug}`)}
+        onDelete={async (clinic) => {
+          if (!confirm(`Delete clinic "${clinic.name || clinic.slug}"?`)) return
           await fetch(`/directory/api/admin/clinics/${clinic.slug}`, { method: 'DELETE' })
-          setClinics(clinics.filter(c => c.slug !== clinic.slug))
-        }
-      }}
-      onAdd={() => router.push('/admin/clinics/new')}
-    />
+          setClinics((prev) => prev.filter((c) => c.slug !== clinic.slug))
+        }}
+        onAdd={() => router.push('/admin/clinics/new')}
+        addLabel="Add Clinic"
+      />
+    </AdminLayout>
   )
 }

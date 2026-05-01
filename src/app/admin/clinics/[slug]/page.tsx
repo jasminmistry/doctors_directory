@@ -1,12 +1,14 @@
-"use client";
-import AdminForm from "@/components/admin/AdminForm";
+'use client'
+
+import { AdminLayout } from '@/components/admin/AdminLayout'
+import { ClinicForm } from '@/components/admin/forms/ClinicForm'
+
+export const dynamic = 'force-dynamic'
 
 export default function ClinicEditor() {
   return (
-    <AdminForm
-      entityType="clinics"
-      apiBasePath="/directory/api/admin/pending/clinics"
-      redirectPath="/admin/clinics"
-    />
-  );
+    <AdminLayout title="Clinics">
+      <ClinicForm />
+    </AdminLayout>
+  )
 }

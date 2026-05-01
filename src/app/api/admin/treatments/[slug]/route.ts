@@ -1,19 +1,18 @@
 import { NextResponse } from 'next/server'
-import { readJsonFile, writeJsonFile } from '@/lib/admin/file-utils'
+import { getTreatmentBySlug, updateTreatment, deleteTreatment } from '@/lib/data-access/treatments'
 import { validateTreatment } from '@/lib/admin/validators'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
   try {
-    const treatments = await readJsonFile('treatments.json')
-    const treatment = treatments[params.slug]
-
+    const treatment = await getTreatmentBySlug(params.slug)
     if (!treatment) {
       return NextResponse.json({ error: 'Treatment not found' }, { status: 404 })
     }
-
     return NextResponse.json(treatment)
   } catch (error) {
     console.error('Failed to read treatment:', error)
@@ -28,19 +27,40 @@ export async function PUT(
   try {
     const data = await request.json()
     const validation = validateTreatment(data)
-
     if (!validation.success) {
       console.error('Validation error:', validation.error.errors)
       return NextResponse.json({ error: 'Invalid treatment data', details: validation.error.errors }, { status: 400 })
     }
 
-    const treatments = await readJsonFile('treatments.json')
-    const updated = { ...treatments, [params.slug]: validation.data }
-    await writeJsonFile('treatments.json', updated)
+    const { name, description, goals, prosAndCons, cost, choosingDoctor, alternatives, goodCandidate, preparation, safetyAndPain, howLongResultsLast, mildVsSevere, whatHappensDuring, recovery, regulation, maintenance, qualifications, niceGuidelines } = validation.data
 
-    return NextResponse.json(validation.data)
+    const treatment = await updateTreatment(params.slug, {
+      name: name ?? undefined,
+      description: description ?? null,
+      goals: goals ?? null,
+      prosAndCons: prosAndCons ?? null,
+      cost: cost ?? null,
+      choosingDoctor: choosingDoctor ?? null,
+      alternatives: alternatives ?? null,
+      goodCandidate: goodCandidate ?? null,
+      preparation: preparation ?? null,
+      safetyAndPain: safetyAndPain ?? null,
+      howLongResultsLast: howLongResultsLast ?? null,
+      mildVsSevere: mildVsSevere ?? null,
+      whatHappensDuring: whatHappensDuring ?? null,
+      recovery: recovery ?? null,
+      regulation: regulation ?? null,
+      maintenance: maintenance ?? null,
+      qualifications: qualifications ?? null,
+      niceGuidelines: niceGuidelines ?? null,
+    })
+
+    return NextResponse.json(treatment)
   } catch (error) {
     console.error('Failed to update treatment:', error)
+    if ((error as any).code === 'P2025') {
+      return NextResponse.json({ error: 'Treatment not found' }, { status: 404 })
+    }
     return NextResponse.json({ error: 'Failed to update treatment' }, { status: 500 })
   }
 }
@@ -50,13 +70,13 @@ export async function DELETE(
   { params }: { params: { slug: string } }
 ) {
   try {
-    const treatments = await readJsonFile('treatments.json')
-    const { [params.slug]: _, ...rest } = treatments
-
-    await writeJsonFile('treatments.json', rest)
+    await deleteTreatment(params.slug)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Failed to delete treatment:', error)
+    if ((error as any).code === 'P2025') {
+      return NextResponse.json({ error: 'Treatment not found' }, { status: 404 })
+    }
     return NextResponse.json({ error: 'Failed to delete treatment' }, { status: 500 })
   }
 }

@@ -15,7 +15,7 @@ export default function PractitionerDetailsSections({
   function renderList(val: any) {
   if (!val) return "Not publicly listed";
 
-    let list = parseList(fixPythonArrayString(val));
+    let list = Array.isArray(val) ? val : parseList(fixPythonArrayString(val));
     if (!list.length) return "Not publicly listed";
     // If first element is an object, convert its key-value pairs to array of strings
     if (typeof list[0] === "object" && !Array.isArray(list[0])) {
@@ -50,20 +50,23 @@ export default function PractitionerDetailsSections({
       <div className="border-t border-gray-300 my-6"></div>
 
       <Section title="Composition" id="composition">
-        {JSON.parse(clinic?.composition as string)[0]['component'] !== undefined ? JSON.parse(clinic?.composition as string).map((item: any, index: number) => (
-          <div key={index}>
-             <ul className="list-disc ml-6 space-y-1">
-          
-             
-                {item['ingredients_INCI']?.map((a: string, i: number) => (
-                  <li key={i}>{a}</li>
-                ))}
-              </ul>
-          
-           
-          </div>
-        )) : renderList(clinic.composition)}
-        
+        {(() => {
+          const comp = Array.isArray(clinic?.composition)
+            ? clinic.composition
+            : (typeof clinic?.composition === 'string' ? JSON.parse(clinic.composition) : null)
+          if (Array.isArray(comp) && comp.length > 0 && comp[0]?.['component'] !== undefined) {
+            return comp.map((item: any, index: number) => (
+              <div key={index}>
+                <ul className="list-disc ml-6 space-y-1">
+                  {item['ingredients_INCI']?.map((a: string, i: number) => (
+                    <li key={i}>{a}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+          return renderList(clinic.composition)
+        })()}
       </Section>
       <div className="border-t border-gray-300 my-6"></div>
   

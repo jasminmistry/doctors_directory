@@ -1,55 +1,57 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable } from '@/components/admin/DataTable'
-import type { Practitioner, Clinic } from '@/lib/types'
-import practitionersJson from "@/../public/derms_processed_new_5403.json";
-import clinicsJson from "@/../public/clinics_processed_new_data.json";
-const clinicsJsonData = clinicsJson as unknown as Clinic[];
-const practitionersJsonData = practitionersJson as unknown as Practitioner[];
-const clinics = clinicsJsonData
-const clinicIndex = new Map(
-  clinics.filter(c=>c.slug !== undefined).map(c => [c.slug!, c])
-)
-const enrichedPractitionersJsonData = practitionersJsonData.map(p => {
-  const clinic = clinicIndex.get(JSON.parse(p.Associated_Clinics!)[0])
-  return {...p,...clinic}
-})
+import { DEFAULT_PERSON, FallbackImage } from '@/components/ui/fallback-image'
+
+export const dynamic = 'force-dynamic'
 
 const columns = [
   {
-    key: 'image' as any,
+    key: 'imageUrl',
     label: 'Image',
+    sortable: false,
     render: (value: string) => (
-      <img src={value} alt="" className="w-10 h-10 rounded-full object-cover" />
-    )
+      value
+        ? <FallbackImage src={value.replaceAll('"', '')} alt="Practitioner" className="w-9 h-9 rounded-full object-cover" fallback={DEFAULT_PERSON} />
+        : <div className="w-9 h-9 rounded-full bg-gray-100" />
+    ),
   },
-  { key: 'practitioner_name' as any, label: 'Name' },
-  { key: 'category' as any, label: 'Category' },
-  { key: 'City' as any, label: 'City' },
-  { key: 'rating' as any, label: 'Rating' },
+  { key: 'displayName', label: 'Name' },
+  { key: 'slug', label: 'Slug' },
+  { key: 'specialty', label: 'Specialty' },
+  { key: 'title', label: 'Title', render: (value: string) => value || <span className="text-gray-300">—</span> },
 ]
 
 export default function PractitionersList() {
-  const [practitioners, setPractitioners] = useState<Practitioner[]>(enrichedPractitionersJsonData)
-  
+  const [practitioners, setPractitioners] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  
+  useEffect(() => {
+    fetch('/directory/api/admin/practitioners')
+      .then((r) => r.json())
+      .then((data) => { setPractitioners(Array.isArray(data) ? data : []); setLoading(false) })
+      .catch(() => setLoading(false))
+  }, [])
 
   return (
-    <DataTable
-      data={practitioners}
-      columns={columns}
-      onEdit={(practitioner) => router.push(`/admin/practitioners/${practitioner.practitioner_name}`)}
-      onDelete={async (practitioner) => {
-        if (confirm(`Delete practitioner "${practitioner.practitioner_name}"?`)) {
-          await fetch(`/directory/api/admin/practitioners/${practitioner.slug}`, { method: 'DELETE' })
-          setPractitioners(practitioners.filter(p => p.slug !== practitioner.slug))
-        }
-      }}
-      onAdd={() => router.push('/admin/practitioners/new')}
-    />
+    <AdminLayout title="Practitioners">
+      <DataTable
+        data={practitioners}
+        columns={columns}
+        loading={loading}
+        onEdit={(p) => router.push(`/admin/practitioners/${p.slug}`)}
+        onDelete={async (p) => {
+          if (!confirm(`Delete practitioner "${p.displayName || p.slug}"?`)) return
+          await fetch(`/directory/api/admin/practitioners/${p.slug}`, { method: 'DELETE' })
+          setPractitioners((prev) => prev.filter((r) => r.slug !== p.slug))
+        }}
+        onAdd={() => router.push('/admin/practitioners/new')}
+        addLabel="Add Practitioner"
+      />
+    </AdminLayout>
   )
 }

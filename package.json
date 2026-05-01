@@ -21,8 +21,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
-    "@prisma/client": "^6.16.2",
-    "prisma": "^6.16.2",
+    "@prisma/adapter-mariadb": "^7.7.0",
+    "@prisma/client": "^7.7.0",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
     "@radix-ui/react-aspect-ratio": "1.1.1",
@@ -65,6 +65,7 @@
     "input-otp": "1.4.1",
     "ioredis": "^5.10.1",
     "lucide-react": "^0.454.0",
+    "mariadb": "^3.5.2",
     "next": "14.2.25",
     "next-themes": "^0.4.6",
     "node-cache": "^5.1.2",
@@ -84,9 +85,13 @@
     "supabase": "^2.58.5",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.20.6",
     "vaul": "^0.9.9",
     "zod": "3.25.67",
     "zustand": "^5.0.8"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
@@ -106,9 +111,9 @@
     "jest-stare": "^2.5.3",
     "jsdom": "^23.2.0",
     "postcss": "^8.5",
+    "prisma": "^7.7.0",
     "tailwindcss": "^4.1.9",
     "ts-node": "^10.9.2",
-    "tsx": "^4.20.6",
     "tw-animate-css": "1.3.3",
     "typescript": "^5.9.3"
   }

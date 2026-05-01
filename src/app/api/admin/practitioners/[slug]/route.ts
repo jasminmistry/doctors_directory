@@ -1,20 +1,46 @@
 import { NextResponse } from 'next/server'
-import { readJsonFile, writeJsonFile } from '@/lib/admin/file-utils'
-import { validatePractitioner } from '@/lib/admin/validators'
+import { z } from 'zod'
+import { prisma } from '@/lib/db'
+
+export const dynamic = 'force-dynamic'
+
+const practitionerEditSchema = z.object({
+  displayName: z.string().optional().nullable(),
+  title: z.string().optional().nullable(),
+  specialty: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  qualifications: z.any().optional().nullable(),
+  awards: z.any().optional().nullable(),
+  roles: z.any().optional().nullable(),
+  media: z.any().optional().nullable(),
+  experience: z.any().optional().nullable(),
+})
+
+const PRACTITIONER_EDIT_SELECT = {
+  slug: true,
+  displayName: true,
+  title: true,
+  specialty: true,
+  imageUrl: true,
+  qualifications: true,
+  awards: true,
+  roles: true,
+  media: true,
+  experience: true,
+}
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: { slug: string } }
 ) {
   try {
-    const practitioners = await readJsonFile('derms_processed_new_5403.json')
-    
-    const practitioner = practitioners.find((p: any) => p.practitioner_name === params.slug)
-
+    const practitioner = await prisma.practitioner.findUnique({
+      where: { slug: params.slug },
+      select: PRACTITIONER_EDIT_SELECT,
+    })
     if (!practitioner) {
       return NextResponse.json({ error: 'Practitioner not found' }, { status: 404 })
     }
-
     return NextResponse.json(practitioner)
   } catch (error) {
     console.error('Failed to read practitioner:', error)
@@ -27,47 +53,38 @@ export async function PUT(
   { params }: { params: { slug: string } }
 ) {
   try {
-    const data = await request.json()
-    const validation = validatePractitioner(data)
-
+    const body = await request.json()
+    const { slug: _slug, ...rest } = body
+    const validation = practitionerEditSchema.safeParse(rest)
     if (!validation.success) {
-      console.error('Validation error:', validation.error.errors)
-      return NextResponse.json({ error: 'Invalid practitioner data', details: validation.error.errors }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid data', details: validation.error.errors }, { status: 400 })
     }
-
-    const practitioners = await readJsonFile('derms_processed_new_5403.json')
-    const index = practitioners.findIndex((p: any) => p.slug === params.slug)
-
-    if (index === -1) {
-      return NextResponse.json({ error: 'Practitioner not found' }, { status: 404 })
-    }
-
-    const updated = [...practitioners]
-    updated[index] = validation.data
-    await writeJsonFile('derms_processed_new_5403.json', updated)
-
-    return NextResponse.json(validation.data)
+    const practitioner = await prisma.practitioner.update({
+      where: { slug: params.slug },
+      data: validation.data,
+      select: PRACTITIONER_EDIT_SELECT,
+    })
+    return NextResponse.json(practitioner)
   } catch (error) {
     console.error('Failed to update practitioner:', error)
+    if ((error as any).code === 'P2025') {
+      return NextResponse.json({ error: 'Practitioner not found' }, { status: 404 })
+    }
     return NextResponse.json({ error: 'Failed to update practitioner' }, { status: 500 })
   }
 }
 
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: { slug: string } }
 ) {
   try {
-    const practitioners = await readJsonFile('derms_processed_new_5403.json')
-    const filtered = practitioners.filter((p: any) => p.slug !== params.slug)
-
-    if (practitioners.length === filtered.length) {
+    await prisma.practitioner.delete({ where: { slug: params.slug } })
+    return NextResponse.json({ success: true })
+  } catch (error: any) {
+    if (error?.code === 'P2025') {
       return NextResponse.json({ error: 'Practitioner not found' }, { status: 404 })
     }
-
-    await writeJsonFile('derms_processed_new_5403.json', filtered)
-    return NextResponse.json({ success: true })
-  } catch (error) {
     console.error('Failed to delete practitioner:', error)
     return NextResponse.json({ error: 'Failed to delete practitioner' }, { status: 500 })
   }

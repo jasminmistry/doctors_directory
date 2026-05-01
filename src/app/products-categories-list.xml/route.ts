@@ -2,15 +2,14 @@ import {
   buildUrlSetXml,
   encodeSegment,
   mapPathsToSitemapUrls,
-  uniqueStrings,
   xmlResponse,
 } from '@/lib/sitemap'
-import { Product } from '@/lib/types'
-import { readJsonFileSync } from '@/lib/json-cache'
+import { getAllCategorySlugs } from '@/lib/data-access/products'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const products: Product[] = readJsonFileSync('products_processed_new.json')
-  const categories = uniqueStrings(products.map((product) => product.category))
+  const categories = await getAllCategorySlugs()
   const paths = categories.map(
     (category) => `/products/category/${encodeSegment(category)}`
   )
