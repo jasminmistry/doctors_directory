@@ -31,35 +31,8 @@ export async function middleware(request: NextRequest) {
   if (isLoginPage) return NextResponse.next()
 
   const token = request.cookies.get(COOKIE_TOKEN)?.value
-  const refreshToken = request.cookies.get(COOKIE_REFRESH)?.value
 
   if (!token) {
-    // No session token — try refresh if we have a refresh token
-    if (refreshToken) {
-      try {
-        const authApiUrl = process.env.CONSENTZ_AUTH_API_URL
-        const appId = process.env.CONSENTZ_APPLICATION_ID || 'admin'
-
-        const refreshRes = await fetch(`${authApiUrl}/refresh-token`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': appId },
-          body: JSON.stringify({ refreshToken }),
-        })
-
-        if (!refreshRes.ok) throw new Error('refresh failed')
-        const data = await refreshRes.json()
-        if (data.error) throw new Error(data.error.message)
-
-        const response = NextResponse.next()
-        response.cookies.set(COOKIE_TOKEN, data.user.sessionToken, COOKIE_OPTS)
-        response.cookies.set(COOKIE_REFRESH, data.user.refreshToken, COOKIE_OPTS)
-        return response
-      } catch {
-        if (isApiRoute) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-        return clearAuthAndRedirect(request, pathname)
-      }
-    }
-
     if (isApiRoute) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     return clearAuthAndRedirect(request, pathname)
   }

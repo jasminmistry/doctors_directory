@@ -37,7 +37,9 @@ export async function POST(request: Request) {
 
     const response = NextResponse.json({ success: true })
     response.cookies.set(COOKIE_TOKEN, token, COOKIE_OPTS)
-    response.cookies.set(COOKIE_REFRESH, refreshToken, COOKIE_OPTS)
+    if (refreshToken) {
+      response.cookies.set(COOKIE_REFRESH, refreshToken, COOKIE_OPTS)
+    }
 
     return response
   } catch (error) {
