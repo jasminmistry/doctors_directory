@@ -25,6 +25,13 @@ function clearAuthAndRedirect(request: NextRequest, pathname: string) {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  if (pathname === '/business' || pathname.startsWith('/business/')) {
+    const url = request.nextUrl.clone()
+    url.pathname = `/directory${pathname}`
+    return NextResponse.rewrite(url)
+  }
+
   const isApiRoute = pathname.startsWith('/api/admin')
   const isLoginPage = pathname === '/admin/login' || pathname === '/admin/login/'
 
@@ -41,6 +48,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Note: Next.js matcher paths are relative to the app root, not the basePath
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: ['/business', '/business/:path*', '/admin/:path*', '/api/admin/:path*'],
 }
