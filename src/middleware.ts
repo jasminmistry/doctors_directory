@@ -13,8 +13,8 @@ const COOKIE_OPTS = {
 }
 
 function clearAuthAndRedirect(request: NextRequest, pathname: string) {
-  const loginUrl = request.nextUrl.clone()
-  loginUrl.pathname = '/admin/login'
+  const loginUrl = new URL(request.url)
+  loginUrl.pathname = '/directory/admin/login'
   loginUrl.search = ''
   loginUrl.searchParams.set('next', pathname)
   const res = NextResponse.redirect(loginUrl)
@@ -26,14 +26,12 @@ function clearAuthAndRedirect(request: NextRequest, pathname: string) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  if (pathname === '/business' || pathname.startsWith('/business/')) {
-    const url = request.nextUrl.clone()
-    url.pathname = `/directory${pathname}`
-    return NextResponse.rewrite(url)
-  }
-
   const isApiRoute = pathname.startsWith('/api/admin')
-  const isLoginPage = pathname === '/admin/login' || pathname === '/admin/login/'
+  const isLoginPage =
+    pathname === '/admin/login' ||
+    pathname === '/admin/login/' ||
+    pathname === '/directory/admin/login' ||
+    pathname === '/directory/admin/login/'
 
   if (isLoginPage) return NextResponse.next()
 
@@ -48,5 +46,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/business', '/business/:path*', '/admin/:path*', '/api/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
 }

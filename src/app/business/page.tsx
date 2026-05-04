@@ -12,11 +12,13 @@ import {
   segmentLabel,
   type HubSegment,
 } from "@/lib/b2b-hub/registry";
+import { toBusinessHubUrl } from "@/lib/sitemap";
 
 export const metadata: Metadata = {
   title: "B2B software buyer hub | ConsenTZ",
   description:
     "Evaluate clinic software with structured guides across consent, CQC evidence, automation, and competitor comparisons.",
+  alternates: { canonical: toBusinessHubUrl("/business/") },
 };
 
 export default function BusinessHubHomePage() {

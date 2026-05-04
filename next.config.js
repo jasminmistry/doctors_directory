@@ -40,6 +40,24 @@ const nextConfig = {
     return [
       ...barePaths,
       {
+        source: '/business',
+        destination: '/directory/business/',
+        permanent: false,
+        basePath: false,
+      },
+      {
+        source: '/business/',
+        destination: '/directory/business/',
+        permanent: false,
+        basePath: false,
+      },
+      {
+        source: '/business/:path*',
+        destination: '/directory/business/:path*',
+        permanent: false,
+        basePath: false,
+      },
+      {
         source: '/clinics/middlesbrough/clinic/the-skin-clinic-5',
         destination: '/clinics/middlesbrough/clinic/the-skin-clinic',
         permanent: true,

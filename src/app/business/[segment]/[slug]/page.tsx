@@ -8,9 +8,7 @@ import {
   type HubSegment,
 } from "@/lib/b2b-hub/registry";
 import { HubDetailTemplate } from "@/components/b2b-hub/hub-detail-template";
-
-const baseUrl =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
+import { toBusinessHubUrl } from "@/lib/sitemap";
 
 type Props = { params: { segment: string; slug: string } };
 
@@ -30,11 +28,12 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!entry) {
     return { title: "Not found" };
   }
-  const canonical = `${baseUrl}/directory/business/${seg}/${entry.slug}/`;
   return {
     title: `${entry.title} | ConsenTZ buyer hub`,
     description: entry.summary ?? entry.title,
-    alternates: { canonical },
+    alternates: {
+      canonical: toBusinessHubUrl(`/business/${seg}/${entry.slug}/`),
+    },
   };
 }
 

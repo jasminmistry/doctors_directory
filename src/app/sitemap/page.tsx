@@ -4,6 +4,7 @@ import { readJsonFileSync } from '@/lib/json-cache'
 import { toUrlSlug } from '@/lib/utils'
 import { toDirectoryCanonical } from '@/lib/seo'
 import { modalities } from '@/lib/data'
+import { HUB_SEGMENTS, segmentLabel, type HubSegment } from '@/lib/b2b-hub/registry'
 
 const ACCREDITATIONS = [
   { key: 'cqc', name: 'Care Quality Commission (CQC)', field: 'isCQC' },
@@ -43,6 +44,15 @@ const XML_SITEMAPS: { file: string; label: string }[] = [
   { file: 'accredited-practitioners.xml', label: 'Accredited — Practitioners' },
   { file: 'accredited-practitioners-cities.xml', label: 'Accredited — Practitioner Cities' },
   { file: 'treatments-base.xml', label: 'Treatments — Base' },
+]
+
+const B2B_XML_SITEMAPS: { file: string; label: string }[] = [
+  { file: 'business-sitemap.xml', label: 'B2B buyer hub — Index' },
+  { file: 'business-hub.xml', label: 'B2B buyer hub — Hub root' },
+  ...HUB_SEGMENTS.map((s: HubSegment) => ({
+    file: `business-${s}.xml`,
+    label: `B2B buyer hub — ${segmentLabel(s)}`,
+  })),
 ]
 
 function hasAccreditation(source: Record<string, unknown>, field: string): boolean {
@@ -105,7 +115,6 @@ export default function HtmlSitemapPage() {
           A complete index of all sections and pages on the Healthcare Directory.
         </p>
 
-        {/* ── Site Pages ─────────────────────────────────────── */}
         <SitemapSection title="Site Pages">
           <ul className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {[
@@ -119,6 +128,7 @@ export default function HtmlSitemapPage() {
               ['/products/category', 'Product Categories'],
               ['/accredited', 'Accredited Providers'],
               ['/practitioners/credentials', 'Practitioner Credentials'],
+              ['/business/', 'B2B buyer hub'],
               ['/sitemap', 'HTML Sitemap'],
             ].map(([href, label]) => (
               <li key={href}>
@@ -128,12 +138,12 @@ export default function HtmlSitemapPage() {
           </ul>
         </SitemapSection>
 
-        {/* ── XML Sitemaps ───────────────────────────────────── */}
         <SitemapSection title="XML Sitemaps (machine-readable)">
           <p className="text-sm text-muted-foreground mb-4">
-            These feeds are consumed by search engines. All feeds are referenced from the{' '}
+            Directory feeds are referenced from the{' '}
             <Link href="/sitemap.xml" className="text-blue-700 hover:underline font-mono text-xs">sitemap.xml</Link>
-            {' '}index.
+            {' '}index. The B2B buyer hub uses a separate index (below) with canonical page URLs under{' '}
+            <span className="font-mono text-xs">/business/</span>.
           </p>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {XML_SITEMAPS.map(({ file, label }) => (
@@ -145,7 +155,17 @@ export default function HtmlSitemapPage() {
           </ul>
         </SitemapSection>
 
-        {/* ── Database URLs ──────────────────────────────────── */}
+        <SitemapSection title="XML Sitemaps — B2B buyer hub">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {B2B_XML_SITEMAPS.map(({ file, label }) => (
+              <li key={file} className="flex items-baseline gap-2">
+                <Link href={`/${file}`} className="text-sm text-blue-700 hover:underline">{label}</Link>
+                <span className="text-xs text-gray-400 font-mono">{file}</span>
+              </li>
+            ))}
+          </ul>
+        </SitemapSection>
+
         <SitemapSection title="Database URLs">
           <p className="text-sm text-muted-foreground mb-8">
             All listing pages, grouped by category. These pages index individual clinic, practitioner, treatment, and product profiles.

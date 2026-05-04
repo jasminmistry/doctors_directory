@@ -8,6 +8,7 @@ import {
   segmentLabel,
   type HubSegment,
 } from "@/lib/b2b-hub/registry";
+import { toBusinessHubUrl } from "@/lib/sitemap";
 
 type Props = { params: { segment: string } };
 
@@ -23,6 +24,9 @@ export function generateMetadata({ params }: Props): Metadata {
   return {
     title: `${label} | B2B buyer hub`,
     description: `Browse ${label} guides and comparisons for clinic software buyers.`,
+    alternates: {
+      canonical: toBusinessHubUrl(`/business/${params.segment}/`),
+    },
   };
 }
 
