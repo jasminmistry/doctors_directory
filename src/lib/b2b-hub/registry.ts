@@ -646,8 +646,8 @@ function buildCompareMigratePricing(): HubEntry[] {
     out.push({
       segment: "compare",
       slug: `consentz-vs-${comp}`,
-      title: `ConsenTZ vs ${label}`,
-      summary: `How ConsenTZ compares to ${label} for clinic operations.`,
+      title: `Consentz vs ${label}`,
+      summary: `How Consentz compares to ${label} for clinic operations.`,
     })
     out.push({
       segment: "migrate",

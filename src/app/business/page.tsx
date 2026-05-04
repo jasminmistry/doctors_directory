@@ -12,16 +12,18 @@ import {
   segmentLabel,
   type HubSegment,
 } from "@/lib/b2b-hub/registry";
+import { getUniqueDirectoryCityNames } from "@/lib/b2b-hub/directory-cities";
 import { toBusinessHubUrl } from "@/lib/sitemap";
 
 export const metadata: Metadata = {
-  title: "B2B software buyer hub | ConsenTZ",
+  title: "B2B software buyer hub | Consentz",
   description:
     "Evaluate clinic software with structured guides across consent, CQC evidence, automation, and competitor comparisons.",
   alternates: { canonical: toBusinessHubUrl("/business/") },
 };
 
 export default function BusinessHubHomePage() {
+  const cityCount = getUniqueDirectoryCityNames().length;
   return (
     <div className="max-w-5xl mx-auto px-4 pb-16">
       <header className="mb-10">
@@ -32,6 +34,10 @@ export default function BusinessHubHomePage() {
           Practical pages for operators comparing clinic software, consent
           workflows, compliance evidence, and migration paths from common
           platforms.
+        </p>
+        <p className="text-sm text-neutral-500 max-w-3xl mt-3">
+          City-level hub pages will use the same city set as the clinic
+          directory data ({cityCount} cities).
         </p>
       </header>
 

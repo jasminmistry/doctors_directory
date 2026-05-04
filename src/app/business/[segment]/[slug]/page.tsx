@@ -29,7 +29,7 @@ export function generateMetadata({ params }: Props): Metadata {
     return { title: "Not found" };
   }
   return {
-    title: `${entry.title} | ConsenTZ buyer hub`,
+    title: `${entry.title} | Consentz buyer hub`,
     description: entry.summary ?? entry.title,
     alternates: {
       canonical: toBusinessHubUrl(`/business/${seg}/${entry.slug}/`),

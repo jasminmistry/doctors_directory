@@ -77,9 +77,9 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
         </Card>
         <Card className="border-neutral-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg">What changes with ConsenTZ</CardTitle>
+            <CardTitle className="text-lg">What changes with Consentz</CardTitle>
             <CardDescription className="text-base leading-relaxed">
-              ConsenTZ is built as an operating layer for clinics: structured
+              Consentz is built as an operating layer for clinics: structured
               consent, workflow automation, and reporting that maps to how
               regulated teams actually work day to day.
             </CardDescription>
@@ -94,7 +94,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
               <tr>
                 <th className="px-4 py-3 font-semibold">Capability</th>
                 <th className="px-4 py-3 font-semibold">Typical stack</th>
-                <th className="px-4 py-3 font-semibold">ConsenTZ</th>
+                <th className="px-4 py-3 font-semibold">Consentz</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200 bg-white">
@@ -151,13 +151,13 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
         <div className="space-y-2">
           <details className="group rounded-lg border border-neutral-200 bg-white px-4 py-3 open:shadow-sm">
             <summary className="cursor-pointer font-medium text-neutral-900 list-none flex justify-between gap-2">
-              Is ConsenTZ only for aesthetic clinics?
+              Is Consentz only for aesthetic clinics?
               <span className="text-neutral-400 group-open:rotate-180 transition-transform">
                 ▾
               </span>
             </summary>
             <p className="mt-3 text-neutral-600 leading-relaxed text-sm">
-              ConsenTZ supports clinics that need governed consent, structured
+              Consentz supports clinics that need governed consent, structured
               workflows, and operational reporting—common across aesthetic,
               dermatology, and wellness operators.
             </p>
