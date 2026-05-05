@@ -30,7 +30,15 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
   const intro =
     entry.summary ||
     `${entry.title}: guidance for clinic operators evaluating software and workflows.`;
-  const showCompareRow = seg === "software";
+  const showCompareRow =
+    seg === "software" ||
+    seg === "alternatives" ||
+    seg === "compare" ||
+    seg === "migrate" ||
+    seg === "pricing" ||
+    (seg === "cqc" && entry.slug.includes("-cqc-compliance-alternative")) ||
+    (seg === "consent" && entry.slug.includes("-consent-form-alternative")) ||
+    (seg === "automation" && entry.slug.includes("-automation-alternative"));
 
   return (
     <article className="max-w-5xl mx-auto px-4 pb-16">

@@ -5,6 +5,7 @@ export type HubSegment =
   | "compare"
   | "migrate"
   | "pricing"
+  | "alternatives"
   | "cqc"
   | "consent"
   | "automation"
@@ -665,12 +666,58 @@ function buildCompareMigratePricing(): HubEntry[] {
   return out
 }
 
+function buildCompetitorAlternativesADEF() {
+  const alternatives: HubEntry[] = []
+  const cqcCompetitor: HubEntry[] = []
+  const consentCompetitor: HubEntry[] = []
+  const automationCompetitor: HubEntry[] = []
+  for (const comp of COMPETITOR_ORDER) {
+    const label = COMPETITOR_LABEL[comp] ?? comp
+    alternatives.push({
+      segment: "alternatives",
+      slug: comp,
+      title: `${label} alternative`,
+      summary: `How clinics evaluate Consentz against ${label} for operations, compliance, and growth.`,
+    })
+    cqcCompetitor.push({
+      segment: "cqc",
+      slug: `${comp}-cqc-compliance-alternative`,
+      title: `${label} CQC compliance alternative`,
+      summary: `CQC compliance and evidence workflows compared with ${label}.`,
+    })
+    consentCompetitor.push({
+      segment: "consent",
+      slug: `${comp}-consent-form-alternative`,
+      title: `${label} consent form alternative`,
+      summary: `Consent capture and record-keeping relative to ${label}.`,
+    })
+    automationCompetitor.push({
+      segment: "automation",
+      slug: `${comp}-automation-alternative`,
+      title: `${label} automation alternative`,
+      summary: `Patient journeys and automation capabilities versus ${label}.`,
+    })
+  }
+  return {
+    alternatives,
+    cqcCompetitor,
+    consentCompetitor,
+    automationCompetitor,
+  }
+}
+
+const competitorPdfAdEf = buildCompetitorAlternativesADEF()
+
 export const HUB_ENTRIES: HubEntry[] = [
   ...softwareEntries,
   ...buildCompareMigratePricing(),
+  ...competitorPdfAdEf.alternatives,
   ...cqcEntries,
+  ...competitorPdfAdEf.cqcCompetitor,
   ...consentEntries,
+  ...competitorPdfAdEf.consentCompetitor,
   ...automationEntries,
+  ...competitorPdfAdEf.automationCompetitor,
   ...resourcesEntries,
   ...practitionersEntries,
 ]
@@ -698,6 +745,7 @@ export const HUB_SEGMENTS: HubSegment[] = [
   "compare",
   "migrate",
   "pricing",
+  "alternatives",
   "cqc",
   "consent",
   "automation",
@@ -715,6 +763,7 @@ export function segmentLabel(segment: HubSegment): string {
     compare: "Compare",
     migrate: "Migrate",
     pricing: "Pricing",
+    alternatives: "Alternatives",
     cqc: "CQC",
     consent: "Consent",
     automation: "Automation",

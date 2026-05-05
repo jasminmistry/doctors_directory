@@ -1,5 +1,6 @@
 import type React from "react";
 import { HubChrome } from "@/components/b2b-hub/hub-chrome";
+import { RelevantBlogGuides } from "@/components/b2b-hub/relevant-blog-guides";
 
 export default function BusinessLayout({
   children,
@@ -10,6 +11,7 @@ export default function BusinessLayout({
     <div className="min-h-[60vh] bg-white">
       <HubChrome />
       {children}
+      <RelevantBlogGuides />
     </div>
   );
 }

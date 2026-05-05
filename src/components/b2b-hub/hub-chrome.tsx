@@ -23,6 +23,7 @@ export function HubChrome() {
   const p = pathWithoutBase(pathname);
 
   const hubHomeActive = p === "/business";
+  const byCityActive = p === "/business/uk" || p.startsWith("/business/uk/");
 
   const segmentActive = (seg: HubSegment) =>
     p === `/business/${seg}` || p.startsWith(`/business/${seg}/`);
@@ -56,6 +57,17 @@ export function HubChrome() {
               {segmentLabel(seg)}
             </Link>
           ))}
+          <Link
+            href="/business/uk/"
+            className={cn(
+              "text-sm font-medium px-2 py-1 rounded-md transition-colors",
+              byCityActive
+                ? "bg-black text-white"
+                : "text-neutral-700 hover:bg-neutral-100"
+            )}
+          >
+            By city
+          </Link>
         </div>
       </div>
     </div>

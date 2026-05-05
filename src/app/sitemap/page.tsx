@@ -49,6 +49,7 @@ const XML_SITEMAPS: { file: string; label: string }[] = [
 const B2B_XML_SITEMAPS: { file: string; label: string }[] = [
   { file: 'business-sitemap.xml', label: 'B2B buyer hub — Index' },
   { file: 'business-hub.xml', label: 'B2B buyer hub — Hub root' },
+  { file: 'business-uk.xml', label: 'B2B buyer hub — By city index' },
   ...HUB_SEGMENTS.map((s: HubSegment) => ({
     file: `business-${s}.xml`,
     label: `B2B buyer hub — ${segmentLabel(s)}`,

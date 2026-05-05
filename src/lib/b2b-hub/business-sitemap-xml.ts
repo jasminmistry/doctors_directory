@@ -17,6 +17,7 @@ export const BUSINESS_SITEMAP_SEGMENT_FILES = HUB_SEGMENTS.map(
 
 export const BUSINESS_SITEMAP_INDEX_FILES = [
   "business-hub.xml",
+  "business-uk.xml",
   ...BUSINESS_SITEMAP_SEGMENT_FILES,
 ]
 
@@ -27,6 +28,12 @@ export function buildBusinessHubRootSitemapXml(): string {
       lastmod: nowIso(),
       changefreq: "weekly",
       priority: 0.9,
+    },
+    {
+      loc: toBusinessHubUrl("/business/uk/"),
+      lastmod: nowIso(),
+      changefreq: "weekly",
+      priority: 0.7,
     },
   ]
   return buildUrlSetXml(urls)

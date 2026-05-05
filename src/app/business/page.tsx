@@ -60,6 +60,18 @@ export default function BusinessHubHomePage() {
             </Link>
           );
         })}
+        <Link href="/business/uk/" className="block group">
+          <Card className="h-full border-neutral-200 shadow-sm transition-all group-hover:border-neutral-400 group-hover:shadow-md">
+            <CardHeader>
+              <CardTitle className="text-xl group-hover:underline">
+                By city
+              </CardTitle>
+              <CardDescription className="text-base">
+                {cityCount} cities — city index for the buyer hub.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
       </div>
     </div>
   );
