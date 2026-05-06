@@ -5,7 +5,7 @@ import { toBusinessHubUrl } from "@/lib/sitemap";
 import { toUrlSlug } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "By city | B2B buyer hub",
+  title: "By City | B2B Buyer Hub",
   description:
     "City index for the B2B buyer hub using the same city source as the clinic directory.",
   alternates: {
@@ -41,6 +41,34 @@ const PRIORITY_CITIES = [
   "Southampton",
 ];
 
+const POPULAR_TREATMENTS = [
+  {
+    name: "Facial",
+    image: "/directory/images/Facial Treatment.webp",
+    href: "/treatments/facial-treatments/",
+  },
+  {
+    name: "Massage",
+    image: "/directory/treatments/massage.webp",
+    href: "/treatments/massage/",
+  },
+  {
+    name: "Lips",
+    image: "/directory/treatments/lips.webp",
+    href: "/treatments/lips/",
+  },
+  {
+    name: "Skin",
+    image: "/directory/images/Skin Treatment.webp",
+    href: "/treatments/skin-booster/",
+  },
+  {
+    name: "Hairline",
+    image: "/directory/images/Hairline Treatment.webp",
+    href: "/treatments/hair-treatments/",
+  },
+];
+
 export default function BusinessCityIndexPage() {
   const allCities = getUniqueDirectoryCityNames();
   const featuredCities = PRIORITY_CITIES.slice(0, 8);
@@ -56,7 +84,7 @@ export default function BusinessCityIndexPage() {
     <div className="max-w-5xl mx-auto px-4 pb-16">
       <header className="mb-10">
         <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 tracking-tight mb-3">
-          By city
+          By City
         </h1>
         <p className="text-lg text-neutral-600 max-w-3xl leading-relaxed">
           City coverage for the B2B buyer hub follows the same city source as
@@ -67,7 +95,7 @@ export default function BusinessCityIndexPage() {
 
       <section className="mb-10">
         <h2 className="text-xl font-semibold text-neutral-900 mb-4">
-          Featured city links
+          Featured City Links
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {featuredCities.map((city) => {
@@ -80,13 +108,13 @@ export default function BusinessCityIndexPage() {
                     href={`/directory/clinics/${slug}/`}
                     className="text-sm text-neutral-700 hover:underline"
                   >
-                    Clinics in {city}
+                    Clinics In {city}
                   </a>
                   <a
                     href={`/directory/practitioners/${slug}/`}
                     className="text-sm text-neutral-700 hover:underline"
                   >
-                    Practitioners in {city}
+                    Practitioners In {city}
                   </a>
                 </div>
               </div>
@@ -97,7 +125,7 @@ export default function BusinessCityIndexPage() {
 
       <section className="mb-10">
         <h2 className="text-xl font-semibold text-neutral-900 mb-4">
-          Priority city batch
+          Priority City Batch
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
           {PRIORITY_CITIES.map((city) => (
@@ -113,7 +141,7 @@ export default function BusinessCityIndexPage() {
 
       <section className="mb-12">
         <h2 className="text-xl font-semibold text-neutral-900 mb-4">
-          Directory city source ({allCities.length})
+          Directory City Source ({allCities.length})
         </h2>
         <div className="space-y-4">
           {letters.map((letter) => (
@@ -136,9 +164,39 @@ export default function BusinessCityIndexPage() {
         </div>
       </section>
 
+      <section className="mb-12">
+        <h2 className="text-3xl font-bold text-center text-neutral-900 mb-10">
+          Most Popular Treatments
+        </h2>
+        <div className="flex flex-wrap justify-center items-start gap-8 md:gap-12">
+          {POPULAR_TREATMENTS.map((treatment) => (
+            <Link
+              key={treatment.name}
+              href={treatment.href}
+              className="flex flex-col items-center gap-2"
+            >
+              <img
+                src={treatment.image}
+                alt={treatment.name}
+                className="h-24 w-24 rounded-full object-cover"
+              />
+              <p className="text-sm font-medium text-neutral-900">{treatment.name}</p>
+            </Link>
+          ))}
+        </div>
+        <div className="mt-8 flex justify-center">
+          <Link
+            href="/treatments/"
+            className="inline-flex items-center rounded-md bg-black text-white px-5 py-2.5 text-sm font-semibold"
+          >
+            See All Treatments
+          </Link>
+        </div>
+      </section>
+
       <section className="rounded-xl border border-neutral-200 bg-neutral-50 px-6 py-6">
         <h3 className="text-xl font-semibold text-neutral-900 mb-2">
-          City coverage reference
+          City Coverage Reference
         </h3>
         <p className="text-neutral-600 mb-4">
           This index lists the cities currently represented in directory data and
@@ -149,7 +207,7 @@ export default function BusinessCityIndexPage() {
             href="/business/"
             className="inline-flex items-center rounded-md border border-neutral-300 bg-white text-neutral-900 px-4 py-2 text-sm font-semibold"
           >
-            Back to buyer hub
+            Back to Buyer Hub
           </Link>
         </div>
       </section>

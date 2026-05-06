@@ -41,7 +41,7 @@ export function HubChrome() {
                 : "text-neutral-700 hover:bg-neutral-100"
             )}
           >
-            Buyer hub
+            Buyer Hub
           </Link>
           {HUB_SEGMENTS.map((seg: HubSegment) => (
             <Link
@@ -66,7 +66,7 @@ export function HubChrome() {
                 : "text-neutral-700 hover:bg-neutral-100"
             )}
           >
-            By city
+            By City
           </Link>
         </div>
       </div>
