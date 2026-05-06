@@ -72,6 +72,18 @@ export default function BusinessHubHomePage() {
             </CardHeader>
           </Card>
         </Link>
+        <Link href="/business/treatments/" className="block group">
+          <Card className="h-full border-neutral-200 shadow-sm transition-all group-hover:border-neutral-400 group-hover:shadow-md">
+            <CardHeader>
+              <CardTitle className="text-xl group-hover:underline">
+                By Treatment
+              </CardTitle>
+              <CardDescription className="text-base">
+                Treatment-Based Workflow And Software Pages.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
       </div>
     </div>
   );

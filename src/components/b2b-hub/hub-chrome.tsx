@@ -24,6 +24,8 @@ export function HubChrome() {
 
   const hubHomeActive = p === "/business";
   const byCityActive = p === "/business/uk" || p.startsWith("/business/uk/");
+  const byTreatmentActive =
+    p === "/business/treatments" || p.startsWith("/business/treatments/");
 
   const segmentActive = (seg: HubSegment) =>
     p === `/business/${seg}` || p.startsWith(`/business/${seg}/`);
@@ -67,6 +69,17 @@ export function HubChrome() {
             )}
           >
             By City
+          </Link>
+          <Link
+            href="/business/treatments/"
+            className={cn(
+              "text-sm font-medium px-2 py-1 rounded-md transition-colors",
+              byTreatmentActive
+                ? "bg-black text-white"
+                : "text-neutral-700 hover:bg-neutral-100"
+            )}
+          >
+            By Treatment
           </Link>
         </div>
       </div>
