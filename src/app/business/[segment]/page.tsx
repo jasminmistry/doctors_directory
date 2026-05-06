@@ -8,6 +8,7 @@ import {
   segmentLabel,
   type HubSegment,
 } from "@/lib/b2b-hub/registry";
+import { toDisplayTitle } from "@/lib/b2b-hub/text";
 import { toBusinessHubUrl } from "@/lib/sitemap";
 
 type Props = { params: { segment: string } };
@@ -75,7 +76,7 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
 
       <section className="mb-12">
         <h2 className="text-xl font-semibold text-neutral-900 mb-4">
-          Pages in this collection
+          Pages In This Collection
         </h2>
         <ul className="space-y-2">
           {entries.map((e) => (
@@ -84,7 +85,9 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
                 href={`/business/${e.segment}/${e.slug}/`}
                 className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 rounded-lg border border-neutral-200 bg-white px-4 py-3 hover:border-neutral-400 hover:shadow-sm transition-all"
               >
-                <span className="font-medium text-neutral-900">{e.title}</span>
+                <span className="font-medium text-neutral-900">
+                  {toDisplayTitle(e.title)}
+                </span>
                 {e.summary ? (
                   <span className="text-sm text-neutral-500 line-clamp-2 sm:max-w-xl sm:text-right">
                     {e.summary}
@@ -98,7 +101,7 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
 
       <section className="mb-12">
         <h2 className="text-xl font-semibold text-neutral-900 mb-4">
-          Explore related collections
+          Explore Related Collections
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {relatedCollections.map((s) => (
@@ -117,15 +120,15 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
             href="/business/uk/"
             className="rounded-lg border border-neutral-200 bg-white p-4 hover:border-neutral-400 hover:shadow-sm transition-all"
           >
-            <p className="font-medium text-neutral-900">By city</p>
-            <p className="text-sm text-neutral-500 mt-1">City collection index</p>
+            <p className="font-medium text-neutral-900">By City</p>
+            <p className="text-sm text-neutral-500 mt-1">City Collection Index</p>
           </Link>
         </div>
       </section>
 
       <section className="mb-12">
         <h2 className="text-xl font-semibold text-neutral-900 mb-4">
-          Frequently asked questions
+          Frequently Asked Questions
         </h2>
         <div className="space-y-2">
           {faq.map((item) => (
@@ -149,7 +152,7 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
 
       <section className="rounded-xl border border-neutral-200 bg-neutral-50 px-6 py-6">
         <h3 className="text-xl font-semibold text-neutral-900 mb-2">
-          Ready to move forward?
+          Ready To Move Forward?
         </h3>
         <p className="text-neutral-600 mb-4">
           Book a Consentz demo to map these requirements to your clinic workflows,

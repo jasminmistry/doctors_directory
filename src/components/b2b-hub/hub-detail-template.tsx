@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry";
 import { segmentLabel } from "@/lib/b2b-hub/registry";
+import { toDisplayTitle } from "@/lib/b2b-hub/text";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
@@ -29,7 +30,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
   const seg = entry.segment as HubSegment;
   const intro =
     entry.summary ||
-    `${entry.title}: guidance for clinic operators evaluating software and workflows.`;
+    `${toDisplayTitle(entry.title)}: guidance for clinic operators evaluating software and workflows.`;
   const showCompareRow =
     seg === "software" ||
     seg === "alternatives" ||
@@ -45,7 +46,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/business/">Buyer hub</BreadcrumbLink>
+            <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -55,7 +56,9 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="line-clamp-1">{entry.title}</BreadcrumbPage>
+            <BreadcrumbPage className="line-clamp-1">
+              {toDisplayTitle(entry.title)}
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -65,7 +68,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
           {segmentLabel(seg)}
         </p>
         <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 tracking-tight mb-4">
-          {entry.title}
+          {toDisplayTitle(entry.title)}
         </h1>
         <p className="text-lg text-neutral-600 leading-relaxed max-w-3xl">
           {intro}
@@ -75,7 +78,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
       <section className="grid md:grid-cols-2 gap-6 mb-12">
         <Card className="border-neutral-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg">Operational reality</CardTitle>
+            <CardTitle className="text-lg">Operational Reality</CardTitle>
             <CardDescription className="text-base leading-relaxed">
               Teams outgrow generic tools when consent, payments, and clinical
               evidence sit in different places. The result is slower bookings,
@@ -85,7 +88,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
         </Card>
         <Card className="border-neutral-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg">What changes with Consentz</CardTitle>
+            <CardTitle className="text-lg">What Changes With Consentz</CardTitle>
             <CardDescription className="text-base leading-relaxed">
               Consentz is built as an operating layer for clinics: structured
               consent, workflow automation, and reporting that maps to how
@@ -101,31 +104,31 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
             <thead className="bg-neutral-100 text-neutral-800">
               <tr>
                 <th className="px-4 py-3 font-semibold">Capability</th>
-                <th className="px-4 py-3 font-semibold">Typical stack</th>
+                <th className="px-4 py-3 font-semibold">Typical Stack</th>
                 <th className="px-4 py-3 font-semibold">Consentz</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200 bg-white">
               <tr>
                 <td className="px-4 py-3 font-medium text-neutral-900">
-                  Consent &amp; clinical records
+                  Consent &amp; Clinical Records
                 </td>
-                <td className="px-4 py-3 text-neutral-600">Paper / PDF chaos</td>
-                <td className="px-4 py-3 text-neutral-900">Structured, versioned</td>
+                <td className="px-4 py-3 text-neutral-600">Paper / PDF Chaos</td>
+                <td className="px-4 py-3 text-neutral-900">Structured, Versioned</td>
               </tr>
               <tr>
                 <td className="px-4 py-3 font-medium text-neutral-900">
-                  Booking &amp; payments
+                  Booking &amp; Payments
                 </td>
-                <td className="px-4 py-3 text-neutral-600">Disconnected tools</td>
-                <td className="px-4 py-3 text-neutral-900">Linked to treatment context</td>
+                <td className="px-4 py-3 text-neutral-600">Disconnected Tools</td>
+                <td className="px-4 py-3 text-neutral-900">Linked To Treatment Context</td>
               </tr>
               <tr>
                 <td className="px-4 py-3 font-medium text-neutral-900">
-                  Compliance evidence
+                  Compliance Evidence
                 </td>
-                <td className="px-4 py-3 text-neutral-600">Retroactive folder hunts</td>
-                <td className="px-4 py-3 text-neutral-900">Continuous capture</td>
+                <td className="px-4 py-3 text-neutral-600">Retroactive Folder Hunts</td>
+                <td className="px-4 py-3 text-neutral-900">Continuous Capture</td>
               </tr>
             </tbody>
           </table>
@@ -134,7 +137,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
 
       <section className="mb-12">
         <h2 className="text-xl font-semibold text-neutral-900 mb-4">
-          Explore next
+          Explore Next
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {related.map((r) => (
@@ -147,7 +150,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
                 {segmentLabel(r.segment)}
               </p>
               <p className="font-medium text-neutral-900 group-hover:underline">
-                {r.title}
+                {toDisplayTitle(r.title)}
               </p>
             </Link>
           ))}
@@ -200,10 +203,10 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
 
       <div className="flex flex-wrap gap-3">
         <Button asChild className="font-semibold">
-          <a href={`${baseUrl}/book-demo`}>Book demo</a>
+          <a href={`${baseUrl}/book-demo`}>Book Demo</a>
         </Button>
         <Button asChild variant="outline" className="font-semibold">
-          <Link href="/business/">Back to hub</Link>
+            <Link href="/business/">Back to Hub</Link>
         </Button>
       </div>
     </article>

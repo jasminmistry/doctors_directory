@@ -16,7 +16,7 @@ import { getUniqueDirectoryCityNames } from "@/lib/b2b-hub/directory-cities";
 import { toBusinessHubUrl } from "@/lib/sitemap";
 
 export const metadata: Metadata = {
-  title: "B2B software buyer hub | Consentz",
+  title: "B2B Software Buyer Hub | Consentz",
   description:
     "Evaluate clinic software with structured guides across consent, CQC evidence, automation, and competitor comparisons.",
   alternates: { canonical: toBusinessHubUrl("/business/") },
@@ -28,7 +28,7 @@ export default function BusinessHubHomePage() {
     <div className="max-w-5xl mx-auto px-4 pb-16">
       <header className="mb-10">
         <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 tracking-tight mb-3">
-          B2B software buyer hub
+          B2B Software Buyer Hub
         </h1>
         <p className="text-lg text-neutral-600 max-w-3xl leading-relaxed">
           Practical pages for operators comparing clinic software, consent
@@ -64,10 +64,22 @@ export default function BusinessHubHomePage() {
           <Card className="h-full border-neutral-200 shadow-sm transition-all group-hover:border-neutral-400 group-hover:shadow-md">
             <CardHeader>
               <CardTitle className="text-xl group-hover:underline">
-                By city
+                By City
               </CardTitle>
               <CardDescription className="text-base">
-                {cityCount} cities — city index for the buyer hub.
+                {cityCount} Cities — City Index For The Buyer Hub.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link href="/business/treatments/" className="block group">
+          <Card className="h-full border-neutral-200 shadow-sm transition-all group-hover:border-neutral-400 group-hover:shadow-md">
+            <CardHeader>
+              <CardTitle className="text-xl group-hover:underline">
+                By Treatment
+              </CardTitle>
+              <CardDescription className="text-base">
+                Treatment-Based Workflow And Software Pages.
               </CardDescription>
             </CardHeader>
           </Card>
