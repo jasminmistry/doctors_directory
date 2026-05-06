@@ -21,6 +21,12 @@ export default function Header() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com';
 
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
+  const pathWithoutDirectoryBase = normalizedPath.startsWith("/directory")
+    ? normalizedPath.slice("/directory".length) || "/"
+    : normalizedPath;
+  const isBusinessHub =
+    pathWithoutDirectoryBase === "/business" ||
+    pathWithoutDirectoryBase.startsWith("/business/");
   const showSearch =
     normalizedPath !== "/" &&
     !normalizedPath.startsWith("/admin") &&
@@ -29,7 +35,8 @@ export default function Header() {
     normalizedPath !== "/practitioners" &&
     normalizedPath !== "/products" &&
     normalizedPath !== "/treatments" &&
-    !normalizedPath.startsWith("/accredited");
+    !normalizedPath.startsWith("/accredited") &&
+    !isBusinessHub;
 
   return (
     <header className="bg-[var(--primary-bg-color)] sticky top-0 z-40 shadow-sm">
