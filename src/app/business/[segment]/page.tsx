@@ -9,8 +9,7 @@ import {
   type HubSegment,
 } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
-import { toBusinessHubUrl } from "@/lib/sitemap";
-import { b2bBaseUrl, b2bOgImageUrl } from "@/lib/b2b-hub/seo";
+import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
 
 type Props = { params: { segment: string } };
 
@@ -25,7 +24,7 @@ export function generateMetadata({ params }: Props): Metadata {
   const label = segmentLabel(params.segment);
   const title = `${label} | B2B Buyer Hub`;
   const description = `Browse ${label} guides and comparisons for clinic software buyers.`;
-  const url = toBusinessHubUrl(`/business/${params.segment}/`);
+  const url = toCurrentSiteUrl(`/business/${params.segment}/`);
   return {
     metadataBase: new URL(b2bBaseUrl()),
     title,
@@ -38,13 +37,13 @@ export function generateMetadata({ params }: Props): Metadata {
       description,
       type: "website",
       url,
-      images: [{ url: b2bOgImageUrl() }],
+      images: [{ url: b2bOgImageUrl(["/images/Consentz Logo.webp"]) }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [b2bOgImageUrl()],
+      images: [b2bOgImageUrl(["/images/Consentz Logo.webp"])],
     },
   };
 }

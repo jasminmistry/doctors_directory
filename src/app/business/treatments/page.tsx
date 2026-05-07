@@ -6,9 +6,8 @@ import {
   TREATMENT_PAGE_TYPES,
   type TreatmentPageType,
 } from "@/lib/b2b-hub/scaled-pages"
-import { toBusinessHubUrl } from "@/lib/sitemap"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
-import { b2bBaseUrl, b2bOgImageUrl } from "@/lib/b2b-hub/seo"
+import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo"
 
 export const metadata: Metadata = {
   metadataBase: new URL(b2bBaseUrl()),
@@ -16,22 +15,22 @@ export const metadata: Metadata = {
   description:
     "Treatment-based B2B pages connecting consent, automation, and software workflows.",
   alternates: {
-    canonical: toBusinessHubUrl("/business/treatments/"),
+    canonical: toCurrentSiteUrl("/business/treatments/"),
   },
   openGraph: {
     title: "Treatments | B2B Buyer Hub",
     description:
       "Treatment-based B2B pages connecting consent, automation, and software workflows.",
     type: "website",
-    url: toBusinessHubUrl("/business/treatments/"),
-    images: [{ url: b2bOgImageUrl() }],
+    url: toCurrentSiteUrl("/business/treatments/"),
+    images: [{ url: b2bOgImageUrl(["/images/Consentz Logo.webp"]) }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Treatments | B2B Buyer Hub",
     description:
       "Treatment-based B2B pages connecting consent, automation, and software workflows.",
-    images: [b2bOgImageUrl()],
+    images: [b2bOgImageUrl(["/images/Consentz Logo.webp"])],
   },
 }
 

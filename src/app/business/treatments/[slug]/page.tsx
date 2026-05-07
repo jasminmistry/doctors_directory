@@ -6,9 +6,8 @@ import {
   parseTreatmentPageSlug,
   type TreatmentPageType,
 } from "@/lib/b2b-hub/scaled-pages"
-import { toBusinessHubUrl } from "@/lib/sitemap"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
-import { b2bBaseUrl, b2bOgImageUrl } from "@/lib/b2b-hub/seo"
+import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo"
 
 type Props = { params: { slug: string } }
 
@@ -33,7 +32,7 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!label) return { title: "Treatments" }
   const title = `${toDisplayTitle(label)} ${TYPE_LABEL[parsed.pageType]}`
   const description = `${title} connecting consent, automation, practitioner and software pathways.`
-  const url = toBusinessHubUrl(`/business/treatments/${params.slug}/`)
+  const url = toCurrentSiteUrl(`/business/treatments/${params.slug}/`)
   return {
     metadataBase: new URL(b2bBaseUrl()),
     title: `${title} | B2B Buyer Hub`,
@@ -46,13 +45,13 @@ export function generateMetadata({ params }: Props): Metadata {
       description,
       type: "article",
       url,
-      images: [{ url: b2bOgImageUrl() }],
+      images: [{ url: b2bOgImageUrl(["/images/Consentz Logo.webp"]) }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} | B2B Buyer Hub`,
       description,
-      images: [b2bOgImageUrl()],
+      images: [b2bOgImageUrl(["/images/Consentz Logo.webp"])],
     },
   }
 }

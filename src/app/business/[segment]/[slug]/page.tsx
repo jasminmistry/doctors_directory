@@ -8,8 +8,7 @@ import {
   type HubSegment,
 } from "@/lib/b2b-hub/registry";
 import { HubDetailTemplate } from "@/components/b2b-hub/hub-detail-template";
-import { toBusinessHubUrl } from "@/lib/sitemap";
-import { b2bBaseUrl, b2bOgImageUrl } from "@/lib/b2b-hub/seo";
+import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
 
 type Props = { params: { segment: string; slug: string } };
 
@@ -31,7 +30,7 @@ export function generateMetadata({ params }: Props): Metadata {
   }
   const title = `${entry.title} | Consentz Buyer Hub`;
   const description = entry.summary ?? entry.title;
-  const url = toBusinessHubUrl(`/business/${seg}/${entry.slug}/`);
+  const url = toCurrentSiteUrl(`/business/${seg}/${entry.slug}/`);
   return {
     metadataBase: new URL(b2bBaseUrl()),
     title,
@@ -44,13 +43,13 @@ export function generateMetadata({ params }: Props): Metadata {
       description,
       type: "article",
       url,
-      images: [{ url: b2bOgImageUrl() }],
+      images: [{ url: b2bOgImageUrl(["/images/Consentz Logo.webp"]) }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [b2bOgImageUrl()],
+      images: [b2bOgImageUrl(["/images/Consentz Logo.webp"])],
     },
   };
 }

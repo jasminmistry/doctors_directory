@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getUniqueDirectoryCityNames } from "@/lib/b2b-hub/directory-cities";
-import { toBusinessHubUrl } from "@/lib/sitemap";
 import { toUrlSlug } from "@/lib/utils";
-import { b2bBaseUrl, b2bOgImageUrl } from "@/lib/b2b-hub/seo";
+import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
 
 export const metadata: Metadata = {
   metadataBase: new URL(b2bBaseUrl()),
@@ -11,22 +10,22 @@ export const metadata: Metadata = {
   description:
     "City index for the B2B buyer hub using the same city source as the clinic directory.",
   alternates: {
-    canonical: toBusinessHubUrl("/business/uk/"),
+    canonical: toCurrentSiteUrl("/business/uk/"),
   },
   openGraph: {
     title: "By City | B2B Buyer Hub",
     description:
       "City index for the B2B buyer hub using the same city source as the clinic directory.",
     type: "website",
-    url: toBusinessHubUrl("/business/uk/"),
-    images: [{ url: b2bOgImageUrl() }],
+    url: toCurrentSiteUrl("/business/uk/"),
+    images: [{ url: b2bOgImageUrl(["/images/Consentz Logo.webp"]) }],
   },
   twitter: {
     card: "summary_large_image",
     title: "By City | B2B Buyer Hub",
     description:
       "City index for the B2B buyer hub using the same city source as the clinic directory.",
-    images: [b2bOgImageUrl()],
+    images: [b2bOgImageUrl(["/images/Consentz Logo.webp"])],
   },
 };
 
