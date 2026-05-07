@@ -10,6 +10,7 @@ import {
 } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
 import { toBusinessHubUrl } from "@/lib/sitemap";
+import { b2bBaseUrl, b2bOgImageUrl } from "@/lib/b2b-hub/seo";
 
 type Props = { params: { segment: string } };
 
@@ -22,11 +23,28 @@ export function generateMetadata({ params }: Props): Metadata {
     return { title: "Buyer hub" };
   }
   const label = segmentLabel(params.segment);
+  const title = `${label} | B2B Buyer Hub`;
+  const description = `Browse ${label} guides and comparisons for clinic software buyers.`;
+  const url = toBusinessHubUrl(`/business/${params.segment}/`);
   return {
-    title: `${label} | B2B buyer hub`,
-    description: `Browse ${label} guides and comparisons for clinic software buyers.`,
+    metadataBase: new URL(b2bBaseUrl()),
+    title,
+    description,
     alternates: {
-      canonical: toBusinessHubUrl(`/business/${params.segment}/`),
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url,
+      images: [{ url: b2bOgImageUrl() }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [b2bOgImageUrl()],
     },
   };
 }

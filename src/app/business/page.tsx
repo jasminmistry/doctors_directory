@@ -14,12 +14,29 @@ import {
 } from "@/lib/b2b-hub/registry";
 import { getUniqueDirectoryCityNames } from "@/lib/b2b-hub/directory-cities";
 import { toBusinessHubUrl } from "@/lib/sitemap";
+import { b2bBaseUrl, b2bOgImageUrl } from "@/lib/b2b-hub/seo";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(b2bBaseUrl()),
   title: "B2B Software Buyer Hub | Consentz",
   description:
     "Evaluate clinic software with structured guides across consent, CQC evidence, automation, and competitor comparisons.",
   alternates: { canonical: toBusinessHubUrl("/business/") },
+  openGraph: {
+    title: "B2B Software Buyer Hub | Consentz",
+    description:
+      "Evaluate clinic software with structured guides across consent, CQC evidence, automation, and competitor comparisons.",
+    type: "website",
+    url: toBusinessHubUrl("/business/"),
+    images: [{ url: b2bOgImageUrl() }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "B2B Software Buyer Hub | Consentz",
+    description:
+      "Evaluate clinic software with structured guides across consent, CQC evidence, automation, and competitor comparisons.",
+    images: [b2bOgImageUrl()],
+  },
 };
 
 export default function BusinessHubHomePage() {

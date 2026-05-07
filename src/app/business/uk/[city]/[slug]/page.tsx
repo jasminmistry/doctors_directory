@@ -6,6 +6,7 @@ import { toBusinessHubUrl } from "@/lib/sitemap"
 import { toUrlSlug } from "@/lib/utils"
 import { CITY_LOCAL_PAGE_SLUGS } from "@/lib/b2b-hub/scaled-pages"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
+import { b2bBaseUrl, b2bOgImageUrl } from "@/lib/b2b-hub/seo"
 
 type Props = { params: { city: string; slug: string } }
 
@@ -29,11 +30,27 @@ export function generateMetadata({ params }: Props): Metadata {
   }
   const cityTitle = toDisplayTitle(params.city.replaceAll("-", " "))
   const pageTitle = `${cityTitle} ${slugToTitle(params.slug)}`
+  const description = `${pageTitle} with links to local clinics, practitioners, and related B2B workflow pages.`
+  const url = toBusinessHubUrl(`/business/uk/${params.city}/${params.slug}/`)
   return {
+    metadataBase: new URL(b2bBaseUrl()),
     title: `${pageTitle} | B2B Buyer Hub`,
-    description: `${pageTitle} with links to local clinics, practitioners, and related B2B workflow pages.`,
+    description,
     alternates: {
-      canonical: toBusinessHubUrl(`/business/uk/${params.city}/${params.slug}/`),
+      canonical: url,
+    },
+    openGraph: {
+      title: `${pageTitle} | B2B Buyer Hub`,
+      description,
+      type: "article",
+      url,
+      images: [{ url: b2bOgImageUrl() }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${pageTitle} | B2B Buyer Hub`,
+      description,
+      images: [b2bOgImageUrl()],
     },
   }
 }

@@ -8,6 +8,7 @@ import {
 } from "@/lib/b2b-hub/scaled-pages"
 import { toBusinessHubUrl } from "@/lib/sitemap"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
+import { b2bBaseUrl, b2bOgImageUrl } from "@/lib/b2b-hub/seo"
 
 type Props = { params: { slug: string } }
 
@@ -31,11 +32,27 @@ export function generateMetadata({ params }: Props): Metadata {
   const label = findTreatmentLabel(parsed.treatmentSlug)
   if (!label) return { title: "Treatments" }
   const title = `${toDisplayTitle(label)} ${TYPE_LABEL[parsed.pageType]}`
+  const description = `${title} connecting consent, automation, practitioner and software pathways.`
+  const url = toBusinessHubUrl(`/business/treatments/${params.slug}/`)
   return {
+    metadataBase: new URL(b2bBaseUrl()),
     title: `${title} | B2B Buyer Hub`,
-    description: `${title} connecting consent, automation, practitioner and software pathways.`,
+    description,
     alternates: {
-      canonical: toBusinessHubUrl(`/business/treatments/${params.slug}/`),
+      canonical: url,
+    },
+    openGraph: {
+      title: `${title} | B2B Buyer Hub`,
+      description,
+      type: "article",
+      url,
+      images: [{ url: b2bOgImageUrl() }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | B2B Buyer Hub`,
+      description,
+      images: [b2bOgImageUrl()],
     },
   }
 }
