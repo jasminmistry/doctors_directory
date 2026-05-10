@@ -33,7 +33,8 @@ export default function AdminLoginPage() {
         return
       }
 
-      const next = searchParams.get('next') || '/admin'
+      const defaultNext = data.role === 'portal' ? '/portal' : '/admin'
+      const next = searchParams.get('next') || defaultNext
       router.push(next)
       router.refresh()
     } catch {

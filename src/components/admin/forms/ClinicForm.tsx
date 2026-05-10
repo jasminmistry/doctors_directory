@@ -6,9 +6,11 @@ import { toast } from 'sonner'
 import { ArrowLeft, Building2, ExternalLink, MapPin, Star, Share2, ShieldCheck, FileText, Save, Wand2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormSection, Field } from './FormSection'
+import { cn } from '@/lib/utils'
 
 type ClinicData = {
   slug: string
@@ -64,16 +66,36 @@ const REG_FLAGS = [
   { key: 'isRqia' as const, urlKey: 'rqiaUrl' as const, label: 'RQIA' },
 ]
 
-export function ClinicForm() {
+interface ClinicFormProps {
+  /** Override the fetch/save URL (portal use: '/directory/api/portal/clinic'). Omit for admin (auto-computed from slug). */
+  fetchUrl?: string
+  saveUrl?: string
+  /** Portal mode: hides slug display, rating/review count, and regulatory flags. */
+  mode?: 'portal'
+  /** When true, all fields are locked (e.g. pending ID verification). */
+  disabled?: boolean
+  /** Called after a successful save instead of navigating back to /admin/clinics. */
+  onSaved?: () => void
+}
+
+export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: ClinicFormProps = {}) {
   const [data, setData] = useState<ClinicData>(EMPTY)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [isNew, setIsNew] = useState(false)
   const router = useRouter()
   const params = useParams()
-  const slug = params.slug as string
+  const slug = (params?.slug as string) ?? ''
+  const isPortal = mode === 'portal'
 
   useEffect(() => {
+    if (fetchUrl) {
+      fetch(fetchUrl)
+        .then((r) => { if (!r.ok) throw new Error(); return r.json() })
+        .then((d) => { setData(d); setLoading(false) })
+        .catch(() => setLoading(false))
+      return
+    }
     if (slug === 'new') {
       setIsNew(true)
       setLoading(false)
@@ -89,7 +111,7 @@ export function ClinicForm() {
         setLoading(false)
       })
       .catch(() => router.push('/admin/clinics'))
-  }, [slug, router])
+  }, [fetchUrl, slug, router])
 
   function set<K extends keyof ClinicData>(key: K, value: ClinicData[K]) {
     setData((prev) => ({ ...prev, [key]: value }))
@@ -102,7 +124,7 @@ export function ClinicForm() {
     setSaving(true)
     const { slug: _s, ...rest } = data
     const body = isNew ? { slug: data.slug.trim(), ...rest } : rest
-    const url = isNew ? '/directory/api/admin/clinics' : `/directory/api/admin/clinics/${slug}`
+    const url = saveUrl ?? (isNew ? '/directory/api/admin/clinics' : `/directory/api/admin/clinics/${slug}`)
     try {
       const res = await fetch(url, {
         method: isNew ? 'POST' : 'PUT',
@@ -111,7 +133,11 @@ export function ClinicForm() {
       })
       if (res.ok) {
         toast.success('Clinic saved')
-        setTimeout(() => router.push('/admin/clinics'), 300)
+        if (onSaved) {
+          onSaved()
+        } else {
+          setTimeout(() => router.push('/admin/clinics'), 300)
+        }
       } else {
         const err = await res.json().catch(() => ({}))
         toast.error(err.error || 'Failed to save')
@@ -128,15 +154,17 @@ export function ClinicForm() {
   const title = isNew ? 'New Clinic' : (data.name || data.slug || 'Edit Clinic')
 
   return (
-    <div className="space-y-5">
+    <div className={cn('space-y-5', disabled && 'pointer-events-none opacity-60 select-none')}>
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => router.push('/admin/clinics')}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
+          {!isPortal && (
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => router.push('/admin/clinics')}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          )}
           <div className="min-w-0">
-            <p className="text-xs text-gray-400 font-medium">Clinics</p>
+            {!isPortal && <p className="text-xs text-gray-400 font-medium">Clinics</p>}
             <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
           </div>
         </div>
@@ -194,7 +222,7 @@ export function ClinicForm() {
               )}
             </div>
           </Field>
-          {isNew ? (
+          {!isPortal && (isNew ? (
             <Field label="Slug" required hint="Auto-filled from name — editable">
               <Input
                 value={data.slug}
@@ -208,22 +236,12 @@ export function ClinicForm() {
               <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
               <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
             </div>
-          )}
+          ))}
           <Field label="Category">
             <Input value={data.category ?? ''} onChange={(e) => set('category', e.target.value || null)} placeholder="e.g. Aesthetics" />
           </Field>
-          <Field label="Image URL" fullWidth>
-            <div className="flex gap-3 items-start">
-              <Input
-                value={data.image ?? ''}
-                onChange={(e) => set('image', e.target.value || null)}
-                placeholder="https://…"
-                className="flex-1"
-              />
-              {data.image && (
-                <img src={data.image} alt="" className="w-12 h-12 rounded-lg object-cover border border-gray-200 shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
-              )}
-            </div>
+          <Field label="Image" fullWidth>
+            <ImageUpload value={data.image ?? null} onChange={(url) => set('image', url)} />
           </Field>
         </div>
       </FormSection>
@@ -249,15 +267,19 @@ export function ClinicForm() {
         </div>
       </FormSection>
 
-      {/* Reputation */}
-      <FormSection title="Reputation" icon={Star}>
+      {/* Reputation — rating/reviewCount are admin-managed; portal users only edit About */}
+      <FormSection title={isPortal ? 'About' : 'Reputation'} icon={Star}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <Field label="Rating">
-            <Input type="number" min={0} max={5} step={0.1} value={data.rating ?? ''} onChange={(e) => set('rating', e.target.value ? Number(e.target.value) : null)} placeholder="4.8" />
-          </Field>
-          <Field label="Review Count">
-            <Input type="number" min={0} value={data.reviewCount ?? ''} onChange={(e) => set('reviewCount', e.target.value ? Number(e.target.value) : null)} placeholder="124" />
-          </Field>
+          {!isPortal && (
+            <>
+              <Field label="Rating">
+                <Input type="number" min={0} max={5} step={0.1} value={data.rating ?? ''} onChange={(e) => set('rating', e.target.value ? Number(e.target.value) : null)} placeholder="4.8" />
+              </Field>
+              <Field label="Review Count">
+                <Input type="number" min={0} value={data.reviewCount ?? ''} onChange={(e) => set('reviewCount', e.target.value ? Number(e.target.value) : null)} placeholder="124" />
+              </Field>
+            </>
+          )}
           <Field label="About" fullWidth>
             <Textarea value={data.aboutSection ?? ''} onChange={(e) => set('aboutSection', e.target.value || null)} placeholder="Brief description of the clinic…" className="min-h-[100px]" />
           </Field>
@@ -297,8 +319,8 @@ export function ClinicForm() {
         </div>
       </FormSection>
 
-      {/* Regulatory */}
-      <FormSection title="Regulatory Flags" icon={ShieldCheck} description="Certifications and regulatory body memberships">
+      {/* Regulatory — admin-managed only */}
+      {!isPortal && <FormSection title="Regulatory Flags" icon={ShieldCheck} description="Certifications and regulatory body memberships">
         <div className="space-y-4">
           <div className="flex items-center gap-8">
             <label className="flex items-center gap-2 cursor-pointer">
@@ -327,7 +349,7 @@ export function ClinicForm() {
             ))}
           </div>
         </div>
-      </FormSection>
+      </FormSection>}
 
       {/* Footer save */}
       <div className="flex justify-end pt-2">

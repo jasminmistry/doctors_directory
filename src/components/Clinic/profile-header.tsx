@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   MapPin,
   Phone,
+  ShieldCheck,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -45,20 +46,16 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
 
   return (
     <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-xl px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t md:border md:border-(--alto) bg-white md:bg-(--primary-bg-color)">
-      <Link
-        prefetch={false}
-        href={{
-          pathname: `/admin/clinics/${clinic.slug}`,
-          query: { returnTo },
-        }}
-      >
-        <Badge
-          variant="outline"
-          className="absolute top-2 right-2 z-50 mb-2 font-semibold text-balance leading-tight bg-white md:bg-(--primary-bg-color)"
-        >
-          Claim Profile
-        </Badge>
-      </Link>
+      {!clinic.claimed && (
+        <Link prefetch={false} href={`/claim/${clinic.slug}`}>
+          <Badge
+            variant="outline"
+            className="absolute top-2 right-2 z-50 mb-2 font-semibold text-balance leading-tight bg-white md:bg-(--primary-bg-color)"
+          >
+            Claim Profile
+          </Badge>
+        </Link>
+      )}
       <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-center">
         <div className="flex flex-col md:flex-col md:mb-4 md:px-4 md:px-0 lg:mb-0 items-start gap-4 border-b border-[#C4C4C4] md:border-0">
           <div className="flex flex-row flex-wrap items-start md:items-center">
@@ -73,9 +70,32 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
 
             <div className="flex flex-col w-[calc(100%-96px)] md:w-[calc(100%-196px)]">
               <div className="flex w-full md:w-auto flex-col md:flex-row gap-2 mb-2 items-start md:items-center">
-                <h1 className="inline text-left mb-0 md:m-0 font-semibold text-md md:text-2xl transition-colors md:text-left">
-                  {practitionerName}
-                </h1>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-left mb-0 md:m-0 font-semibold text-md md:text-2xl transition-colors md:text-left leading-tight">
+                    {practitionerName}
+                  </h1>
+                  {clinic.idVerified && (
+                    <Badge className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border-emerald-200 text-xs font-medium shrink-0 self-center">
+                      <ShieldCheck className="h-3 w-3" />
+                      ID Verified
+                    </Badge>
+                  )}
+                  {!clinic.idVerified && clinic.manualVerified && (
+                    <Badge className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 border-blue-200 text-xs font-medium shrink-0 self-center">
+                      <ShieldCheck className="h-3 w-3" />
+                      Manually Verified
+                    </Badge>
+                  )}
+                  {!clinic.idVerified && !clinic.manualVerified && clinic.verified && (
+                    <Badge
+                      variant="outline"
+                      className="inline-flex items-center gap-1 border-foreground/30 text-foreground text-xs font-medium shrink-0 self-center"
+                    >
+                      <ShieldCheck className="h-3 w-3" />
+                      Verified
+                    </Badge>
+                  )}
+                </div>
                 <ClinicLabels clinic={clinic} />
               </div>
 

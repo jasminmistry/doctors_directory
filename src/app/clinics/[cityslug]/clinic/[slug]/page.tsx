@@ -132,6 +132,13 @@ function convertDbClinicToOldType(dbClinic: any): Clinic {
     })) || []) as any,
     x_twitter: dbClinic.xTwitter || '',
     Treatments: dbClinic.treatments?.map((t: any) => t.treatment.name) || [],
+    claimed: dbClinic.claimed ?? false,
+    verified: (dbClinic as any).verified ?? false,
+    domainVerified: (dbClinic as any).domainVerified ?? false,
+    gbpMatch: (dbClinic as any).gbpMatch ?? false,
+    gbpVerified: (dbClinic as any).gbpVerified ?? false,
+    idVerified: (dbClinic as any).idVerified ?? false,
+    manualVerified: (dbClinic as any).manualVerified ?? false,
   } as Clinic;
 }
 

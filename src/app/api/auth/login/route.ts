@@ -1,5 +1,16 @@
 import { NextResponse } from 'next/server'
-import { COOKIE_TOKEN, COOKIE_REFRESH, COOKIE_OPTS, getConsentzAuthUrl, getApplicationId, extractTokens } from '@/lib/auth'
+import {
+  COOKIE_TOKEN,
+  COOKIE_REFRESH,
+  COOKIE_USERNAME,
+  COOKIE_ROLE,
+  COOKIE_OPTS,
+  consentzFetch,
+  getConsentzAuthUrl,
+  getApplicationId,
+  extractTokens,
+} from '@/lib/auth'
+import { prisma } from '@/lib/db'
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +27,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Auth service not configured' }, { status: 500 })
     }
 
-    const res = await fetch(`${authApiUrl}/login`, {
+    const res = await consentzFetch(`${authApiUrl}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +37,6 @@ export async function POST(request: Request) {
     })
 
     const data = await res.json()
-    console.log('Auth response:', { status: res.status, data })
 
     if (!res.ok || data.error) {
       const message = data.error?.message || 'Invalid credentials'
@@ -35,8 +45,16 @@ export async function POST(request: Request) {
 
     const { token, refreshToken } = extractTokens(data)
 
-    const response = NextResponse.json({ success: true })
+    const claim = await prisma.claimRequest.findFirst({
+      where: { consentzUsername: username },
+      select: { id: true },
+    })
+    const role = claim ? 'portal' : 'admin'
+
+    const response = NextResponse.json({ success: true, role })
     response.cookies.set(COOKIE_TOKEN, token, COOKIE_OPTS)
+    response.cookies.set(COOKIE_USERNAME, username, COOKIE_OPTS)
+    response.cookies.set(COOKIE_ROLE, role, COOKIE_OPTS)
     if (refreshToken) {
       response.cookies.set(COOKIE_REFRESH, refreshToken, COOKIE_OPTS)
     }

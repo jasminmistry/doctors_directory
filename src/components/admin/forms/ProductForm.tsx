@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { ArrowLeft, ExternalLink, Package, FileText, FlaskConical, ShieldCheck, Save, Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormSection, Field } from './FormSection'
@@ -240,13 +241,8 @@ export function ProductForm() {
           <Field label="SKU">
             <Input value={data.sku ?? ''} onChange={(e) => set('sku', e.target.value || null)} />
           </Field>
-          <Field label="Image URL" fullWidth>
-            <div className="flex gap-3 items-start">
-              <Input value={data.imageUrl ?? ''} onChange={(e) => set('imageUrl', e.target.value || null)} placeholder="https://…" className="flex-1" />
-              {data.imageUrl && (
-                <img src={data.imageUrl} alt="" className="w-12 h-12 rounded-lg object-cover border border-gray-200 shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
-              )}
-            </div>
+          <Field label="Image" fullWidth>
+            <ImageUpload value={data.imageUrl ?? null} onChange={(url) => set('imageUrl', url)} />
           </Field>
           <Field label="Product PDF URL" fullWidth>
             <Input value={data.documentPdfUrl ?? ''} onChange={(e) => set('documentPdfUrl', e.target.value || null)} placeholder="https://…" />

@@ -16,6 +16,7 @@ const ACCREDITATIONS = [
 
 const XML_SITEMAPS: { file: string; label: string }[] = [
   { file: 'sitemap.xml', label: 'Sitemap Index' },
+  { file: 'register.xml', label: 'Register Pages' },
   { file: 'all-clinics.xml', label: 'All Clinic Pages' },
   { file: 'all-practitioners.xml', label: 'All Practitioner Pages' },
   { file: 'all-treatments.xml', label: 'All Treatment Pages' },
@@ -119,6 +120,8 @@ export default function HtmlSitemapPage() {
               ['/products/category', 'Product Categories'],
               ['/accredited', 'Accredited Providers'],
               ['/practitioners/credentials', 'Practitioner Credentials'],
+              ['/register/clinic', 'Register a Clinic'],
+              ['/register/practitioner', 'Register as a Practitioner'],
               ['/sitemap', 'HTML Sitemap'],
             ].map(([href, label]) => (
               <li key={href}>

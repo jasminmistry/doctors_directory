@@ -33,6 +33,31 @@ enum PendingStatus {
   rejected
 }
 
+enum ClaimEntityType {
+  clinic
+  practitioner
+}
+
+enum ClaimStatus {
+  pending_otp
+  otp_verified
+  pending_approval
+  approved
+  rejected
+}
+
+enum ClaimPlan {
+  free
+  pay_per_lead
+  subscription
+}
+
+enum VerificationStatus {
+  pending
+  approved
+  rejected
+}
+
 // ============================================================
 // CITIES
 // ============================================================
@@ -154,6 +179,17 @@ model Clinic {
   criteriaBreakdown  Json? // { [category]: CriteriaItem[] }
   advice             Json? // { strengths, gaps, priority_30d, priority_90d }
 
+  // Claim & trust flags
+  claimed        Boolean    @default(false)
+  claimedAt      DateTime?
+  claimedPlan    ClaimPlan?
+  verified       Boolean    @default(false)
+  domainVerified Boolean    @default(false)
+  gbpMatch       Boolean    @default(false)
+  gbpVerified    Boolean    @default(false)
+  idVerified     Boolean    @default(false)
+  manualVerified Boolean    @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -165,6 +201,7 @@ model Clinic {
   treatments               ClinicTreatment[]
   staff                    ClinicStaff[]
   practitionerAssociations PractitionerClinicAssociation[]
+  claimRequests            ClaimRequest[]
 
   @@index([cityId])
   @@index([rating])
@@ -309,6 +346,16 @@ model Practitioner {
   experience       Json? // string[]
   weightedAnalysis Json? // { [category]: ItemMeta }
 
+  // Claim & trust flags
+  claimed        Boolean    @default(false)
+  claimedAt      DateTime?
+  claimedPlan    ClaimPlan?
+  verified       Boolean    @default(false)
+  affiliated     Boolean    @default(false)
+  licensed       Boolean    @default(false)
+  idVerified     Boolean    @default(false)
+  manualVerified Boolean    @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -316,6 +363,7 @@ model Practitioner {
   clinicAssociations PractitionerClinicAssociation[]
   treatments         PractitionerTreatment[]
   staffEntries       ClinicStaff[]
+  claimRequests      ClaimRequest[]
 
   @@index([displayName(length: 191)])
   @@index([specialty])
@@ -549,4 +597,106 @@ model DirectoryLead {
   @@index([pageType], map: "idx_directory_leads_page_type")
   @@index([timestamp], map: "idx_directory_leads_timestamp")
   @@map("directory_leads")
+}
+
+// ============================================================
+// CLAIM REQUESTS
+// ============================================================
+
+model ClaimRequest {
+  id         Int             @id @default(autoincrement())
+  entityType ClaimEntityType @default(clinic)
+
+  // Entity — exactly one is set
+  clinicId          Int?
+  clinicSlug        String? @db.VarChar(255)
+  practitionerId    Int?
+  practitionerSlug  String? @db.VarChar(255)
+
+  // Claimer details
+  claimerName   String  @db.VarChar(255)
+  claimerEmail  String  @db.VarChar(255)
+  claimerPhone  String? @db.VarChar(50)
+
+  // Clinic-specific inputs
+  clinicNameInput    String? @db.VarChar(255)
+  clinicPhone        String? @db.VarChar(50)
+  clinicWebsite      String? @db.VarChar(500)
+  googleBusinessLink String? @db.VarChar(500)
+
+  // Practitioner-specific inputs
+  profession    String? @db.VarChar(255)
+  licenseNumber String? @db.VarChar(100)
+  registryName  String? @db.VarChar(255)
+
+  // OTP verification
+  otpCode       String?   @db.VarChar(10)
+  otpExpiresAt  DateTime?
+  otpVerifiedAt DateTime?
+
+  // Auto-verification results (set at otp_verified time)
+  domainVerified Boolean @default(false)
+  affiliated     Boolean @default(false)
+
+  // Anti-fraud
+  requiresManualReview Boolean @default(false)
+
+  // Plan & Stripe
+  selectedPlan         ClaimPlan?
+  stripeSessionId      String?    @db.VarChar(255)
+  stripeCustomerId     String?    @db.VarChar(255)
+  stripeSubscriptionId String?    @db.VarChar(255)
+
+  // Consentz account provisioning (set on admin approval)
+  consentzClinicId  Int?
+  consentzUserId    Int?
+  consentzUsername  String? @db.VarChar(100)
+  mustResetPassword Boolean @default(false)
+
+  // Workflow
+  status     ClaimStatus @default(pending_otp)
+  adminNotes String?     @db.Text
+  approvedAt DateTime?
+  rejectedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clinic       Clinic?       @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  practitioner Practitioner? @relation(fields: [practitionerId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([practitionerId])
+  @@index([status])
+  @@index([claimerEmail])
+  @@map("claim_requests")
+}
+
+// ============================================================
+// ID / MANUAL VERIFICATION
+// ============================================================
+
+model VerificationRequest {
+  id           Int                @id @default(autoincrement())
+  entityType   ClaimEntityType
+  entitySlug   String             @db.VarChar(255)
+  claimerName  String             @db.VarChar(255)
+  claimerEmail String             @db.VarChar(255)
+
+  // Uploaded file names (stored in ./uploads/verification/{id}/)
+  govIdFile    String?            @db.VarChar(255)
+  selfieFile   String?            @db.VarChar(255)
+  proofType    String?            @db.VarChar(50)  // work_email|contract|website|letter
+  proofFile    String?            @db.VarChar(255)
+
+  status       VerificationStatus @default(pending)
+  adminNotes   String?            @db.Text
+  reviewedAt   DateTime?
+
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@index([entitySlug])
+  @@index([status])
+  @@map("verification_requests")
 }

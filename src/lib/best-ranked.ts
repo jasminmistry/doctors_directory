@@ -19,6 +19,8 @@ export interface RankedEntry {
   scoreValue: number
   scoreLabel: string
   valueLabel: "Best value" | "Premium" | "Budget"
+  verified?: boolean
+  idVerified?: boolean
 }
 
 const toNumbers = (value: string): number[] => {
@@ -207,6 +209,8 @@ const buildEntries = (
           ? `${score} Consentz Score`
           : `${Number(item.rating ?? 0).toFixed(1)}★ rating`,
       valueLabel: valueLabel(avgPrice, medianPrice),
+      verified: (item as Clinic).verified ?? false,
+      idVerified: (item as Clinic).idVerified ?? false,
     }
   })
 }
