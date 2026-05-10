@@ -550,3 +550,26 @@ model DirectoryLead {
   @@index([timestamp], map: "idx_directory_leads_timestamp")
   @@map("directory_leads")
 }
+
+model MainSiteEvent {
+  id           BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  timestamp    DateTime @db.DateTime(3)
+  pageUrl      String   @map("page_url") @db.Text
+  referrer     String   @db.Text
+  country      String   @default("unknown") @db.VarChar(8)
+  deviceType   String   @map("device_type") @default("desktop") @db.VarChar(16)
+  eventType    String   @map("event_type") @db.VarChar(64)
+  eventName    String   @map("event_name") @db.VarChar(255)
+  targetUrl    String?  @map("target_url") @db.Text
+  contentType  String?  @map("content_type") @db.VarChar(64)
+  contentSlug  String?  @map("content_slug") @db.VarChar(255)
+  contactName  String?  @map("contact_name") @db.VarChar(255)
+  contactValue String?  @map("contact_value") @db.VarChar(255)
+  metaJson     String?  @map("meta_json") @db.LongText
+
+  @@index([timestamp], map: "idx_main_site_events_timestamp")
+  @@index([eventType], map: "idx_main_site_events_event_type")
+  @@index([eventName], map: "idx_main_site_events_event_name")
+  @@index([contentType], map: "idx_main_site_events_content_type")
+  @@map("main_site_events")
+}
