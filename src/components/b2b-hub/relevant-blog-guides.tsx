@@ -1,68 +1,56 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
-
-type BlogLink = {
-  title: string;
-  href: string;
-};
-
-const baseGuides: BlogLink[] = [
-  {
-    title: "Aesthetic Clinic Marketing: Complete Guide [2025]",
-    href: "https://www.consentz.com/aesthetic-clinic-marketing",
-  },
-  {
-    title: "10 Best HIPAA Compliant Medical Spa Software in 2025",
-    href: "https://www.consentz.com/hipaa-compliant-medical-spa-software",
-  },
-  {
-    title: "Top 10 Clinical Data Management Software Solutions in the USA",
-    href: "https://www.consentz.com/clinical-data-management-software",
-  },
-];
+import Image from "next/image"
+import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links"
 
 export function RelevantBlogGuides() {
-  const pathname = usePathname();
-  const normalized = pathname.replace(/\/$/, "");
-  const pathNoBase = normalized.startsWith("/directory")
-    ? normalized.slice("/directory".length) || "/"
-    : normalized || "/";
-  const links = baseGuides;
-
   return (
-    <section className="max-w-5xl mx-auto px-4 pb-16">
-      <h2 className="text-lg font-semibold text-neutral-900 mb-4">
-        Relevant blog guides
-      </h2>
-      <div className="grid gap-3 md:grid-cols-3">
-        {links.map((blog) => (
+    <section className="bg-[#F2EFE9] px-4 py-14 md:py-16 mt-10">
+      <div className="max-w-[1280px] mx-auto">
+        <h2 className="text-center text-2xl md:text-3xl font-bold text-neutral-900 mb-10 tracking-tight">
+          Related Articles
+        </h2>
+        <div className="grid gap-6 md:grid-cols-3 md:gap-8">
+          {HUB_BLOG_LINKS.map((post) => (
+            <a
+              key={post.id}
+              href={post.href}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex flex-col bg-white rounded-xl overflow-hidden border border-[#E5E7EB] hover:shadow-md transition-shadow"
+            >
+              <div className="relative aspect-video bg-neutral-100">
+                <Image
+                  src={post.image}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              </div>
+              <div className="p-5 flex flex-col flex-1">
+                <span className="text-[10px] font-bold tracking-[0.12em] text-neutral-500 mb-3">
+                  CONSENTZ
+                </span>
+                <span className="font-semibold text-neutral-900 text-base leading-snug group-hover:underline underline-offset-2">
+                  {post.title}
+                </span>
+                <span className="text-sm text-neutral-500 mt-auto pt-4">
+                  {post.date}
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+        <div className="flex justify-center mt-10">
           <a
-            key={blog.href}
-            href={blog.href}
+            href="https://www.consentz.com/blog/"
             target="_blank"
             rel="noreferrer"
-            className="block"
+            className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-900 transition-colors"
           >
-            <Card className="h-full bg-white transition-colors hover:bg-neutral-50 border-neutral-200">
-              <CardContent className="py-4 text-sm font-medium text-neutral-900">
-                {blog.title}
-              </CardContent>
-            </Card>
+            View all blogs
           </a>
-        ))}
-      </div>
-      <div className="mt-4">
-        <a
-          href="https://www.consentz.com/blog/"
-          target="_blank"
-          rel="noreferrer"
-          className="text-sm font-semibold text-neutral-700 hover:text-neutral-900 underline"
-        >
-          View all blog posts
-        </a>
+        </div>
       </div>
     </section>
-  );
+  )
 }

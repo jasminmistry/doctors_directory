@@ -31,16 +31,16 @@ export function HubChrome() {
     p === `/business/${seg}` || p.startsWith(`/business/${seg}/`);
 
   return (
-    <div className="border-b border-neutral-200 bg-neutral-50/80 mb-8">
-      <div className="max-w-5xl mx-auto px-4 py-4 flex flex-col gap-3">
-        <div className="flex flex-wrap items-center gap-2">
+    <div className="border-b border-[#E5E7EB] bg-[#F2EEE6]/60 mb-0">
+      <div className="max-w-[1280px] mx-auto px-4 py-3 flex flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           <Link
             href="/business/"
             className={cn(
-              "text-sm font-medium px-2 py-1 rounded-md transition-colors",
+              "text-sm font-medium px-[13px] py-[5px] rounded-[20px] transition-colors",
               hubHomeActive
-                ? "bg-black text-white"
-                : "text-neutral-700 hover:bg-neutral-100"
+                ? "bg-[#111111] text-white"
+                : "text-neutral-900 hover:bg-white/70"
             )}
           >
             Buyer Hub
@@ -50,10 +50,10 @@ export function HubChrome() {
               key={seg}
               href={`/business/${seg}/`}
               className={cn(
-                "text-sm font-medium px-2 py-1 rounded-md transition-colors",
+                "text-sm font-medium px-[13px] py-[5px] rounded-[20px] transition-colors",
                 segmentActive(seg)
-                  ? "bg-black text-white"
-                  : "text-neutral-700 hover:bg-neutral-100"
+                  ? "bg-[#111111] text-white"
+                  : "text-neutral-900 hover:bg-white/70"
               )}
             >
               {segmentLabel(seg)}
@@ -62,10 +62,10 @@ export function HubChrome() {
           <Link
             href="/business/uk/"
             className={cn(
-              "text-sm font-medium px-2 py-1 rounded-md transition-colors",
+              "text-sm font-medium px-[13px] py-[5px] rounded-[20px] transition-colors",
               byCityActive
-                ? "bg-black text-white"
-                : "text-neutral-700 hover:bg-neutral-100"
+                ? "bg-[#111111] text-white"
+                : "text-neutral-900 hover:bg-white/70"
             )}
           >
             By City
@@ -73,10 +73,10 @@ export function HubChrome() {
           <Link
             href="/business/treatments/"
             className={cn(
-              "text-sm font-medium px-2 py-1 rounded-md transition-colors",
+              "text-sm font-medium px-[13px] py-[5px] rounded-[20px] transition-colors",
               byTreatmentActive
-                ? "bg-black text-white"
-                : "text-neutral-700 hover:bg-neutral-100"
+                ? "bg-[#111111] text-white"
+                : "text-neutral-900 hover:bg-white/70"
             )}
           >
             By Treatment

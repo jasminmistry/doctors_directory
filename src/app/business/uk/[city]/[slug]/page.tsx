@@ -65,7 +65,7 @@ export default function BusinessCityScaledPage({ params }: Props) {
   const pageTitle = `${cityTitle} ${slugToTitle(params.slug)}`
 
   return (
-    <div className="max-w-5xl mx-auto px-4 pb-16">
+    <div className="max-w-5xl mx-auto px-4 pt-8 md:pt-10 pb-16">
       <header className="mb-10">
         <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500 mb-2">
           By City

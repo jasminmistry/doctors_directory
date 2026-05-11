@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { HubIndexSearchCards } from "@/components/b2b-hub/hub-index-search-cards";
+import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta";
 import {
   HUB_ENTRIES_BY_SEGMENT,
   HUB_SEGMENTS,
@@ -76,122 +78,84 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
   }
   const seg = params.segment as HubSegment;
   const entries = HUB_ENTRIES_BY_SEGMENT[seg] ?? [];
-  const relatedCollections = HUB_SEGMENTS.filter((s) => s !== seg).slice(0, 6);
+  const relatedCollections = HUB_SEGMENTS.filter((s) => s !== seg);
   const faq = buildFaq(seg);
 
+  const cards = entries.map((e) => ({
+    key: `${e.segment}-${e.slug}`,
+    href: `/business/${e.segment}/${e.slug}/`,
+    title: toDisplayTitle(e.title),
+    subtitle: e.summary || "Open this guide.",
+  }));
+
   return (
-    <div className="max-w-5xl mx-auto px-4 pb-16">
-      <header className="mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 tracking-tight mb-3">
-          {segmentLabel(seg)}
-        </h1>
-        <p className="text-lg text-neutral-600 max-w-3xl leading-relaxed">
-          {entries.length} pages in this section. Open any guide to compare
-          workflows, consent patterns, and migration considerations.
-        </p>
-      </header>
-
-      <section className="mb-12">
-        <h2 className="text-xl font-semibold text-neutral-900 mb-4">
-          Pages In This Collection
-        </h2>
-        <ul className="space-y-2">
-          {entries.map((e) => (
-            <li key={e.slug}>
+    <>
+      <HubIndexSearchCards
+        heroTitle={segmentLabel(seg)}
+        heroSubtitle={`${entries.length} pages in this section. Open any guide to compare workflows, consent patterns, and migration considerations.`}
+        entries={cards}
+      />
+      <section className="bg-white px-4 pb-12">
+        <div className="max-w-[1280px] mx-auto">
+          <h2 className="text-xl font-semibold text-neutral-900 mb-6 text-center">
+            Explore Related Collections
+          </h2>
+          <div className="flex flex-wrap justify-center gap-2">
+            {relatedCollections.map((s) => (
               <Link
-                href={`/business/${e.segment}/${e.slug}/`}
-                className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 rounded-lg border border-neutral-200 bg-white px-4 py-3 hover:border-neutral-400 hover:shadow-sm transition-all"
+                key={s}
+                href={`/business/${s}/`}
+                className="inline-flex rounded-full border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-sm font-medium text-neutral-900 hover:border-neutral-400 hover:bg-white transition-all"
               >
-                <span className="font-medium text-neutral-900">
-                  {toDisplayTitle(e.title)}
+                {segmentLabel(s)}
+                <span className="text-neutral-500 font-normal ml-1.5">
+                  ({HUB_ENTRIES_BY_SEGMENT[s]?.length ?? 0})
                 </span>
-                {e.summary ? (
-                  <span className="text-sm text-neutral-500 line-clamp-2 sm:max-w-xl sm:text-right">
-                    {e.summary}
-                  </span>
-                ) : null}
               </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mb-12">
-        <h2 className="text-xl font-semibold text-neutral-900 mb-4">
-          Explore Related Collections
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {relatedCollections.map((s) => (
+            ))}
             <Link
-              key={s}
-              href={`/business/${s}/`}
-              className="rounded-lg border border-neutral-200 bg-white p-4 hover:border-neutral-400 hover:shadow-sm transition-all"
+              href="/business/uk/"
+              className="inline-flex rounded-full border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-sm font-medium text-neutral-900 hover:border-neutral-400 hover:bg-white transition-all"
             >
-              <p className="font-medium text-neutral-900">{segmentLabel(s)}</p>
-              <p className="text-sm text-neutral-500 mt-1">
-                {HUB_ENTRIES_BY_SEGMENT[s]?.length ?? 0} pages
-              </p>
+              By City
             </Link>
-          ))}
-          <Link
-            href="/business/uk/"
-            className="rounded-lg border border-neutral-200 bg-white p-4 hover:border-neutral-400 hover:shadow-sm transition-all"
-          >
-            <p className="font-medium text-neutral-900">By City</p>
-            <p className="text-sm text-neutral-500 mt-1">City Collection Index</p>
-          </Link>
+          </div>
         </div>
       </section>
-
-      <section className="mb-12">
-        <h2 className="text-xl font-semibold text-neutral-900 mb-4">
-          Frequently Asked Questions
-        </h2>
-        <div className="space-y-2">
-          {faq.map((item) => (
-            <details
-              key={item.q}
-              className="group rounded-lg border border-neutral-200 bg-white px-4 py-3 open:shadow-sm"
-            >
-              <summary className="cursor-pointer font-medium text-neutral-900 list-none flex justify-between gap-2">
-                {item.q}
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform">
-                  ▾
-                </span>
-              </summary>
-              <p className="mt-3 text-neutral-600 leading-relaxed text-sm">
-                {item.a}
-              </p>
-            </details>
-          ))}
+      <section className="bg-white px-4 pb-16">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-neutral-900 mb-10 text-center">
+            Frequently Asked Questions
+          </h2>
+          <div>
+            {faq.map((item, i) => (
+              <details
+                key={item.q}
+                className={`group border-t border-neutral-200 bg-white px-6 py-5 open:bg-neutral-50/80 ${
+                  i === faq.length - 1 ? "border-b" : ""
+                }`}
+              >
+                <summary className="cursor-pointer font-medium text-neutral-900 list-none flex justify-between gap-2">
+                  {item.q}
+                  <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0">
+                    ▾
+                  </span>
+                </summary>
+                <p className="mt-3 text-neutral-600 leading-relaxed text-sm">
+                  {item.a}
+                </p>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
-
-      <section className="rounded-xl border border-neutral-200 bg-neutral-50 px-6 py-6">
-        <h3 className="text-xl font-semibold text-neutral-900 mb-2">
-          Ready To Move Forward?
-        </h3>
-        <p className="text-neutral-600 mb-4">
-          Book a Consentz demo to map these requirements to your clinic workflows,
-          compliance priorities, and rollout plan.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <a
-            href={`${
-              process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com"
-            }/book-demo`}
-            className="inline-flex items-center rounded-md bg-black text-white px-4 py-2 text-sm font-semibold"
-          >
-            Book demo
-          </a>
-          <Link
-            href="/business/"
-            className="inline-flex items-center rounded-md border border-neutral-300 bg-white text-neutral-900 px-4 py-2 text-sm font-semibold"
-          >
-            Back to buyer hub
-          </Link>
-        </div>
-      </section>
-    </div>
+      <HubSectionCta
+        heading="Ready To Move Forward?"
+        sub="Book a Consentz demo to map these requirements to your clinic workflows, compliance priorities, and rollout plan."
+        primaryLabel="Book A Demo"
+        secondaryLabel="Back To Buyer Hub"
+        secondaryHref="/business/"
+      />
+    </>
   );
 }
