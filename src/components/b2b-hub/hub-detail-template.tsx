@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,7 +8,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
@@ -19,7 +19,7 @@ import { segmentLabel } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
 
 const baseUrl =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
+  process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
 
 type HubDetailTemplateProps = {
   entry: HubEntry;
@@ -42,7 +42,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
     (seg === "automation" && entry.slug.includes("-automation-alternative"));
 
   return (
-    <article className="max-w-5xl mx-auto px-4 pb-16">
+    <article className="max-w-[1280px] mx-auto px-4 pt-8 md:pt-12 pb-16">
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -76,7 +76,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
       </header>
 
       <section className="grid md:grid-cols-2 gap-6 mb-12">
-        <Card className="border-neutral-200 shadow-sm">
+        <Card className="border-[#E5E7EB] bg-[#FAFAFA] shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg">Operational Reality</CardTitle>
             <CardDescription className="text-base leading-relaxed">
@@ -86,7 +86,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
             </CardDescription>
           </CardHeader>
         </Card>
-        <Card className="border-neutral-200 shadow-sm">
+        <Card className="border-[#E5E7EB] bg-[#FAFAFA] shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg">What Changes With Consentz</CardTitle>
             <CardDescription className="text-base leading-relaxed">
@@ -98,72 +98,36 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
         </Card>
       </section>
 
-      {showCompareRow ? (
-        <section className="mb-12 overflow-x-auto rounded-lg border border-neutral-200">
-          <table className="w-full text-sm text-left min-w-[520px]">
-            <thead className="bg-neutral-100 text-neutral-800">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Capability</th>
-                <th className="px-4 py-3 font-semibold">Typical Stack</th>
-                <th className="px-4 py-3 font-semibold">Consentz</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-200 bg-white">
-              <tr>
-                <td className="px-4 py-3 font-medium text-neutral-900">
-                  Consent &amp; Clinical Records
-                </td>
-                <td className="px-4 py-3 text-neutral-600">Paper / PDF Chaos</td>
-                <td className="px-4 py-3 text-neutral-900">Structured, Versioned</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-3 font-medium text-neutral-900">
-                  Booking &amp; Payments
-                </td>
-                <td className="px-4 py-3 text-neutral-600">Disconnected Tools</td>
-                <td className="px-4 py-3 text-neutral-900">Linked To Treatment Context</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-3 font-medium text-neutral-900">
-                  Compliance Evidence
-                </td>
-                <td className="px-4 py-3 text-neutral-600">Retroactive Folder Hunts</td>
-                <td className="px-4 py-3 text-neutral-900">Continuous Capture</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-      ) : null}
+      {showCompareRow ? <HubComparisonTable /> : null}
 
       <section className="mb-12">
-        <h2 className="text-xl font-semibold text-neutral-900 mb-4">
+        <h2 className="text-xl font-semibold text-neutral-900 mb-6 text-center">
           Explore Next
         </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="flex flex-wrap justify-center gap-2 max-w-[1120px] mx-auto">
           {related.map((r) => (
             <Link
               key={`${r.segment}-${r.slug}`}
               href={`/business/${r.segment}/${r.slug}/`}
-              className="group rounded-lg border border-neutral-200 bg-white p-4 hover:border-neutral-400 hover:shadow-sm transition-all"
+              className="inline-flex rounded-full border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-sm font-medium text-neutral-900 hover:border-neutral-400 hover:bg-white transition-all"
             >
-              <p className="text-xs font-semibold uppercase text-neutral-500 mb-1">
-                {segmentLabel(r.segment)}
-              </p>
-              <p className="font-medium text-neutral-900 group-hover:underline">
+              <span className="truncate max-w-[280px] sm:max-w-[320px]">
                 {toDisplayTitle(r.title)}
-              </p>
+              </span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="mb-12 max-w-3xl">
-        <h2 className="text-xl font-semibold text-neutral-900 mb-4">FAQ</h2>
-        <div className="space-y-2">
-          <details className="group rounded-lg border border-neutral-200 bg-white px-4 py-3 open:shadow-sm">
+      <section className="mb-12 max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold text-neutral-900 mb-10 text-center">
+          FAQ
+        </h2>
+        <div>
+          <details className="group border-t border-neutral-200 bg-white px-6 py-5 open:bg-neutral-50/80">
             <summary className="cursor-pointer font-medium text-neutral-900 list-none flex justify-between gap-2">
               Is Consentz only for aesthetic clinics?
-              <span className="text-neutral-400 group-open:rotate-180 transition-transform">
+              <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0">
                 ▾
               </span>
             </summary>
@@ -173,10 +137,10 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
               dermatology, and wellness operators.
             </p>
           </details>
-          <details className="group rounded-lg border border-neutral-200 bg-white px-4 py-3 open:shadow-sm">
+          <details className="group border-t border-neutral-200 bg-white px-6 py-5 open:bg-neutral-50/80">
             <summary className="cursor-pointer font-medium text-neutral-900 list-none flex justify-between gap-2">
               How does migration work from another system?
-              <span className="text-neutral-400 group-open:rotate-180 transition-transform">
+              <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0">
                 ▾
               </span>
             </summary>
@@ -186,10 +150,10 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
               structured.
             </p>
           </details>
-          <details className="group rounded-lg border border-neutral-200 bg-white px-4 py-3 open:shadow-sm">
+          <details className="group border-t border-b border-neutral-200 bg-white px-6 py-5 open:bg-neutral-50/80">
             <summary className="cursor-pointer font-medium text-neutral-900 list-none flex justify-between gap-2">
               Can we evaluate pricing without a long procurement cycle?
-              <span className="text-neutral-400 group-open:rotate-180 transition-transform">
+              <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0">
                 ▾
               </span>
             </summary>
@@ -201,13 +165,19 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
         </div>
       </section>
 
-      <div className="flex flex-wrap gap-3">
-        <Button asChild className="font-semibold">
-          <a href={`${baseUrl}/book-demo`}>Book Demo</a>
-        </Button>
-        <Button asChild variant="outline" className="font-semibold">
-            <Link href="/business/">Back to Hub</Link>
-        </Button>
+      <div className="flex flex-wrap gap-3 justify-center">
+        <a
+          href={`${baseUrl}/book-demo`}
+          className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-900 transition-colors"
+        >
+          Book A Demo
+        </a>
+        <Link
+          href="/business/"
+          className="inline-flex items-center justify-center rounded-full border-2 border-neutral-900 bg-white px-8 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors"
+        >
+          Back To Buyer Hub
+        </Link>
       </div>
     </article>
   );

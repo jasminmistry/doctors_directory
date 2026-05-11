@@ -1,6 +1,14 @@
 import type React from "react";
+import { Playfair_Display } from "next/font/google";
 import { HubChrome } from "@/components/b2b-hub/hub-chrome";
 import { RelevantBlogGuides } from "@/components/b2b-hub/relevant-blog-guides";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-playfair",
+  adjustFontFallback: false,
+});
 
 export default function BusinessLayout({
   children,
@@ -8,7 +16,7 @@ export default function BusinessLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-[60vh] bg-white">
+    <div className={`${playfair.variable} min-h-[60vh] bg-white`}>
       <HubChrome />
       {children}
       <RelevantBlogGuides />

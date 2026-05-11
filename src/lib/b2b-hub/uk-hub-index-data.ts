@@ -1,0 +1,55 @@
+export const UK_PRIORITY_CITIES = [
+  "Aberdeen",
+  "Belfast",
+  "Birmingham",
+  "Brighton",
+  "Bristol",
+  "Cambridge",
+  "Cardiff",
+  "Chester",
+  "Coventry",
+  "Edinburgh",
+  "Glasgow",
+  "Leeds",
+  "Leicester",
+  "Liverpool",
+  "London",
+  "Manchester",
+  "Newcastle",
+  "Norwich",
+  "Nottingham",
+  "Oxford",
+  "Plymouth",
+  "Portsmouth",
+  "Reading",
+  "Sheffield",
+  "Southampton",
+] as const
+
+export const UK_POPULAR_TREATMENTS = [
+  {
+    name: "Facial",
+    image: "/directory/images/Facial Treatment.webp",
+    href: "/treatments/facial-treatments/",
+  },
+  {
+    name: "Massage",
+    image: "/directory/treatments/massage.webp",
+    href: "/treatments/massage/",
+  },
+  {
+    name: "Lips",
+    image: "/directory/treatments/lips.webp",
+    href: "/treatments/lips/",
+  },
+  {
+    name: "Skin",
+    image: "/directory/images/Skin Treatment.webp",
+    href: "/treatments/skin-booster/",
+  },
+  {
+    name: "Hairline",
+    image: "/directory/images/Hairline Treatment.webp",
+    href: "/treatments/hair-treatments/",
+  },
+] as const
