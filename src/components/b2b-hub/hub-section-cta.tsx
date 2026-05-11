@@ -45,7 +45,7 @@ export function HubSectionCta({
   secondaryHref = `${baseUrl}/book-demo`,
 }: Props) {
   return (
-    <section className="bg-[#F2EEE6] px-4 py-14 md:py-20 mt-8">
+    <section className="bg-[var(--primary-bg-color)] px-4 py-14 md:py-20 mt-8">
       <div className="max-w-[1280px] mx-auto text-center">
         <div className="max-w-xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 tracking-tight">

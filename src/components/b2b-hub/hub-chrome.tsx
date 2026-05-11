@@ -31,7 +31,7 @@ export function HubChrome() {
     p === `/business/${seg}` || p.startsWith(`/business/${seg}/`);
 
   return (
-    <div className="border-b border-[#E5E7EB] bg-[#F2EEE6]/60 mb-0">
+    <div className="border-b border-[#E5E7EB] bg-[var(--primary-bg-color)] mb-0">
       <div className="max-w-[1280px] mx-auto px-4 py-3 flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-center gap-2">
           <Link
