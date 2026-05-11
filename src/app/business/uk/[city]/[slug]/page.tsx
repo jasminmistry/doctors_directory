@@ -5,6 +5,7 @@ import { getUniqueDirectoryCityNames } from "@/lib/b2b-hub/directory-cities"
 import { toUrlSlug } from "@/lib/utils"
 import { CITY_LOCAL_PAGE_SLUGS } from "@/lib/b2b-hub/scaled-pages"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
+import { HubLocalizedPageHero } from "@/components/b2b-hub/hub-localized-page-hero"
 import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo"
 
 type Props = { params: { city: string; slug: string } }
@@ -65,20 +66,13 @@ export default function BusinessCityScaledPage({ params }: Props) {
   const pageTitle = `${cityTitle} ${slugToTitle(params.slug)}`
 
   return (
-    <div className="max-w-5xl mx-auto px-4 pt-8 md:pt-10 pb-16">
-      <header className="mb-10">
-        <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500 mb-2">
-          By City
-        </p>
-        <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 tracking-tight mb-3">
-          {pageTitle}
-        </h1>
-        <p className="text-lg text-neutral-600 max-w-3xl leading-relaxed">
-          Localized B2B page based on approved scaling rules: city combined with
-          software, practitioner, or consent workflows only.
-        </p>
-      </header>
-
+    <>
+      <HubLocalizedPageHero
+        eyebrow="By City"
+        title={pageTitle}
+        description="Localized B2B page based on approved scaling rules: city combined with software, practitioner, or consent workflows only."
+      />
+      <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-12 pb-16">
       <section className="mb-12 grid sm:grid-cols-2 gap-3">
         <a
           href={`/directory/clinics/${params.city}/`}
@@ -113,5 +107,6 @@ export default function BusinessCityScaledPage({ params }: Props) {
         </div>
       </section>
     </div>
+    </>
   )
 }

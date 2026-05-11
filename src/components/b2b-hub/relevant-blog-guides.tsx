@@ -3,7 +3,7 @@ import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links"
 
 export function RelevantBlogGuides() {
   return (
-    <section className="bg-[#F2EFE9] px-4 py-14 md:py-16 mt-10">
+    <section className="bg-white px-4 md:px-6 py-12 md:py-16 mt-10 max-w-7xl mx-auto">
       <div className="max-w-[1280px] mx-auto">
         <h2 className="text-center text-2xl md:text-3xl font-bold text-neutral-900 mb-10 tracking-tight">
           Related Articles

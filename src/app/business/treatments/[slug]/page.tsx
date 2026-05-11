@@ -7,6 +7,7 @@ import {
   type TreatmentPageType,
 } from "@/lib/b2b-hub/scaled-pages"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
+import { HubLocalizedPageHero } from "@/components/b2b-hub/hub-localized-page-hero"
 import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo"
 
 type Props = { params: { slug: string } }
@@ -73,20 +74,13 @@ export default function BusinessTreatmentDetailPage({ params }: Props) {
     .map((t) => `${parsed.treatmentSlug}-${t}`)
 
   return (
-    <div className="max-w-5xl mx-auto px-4 pt-8 md:pt-10 pb-16">
-      <header className="mb-10">
-        <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500 mb-2">
-          Treatments
-        </p>
-        <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 tracking-tight mb-3">
-          {title}
-        </h1>
-        <p className="text-lg text-neutral-600 max-w-3xl leading-relaxed">
-          Treatment-focused page built with controlled combinations to keep scale
-          useful: treatment × consent, treatment × automation, and treatment × software.
-        </p>
-      </header>
-
+    <>
+      <HubLocalizedPageHero
+        eyebrow="Treatments"
+        title={title}
+        description="Treatment-focused page built with controlled combinations to keep scale useful: treatment × consent, treatment × automation, and treatment × software."
+      />
+      <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-12 pb-16">
       <section className="mb-12 grid sm:grid-cols-2 gap-3">
         <Link href="/business/consent/" className="rounded-lg border border-neutral-200 bg-white p-4 hover:border-neutral-400 hover:shadow-sm transition-all">
           <p className="font-medium text-neutral-900">Consent</p>
@@ -113,5 +107,6 @@ export default function BusinessTreatmentDetailPage({ params }: Props) {
         </div>
       </section>
     </div>
+    </>
   )
 }
