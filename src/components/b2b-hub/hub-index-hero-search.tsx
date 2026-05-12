@@ -24,7 +24,7 @@ const HUB_HERO_IMAGE_SRC =
 export function HubIndexHeroSearch({
   heroTitle,
   heroSubtitle,
-  searchPlaceholder = "Search resources",
+  searchPlaceholder = "Search buyer hub",
   query,
   onQueryChange,
   inputId,

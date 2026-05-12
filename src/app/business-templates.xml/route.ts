@@ -2,5 +2,5 @@ import { buildBusinessSegmentSitemapXml } from "@/lib/b2b-hub/business-sitemap-x
 import { xmlResponse } from "@/lib/sitemap"
 
 export async function GET() {
-  return xmlResponse(buildBusinessSegmentSitemapXml("resources"))
+  return xmlResponse(buildBusinessSegmentSitemapXml("templates"))
 }

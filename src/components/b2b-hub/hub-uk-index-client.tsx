@@ -155,7 +155,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
               {filteredPriority.map((city) => (
                 <div
                   key={city}
-                  className="rounded-full border border-[#E5E7EB] bg-[#FAFAFA] px-3 py-2 text-sm text-neutral-800 text-center"
+                  className="rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-3 py-2 text-sm text-neutral-800 text-center"
                 >
                   {city}
                 </div>
@@ -213,7 +213,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
             <div className="mt-8 flex justify-center">
               <Link
                 href="/treatments/"
-                className="inline-flex items-center rounded-full bg-black text-white px-8 py-3 text-sm font-semibold hover:bg-neutral-900 transition-colors"
+                className="inline-flex items-center rounded-[12px] bg-black text-white px-8 py-3 text-sm font-semibold hover:bg-neutral-900 transition-colors"
               >
                 See All Treatments
               </Link>
@@ -230,7 +230,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
             </p>
             <Link
               href="/business/"
-              className="inline-flex items-center justify-center rounded-full border-2 border-neutral-900 bg-white px-8 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors"
+              className="inline-flex items-center justify-center rounded-[12px] border-2 border-neutral-900 bg-white px-8 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors"
             >
               Back To Buyer Hub
             </Link>

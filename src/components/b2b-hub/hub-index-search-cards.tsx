@@ -26,7 +26,7 @@ type Props = {
 export function HubIndexSearchCards({
   heroTitle,
   heroSubtitle,
-  searchPlaceholder = "Search resources",
+  searchPlaceholder = "Search buyer hub",
   entries,
   heroTitleClassName,
   heroInputId = "hub-index-search",

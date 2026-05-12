@@ -9,7 +9,7 @@ export type HubSegment =
   | "cqc"
   | "consent"
   | "automation"
-  | "resources"
+  | "templates"
   | "practitioners"
 
 export type HubEntry = {
@@ -508,7 +508,7 @@ const automationEntries = withSegment("automation", [
   },
 ])
 
-const resourcesEntries = withSegment("resources", [
+const templatesEntries = withSegment("templates", [
   {
     slug: "how-to-automate-an-aesthetic-clinic",
     title: "How to automate an aesthetic clinic",
@@ -718,7 +718,7 @@ export const HUB_ENTRIES: HubEntry[] = [
   ...competitorPdfAdEf.consentCompetitor,
   ...automationEntries,
   ...competitorPdfAdEf.automationCompetitor,
-  ...resourcesEntries,
+  ...templatesEntries,
   ...practitionersEntries,
 ]
 
@@ -749,7 +749,7 @@ export const HUB_SEGMENTS: HubSegment[] = [
   "cqc",
   "consent",
   "automation",
-  "resources",
+  "templates",
   "practitioners",
 ]
 
@@ -767,7 +767,7 @@ export function segmentLabel(segment: HubSegment): string {
     cqc: "CQC",
     consent: "Consent",
     automation: "Automation",
-    resources: "Resources",
+    templates: "Templates",
     practitioners: "Practitioners",
   }
   return labels[segment]
