@@ -1,6 +1,5 @@
 export type HubBlogEntry = {
   id: string
-  shortTitle: string
   title: string
   href: string
   image: string
@@ -10,7 +9,6 @@ export type HubBlogEntry = {
 export const HUB_BLOG_LINKS: HubBlogEntry[] = [
   {
     id: "1",
-    shortTitle: "HIPAA compliant medical spa software",
     title: "10 Best HIPAA Compliant Medical Spa Software in 2025",
     href: "https://www.consentz.com/hipaa-compliant-medical-spa-software",
     image:
@@ -19,7 +17,6 @@ export const HUB_BLOG_LINKS: HubBlogEntry[] = [
   },
   {
     id: "2",
-    shortTitle: "Clinical data management software USA",
     title: "Top 10 Clinical Data Management Software Solutions in the USA",
     href: "https://www.consentz.com/clinical-data-management-software",
     image:
@@ -28,7 +25,6 @@ export const HUB_BLOG_LINKS: HubBlogEntry[] = [
   },
   {
     id: "3",
-    shortTitle: "Aesthetic clinic marketing guide",
     title: "Aesthetic Clinic Marketing: Complete Guide [2025]",
     href: "https://www.consentz.com/aesthetic-clinic-marketing",
     image:

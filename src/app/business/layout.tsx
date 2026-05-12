@@ -1,7 +1,7 @@
 import type React from "react";
 import { Playfair_Display } from "next/font/google";
 import { HubChrome } from "@/components/b2b-hub/hub-chrome";
-import { RelevantBlogGuides } from "@/components/b2b-hub/relevant-blog-guides";
+import { HubLayoutBlogSlot } from "@/components/b2b-hub/hub-layout-blog-slot";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -19,7 +19,7 @@ export default function BusinessLayout({
     <div className={`${playfair.variable} min-h-[60vh] bg-white`}>
       <HubChrome />
       {children}
-      <RelevantBlogGuides />
+      <HubLayoutBlogSlot />
     </div>
   );
 }
