@@ -3,8 +3,6 @@ import { HubPillarDetailTemplate } from "@/components/b2b-hub/hub-pillar-detail-
 
 type Props = { entry: HubEntry; related: HubEntry[] };
 
-export function HubSoftwareDetailTemplate({ entry, related }: Props) {
-  return (
-    <HubPillarDetailTemplate entry={entry} related={related} pillar="software" />
-  );
+export function HubCqcDetailTemplate({ entry, related }: Props) {
+  return <HubPillarDetailTemplate entry={entry} related={related} pillar="cqc" />;
 }

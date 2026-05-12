@@ -15,7 +15,7 @@ function pathWithoutBase(pathname: string) {
 export function HubLayoutBlogSlot() {
   const pathname = usePathname() ?? "";
   const p = pathWithoutBase(pathname);
-  if (/^\/business\/software\/.+/.test(p)) {
+  if (/^\/business\/(software|cqc)\/.+/.test(p)) {
     return null;
   }
   return <RelevantBlogGuides />;
