@@ -18,48 +18,52 @@ const PLANS: {
   id: Plan
   name: string
   price: string
+  priceNote: string
   description: string
   features: string[]
   badge?: string
 }[] = [
   {
     id: 'free',
-    name: 'Free',
-    price: '£0 / month',
+    name: 'Free Listing',
+    price: '£0',
+    priceNote: 'forever',
     description: 'Get your profile live with no commitment.',
     features: [
-      'Standard listing',
-      'Core Lite account',
-      '£15 per lead',
-      'Manual booking requests',
-      'Basic reviews',
+      'Standard directory listing',
+      'Basic clinic profile',
+      'Visible in search',
+      'No lead access',
+      'No Verified badge',
+    ],
+  },
+  {
+    id: 'subscription',
+    name: 'Verified Subscription',
+    price: '£99',
+    priceNote: '/mo',
+    description: 'Priority visibility with unlimited instant leads.',
+    badge: 'Recommended',
+    features: [
+      'Priority + Verified badge',
+      'Unlimited instant leads',
+      'Full calendar sync',
+      'Verified Patient reviews',
+      'Full SSO + CRM sync',
     ],
   },
   {
     id: 'pay_per_lead',
     name: 'Pay-Per-Lead',
-    price: '£15 / month',
-    description: 'Priority visibility with unlimited instant leads.',
-    badge: 'Popular',
+    price: '£15',
+    priceNote: '/lead',
+    description: 'Pay only for the leads you receive.',
     features: [
-      'Priority listing + Verified badge',
-      'Unlimited instant leads',
-      'Full calendar sync',
-      'Verified Patient review tags',
-      'Full SSO + CRM sync',
-    ],
-  },
-  {
-    id: 'subscription',
-    name: 'Subscription',
-    price: '£99 / month',
-    description: 'Everything included — zero per-lead cost.',
-    features: [
-      'Priority listing + Verified badge',
-      'Unlimited leads at £0 each',
-      'Full calendar sync',
-      'Verified Patient review tags',
-      'Full SSO + CRM sync',
+      'Standard listing',
+      'Blurred leads — pay to unlock',
+      'Manual lead requests',
+      'Basic reviews',
+      'Lite account (20% off w/ Core sub)',
     ],
   },
 ]
@@ -134,7 +138,8 @@ export function StepChoosePlan({ claimId, entitySlug, onPending }: Readonly<Prop
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2 mb-0.5">
                   <span className="font-semibold">{plan.name}</span>
-                  <span className="text-sm text-muted-foreground">{plan.price}</span>
+                  <span className="text-sm font-medium">{plan.price}</span>
+                  <span className="text-xs text-muted-foreground">{plan.priceNote}</span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-2">{plan.description}</p>
                 <ul className="space-y-1">

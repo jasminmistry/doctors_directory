@@ -58,6 +58,39 @@ enum VerificationStatus {
   rejected
 }
 
+enum LeadStatus {
+  new
+  contacted
+  closed
+}
+
+enum BookingStatus {
+  pending
+  confirmed
+  cancelled
+  completed
+  no_show
+}
+
+enum CqcStatus {
+  not_applicable
+  good
+  requires_improvement
+  outstanding
+}
+
+enum AvgReplyTime {
+  within_24hrs
+  within_48hrs
+  more_than_48hrs
+}
+
+enum ReviewStatus {
+  pending
+  approved
+  rejected
+}
+
 // ============================================================
 // CITIES
 // ============================================================
@@ -190,6 +223,17 @@ model Clinic {
   idVerified     Boolean    @default(false)
   manualVerified Boolean    @default(false)
 
+  // Profile enhancements
+  coverImage   String?       @db.Text
+  cqcStatus    CqcStatus?
+  avgReplyTime AvgReplyTime?
+
+  // Consentz Core — populated at claim approval; used for calendar + booking API calls
+  coreClinicId Int?
+
+  // Stripe — stored after PPL SetupIntent completes so we can charge per-lead unlock
+  stripeCustomerId String? @db.VarChar(255)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -202,6 +246,9 @@ model Clinic {
   staff                    ClinicStaff[]
   practitionerAssociations PractitionerClinicAssociation[]
   claimRequests            ClaimRequest[]
+  consultationLeads        ConsultationLead[]
+  bookings                 Booking[]
+  platformReviews          PlatformReview[]
 
   @@index([cityId])
   @@index([rating])
@@ -699,4 +746,113 @@ model VerificationRequest {
   @@index([entitySlug])
   @@index([status])
   @@map("verification_requests")
+}
+
+// ============================================================
+// CONSULTATION LEADS
+// ============================================================
+
+model ConsultationLead {
+  id           Int        @id @default(autoincrement())
+  clinicId     Int
+  patientName  String     @db.VarChar(200)
+  patientPhone String     @db.VarChar(30)
+  patientEmail String?    @db.VarChar(255)
+  treatment    String?    @db.VarChar(255)
+  preferredTime String?   @db.VarChar(100) // "morning", "afternoon", "evening"
+  location     String?    @db.VarChar(255) // city/area for context
+
+  status       LeadStatus @default(new)
+
+  // Unlock (PPL plan — patient data revealed on £15 payment)
+  isUnlocked            Boolean   @default(false)
+  unlockedAt            DateTime?
+  stripePaymentIntentId String?   @db.VarChar(255)
+
+  // Ghost lead — clinic was unclaimed when lead was submitted
+  isGhostLead     Boolean   @default(false)
+  ghostNotifiedAt DateTime? // when FOMO email was sent to clinic's public contact
+
+  // Read tracking for nav badge
+  seenAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([isUnlocked])
+  @@index([seenAt])
+  @@index([createdAt])
+  @@map("consultation_leads")
+}
+
+// ============================================================
+// BOOKINGS  (synced from Consentz Core calendar)
+// ============================================================
+
+model Booking {
+  id        Int    @id @default(autoincrement())
+  clinicId  Int
+
+  // Core CRM reference — set when synced; null for directory-only bookings
+  coreBookingId String? @unique @db.VarChar(255)
+
+  patientName  String  @db.VarChar(200)
+  patientPhone String  @db.VarChar(30)
+  patientEmail String? @db.VarChar(255)
+  treatment    String? @db.VarChar(255)
+  notes        String? @db.Text
+
+  slotStart DateTime
+  slotEnd   DateTime
+
+  status       BookingStatus @default(pending)
+  // Stripe deposit — populated if patient paid at booking time
+  stripePaymentIntentId String? @db.VarChar(255)
+  depositAmount         Decimal? @db.Decimal(10, 2)
+
+  // Sync metadata
+  syncedFromCore  Boolean   @default(false)
+  lastSyncedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([slotStart])
+  @@index([status])
+  @@index([coreBookingId])
+  @@map("bookings")
+}
+
+// ============================================================
+// PLATFORM REVIEWS  (Consentz-verified, separate from Google)
+// ============================================================
+
+model PlatformReview {
+  id                Int          @id @default(autoincrement())
+  clinicId          Int
+  patientName       String       @db.VarChar(200)
+  rating            Int          @db.TinyInt  // 1–5
+  reviewText        String       @db.Text
+  treatment         String?      @db.VarChar(255)
+  isVerifiedPatient Boolean      @default(false)
+  status            ReviewStatus @default(pending)
+  clinicResponse    String?      @db.Text
+  respondedAt       DateTime?
+  approvedAt        DateTime?
+  rejectedAt        DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([status])
+  @@map("platform_reviews")
 }

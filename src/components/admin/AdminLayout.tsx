@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Building2, Users, Package,
   Stethoscope, Clock, FlaskConical, LogOut, Globe,
-  Menu, X, ShieldCheck,
+  Menu, X, ShieldCheck, Star,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -47,6 +47,7 @@ const NAV = [
   },
   { href: '/admin/claims', label: 'Claims', icon: ShieldCheck },
   { href: '/admin/verification', label: 'ID Verification', icon: ShieldCheck },
+  { href: '/admin/reviews', label: 'Reviews', icon: Star },
   { href: '/admin/qa', label: 'QA Report', icon: FlaskConical },
 ] as const
 

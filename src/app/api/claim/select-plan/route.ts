@@ -5,17 +5,10 @@ import { selectPlanSchema } from '@/lib/schemas/claim.schema'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
 
-const PLAN_CONFIG: Record<string, { name: string; description: string; amountPence: number }> = {
-  pay_per_lead: {
-    name: 'Pay-Per-Lead',
-    description: 'Priority listing + Verified badge, unlimited instant leads',
-    amountPence: 1500, // £15.00
-  },
-  subscription: {
-    name: 'Subscription',
-    description: 'Priority listing + Verified badge, unlimited leads at £0 each',
-    amountPence: 9900, // £99.00
-  },
+const SUBSCRIPTION_CONFIG = {
+  name: 'Verified Subscription',
+  description: 'Priority listing + Verified badge, unlimited leads at £0 each',
+  amountPence: 9900, // £99.00/month
 }
 
 export async function POST(req: NextRequest) {
@@ -49,6 +42,8 @@ export async function POST(req: NextRequest) {
         ? `practitioner/${claim.practitionerSlug}`
         : claim.clinicSlug
 
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-04-22.dahlia' })
+
     // Free plan — skip Stripe, go straight to pending_approval
     if (plan === 'free') {
       await prisma.claimRequest.update({
@@ -58,46 +53,56 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ redirect: `/directory/claim/${entitySlug}?claimId=${claimId}&step=pending` })
     }
 
-    // Paid plan — create Stripe Checkout session with inline price_data
-    const planConfig = PLAN_CONFIG[plan]
-    if (!planConfig) {
-      return NextResponse.json({ error: `Unknown plan: ${plan}` }, { status: 400 })
+    // PPL — SetupIntent to capture card with no upfront charge (£15 charged per-lead unlock)
+    if (plan === 'pay_per_lead') {
+      const session = await stripe.checkout.sessions.create({
+        mode: 'setup',
+        payment_method_types: ['card'],
+        customer_email: claim.claimerEmail,
+        metadata: { claimId: String(claimId), plan },
+        success_url: `${BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${BASE_URL}/directory/claim/${entitySlug}?claimId=${claimId}&step=plan`,
+      })
+      await prisma.claimRequest.update({
+        where: { id: claimId },
+        data: { selectedPlan: 'pay_per_lead', stripeSessionId: session.id },
+      })
+      return NextResponse.json({ redirect: session.url })
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-04-22.dahlia' })
-
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: 'gbp',
-            recurring: { interval: 'month' },
-            unit_amount: planConfig.amountPence,
-            product_data: {
-              name: planConfig.name,
-              description: planConfig.description,
+    // Subscription — £99/month recurring
+    if (plan === 'subscription') {
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            quantity: 1,
+            price_data: {
+              currency: 'gbp',
+              recurring: { interval: 'month' },
+              unit_amount: SUBSCRIPTION_CONFIG.amountPence,
+              product_data: {
+                name: SUBSCRIPTION_CONFIG.name,
+                description: SUBSCRIPTION_CONFIG.description,
+              },
             },
           },
-        },
-      ],
-      customer_email: claim.claimerEmail,
-      metadata: { claimId: String(claimId), plan },
-      // Propagate to the subscription so payment_intent.succeeded can resolve the claim
-      // via: PaymentIntent → Invoice → Subscription → metadata
-      subscription_data: { metadata: { claimId: String(claimId), plan } },
-      success_url: `${BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${BASE_URL}/directory/claim/${entitySlug}?claimId=${claimId}&step=plan`,
-    })
+        ],
+        customer_email: claim.claimerEmail,
+        metadata: { claimId: String(claimId), plan },
+        subscription_data: { metadata: { claimId: String(claimId), plan } },
+        success_url: `${BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${BASE_URL}/directory/claim/${entitySlug}?claimId=${claimId}&step=plan`,
+      })
+      await prisma.claimRequest.update({
+        where: { id: claimId },
+        data: { selectedPlan: 'subscription', stripeSessionId: session.id },
+      })
+      return NextResponse.json({ redirect: session.url })
+    }
 
-    await prisma.claimRequest.update({
-      where: { id: claimId },
-      data: { selectedPlan: plan as 'pay_per_lead' | 'subscription', stripeSessionId: session.id },
-    })
-
-    return NextResponse.json({ redirect: session.url })
+    return NextResponse.json({ error: `Unknown plan: ${plan}` }, { status: 400 })
   } catch (error) {
     console.error('Select plan error:', error)
     return NextResponse.json({ error: 'Failed to process plan selection' }, { status: 500 })

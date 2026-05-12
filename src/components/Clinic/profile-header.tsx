@@ -146,6 +146,7 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
         <div className="flex flex-col gap-3 justify-center">
           <RequestConsultationDialog
             pageType="clinic_page"
+            clinicSlug={clinic.slug}
             treatment={clinic.Treatments?.[0]}
             location={clinic.City}
             consultationHref={consultationHref}

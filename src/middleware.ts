@@ -6,9 +6,9 @@ const COOKIE_REFRESH = 'consentz_refresh_token'
 const COOKIE_ROLE = 'consentz_role'
 const COOKIE_PATH = '/directory'
 
-function clearAuthAndRedirect(request: NextRequest, pathname: string) {
+function clearAuthAndRedirect(request: NextRequest, pathname: string, loginPath: string) {
   const loginUrl = request.nextUrl.clone()
-  loginUrl.pathname = '/admin/login'
+  loginUrl.pathname = loginPath
   loginUrl.search = ''
   loginUrl.searchParams.set('next', pathname)
   const res = NextResponse.redirect(loginUrl)
@@ -23,16 +23,21 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/api/admin')
   const isPortalRoute = pathname.startsWith('/portal') || pathname.startsWith('/api/portal') || pathname.startsWith('/verify')
-  const isLoginPage = pathname === '/admin/login' || pathname === '/admin/login/'
+  const isAdminLoginPage = pathname === '/admin/login' || pathname === '/admin/login/'
+  const isPortalLoginPage = pathname === '/portal/login' || pathname === '/portal/login/'
 
-  if (isLoginPage) return NextResponse.next()
+  if (isAdminLoginPage || isPortalLoginPage) return NextResponse.next()
 
   const token = request.cookies.get(COOKIE_TOKEN)?.value
 
   if (!token) {
-    if (isAdminRoute || isPortalRoute) {
+    if (isAdminRoute) {
       if (pathname.startsWith('/api/')) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-      return clearAuthAndRedirect(request, pathname)
+      return clearAuthAndRedirect(request, pathname, '/admin/login')
+    }
+    if (isPortalRoute) {
+      if (pathname.startsWith('/api/')) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return clearAuthAndRedirect(request, pathname, '/portal/login')
     }
     return NextResponse.next()
   }
@@ -60,5 +65,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   // Note: Next.js matcher paths are relative to the app root, not the basePath
-  matcher: ['/admin/:path*', '/api/admin/:path*', '/portal/:path*', '/api/portal/:path*', '/api/portal/upgrade', '/verify/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/portal/:path*', '/api/portal/:path*', '/api/portal/upgrade', '/verify/:path*', '/portal/login'],
 }

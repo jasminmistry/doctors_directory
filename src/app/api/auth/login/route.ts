@@ -5,9 +5,7 @@ import {
   COOKIE_USERNAME,
   COOKIE_ROLE,
   COOKIE_OPTS,
-  consentzFetch,
-  getConsentzAuthUrl,
-  getApplicationId,
+  consentzApi,
   extractTokens,
 } from '@/lib/auth'
 import { prisma } from '@/lib/db'
@@ -20,21 +18,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Username and password are required' }, { status: 400 })
     }
 
-    let authApiUrl: string
+    let res: Response
     try {
-      authApiUrl = getConsentzAuthUrl()
+      res = await consentzApi('/login', {
+        method: 'POST',
+        body: { username, password, confirmLogin: true },
+      })
     } catch {
       return NextResponse.json({ error: 'Auth service not configured' }, { status: 500 })
     }
-
-    const res = await consentzFetch(`${authApiUrl}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-APPLICATION-ID': getApplicationId(),
-      },
-      body: JSON.stringify({ username, password, confirmLogin: true }),
-    })
 
     const data = await res.json()
 

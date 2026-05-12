@@ -173,3 +173,192 @@ ${BASE_URL}/directory/admin
     `.trim(),
   })
 }
+
+export async function sendPplLeadTeaserEmail({
+  to,
+  clinicName,
+  treatment,
+  location,
+  portalUrl,
+}: {
+  to: string
+  clinicName: string
+  treatment?: string
+  location?: string
+  portalUrl: string
+}) {
+  const transport = createTransport()
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject: `New consultation request for ${clinicName} — unlock to view`,
+    text: `
+Hi,
+
+A patient has requested a consultation at ${clinicName} via Consentz Directory.${treatment ? `\nTreatment interest: ${treatment}` : ''}${location ? `\nLocation: ${location}` : ''}
+
+Their contact details are hidden until you unlock this lead (£15).
+
+View lead in your portal:
+${portalUrl}
+
+— The Consentz Team
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  <h2 style="margin-bottom:8px;">New consultation request</h2>
+  <p>A patient has requested a consultation at <strong>${clinicName}</strong> via Consentz Directory.</p>
+  <table style="margin:20px 0;background:#f5f5f5;border-radius:8px;width:100%;border-collapse:collapse;">
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;width:35%;border-bottom:1px solid #e5e5e5;">Patient</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;color:#999;font-style:italic;">Hidden — unlock to reveal</td>
+    </tr>
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;border-bottom:1px solid #e5e5e5;">Contact</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;color:#999;font-style:italic;">Hidden — unlock to reveal</td>
+    </tr>
+    ${treatment ? `<tr><td style="padding:10px 16px;font-weight:600;border-bottom:1px solid #e5e5e5;">Treatment</td><td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${treatment}</td></tr>` : ''}
+    ${location ? `<tr><td style="padding:10px 16px;font-weight:600;">Location</td><td style="padding:10px 16px;">${location}</td></tr>` : ''}
+  </table>
+  <p style="color:#666;font-size:14px;">Unlock this lead for <strong>£15</strong> to see the patient's name and contact details.</p>
+  <a href="${portalUrl}"
+     style="display:inline-block;margin:0 0 24px;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
+    Unlock lead — £15
+  </a>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">— The Consentz Team</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
+export async function sendLeadNotificationEmail({
+  to,
+  clinicName,
+  patientName,
+  contact,
+  treatment,
+  location,
+  portalUrl,
+}: {
+  to: string
+  clinicName: string
+  patientName: string
+  contact: string
+  treatment?: string
+  location?: string
+  portalUrl: string
+}) {
+  const transport = createTransport()
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject: `New consultation request for ${clinicName}`,
+    text: `
+Hi,
+
+A new consultation request has been submitted for ${clinicName} on Consentz Directory.
+
+Patient: ${patientName}
+Contact: ${contact}${treatment ? `\nTreatment: ${treatment}` : ''}${location ? `\nLocation: ${location}` : ''}
+
+View this lead in your portal:
+${portalUrl}
+
+— The Consentz Team
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  <h2 style="margin-bottom:8px;">New consultation request</h2>
+  <p>A patient has requested a consultation at <strong>${clinicName}</strong> via Consentz Directory.</p>
+  <table style="margin:20px 0;background:#f5f5f5;border-radius:8px;width:100%;border-collapse:collapse;">
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;width:35%;border-bottom:1px solid #e5e5e5;">Patient</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${patientName}</td>
+    </tr>
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;border-bottom:1px solid #e5e5e5;">Contact</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${contact}</td>
+    </tr>
+    ${treatment ? `<tr><td style="padding:10px 16px;font-weight:600;border-bottom:1px solid #e5e5e5;">Treatment</td><td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${treatment}</td></tr>` : ''}
+    ${location ? `<tr><td style="padding:10px 16px;font-weight:600;">Location</td><td style="padding:10px 16px;">${location}</td></tr>` : ''}
+  </table>
+  <a href="${portalUrl}"
+     style="display:inline-block;margin:0 0 24px;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
+    View lead in portal
+  </a>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">— The Consentz Team</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
+export async function sendGhostLeadHook({
+  to,
+  clinicName,
+  patientFirstName,
+  location,
+  pendingCount,
+  claimUrl,
+}: {
+  to: string
+  clinicName: string
+  patientFirstName: string
+  location: string
+  pendingCount: number
+  claimUrl: string
+}) {
+  const transport = createTransport()
+  const otherLeads = pendingCount - 1
+  const otherText = otherLeads > 0 ? ` and ${otherLeads} other pending lead${otherLeads === 1 ? '' : 's'}` : ''
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject: `${patientFirstName} just requested a consultation at ${clinicName} via Consentz`,
+    text: `
+Hi,
+
+${patientFirstName} just requested a consultation at your clinic via Consentz. You are trending in ${location}!
+
+Claim your profile to see their details${otherText}.
+
+${claimUrl}
+
+— The Consentz Team
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+    <p style="margin:0;font-size:15px;">
+      <strong>${patientFirstName}</strong> just requested a consultation at your clinic via Consentz.
+      You are trending in <strong>${location}</strong>!
+    </p>
+    ${otherLeads > 0 ? `<p style="margin:8px 0 0;font-size:13px;color:#666;">Plus ${otherLeads} other pending lead${otherLeads === 1 ? '' : 's'} waiting for you.</p>` : ''}
+  </div>
+  <p>Claim your <strong>${clinicName}</strong> profile to see their details and start managing your leads.</p>
+  <a href="${claimUrl}"
+     style="display:inline-block;margin:16px 0 24px;padding:12px 28px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;font-size:15px;">
+    Claim your profile
+  </a>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">You received this because a patient requested a consultation at ${clinicName} on Consentz Directory.</p>
+</body>
+</html>
+    `.trim(),
+  })
+}

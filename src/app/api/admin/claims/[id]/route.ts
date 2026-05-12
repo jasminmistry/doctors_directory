@@ -18,6 +18,7 @@ async function provisionConsentzAccount(
   claim: {
     id: number
     entityType: 'clinic' | 'practitioner'
+    clinicId: number | null
     claimerName: string
     claimerEmail: string
     claimerPhone: string | null
@@ -89,6 +90,13 @@ async function provisionConsentzAccount(
       where: { id: claim.id },
       data: { consentzClinicId, consentzUserId, consentzUsername },
     })
+
+    if (claim.entityType === 'clinic' && claim.clinicId && consentzClinicId) {
+      await prisma.clinic.update({
+        where: { id: claim.clinicId },
+        data: { coreClinicId: consentzClinicId },
+      }).catch(err => console.error('[claim] Failed to copy coreClinicId to clinic:', err))
+    }
   } catch (err) {
     console.error('[claim] Consentz account provisioning failed — claimId=%d:', claim.id, err)
   }
@@ -213,6 +221,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
                 return n(claim.claimerPhone) === n(claim.clinic.gmapsPhone)
               })(),
               verified: claim.domainVerified,
+              // Copy Stripe customer ID if the webhook already stored it on the claim
+              ...(claim.stripeCustomerId ? { stripeCustomerId: claim.stripeCustomerId } : {}),
             },
           }),
         ])

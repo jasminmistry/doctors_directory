@@ -55,6 +55,12 @@ export default function RegisterPractitionerPage() {
             </Link>{' '}
             and use the &quot;Claim this profile&quot; link.
           </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Already have an account?{' '}
+            <Link href="/portal/login" className="text-foreground underline underline-offset-2">
+              Sign in to your portal
+            </Link>
+          </p>
         </div>
 
         <div className="rounded-xl border border-border p-6">

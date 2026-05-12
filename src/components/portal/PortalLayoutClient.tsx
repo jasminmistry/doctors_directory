@@ -3,21 +3,23 @@
 import { ReactNode, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Building2, User, Globe, LogOut, Menu, X } from 'lucide-react'
+import { Building2, User, Globe, LogOut, Menu, X, Inbox, CalendarDays } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { LeadBadge } from '@/components/portal/lead-badge'
 
 interface PortalLayoutClientProps {
   children: ReactNode
   entityType: 'clinic' | 'practitioner' | null
   entityName: string
+  plan?: string | null
 }
 
-export function PortalLayoutClient({ children, entityType, entityName }: PortalLayoutClientProps) {
+export function PortalLayoutClient({ children, entityType, entityName, plan }: PortalLayoutClientProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
 
-  const nav =
+  const baseNav =
     entityType === 'clinic'
       ? [{ href: '/portal/clinic', label: 'My Clinic', icon: Building2 }]
       : entityType === 'practitioner'
@@ -26,7 +28,7 @@ export function PortalLayoutClient({ children, entityType, entityName }: PortalL
 
   async function handleLogout() {
     await fetch('/directory/api/auth/logout', { method: 'POST' })
-    router.push('/admin/login')
+    router.push('/portal/login')
   }
 
   return (
@@ -34,15 +36,23 @@ export function PortalLayoutClient({ children, entityType, entityName }: PortalL
       {/* Mobile topbar */}
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-white/10 bg-gray-950 px-4 py-3 lg:hidden">
         <span className="text-sm font-semibold text-white truncate">{entityName || 'My Portal'}</span>
-        <button
-          type="button"
-          onClick={() => setIsMobileNavOpen((o) => !o)}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/15 text-gray-200"
-          aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={isMobileNavOpen}
-        >
-          {isMobileNavOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
+        <div className="flex items-center gap-2">
+          {entityType === 'clinic' && (
+            <Link href="/portal/clinic/prospects" className="relative inline-flex">
+              <Inbox className="h-5 w-5 text-gray-400" />
+              <LeadBadge mobile />
+            </Link>
+          )}
+          <button
+            type="button"
+            onClick={() => setIsMobileNavOpen((o) => !o)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/15 text-gray-200"
+            aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMobileNavOpen}
+          >
+            {isMobileNavOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
 
       {isMobileNavOpen && (
@@ -79,8 +89,8 @@ export function PortalLayoutClient({ children, entityType, entityName }: PortalL
 
           {/* Nav */}
           <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
-            {nav.map(({ href, label, icon: Icon }) => {
-              const active = pathname.startsWith(href)
+            {baseNav.map(({ href, label, icon: Icon }) => {
+              const active = pathname === href
               return (
                 <Link
                   key={href}
@@ -96,6 +106,42 @@ export function PortalLayoutClient({ children, entityType, entityName }: PortalL
                 </Link>
               )
             })}
+
+            {entityType === 'clinic' && (
+              <>
+                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-600">
+                  Marketing
+                </p>
+                <Link
+                  href="/portal/clinic/prospects"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className={cn(
+                    'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                    pathname.startsWith('/portal/clinic/prospects')
+                      ? 'bg-white/10 text-white'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5',
+                  )}
+                >
+                  <Inbox className="h-4 w-4 shrink-0" />
+                  <span className="flex-1">Prospects</span>
+                  <LeadBadge />
+                </Link>
+
+                <Link
+                  href="/portal/clinic/calendar"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className={cn(
+                    'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                    pathname.startsWith('/portal/clinic/calendar')
+                      ? 'bg-white/10 text-white'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5',
+                  )}
+                >
+                  <CalendarDays className="h-4 w-4 shrink-0" />
+                  Calendar
+                </Link>
+              </>
+            )}
           </nav>
 
           {/* Footer */}

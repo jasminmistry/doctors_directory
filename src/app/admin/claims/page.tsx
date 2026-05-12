@@ -245,7 +245,7 @@ export default function AdminClaimsPage() {
                     <button
                       onClick={(e) => { e.stopPropagation(); handleMarkPaid(row) }}
                       disabled={markingPaid === row.id}
-                      className="px-2 py-1 text-xs rounded-md bg-amber-100 text-amber-800 hover:bg-amber-200 font-medium disabled:opacity-50"
+                      className="px-2 py-1 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-700 font-medium disabled:opacity-50"
                     >
                       {markingPaid === row.id ? 'Updating…' : 'Mark as Paid'}
                     </button>
@@ -256,7 +256,7 @@ export default function AdminClaimsPage() {
                     <button
                       onClick={(e) => { e.stopPropagation(); handleReprovision(row) }}
                       disabled={reprovisioning === row.id}
-                      className="px-2 py-1 text-xs rounded-md bg-purple-100 text-purple-800 hover:bg-purple-200 font-medium disabled:opacity-50"
+                      className="px-2 py-1 text-xs rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium disabled:opacity-50"
                     >
                       {reprovisioning === row.id ? 'Provisioning…' : 'Reprovision'}
                     </button>

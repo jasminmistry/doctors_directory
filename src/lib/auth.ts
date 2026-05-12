@@ -1,48 +1,67 @@
 import crypto from 'crypto'
 
-/**
- * Central fetch wrapper for all Consentz API calls.
- * TLS verification is controlled by NODE_TLS_REJECT_UNAUTHORIZED in the environment
- * (set to '0' in .env.local when Consentz dev uses a self-signed cert).
- */
-export function consentzFetch(url: string, init: RequestInit): Promise<Response> {
-  return fetch(url, init)
-}
-
 export const COOKIE_TOKEN = 'consentz_token'
 export const COOKIE_REFRESH = 'consentz_refresh_token'
-// Stores the Consentz username so portal API routes can resolve the user's entity.
-// Set at login alongside the session token — both cookies are httpOnly and
-// were set together by our server, so presence of both is sufficient proof.
 export const COOKIE_USERNAME = 'consentz_username'
-// 'admin' | 'portal' — set at login to restrict route access in middleware.
 export const COOKIE_ROLE = 'consentz_role'
-
 export const COOKIE_PATH = '/directory'
 
 export const COOKIE_OPTS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict' as const,
+  sameSite: 'lax' as const,
   path: COOKIE_PATH,
 }
-
 
 export function getConsentzAuthUrl(): string {
   const url = process.env.CONSENTZ_AUTH_API_URL
   if (!url) throw new Error('CONSENTZ_AUTH_API_URL is not configured')
-  return url
+  return url.replace(/\/$/, '')
 }
 
 export function getApplicationId(): string {
   return process.env.CONSENTZ_APPLICATION_ID || 'admin'
 }
 
-// Extract tokens from Consentz response — shape: { user: { sessionToken, refreshToken } }
-export function extractTokens(data: Record<string, any>) {
+/**
+ * Central fetch wrapper for every Consentz API call.
+ * Automatically injects Content-Type, X-APPLICATION-ID, and (when provided) X-SESSION-TOKEN.
+ * Callers pass a path relative to CONSENTZ_AUTH_API_URL, e.g. "/login".
+ */
+export async function consentzApi(
+  path: string,
+  options: {
+    method?: string
+    body?: unknown
+    sessionToken?: string
+    extraHeaders?: Record<string, string>
+  } = {},
+): Promise<Response> {
+  const base = getConsentzAuthUrl()
+  const { method = 'GET', body, sessionToken, extraHeaders } = options
+
+  return fetch(`${base}${path}`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-APPLICATION-ID': getApplicationId(),
+      ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),
+      ...extraHeaders,
+    },
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+  })
+}
+
+/** Legacy alias kept for callers that pass a full URL — wraps fetch unchanged. */
+export function consentzFetch(url: string, init: RequestInit): Promise<Response> {
+  return fetch(url, init)
+}
+
+export function extractTokens(data: Record<string, unknown>) {
+  const user = data.user as Record<string, unknown>
   return {
-    token: data.user.sessionToken as string,
-    refreshToken: data.user.refreshToken as string,
+    token: user.sessionToken as string,
+    refreshToken: user.refreshToken as string,
   }
 }
 
@@ -63,18 +82,12 @@ export async function refreshConsentzToken(
   refreshToken: string,
 ): Promise<{ token: string; refreshToken: string } | null> {
   try {
-    const authApiUrl = getConsentzAuthUrl()
-    const res = await consentzFetch(`${authApiUrl}/refresh-token`, {
+    const res = await consentzApi('/refresh-token', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-APPLICATION-ID': getApplicationId(),
-      },
-      body: JSON.stringify({ refreshToken }),
+      body: { refreshToken },
     })
     if (!res.ok) return null
     const data = await res.json()
-    // Refresh endpoint returns tokens at the top level (not nested under `user`)
     const token: string = data.sessionToken ?? data.user?.sessionToken
     const newRefreshToken: string = data.refreshToken ?? data.user?.refreshToken
     if (!token) return null
@@ -91,38 +104,23 @@ export async function registerConsentzClinic(
     phone?: string | null
     contactName?: string
   },
-  authToken?: string,
+  sessionToken?: string,
 ): Promise<{ id: number; name: string; email: string }> {
-  console.log(authToken )
-  const authApiUrl = getConsentzAuthUrl()
-  console.log(JSON.stringify({
-      name: data.name,
-      email: data.email,
-      timezone: 'Europe/London',
-      currency: 'GBP',
-      ...(data.phone ? { phone: data.phone } : {}),
-      ...(data.contactName ? { contactName: data.contactName } : {}),
-    }));
-  console.log(`Registering clinic "${data.name}" with Consentz at ${authApiUrl}/register/clinic...`)
-  const res = await consentzFetch(`${authApiUrl}/register/clinic`, {
+  const res = await consentzApi('/register/clinic', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-APPLICATION-ID': getApplicationId(),
-      ...(authToken ? { 'X-SESSION-TOKEN': `${authToken}` } : {}),
-    },
-    body: JSON.stringify({
+    sessionToken,
+    body: {
       name: data.name,
       email: data.email,
       timezone: 'Europe/London',
       currency: 'GBP',
       ...(data.phone ? { phone: data.phone } : {}),
       ...(data.contactName ? { contactName: data.contactName } : {}),
-    }),
+    },
   })
 
-  const json: Record<string, any> = await res.json().catch(() => ({}))
-  if (res.status === 409 && json.clinic?.id) {
+  const json: Record<string, unknown> = await res.json().catch(() => ({}))
+  if (res.status === 409 && (json.clinic as Record<string, unknown>)?.id) {
     return json.clinic as { id: number; name: string; email: string }
   }
   if (!res.ok) {
@@ -139,21 +137,16 @@ export async function registerConsentzPractitioner(
     email: string
     password: string
   },
-  authToken?: string,
+  sessionToken?: string,
 ): Promise<{ id: number; username: string; email: string }> {
-  const authApiUrl = getConsentzAuthUrl()
-  const res = await consentzFetch(`${authApiUrl}/register/practitioner`, {
+  const res = await consentzApi('/register/practitioner', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-APPLICATION-ID': getApplicationId(),
-      ...(authToken ? { 'X-SESSION-TOKEN': `${authToken}` } : {}),
-    },
-    body: JSON.stringify(data),
+    sessionToken,
+    body: data,
   })
 
-  const json: Record<string, any> = await res.json().catch(() => ({}))
-  if (res.status === 409 && json.practitioner?.id) {
+  const json: Record<string, unknown> = await res.json().catch(() => ({}))
+  if (res.status === 409 && (json.practitioner as Record<string, unknown>)?.id) {
     return json.practitioner as { id: number; username: string; email: string }
   }
   if (!res.ok) {

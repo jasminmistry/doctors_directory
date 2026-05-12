@@ -22,30 +22,54 @@ export async function POST(req: NextRequest) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
-
+    const customerId = session.customer as string | null
     const claimId = session.metadata?.claimId ? parseInt(session.metadata.claimId, 10) : null
     const plan = session.metadata?.plan ?? null
 
-    if (!claimId || !plan) {
-      console.warn('[stripe] checkout.session.completed — no claimId/plan in metadata', session.id)
-      return NextResponse.json({ received: true })
-    }
+    // ── Claim-based checkout (PPL setup or subscription) ──────────────────────
+    if (claimId && plan) {
+      try {
+        await prisma.claimRequest.updateMany({
+          where: { id: claimId, status: 'otp_verified' },
+          data: {
+            status: 'pending_approval',
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: session.mode === 'subscription'
+              ? (session.subscription as string | null)
+              : null,
+          },
+        })
 
-    try {
-      const result = await prisma.claimRequest.updateMany({
-        where: { id: claimId, status: 'otp_verified' },
-        data: {
-          status: 'pending_approval',
-          stripeCustomerId: session.customer as string | null,
-          stripeSubscriptionId: session.subscription as string | null,
-        },
-      })
-
-      if (result.count > 0) {
-        console.info(`[stripe] Claim moved to pending_approval — claimId=${claimId} plan=${plan}`)
+        // PPL setup: also store stripeCustomerId directly on the Clinic
+        if (plan === 'pay_per_lead' && session.mode === 'setup' && customerId) {
+          const claim = await prisma.claimRequest.findUnique({
+            where: { id: claimId },
+            select: { clinicId: true },
+          })
+          if (claim?.clinicId) {
+            await prisma.clinic.update({
+              where: { id: claim.clinicId },
+              data: { stripeCustomerId: customerId },
+            })
+            console.info(`[stripe] Stored stripeCustomerId on clinic ${claim.clinicId} for PPL`)
+          }
+        }
+      } catch (error) {
+        console.error('[stripe] checkout.session.completed (claim) processing error:', error)
       }
-    } catch (error) {
-      console.error('[stripe] checkout.session.completed processing error:', error)
+
+    // ── Add-card setup from the unlock flow (no claimId, just clinicId) ───────
+    } else if (session.mode === 'setup' && customerId && session.metadata?.clinicId) {
+      const clinicId = parseInt(session.metadata.clinicId, 10)
+      if (!isNaN(clinicId)) {
+        await prisma.clinic.update({
+          where: { id: clinicId },
+          data: { stripeCustomerId: customerId },
+        }).catch(err => console.error('[stripe] Failed to store stripeCustomerId from unlock setup:', err))
+        console.info(`[stripe] Stored stripeCustomerId on clinic ${clinicId} from unlock setup flow`)
+      }
+    } else {
+      console.warn('[stripe] checkout.session.completed — unhandled metadata', session.id, session.metadata)
     }
   }
 

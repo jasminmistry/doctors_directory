@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Building2, ExternalLink, MapPin, Star, Share2, ShieldCheck, FileText, Save, Wand2 } from 'lucide-react'
+import { ArrowLeft, Building2, ExternalLink, MapPin, Star, Share2, ShieldCheck, FileText, Save, Wand2, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ImageUpload } from '@/components/admin/ImageUpload'
@@ -47,6 +47,9 @@ type ClinicData = {
   hisUrl: string | null
   isRqia: boolean | null
   rqiaUrl: string | null
+  coverImage: string | null
+  cqcStatus: 'not_applicable' | 'good' | 'requires_improvement' | 'outstanding' | null
+  avgReplyTime: 'within_24hrs' | 'within_48hrs' | 'more_than_48hrs' | null
 }
 
 const EMPTY: ClinicData = {
@@ -56,6 +59,7 @@ const EMPTY: ClinicData = {
   xTwitter: null, instagram: null, youtube: null, linkedin: null,
   isSaveFace: false, isDoctor: false, isJccp: null, jccpUrl: null, isCqc: null, cqcUrl: null,
   isHiw: null, hiwUrl: null, isHis: null, hisUrl: null, isRqia: null, rqiaUrl: null,
+  coverImage: null, cqcStatus: null, avgReplyTime: null,
 }
 
 const REG_FLAGS = [
@@ -283,6 +287,42 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
           <Field label="About" fullWidth>
             <Textarea value={data.aboutSection ?? ''} onChange={(e) => set('aboutSection', e.target.value || null)} placeholder="Brief description of the clinic…" className="min-h-[100px]" />
           </Field>
+        </div>
+      </FormSection>
+
+      {/* Profile Enhancements */}
+      <FormSection title="Profile" icon={Sparkles}>
+        <div className="grid grid-cols-1 gap-5">
+          <Field label="Cover Photo URL" fullWidth>
+            <Input value={data.coverImage ?? ''} onChange={(e) => set('coverImage', e.target.value || null)} placeholder="https://…" />
+          </Field>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <Field label="CQC Status">
+              <select
+                value={data.cqcStatus ?? ''}
+                onChange={(e) => set('cqcStatus', (e.target.value || null) as ClinicData['cqcStatus'])}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">Not set</option>
+                <option value="not_applicable">N/A</option>
+                <option value="good">Good</option>
+                <option value="requires_improvement">Requires Improvement</option>
+                <option value="outstanding">Outstanding</option>
+              </select>
+            </Field>
+            <Field label="Avg Reply Time">
+              <select
+                value={data.avgReplyTime ?? ''}
+                onChange={(e) => set('avgReplyTime', (e.target.value || null) as ClinicData['avgReplyTime'])}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">Not set</option>
+                <option value="within_24hrs">Within 24 hours</option>
+                <option value="within_48hrs">Within 48 hours</option>
+                <option value="more_than_48hrs">More than 48 hours</option>
+              </select>
+            </Field>
+          </div>
         </div>
       </FormSection>
 
