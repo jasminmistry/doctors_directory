@@ -18,6 +18,7 @@ import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links";
 import { UK_POPULAR_TREATMENTS } from "@/lib/b2b-hub/uk-hub-index-data";
 import { getCityScaledHero } from "@/lib/b2b-hub/city-page-hero";
 import type { CityMarketStats } from "@/lib/b2b-hub/city-page-stats";
+import { toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
@@ -77,14 +78,19 @@ function cityWorkflowLinks(citySlug: string, cityTitle: string) {
   ] as const;
 }
 
-const painPoints = (cityTitle: string) =>
-  [
-    `CQC inspections are increasing across ${cityTitle}`,
+function painPoints(cityTitle: string) {
+  const regionLine =
+    cityTitle.trim().toLowerCase() === "manchester"
+      ? "CQC inspections are increasing across Greater Manchester"
+      : `CQC inspections are increasing across ${cityTitle}`;
+  return [
+    regionLine,
     "Paper consent forms don’t meet CQC evidence standards",
     "Patient reactivation is being lost to competitors",
     "Too many disconnected tools for one small clinic",
     "No time to manually chase follow-ups and aftercare",
   ] as const;
+}
 
 export type HubCityScaledPageProps = {
   citySlug: string;
@@ -105,41 +111,60 @@ export function HubCityScaledPage({
   const workflow = cityWorkflowLinks(citySlug, cityTitle);
   const pains = painPoints(cityTitle);
 
-  const faqJsonLd = {
+  const pagePath = `/business/uk/${citySlug}/${pageSlug}/`;
+  const pageUrl = toCurrentSiteUrl(pagePath);
+  const jsonLdGraph = {
     "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
+    "@graph": [
       {
-        "@type": "Question",
-        name: "What is aesthetic clinic management software?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: FAQ_JSONLD_ANSWERS["What is aesthetic clinic management software?"],
+        "@type": "WebPage",
+        "@id": `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: pageTitle,
+        description: hero.intro,
+        isPartOf: {
+          "@type": "WebSite",
+          url: toCurrentSiteUrl("/business/"),
+          name: "Consentz Buyer Hub",
         },
       },
       {
-        "@type": "Question",
-        name: "Does Consentz include digital consent forms?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: FAQ_JSONLD_ANSWERS["Does Consentz include digital consent forms?"],
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Can Consentz help with CQC compliance?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: FAQ_JSONLD_ANSWERS["Can Consentz help with CQC compliance?"],
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Can I migrate from Pabau or Fresha?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: FAQ_JSONLD_ANSWERS["Can I migrate from Pabau or Fresha?"],
-        },
+        "@type": "FAQPage",
+        "@id": `${pageUrl}#faq`,
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "What is aesthetic clinic management software?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: FAQ_JSONLD_ANSWERS["What is aesthetic clinic management software?"],
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Does Consentz include digital consent forms?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: FAQ_JSONLD_ANSWERS["Does Consentz include digital consent forms?"],
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Can Consentz help with CQC compliance?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: FAQ_JSONLD_ANSWERS["Can Consentz help with CQC compliance?"],
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Can I migrate from Pabau or Fresha?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: FAQ_JSONLD_ANSWERS["Can I migrate from Pabau or Fresha?"],
+            },
+          },
+        ],
       },
     ],
   };
@@ -148,7 +173,7 @@ export function HubCityScaledPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
       />
       <section className="w-full border-b border-[#E5E7EB] bg-[#F2EEE6]">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-0">
@@ -219,7 +244,7 @@ export function HubCityScaledPage({
         </div>
       </section>
 
-      <article className="mx-auto max-w-[1280px] px-4 pb-16 pt-10 md:pt-12 [font-family:Inter,system-ui,sans-serif]">
+      <article className="mx-auto max-w-[1280px] px-4 pb-0 pt-10 md:pt-12 [font-family:Inter,system-ui,sans-serif]">
         <section className="mb-12 text-center">
           <h2 className="text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
             The {cityTitle} Aesthetic Market
@@ -246,21 +271,21 @@ export function HubCityScaledPage({
               <p className="text-[36px] font-bold tracking-[-1.08px] text-[#111111]">
                 {stats.topTreatment}
               </p>
-              <p className="text-xl leading-[1.45] text-[#6B6B6B]">Top treatment</p>
+              <p className="text-xl leading-[1.45] text-[#6B6B6B]">Top Treatment</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
               <Droplets className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
               <p className="text-[36px] font-bold tracking-[-1.08px] text-[#111111]">
                 {stats.secondTreatment}
               </p>
-              <p className="text-xl leading-[1.45] text-[#6B6B6B]">2nd treatment</p>
+              <p className="text-xl leading-[1.45] text-[#6B6B6B]">2nd Treatment</p>
             </div>
           </div>
         </section>
 
         <section className="mb-16">
           <h2 className="mb-10 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
-            Why {cityTitle} clinics choose Consentz
+            Why {cityTitle} Clinics Choose Consentz
           </h2>
           <div className="mx-auto grid max-w-[1070px] grid-cols-1 gap-6 md:grid-cols-2">
             {pains.map((text) => (
@@ -274,43 +299,10 @@ export function HubCityScaledPage({
               </div>
             ))}
           </div>
-          <div className="mt-10 flex justify-center">
-            <a
-              href={`${baseUrl}/book-demo`}
-              className="inline-flex h-[52px] w-[208px] items-center justify-center rounded-xl bg-[#1A1A1A] text-xl font-semibold text-white hover:bg-neutral-900 transition-colors"
-            >
-              Book Demo
-            </a>
-          </div>
-        </section>
-
-        <section className="mb-16">
-          <h2 className="mb-6 text-center text-xl font-semibold text-[#111111] md:text-2xl">
-            Featured city links
-          </h2>
-          <div className="mx-auto grid max-w-[1072px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {workflow.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-          <div className="mt-10 flex justify-center">
-            <a
-              href={`${baseUrl}/book-demo`}
-              className="inline-flex h-[52px] w-[208px] items-center justify-center rounded-xl bg-[#1A1A1A] text-xl font-semibold text-white hover:bg-neutral-900 transition-colors"
-            >
-              Book Demo
-            </a>
-          </div>
         </section>
 
         <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 py-6 md:py-10">
-          <div className="mx-auto flex max-w-[920px] flex-col items-center px-4">
+          <div className="mx-auto flex max-w-[1072px] flex-col items-center px-4">
             <Image
               src={CITY_MACBOOK_SRC}
               alt=""
@@ -319,7 +311,18 @@ export function HubCityScaledPage({
               className="h-auto w-full max-w-[781px] object-contain"
               loading="lazy"
             />
-            <div className="mt-6 flex justify-center">
+            <div className="mx-auto mt-10 grid w-full max-w-[1072px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {workflow.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-10 flex justify-center">
               <a
                 href={`${baseUrl}/book-demo`}
                 className="inline-flex h-[52px] w-[208px] items-center justify-center rounded-xl bg-[#1A1A1A] text-xl font-semibold text-white hover:bg-neutral-900 transition-colors"
@@ -345,32 +348,6 @@ export function HubCityScaledPage({
             <p className="font-medium text-neutral-900">Practitioners in {cityTitle}</p>
             <p className="mt-1 text-sm text-neutral-500">Browse local practitioner listings</p>
           </a>
-        </section>
-
-        <section className="mb-16 rounded-xl border border-neutral-200 bg-neutral-50 px-6 py-6">
-          <h2 className="mb-2 text-xl font-semibold text-neutral-900">
-            Related global collections
-          </h2>
-          <div className="mt-3 flex flex-wrap gap-3">
-            <Link
-              href="/business/software/"
-              className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-900"
-            >
-              Software
-            </Link>
-            <Link
-              href="/business/practitioners/"
-              className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-900"
-            >
-              Practitioners
-            </Link>
-            <Link
-              href="/business/consent/"
-              className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-900"
-            >
-              Consent
-            </Link>
-          </div>
         </section>
 
         <section className="mb-16">
@@ -442,7 +419,7 @@ export function HubCityScaledPage({
           <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-6 py-10 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">
             <div className="flex min-w-0 max-w-[629px] flex-col gap-2 lg:max-h-[302px] lg:gap-3 lg:py-1">
               <h2 className="text-[26px] font-semibold leading-[1.1] text-[#1A1A1A] sm:text-[30px] lg:text-[36px] lg:leading-[1.08]">
-                Are you a service provider?
+                Are You A Service Provider?
               </h2>
               <p className="text-base font-medium leading-snug text-[#1A1A1A] sm:text-lg lg:text-[20px] lg:leading-normal">
                 Join Consentz to streamline your clinic operations, enhance patient experience,
@@ -453,7 +430,7 @@ export function HubCityScaledPage({
                   href={`${baseUrl}/book-demo`}
                   className="inline-flex h-[48px] w-[200px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] px-5 text-base font-semibold text-white transition-colors hover:bg-neutral-900 sm:h-[52px] sm:w-[208px] sm:px-6 sm:text-[20px]"
                 >
-                  Learn more
+                  Learn More
                 </a>
               </div>
             </div>

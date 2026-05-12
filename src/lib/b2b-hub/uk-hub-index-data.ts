@@ -1,3 +1,9 @@
+/**
+ * City hub URLs are `/business/uk/{city-slug}/{topic-slug}/` only (no city index route).
+ * This is the default topic we use when someone picks a city from the UK hub.
+ */
+export const UK_CITY_HUB_ENTRY_SLUG = "aesthetic-clinic-software" as const
+
 export const UK_PRIORITY_CITIES = [
   "Aberdeen",
   "Belfast",
