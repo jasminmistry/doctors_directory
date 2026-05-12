@@ -37,7 +37,7 @@ export function HubChrome() {
           <Link
             href="/business/"
             className={cn(
-              "text-sm font-medium px-[13px] py-[5px] rounded-[20px] transition-colors",
+              "text-sm font-medium px-[13px] py-[5px] rounded-[12px] transition-colors",
               hubHomeActive
                 ? "bg-[#111111] text-white"
                 : "text-neutral-900 hover:bg-white/70"
@@ -50,7 +50,7 @@ export function HubChrome() {
               key={seg}
               href={`/business/${seg}/`}
               className={cn(
-                "text-sm font-medium px-[13px] py-[5px] rounded-[20px] transition-colors",
+                "text-sm font-medium px-[13px] py-[5px] rounded-[12px] transition-colors",
                 segmentActive(seg)
                   ? "bg-[#111111] text-white"
                   : "text-neutral-900 hover:bg-white/70"
@@ -62,7 +62,7 @@ export function HubChrome() {
           <Link
             href="/business/uk/"
             className={cn(
-              "text-sm font-medium px-[13px] py-[5px] rounded-[20px] transition-colors",
+              "text-sm font-medium px-[13px] py-[5px] rounded-[12px] transition-colors",
               byCityActive
                 ? "bg-[#111111] text-white"
                 : "text-neutral-900 hover:bg-white/70"
@@ -73,7 +73,7 @@ export function HubChrome() {
           <Link
             href="/business/treatments/"
             className={cn(
-              "text-sm font-medium px-[13px] py-[5px] rounded-[20px] transition-colors",
+              "text-sm font-medium px-[13px] py-[5px] rounded-[12px] transition-colors",
               byTreatmentActive
                 ? "bg-[#111111] text-white"
                 : "text-neutral-900 hover:bg-white/70"

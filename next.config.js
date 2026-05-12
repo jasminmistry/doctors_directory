@@ -58,6 +58,36 @@ const nextConfig = {
         basePath: false,
       },
       {
+        source: '/directory/business-resources.xml',
+        destination: '/directory/business-templates.xml',
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: '/directory/business/resources',
+        destination: '/directory/business/templates',
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: '/directory/business/resources/',
+        destination: '/directory/business/templates/',
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: '/directory/business/resources/:slug',
+        destination: '/directory/business/templates/:slug',
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: '/directory/business/resources/:slug/',
+        destination: '/directory/business/templates/:slug/',
+        permanent: true,
+        basePath: false,
+      },
+      {
         source: '/clinics/middlesbrough/clinic/the-skin-clinic-5',
         destination: '/clinics/middlesbrough/clinic/the-skin-clinic',
         permanent: true,

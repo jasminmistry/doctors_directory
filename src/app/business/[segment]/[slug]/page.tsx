@@ -8,6 +8,8 @@ import {
   type HubSegment,
 } from "@/lib/b2b-hub/registry";
 import { HubDetailTemplate } from "@/components/b2b-hub/hub-detail-template";
+import { HubSoftwareDetailTemplate } from "@/components/b2b-hub/hub-software-detail-template";
+import { HubCqcDetailTemplate } from "@/components/b2b-hub/hub-cqc-detail-template";
 import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
 
 type Props = { params: { segment: string; slug: string } };
@@ -64,5 +66,11 @@ export default function BusinessDetailPage({ params }: Props) {
     notFound();
   }
   const related = relatedEntriesFor(seg, params.slug, 9);
+  if (seg === "software") {
+    return <HubSoftwareDetailTemplate entry={entry} related={related} />;
+  }
+  if (seg === "cqc") {
+    return <HubCqcDetailTemplate entry={entry} related={related} />;
+  }
   return <HubDetailTemplate entry={entry} related={related} />;
 }

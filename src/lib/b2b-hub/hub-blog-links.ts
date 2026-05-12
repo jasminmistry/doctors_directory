@@ -1,16 +1,38 @@
 export type HubBlogEntry = {
   id: string
-  shortTitle: string
   title: string
   href: string
   image: string
   date: string
 }
 
+export const HUB_CQC_GUIDE_LINKS: HubBlogEntry[] = [
+  {
+    id: "cqc-guide-1",
+    title: "How to automate CQC compliance evidence",
+    href: "/business/templates/how-to-automate-cqc-compliance-evidence/",
+    image: "/directory/images/cqc-hub/mid-heatmap.png",
+    date: "Buyer hub",
+  },
+  {
+    id: "cqc-guide-2",
+    title: "CQC inspection readiness software",
+    href: "/business/cqc/cqc-inspection-readiness-software/",
+    image: "/directory/images/cqc-hub/mid-domains.png",
+    date: "Buyer hub",
+  },
+  {
+    id: "cqc-guide-3",
+    title: "CQC evidence software",
+    href: "/business/cqc/cqc-evidence-software/",
+    image: "/directory/images/cqc-hub/mid-caring.png",
+    date: "Buyer hub",
+  },
+]
+
 export const HUB_BLOG_LINKS: HubBlogEntry[] = [
   {
     id: "1",
-    shortTitle: "HIPAA compliant medical spa software",
     title: "10 Best HIPAA Compliant Medical Spa Software in 2025",
     href: "https://www.consentz.com/hipaa-compliant-medical-spa-software",
     image:
@@ -19,7 +41,6 @@ export const HUB_BLOG_LINKS: HubBlogEntry[] = [
   },
   {
     id: "2",
-    shortTitle: "Clinical data management software USA",
     title: "Top 10 Clinical Data Management Software Solutions in the USA",
     href: "https://www.consentz.com/clinical-data-management-software",
     image:
@@ -28,7 +49,6 @@ export const HUB_BLOG_LINKS: HubBlogEntry[] = [
   },
   {
     id: "3",
-    shortTitle: "Aesthetic clinic marketing guide",
     title: "Aesthetic Clinic Marketing: Complete Guide [2025]",
     href: "https://www.consentz.com/aesthetic-clinic-marketing",
     image:

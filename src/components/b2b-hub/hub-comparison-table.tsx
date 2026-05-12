@@ -1,13 +1,15 @@
 import { AlertTriangle, Check, X } from "lucide-react"
 
+type Typical = { type: "not" | "warn" | "basic"; label: string }
+
 type Row = {
   feature: string
   consentz: "native" | string
-  typical: { type: "not" | "warn" | "basic"; label: string }
+  typical: Typical
   why: string
 }
 
-const rows: Row[] = [
+const defaultRows: Row[] = [
   {
     feature: "Consent & clinical records",
     consentz: "native",
@@ -28,70 +30,153 @@ const rows: Row[] = [
   },
 ]
 
-function TypicalCell({ typical }: { typical: Row["typical"] }) {
+const softwareRows: Row[] = [
+  {
+    feature: "Digital consent forms",
+    consentz: "native",
+    typical: { type: "not", label: "Not included" },
+    why: "CQC requires signed evidence",
+  },
+  {
+    feature: "CQC evidence dashboard",
+    consentz: "native",
+    typical: { type: "not", label: "Not included" },
+    why: "Inspection readiness",
+  },
+  {
+    feature: "Patient reactivation",
+    consentz: "native",
+    typical: { type: "warn", label: "Check provider" },
+    why: "Revenue recovery",
+  },
+  {
+    feature: "Automation workflows",
+    consentz: "native",
+    typical: { type: "warn", label: "May vary by plan" },
+    why: "Reduces manual admin",
+  },
+  {
+    feature: "Treatment records",
+    consentz: "native",
+    typical: { type: "basic", label: "Basic only" },
+    why: "Full compliance trail",
+  },
+]
+
+function TypicalCell({
+  typical,
+  large,
+}: {
+  typical: Typical
+  large?: boolean
+}) {
+  const textCls = large ? "text-sm text-[#6B6B6B]" : "text-neutral-700"
+  const iconCls = large ? "h-4 w-4 shrink-0" : "h-4 w-4 shrink-0"
   if (typical.type === "not") {
     return (
-      <span className="inline-flex items-center gap-2 text-neutral-700">
-        <X className="h-4 w-4 shrink-0 text-red-600" strokeWidth={2.5} aria-hidden />
-        <span>{typical.label}</span>
-      </span>
-    )
-  }
-  if (typical.type === "warn") {
-    return (
-      <span className="inline-flex items-center gap-2 text-neutral-700">
-        <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" strokeWidth={2.5} aria-hidden />
+      <span className={`inline-flex items-center gap-2 ${textCls}`}>
+        <X className={`${iconCls} text-[#CB3333]`} strokeWidth={2.5} aria-hidden />
         <span>{typical.label}</span>
       </span>
     )
   }
   return (
-    <span className="inline-flex items-center gap-2 text-neutral-700">
-      <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" strokeWidth={2.5} aria-hidden />
+    <span className={`inline-flex items-center gap-2 ${textCls}`}>
+      <AlertTriangle className={`${iconCls} text-[#CA7F18]`} strokeWidth={2.5} aria-hidden />
       <span>{typical.label}</span>
     </span>
   )
 }
 
-export function HubComparisonTable() {
+function NativePill({ large }: { large?: boolean }) {
+  if (large) {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#DBFCE7] px-2.5 py-1 text-[#1E904C] font-semibold text-sm">
+        <Check className="h-4 w-4 shrink-0" strokeWidth={2.5} aria-hidden />
+        Native
+      </span>
+    )
+  }
   return (
-    <section className="mb-12 overflow-x-auto">
-      <div className="inline-block min-w-full align-middle p-2">
-        <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white max-w-[1120px] mx-auto">
-          <table className="w-full min-w-[640px] text-left text-sm">
+    <span className="inline-flex items-center gap-2 text-emerald-700 font-medium">
+      <Check className="h-4 w-4 shrink-0" strokeWidth={2.5} aria-hidden />
+      Native
+    </span>
+  )
+}
+
+export function HubComparisonTable({
+  variant = "default",
+}: {
+  variant?: "default" | "software"
+}) {
+  const rows = variant === "software" ? softwareRows : defaultRows
+  const large = variant === "software"
+  const theadCls =
+    variant === "software"
+      ? "bg-[#1A1A1A] text-white"
+      : "bg-[#111827] text-white"
+  const thCls = large ? "px-4 py-3 font-semibold text-sm" : "px-4 py-4 font-semibold"
+  const tdBase = large
+    ? "px-4 py-3 border-b border-[#E5E7EB] text-sm"
+    : "px-4 py-4 border-b border-[#E5E7EB]"
+  const featureTd = large
+    ? `${tdBase} font-medium text-[#1A1A1A]`
+    : `${tdBase} font-semibold text-neutral-900`
+  const whyTd = large ? `${tdBase} text-[#1A1A1A] font-normal` : `${tdBase} text-neutral-600`
+
+  const shellCls = large
+    ? "w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 mb-12 overflow-x-auto"
+    : "mb-12 overflow-x-auto"
+  const innerCls = large
+    ? "px-4 sm:px-6 lg:px-12 max-w-[1440px] mx-auto"
+    : "inline-block min-w-full align-middle p-2"
+  const cardCls = large
+    ? "overflow-hidden rounded-xl border border-[#E5E7EB] bg-white w-full"
+    : "overflow-hidden rounded-xl border border-[#E5E7EB] bg-white max-w-[1120px] mx-auto"
+
+  return (
+    <section className={shellCls}>
+      <div className={innerCls}>
+        <div className={cardCls}>
+          <table
+            className={`w-full text-left text-sm table-fixed ${large ? "min-w-[720px]" : "min-w-[640px]"}`}
+          >
+            {large ? (
+              <colgroup>
+                <col style={{ width: "28%" }} />
+                <col style={{ width: "18%" }} />
+                <col style={{ width: "24%" }} />
+                <col style={{ width: "30%" }} />
+              </colgroup>
+            ) : null}
             <thead>
-              <tr className="bg-[#111827] text-white">
-                <th className="px-4 py-4 font-semibold">Feature</th>
-                <th className="px-4 py-4 font-semibold">Consentz</th>
-                <th className="px-4 py-4 font-semibold">Typical booking tool</th>
-                <th className="px-4 py-4 font-semibold">Why it matters</th>
+              <tr className={theadCls}>
+                <th className={thCls}>Feature</th>
+                <th className={thCls}>Consentz</th>
+                <th className={thCls}>
+                  {variant === "software" ? "Typical Booking Tool" : "Typical booking tool"}
+                </th>
+                <th className={thCls}>
+                  {variant === "software" ? "Why It Matters" : "Why it matters"}
+                </th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, i) => (
-                <tr
-                  key={row.feature}
-                  className={i % 2 === 0 ? "bg-white" : "bg-neutral-50"}
-                >
-                  <td className="px-4 py-4 font-semibold text-neutral-900 border-b border-[#E5E7EB]">
-                    {row.feature}
-                  </td>
-                  <td className="px-4 py-4 border-b border-[#E5E7EB]">
+              {rows.map((row) => (
+                <tr key={row.feature} className="bg-white">
+                  <td className={featureTd}>{row.feature}</td>
+                  <td className={tdBase}>
                     {row.consentz === "native" ? (
-                      <span className="inline-flex items-center gap-2 text-emerald-700 font-medium">
-                        <Check className="h-4 w-4 shrink-0" strokeWidth={2.5} aria-hidden />
-                        Native
-                      </span>
+                      <NativePill large={large} />
                     ) : (
                       row.consentz
                     )}
                   </td>
-                  <td className="px-4 py-4 border-b border-[#E5E7EB]">
-                    <TypicalCell typical={row.typical} />
+                  <td className={tdBase}>
+                    <TypicalCell typical={row.typical} large={large} />
                   </td>
-                  <td className="px-4 py-4 text-neutral-600 border-b border-[#E5E7EB]">
-                    {row.why}
-                  </td>
+                  <td className={whyTd}>{row.why}</td>
                 </tr>
               ))}
             </tbody>

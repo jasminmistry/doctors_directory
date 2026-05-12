@@ -45,7 +45,7 @@ export function RelevantBlogGuides() {
             href="https://www.consentz.com/blog/"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-900 transition-colors"
+            className="inline-flex items-center justify-center rounded-[12px] bg-black px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-900 transition-colors"
           >
             View all blogs
           </a>

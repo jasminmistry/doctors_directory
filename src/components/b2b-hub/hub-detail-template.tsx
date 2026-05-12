@@ -127,7 +127,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
               <Link
                 key={`${r.segment}-${r.slug}`}
                 href={`/business/${r.segment}/${r.slug}/`}
-                className="inline-flex rounded-full border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-sm font-medium text-neutral-900 hover:border-neutral-400 hover:bg-white transition-all"
+                className="inline-flex rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-sm font-medium text-neutral-900 hover:border-neutral-400 hover:bg-white transition-all"
               >
                 <span className="truncate max-w-[280px] sm:max-w-[320px]">
                   {toDisplayTitle(r.title)}
@@ -186,13 +186,13 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
         <div className="flex flex-wrap gap-3 justify-center">
           <a
             href={`${baseUrl}/book-demo`}
-            className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-900 transition-colors"
+            className="inline-flex items-center justify-center rounded-[12px] bg-black px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-900 transition-colors"
           >
             Book A Demo
           </a>
           <Link
             href="/business/"
-            className="inline-flex items-center justify-center rounded-full border-2 border-neutral-900 bg-white px-8 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors"
+            className="inline-flex items-center justify-center rounded-[12px] border-2 border-neutral-900 bg-white px-8 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors"
           >
             Back To Buyer Hub
           </Link>

@@ -6,7 +6,11 @@ import {
   HubIndexHeroSearch,
   HUB_INDEX_HERO_TITLE_CLASS_SECTION,
 } from "@/components/b2b-hub/hub-index-hero-search"
-import { UK_POPULAR_TREATMENTS, UK_PRIORITY_CITIES } from "@/lib/b2b-hub/uk-hub-index-data"
+import {
+  UK_CITY_HUB_ENTRY_SLUG,
+  UK_POPULAR_TREATMENTS,
+  UK_PRIORITY_CITIES,
+} from "@/lib/b2b-hub/uk-hub-index-data"
 import { toUrlSlug } from "@/lib/utils"
 
 function matchesQuery(q: string, text: string) {
@@ -29,7 +33,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
       const slug = toUrlSlug(city)
       return {
         key: slug,
-        href: `/business/uk/${slug}/consent-and-booking-software/`,
+        href: `/business/uk/${slug}/${UK_CITY_HUB_ENTRY_SLUG}/`,
         title: city,
         subtitle: `Directory coverage — clinics and practitioners in ${city}.`,
       }
@@ -104,8 +108,8 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
           ) : (
             <p className="text-center text-neutral-500 text-base max-w-2xl mx-auto mb-14 leading-relaxed">
               Search to filter cities and open the local buyer hub. Below you can
-              jump to featured links, the priority list, and the full A–Z
-              directory.
+              jump to featured links, the priority list (each city opens the same hub
+              entry page), and the full A–Z directory.
             </p>
           )}
 
@@ -123,6 +127,12 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
                   >
                     <p className="font-medium text-neutral-900 mb-2">{city}</p>
                     <div className="flex flex-col gap-1.5">
+                      <Link
+                        href={`/business/uk/${slug}/${UK_CITY_HUB_ENTRY_SLUG}/`}
+                        className="text-sm font-medium text-neutral-900 hover:underline"
+                      >
+                        Local buyer hub
+                      </Link>
                       <a
                         href={`/directory/clinics/${slug}/`}
                         className="text-sm text-neutral-700 hover:underline"
@@ -152,14 +162,18 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
               Priority City Batch
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-              {filteredPriority.map((city) => (
-                <div
-                  key={city}
-                  className="rounded-full border border-[#E5E7EB] bg-[#FAFAFA] px-3 py-2 text-sm text-neutral-800 text-center"
-                >
-                  {city}
-                </div>
-              ))}
+              {filteredPriority.map((city) => {
+                const slug = toUrlSlug(city)
+                return (
+                  <Link
+                    key={city}
+                    href={`/business/uk/${slug}/${UK_CITY_HUB_ENTRY_SLUG}/`}
+                    className="rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-3 py-2 text-sm text-neutral-800 text-center transition-colors hover:border-neutral-400 hover:bg-white hover:shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
+                  >
+                    {city}
+                  </Link>
+                )
+              })}
             </div>
           </section>
 
@@ -174,14 +188,18 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
                     {letter}
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {byLetter[letter].map((city) => (
-                      <span
-                        key={city}
-                        className="rounded-md border border-[#E5E7EB] bg-[#FAFAFA] px-2.5 py-1 text-xs text-neutral-700"
-                      >
-                        {city}
-                      </span>
-                    ))}
+                    {byLetter[letter].map((city) => {
+                      const slug = toUrlSlug(city)
+                      return (
+                        <Link
+                          key={city}
+                          href={`/business/uk/${slug}/${UK_CITY_HUB_ENTRY_SLUG}/`}
+                          className="rounded-md border border-[#E5E7EB] bg-[#FAFAFA] px-2.5 py-1 text-xs text-neutral-700 transition-colors hover:border-neutral-400 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-neutral-900"
+                        >
+                          {city}
+                        </Link>
+                      )
+                    })}
                   </div>
                 </div>
               ))}
@@ -213,7 +231,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
             <div className="mt-8 flex justify-center">
               <Link
                 href="/treatments/"
-                className="inline-flex items-center rounded-full bg-black text-white px-8 py-3 text-sm font-semibold hover:bg-neutral-900 transition-colors"
+                className="inline-flex items-center rounded-[12px] bg-black text-white px-8 py-3 text-sm font-semibold hover:bg-neutral-900 transition-colors"
               >
                 See All Treatments
               </Link>
@@ -230,7 +248,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
             </p>
             <Link
               href="/business/"
-              className="inline-flex items-center justify-center rounded-full border-2 border-neutral-900 bg-white px-8 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors"
+              className="inline-flex items-center justify-center rounded-[12px] border-2 border-neutral-900 bg-white px-8 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors"
             >
               Back To Buyer Hub
             </Link>

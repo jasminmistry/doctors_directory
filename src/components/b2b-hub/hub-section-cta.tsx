@@ -55,13 +55,13 @@ export function HubSectionCta({
           <div className="flex flex-wrap gap-3 mt-8 justify-center">
             <CtaButton
               href={primaryHref}
-              className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-900 transition-colors"
+              className="inline-flex items-center justify-center rounded-[12px] bg-black px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-900 transition-colors"
             >
               {primaryLabel}
             </CtaButton>
             <CtaButton
               href={secondaryHref}
-              className="inline-flex items-center justify-center rounded-full border-2 border-neutral-900 bg-white px-8 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors"
+              className="inline-flex items-center justify-center rounded-[12px] border-2 border-neutral-900 bg-white px-8 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors"
             >
               {secondaryLabel}
             </CtaButton>
