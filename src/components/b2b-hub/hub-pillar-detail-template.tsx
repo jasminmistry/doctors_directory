@@ -54,7 +54,7 @@ const SERVICE_PROVIDER_COLLAGE = {
   ] as const,
 } as const;
 
-const testimonials = [
+export const hubBuyerHubTestimonials = [
   {
     quote: "Consentz transformed how we handle patient consent.",
     name: "Sarah Mitchell",
@@ -79,6 +79,8 @@ const testimonials = [
     tag: "Faster patient follow-up",
   },
 ] as const;
+
+const testimonials = hubBuyerHubTestimonials;
 
 const softwarePainPoints = [
   {
@@ -194,11 +196,11 @@ function PhoneFanCollage({
   );
 }
 
-function SoftwareHeroCollage() {
+export function SoftwareHeroCollage() {
   return <PhoneFanCollage layers={SOFTWARE_HERO_LAYERS} />;
 }
 
-function ServiceProviderCollage() {
+export function ServiceProviderCollage() {
   return <PhoneFanCollage layers={SERVICE_PROVIDER_COLLAGE.layers} />;
 }
 
