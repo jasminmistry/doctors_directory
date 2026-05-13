@@ -10,6 +10,7 @@ import {
 import { HubDetailTemplate } from "@/components/b2b-hub/hub-detail-template";
 import { HubSoftwareDetailTemplate } from "@/components/b2b-hub/hub-software-detail-template";
 import { HubCqcDetailTemplate } from "@/components/b2b-hub/hub-cqc-detail-template";
+import { HubAlternativesDetailTemplate } from "@/components/b2b-hub/hub-alternatives-detail-template";
 import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
 
 type Props = { params: { segment: string; slug: string } };
@@ -71,6 +72,9 @@ export default function BusinessDetailPage({ params }: Props) {
   }
   if (seg === "cqc") {
     return <HubCqcDetailTemplate entry={entry} related={related} />;
+  }
+  if (seg === "alternatives") {
+    return <HubAlternativesDetailTemplate entry={entry} />;
   }
   return <HubDetailTemplate entry={entry} related={related} />;
 }
