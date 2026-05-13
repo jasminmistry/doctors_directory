@@ -21,6 +21,9 @@ export function HubLayoutBlogSlot() {
   if (/^\/business\/alternatives\/.+/.test(p)) {
     return null;
   }
+  if (/^\/business\/automation\//.test(p) && !/-automation-alternative\/?$/.test(p)) {
+    return null;
+  }
   // City scaled hub pages include their own blog strip; skip duplicate "Related Articles".
   if (/^\/business\/uk\/[^/]+\/[^/]+/.test(p)) {
     return null;
