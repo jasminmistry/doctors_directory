@@ -12,6 +12,10 @@ import { HubSoftwareDetailTemplate } from "@/components/b2b-hub/hub-software-det
 import { HubCqcDetailTemplate } from "@/components/b2b-hub/hub-cqc-detail-template";
 import { HubAlternativesDetailTemplate } from "@/components/b2b-hub/hub-alternatives-detail-template";
 import {
+  HubMigrateDetailTemplate,
+  isMigrateFromHubSlug,
+} from "@/components/b2b-hub/hub-migrate-detail-template";
+import {
   HubAutomationDetailTemplate,
   isCoreAutomationHubSlug,
 } from "@/components/b2b-hub/hub-automation-detail-template";
@@ -82,6 +86,9 @@ export default function BusinessDetailPage({ params }: Props) {
   }
   if (seg === "automation" && isCoreAutomationHubSlug(entry.slug)) {
     return <HubAutomationDetailTemplate entry={entry} />;
+  }
+  if (seg === "migrate" && isMigrateFromHubSlug(entry.slug)) {
+    return <HubMigrateDetailTemplate entry={entry} />;
   }
   return <HubDetailTemplate entry={entry} related={related} />;
 }

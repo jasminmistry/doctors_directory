@@ -205,16 +205,10 @@ export function HubComparisonTable({
                 <th className={thCls}>
                   {variant === "alternatives"
                     ? (competitorName ?? "Competitor")
-                    : variant === "software"
-                      ? "Typical Booking Tool"
-                      : "Typical booking tool"}
+                    : "Typical Booking Tool"}
                 </th>
                 <th className={thCls}>
-                  {variant === "alternatives"
-                    ? "Notes"
-                    : variant === "software"
-                      ? "Why It Matters"
-                      : "Why it matters"}
+                  {variant === "alternatives" ? "Notes" : "Why It Matters"}
                 </th>
               </tr>
             </thead>
