@@ -30,6 +30,46 @@ const defaultRows: Row[] = [
   },
 ]
 
+/** Pabau-style competitor comparison (Buyer Hub alternatives pages). */
+const alternativesRows: Row[] = [
+  {
+    feature: "Digital consent forms",
+    consentz: "native",
+    typical: { type: "not", label: "Included" },
+    why: "Both include consent forms",
+  },
+  {
+    feature: "CQC evidence dashboard",
+    consentz: "native",
+    typical: { type: "warn", label: "Check provider" },
+    why: "Consentz built for CQC specifically",
+  },
+  {
+    feature: "Patient reactivation automation",
+    consentz: "native",
+    typical: { type: "warn", label: "Check provider" },
+    why: "Automatic reactivation workflows",
+  },
+  {
+    feature: "CQC audit trail",
+    consentz: "native",
+    typical: { type: "warn", label: "May vary by plan" },
+    why: "Automatic evidence capture",
+  },
+  {
+    feature: "Appointment booking",
+    consentz: "native",
+    typical: { type: "warn", label: "Core feature" },
+    why: "Both support booking",
+  },
+  {
+    feature: "UK pricing",
+    consentz: "native",
+    typical: { type: "warn", label: "Check provider" },
+    why: "Pricing subject to change",
+  },
+]
+
 const softwareRows: Row[] = [
   {
     feature: "Digital consent forms",
@@ -107,13 +147,21 @@ function NativePill({ large }: { large?: boolean }) {
 
 export function HubComparisonTable({
   variant = "default",
+  competitorName,
 }: {
-  variant?: "default" | "software"
+  variant?: "default" | "software" | "alternatives"
+  /** Shown as the third column header when variant is "alternatives". */
+  competitorName?: string
 }) {
-  const rows = variant === "software" ? softwareRows : defaultRows
-  const large = variant === "software"
-  const theadCls =
+  const rows =
     variant === "software"
+      ? softwareRows
+      : variant === "alternatives"
+        ? alternativesRows
+        : defaultRows
+  const large = variant === "software" || variant === "alternatives"
+  const theadCls =
+    variant === "software" || variant === "alternatives"
       ? "bg-[#1A1A1A] text-white"
       : "bg-[#111827] text-white"
   const thCls = large ? "px-4 py-3 font-semibold text-sm" : "px-4 py-4 font-semibold"
@@ -155,10 +203,12 @@ export function HubComparisonTable({
                 <th className={thCls}>Feature</th>
                 <th className={thCls}>Consentz</th>
                 <th className={thCls}>
-                  {variant === "software" ? "Typical Booking Tool" : "Typical booking tool"}
+                  {variant === "alternatives"
+                    ? (competitorName ?? "Competitor")
+                    : "Typical Booking Tool"}
                 </th>
                 <th className={thCls}>
-                  {variant === "software" ? "Why It Matters" : "Why it matters"}
+                  {variant === "alternatives" ? "Notes" : "Why It Matters"}
                 </th>
               </tr>
             </thead>
