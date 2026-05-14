@@ -19,6 +19,7 @@ import {
   HubAutomationDetailTemplate,
   isCoreAutomationHubSlug,
 } from "@/components/b2b-hub/hub-automation-detail-template";
+import { HubTemplatesDetailTemplate } from "@/components/b2b-hub/hub-templates-detail-template";
 import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
 
 type Props = { params: { segment: string; slug: string } };
@@ -89,6 +90,9 @@ export default function BusinessDetailPage({ params }: Props) {
   }
   if (seg === "migrate" && isMigrateFromHubSlug(entry.slug)) {
     return <HubMigrateDetailTemplate entry={entry} />;
+  }
+  if (seg === "templates") {
+    return <HubTemplatesDetailTemplate entry={entry} />;
   }
   return <HubDetailTemplate entry={entry} related={related} />;
 }
