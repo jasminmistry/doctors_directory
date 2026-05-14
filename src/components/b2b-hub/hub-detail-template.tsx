@@ -37,7 +37,6 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
   const showCompareRow =
     seg === "software" ||
     seg === "alternatives" ||
-    seg === "compare" ||
     seg === "migrate" ||
     seg === "pricing" ||
     (seg === "cqc" && entry.slug.includes("-cqc-compliance-alternative")) ||
