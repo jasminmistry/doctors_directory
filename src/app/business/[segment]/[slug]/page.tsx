@@ -21,6 +21,7 @@ import {
 } from "@/components/b2b-hub/hub-automation-detail-template";
 import { HubTemplatesDetailTemplate } from "@/components/b2b-hub/hub-templates-detail-template";
 import { HubCompareDetailTemplate } from "@/components/b2b-hub/hub-compare-detail-template";
+import { HubPractitionersDetailTemplate } from "@/components/b2b-hub/hub-practitioners-detail-template";
 import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
 
 type Props = { params: { segment: string; slug: string } };
@@ -97,6 +98,9 @@ export default function BusinessDetailPage({ params }: Props) {
   }
   if (seg === "compare") {
     return <HubCompareDetailTemplate entry={entry} />;
+  }
+  if (seg === "practitioners") {
+    return <HubPractitionersDetailTemplate entry={entry} />;
   }
   return <HubDetailTemplate entry={entry} related={related} />;
 }
