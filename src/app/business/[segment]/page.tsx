@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { HubIndexSearchCards } from "@/components/b2b-hub/hub-index-search-cards";
@@ -77,6 +77,9 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
     notFound();
   }
   const seg = params.segment as HubSegment;
+  if (seg === "templates") {
+    redirect("/business/templates/");
+  }
   const entries = HUB_ENTRIES_BY_SEGMENT[seg] ?? [];
   const relatedCollections = HUB_SEGMENTS.filter((s) => s !== seg);
   const faq = buildFaq(seg);
