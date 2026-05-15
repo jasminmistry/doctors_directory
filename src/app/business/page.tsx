@@ -7,6 +7,7 @@ import {
   segmentLabel,
   type HubSegment,
 } from "@/lib/b2b-hub/registry";
+import { TEMPLATE_ENTRIES } from "@/lib/b2b-hub/templates-registry";
 import { getUniqueDirectoryCityNames } from "@/lib/b2b-hub/directory-cities";
 import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
 
@@ -37,10 +38,13 @@ export default function BusinessHubHomePage() {
   const cityCount = getUniqueDirectoryCityNames().length;
   const entries = [
     ...HUB_SEGMENTS.map((seg: HubSegment) => {
-      const count = HUB_ENTRIES_BY_SEGMENT[seg]?.length ?? 0;
+      const count =
+        seg === "templates"
+          ? TEMPLATE_ENTRIES.length
+          : HUB_ENTRIES_BY_SEGMENT[seg]?.length ?? 0;
       return {
         key: seg,
-        href: `/business/${seg}/`,
+        href: seg === "templates" ? "/business/templates/" : `/business/${seg}/`,
         title: segmentLabel(seg),
         subtitle: `${count} pages — guides and comparisons for ${segmentLabel(seg).toLowerCase()}.`,
       };

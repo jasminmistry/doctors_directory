@@ -1,3 +1,4 @@
+import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -263,8 +264,8 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
 
   return (
     <>
-      <section className="w-full border-b border-[#E5E7EB] bg-[#F2EEE6]">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-0">
+      <section className="w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-0">
           <div className="relative box-border overflow-hidden pt-8 pb-12 lg:grid lg:min-h-[480px] lg:max-h-[720px] lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] lg:items-center lg:gap-x-10 lg:px-12 lg:py-16 xl:px-[120px]">
             <div className="relative z-10 flex min-w-0 flex-col items-start justify-center lg:min-h-0 lg:pr-2">
               <Breadcrumb className="mb-6 flex justify-start">
@@ -320,7 +321,9 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               <PractitionerHeroMockup />
             </div>
           </div>
-        </div>
+        
+        <HubLogoStrip />
+</div>
       </section>
 
       <article className="mx-auto max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
@@ -575,8 +578,8 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-0 mt-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 overflow-hidden bg-[#F2EEE6]">
-          <div className="relative mx-auto max-w-[1440px] px-6 pb-12 pt-8 sm:pb-14 sm:pt-10 lg:h-[472px] lg:overflow-hidden lg:px-20 lg:pb-20 lg:pt-0">
+        <section className="mb-0 mt-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 overflow-hidden bg-[var(--primary-bg-color)]">
+          <div className="relative mx-auto max-w-7xl px-6 pb-12 pt-8 sm:pb-14 sm:pt-10 lg:h-[472px] lg:overflow-hidden lg:px-20 lg:pb-20 lg:pt-0">
             <div className="relative z-10 flex w-full max-w-[720px] flex-col items-center text-center lg:absolute lg:left-1/2 lg:top-[118px] lg:-translate-x-1/2">
               <h2 className="text-[26px] font-bold leading-tight tracking-[-0.03em] text-[#111111] sm:text-[30px] lg:text-[36px] lg:leading-normal lg:tracking-[-1.08px]">
                 Ready To Run Your Clinic Properly?

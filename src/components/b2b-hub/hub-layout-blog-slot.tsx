@@ -27,7 +27,7 @@ export function HubLayoutBlogSlot() {
   if (/^\/business\/migrate\/from-[^/]+\/?$/.test(p)) {
     return null;
   }
-  if (/^\/business\/templates\//.test(p)) {
+  if (/^\/business\/templates(\/|$)/.test(p)) {
     return null;
   }
   if (/^\/business\/compare\//.test(p)) {

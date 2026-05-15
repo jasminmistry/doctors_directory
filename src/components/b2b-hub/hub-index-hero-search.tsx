@@ -1,6 +1,7 @@
 "use client"
 
 import { Search } from "lucide-react"
+import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 
 export const HUB_INDEX_HERO_TITLE_CLASS_DEFAULT =
   "text-[40px] md:text-[44px] leading-tight md:leading-[52px] tracking-[-0.03em] text-[#111827] font-medium mb-4 md:mb-6 [font-family:var(--font-playfair),Georgia,serif]"
@@ -31,17 +32,17 @@ export function HubIndexHeroSearch({
   heroTitleClassName = HUB_INDEX_HERO_TITLE_CLASS_DEFAULT,
 }: Props) {
   return (
-    <section className="bg-[var(--primary-bg-color)] px-4 pt-8 pb-10 md:pt-10 md:pb-14">
-      <div className="max-w-[1280px] mx-auto text-center md:text-left">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
-          <div className="min-w-0">
+    <section className="border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-0 md:pt-10">
+        <div className="grid items-center gap-10 pb-6 md:gap-12 lg:grid-cols-2 lg:pb-8">
+          <div className="min-w-0 text-center md:text-left">
             <h1 className={heroTitleClassName}>{heroTitle}</h1>
             {heroSubtitle ? (
-              <p className="text-neutral-600 text-base md:text-lg max-w-3xl mx-auto md:mx-0 mb-8 md:mb-10 leading-relaxed">
+              <p className="mx-auto mb-8 max-w-3xl text-base leading-relaxed text-neutral-600 md:mx-0 md:mb-10 md:text-lg">
                 {heroSubtitle}
               </p>
             ) : null}
-            <div className="flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto md:mx-0 items-stretch sm:items-center md:justify-start justify-center">
+            <div className="mx-auto flex max-w-3xl flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center md:mx-0 md:justify-start">
               <label className="sr-only" htmlFor={inputId}>
                 Search
               </label>
@@ -57,20 +58,21 @@ export function HubIndexHeroSearch({
               <button
                 type="button"
                 aria-label="Search"
-                className="shrink-0 inline-flex items-center justify-center rounded-lg bg-black text-white w-full sm:w-14 h-[52px] hover:bg-neutral-800 transition-colors"
+                className="inline-flex h-[52px] w-full shrink-0 items-center justify-center rounded-lg bg-black text-white hover:bg-neutral-800 transition-colors sm:w-14"
               >
                 <Search className="h-5 w-5" strokeWidth={2} />
               </button>
             </div>
           </div>
-          <figure className="flex justify-center lg:justify-end order-first lg:order-none">
+          <figure className="order-first flex justify-center lg:order-none lg:justify-end">
             <img
               src={HUB_HERO_IMAGE_SRC}
               alt=""
-              className="max-w-[220px] sm:max-w-xs w-full h-auto object-contain"
+              className="max-w-[220px] w-full h-auto object-contain sm:max-w-xs"
             />
           </figure>
         </div>
+        <HubLogoStrip />
       </div>
     </section>
   )

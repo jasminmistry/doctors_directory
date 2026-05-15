@@ -1,13 +1,8 @@
 import Link from "next/link";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { HubContentStart } from "@/components/b2b-hub/hub-content-start";
+import { HubDetailHero } from "@/components/b2b-hub/hub-detail-hero";
+import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta";
 import {
   Card,
   CardDescription,
@@ -15,14 +10,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry";
-import { segmentLabel } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
-
-const HUB_HERO_IMAGE_SRC =
-  "/directory/images/Consentz Aesthetic Clinic Directory.webp";
 
 type HubDetailTemplateProps = {
   entry: HubEntry;
@@ -45,53 +36,9 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
 
   return (
     <>
-      <section className="w-full bg-[var(--primary-bg-color)] border-b border-[#E5E7EB]">
-        <div className="max-w-[1280px] mx-auto px-4 pt-8 md:pt-12 pb-10 md:pb-14">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-start lg:items-center text-center md:text-left">
-            <div className="min-w-0">
-              <Breadcrumb className="mb-6 flex justify-center md:justify-start">
-                <BreadcrumbList>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href={`/business/${seg}/`}>
-                      {segmentLabel(seg)}
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage className="line-clamp-1">
-                      {toDisplayTitle(entry.title)}
-                    </BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-              <header>
-                <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500 mb-2">
-                  {segmentLabel(seg)}
-                </p>
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 tracking-tight mb-4 [font-family:var(--font-playfair),Georgia,serif]">
-                  {toDisplayTitle(entry.title)}
-                </h1>
-                <p className="text-base md:text-lg text-neutral-600 leading-relaxed max-w-3xl mx-auto md:mx-0">
-                  {intro}
-                </p>
-              </header>
-            </div>
-            <figure className="flex justify-center lg:justify-end order-first lg:order-none pt-2 lg:pt-0">
-              <img
-                src={HUB_HERO_IMAGE_SRC}
-                alt=""
-                className="max-w-[220px] sm:max-w-xs w-full h-auto object-contain"
-              />
-            </figure>
-          </div>
-        </div>
-      </section>
+      <HubDetailHero seg={seg} title={entry.title} intro={intro} />
 
-      <article className="max-w-[1280px] mx-auto px-4 pt-10 md:pt-12 pb-16">
+      <HubContentStart className="pb-16">
         <section className="grid md:grid-cols-2 gap-6 mb-12">
           <Card className="border-[#E5E7EB] bg-[#FAFAFA] shadow-sm">
             <CardHeader>
@@ -196,7 +143,8 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
             Back To Buyer Hub
           </Link>
         </div>
-      </article>
+      </HubContentStart>
+      <HubSectionCta />
     </>
   );
 }

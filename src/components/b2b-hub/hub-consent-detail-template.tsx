@@ -2,17 +2,11 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   ServiceProviderCollage,
-  SoftwareHeroCollage,
   hubBuyerHubTestimonials,
 } from "@/components/b2b-hub/hub-pillar-detail-template"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+import { HubContentStart } from "@/components/b2b-hub/hub-content-start"
+import { HubDetailHero } from "@/components/b2b-hub/hub-detail-hero"
+import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
 import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links"
 import {
   CONSENT_FLOW_STEPS,
@@ -20,13 +14,10 @@ import {
 } from "@/lib/b2b-hub/consent-hub-content"
 import { consentHubNavLinks } from "@/lib/b2b-hub/consent-hub-nav-links"
 import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry"
-import { segmentLabel } from "@/lib/b2b-hub/registry"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com"
-
-const CTA_CLINIC_PHONE_SRC = "/directory/images/cta-clinic-phone.png"
 
 const consentFaqs = [
   {
@@ -83,67 +74,32 @@ export function HubConsentDetailTemplate({ entry }: Props) {
 
   return (
     <>
-      <section className="w-full border-b border-[#E5E7EB] bg-[#F2EEE6]">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-0">
-          <div className="relative box-border overflow-hidden pt-8 pb-12 lg:grid lg:h-[562px] lg:min-h-[562px] lg:max-h-[562px] lg:grid-cols-[minmax(0,700px)_minmax(0,1fr)] lg:items-stretch lg:gap-x-6 lg:px-0 lg:py-0">
-            <div className="relative z-10 flex min-w-0 flex-col items-start justify-center lg:min-h-0 lg:pr-2">
-              <Breadcrumb className="mb-6 flex justify-start">
-                <BreadcrumbList>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href={`/business/${seg}/`}>
-                      {segmentLabel(seg)}
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage className="line-clamp-1">
-                      {toDisplayTitle(entry.title)}
-                    </BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-              <header>
-                <h1 className="mb-5 max-w-[700px] text-[clamp(1.75rem,5vw,3.25rem)] font-medium leading-[1.08] tracking-[0.468px] text-[#1A1A1A] [font-family:var(--font-playfair),Georgia,serif] lg:text-[52px]">
-                  {toDisplayTitle(entry.title)}
-                </h1>
-                <p className="mb-9 max-w-[700px] text-lg font-medium leading-[1.65] text-[#1A1A1A] [font-family:Inter,system-ui,sans-serif] lg:text-2xl">
-                  {intro}
-                </p>
-                <div className="flex max-sm:flex-col max-sm:items-stretch gap-3 sm:flex-row sm:flex-nowrap sm:items-center sm:gap-2.5 sm:overflow-x-auto">
-                  <a
-                    href={`${baseUrl}/book-demo`}
-                    className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[7px] bg-[#1A1A1A] px-6 py-[13px] text-[20px] font-semibold text-white hover:bg-neutral-900 transition-colors"
-                  >
-                    Book A Demo
-                  </a>
-                  <a
-                    href={`${baseUrl}/medical-templates/`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex shrink-0 items-center justify-center rounded-[7px] border-[1.5px] border-[#E2DDD7] bg-white px-6 py-[13px] text-[20px] font-medium text-[#111111] hover:bg-neutral-50 transition-colors whitespace-nowrap"
-                  >
-                    Create Consent Workflow
-                  </a>
-                </div>
-              </header>
-            </div>
-            <div
-              className="relative z-0 mt-8 flex h-[260px] w-full min-w-0 justify-center overflow-hidden sm:h-[300px] lg:mt-0 lg:h-full lg:justify-end"
-              aria-hidden
+      <HubDetailHero
+        seg={seg}
+        title={entry.title}
+        intro={intro}
+        usePhoneCollage
+        actions={
+          <>
+            <a
+              href={`${baseUrl}/book-demo`}
+              className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[7px] bg-[#1A1A1A] px-6 text-[20px] font-semibold text-white hover:bg-neutral-900 transition-colors"
             >
-              <div className="relative h-full w-full min-h-[220px] max-w-[720px] lg:max-w-none">
-                <SoftwareHeroCollage />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+              Book A Demo
+            </a>
+            <a
+              href={`${baseUrl}/medical-templates/`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex shrink-0 items-center justify-center rounded-[7px] border-[1.5px] border-[#E2DDD7] bg-white px-6 py-[13px] text-[20px] font-medium text-[#111111] hover:bg-neutral-50 transition-colors whitespace-nowrap"
+            >
+              Create Consent Workflow
+            </a>
+          </>
+        }
+      />
 
-      <article className="mx-auto max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
+      <HubContentStart>
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
             <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
@@ -411,53 +367,8 @@ export function HubConsentDetailTemplate({ entry }: Props) {
             </a>
           </div>
         </section>
-
-        <section className="mb-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 overflow-hidden bg-[#F2EEE6]">
-          <div className="relative mx-auto max-w-[1440px] px-6 pb-12 pt-8 sm:pb-14 sm:pt-10 lg:h-[472px] lg:overflow-hidden lg:px-20 lg:pb-20 lg:pt-0">
-            <div className="relative z-10 flex w-full max-w-[720px] flex-col items-center text-center lg:absolute lg:left-1/2 lg:top-[118px] lg:-translate-x-1/2">
-              <h2 className="text-[26px] font-bold leading-tight tracking-[-0.03em] text-[#111111] sm:text-[30px] lg:text-[36px] lg:leading-normal lg:tracking-[-1.08px]">
-                Ready To Run Your Clinic Properly?
-              </h2>
-              <p className="mt-3 max-w-xl text-base leading-[1.6] text-[#1A1A1A] sm:text-lg lg:mt-[14px] lg:text-[20px]">
-                Join aesthetic clinics across the UK using Consentz
-              </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] text-[18px] font-semibold text-white transition-colors hover:bg-neutral-900 sm:text-[20px]"
-                >
-                  Book A Demo
-                </a>
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className="inline-flex items-center justify-center rounded-[12px] border-[1.5px] border-[#E2DDD7] bg-white px-6 py-[13px] text-sm font-medium text-[#111111] transition-colors hover:bg-neutral-50"
-                >
-                  Get CQC Readiness Audit
-                </a>
-              </div>
-            </div>
-            <div
-              className="relative z-0 mx-auto mt-8 h-[200px] w-[174px] overflow-hidden sm:h-[220px] sm:w-[191px] lg:absolute lg:mx-0 lg:mt-0 lg:h-[469px] lg:w-[407px] lg:max-w-none lg:right-20 lg:top-[41px]"
-              aria-hidden
-            >
-              <Image
-                src={CTA_CLINIC_PHONE_SRC}
-                alt=""
-                width={586}
-                height={731}
-                className="pointer-events-none absolute max-w-none select-none"
-                sizes="(max-width: 1024px) 191px, 407px"
-                style={{
-                  height: "156.09%",
-                  width: "144.06%",
-                  left: "-15.65%",
-                  top: "-7.82%",
-                }}
-              />
-            </div>
-          </div>
-        </section>
-      </article>
+      </HubContentStart>
+      <HubSectionCta />
     </>
   )
 }

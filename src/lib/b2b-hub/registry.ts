@@ -508,51 +508,6 @@ const automationEntries = withSegment("automation", [
   },
 ])
 
-const templatesEntries = withSegment("templates", [
-  {
-    slug: "how-to-automate-an-aesthetic-clinic",
-    title: "How to automate an aesthetic clinic",
-    summary:
-      "A practical framing for automation priorities and pitfalls.",
-  },
-  {
-    slug: "how-to-automate-patient-reactivation",
-    title: "How to automate patient reactivation",
-    summary:
-      "Reactivation that respects consent and clinical boundaries.",
-  },
-  {
-    slug: "how-to-automate-consent-form-follow-up",
-    title: "How to automate consent form follow-up",
-    summary:
-      "Close the gap between consent capture and treatment readiness.",
-  },
-  {
-    slug: "how-to-automate-no-show-recovery",
-    title: "How to automate no-show recovery",
-    summary:
-      "Recover revenue without aggressive messaging that damages trust.",
-  },
-  {
-    slug: "how-to-automate-cqc-compliance-evidence",
-    title: "How to automate CQC compliance evidence",
-    summary:
-      "Make evidence collection continuous instead of reactive.",
-  },
-  {
-    slug: "how-to-automate-treatment-launches",
-    title: "How to automate treatment launches",
-    summary:
-      "Launch new services with consistent intake and consent.",
-  },
-  {
-    slug: "how-to-automate-aftercare-messages",
-    title: "How to automate aftercare messages",
-    summary:
-      "Deliver aftercare that matches treatment context automatically.",
-  },
-])
-
 const practitionersEntries = withSegment("practitioners", [
   {
     slug: "aesthetic-practitioner-software",
@@ -718,7 +673,6 @@ export const HUB_ENTRIES: HubEntry[] = [
   ...competitorPdfAdEf.consentCompetitor,
   ...automationEntries,
   ...competitorPdfAdEf.automationCompetitor,
-  ...templatesEntries,
   ...practitionersEntries,
 ]
 
