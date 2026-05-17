@@ -4,7 +4,9 @@ import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start";
 import { HubDetailHero } from "@/components/b2b-hub/hub-detail-hero";
+import { HubMainDifferenceSection } from "@/components/b2b-hub/hub-main-difference-section";
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta";
+import { hubEntryCompetitorLabel } from "@/lib/b2b-hub/hub-competitor-from-entry";
 import {
   Card,
   CardDescription,
@@ -35,6 +37,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
     (seg === "cqc" && entry.slug.includes("-cqc-compliance-alternative")) ||
     (seg === "consent" && entry.slug.includes("-consent-form-alternative")) ||
     (seg === "automation" && entry.slug.includes("-automation-alternative"));
+  const competitorLabel = hubEntryCompetitorLabel(entry);
 
   return (
     <>
@@ -63,6 +66,10 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
             </CardHeader>
           </Card>
         </section>
+
+        {competitorLabel ? (
+          <HubMainDifferenceSection competitorLabel={competitorLabel} />
+        ) : null}
 
         {showCompareRow ? <HubComparisonTable /> : null}
 

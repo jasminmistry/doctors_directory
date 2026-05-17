@@ -7,6 +7,8 @@ import {
   HUB_CTA_LINK_CLASS,
 } from "@/components/b2b-hub/hub-cta-buttons"
 import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
+import { HubMainDifferenceSection } from "@/components/b2b-hub/hub-main-difference-section"
+import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import Image from "next/image";
 import Link from "next/link";
@@ -37,8 +39,6 @@ import { toDisplayTitle } from "@/lib/b2b-hub/text";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
-
-const CTA_CLINIC_PHONE_SRC = "/directory/images/cta-clinic-phone.png";
 
 const migrationProgressRows = [
   "Patient profiles",
@@ -237,6 +237,8 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
             </div>
           </div>
         </section>
+
+        <HubMainDifferenceSection competitorLabel={platform} />
 
         <HubComparisonTable />
 
@@ -532,52 +534,8 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 overflow-hidden bg-[var(--primary-bg-color)]">
-          <div className="relative mx-auto max-w-7xl px-6 pb-12 pt-8 sm:pb-14 sm:pt-10 lg:h-[472px] lg:overflow-hidden lg:px-20 lg:pb-20 lg:pt-0">
-            <div className="relative z-10 flex w-full max-w-[720px] flex-col items-center text-center lg:absolute lg:left-1/2 lg:top-[118px] lg:-translate-x-1/2">
-              <h2 className="text-[26px] font-bold leading-tight tracking-[-0.03em] text-[#111111] sm:text-[30px] lg:text-[36px] lg:leading-normal lg:tracking-[-1.08px]">
-                Ready To Run Your Clinic Properly?
-              </h2>
-              <p className="mt-3 max-w-xl text-base leading-[1.6] text-[#1A1A1A] sm:text-lg lg:mt-[14px] lg:text-[20px]">
-                Join aesthetic clinics across the UK using Consentz
-              </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className={HUB_CTA_PRIMARY_CLASS}
-                >
-                  Book a Demo
-                </a>
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className="inline-flex items-center justify-center rounded-[12px] border-[1.5px] border-[#E2DDD7] bg-white px-6 py-[13px] text-sm font-medium text-[#111111] transition-colors hover:bg-neutral-50"
-                >
-                  Get CQC Readiness Audit
-                </a>
-              </div>
-            </div>
-            <div
-              className="relative z-0 mx-auto mt-8 h-[200px] w-[174px] overflow-hidden sm:h-[220px] sm:w-[191px] lg:absolute lg:mx-0 lg:mt-0 lg:h-[469px] lg:w-[407px] lg:max-w-none lg:right-20 lg:top-[41px]"
-              aria-hidden
-            >
-              <Image
-                src={CTA_CLINIC_PHONE_SRC}
-                alt=""
-                width={586}
-                height={731}
-                className="pointer-events-none absolute max-w-none select-none"
-                sizes="(max-width: 1024px) 191px, 407px"
-                style={{
-                  height: "156.09%",
-                  width: "144.06%",
-                  left: "-15.65%",
-                  top: "-7.82%",
-                }}
-              />
-            </div>
-          </div>
-        </section>
       </article>
+      <HubSectionCta className="mb-0" withBorder={false} />
     </>
   );
 }

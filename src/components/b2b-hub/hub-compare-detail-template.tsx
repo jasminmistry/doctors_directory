@@ -7,6 +7,8 @@ import {
   HUB_CTA_LINK_CLASS,
 } from "@/components/b2b-hub/hub-cta-buttons"
 import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
+import { HubMainDifferenceSection } from "@/components/b2b-hub/hub-main-difference-section"
+import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import Image from "next/image";
 import Link from "next/link";
@@ -33,15 +35,6 @@ import { toDisplayTitle } from "@/lib/b2b-hub/text";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
-
-const CTA_CLINIC_PHONE_SRC = "/directory/images/cta-clinic-phone.png";
-
-const consentzMainDiff = [
-  "Built for aesthetic clinics and clinical workflows",
-  "Combines patient records, consent, marketing, and compliance in one platform",
-  "Helps clinics reduce disconnected tools and manual admin",
-  "Designed for independent clinic growth and operational control",
-] as const;
 
 const readyToSwitchSteps = [
   {
@@ -83,15 +76,6 @@ function comparePricingFaqs(competitorLabel: string) {
       q: "Do Subscription Changes Affect Historical Consent And Audit Records?",
       a: "No. Historical consent artefacts, sends, and audit-relevant records remain available. Plan changes only affect what you can create or edit going forward.",
     },
-  ] as const;
-}
-
-function competitorMainDiff(competitorLabel: string) {
-  return [
-    `Booking and scheduling are often the headline strength of platforms like ${competitorLabel}`,
-    "Consent and regulated evidence can depend on add-ons, exports, or separate tools",
-    "Marketing and patient comms may sit outside the governed clinical record",
-    "Teams may still bridge spreadsheets, PDFs, and manual processes between visits",
   ] as const;
 }
 
@@ -267,7 +251,6 @@ export function HubCompareDetailTemplate({ entry }: Props) {
     `See how Consentz stacks up against ${competitorLabel} for records, consent, marketing, and compliance in one connected platform.`;
   const navLinks = compKey ? alternativesHubNavLinks(compKey) : alternativesHubNavLinks("pabau");
   const faqs = comparePricingFaqs(competitorLabel);
-  const altDiff = competitorMainDiff(competitorLabel);
 
   return (
     <>
@@ -330,43 +313,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
       </section>
 
       <article className="mx-auto max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
-        <section className="mb-16 bg-white py-12 md:py-16 lg:py-20">
-          <h2 className="mb-10 text-center text-3xl font-semibold text-[#2e2e2e] md:mb-12 md:text-4xl md:leading-[44px]">
-            What&apos;s The Main Difference?
-          </h2>
-          <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
-            <div className="flex flex-col gap-6 rounded-xl border border-[#e3dfd9] bg-[#f8f8f8] p-8">
-              <div className="flex items-center gap-2.5">
-                <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#1a877a]" aria-hidden />
-                <h3 className="text-xl font-semibold text-[#2e2e2e]">Consentz</h3>
-              </div>
-              <div className="h-px bg-[#e6e0d8]" />
-              <ul className="flex flex-col gap-3.5">
-                {consentzMainDiff.map((line) => (
-                  <li key={line} className="flex gap-3 text-[15px] leading-[22px] text-[#2e2e2e]">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#2e2e2e]" aria-hidden />
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="flex flex-col gap-6 rounded-xl border border-[#e3dfd9] bg-[#f8f8f8] p-8">
-              <div className="flex items-center gap-2.5">
-                <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#928b82]" aria-hidden />
-                <h3 className="text-xl font-semibold text-[#2e2e2e]">{competitorLabel}</h3>
-              </div>
-              <div className="h-px bg-[#e6e0d8]" />
-              <ul className="flex flex-col gap-3.5">
-                {altDiff.map((line) => (
-                  <li key={line} className="flex gap-3 text-[15px] leading-[22px] text-[#2e2e2e]">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#928b82]" aria-hidden />
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
+        <HubMainDifferenceSection competitorLabel={competitorLabel} />
 
         <section className="mb-16">
           <div className="mx-auto grid max-w-[1072px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -584,52 +531,8 @@ export function HubCompareDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 overflow-hidden bg-[var(--primary-bg-color)]">
-          <div className="relative mx-auto max-w-7xl px-6 pb-12 pt-8 sm:pb-14 sm:pt-10 lg:h-[472px] lg:overflow-hidden lg:px-20 lg:pb-20 lg:pt-0">
-            <div className="relative z-10 flex w-full max-w-[720px] flex-col items-center text-center lg:absolute lg:left-1/2 lg:top-[118px] lg:-translate-x-1/2">
-              <h2 className="text-[26px] font-bold leading-tight tracking-[-0.03em] text-[#111111] sm:text-[30px] lg:text-[36px] lg:leading-normal lg:tracking-[-1.08px]">
-                Ready To Run Your Clinic Properly?
-              </h2>
-              <p className="mt-3 max-w-xl text-base leading-[1.6] text-[#1A1A1A] sm:text-lg lg:mt-[14px] lg:text-[20px]">
-                Join aesthetic clinics across the UK using Consentz
-              </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className={HUB_CTA_PRIMARY_CLASS}
-                >
-                  Book A Demo
-                </a>
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className="inline-flex items-center justify-center rounded-[12px] border-[1.5px] border-[#E2DDD7] bg-white px-6 py-[13px] text-sm font-medium text-[#111111] transition-colors hover:bg-neutral-50"
-                >
-                  Get CQC Readiness Audit
-                </a>
-              </div>
-            </div>
-            <div
-              className="relative z-0 mx-auto mt-8 h-[200px] w-[174px] overflow-hidden sm:h-[220px] sm:w-[191px] lg:absolute lg:mx-0 lg:mt-0 lg:h-[469px] lg:w-[407px] lg:max-w-none lg:right-20 lg:top-[41px]"
-              aria-hidden
-            >
-              <Image
-                src={CTA_CLINIC_PHONE_SRC}
-                alt=""
-                width={586}
-                height={731}
-                className="pointer-events-none absolute max-w-none select-none"
-                sizes="(max-width: 1024px) 191px, 407px"
-                style={{
-                  height: "156.09%",
-                  width: "144.06%",
-                  left: "-15.65%",
-                  top: "-7.82%",
-                }}
-              />
-            </div>
-          </div>
-        </section>
       </article>
+      <HubSectionCta className="mb-0" withBorder={false} />
     </>
   );
 }
