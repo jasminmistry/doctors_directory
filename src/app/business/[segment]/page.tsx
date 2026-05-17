@@ -6,6 +6,8 @@ import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta";
 import {
   HUB_ENTRIES_BY_SEGMENT,
   HUB_SEGMENTS,
+  hubSegmentCollectionHref,
+  hubSegmentPageCount,
   isHubSegment,
   segmentLabel,
   type HubSegment,
@@ -107,12 +109,12 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
             {relatedCollections.map((s) => (
               <Link
                 key={s}
-                href={`/business/${s}/`}
+                href={hubSegmentCollectionHref(s)}
                 className="inline-flex rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-sm font-medium text-neutral-900 hover:border-neutral-400 hover:bg-white transition-all"
               >
                 {segmentLabel(s)}
                 <span className="text-neutral-500 font-normal ml-1.5">
-                  ({HUB_ENTRIES_BY_SEGMENT[s]?.length ?? 0})
+                  ({hubSegmentPageCount(s)})
                 </span>
               </Link>
             ))}

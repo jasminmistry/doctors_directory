@@ -1,21 +1,16 @@
-"use client"
-
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
 import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell"
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HubTemplateDownloadForm } from "@/components/b2b-hub/hub-template-download-form"
 import {
   HUB_HERO_PHONE_SRC,
   HUB_HERO_PHONE_IMAGE_CLASS,
   HUB_HERO_INTRO_CLASS,
   HUB_HERO_TITLE_CLASS,
 } from "@/components/b2b-hub/hub-hero-typography"
-import {
-  ServiceProviderCollage,
-  hubBuyerHubTestimonials,
-} from "@/components/b2b-hub/hub-pillar-detail-template"
+import { ServiceProviderCollage } from "@/components/b2b-hub/hub-pillar-detail-template"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -43,9 +38,6 @@ type Props = {
 export function HubTemplateDownloadPage({ entry }: Props) {
   const content = getTemplatePageContent(entry)
   const related = relatedTemplateEntries(entry.category, entry.slug, 9)
-  const [email, setEmail] = useState("")
-  const [clinic, setClinic] = useState("")
-  const [submitted, setSubmitted] = useState(false)
 
   const breadcrumb = (
     <Breadcrumb>
@@ -96,7 +88,14 @@ export function HubTemplateDownloadPage({ entry }: Props) {
         }
         visual={
           <figure className="flex justify-center lg:justify-end">
-            <img src={HUB_HERO_PHONE_SRC} alt="" className={HUB_HERO_PHONE_IMAGE_CLASS} />
+            <Image
+              src={HUB_HERO_PHONE_SRC}
+              alt=""
+              width={320}
+              height={640}
+              priority
+              className={HUB_HERO_PHONE_IMAGE_CLASS}
+            />
           </figure>
         }
       />
@@ -109,46 +108,7 @@ export function HubTemplateDownloadPage({ entry }: Props) {
               Enter your email to receive the PDF. We will also send practical tips for digitising this workflow in
               Consentz.
             </p>
-            {submitted ? (
-              <p className="rounded-xl bg-[#eef7f2] px-4 py-3 text-sm font-medium text-[#1a6e45]">
-                Thank you — check your inbox for the download link.
-              </p>
-            ) : (
-              <form
-                className="flex flex-col gap-4"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  setSubmitted(true)
-                }}
-              >
-                <label className="flex flex-col gap-1.5 text-sm font-medium text-[#111111]">
-                  Work email
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
-                  />
-                </label>
-                <label className="flex flex-col gap-1.5 text-sm font-medium text-[#111111]">
-                  Clinic name
-                  <input
-                    type="text"
-                    required
-                    value={clinic}
-                    onChange={(e) => setClinic(e.target.value)}
-                    className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
-                  />
-                </label>
-                <button
-                  type="submit"
-                  className="inline-flex h-[48px] items-center justify-center rounded-[12px] bg-[#1A1A1A] text-base font-semibold text-white transition-colors hover:bg-neutral-900"
-                >
-                  Send Me The Template
-                </button>
-              </form>
-            )}
+            <HubTemplateDownloadForm />
           </div>
           <div className="flex flex-col gap-4">
             <div className="overflow-hidden rounded-2xl border border-[#E2DDD7] bg-white shadow-sm">

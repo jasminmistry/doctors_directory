@@ -1,4 +1,5 @@
 import { COMPETITOR_ORDER, COMPETITOR_LABEL } from "./competitors"
+import { TEMPLATE_ENTRIES } from "./templates-registry"
 
 export type HubSegment =
   | "software"
@@ -738,4 +739,14 @@ export function relatedEntriesFor(
   const sameFirst = pool.filter((e) => e.segment === segment)
   const rest = pool.filter((e) => e.segment !== segment)
   return [...sameFirst, ...rest].slice(0, count)
+}
+
+export function hubSegmentCollectionHref(segment: HubSegment): string {
+  if (segment === "templates") return "/business/templates/"
+  return `/business/${segment}/`
+}
+
+export function hubSegmentPageCount(segment: HubSegment): number {
+  if (segment === "templates") return TEMPLATE_ENTRIES.length
+  return HUB_ENTRIES_BY_SEGMENT[segment]?.length ?? 0
 }

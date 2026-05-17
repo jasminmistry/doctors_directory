@@ -193,7 +193,15 @@ function PhoneFanCollage({
                   transform: "rotate(44deg) skewX(-6.96deg) scaleY(0.99)",
                 }}
               >
-                <Image src={src} alt="" fill className="object-cover" sizes="120px" />
+                <Image
+                  src={src}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="120px"
+                  priority={i === 0}
+                  loading={i === 0 ? undefined : "lazy"}
+                />
               </div>
             </div>
           ))}
