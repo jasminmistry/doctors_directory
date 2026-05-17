@@ -5,12 +5,14 @@ import {
   HUB_CTA_SECONDARY_HERO_CLASS,
   HUB_CTA_LINK_CLASS,
 } from "@/components/b2b-hub/hub-cta-buttons"
+import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
 import Image from "next/image"
 import Link from "next/link"
 import {
   ServiceProviderCollage,
   hubBuyerHubTestimonials,
 } from "@/components/b2b-hub/hub-pillar-detail-template"
+import { HubBuyerFaq, mapLegacyHubFaqs } from "@/components/b2b-hub/hub-buyer-faq"
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start"
 import { HubDetailHero } from "@/components/b2b-hub/hub-detail-hero"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
@@ -78,6 +80,14 @@ export function HubConsentDetailTemplate({ entry }: Props) {
     `${toDisplayTitle(entry.title)}: guidance for clinic operators evaluating consent workflows.`
   const navLinks = consentHubNavLinks(entry.slug)
   const dynamic = getConsentPageDynamic(entry.slug, entry.title)
+  const faqItems = [
+    {
+      question: `What Is ${toDisplayTitle(entry.title)} And When Should Clinics Use It?`,
+      answer: intro,
+      defaultOpen: true,
+    },
+    ...mapLegacyHubFaqs(consentFaqs),
+  ]
 
   return (
     <>
@@ -286,47 +296,8 @@ export function HubConsentDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-16 px-0 sm:px-4">
-          <h2 className="mb-3 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111]">
-            Frequently Asked Questions
-          </h2>
-          <div className="h-3" />
-          <div className="mx-auto max-w-[1056px] overflow-hidden rounded-xl border border-[#E2DDD7] bg-white">
-            <details
-              open
-              className="group border-b border-[#EDE9E3] bg-white open:bg-white"
-            >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-xl font-semibold text-[#111111]">
-                {`What Is ${toDisplayTitle(entry.title)} And When Should Clinics Use It?`}
-                <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="max-w-[1000px] text-base leading-[1.7] text-[#6B6B6B]">
-                  {intro}
-                </p>
-              </div>
-            </details>
-            {consentFaqs.map((item) => (
-              <details
-                key={item.q}
-                open={item.open}
-                className="group border-b border-[#EDE9E3] bg-white last:border-b-0 open:bg-white"
-              >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-xl font-semibold text-[#111111]">
-                  {item.q}
-                  <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                    ▾
-                  </span>
-                </summary>
-                <div className="px-6 pb-5">
-                  <p className="max-w-[1000px] text-base leading-[1.7] text-[#6B6B6B]">{item.a}</p>
-                </div>
-              </details>
-            ))}
-          </div>
-        </section>
+        <HubBuyerFaq items={faqItems} />
+
 
         <section className="mb-16 mx-auto max-w-[1280px]">
           <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
@@ -368,7 +339,7 @@ export function HubConsentDetailTemplate({ entry }: Props) {
               href="https://www.consentz.com/blog/"
               target="_blank"
               rel="noreferrer"
-              className={HUB_CTA_PRIMARY_CLASS}
+              className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
             >
               View All Blogs
             </a>

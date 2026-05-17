@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq";
 import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start";
@@ -84,51 +85,28 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
           </div>
         </section>
 
-        <section className="mb-12 max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-neutral-900 mb-10 text-center">
-            FAQ
-          </h2>
-          <div>
-            <details className="group border-t border-neutral-200 bg-white px-6 py-5 open:bg-neutral-50/80">
-              <summary className="cursor-pointer font-medium text-neutral-900 list-none flex justify-between gap-2">
-                Is Consentz only for aesthetic clinics?
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0">
-                  ▾
-                </span>
-              </summary>
-              <p className="mt-3 text-neutral-600 leading-relaxed text-sm">
-                Consentz supports clinics that need governed consent, structured
-                workflows, and operational reporting—common across aesthetic,
-                dermatology, and wellness operators.
-              </p>
-            </details>
-            <details className="group border-t border-neutral-200 bg-white px-6 py-5 open:bg-neutral-50/80">
-              <summary className="cursor-pointer font-medium text-neutral-900 list-none flex justify-between gap-2">
-                How does migration work from another system?
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0">
-                  ▾
-                </span>
-              </summary>
-              <p className="mt-3 text-neutral-600 leading-relaxed text-sm">
-                Start with the workflows that cause the most leakage—consent,
-                booking, and payments—then expand automation once data is
-                structured.
-              </p>
-            </details>
-            <details className="group border-t border-b border-neutral-200 bg-white px-6 py-5 open:bg-neutral-50/80">
-              <summary className="cursor-pointer font-medium text-neutral-900 list-none flex justify-between gap-2">
-                Can we evaluate pricing without a long procurement cycle?
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0">
-                  ▾
-                </span>
-              </summary>
-              <p className="mt-3 text-neutral-600 leading-relaxed text-sm">
-                Use the pricing comparison pages for common alternatives, then
-                book a demo to map packages to your locations and services.
-              </p>
-            </details>
-          </div>
-        </section>
+        <HubBuyerFaq
+          className="max-w-3xl mx-auto"
+          items={[
+            {
+              question: "Is Consentz only for aesthetic clinics?",
+              answer:
+                "Consentz supports clinics that need governed consent, structured workflows, and operational reporting—common across aesthetic, dermatology, and wellness operators.",
+              defaultOpen: true,
+            },
+            {
+              question: "How does migration work from another system?",
+              answer:
+                "Start with the workflows that cause the most leakage—consent, booking, and payments—then expand automation once data is structured.",
+            },
+            {
+              question: "Can we evaluate pricing without a long procurement cycle?",
+              answer:
+                "Use the pricing comparison pages for common alternatives, then book a demo to map packages to your locations and services.",
+            },
+          ]}
+        />
+
 
         <div className="flex flex-wrap gap-3 justify-center">
           <a

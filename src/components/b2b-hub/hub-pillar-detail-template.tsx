@@ -16,7 +16,9 @@ import {
   UserRound,
 } from "lucide-react";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
+import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq";
 import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell";
+import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography";
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start";
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta";
 import {
@@ -661,77 +663,32 @@ export function HubPillarDetailTemplate({
           </div>
         </section>
 
-        <section className="mb-16 px-0 sm:px-4">
-          <h2 className="text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111] mb-3">
-            Frequently Asked Questions
-          </h2>
-          <div className="h-3" />
-          <div className="max-w-[1056px] mx-auto rounded-xl border border-[#E2DDD7] bg-white overflow-hidden">
-            <details
-              open
-              className="group border-b border-[#EDE9E3] bg-white open:bg-white"
-            >
-              <summary className="cursor-pointer list-none px-6 py-5 font-semibold text-xl text-[#111111] flex justify-between gap-4 items-center">
-                What is aesthetic clinic management software?
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0 text-sm">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B] max-w-[1000px]">
-                  Aesthetic clinic management software handles the core operations of a
-                  cosmetic or aesthetic clinic — including digital consent forms, patient
-                  records, appointment scheduling, CQC compliance evidence, automated
-                  messaging and clinic payments. Unlike generic booking tools,
-                  purpose-built aesthetic software is designed for the specific compliance
-                  requirements of UK aesthetic medicine.
-                </p>
-              </div>
-            </details>
-            <details className="group border-b border-[#EDE9E3] bg-white">
-              <summary className="cursor-pointer list-none px-6 py-5 font-semibold text-xl text-[#111111] flex justify-between gap-4 items-center">
-                Does Consentz include digital consent forms?
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0 text-sm">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  Yes. Consentz supports structured digital consent tied to treatments and
-                  visits so evidence stays consistent and retrievable.
-                </p>
-              </div>
-            </details>
-            <details className="group border-b border-[#EDE9E3] bg-white">
-              <summary className="cursor-pointer list-none px-6 py-5 font-semibold text-xl text-[#111111] flex justify-between gap-4 items-center">
-                Can Consentz help with CQC compliance?
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0 text-sm">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  Consentz is designed to help teams collect and organise evidence that
-                  maps to common inspection expectations, alongside operational workflows.
-                </p>
-              </div>
-            </details>
-            <details className="group bg-white">
-              <summary className="cursor-pointer list-none px-6 py-5 font-semibold text-xl text-[#1A1A1A] flex justify-between gap-4 items-center">
-                Can I migrate from Pabau or Fresha?
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0 text-sm">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  Many clinics phase migration by workflow. Start with consent, booking, and
-                  payments, then expand automation as data is structured.
-                </p>
-              </div>
-            </details>
-          </div>
-        </section>
+        <HubBuyerFaq
+          items={[
+            {
+              question: "What is aesthetic clinic management software?",
+              answer:
+                "Aesthetic clinic management software handles the core operations of a cosmetic or aesthetic clinic — including digital consent forms, patient records, appointment scheduling, CQC compliance evidence, automated messaging and clinic payments. Unlike generic booking tools, purpose-built aesthetic software is designed for the specific compliance requirements of UK aesthetic medicine.",
+              defaultOpen: true,
+            },
+            {
+              question: "Does Consentz include digital consent forms?",
+              answer:
+                "Yes. Consentz supports structured digital consent tied to treatments and visits so evidence stays consistent and retrievable.",
+            },
+            {
+              question: "Can Consentz help with CQC compliance?",
+              answer:
+                "Consentz is designed to help teams collect and organise evidence that maps to common inspection expectations, alongside operational workflows.",
+            },
+            {
+              question: "Can I migrate from Pabau or Fresha?",
+              answer:
+                "Many clinics phase migration by workflow. Start with consent, booking, and payments, then expand automation as data is structured.",
+            },
+          ]}
+        />
+
 
         <section className="mb-16 max-w-[1280px] mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-[#111111] mb-3">
@@ -802,7 +759,7 @@ export function HubPillarDetailTemplate({
                 href="https://www.consentz.com/blog/"
                 target="_blank"
                 rel="noreferrer"
-                className={HUB_CTA_PRIMARY_CLASS}
+                className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
               >
                 View All Blogs
               </a>

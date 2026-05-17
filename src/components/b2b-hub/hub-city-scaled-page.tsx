@@ -1,3 +1,4 @@
+import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq"
 import {
   HUB_CTA_PRIMARY_CLASS,
   HUB_CTA_PRIMARY_HERO_CLASS,
@@ -5,6 +6,7 @@ import {
   HUB_CTA_SECONDARY_HERO_CLASS,
   HUB_CTA_LINK_CLASS,
 } from "@/components/b2b-hub/hub-cta-buttons"
+import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
 import Image from "next/image";
 import Link from "next/link";
 import { Droplets, MapPin, Syringe, Users } from "lucide-react";
@@ -447,69 +449,28 @@ export function HubCityScaledPage({
           </div>
         </section>
 
-        <section className="mb-16 px-0 sm:px-4">
-          <h2 className="mb-3 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111]">
-            Frequently asked questions
-          </h2>
-          <div className="h-3" />
-          <div className="mx-auto max-w-[1056px] overflow-hidden rounded-xl border border-[#E2DDD7] bg-white">
-            <details
-              open
-              className="group border-b border-[#EDE9E3] bg-white open:bg-white"
-            >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-xl font-semibold text-[#111111]">
-                What is aesthetic clinic management software?
-                <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="max-w-[1000px] text-base leading-[1.7] text-[#6B6B6B]">
-                  {FAQ_JSONLD_ANSWERS["What is aesthetic clinic management software?"]}
-                </p>
-              </div>
-            </details>
-            <details className="group border-b border-[#EDE9E3] bg-white">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-xl font-semibold text-[#111111]">
-                Does Consentz include digital consent forms?
-                <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  {FAQ_JSONLD_ANSWERS["Does Consentz include digital consent forms?"]}
-                </p>
-              </div>
-            </details>
-            <details className="group border-b border-[#EDE9E3] bg-white">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-xl font-semibold text-[#111111]">
-                Can Consentz help with CQC compliance?
-                <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  {FAQ_JSONLD_ANSWERS["Can Consentz help with CQC compliance?"]}
-                </p>
-              </div>
-            </details>
-            <details className="group bg-white">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-xl font-semibold text-[#1A1A1A]">
-                Can I migrate from Pabau or Fresha?
-                <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  {FAQ_JSONLD_ANSWERS["Can I migrate from Pabau or Fresha?"]}
-                </p>
-              </div>
-            </details>
-          </div>
-        </section>
+        <HubBuyerFaq
+          items={[
+            {
+              question: "What is aesthetic clinic management software?",
+              answer: FAQ_JSONLD_ANSWERS["What is aesthetic clinic management software?"],
+              defaultOpen: true,
+            },
+            {
+              question: "Does Consentz include digital consent forms?",
+              answer: FAQ_JSONLD_ANSWERS["Does Consentz include digital consent forms?"],
+            },
+            {
+              question: "Can Consentz help with CQC compliance?",
+              answer: FAQ_JSONLD_ANSWERS["Can Consentz help with CQC compliance?"],
+            },
+            {
+              question: "Can I migrate from Pabau or Fresha?",
+              answer: FAQ_JSONLD_ANSWERS["Can I migrate from Pabau or Fresha?"],
+            },
+          ]}
+        />
+
 
         <section className="mb-16 max-w-[1280px] mx-auto">
           <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our latest blogs</h2>
@@ -551,7 +512,7 @@ export function HubCityScaledPage({
               href="https://www.consentz.com/blog/"
               target="_blank"
               rel="noreferrer"
-              className={HUB_CTA_PRIMARY_CLASS}
+              className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
             >
               View all blogs
             </a>
