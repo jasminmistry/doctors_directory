@@ -1,6 +1,10 @@
 import Image from "next/image"
 import Link from "next/link"
 import type { ReactNode } from "react"
+import {
+  HUB_CTA_PRIMARY_CLASS,
+  HUB_CTA_SECONDARY_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com"
@@ -56,16 +60,10 @@ export function HubSectionCta({
           </h2>
           <p className="mt-3 max-w-xl text-base leading-[1.6] text-[#1A1A1A] sm:text-lg">{sub}</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <CtaButton
-              href={primaryHref}
-              className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] text-[18px] font-semibold text-white transition-colors hover:bg-neutral-900 sm:text-[20px]"
-            >
+            <CtaButton href={primaryHref} className={HUB_CTA_PRIMARY_CLASS}>
               {primaryLabel}
             </CtaButton>
-            <CtaButton
-              href={secondaryHref}
-              className="inline-flex items-center justify-center rounded-[12px] border-[1.5px] border-[#E2DDD7] bg-white px-6 py-[13px] text-sm font-medium text-[#111111] transition-colors hover:bg-neutral-50"
-            >
+            <CtaButton href={secondaryHref} className={HUB_CTA_SECONDARY_CLASS}>
               {secondaryLabel}
             </CtaButton>
           </div>

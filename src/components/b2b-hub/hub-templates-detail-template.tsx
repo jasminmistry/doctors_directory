@@ -1,3 +1,10 @@
+import {
+  HUB_CTA_PRIMARY_CLASS,
+  HUB_CTA_PRIMARY_HERO_CLASS,
+  HUB_CTA_SECONDARY_CLASS,
+  HUB_CTA_SECONDARY_HERO_CLASS,
+  HUB_CTA_LINK_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -107,7 +114,7 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
                     href={`${baseUrl}/medical-templates/`}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex h-[52px] w-[min(100%,240px)] shrink-0 items-center justify-center rounded-[7px] bg-[#1A1A1A] px-8 py-[13px] text-[20px] font-semibold text-white hover:bg-neutral-900 transition-colors"
+                    className={HUB_CTA_PRIMARY_HERO_CLASS}
                   >
                     Explore Templates
                   </a>
@@ -165,7 +172,7 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
           <div className="mt-10 flex justify-center">
             <a
               href={`${baseUrl}/book-demo`}
-              className="inline-flex h-[52px] w-[208px] items-center justify-center rounded-xl bg-[#1A1A1A] text-xl font-semibold text-white transition-colors hover:bg-neutral-900"
+              className={HUB_CTA_PRIMARY_CLASS}
             >
               Book Demo
             </a>
@@ -223,7 +230,7 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
               <div className="pt-3 lg:pt-2">
                 <a
                   href={`${baseUrl}/book-demo`}
-                  className="inline-flex h-[48px] w-[200px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] px-5 text-base font-semibold text-white transition-colors hover:bg-neutral-900 sm:h-[52px] sm:w-[208px] sm:px-6 sm:text-[20px]"
+                  className={HUB_CTA_PRIMARY_CLASS}
                 >
                   Learn More
                 </a>
@@ -301,7 +308,7 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
               href="https://www.consentz.com/blog/"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-[12px] bg-[#111111] px-11 py-4 text-xl font-semibold text-white transition-colors hover:bg-neutral-900"
+              className={HUB_CTA_PRIMARY_CLASS}
             >
               View All Blogs
             </a>
@@ -320,7 +327,7 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href={`${baseUrl}/book-demo`}
-                  className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] text-[18px] font-semibold text-white transition-colors hover:bg-neutral-900 sm:text-[20px]"
+                  className={HUB_CTA_PRIMARY_CLASS}
                 >
                   Book A Demo
                 </a>

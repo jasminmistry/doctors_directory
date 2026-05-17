@@ -1,3 +1,10 @@
+import {
+  HUB_CTA_PRIMARY_CLASS,
+  HUB_CTA_PRIMARY_HERO_CLASS,
+  HUB_CTA_SECONDARY_CLASS,
+  HUB_CTA_SECONDARY_HERO_CLASS,
+  HUB_CTA_LINK_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import Image from "next/image"
 import Link from "next/link"
@@ -299,7 +306,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                 <div className="flex max-sm:flex-col max-sm:items-stretch gap-3 sm:flex-row sm:flex-nowrap sm:items-center sm:gap-4">
                   <a
                     href={`${baseUrl}/book-demo`}
-                    className="inline-flex h-[50px] w-[min(100%,175px)] shrink-0 items-center justify-center rounded-lg bg-[#1a1a1a] px-5 text-[15px] font-semibold text-white transition-colors hover:bg-neutral-900"
+                    className={HUB_CTA_PRIMARY_HERO_CLASS}
                   >
                     Book A Demo
                   </a>
@@ -307,7 +314,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                     href={`${baseUrl}/medical-templates/`}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex h-[50px] shrink-0 items-center justify-center rounded-lg border border-white bg-white px-5 text-[15px] font-semibold text-[#2e2e2e] transition-colors hover:bg-neutral-50"
+                    className={HUB_CTA_SECONDARY_HERO_CLASS}
                   >
                     Explore Practitioner Tools
                   </a>
@@ -376,7 +383,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
           <div className="mt-10 flex justify-center">
             <a
               href={`${baseUrl}/book-demo`}
-              className="inline-flex h-[52px] w-[208px] items-center justify-center rounded-xl bg-[#1A1A1A] text-xl font-semibold text-white transition-colors hover:bg-neutral-900"
+              className={HUB_CTA_PRIMARY_CLASS}
             >
               Book Demo
             </a>
@@ -590,7 +597,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href={`${baseUrl}/book-demo`}
-                  className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] text-[18px] font-semibold text-white transition-colors hover:bg-neutral-900 sm:text-[20px]"
+                  className={HUB_CTA_PRIMARY_CLASS}
                 >
                   Book A Demo
                 </a>

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
+import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
 import {
   type HubTemplateLibraryFormat,
   HUB_TEMPLATE_LIBRARY_ITEMS,
@@ -212,7 +213,7 @@ export function HubTemplateLibrarySection() {
             href={`${baseUrl}/medical-templates/`}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-[52px] min-w-[200px] items-center justify-center rounded-xl bg-[#1A1A1A] px-10 text-lg font-semibold text-white transition-colors hover:bg-neutral-900"
+            className={HUB_CTA_PRIMARY_CLASS}
           >
             View All
           </a>

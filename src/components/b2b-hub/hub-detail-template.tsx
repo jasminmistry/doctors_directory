@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start";
 import { HubDetailHero } from "@/components/b2b-hub/hub-detail-hero";
@@ -132,7 +133,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
         <div className="flex flex-wrap gap-3 justify-center">
           <a
             href={`${baseUrl}/book-demo`}
-            className="inline-flex items-center justify-center rounded-[12px] bg-black px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-900 transition-colors"
+            className={HUB_CTA_PRIMARY_CLASS}
           >
             Book A Demo
           </a>

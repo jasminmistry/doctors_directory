@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { SearchBar } from "@/components/search/search-bar";
+import { HUB_CTA_HEADER_OUTLINE_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -69,7 +70,11 @@ export default function Header() {
           </nav>
           <a
             href={`${baseUrl}/book-demo`}
-            className="font-bold rounded-lg border-2 py-2 px-5 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white"
+            className={
+              isBusinessHub
+                ? HUB_CTA_HEADER_OUTLINE_CLASS
+                : "font-bold rounded-lg border-2 py-2 px-5 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white"
+            }
           >
             BOOK DEMO
           </a>
@@ -140,9 +145,12 @@ export default function Header() {
               FAQS
             </button>
           </nav>
-          <Button className="mt-4 font-bold border-2 py-3 px-6 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white">
+          <a
+            href={`${baseUrl}/book-demo`}
+            className={`mt-4 ${isBusinessHub ? HUB_CTA_HEADER_OUTLINE_CLASS : "inline-flex font-bold rounded-lg border-2 py-3 px-6 border-black bg-transparent text-black hover:bg-black hover:text-white"}`}
+          >
             BOOK DEMO
-          </Button>
+          </a>
         </div>
       )}
     </header>

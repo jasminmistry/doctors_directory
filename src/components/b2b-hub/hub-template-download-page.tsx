@@ -1,3 +1,10 @@
+import {
+  HUB_CTA_PRIMARY_CLASS,
+  HUB_CTA_PRIMARY_HERO_CLASS,
+  HUB_CTA_SECONDARY_CLASS,
+  HUB_CTA_SECONDARY_HERO_CLASS,
+  HUB_CTA_LINK_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
 import Image from "next/image"
 import Link from "next/link"
 import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell"
@@ -81,7 +88,7 @@ export function HubTemplateDownloadPage({ entry }: Props) {
         actions={
           <a
             href="#download-form"
-            className="inline-flex h-[52px] w-[min(100%,240px)] shrink-0 items-center justify-center rounded-[7px] bg-[#1A1A1A] px-8 text-[18px] font-semibold text-white transition-colors hover:bg-neutral-900"
+            className={HUB_CTA_PRIMARY_HERO_CLASS}
           >
             Download Template
           </a>
@@ -168,7 +175,7 @@ export function HubTemplateDownloadPage({ entry }: Props) {
           <div className="flex flex-wrap gap-3">
             <a
               href={`${baseUrl}/book-demo`}
-              className="inline-flex h-[48px] items-center justify-center rounded-[12px] bg-[#1A1A1A] px-6 text-base font-semibold text-white transition-colors hover:bg-neutral-900"
+              className={HUB_CTA_PRIMARY_CLASS}
             >
               Book A Demo
             </a>
@@ -244,7 +251,7 @@ export function HubTemplateDownloadPage({ entry }: Props) {
               </p>
               <a
                 href={`${baseUrl}/book-demo`}
-                className="mt-3 inline-flex h-[48px] w-[200px] items-center justify-center rounded-[12px] bg-[#1A1A1A] text-base font-semibold text-white transition-colors hover:bg-neutral-900"
+                className={`mt-3 ${HUB_CTA_PRIMARY_CLASS}`}
               >
                 Learn More
               </a>

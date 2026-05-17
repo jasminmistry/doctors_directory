@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Mail, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { HUB_CTA_FOOTER_LIGHT_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
 import { toUrlSlug } from "@/lib/utils";
 import {
   modalities,
@@ -11,7 +14,17 @@ import {
   locations,
 } from "@/lib/data";
 
+function isBusinessHubPath(pathname: string) {
+  const normalized = pathname.replace(/\/$/, "") || "/";
+  const path = normalized.startsWith("/directory")
+    ? normalized.slice("/directory".length) || "/"
+    : normalized;
+  return path === "/business" || path.startsWith("/business/");
+}
+
 export function Footer() {
+  const pathname = usePathname() ?? "";
+  const isBusinessHub = isBusinessHubPath(pathname);
   const recognitions = [...accreditations, ...edu];
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
@@ -33,10 +46,13 @@ export function Footer() {
                 href={`${baseUrl}/book-demo/?source=${baseUrl}/`}
                 target="_blank"
                 rel="noopener noreferrer"
+                className={
+                  isBusinessHub
+                    ? HUB_CTA_FOOTER_LIGHT_CLASS
+                    : "inline-flex h-auto items-center justify-center rounded-lg bg-white px-4 py-2 text-base font-semibold text-black transition-colors hover:bg-gray-200 md:px-5 md:py-2 md:text-lg"
+                }
               >
-                <Button className="h-auto rounded-lg md:text-lg px-4 py-2 md:px-5 md:py-2 bg-white text-black hover:bg-gray-200 hover:cursor-pointer">
-                  BOOK DEMO
-                </Button>
+                BOOK DEMO
               </a>
             </div>
           </div>

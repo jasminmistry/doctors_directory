@@ -1,3 +1,10 @@
+import {
+  HUB_CTA_PRIMARY_CLASS,
+  HUB_CTA_PRIMARY_HERO_CLASS,
+  HUB_CTA_SECONDARY_CLASS,
+  HUB_CTA_SECONDARY_HERO_CLASS,
+  HUB_CTA_LINK_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import Image from "next/image";
 import Link from "next/link";
@@ -223,19 +230,19 @@ export function HubAutomationDetailTemplate({ entry }: Props) {
                 <div className="flex max-sm:flex-col max-sm:items-stretch gap-3 sm:flex-row sm:flex-nowrap sm:items-center sm:gap-2.5 sm:overflow-x-auto">
                   <a
                     href={`${baseUrl}/book-demo`}
-                    className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[7px] bg-[#1A1A1A] px-6 py-[13px] text-[20px] font-semibold text-white hover:bg-neutral-900 transition-colors"
+                    className={HUB_CTA_PRIMARY_HERO_CLASS}
                   >
                     Book a Demo
                   </a>
                   <a
                     href={`${baseUrl}/book-demo`}
-                    className="inline-flex shrink-0 items-center justify-center rounded-[7px] border-[1.5px] border-[#E2DDD7] bg-white px-6 py-[13px] text-[20px] font-medium text-[#111111] hover:bg-neutral-50 transition-colors whitespace-nowrap"
+                    className={HUB_CTA_SECONDARY_HERO_CLASS}
                   >
                     Get CQC Readiness Audit
                   </a>
                   <a
                     href={`${baseUrl}/book-demo`}
-                    className="inline-flex shrink-0 items-center justify-center px-1 py-[13px] text-[20px] font-medium text-[#6B6B6B] hover:text-neutral-900 transition-colors whitespace-nowrap"
+                    className={HUB_CTA_LINK_CLASS}
                   >
                     See How It Works →
                   </a>
@@ -296,7 +303,7 @@ export function HubAutomationDetailTemplate({ entry }: Props) {
           <div className="mt-10 flex justify-center">
             <a
               href={`${baseUrl}/book-demo`}
-              className="inline-flex h-[52px] w-[208px] items-center justify-center rounded-xl bg-[#1A1A1A] text-xl font-semibold text-white hover:bg-neutral-900 transition-colors"
+              className={HUB_CTA_PRIMARY_CLASS}
             >
               Book Demo
             </a>
@@ -349,7 +356,7 @@ export function HubAutomationDetailTemplate({ entry }: Props) {
               <div className="pt-3 lg:pt-2">
                 <a
                   href={`${baseUrl}/book-demo`}
-                  className="inline-flex h-[48px] w-[200px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] px-5 text-base font-semibold text-white transition-colors hover:bg-neutral-900 sm:h-[52px] sm:w-[208px] sm:px-6 sm:text-[20px]"
+                  className={HUB_CTA_PRIMARY_CLASS}
                 >
                   Learn More
                 </a>
@@ -427,7 +434,7 @@ export function HubAutomationDetailTemplate({ entry }: Props) {
               href="https://www.consentz.com/blog/"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-[12px] bg-[#111111] px-11 py-4 text-xl font-semibold text-white transition-colors hover:bg-neutral-900"
+              className={HUB_CTA_PRIMARY_CLASS}
             >
               View all blogs
             </a>
@@ -446,7 +453,7 @@ export function HubAutomationDetailTemplate({ entry }: Props) {
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href={`${baseUrl}/book-demo`}
-                  className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] text-[18px] font-semibold text-white transition-colors hover:bg-neutral-900 sm:text-[20px]"
+                  className={HUB_CTA_PRIMARY_CLASS}
                 >
                   Book a Demo
                 </a>

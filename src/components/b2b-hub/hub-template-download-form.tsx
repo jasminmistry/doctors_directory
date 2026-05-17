@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons"
 
 export function HubTemplateDownloadForm() {
   const [email, setEmail] = useState("")
@@ -45,7 +46,7 @@ export function HubTemplateDownloadForm() {
       </label>
       <button
         type="submit"
-        className="inline-flex h-[48px] items-center justify-center rounded-[12px] bg-[#1A1A1A] text-base font-semibold text-white transition-colors hover:bg-neutral-900"
+        className={HUB_CTA_PRIMARY_CLASS}
       >
         Send Me The Template
       </button>
