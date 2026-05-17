@@ -1,4 +1,5 @@
 import { HubBuyerFaq, mapLegacyHubFaqs } from "@/components/b2b-hub/hub-buyer-faq"
+import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section"
 import {
   HUB_CTA_PRIMARY_CLASS,
   HUB_CTA_PRIMARY_HERO_CLASS,
@@ -15,7 +16,6 @@ import Link from "next/link";
 import { HubCompareFeatureTable } from "@/components/b2b-hub/hub-compare-feature-table";
 import {
   ServiceProviderCollage,
-  hubBuyerHubTestimonials,
 } from "@/components/b2b-hub/hub-pillar-detail-template";
 import {
   Breadcrumb,
@@ -418,41 +418,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-16">
-          <h2 className="mb-8 text-center text-2xl font-bold text-[#111111] md:text-3xl">
-            What Clinics Say About Consentz
-          </h2>
-          <div className="mx-auto grid max-w-[1224px] grid-cols-1 gap-5 md:grid-cols-3">
-            {hubBuyerHubTestimonials.map((t) => (
-              <div
-                key={t.name}
-                className="flex flex-col gap-4 rounded-[19px] border border-[#E6E0D8] bg-[#FAF8F5] p-7 md:p-8"
-              >
-                <div className="flex gap-0.5 text-[#2E2E2E]" aria-hidden>
-                  {"★★★★★".split("").map((s, i) => (
-                    <span key={i} className="text-sm">
-                      {s}
-                    </span>
-                  ))}
-                </div>
-                <p className="flex-1 text-xl leading-snug tracking-tight text-[#2E2E2E]">{t.quote}</p>
-                <div className="h-px bg-[#E1DCD5]" />
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D8D4CE] text-[10px] font-semibold tracking-wide text-[#7A7570]">
-                    {t.initials}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[#2E2E2E]">{t.name}</p>
-                    <p className="text-[11px] leading-snug text-[#928B82]">{t.role}</p>
-                  </div>
-                </div>
-                <span className="inline-flex w-fit items-center rounded-md bg-[#EDE9E3] px-2 py-1 text-[9px] font-medium tracking-wide text-[#5C564E]">
-                  ↑ {t.tag}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
+        <HubTestimonialsSection title="What Clinics Say About Consentz" />
 
         <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[var(--primary-bg-color)] lg:h-[302px] lg:overflow-hidden">
           <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-10 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">

@@ -21,6 +21,7 @@ import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell";
 import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography";
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start";
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta";
+import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section";
 import {
   HUB_HERO_INTRO_CLASS,
   HUB_HERO_TITLE_CLASS,
@@ -70,33 +71,7 @@ const SERVICE_PROVIDER_COLLAGE = {
   ] as const,
 } as const;
 
-export const hubBuyerHubTestimonials = [
-  {
-    quote: "Consentz transformed how we handle patient consent.",
-    name: "Sarah Mitchell",
-    role: "Clinic Director · Clarity Aesthetics, London",
-    initials: "SM",
-    tag: "Inspection-ready workflows",
-  },
-  {
-    quote:
-      "We cut our admin time by nearly 40%. The automated reminders and digital consent flow means our team focuses on patients.",
-    name: "Dr. James Okafor",
-    role: "Medical Director · Revive Clinic Group",
-    initials: "JO",
-    tag: "Reduced admin workload",
-  },
-  {
-    quote:
-      "Patient follow-up used to be a manual headache. Consentz handles it automatically.",
-    name: "Priya Sharma",
-    role: "Practice Manager · Luminary Medical Aesthetics",
-    initials: "PS",
-    tag: "Faster patient follow-up",
-  },
-] as const;
-
-const testimonials = hubBuyerHubTestimonials;
+export { hubBuyerHubTestimonials } from "@/lib/b2b-hub/hub-testimonials";
 
 const softwarePainPoints = [
   {
@@ -603,40 +578,7 @@ export function HubPillarDetailTemplate({
 
         {pillar === "software" ? <HubRelatedLinksGrid related={related} /> : null}
 
-        <section className="mb-16">
-          <div className="grid md:grid-cols-3 gap-5 max-w-[1224px] mx-auto">
-            {testimonials.map((t) => (
-              <div
-                key={t.name}
-                className="flex flex-col gap-4 rounded-[19px] border border-[#E6E0D8] bg-[#FAF8F5] p-7 md:p-8"
-              >
-                <div className="flex gap-0.5 text-[#2E2E2E]" aria-hidden>
-                  {"★★★★★".split("").map((s, i) => (
-                    <span key={i} className="text-sm">
-                      {s}
-                    </span>
-                  ))}
-                </div>
-                <p className="text-xl leading-snug text-[#2E2E2E] tracking-tight flex-1">
-                  {t.quote}
-                </p>
-                <div className="h-px bg-[#E1DCD5]" />
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D8D4CE] text-[10px] font-semibold tracking-wide text-[#7A7570]">
-                    {t.initials}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[#2E2E2E]">{t.name}</p>
-                    <p className="text-[11px] leading-snug text-[#928B82]">{t.role}</p>
-                  </div>
-                </div>
-                <span className="inline-flex w-fit items-center rounded-md bg-[#EDE9E3] px-2 py-1 text-[9px] font-medium tracking-wide text-[#5C564E]">
-                  ↑ {t.tag}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
+        <HubTestimonialsSection />
 
         <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#F2EEE6] lg:h-[302px] lg:overflow-hidden">
           <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-6 py-10 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">
