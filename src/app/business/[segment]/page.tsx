@@ -1,11 +1,14 @@
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { HubBuyerFaq, mapLegacyHubFaqs } from "@/components/b2b-hub/hub-buyer-faq";
 import { HubIndexSearchCards } from "@/components/b2b-hub/hub-index-search-cards";
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta";
 import {
   HUB_ENTRIES_BY_SEGMENT,
   HUB_SEGMENTS,
+  hubSegmentCollectionHref,
+  hubSegmentPageCount,
   isHubSegment,
   segmentLabel,
   type HubSegment,
@@ -107,12 +110,12 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
             {relatedCollections.map((s) => (
               <Link
                 key={s}
-                href={`/business/${s}/`}
+                href={hubSegmentCollectionHref(s)}
                 className="inline-flex rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-sm font-medium text-neutral-900 hover:border-neutral-400 hover:bg-white transition-all"
               >
                 {segmentLabel(s)}
                 <span className="text-neutral-500 font-normal ml-1.5">
-                  ({HUB_ENTRIES_BY_SEGMENT[s]?.length ?? 0})
+                  ({hubSegmentPageCount(s)})
                 </span>
               </Link>
             ))}
@@ -125,33 +128,13 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
           </div>
         </div>
       </section>
-      <section className="bg-white px-4 pb-16">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-neutral-900 mb-10 text-center">
-            Frequently Asked Questions
-          </h2>
-          <div>
-            {faq.map((item, i) => (
-              <details
-                key={item.q}
-                className={`group border-t border-neutral-200 bg-white px-6 py-5 open:bg-neutral-50/80 ${
-                  i === faq.length - 1 ? "border-b" : ""
-                }`}
-              >
-                <summary className="cursor-pointer font-medium text-neutral-900 list-none flex justify-between gap-2">
-                  {item.q}
-                  <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0">
-                    ▾
-                  </span>
-                </summary>
-                <p className="mt-3 text-neutral-600 leading-relaxed text-sm">
-                  {item.a}
-                </p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HubBuyerFaq
+        className="max-w-3xl mx-auto"
+        intro={`Browse ${segmentLabel(seg).toLowerCase()} guides and comparisons for clinic software buyers.`}
+        items={mapLegacyHubFaqs(
+          faq.map((item, index) => ({ q: item.q, a: item.a, open: index === 0 }))
+        )}
+      />
       <HubSectionCta
         heading="Ready To Move Forward?"
         sub="Book a Consentz demo to map these requirements to your clinic workflows, compliance priorities, and rollout plan."

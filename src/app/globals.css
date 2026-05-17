@@ -173,3 +173,17 @@
   color: var(--dune) !important;
   border: 1px solid var(--alto) !important;
 }
+
+@keyframes hub-logo-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.hub-logo-marquee-track {
+  animation: hub-logo-marquee 45s linear infinite;
+  width: max-content;
+}

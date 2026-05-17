@@ -1,10 +1,20 @@
+import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq"
+import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section"
+import {
+  HUB_CTA_PRIMARY_CLASS,
+  HUB_CTA_PRIMARY_HERO_CLASS,
+  HUB_CTA_SECONDARY_CLASS,
+  HUB_CTA_SECONDARY_HERO_CLASS,
+  HUB_CTA_LINK_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
+import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
 import Image from "next/image";
 import Link from "next/link";
 import { Droplets, MapPin, Syringe, Users } from "lucide-react";
 import {
   ServiceProviderCollage,
   SoftwareHeroCollage,
-  hubBuyerHubTestimonials,
 } from "@/components/b2b-hub/hub-pillar-detail-template";
 import {
   Breadcrumb,
@@ -213,19 +223,19 @@ export function HubCityScaledPage({
                 <div className="flex max-sm:flex-col max-sm:items-stretch gap-3 sm:flex-row sm:flex-nowrap sm:items-center sm:gap-2.5 sm:overflow-x-auto">
                   <a
                     href={`${baseUrl}/book-demo`}
-                    className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[7px] bg-[#1A1A1A] px-6 py-[13px] text-[20px] font-semibold text-white hover:bg-neutral-900 transition-colors"
+                    className={HUB_CTA_PRIMARY_HERO_CLASS}
                   >
                     Book a Demo
                   </a>
                   <a
                     href={`${baseUrl}/book-demo`}
-                    className="inline-flex shrink-0 items-center justify-center rounded-[7px] border-[1.5px] border-[#E2DDD7] bg-white px-6 py-[13px] text-[20px] font-medium text-[#111111] hover:bg-neutral-50 transition-colors whitespace-nowrap"
+                    className={HUB_CTA_SECONDARY_HERO_CLASS}
                   >
                     Get CQC Readiness Audit
                   </a>
                   <a
                     href={`${baseUrl}/book-demo`}
-                    className="inline-flex shrink-0 items-center justify-center px-1 py-[13px] text-[20px] font-medium text-[#6B6B6B] hover:text-neutral-900 transition-colors whitespace-nowrap"
+                    className={HUB_CTA_LINK_CLASS}
                   >
                     See How It Works →
                   </a>
@@ -325,7 +335,7 @@ export function HubCityScaledPage({
             <div className="mt-10 flex justify-center">
               <a
                 href={`${baseUrl}/book-demo`}
-                className="inline-flex h-[52px] w-[208px] items-center justify-center rounded-xl bg-[#1A1A1A] text-xl font-semibold text-white hover:bg-neutral-900 transition-colors"
+                className={HUB_CTA_PRIMARY_CLASS}
               >
                 Book Demo
               </a>
@@ -380,40 +390,7 @@ export function HubCityScaledPage({
           </div>
         </section>
 
-        <section className="mb-16">
-          <div className="mx-auto grid max-w-[1224px] grid-cols-1 gap-5 md:grid-cols-3">
-            {hubBuyerHubTestimonials.map((t) => (
-              <div
-                key={t.name}
-                className="flex flex-col gap-4 rounded-[19px] border border-[#E6E0D8] bg-[#FAF8F5] p-7 md:p-8"
-              >
-                <div className="flex gap-0.5 text-[#2E2E2E]" aria-hidden>
-                  {"★★★★★".split("").map((s, i) => (
-                    <span key={i} className="text-sm">
-                      {s}
-                    </span>
-                  ))}
-                </div>
-                <p className="flex-1 text-xl leading-snug tracking-tight text-[#2E2E2E]">
-                  {t.quote}
-                </p>
-                <div className="h-px bg-[#E1DCD5]" />
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D8D4CE] text-[10px] font-semibold tracking-wide text-[#7A7570]">
-                    {t.initials}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[#2E2E2E]">{t.name}</p>
-                    <p className="text-[11px] leading-snug text-[#928B82]">{t.role}</p>
-                  </div>
-                </div>
-                <span className="inline-flex w-fit items-center rounded-md bg-[#EDE9E3] px-2 py-1 text-[9px] font-medium tracking-wide text-[#5C564E]">
-                  ↑ {t.tag}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
+        <HubTestimonialsSection />
 
         <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#F2EEE6] lg:h-[302px] lg:overflow-hidden">
           <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-6 py-10 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">
@@ -428,7 +405,7 @@ export function HubCityScaledPage({
               <div className="pt-3 lg:pt-2">
                 <a
                   href={`${baseUrl}/book-demo`}
-                  className="inline-flex h-[48px] w-[200px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] px-5 text-base font-semibold text-white transition-colors hover:bg-neutral-900 sm:h-[52px] sm:w-[208px] sm:px-6 sm:text-[20px]"
+                  className={HUB_CTA_PRIMARY_CLASS}
                 >
                   Learn More
                 </a>
@@ -440,69 +417,28 @@ export function HubCityScaledPage({
           </div>
         </section>
 
-        <section className="mb-16 px-0 sm:px-4">
-          <h2 className="mb-3 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111]">
-            Frequently asked questions
-          </h2>
-          <div className="h-3" />
-          <div className="mx-auto max-w-[1056px] overflow-hidden rounded-xl border border-[#E2DDD7] bg-white">
-            <details
-              open
-              className="group border-b border-[#EDE9E3] bg-white open:bg-white"
-            >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-xl font-semibold text-[#111111]">
-                What is aesthetic clinic management software?
-                <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="max-w-[1000px] text-base leading-[1.7] text-[#6B6B6B]">
-                  {FAQ_JSONLD_ANSWERS["What is aesthetic clinic management software?"]}
-                </p>
-              </div>
-            </details>
-            <details className="group border-b border-[#EDE9E3] bg-white">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-xl font-semibold text-[#111111]">
-                Does Consentz include digital consent forms?
-                <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  {FAQ_JSONLD_ANSWERS["Does Consentz include digital consent forms?"]}
-                </p>
-              </div>
-            </details>
-            <details className="group border-b border-[#EDE9E3] bg-white">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-xl font-semibold text-[#111111]">
-                Can Consentz help with CQC compliance?
-                <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  {FAQ_JSONLD_ANSWERS["Can Consentz help with CQC compliance?"]}
-                </p>
-              </div>
-            </details>
-            <details className="group bg-white">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-xl font-semibold text-[#1A1A1A]">
-                Can I migrate from Pabau or Fresha?
-                <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  {FAQ_JSONLD_ANSWERS["Can I migrate from Pabau or Fresha?"]}
-                </p>
-              </div>
-            </details>
-          </div>
-        </section>
+        <HubBuyerFaq
+          items={[
+            {
+              question: "What is aesthetic clinic management software?",
+              answer: FAQ_JSONLD_ANSWERS["What is aesthetic clinic management software?"],
+              defaultOpen: true,
+            },
+            {
+              question: "Does Consentz include digital consent forms?",
+              answer: FAQ_JSONLD_ANSWERS["Does Consentz include digital consent forms?"],
+            },
+            {
+              question: "Can Consentz help with CQC compliance?",
+              answer: FAQ_JSONLD_ANSWERS["Can Consentz help with CQC compliance?"],
+            },
+            {
+              question: "Can I migrate from Pabau or Fresha?",
+              answer: FAQ_JSONLD_ANSWERS["Can I migrate from Pabau or Fresha?"],
+            },
+          ]}
+        />
+
 
         <section className="mb-16 max-w-[1280px] mx-auto">
           <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our latest blogs</h2>
@@ -544,59 +480,15 @@ export function HubCityScaledPage({
               href="https://www.consentz.com/blog/"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-[12px] bg-[#111111] px-11 py-4 text-xl font-semibold text-white transition-colors hover:bg-neutral-900"
+              className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
             >
               View all blogs
             </a>
           </div>
         </section>
 
-        <section className="mb-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 overflow-hidden bg-[#F2EEE6]">
-          <div className="relative mx-auto max-w-[1440px] px-6 pb-12 pt-8 sm:pb-14 sm:pt-10 lg:h-[472px] lg:overflow-hidden lg:px-20 lg:pb-20 lg:pt-0">
-            <div className="relative z-10 flex w-full max-w-[720px] flex-col items-center text-center lg:absolute lg:left-1/2 lg:top-[118px] lg:-translate-x-1/2">
-              <h2 className="text-[26px] font-bold leading-tight tracking-[-0.03em] text-[#111111] sm:text-[30px] lg:text-[36px] lg:leading-normal lg:tracking-[-1.08px]">
-                Ready to run your clinic properly?
-              </h2>
-              <p className="mt-3 max-w-xl text-base leading-[1.6] text-[#1A1A1A] sm:text-lg lg:mt-[14px] lg:text-[20px]">
-                Join aesthetic clinics across the UK using Consentz
-              </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] text-[18px] font-semibold text-white transition-colors hover:bg-neutral-900 sm:text-[20px]"
-                >
-                  Book a Demo
-                </a>
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className="inline-flex items-center justify-center rounded-[12px] border-[1.5px] border-[#E2DDD7] bg-white px-6 py-[13px] text-sm font-medium text-[#111111] transition-colors hover:bg-neutral-50"
-                >
-                  Get CQC Readiness Audit
-                </a>
-              </div>
-            </div>
-            <div
-              className="relative z-0 mx-auto mt-8 h-[200px] w-[174px] overflow-hidden sm:h-[220px] sm:w-[191px] lg:absolute lg:mx-0 lg:mt-0 lg:h-[469px] lg:w-[407px] lg:max-w-none lg:right-20 lg:top-[41px]"
-              aria-hidden
-            >
-              <Image
-                src="/directory/images/cta-clinic-phone.png"
-                alt=""
-                width={586}
-                height={731}
-                className="pointer-events-none absolute max-w-none select-none"
-                sizes="(max-width: 1024px) 191px, 407px"
-                style={{
-                  height: "156.09%",
-                  width: "144.06%",
-                  left: "-15.65%",
-                  top: "-7.82%",
-                }}
-              />
-            </div>
-          </div>
-        </section>
       </article>
+      <HubSectionCta className="mb-0" tone="warm" withBorder={false} />
     </>
   );
 }

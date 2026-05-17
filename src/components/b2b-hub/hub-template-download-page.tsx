@@ -1,21 +1,25 @@
-"use client"
-
+import {
+  HUB_CTA_PRIMARY_CLASS,
+  HUB_CTA_PRIMARY_HERO_CLASS,
+  HUB_CTA_SECONDARY_CLASS,
+  HUB_CTA_SECONDARY_HERO_CLASS,
+  HUB_CTA_LINK_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
 import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell"
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HubTemplateDownloadForm } from "@/components/b2b-hub/hub-template-download-form"
+import { HubTemplateLibrarySection } from "@/components/b2b-hub/hub-template-library-section"
+import { HubTemplatePreviewPanel } from "@/components/b2b-hub/hub-template-preview-panel"
 import {
   HUB_HERO_PHONE_SRC,
   HUB_HERO_PHONE_IMAGE_CLASS,
   HUB_HERO_INTRO_CLASS,
   HUB_HERO_TITLE_CLASS,
 } from "@/components/b2b-hub/hub-hero-typography"
-import {
-  ServiceProviderCollage,
-  hubBuyerHubTestimonials,
-} from "@/components/b2b-hub/hub-pillar-detail-template"
+import { ServiceProviderCollage } from "@/components/b2b-hub/hub-pillar-detail-template"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -43,9 +47,6 @@ type Props = {
 export function HubTemplateDownloadPage({ entry }: Props) {
   const content = getTemplatePageContent(entry)
   const related = relatedTemplateEntries(entry.category, entry.slug, 9)
-  const [email, setEmail] = useState("")
-  const [clinic, setClinic] = useState("")
-  const [submitted, setSubmitted] = useState(false)
 
   const breadcrumb = (
     <Breadcrumb>
@@ -89,84 +90,41 @@ export function HubTemplateDownloadPage({ entry }: Props) {
         actions={
           <a
             href="#download-form"
-            className="inline-flex h-[52px] w-[min(100%,240px)] shrink-0 items-center justify-center rounded-[7px] bg-[#1A1A1A] px-8 text-[18px] font-semibold text-white transition-colors hover:bg-neutral-900"
+            className={HUB_CTA_PRIMARY_HERO_CLASS}
           >
             Download Template
           </a>
         }
         visual={
           <figure className="flex justify-center lg:justify-end">
-            <img src={HUB_HERO_PHONE_SRC} alt="" className={HUB_HERO_PHONE_IMAGE_CLASS} />
+            <Image
+              src={HUB_HERO_PHONE_SRC}
+              alt=""
+              width={320}
+              height={640}
+              priority
+              className={HUB_HERO_PHONE_IMAGE_CLASS}
+            />
           </figure>
         }
       />
 
       <HubContentStart>
-        <section className="mb-12 grid gap-10 lg:grid-cols-2 lg:gap-12">
+        <section className="mb-12 grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-12">
           <div id="download-form" className="rounded-2xl border border-[#E2DDD7] bg-[#FAFAFA] p-6 md:p-8">
             <h2 className="mb-2 text-xl font-semibold text-[#111111]">Download Your Free Template</h2>
             <p className="mb-6 text-sm text-[#6B6B6B]">
               Enter your email to receive the PDF. We will also send practical tips for digitising this workflow in
               Consentz.
             </p>
-            {submitted ? (
-              <p className="rounded-xl bg-[#eef7f2] px-4 py-3 text-sm font-medium text-[#1a6e45]">
-                Thank you — check your inbox for the download link.
-              </p>
-            ) : (
-              <form
-                className="flex flex-col gap-4"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  setSubmitted(true)
-                }}
-              >
-                <label className="flex flex-col gap-1.5 text-sm font-medium text-[#111111]">
-                  Work email
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
-                  />
-                </label>
-                <label className="flex flex-col gap-1.5 text-sm font-medium text-[#111111]">
-                  Clinic name
-                  <input
-                    type="text"
-                    required
-                    value={clinic}
-                    onChange={(e) => setClinic(e.target.value)}
-                    className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
-                  />
-                </label>
-                <button
-                  type="submit"
-                  className="inline-flex h-[48px] items-center justify-center rounded-[12px] bg-[#1A1A1A] text-base font-semibold text-white transition-colors hover:bg-neutral-900"
-                >
-                  Send Me The Template
-                </button>
-              </form>
-            )}
+            <HubTemplateDownloadForm />
           </div>
-          <div className="flex flex-col gap-4">
-            <div className="overflow-hidden rounded-2xl border border-[#E2DDD7] bg-white shadow-sm">
-              <div className="flex aspect-[4/5] items-center justify-center bg-[#f2eee6] p-8">
-                <div className="w-full max-w-[280px] rounded-lg border border-[#E2DDD7] bg-white p-6 shadow-md">
-                  <div className="mb-4 h-3 w-24 rounded bg-[#e6e0d8]" />
-                  <div className="mb-2 h-2 w-full rounded bg-[#eef7f2]" />
-                  <div className="mb-2 h-2 w-[90%] rounded bg-[#eef7f2]" />
-                  <div className="mb-6 h-2 w-[75%] rounded bg-[#eef7f2]" />
-                  <div className="h-8 w-32 rounded border border-[#1a877a] bg-[#e0f1ed]" />
-                </div>
-              </div>
-              <p className="border-t border-[#E2DDD7] px-5 py-3 text-center text-sm text-[#6B6B6B]">
-                Preview — PDF template thumbnail
-              </p>
-            </div>
-          </div>
+          <HubTemplatePreviewPanel entry={entry} />
         </section>
+
+        <HubTemplateLibrarySection
+          excludeSlug={{ category: entry.category, slug: entry.slug }}
+        />
 
         <section className="mb-12">
           <h2 className="mb-6 text-center text-2xl font-bold text-[#111111] md:text-3xl">
@@ -208,7 +166,7 @@ export function HubTemplateDownloadPage({ entry }: Props) {
           <div className="flex flex-wrap gap-3">
             <a
               href={`${baseUrl}/book-demo`}
-              className="inline-flex h-[48px] items-center justify-center rounded-[12px] bg-[#1A1A1A] px-6 text-base font-semibold text-white transition-colors hover:bg-neutral-900"
+              className={HUB_CTA_PRIMARY_CLASS}
             >
               Book A Demo
             </a>
@@ -284,7 +242,7 @@ export function HubTemplateDownloadPage({ entry }: Props) {
               </p>
               <a
                 href={`${baseUrl}/book-demo`}
-                className="mt-3 inline-flex h-[48px] w-[200px] items-center justify-center rounded-[12px] bg-[#1A1A1A] text-base font-semibold text-white transition-colors hover:bg-neutral-900"
+                className={`mt-3 ${HUB_CTA_PRIMARY_CLASS}`}
               >
                 Learn More
               </a>

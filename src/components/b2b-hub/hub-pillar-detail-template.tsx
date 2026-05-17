@@ -1,3 +1,10 @@
+import {
+  HUB_CTA_PRIMARY_CLASS,
+  HUB_CTA_PRIMARY_HERO_CLASS,
+  HUB_CTA_SECONDARY_CLASS,
+  HUB_CTA_SECONDARY_HERO_CLASS,
+  HUB_CTA_LINK_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -9,9 +16,12 @@ import {
   UserRound,
 } from "lucide-react";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
+import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq";
 import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell";
+import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography";
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start";
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta";
+import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section";
 import {
   HUB_HERO_INTRO_CLASS,
   HUB_HERO_TITLE_CLASS,
@@ -61,33 +71,7 @@ const SERVICE_PROVIDER_COLLAGE = {
   ] as const,
 } as const;
 
-export const hubBuyerHubTestimonials = [
-  {
-    quote: "Consentz transformed how we handle patient consent.",
-    name: "Sarah Mitchell",
-    role: "Clinic Director · Clarity Aesthetics, London",
-    initials: "SM",
-    tag: "Inspection-ready workflows",
-  },
-  {
-    quote:
-      "We cut our admin time by nearly 40%. The automated reminders and digital consent flow means our team focuses on patients.",
-    name: "Dr. James Okafor",
-    role: "Medical Director · Revive Clinic Group",
-    initials: "JO",
-    tag: "Reduced admin workload",
-  },
-  {
-    quote:
-      "Patient follow-up used to be a manual headache. Consentz handles it automatically.",
-    name: "Priya Sharma",
-    role: "Practice Manager · Luminary Medical Aesthetics",
-    initials: "PS",
-    tag: "Faster patient follow-up",
-  },
-] as const;
-
-const testimonials = hubBuyerHubTestimonials;
+export { hubBuyerHubTestimonials } from "@/lib/b2b-hub/hub-testimonials";
 
 const softwarePainPoints = [
   {
@@ -193,7 +177,15 @@ function PhoneFanCollage({
                   transform: "rotate(44deg) skewX(-6.96deg) scaleY(0.99)",
                 }}
               >
-                <Image src={src} alt="" fill className="object-cover" sizes="120px" />
+                <Image
+                  src={src}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="120px"
+                  priority={i === 0}
+                  loading={i === 0 ? undefined : "lazy"}
+                />
               </div>
             </div>
           ))}
@@ -380,20 +372,20 @@ export function HubPillarDetailTemplate({
           <>
             <a
               href={`${baseUrl}/book-demo`}
-              className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[7px] bg-[#1A1A1A] px-6 text-[20px] font-semibold text-white hover:bg-neutral-900 transition-colors"
+              className={HUB_CTA_PRIMARY_HERO_CLASS}
             >
               Book A Demo
             </a>
             <a
               href={`${baseUrl}/book-demo`}
-              className="inline-flex shrink-0 items-center justify-center rounded-[7px] border-[1.5px] border-[#E2DDD7] bg-white px-6 py-[13px] text-[20px] font-medium text-[#111111] hover:bg-neutral-50 transition-colors whitespace-nowrap"
+              className={HUB_CTA_SECONDARY_HERO_CLASS}
             >
               Get CQC Readiness Audit
             </a>
             {pillar === "software" ? (
               <a
                 href={`${baseUrl}/book-demo`}
-                className="inline-flex shrink-0 items-center justify-center px-1 py-[13px] text-[20px] font-medium text-[#6B6B6B] hover:text-neutral-900 transition-colors whitespace-nowrap"
+                className={HUB_CTA_LINK_CLASS}
               >
                 See How It Works →
               </a>
@@ -476,7 +468,7 @@ export function HubPillarDetailTemplate({
           <div className="mt-10 flex justify-center">
             <a
               href={`${baseUrl}/book-demo`}
-              className="inline-flex h-[52px] w-[208px] items-center justify-center rounded-xl bg-[#1A1A1A] text-xl font-semibold text-white hover:bg-neutral-900 transition-colors"
+              className={HUB_CTA_PRIMARY_CLASS}
             >
               Book Demo
             </a>
@@ -548,7 +540,7 @@ export function HubPillarDetailTemplate({
               <div className="mt-10 flex justify-center">
                 <a
                   href={`${baseUrl}/book-demo`}
-                  className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] text-[20px] font-semibold text-white hover:bg-neutral-900 transition-colors"
+                  className={HUB_CTA_PRIMARY_CLASS}
                 >
                   Book Demo
                 </a>
@@ -575,7 +567,7 @@ export function HubPillarDetailTemplate({
               <div className="mt-10 flex justify-center">
                 <a
                   href={`${baseUrl}/book-demo`}
-                  className="inline-flex h-[52px] w-[208px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] text-[20px] font-semibold text-white hover:bg-neutral-900 transition-colors"
+                  className={HUB_CTA_PRIMARY_CLASS}
                 >
                   Book Demo
                 </a>
@@ -586,40 +578,7 @@ export function HubPillarDetailTemplate({
 
         {pillar === "software" ? <HubRelatedLinksGrid related={related} /> : null}
 
-        <section className="mb-16">
-          <div className="grid md:grid-cols-3 gap-5 max-w-[1224px] mx-auto">
-            {testimonials.map((t) => (
-              <div
-                key={t.name}
-                className="flex flex-col gap-4 rounded-[19px] border border-[#E6E0D8] bg-[#FAF8F5] p-7 md:p-8"
-              >
-                <div className="flex gap-0.5 text-[#2E2E2E]" aria-hidden>
-                  {"★★★★★".split("").map((s, i) => (
-                    <span key={i} className="text-sm">
-                      {s}
-                    </span>
-                  ))}
-                </div>
-                <p className="text-xl leading-snug text-[#2E2E2E] tracking-tight flex-1">
-                  {t.quote}
-                </p>
-                <div className="h-px bg-[#E1DCD5]" />
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D8D4CE] text-[10px] font-semibold tracking-wide text-[#7A7570]">
-                    {t.initials}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[#2E2E2E]">{t.name}</p>
-                    <p className="text-[11px] leading-snug text-[#928B82]">{t.role}</p>
-                  </div>
-                </div>
-                <span className="inline-flex w-fit items-center rounded-md bg-[#EDE9E3] px-2 py-1 text-[9px] font-medium tracking-wide text-[#5C564E]">
-                  ↑ {t.tag}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
+        <HubTestimonialsSection />
 
         <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#F2EEE6] lg:h-[302px] lg:overflow-hidden">
           <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-6 py-10 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">
@@ -634,7 +593,7 @@ export function HubPillarDetailTemplate({
               <div className="pt-3 lg:pt-2">
                 <a
                   href={`${baseUrl}/book-demo`}
-                  className="inline-flex h-[48px] w-[200px] shrink-0 items-center justify-center rounded-[12px] bg-[#1A1A1A] px-5 text-base font-semibold text-white hover:bg-neutral-900 transition-colors sm:h-[52px] sm:w-[208px] sm:px-6 sm:text-[20px]"
+                  className={HUB_CTA_PRIMARY_CLASS}
                 >
                   Learn More
                 </a>
@@ -646,77 +605,32 @@ export function HubPillarDetailTemplate({
           </div>
         </section>
 
-        <section className="mb-16 px-0 sm:px-4">
-          <h2 className="text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111] mb-3">
-            Frequently Asked Questions
-          </h2>
-          <div className="h-3" />
-          <div className="max-w-[1056px] mx-auto rounded-xl border border-[#E2DDD7] bg-white overflow-hidden">
-            <details
-              open
-              className="group border-b border-[#EDE9E3] bg-white open:bg-white"
-            >
-              <summary className="cursor-pointer list-none px-6 py-5 font-semibold text-xl text-[#111111] flex justify-between gap-4 items-center">
-                What is aesthetic clinic management software?
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0 text-sm">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B] max-w-[1000px]">
-                  Aesthetic clinic management software handles the core operations of a
-                  cosmetic or aesthetic clinic — including digital consent forms, patient
-                  records, appointment scheduling, CQC compliance evidence, automated
-                  messaging and clinic payments. Unlike generic booking tools,
-                  purpose-built aesthetic software is designed for the specific compliance
-                  requirements of UK aesthetic medicine.
-                </p>
-              </div>
-            </details>
-            <details className="group border-b border-[#EDE9E3] bg-white">
-              <summary className="cursor-pointer list-none px-6 py-5 font-semibold text-xl text-[#111111] flex justify-between gap-4 items-center">
-                Does Consentz include digital consent forms?
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0 text-sm">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  Yes. Consentz supports structured digital consent tied to treatments and
-                  visits so evidence stays consistent and retrievable.
-                </p>
-              </div>
-            </details>
-            <details className="group border-b border-[#EDE9E3] bg-white">
-              <summary className="cursor-pointer list-none px-6 py-5 font-semibold text-xl text-[#111111] flex justify-between gap-4 items-center">
-                Can Consentz help with CQC compliance?
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0 text-sm">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  Consentz is designed to help teams collect and organise evidence that
-                  maps to common inspection expectations, alongside operational workflows.
-                </p>
-              </div>
-            </details>
-            <details className="group bg-white">
-              <summary className="cursor-pointer list-none px-6 py-5 font-semibold text-xl text-[#1A1A1A] flex justify-between gap-4 items-center">
-                Can I migrate from Pabau or Fresha?
-                <span className="text-neutral-400 group-open:rotate-180 transition-transform shrink-0 text-sm">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-[1.7] text-[#6B6B6B]">
-                  Many clinics phase migration by workflow. Start with consent, booking, and
-                  payments, then expand automation as data is structured.
-                </p>
-              </div>
-            </details>
-          </div>
-        </section>
+        <HubBuyerFaq
+          items={[
+            {
+              question: "What is aesthetic clinic management software?",
+              answer:
+                "Aesthetic clinic management software handles the core operations of a cosmetic or aesthetic clinic — including digital consent forms, patient records, appointment scheduling, CQC compliance evidence, automated messaging and clinic payments. Unlike generic booking tools, purpose-built aesthetic software is designed for the specific compliance requirements of UK aesthetic medicine.",
+              defaultOpen: true,
+            },
+            {
+              question: "Does Consentz include digital consent forms?",
+              answer:
+                "Yes. Consentz supports structured digital consent tied to treatments and visits so evidence stays consistent and retrievable.",
+            },
+            {
+              question: "Can Consentz help with CQC compliance?",
+              answer:
+                "Consentz is designed to help teams collect and organise evidence that maps to common inspection expectations, alongside operational workflows.",
+            },
+            {
+              question: "Can I migrate from Pabau or Fresha?",
+              answer:
+                "Many clinics phase migration by workflow. Start with consent, booking, and payments, then expand automation as data is structured.",
+            },
+          ]}
+        />
+
 
         <section className="mb-16 max-w-[1280px] mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-[#111111] mb-3">
@@ -778,7 +692,7 @@ export function HubPillarDetailTemplate({
             {pillar === "cqc" ? (
               <Link
                 href="/business/cqc/"
-                className="inline-flex items-center justify-center rounded-[12px] bg-[#111111] px-11 py-4 text-xl font-semibold text-white hover:bg-neutral-900 transition-colors"
+                className={HUB_CTA_PRIMARY_CLASS}
               >
                 View all CQC guides
               </Link>
@@ -787,7 +701,7 @@ export function HubPillarDetailTemplate({
                 href="https://www.consentz.com/blog/"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center rounded-[12px] bg-[#111111] px-11 py-4 text-xl font-semibold text-white hover:bg-neutral-900 transition-colors"
+                className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
               >
                 View All Blogs
               </a>

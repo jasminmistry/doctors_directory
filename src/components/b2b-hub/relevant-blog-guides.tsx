@@ -1,3 +1,4 @@
+import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
 import Image from "next/image"
 import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links"
 
@@ -45,7 +46,7 @@ export function RelevantBlogGuides() {
             href="https://www.consentz.com/blog/"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-[12px] bg-black px-8 py-3 text-sm font-semibold text-white hover:bg-neutral-900 transition-colors"
+            className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
           >
             View all blogs
           </a>
