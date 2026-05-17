@@ -1,14 +1,9 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HubTemplateLibrarySection } from "@/components/b2b-hub/hub-template-library-section"
 import { HUB_INDEX_HERO_TITLE_CLASS_DEFAULT } from "@/components/b2b-hub/hub-index-hero-search"
-import {
-  TEMPLATE_CATEGORIES,
-  TEMPLATE_CATEGORY_LABEL,
-  TEMPLATE_ENTRIES,
-  templatesByCategory,
-} from "@/lib/b2b-hub/templates-registry"
+import { TEMPLATE_CATEGORIES, TEMPLATE_ENTRIES } from "@/lib/b2b-hub/templates-registry"
 import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo"
 
 export const metadata: Metadata = {
@@ -52,43 +47,7 @@ export default function TemplatesHubPage() {
         </div>
       </section>
 
-      <section className="bg-white px-4 py-12 md:py-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-14">
-            {TEMPLATE_CATEGORIES.map((cat) => {
-              const items = templatesByCategory(cat)
-              if (items.length === 0) return null
-              return (
-                <div key={cat}>
-                  <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                    <h2 className="text-2xl font-bold text-[#111111]">
-                      {TEMPLATE_CATEGORY_LABEL[cat]}
-                    </h2>
-                    <Link
-                      href={`/business/templates/${cat}/`}
-                      className="text-sm font-semibold text-[#1a877a] hover:underline"
-                    >
-                      View all ({items.length}) →
-                    </Link>
-                  </div>
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {items.slice(0, 6).map((e) => (
-                      <Link
-                        key={e.slug}
-                        href={`/business/templates/${e.category}/${e.slug}/`}
-                        className="flex min-h-[88px] flex-col justify-center rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-4 hover:border-neutral-400 hover:bg-white transition-colors"
-                      >
-                        <span className="font-semibold text-[#111111] leading-snug">{e.title}</span>
-                        <span className="mt-1 text-sm text-neutral-600 line-clamp-2">{e.summary}</span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+      <HubTemplateLibrarySection showViewAll={false} />
 
       <HubSectionCta
         heading="Ready To Digitise Your Templates?"

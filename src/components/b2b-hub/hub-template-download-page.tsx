@@ -11,6 +11,8 @@ import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell"
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
 import { HubTemplateDownloadForm } from "@/components/b2b-hub/hub-template-download-form"
+import { HubTemplateLibrarySection } from "@/components/b2b-hub/hub-template-library-section"
+import { HubTemplatePreviewPanel } from "@/components/b2b-hub/hub-template-preview-panel"
 import {
   HUB_HERO_PHONE_SRC,
   HUB_HERO_PHONE_IMAGE_CLASS,
@@ -108,7 +110,7 @@ export function HubTemplateDownloadPage({ entry }: Props) {
       />
 
       <HubContentStart>
-        <section className="mb-12 grid gap-10 lg:grid-cols-2 lg:gap-12">
+        <section className="mb-12 grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-12">
           <div id="download-form" className="rounded-2xl border border-[#E2DDD7] bg-[#FAFAFA] p-6 md:p-8">
             <h2 className="mb-2 text-xl font-semibold text-[#111111]">Download Your Free Template</h2>
             <p className="mb-6 text-sm text-[#6B6B6B]">
@@ -117,23 +119,12 @@ export function HubTemplateDownloadPage({ entry }: Props) {
             </p>
             <HubTemplateDownloadForm />
           </div>
-          <div className="flex flex-col gap-4">
-            <div className="overflow-hidden rounded-2xl border border-[#E2DDD7] bg-white shadow-sm">
-              <div className="flex aspect-[4/5] items-center justify-center bg-[#f2eee6] p-8">
-                <div className="w-full max-w-[280px] rounded-lg border border-[#E2DDD7] bg-white p-6 shadow-md">
-                  <div className="mb-4 h-3 w-24 rounded bg-[#e6e0d8]" />
-                  <div className="mb-2 h-2 w-full rounded bg-[#eef7f2]" />
-                  <div className="mb-2 h-2 w-[90%] rounded bg-[#eef7f2]" />
-                  <div className="mb-6 h-2 w-[75%] rounded bg-[#eef7f2]" />
-                  <div className="h-8 w-32 rounded border border-[#1a877a] bg-[#e0f1ed]" />
-                </div>
-              </div>
-              <p className="border-t border-[#E2DDD7] px-5 py-3 text-center text-sm text-[#6B6B6B]">
-                Preview — PDF template thumbnail
-              </p>
-            </div>
-          </div>
+          <HubTemplatePreviewPanel entry={entry} />
         </section>
+
+        <HubTemplateLibrarySection
+          excludeSlug={{ category: entry.category, slug: entry.slug }}
+        />
 
         <section className="mb-12">
           <h2 className="mb-6 text-center text-2xl font-bold text-[#111111] md:text-3xl">
