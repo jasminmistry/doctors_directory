@@ -91,6 +91,16 @@ enum ReviewStatus {
   rejected
 }
 
+enum ChatSender {
+  patient
+  clinic
+}
+
+enum ChatSessionStatus {
+  active
+  closed
+}
+
 // ============================================================
 // CITIES
 // ============================================================
@@ -249,6 +259,8 @@ model Clinic {
   consultationLeads        ConsultationLead[]
   bookings                 Booking[]
   platformReviews          PlatformReview[]
+  chatSessions             ChatSession[]
+  presence                 ClinicPresence?
 
   @@index([cityId])
   @@index([rating])
@@ -855,4 +867,56 @@ model PlatformReview {
   @@index([clinicId])
   @@index([status])
   @@map("platform_reviews")
+}
+
+// ============================================================
+// CONSULTATION CHAT
+// ============================================================
+
+model ChatSession {
+  id           Int               @id @default(autoincrement())
+  clinicId     Int
+  visitorToken String            @unique @db.VarChar(64)
+  patientName  String?           @db.VarChar(200)
+  patientEmail String?           @db.VarChar(255)
+  patientPhone String?           @db.VarChar(30)
+  status       ChatSessionStatus @default(active)
+  // Consentz Core reference — populated when conversation is pushed (stub, implement later)
+  coreConversationId String?     @db.VarChar(255)
+  closedAt     DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  clinic   Clinic        @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+
+  @@index([clinicId])
+  @@index([status])
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id        Int        @id @default(autoincrement())
+  sessionId Int
+  sender    ChatSender
+  content   String     @db.Text
+  // Consentz Core reference — populated when message is pushed (stub, implement later)
+  coreMessageId String? @db.VarChar(255)
+  createdAt DateTime   @default(now())
+
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([createdAt])
+  @@map("chat_messages")
+}
+
+model ClinicPresence {
+  id         Int      @id @default(autoincrement())
+  clinicId   Int      @unique
+  lastSeenAt DateTime @default(now())
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@map("clinic_presence")
 }

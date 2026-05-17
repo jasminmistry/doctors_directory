@@ -29,8 +29,8 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
   if (badges.length === 0) return null
 
   return (
-    <div className="space-y-3">
-      <h3 className="text-base font-semibold text-gray-900">Accreditations &amp; Certifications</h3>
+    <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+      <h3 className="text-sm font-semibold text-gray-900">Accreditations &amp; Certifications</h3>
       <div className="flex flex-wrap gap-2">
         {badges.map(({ label, url }) =>
           url ? (
@@ -55,7 +55,7 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
         )}
       </div>
       <p className="text-xs text-gray-400 leading-relaxed">
-        Accreditation statuses are self-reported by the clinic. Consentz does not independently verify accreditation credentials. Always confirm directly with the relevant regulatory body.
+        Self-reported by the clinic. Confirm directly with the relevant regulatory body.
       </p>
     </div>
   )

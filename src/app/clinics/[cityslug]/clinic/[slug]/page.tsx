@@ -266,7 +266,11 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       </div>
 
       <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
-        <ProfileHeader clinic={clinic} />
+        <ProfileHeader
+          clinic={clinic}
+          clinicName={dbClinic.name ?? slug}
+          hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
+        />
 
 
         <div className="px-4 md:px-0">
@@ -275,20 +279,6 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-10 mb-4">
             <div className="order-2 lg:order-1 col-span-1 lg:col-span-6 space-y-8">
               <ClinicDetailsMarkdown clinic={clinic} />
-              <AccreditationBadges
-                isSaveFace={clinic.isSaveFace}
-                isDoctor={clinic.isDoctor}
-                isJccp={clinic.isJCCP ? clinic.isJCCP[0] : null}
-                jccpUrl={clinic.isJCCP ? clinic.isJCCP[1] : null}
-                isCqc={clinic.isCQC ? clinic.isCQC[0] : null}
-                cqcUrl={clinic.isCQC ? clinic.isCQC[1] : null}
-                isHiw={clinic.isHIW ? clinic.isHIW[0] : null}
-                hiwUrl={clinic.isHIW ? clinic.isHIW[1] : null}
-                isHis={clinic.isHIS ? clinic.isHIS[0] : null}
-                hisUrl={clinic.isHIS ? clinic.isHIS[1] : null}
-                isRqia={clinic.isRQIA ? clinic.isRQIA[0] : null}
-                rqiaUrl={clinic.isRQIA ? clinic.isRQIA[1] : null}
-              />
               <ReviewsSection clinicSlug={slug} reviews={combinedReviews} />
             </div>
 
@@ -297,7 +287,21 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                 <BookingWidget
                   slug={slug}
                   clinicName={dbClinic.name ?? slug}
-                  hasCoreCalendar={dbClinic.coreClinicId !== null}
+                  hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
+                />
+                <AccreditationBadges
+                  isSaveFace={clinic.isSaveFace}
+                  isDoctor={clinic.isDoctor}
+                  isJccp={clinic.isJCCP ? clinic.isJCCP[0] : null}
+                  jccpUrl={clinic.isJCCP ? clinic.isJCCP[1] : null}
+                  isCqc={clinic.isCQC ? clinic.isCQC[0] : null}
+                  cqcUrl={clinic.isCQC ? clinic.isCQC[1] : null}
+                  isHiw={clinic.isHIW ? clinic.isHIW[0] : null}
+                  hiwUrl={clinic.isHIW ? clinic.isHIW[1] : null}
+                  isHis={clinic.isHIS ? clinic.isHIS[0] : null}
+                  hisUrl={clinic.isHIS ? clinic.isHIS[1] : null}
+                  isRqia={clinic.isRQIA ? clinic.isRQIA[0] : null}
+                  rqiaUrl={clinic.isRQIA ? clinic.isRQIA[1] : null}
                 />
                 <TransparencyBox
                   claimedAt={dbClinic.claimedAt}

@@ -51,7 +51,7 @@ export function TransparencyBox({ claimedAt, cqcStatus, avgReplyTime }: Transpar
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">Transparency</h3>
+      <h3 className="text-sm font-semibold text-gray-900">Transparency</h3>
       {rows.map(({ icon: Icon, label, value, extra }) => (
         <div key={label} className="flex items-start gap-3">
           <Icon className="h-4 w-4 mt-0.5 text-gray-400 shrink-0" />

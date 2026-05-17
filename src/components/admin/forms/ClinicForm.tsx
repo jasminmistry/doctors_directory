@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Building2, ExternalLink, MapPin, Star, Share2, ShieldCheck, FileText, Save, Wand2, Sparkles } from 'lucide-react'
+import { ArrowLeft, Building2, ExternalLink, MapPin, Star, Share2, ShieldCheck, FileText, Save, Wand2, Sparkles, Link2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ImageUpload } from '@/components/admin/ImageUpload'
@@ -50,6 +50,7 @@ type ClinicData = {
   coverImage: string | null
   cqcStatus: 'not_applicable' | 'good' | 'requires_improvement' | 'outstanding' | null
   avgReplyTime: 'within_24hrs' | 'within_48hrs' | 'more_than_48hrs' | null
+  coreClinicId: number | null
 }
 
 const EMPTY: ClinicData = {
@@ -59,7 +60,27 @@ const EMPTY: ClinicData = {
   xTwitter: null, instagram: null, youtube: null, linkedin: null,
   isSaveFace: false, isDoctor: false, isJccp: null, jccpUrl: null, isCqc: null, cqcUrl: null,
   isHiw: null, hiwUrl: null, isHis: null, hisUrl: null, isRqia: null, rqiaUrl: null,
-  coverImage: null, cqcStatus: null, avgReplyTime: null,
+  coverImage: null, cqcStatus: null, avgReplyTime: null, coreClinicId: null,
+}
+
+// Converts stored Python-list / JSON-array strings to newline-separated display text
+function parseStoredList(val: string | null | undefined): string {
+  if (!val || val === '[]' || val === "['']" || val === '[""]') return ''
+  try {
+    if (val.startsWith('[') && val.endsWith(']')) {
+      const parsed = JSON.parse(val.replaceAll("'", '"'))
+      if (Array.isArray(parsed)) return parsed.filter(Boolean).join('\n')
+    }
+  } catch {
+    // unparseable — return as-is so nothing is lost
+  }
+  return val
+}
+
+// Converts newline-separated textarea text back to a JSON array string for storage
+function formatListForSave(val: string | null | undefined): string | null {
+  const lines = (val ?? '').split('\n').map((l) => l.trim()).filter(Boolean)
+  return lines.length > 0 ? JSON.stringify(lines) : null
 }
 
 const REG_FLAGS = [
@@ -96,7 +117,10 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
     if (fetchUrl) {
       fetch(fetchUrl)
         .then((r) => { if (!r.ok) throw new Error(); return r.json() })
-        .then((d) => { setData(d); setLoading(false) })
+        .then((d) => {
+          setData({ ...d, accreditations: parseStoredList(d.accreditations), awards: parseStoredList(d.awards), affiliations: parseStoredList(d.affiliations) })
+          setLoading(false)
+        })
         .catch(() => setLoading(false))
       return
     }
@@ -111,7 +135,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
         if (!d.name) {
           d.name = d.slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
         }
-        setData(d)
+        setData({ ...d, accreditations: parseStoredList(d.accreditations), awards: parseStoredList(d.awards), affiliations: parseStoredList(d.affiliations) })
         setLoading(false)
       })
       .catch(() => router.push('/admin/clinics'))
@@ -127,7 +151,13 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
 
     setSaving(true)
     const { slug: _s, ...rest } = data
-    const body = isNew ? { slug: data.slug.trim(), ...rest } : rest
+    const serialised = {
+      ...rest,
+      accreditations: formatListForSave(rest.accreditations),
+      awards: formatListForSave(rest.awards),
+      affiliations: formatListForSave(rest.affiliations),
+    }
+    const body = isNew ? { slug: data.slug.trim(), ...serialised } : serialised
     const url = saveUrl ?? (isNew ? '/directory/api/admin/clinics' : `/directory/api/admin/clinics/${slug}`)
     try {
       const res = await fetch(url, {
@@ -329,14 +359,14 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       {/* Content */}
       <FormSection title="Content" icon={FileText}>
         <div className="grid grid-cols-1 gap-5">
-          <Field label="Accreditations">
-            <Textarea value={data.accreditations ?? ''} onChange={(e) => set('accreditations', e.target.value || null)} placeholder="List of accreditations…" className="min-h-[80px]" />
+          <Field label="Accreditations" hint="One accreditation per line">
+            <Textarea value={data.accreditations ?? ''} onChange={(e) => set('accreditations', e.target.value || null)} placeholder={"CQC registered\nSave Face accredited\nJCCP member"} className="min-h-[80px]" />
           </Field>
-          <Field label="Awards">
-            <Textarea value={data.awards ?? ''} onChange={(e) => set('awards', e.target.value || null)} placeholder="Awards and recognitions…" className="min-h-[80px]" />
+          <Field label="Awards" hint="One award per line">
+            <Textarea value={data.awards ?? ''} onChange={(e) => set('awards', e.target.value || null)} placeholder={"Best Aesthetic Clinic 2024\nTop Rated on Treatwell"} className="min-h-[80px]" />
           </Field>
-          <Field label="Affiliations">
-            <Textarea value={data.affiliations ?? ''} onChange={(e) => set('affiliations', e.target.value || null)} placeholder="Professional affiliations…" className="min-h-[80px]" />
+          <Field label="Affiliations" hint="One affiliation per line">
+            <Textarea value={data.affiliations ?? ''} onChange={(e) => set('affiliations', e.target.value || null)} placeholder={"British Association of Aesthetic Practitioners\nBritish College of Aesthetic Medicine"} className="min-h-[80px]" />
           </Field>
         </div>
       </FormSection>
@@ -360,6 +390,18 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       </FormSection>
 
       {/* Regulatory — admin-managed only */}
+      {!isPortal && <FormSection title="Integration" icon={Link2} description="Consentz Core CRM identifiers — set these to enable online booking and calendar sync">
+        <Field label="Core Clinic ID" hint="Consentz Core clinic ID (integer). Enables real-time availability and online booking.">
+          <Input
+            type="number"
+            value={data.coreClinicId ?? ''}
+            onChange={(e) => set('coreClinicId', e.target.value ? parseInt(e.target.value, 10) : null)}
+            placeholder="e.g. 42"
+            className="h-8 text-sm max-w-[180px]"
+          />
+        </Field>
+      </FormSection>}
+
       {!isPortal && <FormSection title="Regulatory Flags" icon={ShieldCheck} description="Certifications and regulatory body memberships">
         <div className="space-y-4">
           <div className="flex items-center gap-8">

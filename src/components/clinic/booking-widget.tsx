@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { format, addDays, isSameDay, parseISO } from 'date-fns'
-import { ChevronLeft, ChevronRight, Loader2, CalendarDays, CheckCircle2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2, CalendarDays, CheckCircle2, Video } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { CoreSlot } from '@/lib/core-api'
+import { CallBookingForm } from '@/components/clinic/call-booking-form'
 
 interface BookingWidgetProps {
   slug: string
@@ -28,6 +29,7 @@ function dateKey(d: Date) {
 }
 
 export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidgetProps) {
+  const [tab, setTab] = useState<'appointment' | 'call'>('appointment')
   const [step, setStep] = useState<Step>(1)
   const [weekOffset, setWeekOffset] = useState(0)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
@@ -90,15 +92,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
     }
   }
 
-  // Fallback for clinics without Core calendar
-  if (!hasCoreCalendar) {
-    return (
-      <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-gray-900">Book a Consultation</h3>
-        <p className="text-xs text-gray-500">Online booking is not yet available. Contact {clinicName} directly to arrange an appointment.</p>
-      </div>
-    )
-  }
+  if (!hasCoreCalendar) return null
 
   if (step === 3) {
     return (
@@ -114,12 +108,42 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
-      <div className="flex items-center gap-2">
-        <CalendarDays className="h-4 w-4 text-gray-400" />
-        <h3 className="text-sm font-semibold text-gray-900">Book a Consultation</h3>
+    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+      {/* Tab bar */}
+      <div className="flex border-b border-gray-100">
+        <button
+          type="button"
+          onClick={() => setTab('appointment')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors',
+            tab === 'appointment'
+              ? 'border-b-2 border-gray-900 text-gray-900 -mb-px'
+              : 'text-gray-400 hover:text-gray-600',
+          )}
+        >
+          <CalendarDays className="h-3.5 w-3.5" />
+          In-Clinic Visit
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab('call')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors',
+            tab === 'call'
+              ? 'border-b-2 border-gray-900 text-gray-900 -mb-px'
+              : 'text-gray-400 hover:text-gray-600',
+          )}
+        >
+          <Video className="h-3.5 w-3.5" />
+          Video Call
+        </button>
       </div>
 
+      {tab === 'call' && <CallBookingForm clinicSlug={slug} />}
+
+      {/* Appointment tab */}
+      {tab === 'appointment' && (
+      <div className="p-5 space-y-4">
       {/* Step indicator */}
       <div className="flex items-center gap-1 text-[10px] text-gray-400">
         <span className={cn('font-medium', step === 1 && 'text-gray-900')}>1. Date &amp; Time</span>
@@ -265,6 +289,8 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
             </button>
           </div>
         </div>
+      )}
+      </div>
       )}
     </div>
   )

@@ -1,11 +1,14 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Building2, User, Globe, LogOut, Menu, X, Inbox, CalendarDays } from 'lucide-react'
+import { Building2, User, Globe, LogOut, Menu, X, Inbox, CalendarDays, MessageSquare, Lock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { LeadBadge } from '@/components/portal/lead-badge'
+import { ChatBadge } from '@/components/portal/chat-badge'
+
+const PRESENCE_INTERVAL_MS = 2 * 60 * 1000 // 2 minutes
 
 interface PortalLayoutClientProps {
   children: ReactNode
@@ -18,6 +21,17 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
   const pathname = usePathname()
   const router = useRouter()
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
+
+  // Keep clinic presence alive while portal is open
+  useEffect(() => {
+    if (entityType !== 'clinic') return
+    function ping() {
+      fetch('/directory/api/portal/presence', { method: 'POST' }).catch(() => {})
+    }
+    ping()
+    const id = setInterval(ping, PRESENCE_INTERVAL_MS)
+    return () => clearInterval(id)
+  }, [entityType])
 
   const baseNav =
     entityType === 'clinic'
@@ -38,10 +52,16 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
         <span className="text-sm font-semibold text-white truncate">{entityName || 'My Portal'}</span>
         <div className="flex items-center gap-2">
           {entityType === 'clinic' && (
-            <Link href="/portal/clinic/prospects" className="relative inline-flex">
-              <Inbox className="h-5 w-5 text-gray-400" />
-              <LeadBadge mobile />
-            </Link>
+            <>
+              <Link href="/portal/clinic/chat" className="relative inline-flex">
+                <MessageSquare className="h-5 w-5 text-gray-400" />
+                <ChatBadge mobile />
+              </Link>
+              <Link href="/portal/clinic/prospects" className="relative inline-flex">
+                <Inbox className="h-5 w-5 text-gray-400" />
+                <LeadBadge mobile />
+              </Link>
+            </>
           )}
           <button
             type="button"
@@ -84,6 +104,18 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
                 </span>
               </div>
               <div className="mt-1.5 text-sm font-semibold leading-tight text-white truncate">{entityName || 'My Portal'}</div>
+              {plan && (
+                <div className="mt-2">
+                  <span className={cn(
+                    'inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
+                    plan === 'subscription' && 'bg-cyan-400/20 text-cyan-200',
+                    plan === 'pay_per_lead' && 'bg-violet-400/20 text-violet-200',
+                    plan === 'free' && 'bg-white/10 text-gray-400',
+                  )}>
+                    {plan === 'subscription' ? 'Subscription' : plan === 'pay_per_lead' ? 'Pay-Per-Lead' : 'Free'}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -127,18 +159,46 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
                   <LeadBadge />
                 </Link>
 
+                {plan === 'free' ? (
+                  <Link
+                    href="/portal/clinic/calendar"
+                    onClick={() => setIsMobileNavOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 cursor-pointer"
+                    title="Upgrade to access Calendar"
+                  >
+                    <CalendarDays className="h-4 w-4 shrink-0" />
+                    <span className="flex-1">Calendar</span>
+                    <Lock className="h-3 w-3 shrink-0" />
+                  </Link>
+                ) : (
+                  <Link
+                    href="/portal/clinic/calendar"
+                    onClick={() => setIsMobileNavOpen(false)}
+                    className={cn(
+                      'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                      pathname.startsWith('/portal/clinic/calendar')
+                        ? 'bg-white/10 text-white'
+                        : 'text-gray-400 hover:text-white hover:bg-white/5',
+                    )}
+                  >
+                    <CalendarDays className="h-4 w-4 shrink-0" />
+                    Calendar
+                  </Link>
+                )}
+
                 <Link
-                  href="/portal/clinic/calendar"
+                  href="/portal/clinic/chat"
                   onClick={() => setIsMobileNavOpen(false)}
                   className={cn(
                     'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                    pathname.startsWith('/portal/clinic/calendar')
+                    pathname.startsWith('/portal/clinic/chat')
                       ? 'bg-white/10 text-white'
                       : 'text-gray-400 hover:text-white hover:bg-white/5',
                   )}
                 >
-                  <CalendarDays className="h-4 w-4 shrink-0" />
-                  Calendar
+                  <MessageSquare className="h-4 w-4 shrink-0" />
+                  <span className="flex-1">Chat</span>
+                  <ChatBadge />
                 </Link>
               </>
             )}
