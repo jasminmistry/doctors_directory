@@ -221,6 +221,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
                 return n(claim.claimerPhone) === n(claim.clinic.gmapsPhone)
               })(),
               verified: claim.domainVerified,
+              // Preserve clinic name entered during claim if the record has no name
+              ...(!claim.clinic?.name && claim.clinicNameInput ? { name: claim.clinicNameInput } : {}),
               // Copy Stripe customer ID if the webhook already stored it on the claim
               ...(claim.stripeCustomerId ? { stripeCustomerId: claim.stripeCustomerId } : {}),
             },

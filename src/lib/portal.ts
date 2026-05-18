@@ -41,7 +41,7 @@ export async function getPortalUser(): Promise<PortalUser | null> {
 
   const entityName =
     claim.entityType === 'clinic'
-      ? (claim.clinic?.name ?? claim.clinicSlug ?? '')
+      ? (claim.clinic?.name ?? claim.clinicNameInput ?? claim.clinicSlug ?? '')
       : (claim.practitioner?.displayName ?? claim.practitionerSlug ?? '')
 
   return {
