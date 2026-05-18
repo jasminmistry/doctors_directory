@@ -1,8 +1,5 @@
 import { buildHubTemplateLibraryItems } from "@/lib/b2b-hub/hub-template-library-build"
-import {
-  CONSENTZ_CONTROL_REGISTRATION_URL,
-  type TemplateCategory,
-} from "@/lib/b2b-hub/templates-registry"
+import type { TemplateCategory } from "@/lib/b2b-hub/templates-registry"
 
 export type HubTemplateLibraryFormat =
   | "all"
@@ -28,33 +25,30 @@ export type HubTemplateLibraryItem = {
   internal: boolean
 }
 
-const EXTERNAL_SUPPLEMENT: HubTemplateLibraryItem[] = [
-  {
-    id: "ext-brochure",
-    title: "Medical Brochure Templates For Healthcare Practices [2026 Guide]",
-    description:
-      "Clinic brochure layouts and copy frameworks for healthcare marketing teams.",
-    date: "December 6, 2025",
-    format: "carousels",
-    image: "/directory/images/Aesthetic-Clinic-Marketing-Guide-1536x864.webp",
-    href: CONSENTZ_CONTROL_REGISTRATION_URL,
-    tags: ["MARKETING", "CAROUSELS"],
-    tagColors: ["bg-[#1A1A1A] text-white", "bg-[#1A1A1A] text-white"],
-    author: "Consentz Team",
-    downloads: 92,
-    internal: false,
-  },
-]
-
 export function getHubTemplateLibraryItems(
   exclude?: { category: TemplateCategory; slug: string }
 ): HubTemplateLibraryItem[] {
-  const registry = buildHubTemplateLibraryItems(
+  return buildHubTemplateLibraryItems(
     exclude ? { category: exclude.category, slug: exclude.slug } : undefined
   )
-  const ids = new Set(registry.map((i) => i.id))
-  const extra = EXTERNAL_SUPPLEMENT.filter((i) => !ids.has(i.id))
-  return [...registry, ...extra]
+}
+
+export function countHubTemplateLibraryByFormat(
+  items: HubTemplateLibraryItem[]
+): Record<HubTemplateLibraryFormat, number> {
+  const counts: Record<HubTemplateLibraryFormat, number> = {
+    all: items.length,
+    carousels: 0,
+    stories: 0,
+    reels: 0,
+    email: 0,
+    forms: 0,
+    cqc: 0,
+  }
+  for (const item of items) {
+    counts[item.format] += 1
+  }
+  return counts
 }
 
 /** @deprecated Use getHubTemplateLibraryItems() */

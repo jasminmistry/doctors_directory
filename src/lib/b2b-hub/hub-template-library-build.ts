@@ -9,20 +9,11 @@ import type {
   HubTemplateLibraryFormat,
   HubTemplateLibraryItem,
 } from "@/lib/b2b-hub/hub-template-library-data"
-
-const CATEGORY_PREVIEW: Record<TemplateCategory, string> = {
-  consent: "/directory/images/HIPAA-Compliant-Medical-Spa-Software-768x432.webp",
-  intake: "/directory/images/Aesthetic Software Interface.webp",
-  aftercare: "/directory/images/Aesthetic-Clinic-Marketing-Guide-1536x864.webp",
-  "cqc-policies": "/directory/images/cqc-hub/mid-caring.png",
-  sop: "/directory/images/cqc-hub/mid-domains.png",
-  "risk-assessment": "/directory/images/cqc-hub/hero-screen.png",
-  "treatment-record": "/directory/images/cqc-hub/hero-float-1.png",
-  marketing: "/directory/images/Aesthetic-Clinic-Marketing-Guide-1536x864.webp",
-  business: "/directory/images/Software Buyer Hub Hero Collage.png",
-  hr: "/directory/images/Software Buyer Hub Service Strip.png",
-  pricing: "/directory/images/cqc-hub/mid-heatmap.png",
-}
+import { hubTemplateThumbnailForKey } from "@/lib/b2b-hub/hub-template-thumbnails"
+import {
+  MARKETING_TEMPLATE_SEEDS,
+  type MarketingTemplateSeed,
+} from "@/lib/b2b-hub/hub-marketing-template-library"
 
 const CATEGORY_FORMAT: Record<TemplateCategory, Exclude<HubTemplateLibraryFormat, "all">> = {
   consent: "forms",
@@ -64,18 +55,37 @@ function stableDownloads(slug: string): number {
 export function hubLibraryItemFromEntry(entry: TemplateEntry): HubTemplateLibraryItem {
   const primary = tagLabel(entry.category)
   const secondary = secondaryTag(entry.category)
+  const id = `${entry.category}-${entry.slug}`
   return {
-    id: `${entry.category}-${entry.slug}`,
+    id,
     title: entry.title,
     description: entry.summary,
     date: "May 2026",
     format: CATEGORY_FORMAT[entry.category],
-    image: CATEGORY_PREVIEW[entry.category],
+    image: hubTemplateThumbnailForKey(id),
     href: CONSENTZ_CONTROL_REGISTRATION_URL,
     tags: secondary ? [primary, secondary] : [primary],
     tagColors: [TAG_BADGE_CLASS, TAG_BADGE_CLASS],
     author: "Consentz Clinical Team",
     downloads: stableDownloads(entry.slug),
+    internal: false,
+  }
+}
+
+export function hubLibraryItemFromMarketingSeed(seed: MarketingTemplateSeed): HubTemplateLibraryItem {
+  const tags = seed.tagSecondary ? [seed.tagPrimary, seed.tagSecondary] : [seed.tagPrimary]
+  return {
+    id: seed.id,
+    title: seed.title,
+    description: seed.description,
+    date: "May 2026",
+    format: seed.format,
+    image: hubTemplateThumbnailForKey(seed.id),
+    href: CONSENTZ_CONTROL_REGISTRATION_URL,
+    tags,
+    tagColors: [TAG_BADGE_CLASS, TAG_BADGE_CLASS],
+    author: "Consentz Team",
+    downloads: stableDownloads(seed.id),
     internal: false,
   }
 }
@@ -87,5 +97,8 @@ export function buildHubTemplateLibraryItems(
     (e) => !(exclude && e.category === exclude.category && e.slug === exclude.slug)
   ).map(hubLibraryItemFromEntry)
 
-  return fromRegistry
+  const marketing = MARKETING_TEMPLATE_SEEDS.map(hubLibraryItemFromMarketingSeed)
+  const seen = new Set(fromRegistry.map((i) => i.id))
+  const extraMarketing = marketing.filter((i) => !seen.has(i.id))
+  return [...fromRegistry, ...extraMarketing]
 }

@@ -7,6 +7,7 @@ import { useMemo, useState } from "react"
 import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons"
 import {
   type HubTemplateLibraryFormat,
+  countHubTemplateLibraryByFormat,
   getHubTemplateLibraryItems,
   type HubTemplateLibraryItem,
 } from "@/lib/b2b-hub/hub-template-library-data"
@@ -106,6 +107,7 @@ export function HubTemplateLibrarySection({
   showViewAll = true,
 }: Props) {
   const items = useMemo(() => getHubTemplateLibraryItems(excludeSlug), [excludeSlug])
+  const formatCounts = useMemo(() => countHubTemplateLibraryByFormat(items), [items])
   const [query, setQuery] = useState("")
   const [format, setFormat] = useState<HubTemplateLibraryFormat>("all")
   const [page, setPage] = useState(1)
@@ -187,19 +189,23 @@ export function HubTemplateLibrarySection({
         </div>
 
         <div className="mb-10 flex flex-wrap justify-center gap-2">
-          {FORMAT_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => {
-                setFormat(tab.id)
-                setPage(1)
-              }}
-              className={tabCls(format === tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
+          {FORMAT_TABS.map((tab) => {
+            const count = formatCounts[tab.id]
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  setFormat(tab.id)
+                  setPage(1)
+                }}
+                className={tabCls(format === tab.id)}
+              >
+                {tab.label}
+                {count > 0 ? ` (${count})` : ""}
+              </button>
+            )
+          })}
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
