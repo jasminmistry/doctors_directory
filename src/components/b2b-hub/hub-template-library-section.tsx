@@ -49,22 +49,22 @@ function TemplateLibraryCard({ item }: { item: HubTemplateLibraryItem }) {
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4 text-left">
         <div className="flex flex-wrap gap-1.5">
-          {item.tags.map((tag, i) => (
+          {item.tags.map((tag) => (
             <span
               key={tag}
-              className={`rounded px-2 py-0.5 text-[10px] font-bold tracking-wide ${item.tagColors[i] ?? item.tagColors[0]}`}
+              className="rounded px-2 py-0.5 text-[10px] font-bold tracking-wide bg-[#1A1A1A] text-white"
             >
               {tag}
             </span>
           ))}
         </div>
-        <h3 className="text-base font-bold leading-snug text-[#111111] line-clamp-2 group-hover:text-[#1a877a]">
+        <h3 className="text-base font-bold leading-snug text-[#111111] line-clamp-2 group-hover:text-neutral-700">
           {item.title}
         </h3>
         <p className="line-clamp-2 text-sm leading-relaxed text-[#6B6B6B]">{item.description}</p>
         <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[#F0EDE8] pt-3 text-xs text-[#6B6B6B]">
           <span className="inline-flex items-center gap-1.5 font-medium text-[#111111]">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1a877a] text-[10px] font-bold text-white">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A1A] text-[10px] font-bold text-white">
               C
             </span>
             {item.author}
@@ -152,7 +152,7 @@ export function HubTemplateLibrarySection({
   }
 
   return (
-    <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#F2EEE6] px-4 py-12 sm:px-6 sm:py-16 md:py-20">
+    <section className="mb-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 border-t border-[#E5E7EB] bg-white px-4 py-12 sm:px-6 sm:py-16 md:py-20">
       <div className="mx-auto max-w-[1200px]">
         <h2 className="mb-3 text-center text-[28px] font-bold leading-tight tracking-tight text-[#111111] md:text-[34px] md:leading-snug">
           Find The Right Template For Your Clinic
@@ -221,7 +221,7 @@ export function HubTemplateLibrarySection({
               type="button"
               disabled={safePage <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="rounded-lg px-2 py-2 hover:bg-white/80 disabled:opacity-40"
+              className="rounded-lg px-2 py-2 hover:bg-neutral-100 disabled:opacity-40"
             >
               « Previous
             </button>
@@ -238,7 +238,7 @@ export function HubTemplateLibrarySection({
                   className={`min-w-[2.25rem] rounded-full px-3 py-2 transition-colors ${
                     n === safePage
                       ? "bg-[#1A1A1A] text-white"
-                      : "hover:bg-white/80 text-[#111111]"
+                      : "hover:bg-neutral-100 text-[#111111]"
                   }`}
                 >
                   {n}
@@ -249,7 +249,7 @@ export function HubTemplateLibrarySection({
               type="button"
               disabled={safePage >= pageCount}
               onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
-              className="rounded-lg px-2 py-2 hover:bg-white/80 disabled:opacity-40"
+              className="rounded-lg px-2 py-2 hover:bg-neutral-100 disabled:opacity-40"
             >
               Next »
             </button>

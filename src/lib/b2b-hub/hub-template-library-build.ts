@@ -1,7 +1,7 @@
 import {
+  CONSENTZ_CONTROL_REGISTRATION_URL,
   TEMPLATE_ENTRIES,
   TEMPLATE_CATEGORY_LABEL,
-  templatePageHref,
   type TemplateCategory,
   type TemplateEntry,
 } from "@/lib/b2b-hub/templates-registry"
@@ -38,12 +38,7 @@ const CATEGORY_FORMAT: Record<TemplateCategory, Exclude<HubTemplateLibraryFormat
   pricing: "email",
 }
 
-const TAG_COLORS = [
-  "bg-[#1a877a] text-white",
-  "bg-[#5B9BD5] text-white",
-  "bg-[#C75B5B] text-white",
-  "bg-[#7B9E6B] text-white",
-] as const
+const TAG_BADGE_CLASS = "bg-[#1A1A1A] text-white" as const
 
 function tagLabel(category: TemplateCategory): string {
   return TEMPLATE_CATEGORY_LABEL[category]
@@ -76,12 +71,12 @@ export function hubLibraryItemFromEntry(entry: TemplateEntry): HubTemplateLibrar
     date: "May 2026",
     format: CATEGORY_FORMAT[entry.category],
     image: CATEGORY_PREVIEW[entry.category],
-    href: templatePageHref(entry),
+    href: CONSENTZ_CONTROL_REGISTRATION_URL,
     tags: secondary ? [primary, secondary] : [primary],
-    tagColors: [TAG_COLORS[0], TAG_COLORS[1]],
+    tagColors: [TAG_BADGE_CLASS, TAG_BADGE_CLASS],
     author: "Consentz Clinical Team",
     downloads: stableDownloads(entry.slug),
-    internal: true,
+    internal: false,
   }
 }
 

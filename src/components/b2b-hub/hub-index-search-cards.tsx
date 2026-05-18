@@ -58,20 +58,39 @@ export function HubIndexSearchCards({
       <section className="bg-white px-4 py-12 md:py-16">
         <div className="max-w-[1280px] mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center">
-            {filtered.map((e) => (
-              <Link
-                key={e.key}
-                href={e.href}
-                className="w-full max-w-[404px] rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-4 flex flex-col gap-1.5 hover:border-neutral-400 hover:shadow-sm transition-all text-left min-h-[78px]"
-              >
-                <span className="font-semibold text-neutral-900 leading-snug">
-                  {e.title}
-                </span>
-                <span className="text-sm text-neutral-600 leading-snug line-clamp-3">
-                  {e.subtitle}
-                </span>
-              </Link>
-            ))}
+            {filtered.map((e) => {
+              const external = e.href.startsWith("http")
+              const className =
+                "w-full max-w-[404px] rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-4 flex flex-col gap-1.5 hover:border-neutral-400 hover:shadow-sm transition-all text-left min-h-[78px]"
+              const body = (
+                <>
+                  <span className="font-semibold text-neutral-900 leading-snug">
+                    {e.title}
+                  </span>
+                  <span className="text-sm text-neutral-600 leading-snug line-clamp-3">
+                    {e.subtitle}
+                  </span>
+                </>
+              )
+              if (external) {
+                return (
+                  <a
+                    key={e.key}
+                    href={e.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={className}
+                  >
+                    {body}
+                  </a>
+                )
+              }
+              return (
+                <Link key={e.key} href={e.href} className={className}>
+                  {body}
+                </Link>
+              )
+            })}
           </div>
           {filtered.length === 0 ? (
             <p className="text-center text-neutral-500 py-12">

@@ -2,12 +2,17 @@
 
 import { Search } from "lucide-react"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
+import {
+  HUB_INDEX_HERO_TITLE_CLASS_DEFAULT,
+  HUB_INDEX_HERO_VIEWPORT_CLASS,
+} from "@/lib/b2b-hub/hub-index-hero-layout"
+import { cn } from "@/lib/utils"
 
-export const HUB_INDEX_HERO_TITLE_CLASS_DEFAULT =
-  "text-[40px] md:text-[44px] leading-tight md:leading-[52px] tracking-[-0.03em] text-[#111827] font-medium mb-4 md:mb-6 [font-family:var(--font-playfair),Georgia,serif]"
-
-export const HUB_INDEX_HERO_TITLE_CLASS_SECTION =
-  "text-[26px] md:text-[32px] leading-tight md:leading-[40px] tracking-[-0.02em] text-[#111827] font-semibold mb-4 md:mb-6 [font-family:var(--font-playfair),Georgia,serif]"
+export {
+  HUB_INDEX_HERO_TITLE_CLASS_DEFAULT,
+  HUB_INDEX_HERO_TITLE_CLASS_SECTION,
+  HUB_INDEX_HERO_VIEWPORT_CLASS,
+} from "@/lib/b2b-hub/hub-index-hero-layout"
 
 type Props = {
   heroTitle: string
@@ -17,6 +22,8 @@ type Props = {
   onQueryChange: (value: string) => void
   inputId: string
   heroTitleClassName?: string
+  fillViewport?: boolean
+  showSearch?: boolean
 }
 
 const HUB_HERO_IMAGE_SRC =
@@ -30,39 +37,58 @@ export function HubIndexHeroSearch({
   onQueryChange,
   inputId,
   heroTitleClassName = HUB_INDEX_HERO_TITLE_CLASS_DEFAULT,
+  fillViewport = true,
+  showSearch = true,
 }: Props) {
   return (
-    <section className="border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-0 md:pt-10">
-        <div className="grid items-center gap-10 pb-6 md:gap-12 lg:grid-cols-2 lg:pb-8">
+    <section
+      className={cn(
+        "border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+        fillViewport && HUB_INDEX_HERO_VIEWPORT_CLASS
+      )}
+    >
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 pt-8 pb-0 md:pt-10">
+        <div
+          className={cn(
+            "grid flex-1 items-center gap-10 pb-4 md:gap-12 lg:grid-cols-2 lg:pb-6",
+            !showSearch && "min-h-[min(100%,28rem)] sm:min-h-[min(100%,32rem)]"
+          )}
+        >
           <div className="min-w-0 text-center md:text-left">
             <h1 className={heroTitleClassName}>{heroTitle}</h1>
             {heroSubtitle ? (
-              <p className="mx-auto mb-8 max-w-3xl text-base leading-relaxed text-neutral-600 md:mx-0 md:mb-10 md:text-lg">
+              <p
+                className={cn(
+                  "mx-auto max-w-3xl text-base leading-relaxed text-neutral-600 md:mx-0 md:text-lg",
+                  showSearch ? "mb-8 md:mb-10" : "mb-0"
+                )}
+              >
                 {heroSubtitle}
               </p>
             ) : null}
-            <div className="mx-auto flex max-w-3xl flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center md:mx-0 md:justify-start">
-              <label className="sr-only" htmlFor={inputId}>
-                Search
-              </label>
-              <input
-                id={inputId}
-                type="search"
-                value={query}
-                onChange={(e) => onQueryChange(e.target.value)}
-                placeholder={searchPlaceholder}
-                className="flex-1 rounded-lg border border-neutral-200 bg-white px-4 py-3.5 text-neutral-900 placeholder:text-neutral-400 shadow-sm outline-none focus:ring-2 focus:ring-neutral-900/10"
-                autoComplete="off"
-              />
-              <button
-                type="button"
-                aria-label="Search"
-                className="inline-flex h-[52px] w-full shrink-0 items-center justify-center rounded-lg bg-black text-white hover:bg-neutral-800 transition-colors sm:w-14"
-              >
-                <Search className="h-5 w-5" strokeWidth={2} />
-              </button>
-            </div>
+            {showSearch ? (
+              <div className="mx-auto flex max-w-3xl flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center md:mx-0 md:justify-start">
+                <label className="sr-only" htmlFor={inputId}>
+                  Search
+                </label>
+                <input
+                  id={inputId}
+                  type="search"
+                  value={query}
+                  onChange={(e) => onQueryChange(e.target.value)}
+                  placeholder={searchPlaceholder}
+                  className="flex-1 rounded-lg border border-neutral-200 bg-white px-4 py-3.5 text-neutral-900 placeholder:text-neutral-400 shadow-sm outline-none focus:ring-2 focus:ring-neutral-900/10"
+                  autoComplete="off"
+                />
+                <button
+                  type="button"
+                  aria-label="Search"
+                  className="inline-flex h-[52px] w-full shrink-0 items-center justify-center rounded-lg bg-black text-white hover:bg-neutral-800 transition-colors sm:w-14"
+                >
+                  <Search className="h-5 w-5" strokeWidth={2} />
+                </button>
+              </div>
+            ) : null}
           </div>
           <figure className="order-first flex justify-center lg:order-none lg:justify-end">
             <img
@@ -72,7 +98,7 @@ export function HubIndexHeroSearch({
             />
           </figure>
         </div>
-        <HubLogoStrip />
+        <HubLogoStrip className="mt-auto shrink-0" />
       </div>
     </section>
   )

@@ -1,5 +1,8 @@
 import { buildHubTemplateLibraryItems } from "@/lib/b2b-hub/hub-template-library-build"
-import type { TemplateCategory } from "@/lib/b2b-hub/templates-registry"
+import {
+  CONSENTZ_CONTROL_REGISTRATION_URL,
+  type TemplateCategory,
+} from "@/lib/b2b-hub/templates-registry"
 
 export type HubTemplateLibraryFormat =
   | "all"
@@ -34,9 +37,9 @@ const EXTERNAL_SUPPLEMENT: HubTemplateLibraryItem[] = [
     date: "December 6, 2025",
     format: "carousels",
     image: "/directory/images/Aesthetic-Clinic-Marketing-Guide-1536x864.webp",
-    href: "https://www.consentz.com/medical-brochure-templates/",
+    href: CONSENTZ_CONTROL_REGISTRATION_URL,
     tags: ["MARKETING", "CAROUSELS"],
-    tagColors: ["bg-[#1a877a] text-white", "bg-[#5B9BD5] text-white"],
+    tagColors: ["bg-[#1A1A1A] text-white", "bg-[#1A1A1A] text-white"],
     author: "Consentz Team",
     downloads: 92,
     internal: false,

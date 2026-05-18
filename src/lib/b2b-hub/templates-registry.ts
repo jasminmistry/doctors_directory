@@ -271,6 +271,9 @@ export function relatedTemplateEntries(
   return [...same, ...rest].slice(0, count)
 }
 
+export const CONSENTZ_CONTROL_REGISTRATION_URL =
+  "https://control.consentz.com/admin/registration"
+
 export function templatePageHref(entry: Pick<TemplateEntry, "category" | "slug">) {
   return `/business/templates/${entry.category}/${entry.slug}/`
 }

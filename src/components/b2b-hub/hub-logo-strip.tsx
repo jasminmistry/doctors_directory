@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils"
+
 const HUB_PARTNER_LOGOS = [
   { src: "/directory/images/Aesthetic-Medicine.webp", alt: "Aesthetic Medicine" },
   { src: "/directory/images/Galderma.webp", alt: "Galderma" },
@@ -6,13 +8,13 @@ const HUB_PARTNER_LOGOS = [
   { src: "/directory/images/Prime.webp", alt: "Prime" },
 ] as const
 
-export function HubLogoStrip() {
+export function HubLogoStrip({ className }: { className?: string }) {
   const track = [...HUB_PARTNER_LOGOS, ...HUB_PARTNER_LOGOS]
 
   return (
     <aside
       aria-label="Partner and certification logos"
-      className="w-full border-t border-[#E5E7EB]/80 overflow-hidden"
+      className={cn("w-full border-t border-[#E5E7EB]/80 overflow-hidden", className)}
     >
       <div className="py-8 md:py-10 relative overflow-hidden">
         <div className="hub-logo-marquee-track flex items-center gap-[110px] will-change-transform">
