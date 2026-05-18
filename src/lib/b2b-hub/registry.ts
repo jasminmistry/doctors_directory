@@ -513,9 +513,9 @@ const automationEntries = withSegment("automation", [
 const practitionersEntries = withSegment("practitioners", [
   {
     slug: "aesthetic-practitioner-software",
-    title: "Aesthetic practitioner software",
+    title: "Cosmetic practitioner software",
     summary:
-      "Give practitioners tools that match how aesthetic clinics actually run.",
+      "Tools for independent cosmetic practitioners — consent, notes, photography, and follow-up in one workspace.",
   },
   {
     slug: "aesthetic-nurse-software",
@@ -531,9 +531,9 @@ const practitionersEntries = withSegment("practitioners", [
   },
   {
     slug: "aesthetic-doctor-software",
-    title: "Aesthetic doctor software",
+    title: "Cosmetic doctor software",
     summary:
-      "Align medical leadership with operational visibility.",
+      "Clinical documentation and compliance workflows for cosmetic doctors.",
   },
   {
     slug: "dermatologist-crm-software",
@@ -542,58 +542,28 @@ const practitionersEntries = withSegment("practitioners", [
       "Move beyond generic CRM to dermatology-native workflows.",
   },
   {
-    slug: "skin-clinic-software",
-    title: "Skin clinic software",
-    summary:
-      "Coordinate skin treatments with governed records.",
-  },
-  {
-    slug: "laser-clinic-software",
-    title: "Laser clinic software",
-    summary:
-      "Support laser teams with safer consent and follow-up.",
-  },
-  {
     slug: "trichologist-software",
     title: "Trichologist software",
     summary:
       "Structure hair and scalp pathways without spreadsheet sprawl.",
   },
   {
-    slug: "hair-loss-clinic-software",
-    title: "Hair loss clinic software",
+    slug: "medical-aesthetician-software",
+    title: "Medical aesthetician software",
     summary:
-      "Run programmes with clear consent and longitudinal tracking.",
+      "Governed intake, treatment notes, and aftercare for medical aestheticians.",
   },
   {
-    slug: "hair-transplant-clinic-software",
-    title: "Hair transplant clinic software",
+    slug: "prescribing-nurse-software",
+    title: "Prescribing nurse software",
     summary:
-      "Coordinate surgical hair pathways with complex consent needs.",
+      "Support independent and supplementary prescribers with audit-ready records.",
   },
   {
-    slug: "weight-loss-clinic-software",
-    title: "Weight loss clinic software",
+    slug: "aesthetic-phlebotomist-software",
+    title: "Aesthetic phlebotomist software",
     summary:
-      "Support GLP-1 and medical weight pathways responsibly.",
-  },
-  {
-    slug: "wellness-clinic-software",
-    title: "Wellness clinic software",
-    summary:
-      "Operate wellness services without operational leakage.",
-  },
-  {
-    slug: "longevity-clinic-software",
-    title: "Longevity clinic software",
-    summary:
-      "Support advanced therapies with structured governance.",
-  },
-  {
-    slug: "facial-aesthetics-dentist-software",
-    title: "Facial aesthetics dentist software",
-    summary:
-      "Align facial aesthetics within dental practice operations.",
+      "Consent, batch traceability, and session notes for aesthetic blood-draw roles.",
   },
 ])
 

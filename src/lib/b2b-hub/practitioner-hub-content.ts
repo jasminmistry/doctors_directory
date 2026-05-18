@@ -244,8 +244,8 @@ const WF_DENTAL: PractitionerWorkflowStep[] = [
 
 const SPOTLIGHTS: Record<string, PractitionerSpotlight> = {
   "aesthetic-practitioner-software": {
-    eyebrow: "AESTHETIC PRACTITIONERS",
-    title: "Software For Independent Aesthetic Practitioners",
+    eyebrow: "COSMETIC PRACTITIONERS",
+    title: "Cosmetic Practitioner Software",
     body: "Run consultations, consent, treatment notes, photography, and follow-ups from one connected workspace so patients never fall through the cracks between tools.",
     tags: ["Digital consent", "Treatment notes", "Marketing templates", "Follow-up automations"],
   },
@@ -262,14 +262,14 @@ const SPOTLIGHTS: Record<string, PractitionerSpotlight> = {
     tags: ["Digital consent", "Treatment notes", "Batch records", "Aftercare templates"],
   },
   "aesthetic-doctor-software": {
-    eyebrow: "AESTHETIC DOCTORS",
-    title: "Software For Aesthetic Doctors",
+    eyebrow: "COSMETIC DOCTORS",
+    title: "Cosmetic Doctor Software",
     body: "Support clinical documentation, patient communication, treatment history, and compliance workflows — structured and always audit-ready from one connected system.",
     tags: ["Clinical documentation", "Patient history", "Compliance records", "Structured workflows"],
   },
   "dermatologist-crm-software": {
-    eyebrow: "DERMATOLOGY TEAMS",
-    title: "Software For Dermatology-Led Clinics",
+    eyebrow: "DERMATOLOGISTS",
+    title: "Dermatologist CRM Software",
     body: "Keep regulated consent, imaging, prescribing context, and follow-up evidence aligned so inspections do not depend on folder archaeology.",
     tags: ["Regulated consent", "Imaging notes", "CQC-ready trails", "Multi-practitioner access"],
   },
@@ -287,7 +287,7 @@ const SPOTLIGHTS: Record<string, PractitionerSpotlight> = {
   },
   "trichologist-software": {
     eyebrow: "TRICHOLOGISTS",
-    title: "Software For Trichologists",
+    title: "Trichologist Software",
     body: "Track scalp assessments, home protocols, and visit outcomes longitudinally without spreadsheets or disconnected photo libraries.",
     tags: ["Scalp mapping", "Progress photos", "Consent", "Recall"],
   },
@@ -321,41 +321,43 @@ const SPOTLIGHTS: Record<string, PractitionerSpotlight> = {
     body: "Capture advanced protocols, biomarker reviews, and consent-heavy therapies with the same rigour as regulated clinical notes.",
     tags: ["Protocols", "Biomarkers", "Consent", "Reviews"],
   },
-  "facial-aesthetics-dentist-software": {
-    eyebrow: "DENTAL AESTHETICS",
-    title: "Software For Facial Aesthetics In Dental Practices",
-    body: "Bridge dental charting expectations with facial injectable workflows so consent, photography, and notes stay coherent for dual regulators.",
-    tags: ["Facial consent", "Photography", "Procedure notes", "Recall"],
+  "medical-aesthetician-software": {
+    eyebrow: "MEDICAL AESTHETICIANS",
+    title: "Medical Aesthetician Software",
+    body: "Governed intake, treatment notes, and aftercare for medical aestheticians working in clinic or mobile practice.",
+    tags: ["Intake", "Treatment notes", "Aftercare", "Consent"],
+  },
+  "prescribing-nurse-software": {
+    eyebrow: "PRESCRIBING NURSES",
+    title: "Prescribing Nurse Software",
+    body: "Audit-ready prescribing notes, consent, and patient communication for independent and supplementary prescribers.",
+    tags: ["Prescribing", "Consent", "Clinical notes", "Follow-up"],
+  },
+  "aesthetic-phlebotomist-software": {
+    eyebrow: "AESTHETIC PHLEBOTOMISTS",
+    title: "Aesthetic Phlebotomist Software",
+    body: "Session consent, batch traceability, and structured notes for aesthetic blood-draw and wellness infusion roles.",
+    tags: ["Batch records", "Consent", "Session notes", "Compliance"],
   },
 }
 
 const HERO: Record<string, { focus: string; audience: string }> = {
-  "aesthetic-practitioner-software": { focus: "Independent Aesthetic", audience: "Practitioners" },
-  "aesthetic-nurse-software": { focus: "Aesthetic Nursing", audience: "Teams" },
-  "nurse-injector-software": { focus: "Nurse Injectors", audience: "Practitioners" },
-  "aesthetic-doctor-software": { focus: "Aesthetic Doctors", audience: "Practitioners" },
-  "dermatologist-crm-software": { focus: "Dermatology Practice", audience: "Teams" },
-  "skin-clinic-software": { focus: "Skin Clinic", audience: "Teams" },
-  "laser-clinic-software": { focus: "Laser Clinic", audience: "Teams" },
-  "trichologist-software": { focus: "Trichology Practice", audience: "Practitioners" },
-  "hair-loss-clinic-software": { focus: "Hair Loss Clinics", audience: "Teams" },
-  "hair-transplant-clinic-software": { focus: "Hair Transplant Clinics", audience: "Teams" },
-  "weight-loss-clinic-software": { focus: "Medical Weight Clinics", audience: "Teams" },
-  "wellness-clinic-software": { focus: "Wellness Clinics", audience: "Teams" },
-  "longevity-clinic-software": { focus: "Longevity Clinics", audience: "Teams" },
-  "facial-aesthetics-dentist-software": { focus: "Dental Facial Aesthetics", audience: "Teams" },
+  "aesthetic-practitioner-software": { focus: "Cosmetic Practitioners", audience: "" },
+  "aesthetic-nurse-software": { focus: "Aesthetic Nurses", audience: "" },
+  "nurse-injector-software": { focus: "Nurse Injectors", audience: "" },
+  "aesthetic-doctor-software": { focus: "Cosmetic Doctors", audience: "" },
+  "dermatologist-crm-software": { focus: "Dermatologists", audience: "" },
+  "trichologist-software": { focus: "Trichologists", audience: "" },
+  "medical-aesthetician-software": { focus: "Medical Aestheticians", audience: "" },
+  "prescribing-nurse-software": { focus: "Prescribing Nurses", audience: "" },
+  "aesthetic-phlebotomist-software": { focus: "Aesthetic Phlebotomists", audience: "" },
 }
 
 type WorkflowKey = keyof typeof WORKFLOW_MAP
 
 function workflowKeyForSlug(slug: string): WorkflowKey {
-  if (slug === "dermatologist-crm-software" || slug === "skin-clinic-software") return "derma"
-  if (slug === "laser-clinic-software") return "laser"
-  if (slug === "trichologist-software" || slug === "hair-loss-clinic-software") return "hair"
-  if (slug === "hair-transplant-clinic-software") return "transplant"
-  if (slug === "weight-loss-clinic-software") return "metabolic"
-  if (slug === "wellness-clinic-software" || slug === "longevity-clinic-software") return "wellness"
-  if (slug === "facial-aesthetics-dentist-software") return "dental"
+  if (slug === "dermatologist-crm-software") return "derma"
+  if (slug === "trichologist-software") return "hair"
   return "aesthetic"
 }
 

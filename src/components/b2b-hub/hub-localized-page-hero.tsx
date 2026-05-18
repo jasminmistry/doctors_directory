@@ -1,4 +1,6 @@
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
+import { HUB_DETAIL_HERO_VIEWPORT_CLASS } from "@/lib/b2b-hub/hub-index-hero-layout"
+import { cn } from "@/lib/utils"
 
 type Props = {
   eyebrow: string
@@ -11,9 +13,14 @@ const HUB_HERO_IMAGE_SRC =
 
 export function HubLocalizedPageHero({ eyebrow, title, description }: Props) {
   return (
-    <section className="w-full bg-[var(--primary-bg-color)] border-b border-[#E5E7EB]">
-      <div className="max-w-7xl mx-auto px-4 pt-8 md:pt-12 pb-10 md:pb-14">
-        <div className="grid lg:grid-cols-2 gap-10 md:gap-12 lg:gap-12 items-start lg:items-center text-center md:text-left">
+    <section
+      className={cn(
+        "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+        HUB_DETAIL_HERO_VIEWPORT_CLASS
+      )}
+    >
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
+        <div className="grid flex-1 items-center gap-10 px-4 pt-8 md:gap-12 md:px-6 md:pt-12 lg:grid-cols-2 lg:items-center lg:pb-6 text-center md:text-left">
           <div className="min-w-0">
             <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500 mb-2">
               {eyebrow}
@@ -33,8 +40,8 @@ export function HubLocalizedPageHero({ eyebrow, title, description }: Props) {
             />
           </figure>
         </div>
+        <HubLogoStrip className="mt-auto shrink-0" />
       </div>
-      <HubLogoStrip />
     </section>
   )
 }

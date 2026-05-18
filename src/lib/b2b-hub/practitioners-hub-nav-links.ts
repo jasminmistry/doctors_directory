@@ -15,8 +15,8 @@ export function practitionersHubNavLinks(currentSlug: string): PractitionersNavL
     }))
   const pad: PractitionersNavLink[] = [
     {
-      label: "Clinic Automation Software",
-      href: "/business/automation/clinic-automation-software/",
+      label: "Clinic Software",
+      href: "/business/software/",
     },
   ]
   return [...peers, ...pad].slice(0, 9)

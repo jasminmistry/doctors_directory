@@ -12,7 +12,9 @@ import { HubMainDifferenceSection } from "@/components/b2b-hub/hub-main-differen
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import Image from "next/image";
-import Link from "next/link";
+import Link from "next/link"
+import { HUB_DETAIL_HERO_VIEWPORT_CLASS } from "@/lib/b2b-hub/hub-index-hero-layout"
+import { cn } from "@/lib/utils";
 import { HubCompareFeatureTable } from "@/components/b2b-hub/hub-compare-feature-table";
 import {
   ServiceProviderCollage,
@@ -254,9 +256,14 @@ export function HubCompareDetailTemplate({ entry }: Props) {
 
   return (
     <>
-      <section className="w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-0">
-          <div className="relative box-border overflow-hidden pt-8 pb-12 lg:grid lg:min-h-[480px] lg:max-h-[720px] lg:grid-cols-[minmax(0,1fr)_minmax(0,520px)] lg:items-center lg:gap-x-12 lg:px-12 lg:py-16 xl:px-[120px]">
+      <section
+        className={cn(
+          "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          HUB_DETAIL_HERO_VIEWPORT_CLASS
+        )}
+      >
+        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-0">
+          <div className="relative box-border flex flex-1 overflow-hidden pt-8 pb-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,520px)] lg:items-center lg:gap-x-12 lg:px-12 lg:py-8 xl:px-[120px]">
             <div className="relative z-10 flex min-w-0 flex-col items-start justify-center lg:min-h-0 lg:pr-2">
               <Breadcrumb className="mb-6 flex justify-start">
                 <BreadcrumbList>
@@ -308,7 +315,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
             </div>
           </div>
         
-        <HubLogoStrip />
+        <HubLogoStrip className="mt-auto shrink-0" />
 </div>
       </section>
 

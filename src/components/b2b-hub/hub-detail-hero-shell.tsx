@@ -1,5 +1,7 @@
 import type { ReactNode } from "react"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
+import { HUB_DETAIL_HERO_VIEWPORT_CLASS } from "@/lib/b2b-hub/hub-index-hero-layout"
+import { cn } from "@/lib/utils"
 
 type Props = {
   breadcrumb: ReactNode
@@ -26,9 +28,14 @@ export function HubDetailHeroShell({
       : "relative z-0 mt-8 flex w-full min-w-0 justify-center lg:mt-0 lg:justify-end lg:pl-2 order-first lg:order-none"
 
   return (
-    <section className="w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="grid items-center gap-10 pt-8 pb-6 md:gap-12 md:pt-10 md:pb-8 lg:grid-cols-2 lg:items-center lg:gap-12 lg:pt-10 lg:pb-6 max-lg:max-h-[min(92vh,820px)] lg:max-h-[min(88vh,720px)]">
+    <section
+      className={cn(
+        "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+        HUB_DETAIL_HERO_VIEWPORT_CLASS
+      )}
+    >
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6">
+        <div className="grid flex-1 items-center gap-10 pt-8 pb-4 md:gap-12 md:pt-10 lg:grid-cols-2 lg:items-center lg:pb-6">
           <div className="relative z-10 flex min-w-0 flex-col items-start justify-center text-center md:text-left">
             <div className="mb-6 flex w-full justify-center md:justify-start">{breadcrumb}</div>
             <header className="w-full">
@@ -45,7 +52,7 @@ export function HubDetailHeroShell({
             {visual}
           </div>
         </div>
-        {showLogoStrip ? <HubLogoStrip /> : null}
+        {showLogoStrip ? <HubLogoStrip className="mt-auto shrink-0" /> : null}
       </div>
     </section>
   )

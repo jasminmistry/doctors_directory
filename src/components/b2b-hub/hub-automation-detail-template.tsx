@@ -11,7 +11,9 @@ import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import Image from "next/image";
-import Link from "next/link";
+import Link from "next/link"
+import { HUB_DETAIL_HERO_VIEWPORT_CLASS } from "@/lib/b2b-hub/hub-index-hero-layout"
+import { cn } from "@/lib/utils";
 import {
   ServiceProviderCollage,
   SoftwareHeroCollage,
@@ -203,9 +205,14 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
 
   return (
     <>
-      <section className="w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-0">
-          <div className="relative box-border overflow-hidden pt-8 pb-12 lg:grid lg:h-[562px] lg:min-h-[562px] lg:max-h-[562px] lg:grid-cols-2 lg:items-stretch lg:gap-12 lg:px-0 lg:py-0">
+      <section
+        className={cn(
+          "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          HUB_DETAIL_HERO_VIEWPORT_CLASS
+        )}
+      >
+        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-0">
+          <div className="relative box-border flex flex-1 overflow-hidden pt-8 pb-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:px-0 lg:py-0">
             <div className="relative z-10 flex min-w-0 flex-col items-start justify-center lg:min-h-0 lg:pr-2">
               <Breadcrumb className="mb-6 flex justify-start">
                 <BreadcrumbList>
@@ -276,7 +283,7 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
             </div>
           </div>
         
-        <HubLogoStrip />
+        <HubLogoStrip className="mt-auto shrink-0" />
 </div>
       </section>
 
