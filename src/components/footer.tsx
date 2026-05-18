@@ -421,30 +421,26 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Column 3: For Practitioners */}
+            {/* Column 3: List Your Practice */}
             <div>
               <h3 className="font-bold text-lg text-white mb-4">
-                For Practitioners
+                List Your Practice
               </h3>
               <ul className="space-y-3">
                 <li>
                   <Link
-                    href="https://v3.consentz.com/admin/registration"
+                    href="/register/clinic"
                     className="block text-sm hover:text-white transition"
-                    target="_blank"
-                    rel="noopener noreferrer"
                   >
-                    Join Directory
+                    Register a Clinic
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="https://v3.consentz.com/admin/registration"
+                    href="/register/practitioner"
                     className="block text-sm hover:text-white transition"
-                    target="_blank"
-                    rel="noopener noreferrer"
                   >
-                    Update Profile
+                    Register as a Practitioner
                   </Link>
                 </li>
                 <li>

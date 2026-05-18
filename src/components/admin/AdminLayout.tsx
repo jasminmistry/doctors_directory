@@ -1,18 +1,34 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Building2, Users, Package,
   Stethoscope, Clock, FlaskConical, LogOut, Globe,
-  Menu, X, BarChart3, Globe2,
+  Menu, X, ShieldCheck, Star, BarChart3, Globe2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface AdminLayoutProps {
   children: ReactNode
   title: string
+}
+
+interface PendingCounts {
+  pendingClinics: number
+  pendingPractitioners: number
+  pendingClaims: number
+  pendingVerifications: number
+}
+
+function NavBadge({ count }: { count: number }) {
+  if (!count) return null
+  return (
+    <span className="ml-auto flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white leading-none">
+      {count > 99 ? '99+' : count}
+    </span>
+  )
 }
 
 const NAV = [
@@ -29,6 +45,9 @@ const NAV = [
       { href: '/admin/pending/practitioners', label: 'Practitioners' },
     ],
   },
+  { href: '/admin/claims', label: 'Claims', icon: ShieldCheck },
+  { href: '/admin/verification', label: 'ID Verification', icon: ShieldCheck },
+  { href: '/admin/reviews', label: 'Reviews', icon: Star },
   { href: '/admin/qa', label: 'QA Report', icon: FlaskConical },
   { href: '/admin/tracking', label: 'Directory tracking', icon: BarChart3 },
   { href: '/admin/main-site-tracking', label: 'Main site tracking', icon: Globe2 },
@@ -38,6 +57,19 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
   const pathname = usePathname()
   const router = useRouter()
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
+  const [counts, setCounts] = useState<PendingCounts>({
+    pendingClinics: 0,
+    pendingPractitioners: 0,
+    pendingClaims: 0,
+    pendingVerifications: 0,
+  })
+
+  useEffect(() => {
+    fetch('/directory/api/admin/pending-counts')
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => { if (data) setCounts(data) })
+      .catch(() => {})
+  }, [pathname])
 
   async function handleLogout() {
     await fetch('/directory/api/auth/logout', { method: 'POST' })
@@ -107,21 +139,27 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                       {item.label}
                     </div>
                     <div className="ml-6 space-y-0.5">
-                      {item.children.map(child => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          onClick={() => setIsMobileNavOpen(false)}
-                          className={cn(
-                            'block px-3 py-1.5 rounded-lg text-sm transition-colors',
-                            pathname.startsWith(child.href)
-                              ? 'bg-white/10 text-white font-medium'
-                              : 'text-gray-400 hover:text-white hover:bg-white/5'
-                          )}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
+                      {item.children.map(child => {
+                        const childCount =
+                          child.href === '/admin/pending/clinics' ? counts.pendingClinics :
+                          child.href === '/admin/pending/practitioners' ? counts.pendingPractitioners : 0
+                        return (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            onClick={() => setIsMobileNavOpen(false)}
+                            className={cn(
+                              'flex items-center px-3 py-1.5 rounded-lg text-sm transition-colors',
+                              pathname.startsWith(child.href)
+                                ? 'bg-white/10 text-white font-medium'
+                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                            )}
+                          >
+                            {child.label}
+                            <NavBadge count={childCount} />
+                          </Link>
+                        )
+                      })}
                     </div>
                   </div>
                 )
@@ -129,6 +167,9 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
 
               const Icon = item.icon
               const active = ('exact' in item && item.exact) ? pathname === item.href : pathname.startsWith(item.href)
+              const topCount =
+                item.href === '/admin/claims' ? counts.pendingClaims :
+                item.href === '/admin/verification' ? counts.pendingVerifications : 0
               return (
                 <Link
                   key={item.href}
@@ -143,6 +184,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                 >
                   <Icon className="h-4 w-4 shrink-0" />
                   {item.label}
+                  <NavBadge count={topCount} />
                 </Link>
               )
             })}

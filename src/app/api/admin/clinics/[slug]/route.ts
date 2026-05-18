@@ -40,6 +40,10 @@ const CLINIC_EDIT_SELECT = {
   hisUrl: true,
   isRqia: true,
   rqiaUrl: true,
+  coverImage: true,
+  cqcStatus: true,
+  avgReplyTime: true,
+  coreClinicId: true,
 }
 
 export async function GET(

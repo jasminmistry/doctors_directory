@@ -37,6 +37,10 @@ export type SearchClinic = Pick<
   | 'isHiw'
   | 'isHis'
   | 'isRqia'
+  | 'claimed'
+  | 'verified'
+  | 'idVerified'
+  | 'manualVerified'
 > & {
   City?: string
   Treatments?: string[]
@@ -63,6 +67,10 @@ export const getAllClinicsForSearch = cache(async (): Promise<SearchClinic[]> =>
       isHiw: true,
       isHis: true,
       isRqia: true,
+      claimed: true,
+      verified: true,
+      idVerified: true,
+      manualVerified: true,
       city: {
         select: {
           name: true,
@@ -96,6 +104,10 @@ export const getAllClinicsForSearch = cache(async (): Promise<SearchClinic[]> =>
     isHiw: clinic.isHiw,
     isHis: clinic.isHis,
     isRqia: clinic.isRqia,
+    claimed: clinic.claimed,
+    verified: clinic.verified,
+    idVerified: clinic.idVerified,
+    manualVerified: clinic.manualVerified,
     City: clinic.city?.name,
     Treatments: clinic.treatments.map((ct) => ct.treatment.name),
   }))

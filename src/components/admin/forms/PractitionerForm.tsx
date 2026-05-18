@@ -6,8 +6,10 @@ import { toast } from 'sonner'
 import { ArrowLeft, Award, ExternalLink, Plus, Save, User, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Badge } from '@/components/ui/badge'
 import { FormSection, Field } from './FormSection'
+import { cn } from '@/lib/utils'
 
 type PractitionerData = {
   slug: string
@@ -107,16 +109,52 @@ function StringArrayField({
   )
 }
 
-export function PractitionerForm() {
+interface PractitionerFormProps {
+  /** Override the fetch/save URL (portal use: '/directory/api/portal/practitioner'). Omit for admin. */
+  fetchUrl?: string
+  saveUrl?: string
+  /** Portal mode: hides slug display and back navigation. */
+  mode?: 'portal'
+  /** When true, all fields are locked (e.g. pending ID verification). */
+  disabled?: boolean
+  /** Called after a successful save instead of navigating back to /admin/practitioners. */
+  onSaved?: () => void
+  /** Override the preview link href (portal: direct profile URL). */
+  previewHref?: string
+}
+
+export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, previewHref }: PractitionerFormProps = {}) {
   const [data, setData] = useState<PractitionerData>(EMPTY)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [isNew, setIsNew] = useState(false)
   const router = useRouter()
   const params = useParams()
-  const slug = params.slug as string
+  const slug = (params?.slug as string) ?? ''
+  const isPortal = mode === 'portal'
 
   useEffect(() => {
+    if (fetchUrl) {
+      fetch(fetchUrl)
+        .then((r) => { if (!r.ok) throw new Error(); return r.json() })
+        .then((d) => {
+          setData({
+            slug: d.slug ?? '',
+            displayName: d.displayName ?? null,
+            title: d.title ?? null,
+            specialty: d.specialty ?? null,
+            imageUrl: d.imageUrl ?? null,
+            qualifications: toStringArray(d.qualifications),
+            awards: toStringArray(d.awards),
+            roles: toStringArray(d.roles),
+            media: toStringArray(d.media),
+            experience: toStringArray(d.experience),
+          })
+          setLoading(false)
+        })
+        .catch(() => setLoading(false))
+      return
+    }
     if (slug === 'new') {
       setIsNew(true)
       setLoading(false)
@@ -140,7 +178,7 @@ export function PractitionerForm() {
         setLoading(false)
       })
       .catch(() => router.push('/admin/practitioners'))
-  }, [slug, router])
+  }, [fetchUrl, slug, router])
 
   function set<K extends keyof PractitionerData>(key: K, value: PractitionerData[K]) {
     setData((prev) => ({ ...prev, [key]: value }))
@@ -153,7 +191,7 @@ export function PractitionerForm() {
     setSaving(true)
     const { slug: _s, ...rest } = data
     const body = isNew ? { slug: data.slug.trim(), ...rest } : rest
-    const url = isNew ? '/directory/api/admin/practitioners' : `/directory/api/admin/practitioners/${slug}`
+    const url = saveUrl ?? (isNew ? '/directory/api/admin/practitioners' : `/directory/api/admin/practitioners/${slug}`)
     try {
       const res = await fetch(url, {
         method: isNew ? 'POST' : 'PUT',
@@ -162,7 +200,11 @@ export function PractitionerForm() {
       })
       if (res.ok) {
         toast.success('Practitioner saved')
-        setTimeout(() => router.push('/admin/practitioners'), 300)
+        if (onSaved) {
+          onSaved()
+        } else {
+          setTimeout(() => router.push('/admin/practitioners'), 300)
+        }
       } else {
         const err = await res.json().catch(() => ({}))
         toast.error(err.error || 'Failed to save')
@@ -179,22 +221,24 @@ export function PractitionerForm() {
   const title = isNew ? 'New Practitioner' : (data.displayName || data.slug || 'Edit Practitioner')
 
   return (
-    <div className="space-y-5">
+    <div className={cn('space-y-5', disabled && 'pointer-events-none opacity-60 select-none')}>
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => router.push('/admin/practitioners')}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
+          {!isPortal && (
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => router.push('/admin/practitioners')}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          )}
           <div className="min-w-0">
-            <p className="text-xs text-gray-400 font-medium">Practitioners</p>
+            {!isPortal && <p className="text-xs text-gray-400 font-medium">Practitioners</p>}
             <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {!isNew && data.slug && (
             <a
-              href={`/directory/search?type=Practitioner&q=${encodeURIComponent(data.displayName || data.slug)}`}
+              href={previewHref ?? `/directory/search?type=Practitioner&q=${encodeURIComponent(data.displayName || data.slug)}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -226,7 +270,7 @@ export function PractitionerForm() {
               placeholder="Dr. Jane Smith"
             />
           </Field>
-          {isNew ? (
+          {!isPortal && (isNew ? (
             <Field label="Slug" required hint="Auto-filled from name — editable">
               <Input
                 value={data.slug}
@@ -240,25 +284,15 @@ export function PractitionerForm() {
               <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
               <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
             </div>
-          )}
+          ))}
           <Field label="Title">
             <Input value={data.title ?? ''} onChange={(e) => set('title', e.target.value || null)} placeholder="e.g. Consultant Dermatologist" />
           </Field>
           <Field label="Specialty">
             <Input value={data.specialty ?? ''} onChange={(e) => set('specialty', e.target.value || null)} placeholder="e.g. Aesthetic Medicine" />
           </Field>
-          <Field label="Image URL" fullWidth>
-            <div className="flex gap-3 items-start">
-              <Input
-                value={data.imageUrl ?? ''}
-                onChange={(e) => set('imageUrl', e.target.value || null)}
-                placeholder="https://…"
-                className="flex-1"
-              />
-              {data.imageUrl && (
-                <img src={data.imageUrl} alt="" className="w-10 h-10 rounded-full object-cover border border-gray-200 shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
-              )}
-            </div>
+          <Field label="Image" fullWidth>
+            <ImageUpload value={data.imageUrl ?? null} onChange={(url) => set('imageUrl', url)} shape="circle" />
           </Field>
         </div>
       </FormSection>

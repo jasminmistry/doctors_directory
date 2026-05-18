@@ -82,6 +82,10 @@ export const clinicEditSchema = z.object({
   hisUrl: z.string().optional().nullable(),
   isRqia: z.boolean().optional().nullable(),
   rqiaUrl: z.string().optional().nullable(),
+  coverImage: z.string().optional().nullable(),
+  cqcStatus: z.enum(['not_applicable', 'good', 'requires_improvement', 'outstanding']).optional().nullable(),
+  avgReplyTime: z.enum(['within_24hrs', 'within_48hrs', 'more_than_48hrs']).optional().nullable(),
+  coreClinicId: z.coerce.number().int().positive().optional().nullable(),
 })
 
 export type ClinicEditInput = z.infer<typeof clinicEditSchema>
