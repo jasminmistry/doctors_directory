@@ -1,8 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaMariaDb } from '@prisma/adapter-mariadb'
 
+// Bump this when the Prisma schema changes to force a fresh client in dev.
+const SCHEMA_VERSION = 2
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
+  prismaSchemaVersion: number | undefined
 }
 
 let prisma: PrismaClient
@@ -18,6 +22,9 @@ if (process.env.DATABASE_URL) {
     allowPublicKeyRetrieval: true,
   })
 
+  const stale = globalForPrisma.prismaSchemaVersion !== SCHEMA_VERSION
+  if (stale) globalForPrisma.prisma = undefined
+
   prisma = globalForPrisma.prisma ?? new PrismaClient({
     adapter,
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
@@ -25,11 +32,9 @@ if (process.env.DATABASE_URL) {
 
   if (process.env.NODE_ENV !== 'production') {
     globalForPrisma.prisma = prisma
+    globalForPrisma.prismaSchemaVersion = SCHEMA_VERSION
   }
 } else {
-  // No DATABASE_URL — return a proxy that throws on first use rather than at
-  // import time so that build-time static routes that import this module but
-  // never call the DB can still compile successfully.
   prisma = new Proxy({} as PrismaClient, {
     get(_, prop) {
       throw new Error(

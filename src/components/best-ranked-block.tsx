@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { FallbackImage } from "@/components/ui/fallback-image"
+import { VerifiedBadge } from "@/components/ui/verified-badge"
 import type { RankedEntry } from "@/lib/best-ranked"
 
 interface BestRankedBlockProps {
@@ -169,6 +170,11 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
             <div className="flex flex-col items-center text-center px-3 pt-4 pb-2">
               <div className="relative w-[80px] h-[80px] flex items-center justify-center overflow-hidden rounded-full bg-gray-300 mb-3">
                 <FallbackImage src={entry.image} alt={entry.name} className="object-cover w-full h-full" />
+                {(entry.idVerified || entry.verified) && (
+                  <span className="absolute bottom-0 right-0">
+                    <VerifiedBadge idVerified={entry.idVerified} verified={entry.verified} />
+                  </span>
+                )}
               </div>
               <Link
                 href={entry.href}

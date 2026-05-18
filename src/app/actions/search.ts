@@ -26,6 +26,10 @@ type SearchClinicResult = Pick<
   | "isHIS"
   | "isRQIA"
   | "Treatments"
+  | "claimed"
+  | "verified"
+  | "idVerified"
+  | "manualVerified"
 >;
 
 type SearchPractitioner = SearchClinicResult &
@@ -55,6 +59,10 @@ function convertDbClinicToOldFormat(clinic: SearchClinic): SearchClinicResult {
     isHIS: clinic.isHis ? [clinic.isHis, ''] : null,
     isRQIA: clinic.isRqia ? [clinic.isRqia, ''] : null,
     Treatments: clinic.Treatments || [],
+    claimed: clinic.claimed ?? false,
+    verified: clinic.verified ?? false,
+    idVerified: clinic.idVerified ?? false,
+    manualVerified: clinic.manualVerified ?? false,
   }
 }
 

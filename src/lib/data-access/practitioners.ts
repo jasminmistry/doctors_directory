@@ -86,6 +86,11 @@ export function convertDbPractitionerToOldType(p: any): Practitioner {
       ])
     ],
     Title: p.title ?? undefined,
+    claimed: p.claimed ?? false,
+    verified: p.verified ?? false,
+    licensed: p.licensed ?? false,
+    idVerified: p.idVerified ?? false,
+    manualVerified: p.manualVerified ?? false,
   }
 }
 

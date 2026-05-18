@@ -2,6 +2,7 @@ import { buildSitemapIndexXml, toDirectoryUrl, xmlResponse } from '@/lib/sitemap
 
 export async function GET() {
   const files = [
+    'register.xml',
     'products-brands-base.xml', // ui
     'products-brands-list.xml',
     'products-brands-items.xml',

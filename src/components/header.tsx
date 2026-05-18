@@ -67,6 +67,20 @@ export default function Header() {
             <a href={`${baseUrl}/faqs`} className="font-medium hover:text-black">
               FAQS
             </a>
+            <div className="relative group">
+              <button type="button" className="font-medium hover:text-black flex items-center gap-1">
+                LIST YOUR PRACTICE
+                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              </button>
+              <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <Link href="/register/clinic" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg">
+                  Register a Clinic
+                </Link>
+                <Link href="/register/practitioner" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-b-lg border-t border-gray-100">
+                  Register as a Practitioner
+                </Link>
+              </div>
+            </div>
           </nav>
           <a
             href={`${baseUrl}/book-demo`}
@@ -144,6 +158,15 @@ export default function Header() {
             <button type="button" className="text-left font-bold hover:text-black">
               FAQS
             </button>
+            <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">List Your Practice</p>
+              <Link href="/register/clinic" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+                Register a Clinic
+              </Link>
+              <Link href="/register/practitioner" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+                Register as a Practitioner
+              </Link>
+            </div>
           </nav>
           <a
             href={`${baseUrl}/book-demo`}

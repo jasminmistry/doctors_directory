@@ -10,6 +10,7 @@ import type { DirectoryPageType } from "@/lib/tracking/types"
 
 interface RequestConsultationDialogProps {
   pageType: Extract<DirectoryPageType, "practitioner_page" | "clinic_page" | "collection_page">
+  clinicSlug?: string
   treatment?: string
   location?: string
   consultationHref?: string | null
@@ -18,6 +19,7 @@ interface RequestConsultationDialogProps {
 
 export function RequestConsultationDialog({
   pageType,
+  clinicSlug,
   treatment,
   location,
   consultationHref,
@@ -28,7 +30,6 @@ export function RequestConsultationDialog({
   const [contact, setContact] = useState("")
   const [leadTreatment, setLeadTreatment] = useState(treatment ?? "")
   const [leadLocation, setLeadLocation] = useState(location ?? "")
-  const [budget, setBudget] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const isDisabled = useMemo(
@@ -52,18 +53,41 @@ export function RequestConsultationDialog({
     if (isDisabled) return
 
     setIsSubmitting(true)
-    await trackCtaClick({
-      ctaLabel: "Request Consultation Form Submit",
-      ctaTargetUrl: consultationHref ?? undefined,
-      pageType,
-    })
-    setIsSubmitting(false)
 
-    toast.success("Thanks! Your consultation request is submitted.")
-    setOpen(false)
+    try {
+      if (clinicSlug) {
+        const res = await fetch('/directory/api/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            clinicSlug,
+            patientName: name.trim(),
+            contact: contact.trim(),
+            treatment: leadTreatment.trim() || undefined,
+            location: leadLocation.trim() || undefined,
+          }),
+        })
+        if (!res.ok) {
+          const data = await res.json()
+          toast.error(data.error ?? 'Something went wrong, please try again.')
+          return
+        }
+      }
 
-    if (consultationHref) {
-      window.open(consultationHref, "_blank", "noopener,noreferrer")
+      await trackCtaClick({
+        ctaLabel: "Request Consultation Form Submit",
+        ctaTargetUrl: consultationHref ?? undefined,
+        pageType,
+      })
+
+      toast.success("Thanks! Your request has been sent to the clinic.")
+      setOpen(false)
+      setName("")
+      setContact("")
+    } catch {
+      toast.error("Something went wrong, please try again.")
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -80,39 +104,34 @@ export function RequestConsultationDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Request Consultation</DialogTitle>
-          <DialogDescription>Share your details and we will route your request.</DialogDescription>
+          <DialogDescription>Share your details and the clinic will be in touch.</DialogDescription>
         </DialogHeader>
 
         <form className="space-y-3" onSubmit={handleSubmit}>
           <Input
             required
-            placeholder="Name"
+            placeholder="Your name"
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
           <Input
             required
-            placeholder="Email or phone"
+            placeholder="Email or phone number"
             value={contact}
             onChange={(event) => setContact(event.target.value)}
           />
           <Input
-            placeholder="Treatment"
+            placeholder="Treatment (optional)"
             value={leadTreatment}
             onChange={(event) => setLeadTreatment(event.target.value)}
           />
           <Input
-            placeholder="Location"
+            placeholder="Your location (optional)"
             value={leadLocation}
             onChange={(event) => setLeadLocation(event.target.value)}
           />
-          <Input
-            placeholder="Budget (optional)"
-            value={budget}
-            onChange={(event) => setBudget(event.target.value)}
-          />
           <Button disabled={isDisabled} type="submit" className="w-full">
-            {isSubmitting ? "Submitting..." : "Submit"}
+            {isSubmitting ? "Sending..." : "Send request"}
           </Button>
         </form>
       </DialogContent>
