@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextResponse } from 'next/server'
 import { getPortalUser } from '@/lib/portal'
 import { prisma } from '@/lib/db'
