@@ -24,7 +24,7 @@ import { HubPractitionersDetailTemplate } from "@/components/b2b-hub/hub-practit
 import { HubConsentDetailTemplate } from "@/components/b2b-hub/hub-consent-detail-template";
 import { isCoreConsentHubSlug } from "@/lib/b2b-hub/consent-hub-nav-links";
 import { getAutomationToolOfficialUrl } from "@/lib/b2b-hub/automation-tool-entries";
-import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
+import { hubDetailPageMetadata } from "@/lib/b2b-hub/hub-page-metadata";
 
 type Props = { params: { segment: string; slug: string } };
 
@@ -44,30 +44,7 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!entry) {
     return { title: "Not found" };
   }
-  const title = `${entry.title} | Consentz Buyer Hub`;
-  const description = entry.summary ?? entry.title;
-  const url = toCurrentSiteUrl(`/business/${seg}/${entry.slug}/`);
-  return {
-    metadataBase: new URL(b2bBaseUrl()),
-    title,
-    description,
-    alternates: {
-      canonical: url,
-    },
-    openGraph: {
-      title,
-      description,
-      type: "article",
-      url,
-      images: [{ url: b2bOgImageUrl(["/images/Consentz Logo.webp"]) }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [b2bOgImageUrl(["/images/Consentz Logo.webp"])],
-    },
-  };
+  return hubDetailPageMetadata(seg, entry);
 }
 
 export default function BusinessDetailPage({ params }: Props) {

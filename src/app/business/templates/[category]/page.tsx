@@ -10,7 +10,11 @@ import {
   type TemplateCategory,
 } from "@/lib/b2b-hub/templates-registry"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
-import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo"
+import {
+  buildHubPageMetadata,
+  hubTemplateCategoryMetaDescription,
+  hubTemplateCategoryMetaTitle,
+} from "@/lib/b2b-hub/hub-page-metadata"
 
 type Props = { params: { category: string } }
 
@@ -30,23 +34,12 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!isTemplateCategory(params.category)) {
     return { title: "Templates" }
   }
-  const label = TEMPLATE_CATEGORY_LABEL[params.category]
-  const title = `${label} | Consentz Templates`
-  const description = `Free ${label.toLowerCase()} for UK aesthetic clinics — download and customise.`
-  const url = toCurrentSiteUrl(`/business/templates/${params.category}/`)
-  return {
-    metadataBase: new URL(b2bBaseUrl()),
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url,
-      images: [{ url: b2bOgImageUrl(["/images/Consentz Logo.webp"]) }],
-    },
-  }
+  return buildHubPageMetadata({
+    title: hubTemplateCategoryMetaTitle(params.category),
+    description: hubTemplateCategoryMetaDescription(params.category),
+    canonicalPath: `/business/templates/${params.category}/`,
+    ogType: "website",
+  })
 }
 
 export default function TemplateCategoryPage({ params }: Props) {

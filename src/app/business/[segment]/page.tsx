@@ -14,7 +14,7 @@ import {
   type HubSegment,
 } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
-import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
+import { hubSegmentIndexPageMetadata } from "@/lib/b2b-hub/hub-page-metadata";
 
 type Props = { params: { segment: string } };
 
@@ -26,31 +26,7 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!isHubSegment(params.segment)) {
     return { title: "Buyer hub" };
   }
-  const label = segmentLabel(params.segment);
-  const title = `${label} | B2B Buyer Hub`;
-  const description = `Browse ${label} guides and comparisons for clinic software buyers.`;
-  const url = toCurrentSiteUrl(`/business/${params.segment}/`);
-  return {
-    metadataBase: new URL(b2bBaseUrl()),
-    title,
-    description,
-    alternates: {
-      canonical: url,
-    },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url,
-      images: [{ url: b2bOgImageUrl(["/images/Consentz Logo.webp"]) }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [b2bOgImageUrl(["/images/Consentz Logo.webp"])],
-    },
-  };
+  return hubSegmentIndexPageMetadata(params.segment);
 }
 
 function buildFaq(segment: HubSegment) {

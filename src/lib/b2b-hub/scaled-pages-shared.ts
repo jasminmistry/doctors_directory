@@ -19,10 +19,16 @@ export const CITY_LOCAL_CONSENT_SLUGS = [
   "laser-hair-removal-consent-form-software",
 ] as const
 
+export const CITY_LOCAL_CQC_SLUGS = [
+  "cqc-compliance-software",
+  "patient-portal-software",
+] as const
+
 export const CITY_LOCAL_PAGE_SLUGS = [
   ...CITY_LOCAL_SOFTWARE_SLUGS,
   ...CITY_LOCAL_PRACTITIONER_SLUGS,
   ...CITY_LOCAL_CONSENT_SLUGS,
+  ...CITY_LOCAL_CQC_SLUGS,
 ] as const
 
 export type TreatmentPageType =

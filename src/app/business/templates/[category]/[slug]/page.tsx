@@ -7,7 +7,11 @@ import {
   isTemplateCategory,
   templatePageHref,
 } from "@/lib/b2b-hub/templates-registry"
-import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo"
+import {
+  buildHubPageMetadata,
+  hubTemplateDetailMetaDescription,
+  hubTemplateDetailMetaTitle,
+} from "@/lib/b2b-hub/hub-page-metadata"
 
 type Props = { params: { category: string; slug: string } }
 
@@ -26,22 +30,12 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!entry) {
     return { title: "Not found" }
   }
-  const title = `${entry.title} | Free Download | Consentz`
-  const description = entry.summary
-  const url = toCurrentSiteUrl(templatePageHref(entry).replace(/\/$/, "") + "/")
-  return {
-    metadataBase: new URL(b2bBaseUrl()),
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      type: "article",
-      url,
-      images: [{ url: b2bOgImageUrl(["/images/Consentz Logo.webp"]) }],
-    },
-  }
+  return buildHubPageMetadata({
+    title: hubTemplateDetailMetaTitle(entry.title),
+    description: hubTemplateDetailMetaDescription(entry.summary),
+    canonicalPath: templatePageHref(entry),
+    ogType: "article",
+  })
 }
 
 export default function TemplateDetailPage({ params }: Props) {

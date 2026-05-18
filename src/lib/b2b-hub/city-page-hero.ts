@@ -1,5 +1,6 @@
 import {
   CITY_LOCAL_CONSENT_SLUGS,
+  CITY_LOCAL_CQC_SLUGS,
   CITY_LOCAL_PRACTITIONER_SLUGS,
   CITY_LOCAL_SOFTWARE_SLUGS,
 } from "@/lib/b2b-hub/scaled-pages-shared";
@@ -17,6 +18,10 @@ function isPractitionerSlug(
 
 function isConsentSlug(slug: string): slug is (typeof CITY_LOCAL_CONSENT_SLUGS)[number] {
   return (CITY_LOCAL_CONSENT_SLUGS as readonly string[]).includes(slug);
+}
+
+function isCqcSlug(slug: string): slug is (typeof CITY_LOCAL_CQC_SLUGS)[number] {
+  return (CITY_LOCAL_CQC_SLUGS as readonly string[]).includes(slug);
 }
 
 export function getCityScaledHero(
@@ -52,6 +57,14 @@ export function getCityScaledHero(
       line1: `${topic} in ${cityTitle}`,
       line2: null,
       intro: `Digital consent workflows for ${cityTitle} clinics — structured evidence, fewer gaps, and calmer inspections.`,
+    };
+  }
+  if (isCqcSlug(pageSlug)) {
+    const topic = toDisplayTitle(pageSlug.replaceAll("-", " "));
+    return {
+      line1: `${topic} in ${cityTitle}`,
+      line2: null,
+      intro: `CQC-ready workflows for ${cityTitle} clinics — evidence, governance, and patient-facing portals without duct-taped tools.`,
     };
   }
   const fallback = toDisplayTitle(pageSlug.replaceAll("-", " "));

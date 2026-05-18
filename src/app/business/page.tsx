@@ -9,30 +9,18 @@ import {
 } from "@/lib/b2b-hub/registry";
 import { TEMPLATE_ENTRIES } from "@/lib/b2b-hub/templates-registry";
 import { getUniqueDirectoryCityNames } from "@/lib/b2b-hub/directory-cities";
-import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
+import {
+  buildHubPageMetadata,
+  hubHomeMetaDescription,
+  hubHomeMetaTitle,
+} from "@/lib/b2b-hub/hub-page-metadata";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(b2bBaseUrl()),
-  title: "B2B Software Buyer Hub | Consentz",
-  description:
-    "Evaluate clinic software with structured guides across consent, CQC evidence, automation, and competitor comparisons.",
-  alternates: { canonical: toCurrentSiteUrl("/business/") },
-  openGraph: {
-    title: "B2B Software Buyer Hub | Consentz",
-    description:
-      "Evaluate clinic software with structured guides across consent, CQC evidence, automation, and competitor comparisons.",
-    type: "website",
-    url: toCurrentSiteUrl("/business/"),
-    images: [{ url: b2bOgImageUrl(["/images/Consentz Logo.webp"]) }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "B2B Software Buyer Hub | Consentz",
-    description:
-      "Evaluate clinic software with structured guides across consent, CQC evidence, automation, and competitor comparisons.",
-    images: [b2bOgImageUrl(["/images/Consentz Logo.webp"])],
-  },
-};
+export const metadata: Metadata = buildHubPageMetadata({
+  title: hubHomeMetaTitle(),
+  description: hubHomeMetaDescription(),
+  canonicalPath: "/business/",
+  ogType: "website",
+});
 
 export default function BusinessHubHomePage() {
   const cityCount = getUniqueDirectoryCityNames().length;

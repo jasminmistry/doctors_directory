@@ -6,7 +6,7 @@ import {
 } from "@/lib/b2b-hub/scaled-pages"
 
 export async function GET() {
-  const treatments = getDirectoryTreatmentBases(8, 60)
+  const treatments = getDirectoryTreatmentBases(8, 100)
   const paths = [
     "/business/treatments/",
     ...treatments.flatMap((t) =>

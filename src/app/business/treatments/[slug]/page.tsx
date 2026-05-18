@@ -8,7 +8,11 @@ import {
 } from "@/lib/b2b-hub/scaled-pages"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
 import { HubLocalizedPageHero } from "@/components/b2b-hub/hub-localized-page-hero"
-import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo"
+import {
+  buildHubPageMetadata,
+  hubTreatmentPageMetaDescription,
+  hubTreatmentPageMetaTitle,
+} from "@/lib/b2b-hub/hub-page-metadata"
 
 type Props = { params: { slug: string } }
 
@@ -22,7 +26,7 @@ const TYPE_LABEL: Record<TreatmentPageType, string> = {
 }
 
 function findTreatmentLabel(treatmentSlug: string) {
-  const match = getDirectoryTreatmentBases(5, 120).find((t) => t.slug === treatmentSlug)
+  const match = getDirectoryTreatmentBases(8, 100).find((t) => t.slug === treatmentSlug)
   return match?.label
 }
 
@@ -31,30 +35,14 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!parsed) return { title: "Treatments" }
   const label = findTreatmentLabel(parsed.treatmentSlug)
   if (!label) return { title: "Treatments" }
-  const title = `${toDisplayTitle(label)} ${TYPE_LABEL[parsed.pageType]}`
-  const description = `${title} connecting consent, automation, practitioner and software pathways.`
-  const url = toCurrentSiteUrl(`/business/treatments/${params.slug}/`)
-  return {
-    metadataBase: new URL(b2bBaseUrl()),
-    title: `${title} | B2B Buyer Hub`,
-    description,
-    alternates: {
-      canonical: url,
-    },
-    openGraph: {
-      title: `${title} | B2B Buyer Hub`,
-      description,
-      type: "article",
-      url,
-      images: [{ url: b2bOgImageUrl(["/images/Consentz Logo.webp"]) }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${title} | B2B Buyer Hub`,
-      description,
-      images: [b2bOgImageUrl(["/images/Consentz Logo.webp"])],
-    },
-  }
+  const treatmentLabel = toDisplayTitle(label)
+  const typeLabel = TYPE_LABEL[parsed.pageType]
+  return buildHubPageMetadata({
+    title: hubTreatmentPageMetaTitle(treatmentLabel, typeLabel),
+    description: hubTreatmentPageMetaDescription(treatmentLabel, typeLabel),
+    canonicalPath: `/business/treatments/${params.slug}/`,
+    ogType: "article",
+  })
 }
 
 export default function BusinessTreatmentDetailPage({ params }: Props) {
