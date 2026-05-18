@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
       ext === 'webp' ? 'image/webp' :
       'application/octet-stream'
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       headers: {
         'Content-Type': contentType,
         'Content-Disposition': `attachment; filename="${resolved.split('/').pop()}"`,
