@@ -23,6 +23,7 @@ import { HubCompareDetailTemplate } from "@/components/b2b-hub/hub-compare-detai
 import { HubPractitionersDetailTemplate } from "@/components/b2b-hub/hub-practitioners-detail-template";
 import { HubConsentDetailTemplate } from "@/components/b2b-hub/hub-consent-detail-template";
 import { isCoreConsentHubSlug } from "@/lib/b2b-hub/consent-hub-nav-links";
+import { getAutomationToolOfficialUrl } from "@/lib/b2b-hub/automation-tool-entries";
 import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
 
 type Props = { params: { segment: string; slug: string } };
@@ -89,7 +90,12 @@ export default function BusinessDetailPage({ params }: Props) {
     return <HubAlternativesDetailTemplate entry={entry} />;
   }
   if (seg === "automation" && isCoreAutomationHubSlug(entry.slug)) {
-    return <HubAutomationDetailTemplate entry={entry} />;
+    return (
+      <HubAutomationDetailTemplate
+        entry={entry}
+        officialToolUrl={getAutomationToolOfficialUrl(entry.slug)}
+      />
+    );
   }
   if (seg === "migrate" && isMigrateFromHubSlug(entry.slug)) {
     return <HubMigrateDetailTemplate entry={entry} />;

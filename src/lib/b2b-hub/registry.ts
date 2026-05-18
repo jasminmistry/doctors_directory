@@ -1,3 +1,4 @@
+import { AUTOMATION_TOOL_ENTRIES } from "./automation-tool-entries"
 import { COMPETITOR_ORDER, COMPETITOR_LABEL } from "./competitors"
 import { TEMPLATE_ENTRIES } from "./templates-registry"
 
@@ -673,6 +674,7 @@ export const HUB_ENTRIES: HubEntry[] = [
   ...consentEntries,
   ...competitorPdfAdEf.consentCompetitor,
   ...automationEntries,
+  ...AUTOMATION_TOOL_ENTRIES,
   ...competitorPdfAdEf.automationCompetitor,
   ...practitionersEntries,
 ]

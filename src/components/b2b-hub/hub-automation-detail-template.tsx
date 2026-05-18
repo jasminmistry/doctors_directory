@@ -25,7 +25,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links";
-import { automationHubNavLinks } from "@/lib/b2b-hub/automation-hub-nav-links";
+import { automationHubNavLinks } from "@/lib/b2b-hub/automation-hub-nav-links"
+import { automationToolDisplayName } from "@/lib/b2b-hub/automation-tool-entries"
 import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry";
 import { segmentLabel } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
@@ -186,15 +187,19 @@ const automationFaqs = [
 ] as const;
 
 type Props = {
-  entry: HubEntry;
-};
+  entry: HubEntry
+  officialToolUrl?: string
+}
 
-export function HubAutomationDetailTemplate({ entry }: Props) {
+export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
   const seg = entry.segment as HubSegment;
   const intro =
     entry.summary ||
     `${toDisplayTitle(entry.title)}: automate clinic workflows without losing governance.`;
   const navLinks = automationHubNavLinks(entry.slug);
+  const toolName = officialToolUrl
+    ? automationToolDisplayName(entry.slug)
+    : null
 
   return (
     <>
@@ -241,12 +246,23 @@ export function HubAutomationDetailTemplate({ entry }: Props) {
                   >
                     Get CQC Readiness Audit
                   </a>
-                  <a
-                    href={`${baseUrl}/book-demo`}
-                    className={HUB_CTA_LINK_CLASS}
-                  >
-                    See How It Works →
-                  </a>
+                  {officialToolUrl && toolName ? (
+                    <a
+                      href={officialToolUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={HUB_CTA_LINK_CLASS}
+                    >
+                      Visit {toolName} →
+                    </a>
+                  ) : (
+                    <a
+                      href={`${baseUrl}/book-demo`}
+                      className={HUB_CTA_LINK_CLASS}
+                    >
+                      See How It Works →
+                    </a>
+                  )}
                 </div>
               </header>
             </div>
@@ -397,5 +413,5 @@ export function HubAutomationDetailTemplate({ entry }: Props) {
 }
 
 export function isCoreAutomationHubSlug(slug: string) {
-  return !slug.endsWith("-automation-alternative");
+  return !slug.endsWith("-automation-alternative")
 }

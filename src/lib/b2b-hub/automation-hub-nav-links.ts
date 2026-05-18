@@ -1,6 +1,9 @@
-import { getHubEntry } from "@/lib/b2b-hub/registry";
+import {
+  AUTOMATION_TOOL_ORDER,
+  isAutomationToolHubSlug,
+} from "@/lib/b2b-hub/automation-tool-entries"
+import { getHubEntry } from "@/lib/b2b-hub/registry"
 
-/** Priority order for the 3×3 hub cards (current page excluded). */
 const AUTOMATION_CORE_ORDER = [
   "clinic-reactivation-automation-software",
   "patient-journey-automation-software",
@@ -19,14 +22,27 @@ const AUTOMATION_CORE_ORDER = [
 
 export type AutomationNavLink = { label: string; href: string };
 
-export function automationHubNavLinks(currentSlug: string): AutomationNavLink[] {
-  const ordered = AUTOMATION_CORE_ORDER.filter((s) => s !== currentSlug);
-  const nine = ordered.slice(0, 9);
-  return nine.map((slug) => {
-    const e = getHubEntry("automation", slug);
+function slugsToNavLinks(slugs: string[]): AutomationNavLink[] {
+  return slugs.map((slug) => {
+    const e = getHubEntry("automation", slug)
     return {
       label: e?.title ?? slug,
       href: `/business/automation/${slug}/`,
-    };
-  });
+    }
+  })
+}
+
+export function automationHubNavLinks(currentSlug: string): AutomationNavLink[] {
+  if (isAutomationToolHubSlug(currentSlug)) {
+    const toolSlugs = AUTOMATION_TOOL_ORDER.filter((s) => s !== currentSlug).slice(
+      0,
+      9
+    )
+    return slugsToNavLinks(toolSlugs)
+  }
+  const clinicSlugs = AUTOMATION_CORE_ORDER.filter((s) => s !== currentSlug).slice(
+    0,
+    9
+  )
+  return slugsToNavLinks(clinicSlugs)
 }
