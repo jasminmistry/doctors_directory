@@ -123,7 +123,8 @@ export async function POST(req: NextRequest) {
         booking.coreBookingId = String(coreRes.booking.id)
         booking.syncedFromCore = true
       } catch (err: unknown) {
-        console.error('[portal/bookings] Core sync failed:', (err as { message?: string })?.message)
+        const e = err as { message?: string; status?: number; body?: string }
+        console.error(`[portal/bookings] Core sync failed: HTTP ${e.status ?? '?'} — ${e.message} — payload: coreClinicId=${coreClinicId} practitionerId=${practitionerId} slotStart=${slotStart} slotEnd=${slotEnd}`)
       }
     }
   }

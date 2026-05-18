@@ -30,6 +30,7 @@ export default function PortalPractitionerPage() {
   const [upgrading, setUpgrading] = useState<string | null>(null)
   const [idVerified, setIdVerified] = useState<boolean | null>(null)
   const [entitySlug, setEntitySlug] = useState<string | null>(null)
+  const [verificationChecked, setVerificationChecked] = useState(false)
 
   useEffect(() => {
     fetch('/directory/api/portal/practitioner')
@@ -44,6 +45,7 @@ export default function PortalPractitionerPage() {
         }
       })
       .catch(() => {})
+      .finally(() => setVerificationChecked(true))
   }, [])
 
   async function handleUpgrade(plan: string) {
@@ -149,15 +151,17 @@ export default function PortalPractitionerPage() {
         </div>
       )}
 
-      {/* Profile editor */}
-      <PractitionerForm
-        fetchUrl="/directory/api/portal/practitioner"
-        saveUrl="/directory/api/portal/practitioner"
-        mode="portal"
-        disabled={idVerified !== true}
-        onSaved={() => {}}
-        previewHref={profileUrl ?? undefined}
-      />
+      {/* Profile editor — only mount once verification status is known */}
+      {verificationChecked && (
+        <PractitionerForm
+          fetchUrl="/directory/api/portal/practitioner"
+          saveUrl="/directory/api/portal/practitioner"
+          mode="portal"
+          disabled={idVerified !== true}
+          onSaved={() => {}}
+          previewHref={profileUrl ?? undefined}
+        />
+      )}
     </div>
   )
 }

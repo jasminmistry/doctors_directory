@@ -1,4 +1,23 @@
-import { consentzApi, getConsentzAuthUrl } from '@/lib/auth'
+import { getConsentzAuthUrl } from '@/lib/auth'
+
+function getCoreLiteBase(): string {
+  return `${new URL(getConsentzAuthUrl()).origin}/api/core-lite`
+}
+
+function coreLiteApi(
+  path: string,
+  options: { method?: string; body?: unknown; sessionToken?: string } = {},
+): Promise<Response> {
+  const { method = 'GET', body, sessionToken } = options
+  return fetch(`${getCoreLiteBase()}${path}`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),
+    },
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+  })
+}
 
 export interface CoreSlot {
   time: string
@@ -44,8 +63,8 @@ export async function getCoreAvailability(
   date: string,
   sessionToken?: string,
 ): Promise<CoreAvailabilityResponse> {
-  const res = await consentzApi(
-    `/api/core-lite/clinics/${coreClinicId}/availability?date=${date}`,
+  const res = await coreLiteApi(
+    `/clinics/${coreClinicId}/availability?date=${date}`,
     { sessionToken },
   )
   if (!res.ok) {
@@ -60,14 +79,17 @@ export async function createCoreBooking(
   payload: CoreBookingPayload,
   sessionToken?: string,
 ): Promise<CoreBookingResponse> {
-  const res = await consentzApi(`/api/core-lite/clinics/${coreClinicId}/bookings`, {
+  const res = await coreLiteApi(`/clinics/${coreClinicId}/bookings`, {
     method: 'POST',
     body: payload,
     sessionToken,
   })
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    throw Object.assign(new Error((err as { message?: string }).message ?? 'Core booking error'), { status: res.status })
+    const body = await res.text().catch(() => '')
+    let errMsg = 'Core booking error'
+    try { errMsg = (JSON.parse(body) as { message?: string }).message ?? errMsg } catch { /* raw */ }
+    console.error(`[core-api] createCoreBooking failed: HTTP ${res.status} — ${body}`)
+    throw Object.assign(new Error(errMsg), { status: res.status, body })
   }
   return res.json()
 }

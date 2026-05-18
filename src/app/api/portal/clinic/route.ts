@@ -10,6 +10,7 @@ const CLINIC_PORTAL_SELECT = {
   name: true,
   city: { select: { slug: true } },
   idVerified: true,
+  claimedPlan: true,
   image: true,
   gmapsUrl: true,
   gmapsAddress: true,
@@ -36,13 +37,25 @@ export async function GET() {
   }
 
   try {
-    const clinic = await prisma.clinic.findUnique({
-      where: { id: user.clinicId },
-      select: CLINIC_PORTAL_SELECT,
-    })
+    const [clinic, claim] = await Promise.all([
+      prisma.clinic.findUnique({ where: { id: user.clinicId }, select: CLINIC_PORTAL_SELECT }),
+      prisma.claimRequest.findFirst({
+        where: { clinicId: user.clinicId, status: 'approved' },
+        select: { stripeSubscriptionId: true, stripeCustomerId: true, approvedAt: true },
+        orderBy: { approvedAt: 'desc' },
+      }),
+    ])
     if (!clinic) return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
     const { city, ...rest } = clinic
-    return NextResponse.json({ ...rest, citySlug: city?.slug ?? null })
+    return NextResponse.json({
+      ...rest,
+      citySlug: city?.slug ?? null,
+      subscription: {
+        plan: clinic.claimedPlan ?? null,
+        stripeSubscriptionId: claim?.stripeSubscriptionId ?? null,
+        approvedAt: claim?.approvedAt ?? null,
+      },
+    })
   } catch (error) {
     console.error('[portal] Failed to read clinic:', error)
     return NextResponse.json({ error: 'Failed to read clinic' }, { status: 500 })
