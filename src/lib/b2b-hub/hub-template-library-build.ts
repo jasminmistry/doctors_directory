@@ -9,7 +9,10 @@ import type {
   HubTemplateLibraryFormat,
   HubTemplateLibraryItem,
 } from "@/lib/b2b-hub/hub-template-library-data"
-import { hubTemplateThumbnailForKey } from "@/lib/b2b-hub/hub-template-thumbnails"
+import {
+  hubTemplateThumbnailByIndex,
+  hubTemplateThumbnailForKey,
+} from "@/lib/b2b-hub/hub-template-thumbnails"
 import {
   MARKETING_TEMPLATE_SEEDS,
   type MarketingTemplateSeed,
@@ -72,7 +75,10 @@ export function hubLibraryItemFromEntry(entry: TemplateEntry): HubTemplateLibrar
   }
 }
 
-export function hubLibraryItemFromMarketingSeed(seed: MarketingTemplateSeed): HubTemplateLibraryItem {
+export function hubLibraryItemFromMarketingSeed(
+  seed: MarketingTemplateSeed,
+  thumbIndex: number
+): HubTemplateLibraryItem {
   const tags = seed.tagSecondary ? [seed.tagPrimary, seed.tagSecondary] : [seed.tagPrimary]
   return {
     id: seed.id,
@@ -80,7 +86,7 @@ export function hubLibraryItemFromMarketingSeed(seed: MarketingTemplateSeed): Hu
     description: seed.description,
     date: "May 2026",
     format: seed.format,
-    image: hubTemplateThumbnailForKey(seed.id),
+    image: hubTemplateThumbnailByIndex(thumbIndex),
     href: CONSENTZ_CONTROL_REGISTRATION_URL,
     tags,
     tagColors: [TAG_BADGE_CLASS, TAG_BADGE_CLASS],
@@ -95,9 +101,14 @@ export function buildHubTemplateLibraryItems(
 ): HubTemplateLibraryItem[] {
   const fromRegistry = TEMPLATE_ENTRIES.filter(
     (e) => !(exclude && e.category === exclude.category && e.slug === exclude.slug)
-  ).map(hubLibraryItemFromEntry)
+  ).map((entry, index) => ({
+    ...hubLibraryItemFromEntry(entry),
+    image: hubTemplateThumbnailByIndex(index),
+  }))
 
-  const marketing = MARKETING_TEMPLATE_SEEDS.map(hubLibraryItemFromMarketingSeed)
+  const marketing = MARKETING_TEMPLATE_SEEDS.map((seed, index) =>
+    hubLibraryItemFromMarketingSeed(seed, fromRegistry.length + index)
+  )
   const seen = new Set(fromRegistry.map((i) => i.id))
   const extraMarketing = marketing.filter((i) => !seen.has(i.id))
   return [...fromRegistry, ...extraMarketing]
