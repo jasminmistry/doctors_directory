@@ -43,7 +43,7 @@ export default function PortalClinicPage() {
         fetchUrl="/directory/api/portal/clinic"
         saveUrl="/directory/api/portal/clinic"
         mode="portal"
-        disabled={idVerified === false}
+        disabled={idVerified !== true}
         onSaved={() => {}}
       />
     </div>

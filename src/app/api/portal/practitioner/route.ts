@@ -85,6 +85,11 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: 'No claimed practitioner found' }, { status: 403 })
   }
 
+  const practitionerCheck = await prisma.practitioner.findUnique({ where: { id: user.practitionerId }, select: { idVerified: true } })
+  if (!practitionerCheck?.idVerified) {
+    return NextResponse.json({ error: 'Profile editing requires ID verification' }, { status: 403 })
+  }
+
   try {
     const body = await request.json()
     const { slug: _slug, ...rest } = body

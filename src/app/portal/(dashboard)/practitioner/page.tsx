@@ -154,7 +154,7 @@ export default function PortalPractitionerPage() {
         fetchUrl="/directory/api/portal/practitioner"
         saveUrl="/directory/api/portal/practitioner"
         mode="portal"
-        disabled={idVerified === false}
+        disabled={idVerified !== true}
         onSaved={() => {}}
         previewHref={profileUrl ?? undefined}
       />

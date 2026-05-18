@@ -216,17 +216,24 @@ export function ChatInbox() {
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={cn(
-                    'max-w-[75%] rounded-2xl px-3.5 py-2 text-sm',
-                    msg.sender === 'clinic'
-                      ? 'self-end bg-gray-900 text-white rounded-br-sm'
-                      : 'self-start bg-gray-100 text-gray-900 rounded-bl-sm',
-                  )}
+                  className={cn('flex w-full flex-col gap-0.5', msg.sender === 'clinic' ? 'items-end' : 'items-start')}
                 >
-                  {msg.content}
-                  <p className={cn('text-[10px] mt-1', msg.sender === 'clinic' ? 'text-gray-400' : 'text-gray-400')}>
-                    {format(new Date(msg.createdAt), 'HH:mm')}
-                  </p>
+                  <span className="text-[10px] text-gray-400 px-1">
+                    {msg.sender === 'clinic' ? 'You' : (active?.patientName ?? 'Patient')}
+                  </span>
+                  <div
+                    className={cn(
+                      'max-w-[75%] rounded-2xl px-3.5 py-2 text-sm',
+                      msg.sender === 'clinic'
+                        ? 'bg-gray-900 text-white rounded-br-sm'
+                        : 'bg-gray-100 text-gray-900 rounded-bl-sm',
+                    )}
+                  >
+                    {msg.content}
+                    <p className="text-[10px] mt-1 text-gray-400">
+                      {format(new Date(msg.createdAt), 'HH:mm')}
+                    </p>
+                  </div>
                 </div>
               ))}
               <div ref={bottomRef} />

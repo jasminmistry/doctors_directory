@@ -55,6 +55,11 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: 'No claimed clinic found' }, { status: 403 })
   }
 
+  const clinic = await prisma.clinic.findUnique({ where: { id: user.clinicId }, select: { idVerified: true } })
+  if (!clinic?.idVerified) {
+    return NextResponse.json({ error: 'Profile editing requires ID verification' }, { status: 403 })
+  }
+
   try {
     const body = await request.json()
     // Strip fields portal users cannot change

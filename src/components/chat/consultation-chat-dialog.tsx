@@ -403,14 +403,21 @@ export function ConsultationChatDialog({
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={cn(
-                    'max-w-[80%] rounded-2xl px-3.5 py-2 text-sm',
-                    msg.sender === 'patient'
-                      ? 'self-end bg-black text-white rounded-br-sm'
-                      : 'self-start bg-gray-100 text-gray-900 rounded-bl-sm',
-                  )}
+                  className={cn('flex w-full flex-col gap-0.5', msg.sender === 'patient' ? 'items-end' : 'items-start')}
                 >
-                  {msg.content}
+                  <span className="text-[10px] text-gray-400 px-1">
+                    {msg.sender === 'patient' ? 'You' : clinicName}
+                  </span>
+                  <div
+                    className={cn(
+                      'max-w-[80%] rounded-2xl px-3.5 py-2 text-sm',
+                      msg.sender === 'patient'
+                        ? 'bg-black text-white rounded-br-sm'
+                        : 'bg-gray-100 text-gray-900 rounded-bl-sm',
+                    )}
+                  >
+                    {msg.content}
+                  </div>
                 </div>
               ))}
               <div ref={bottomRef} />
