@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Building2, Users, Package,
   Stethoscope, Clock, FlaskConical, LogOut, Globe,
-  Menu, X, ShieldCheck, Star, BarChart3, Globe2,
+  Menu, X, ShieldCheck, Star, BarChart3, Globe2, ExternalLink,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -188,26 +188,27 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                 </Link>
               )
             })}
-          </nav>
 
-        {/* Footer */}
-          <div className="mt-auto shrink-0 border-t border-white/10 bg-gray-950 p-2 pb-2 space-y-0.5">
+            <div className="my-2 mx-1 border-t border-white/10" />
             <Link
               href="/"
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => setIsMobileNavOpen(false)}
               className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
             >
-              <Globe className="h-4 w-4" />
-              View Site
+              <Globe className="h-4 w-4 shrink-0" />
+              <span className="flex-1">View Directory</span>
+              <ExternalLink className="h-3 w-3 opacity-40" />
             </Link>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-4 w-4 shrink-0" />
               Sign out
             </button>
-          </div>
+          </nav>
         </aside>
 
       {/* Main */}

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 
 // Magic-link verification removed — claims now use email OTP entered inline.
