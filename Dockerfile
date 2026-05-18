@@ -7,17 +7,15 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # ── deps: all dependencies for the build ──────────────────────────────────────
 FROM base AS deps
 COPY package.json package-lock.json* ./
-COPY prisma ./prisma
 RUN --mount=type=cache,target=/root/.npm \
-	npm ci && npx prisma generate
+	npm ci
 
 # ── prod-deps: production-only dependencies for the runtime image ──────────────
 # Excludes @playwright/test (browsers), jest, typescript, @types/*, etc.
 FROM base AS prod-deps
 COPY package.json package-lock.json* ./
-COPY prisma ./prisma
 RUN --mount=type=cache,target=/root/.npm \
-	npm ci --omit=dev && npx prisma generate
+	npm ci --omit=dev
 
 # ── builder: compile the app ──────────────────────────────────────────────────
 FROM base AS builder
