@@ -12,20 +12,20 @@ type Props = {
   className?: string
 }
 
-function BrandMark({ name, variant }: { name: string; variant: "consentz" | "competitor" }) {
-  if (variant === "consentz") {
-    return (
-      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md bg-[#111111]">
-        <Image
-          src={CONSENTZ_LOGO_SRC}
-          alt=""
-          fill
-          className="object-contain p-1"
-          sizes="36px"
-        />
-      </div>
-    )
-  }
+function ConsentzBrandLogo() {
+  return (
+    <Image
+      src={CONSENTZ_LOGO_SRC}
+      alt="Consentz"
+      width={180}
+      height={40}
+      className="h-9 w-auto max-w-[200px] shrink-0 object-contain object-left"
+      sizes="200px"
+    />
+  )
+}
+
+function CompetitorBrandMark({ name }: { name: string }) {
   const initial = name.trim().charAt(0).toUpperCase() || "?"
   return (
     <div
@@ -49,8 +49,14 @@ function DifferenceCard({
   return (
     <div className="flex flex-col gap-6 rounded-2xl border border-[#e6e0d8] bg-[#f5f3ee] p-8 md:p-9">
       <div className="flex items-center gap-3">
-        <BrandMark name={brand} variant={variant} />
-        <h3 className="text-xl font-bold text-[#111111] md:text-[22px]">{brand}</h3>
+        {variant === "consentz" ? (
+          <ConsentzBrandLogo />
+        ) : (
+          <>
+            <CompetitorBrandMark name={brand} />
+            <h3 className="text-xl font-bold text-[#111111] md:text-[22px]">{brand}</h3>
+          </>
+        )}
       </div>
       <ul className="flex flex-col gap-4">
         {bullets.map((line) => (
