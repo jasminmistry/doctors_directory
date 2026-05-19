@@ -38,7 +38,7 @@ export default function AdminReviewsPage() {
   const fetchReviews = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch(`/directory/api/admin/reviews?status=${tab}`)
+      const res = await fetch(`/directory/api/admin/reviews?status=${tab}`, { cache: 'no-store' })
       const data = await res.json()
       setReviews(data.reviews ?? [])
     } catch {
@@ -60,7 +60,7 @@ export default function AdminReviewsPage() {
       })
       if (!res.ok) { toast.error('Action failed'); return }
       toast.success(act === 'approve' ? 'Review approved' : 'Review rejected')
-      fetchReviews()
+      setReviews((prev) => prev.filter((r) => r.id !== id))
     } catch {
       toast.error('Action failed')
     } finally {

@@ -52,7 +52,7 @@ export default function PendingClinicsPage() {
   const router = useRouter()
 
   useEffect(() => {
-    fetch('/directory/api/admin/pending/clinics')
+    fetch('/directory/api/admin/pending/clinics', { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => { setClinics(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))

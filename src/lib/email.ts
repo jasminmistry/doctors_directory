@@ -76,7 +76,7 @@ export async function sendWelcomeEmail({
   tempPassword: string
 }) {
   const transport = createTransport()
-  const loginUrl = `${BASE_URL}/directory/admin/login`
+  const loginUrl = `${BASE_URL}/directory/portal/login`
 
   await transport.sendMail({
     from: FROM,
@@ -150,7 +150,7 @@ Great news — your claim for ${clinicName} on Consentz Directory has been appro
 
 You're now on the ${plan} plan. Log in to your dashboard to start managing your profile.
 
-${BASE_URL}/directory/admin
+${BASE_URL}/directory/portal/login
 
 — The Consentz Team
     `.trim(),
@@ -162,7 +162,7 @@ ${BASE_URL}/directory/admin
   <h2 style="margin-bottom:8px;">Claim approved!</h2>
   <p>Your claim for <strong>${clinicName}</strong> on Consentz Directory has been approved.</p>
   <p>You're now on the <strong>${plan}</strong> plan.</p>
-  <a href="${BASE_URL}/directory/admin"
+  <a href="${BASE_URL}/directory/portal/login"
      style="display:inline-block;margin:24px 0;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
     Go to Dashboard
   </a>

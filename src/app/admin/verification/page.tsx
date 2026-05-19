@@ -49,7 +49,7 @@ export default function AdminVerificationPage() {
   function fetchRequests(status?: string) {
     setLoading(true)
     const qs = status && status !== 'all' ? `?status=${status}` : ''
-    fetch(`/directory/api/admin/verification${qs}`)
+    fetch(`/directory/api/admin/verification${qs}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => { setRequests(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -68,9 +68,9 @@ export default function AdminVerificationPage() {
       })
       if (!res.ok) throw new Error()
       toast.success(action === 'approve' ? 'ID verified — profile updated' : 'Request rejected')
+      setRequests((prev) => prev.filter((r) => r.id !== selected.id))
       setSelected(null)
       setAdminNotes('')
-      fetchRequests(filter)
     } catch {
       toast.error('Failed to update verification request')
     } finally {

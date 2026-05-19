@@ -52,7 +52,7 @@ export default function PendingPractitionersPage() {
   const router = useRouter()
 
   useEffect(() => {
-    fetch('/directory/api/admin/pending/practitioners')
+    fetch('/directory/api/admin/pending/practitioners', { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => { setPractitioners(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))

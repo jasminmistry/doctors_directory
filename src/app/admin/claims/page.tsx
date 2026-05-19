@@ -123,7 +123,7 @@ export default function AdminClaimsPage() {
   function fetchClaims(status?: string) {
     setLoading(true)
     const qs = status && status !== 'all' ? `?status=${status}` : ''
-    fetch(`/directory/api/admin/claims${qs}`)
+    fetch(`/directory/api/admin/claims${qs}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data: Claim[]) => {
         if (!Array.isArray(data)) { setClaims([]); setLoading(false); return }
@@ -194,9 +194,9 @@ export default function AdminClaimsPage() {
       } else {
         toast.success(action === 'approve' ? 'Claim approved' : 'Claim rejected')
       }
+      setClaims((prev) => prev.filter((c) => c.id !== reviewClaim.id))
       setReviewClaim(null)
       setAdminNotes('')
-      fetchClaims(filter)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to update claim')
     } finally {

@@ -13,6 +13,7 @@ const bodySchema = z.object({
   patientLastName: z.string().min(1).max(100),
   patientEmail: z.string().email(),
   patientPhone: z.string().min(7).max(30),
+  videoCall: z.boolean().optional(),
 })
 
 export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { practitionerId, slotDatetime, slotDuration, patientFirstName, patientLastName, patientEmail, patientPhone } = parsed.data
+  const { practitionerId, slotDatetime, slotDuration, patientFirstName, patientLastName, patientEmail, patientPhone, videoCall } = parsed.data
 
   const clinic = await prisma.clinic.findUnique({
     where: { slug: params.slug },
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       patient_last_name: patientLastName,
       patient_email: patientEmail,
       patient_phone: patientPhone,
+      ...(videoCall ? { video_call: true } : {}),
     }, sessionToken)
 
     const booking = coreRes.booking

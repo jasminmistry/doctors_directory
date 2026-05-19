@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { format, addDays, isSameDay, parseISO } from 'date-fns'
-import { ChevronLeft, ChevronRight, Loader2, CalendarDays, CheckCircle2, Video } from 'lucide-react'
+import { format, addDays, isSameDay } from 'date-fns'
+import { ChevronLeft, ChevronRight, Loader2, CheckCircle2, Video, ExternalLink } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { CoreSlot } from '@/lib/core-api'
-import { CallBookingForm } from '@/components/clinic/call-booking-form'
 
 interface BookingWidgetProps {
   slug: string
@@ -24,22 +23,29 @@ interface PatientForm {
 
 const WEEK_SIZE = 7
 
+interface VideoCall {
+  type: 'zoom' | 'jitsi'
+  join_url: string
+  start_url: string
+}
+
 function dateKey(d: Date) {
   return format(d, 'yyyy-MM-dd')
 }
 
 export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidgetProps) {
-  const [tab, setTab] = useState<'appointment' | 'call'>('appointment')
   const [step, setStep] = useState<Step>(1)
   const [weekOffset, setWeekOffset] = useState(0)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [slots, setSlots] = useState<CoreSlot[]>([])
   const [slotsLoading, setSlotsLoading] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<CoreSlot | null>(null)
+  const [videoCall, setVideoCall] = useState(false)
   const [patient, setPatient] = useState<PatientForm>({ firstName: '', lastName: '', email: '', phone: '' })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [bookedSlot, setBookedSlot] = useState<string | null>(null)
+  const [bookedVideoCall, setBookedVideoCall] = useState<VideoCall | null>(null)
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -64,26 +70,27 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
     setSubmitting(true)
     setError(null)
     try {
-      const slotDuration = 30
       const res = await fetch(`/directory/api/book/${slug}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           practitionerId: selectedSlot.practitioner_id,
           slotDatetime: selectedSlot.datetime,
-          slotDuration,
+          slotDuration: 30,
           patientFirstName: patient.firstName,
           patientLastName: patient.lastName,
           patientEmail: patient.email,
           patientPhone: patient.phone,
+          videoCall,
         }),
       })
+      const data = await res.json()
       if (!res.ok) {
-        const data = await res.json()
         setError(data.error ?? 'Booking failed')
         return
       }
       setBookedSlot(`${selectedSlot.time_12h} with ${selectedSlot.practitioner}`)
+      setBookedVideoCall(data.booking?.video_call ?? null)
       setStep(3)
     } catch {
       setError('Booking failed — please try again')
@@ -98,51 +105,32 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-5 text-center space-y-3">
         <CheckCircle2 className="mx-auto h-10 w-10 text-green-500" />
-        <h3 className="text-sm font-semibold text-gray-900">Booking confirmed!</h3>
+        <h3 className="text-sm font-semibold text-gray-900">
+          {bookedVideoCall ? 'Video call booked!' : 'Booking confirmed!'}
+        </h3>
         <p className="text-xs text-gray-600">
-          Your appointment at <span className="font-medium">{bookedSlot}</span> has been booked.
-          A confirmation will be sent to {patient.email}.
+          Your {bookedVideoCall ? 'video call' : 'appointment'} at{' '}
+          <span className="font-medium">{bookedSlot}</span> has been booked.
+          {!bookedVideoCall && ` A confirmation will be sent to ${patient.email}.`}
         </p>
+        {bookedVideoCall?.join_url && (
+          <a
+            href={bookedVideoCall.join_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+          >
+            <Video className="h-4 w-4" />
+            Join Video Call
+            <ExternalLink className="h-3.5 w-3.5 opacity-70" />
+          </a>
+        )}
       </div>
     )
   }
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-      {/* Tab bar */}
-      <div className="flex border-b border-gray-100">
-        <button
-          type="button"
-          onClick={() => setTab('appointment')}
-          className={cn(
-            'flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors',
-            tab === 'appointment'
-              ? 'border-b-2 border-gray-900 text-gray-900 -mb-px'
-              : 'text-gray-400 hover:text-gray-600',
-          )}
-        >
-          <CalendarDays className="h-3.5 w-3.5" />
-          In-Clinic Visit
-        </button>
-        <button
-          type="button"
-          onClick={() => setTab('call')}
-          className={cn(
-            'flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors',
-            tab === 'call'
-              ? 'border-b-2 border-gray-900 text-gray-900 -mb-px'
-              : 'text-gray-400 hover:text-gray-600',
-          )}
-        >
-          <Video className="h-3.5 w-3.5" />
-          Video Call
-        </button>
-      </div>
-
-      {tab === 'call' && <CallBookingForm clinicSlug={slug} />}
-
-      {/* Appointment tab */}
-      {tab === 'appointment' && (
       <div className="p-5 space-y-4">
       {/* Step indicator */}
       <div className="flex items-center gap-1 text-[10px] text-gray-400">
@@ -233,6 +221,20 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
             </div>
           )}
 
+          {/* Video call toggle */}
+          <label className="flex items-center gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={videoCall}
+              onChange={(e) => setVideoCall(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 accent-gray-900"
+            />
+            <span className="flex items-center gap-1.5 text-xs text-gray-700">
+              <Video className="h-3.5 w-3.5 text-gray-500" />
+              Book as video call
+            </span>
+          </label>
+
           <button
             type="button"
             disabled={!selectedSlot}
@@ -246,12 +248,20 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
 
       {step === 2 && (
         <div className="space-y-3">
-          <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-600">
-            <span className="font-medium">{selectedSlot?.time_12h}</span>
-            {' · '}
-            {selectedSlot && selectedDate && format(selectedDate, 'EEE d MMM')}
-            {' · '}
-            {selectedSlot?.practitioner}
+          <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-600 flex items-center gap-2 flex-wrap">
+            <span>
+              <span className="font-medium">{selectedSlot?.time_12h}</span>
+              {' · '}
+              {selectedSlot && selectedDate && format(selectedDate, 'EEE d MMM')}
+              {' · '}
+              {selectedSlot?.practitioner}
+            </span>
+            {videoCall && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-700">
+                <Video className="h-3 w-3" />
+                Video call
+              </span>
+            )}
           </div>
 
           {(['firstName', 'lastName', 'email', 'phone'] as const).map(field => (
@@ -291,7 +301,6 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
         </div>
       )}
       </div>
-      )}
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { COOKIE_TOKEN } from '@/lib/auth'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -17,6 +18,8 @@ export async function GET(
       select: { coreClinicId: true },
     })
 
+    console.log(`[call/slots] slug=${params.slug} coreClinicId=${clinic?.coreClinicId ?? 'null'}`)
+
     if (!clinic?.coreClinicId) {
       return NextResponse.json({ slots: [] })
     }
@@ -31,20 +34,33 @@ export async function GET(
     const qs = new URLSearchParams({ date })
     if (practitionerId) qs.set('practitioner_id', practitionerId)
 
-    const res = await fetch(
-      `${getCoreLiteBase()}/clinics/${clinic.coreClinicId}/call-slots?${qs}`,
-      { headers: { 'Content-Type': 'application/json' } },
-    )
+    const sessionToken = req.cookies.get(COOKIE_TOKEN)?.value
+    const url = `${getCoreLiteBase()}/clinics/${clinic.coreClinicId}/call-slots?${qs}`
+    console.log(`[call/slots] GET ${url} hasToken=${!!sessionToken}`)
+
+    const res = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),
+      },
+    })
+
+    const body = await res.text()
+    console.log(`[call/slots] Core HTTP ${res.status} body=${body}`)
 
     if (!res.ok) {
-      console.error('[call/slots]', res.status, await res.text().catch(() => ''))
       return NextResponse.json({ slots: [] })
     }
 
-    const data = await res.json()
+    let data: unknown
+    try { data = JSON.parse(body) } catch {
+      console.error('[call/slots] non-JSON response from Core')
+      return NextResponse.json({ slots: [] })
+    }
+
     return NextResponse.json(data)
   } catch (err) {
-    console.error('[call/slots]', err)
+    console.error('[call/slots] unexpected error:', err)
     return NextResponse.json({ slots: [] })
   }
 }

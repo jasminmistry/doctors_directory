@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { z } from 'zod'
+import { COOKIE_TOKEN } from '@/lib/auth'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -37,11 +38,15 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid request', issues: body.error.issues }, { status: 400 })
     }
 
+    const sessionToken = req.cookies.get(COOKIE_TOKEN)?.value
     const res = await fetch(
       `${getCoreLiteBase()}/clinics/${clinic.coreClinicId}/call-booking`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),
+        },
         body: JSON.stringify(body.data),
       },
     )
