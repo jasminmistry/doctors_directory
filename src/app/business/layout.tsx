@@ -20,8 +20,10 @@ export default function BusinessLayout({
     <div className={`${playfair.variable} min-h-[60vh] bg-white`}>
       <HubProductSchema />
       <HubChrome />
-      {children}
-      <HubLayoutBlogSlot />
+      <div className="flex flex-col">
+        {children}
+        <HubLayoutBlogSlot />
+      </div>
     </div>
   );
 }

@@ -59,14 +59,14 @@ export function HubSectionCta({
   return (
     <section
       className={cn(
-        "relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-x-hidden",
+        "relative z-10 w-full overflow-visible",
         tone === "warm" ? "bg-[#F2EEE6]" : "bg-[var(--primary-bg-color)]",
         withBorder && "border-t border-[#E5E7EB]",
         className
       )}
     >
       <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-20">
-        <div className="relative pb-12 pt-8 sm:pb-14 sm:pt-10 lg:grid lg:h-[472px] lg:grid-cols-[minmax(0,1fr)_407px] lg:items-start lg:overflow-hidden lg:pb-0 lg:pt-0">
+        <div className="relative pt-8 pb-10 max-lg:pb-12 sm:pt-10 lg:grid lg:h-[472px] lg:grid-cols-[minmax(0,1fr)_407px] lg:items-start lg:overflow-hidden lg:pb-0 lg:pt-0">
           <div className="relative z-10 flex flex-col items-center text-center lg:items-center lg:justify-center lg:py-[118px] lg:pr-6">
             <h2 className="max-w-[720px] text-[26px] font-bold leading-tight tracking-[-0.03em] text-[#111111] sm:text-[30px] lg:text-[36px] lg:leading-normal lg:tracking-[-1.08px]">
               {heading}
@@ -74,7 +74,7 @@ export function HubSectionCta({
             <p className="mt-3 max-w-xl text-base leading-[1.6] text-[#1A1A1A] sm:text-lg lg:mt-[14px] lg:text-[20px]">
               {sub}
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <div className="mx-auto mt-8 flex w-full max-w-[320px] flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:justify-center [&_a]:flex [&_a]:w-full [&_a]:justify-center sm:[&_a]:w-auto">
               <CtaButton href={primaryHref} className={HUB_CTA_PRIMARY_CLASS}>
                 {primaryLabel}
               </CtaButton>

@@ -82,12 +82,12 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
           <h2 className="text-xl font-semibold text-neutral-900 mb-6 text-center">
             Explore Related Collections
           </h2>
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="mx-auto grid max-w-md grid-cols-2 gap-2 sm:max-w-none sm:flex sm:flex-wrap sm:justify-center sm:gap-2">
             {relatedCollections.map((s) => (
               <Link
                 key={s}
                 href={hubSegmentCollectionHref(s)}
-                className="inline-flex rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-sm font-medium text-neutral-900 hover:border-neutral-400 hover:bg-white transition-all"
+                className="inline-flex items-center justify-center rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-center text-sm font-medium text-neutral-900 transition-all hover:border-neutral-400 hover:bg-white"
               >
                 {segmentLabel(s)}
                 <span className="text-neutral-500 font-normal ml-1.5">
@@ -97,7 +97,7 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
             ))}
             <Link
               href="/business/uk/"
-              className="inline-flex rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-sm font-medium text-neutral-900 hover:border-neutral-400 hover:bg-white transition-all"
+              className="inline-flex items-center justify-center rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-center text-sm font-medium text-neutral-900 transition-all hover:border-neutral-400 hover:bg-white sm:col-span-1"
             >
               By City
             </Link>

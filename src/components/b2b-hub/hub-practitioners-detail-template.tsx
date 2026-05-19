@@ -6,7 +6,15 @@ import {
   HUB_CTA_LINK_CLASS,
 } from "@/components/b2b-hub/hub-cta-buttons"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
+import {
+  HUB_BLEED_FROM_CONTAINER,
+  HUB_HERO_ACTIONS_ROW,
+  HUB_SPLIT_HERO_CONTENT,
+  HUB_SPLIT_HERO_GRID_COMPARE,
+  HUB_SPLIT_HERO_VISUAL,
+} from "@/components/b2b-hub/hub-hero-layout-classes"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -279,9 +287,12 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
         )}
       >
         <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-0">
-          <div className="relative box-border flex flex-1 overflow-hidden pt-8 pb-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] lg:items-center lg:gap-x-10 lg:px-12 lg:py-8 xl:px-[120px]">
-            <div className="relative z-10 flex min-w-0 flex-col items-start justify-center lg:min-h-0 lg:pr-2">
-              <Breadcrumb className="mb-6 flex justify-start">
+          <div className={HUB_SPLIT_HERO_GRID_COMPARE}>
+            <div className={HUB_SPLIT_HERO_VISUAL} aria-hidden>
+              <PractitionerHeroMockup />
+            </div>
+            <div className={HUB_SPLIT_HERO_CONTENT}>
+              <Breadcrumb className="mb-6 flex w-full justify-center lg:justify-start">
                 <BreadcrumbList>
                   <BreadcrumbItem>
                     <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
@@ -307,7 +318,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                 <p className="mb-9 max-w-[720px] text-lg font-medium leading-[1.65] text-[#1a1a1a] lg:text-xl">
                   {intro}
                 </p>
-                <div className="flex max-sm:flex-col max-sm:items-stretch gap-3 sm:flex-row sm:flex-nowrap sm:items-center sm:gap-4">
+                <div className={HUB_HERO_ACTIONS_ROW}>
                   <a
                     href={`${baseUrl}/book-demo`}
                     className={HUB_CTA_PRIMARY_HERO_CLASS}
@@ -325,19 +336,13 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                 </div>
               </header>
             </div>
-            <div
-              className="relative z-0 mt-10 flex w-full min-w-0 justify-center lg:mt-0 lg:justify-end"
-              aria-hidden
-            >
-              <PractitionerHeroMockup />
-            </div>
           </div>
         
         <HubLogoStrip className="mt-auto shrink-0" />
 </div>
       </section>
 
-      <article className="mx-auto max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
+      <article className="mx-auto w-full min-w-0 max-w-[1280px] overflow-x-clip px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
             <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
@@ -394,7 +399,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#fcfbf9] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]">
+        <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-0 bg-[#fcfbf9] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]")}>
           <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-12">
             <div className="max-w-[900px] text-center">
               <h2 className="text-3xl font-bold leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
@@ -431,7 +436,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#f2eee6] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]">
+        <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-0 bg-[#f2eee6] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]")}>
           <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-12">
             <div className="w-full max-w-[900px] text-center">
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
@@ -462,7 +467,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#fcfbf9] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]">
+        <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-0 bg-[#fcfbf9] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]")}>
           <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-12">
             <div className="w-full max-w-[900px] text-center">
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
@@ -501,7 +506,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#f2eee6] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]">
+        <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-0 bg-[#f2eee6] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]")}>
           <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-12">
             <div className="w-full max-w-[900px] text-center">
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
@@ -531,7 +536,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#fcfbf9] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]">
+        <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-0 bg-[#fcfbf9] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]")}>
           <div className="mx-auto flex max-w-[800px] flex-col items-center gap-8">
             <div className="w-full max-w-[720px] rounded-2xl border border-[#e6e0d8] bg-white shadow-sm">
               <div className="h-1 w-full rounded-t-2xl bg-[#1a877a]" />
@@ -558,7 +563,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-0 mt-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-white px-4 py-16 md:px-12 md:py-24 lg:px-[120px]">
+        <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-0 mt-0 bg-white px-4 py-16 md:px-12 md:py-24 lg:px-[120px]")}>
           <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-12">
             <div className="w-full max-w-[900px] text-center">
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
@@ -590,6 +595,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
         </section>
 
       </article>
+      <HubServiceProviderSection />
       <HubSectionCta className="mb-0 mt-16" withBorder={false} />
     </>
   )

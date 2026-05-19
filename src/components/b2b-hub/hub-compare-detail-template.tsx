@@ -17,8 +17,15 @@ import { HUB_DETAIL_HERO_VIEWPORT_CLASS } from "@/lib/b2b-hub/hub-index-hero-lay
 import { cn } from "@/lib/utils";
 import { HubCompareFeatureTable } from "@/components/b2b-hub/hub-compare-feature-table";
 import {
-  ServiceProviderCollage,
-} from "@/components/b2b-hub/hub-pillar-detail-template";
+  HUB_HERO_ACTIONS_ROW,
+  HUB_INLINE_CARD,
+  HUB_SPLIT_HERO_CONTENT,
+  HUB_SPLIT_HERO_GRID_COMPARE,
+  HUB_SPLIT_HERO_VISUAL,
+  HUB_STACKED_SECTION,
+  HUB_STACKED_SECTION_REVERSE,
+} from "@/components/b2b-hub/hub-hero-layout-classes";
+import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -92,8 +99,8 @@ function CompareHeroPreviewCard({ competitorLabel }: { competitorLabel: string }
   ] as const;
 
   return (
-    <div className="w-full max-w-[520px] overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm">
-      <div className="flex items-center gap-2 border-b border-[#e6e0d8] bg-[#faf8f5] px-6 py-4">
+    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm`}>
+      <div className="flex flex-wrap items-center gap-2 border-b border-[#e6e0d8] bg-[#faf8f5] px-4 py-3 sm:px-6 sm:py-4">
         <span className="flex-1 text-[13px] font-semibold text-[#2e2e2e]">
           Feature Comparison
         </span>
@@ -101,27 +108,27 @@ function CompareHeroPreviewCard({ competitorLabel }: { competitorLabel: string }
           vs. {competitorLabel}
         </span>
       </div>
-      <div className="flex items-center gap-0 bg-[#f2eee6] px-6 py-2.5 text-[11px] font-semibold text-[#928b82]">
-        <span className="flex-1">Feature</span>
-        <span className="flex h-7 w-[126px] shrink-0 items-center justify-center rounded-md bg-[#e0f1ed] text-[11px] font-semibold text-[#1a877a]">
+      <div className="flex items-center gap-0 bg-[#f2eee6] px-3 py-2 text-[10px] font-semibold text-[#928b82] sm:px-6 sm:py-2.5 sm:text-[11px]">
+        <span className="min-w-0 flex-1 truncate">Feature</span>
+        <span className="flex h-7 w-[72px] sm:w-[88px] shrink-0 items-center justify-center rounded-md bg-[#e0f1ed] text-[11px] font-semibold text-[#1a877a]">
           Consentz
         </span>
-        <span className="flex h-7 w-[126px] shrink-0 items-center justify-center rounded-md bg-[#e6e0d8] text-[11px] font-semibold text-[#928b82]">
+        <span className="flex h-7 w-[72px] sm:w-[88px] shrink-0 items-center justify-center rounded-md bg-[#e6e0d8] text-[11px] font-semibold text-[#928b82]">
           {competitorLabel}
         </span>
       </div>
       {rows.map((r, i) => (
         <div
           key={r.feature}
-          className={`flex items-center px-6 py-3 text-[13px] ${
+          className={`flex items-center px-3 py-2.5 text-xs sm:px-6 sm:py-3 sm:text-[13px] ${
             i % 2 === 1 ? "bg-[#faf8f5]" : "bg-white"
           }`}
         >
           <span className="flex-1 text-[#2e2e2e]">{r.feature}</span>
-          <span className="flex w-[126px] shrink-0 justify-center text-sm font-semibold text-[#1a877a]">
+          <span className="flex w-[72px] sm:w-[88px] shrink-0 justify-center text-sm font-semibold text-[#1a877a]">
             {r.cz}
           </span>
-          <span className="flex w-[126px] shrink-0 justify-center text-xs text-[#928b82]">{r.alt}</span>
+          <span className="flex w-[72px] sm:w-[88px] shrink-0 justify-center text-xs text-[#928b82]">{r.alt}</span>
         </div>
       ))}
     </div>
@@ -135,7 +142,7 @@ function PlatformCard() {
     ["Email Campaigns", "CQC Compliance"],
   ] as const;
   return (
-    <div className="w-full max-w-[460px] overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm">
+    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm`}>
       <div className="flex items-center gap-2 bg-[#1a1a1a] px-6 py-3.5">
         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/90" aria-hidden />
         <span className="text-[13px] font-semibold text-white">Consentz Platform</span>
@@ -173,7 +180,7 @@ function TemplateLibraryCard() {
     { label: "CQC", highlight: false },
   ] as const;
   return (
-    <div className="w-full max-w-[460px] overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm">
+    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm`}>
       <div className="flex items-center gap-2 bg-[#1a1a1a] px-6 py-3.5">
         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/90" aria-hidden />
         <span className="text-[13px] font-semibold text-white">Template Library</span>
@@ -211,7 +218,7 @@ function CqcEvidenceCard() {
     "Patient communication logged",
   ] as const;
   return (
-    <div className="w-full max-w-[460px] overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm">
+    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm`}>
       <div className="flex items-center gap-2 bg-[#1a1a1a] px-6 py-3.5">
         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/90" aria-hidden />
         <span className="text-[13px] font-semibold text-white">CQC Evidence Overview</span>
@@ -263,9 +270,12 @@ export function HubCompareDetailTemplate({ entry }: Props) {
         )}
       >
         <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-0">
-          <div className="relative box-border flex flex-1 overflow-hidden pt-8 pb-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,520px)] lg:items-center lg:gap-x-12 lg:px-12 lg:py-8 xl:px-[120px]">
-            <div className="relative z-10 flex min-w-0 flex-col items-start justify-center lg:min-h-0 lg:pr-2">
-              <Breadcrumb className="mb-6 flex justify-start">
+          <div className={HUB_SPLIT_HERO_GRID_COMPARE}>
+            <div className={HUB_SPLIT_HERO_VISUAL} aria-hidden>
+              <CompareHeroPreviewCard competitorLabel={competitorLabel} />
+            </div>
+            <div className={HUB_SPLIT_HERO_CONTENT}>
+              <Breadcrumb className="mb-6 flex w-full justify-center lg:justify-start">
                 <BreadcrumbList>
                   <BreadcrumbItem>
                     <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
@@ -291,7 +301,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
                 <p className="mb-9 max-w-[720px] text-lg font-medium leading-[1.65] text-[#1a1a1a] [font-family:Inter,system-ui,sans-serif] lg:text-2xl">
                   {intro}
                 </p>
-                <div className="flex max-sm:flex-col max-sm:items-stretch gap-3 sm:flex-row sm:flex-nowrap sm:items-center sm:gap-4">
+                <div className={HUB_HERO_ACTIONS_ROW}>
                   <a
                     href={`${baseUrl}/book-demo`}
                     className={HUB_CTA_PRIMARY_HERO_CLASS}
@@ -307,28 +317,22 @@ export function HubCompareDetailTemplate({ entry }: Props) {
                 </div>
               </header>
             </div>
-            <div
-              className="relative z-0 mt-10 flex w-full min-w-0 justify-center lg:mt-0 lg:justify-end"
-              aria-hidden
-            >
-              <CompareHeroPreviewCard competitorLabel={competitorLabel} />
-            </div>
           </div>
         
         <HubLogoStrip className="mt-auto shrink-0" />
 </div>
       </section>
 
-      <article className="mx-auto max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
+      <article className="mx-auto w-full min-w-0 max-w-[1280px] overflow-x-clip px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
         <HubMainDifferenceSection competitorLabel={competitorLabel} />
 
-        <section className="mb-16">
-          <div className="mx-auto grid max-w-[1072px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="mb-16 w-full min-w-0">
+          <div className="mx-auto grid w-full min-w-0 max-w-[1072px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {navLinks.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white"
+                className="flex min-h-[80px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-4 py-4 text-center text-base font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white sm:min-h-[93px] sm:px-5 sm:py-[18px] sm:text-lg md:text-xl"
               >
                 <span className="line-clamp-3">{item.label}</span>
               </Link>
@@ -350,16 +354,16 @@ export function HubCompareDetailTemplate({ entry }: Props) {
           <h2 className="mb-10 text-center text-3xl font-bold tracking-tight text-[#111111] md:text-4xl">
             Ready To Switch To Consentz?
           </h2>
-          <ol className="mx-auto grid max-w-[900px] list-none gap-6">
+          <ol className="mx-auto grid w-full min-w-0 max-w-[900px] list-none gap-6">
             {readyToSwitchSteps.map((step, idx) => (
               <li
                 key={step.title}
-                className="flex gap-5 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 md:p-8"
+                className="flex w-full min-w-0 gap-5 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 md:p-8"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-lg font-bold text-white">
                   {idx + 1}
                 </span>
-                <div>
+                <div className="min-w-0">
                   <h3 className="mb-2 text-xl font-semibold text-[#111111]">{step.title}</h3>
                   <p className="text-base leading-relaxed text-[#1A1A1A]">{step.body}</p>
                 </div>
@@ -369,8 +373,8 @@ export function HubCompareDetailTemplate({ entry }: Props) {
         </section>
 
         <section className="mb-20">
-          <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-12 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
-            <div className="min-w-0 max-w-[640px] flex-1">
+          <div className={HUB_STACKED_SECTION}>
+            <div className="min-w-0 w-full max-w-[640px] flex-1">
               <h2 className="mb-6 text-3xl font-semibold leading-tight text-[#1a1a1a] md:text-4xl">
                 All-In-One Clinic Operations Vs Disconnected Tools
               </h2>
@@ -388,9 +392,9 @@ export function HubCompareDetailTemplate({ entry }: Props) {
         </section>
 
         <section className="mb-20">
-          <div className="mx-auto flex max-w-[1200px] flex-col-reverse items-center gap-12 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
+          <div className={HUB_STACKED_SECTION_REVERSE}>
             <TemplateLibraryCard />
-            <div className="min-w-0 max-w-[640px] flex-1">
+            <div className="min-w-0 w-full max-w-[640px] flex-1">
               <h2 className="mb-6 text-3xl font-semibold leading-tight text-[#1a1a1a] md:text-4xl md:leading-[36px]">
                 Marketing Independence With A Built-In Template Library
               </h2>
@@ -407,8 +411,8 @@ export function HubCompareDetailTemplate({ entry }: Props) {
         </section>
 
         <section className="mb-20">
-          <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-12 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
-            <div className="min-w-0 max-w-[640px] flex-1">
+          <div className={HUB_STACKED_SECTION}>
+            <div className="min-w-0 w-full max-w-[640px] flex-1">
               <h2 className="mb-6 text-3xl font-semibold leading-tight text-[#1a1a1a] md:text-4xl md:leading-[36px]">
                 Compliance Workflows Designed For Real Clinical Evidence
               </h2>
@@ -426,38 +430,14 @@ export function HubCompareDetailTemplate({ entry }: Props) {
         </section>
 
         <HubTestimonialsSection title="What Clinics Say About Consentz" />
+        <HubServiceProviderSection />
 
-        <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[var(--primary-bg-color)] lg:h-[302px] lg:overflow-hidden">
-          <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-10 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">
-            <div className="flex min-w-0 max-w-[629px] flex-col gap-2 lg:max-h-[302px] lg:gap-3 lg:py-1">
-              <h2 className="text-[26px] font-semibold leading-[1.1] text-[#1A1A1A] sm:text-[30px] lg:text-[36px] lg:leading-[1.08]">
-                Are You A Service Provider?
-              </h2>
-              <p className="text-base font-medium leading-snug text-[#1A1A1A] sm:text-lg lg:text-[20px] lg:leading-normal">
-                Join Consentz to streamline your clinic operations, enhance patient experience, and
-                grow your business.
-              </p>
-              <div className="pt-3 lg:pt-2">
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className={HUB_CTA_PRIMARY_CLASS}
-                >
-                  Learn More
-                </a>
-              </div>
-            </div>
-            <div className="relative mx-auto h-[220px] w-full max-w-[400px] overflow-hidden sm:h-[260px] sm:max-w-[440px] lg:mx-0 lg:ml-auto lg:mr-0 lg:h-full lg:max-h-[302px] lg:w-[min(46vw,560px)] lg:max-w-[560px] lg:shrink-0">
-              <ServiceProviderCollage />
-            </div>
-          </div>
-        </section>
-
-        <HubBuyerFaq
+<HubBuyerFaq
           title="Pricing And Subscription Questions"
           items={mapLegacyHubFaqs(faqs)}
         />
 
-        <section className="mb-16 mx-auto max-w-[1280px]">
+        <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
           <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
           <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
             Explore insights and tips to help you manage and grow your aesthetics clinic efficiently.

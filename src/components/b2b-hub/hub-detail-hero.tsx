@@ -7,7 +7,7 @@ import {
   HUB_HERO_PHONE_SRC,
   HUB_HERO_TITLE_CLASS,
 } from "@/components/b2b-hub/hub-hero-typography"
-import { SoftwareHeroCollage } from "@/components/b2b-hub/hub-pillar-detail-template"
+import { SoftwareHeroVisual } from "@/components/b2b-hub/hub-pillar-detail-template"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -61,9 +61,7 @@ export function HubDetailHero({
   const visualNode =
     visual ??
     (usePhoneCollage ? (
-      <div className="relative h-full w-full min-h-[200px] max-w-[360px] lg:max-w-[400px]">
-        <SoftwareHeroCollage />
-      </div>
+      <SoftwareHeroVisual />
     ) : (
       <figure className="flex justify-center lg:justify-end">
         <img src={HUB_HERO_PHONE_SRC} alt="" className={HUB_HERO_PHONE_IMAGE_CLASS} />

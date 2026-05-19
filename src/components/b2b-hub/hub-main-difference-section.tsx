@@ -19,7 +19,7 @@ function ConsentzBrandLogo() {
       alt="Consentz"
       width={180}
       height={40}
-      className="h-9 w-auto max-w-[200px] shrink-0 object-contain object-left"
+      className="h-8 w-auto max-w-[180px] shrink-0 object-contain object-left sm:h-9 sm:max-w-[200px]"
       sizes="200px"
     />
   )
@@ -47,25 +47,25 @@ function DifferenceCard({
   bullets: readonly string[]
 }) {
   return (
-    <div className="flex flex-col gap-6 rounded-2xl border border-[#e6e0d8] bg-[#f5f3ee] p-8 md:p-9">
-      <div className="flex items-center gap-3">
+    <div className="flex w-full flex-col gap-4 rounded-2xl border border-[#e6e0d8] bg-[#f5f3ee] p-6 sm:gap-5 sm:p-8 md:p-9">
+      <div className="flex items-center justify-center gap-3 lg:justify-start">
         {variant === "consentz" ? (
           <ConsentzBrandLogo />
         ) : (
           <>
             <CompetitorBrandMark name={brand} />
-            <h3 className="text-xl font-bold text-[#111111] md:text-[22px]">{brand}</h3>
+            <h3 className="text-lg font-bold text-[#111111] sm:text-xl md:text-[22px]">{brand}</h3>
           </>
         )}
       </div>
-      <ul className="flex flex-col gap-4">
+      <ul className="flex flex-col gap-3 sm:gap-4">
         {bullets.map((line) => (
           <li
             key={line}
-            className="flex gap-3 text-[15px] leading-[1.55] text-[#1a1a1a] md:text-base md:leading-[1.6]"
+            className="flex gap-3 text-left text-sm leading-[1.55] text-[#1a1a1a] sm:text-[15px] md:text-base md:leading-[1.6]"
           >
             <span
-              className="mt-[0.55rem] h-1.5 w-1.5 shrink-0 rounded-full bg-[#111111]"
+              className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#111111]"
               aria-hidden
             />
             <span>{line}</span>
@@ -80,11 +80,11 @@ export function HubMainDifferenceSection({ competitorLabel, className }: Props) 
   const competitorBullets = competitorMainDifferenceBullets(competitorLabel)
 
   return (
-    <section className={cn("mb-16", className)}>
-      <h2 className="mb-10 text-center text-3xl font-semibold tracking-tight text-[#111111] md:mb-12 md:text-4xl md:leading-[44px]">
+    <section className={cn("mb-12 px-0 sm:mb-16", className)}>
+      <h2 className="mb-8 px-2 text-center text-2xl font-semibold tracking-tight text-[#111111] sm:mb-10 sm:text-3xl md:text-4xl md:leading-[44px]">
         What&apos;s The Main Difference?
       </h2>
-      <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+      <div className="mx-auto grid w-full min-w-0 max-w-[1120px] grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2 lg:gap-8">
         <DifferenceCard
           brand="Consentz"
           variant="consentz"

@@ -24,8 +24,8 @@ export function HubDetailHeroShell({
 }: Props) {
   const visualWrap =
     visualAlign === "wide"
-      ? "relative z-0 mt-8 flex min-h-0 w-full min-w-0 justify-center lg:mt-0 lg:justify-end lg:pl-4"
-      : "relative z-0 mt-8 flex w-full min-w-0 justify-center lg:mt-0 lg:justify-end lg:pl-2 order-first lg:order-none"
+      ? "relative z-0 order-first mb-6 flex w-full min-w-0 justify-center lg:order-none lg:mb-0 lg:mt-0 lg:justify-end lg:pl-4"
+      : "relative z-0 order-first mb-6 flex w-full min-w-0 justify-center lg:order-none lg:mb-0 lg:mt-0 lg:min-h-[300px] lg:justify-end lg:pl-2"
 
   return (
     <section
@@ -42,7 +42,7 @@ export function HubDetailHeroShell({
               {title}
               {intro}
               {actions ? (
-                <div className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center md:justify-start">
+                <div className="mx-auto mt-8 flex w-full max-w-[320px] flex-col gap-3 md:mx-0 md:max-w-none md:flex-row md:flex-wrap md:items-center md:justify-start [&_a]:flex [&_a]:w-full [&_a]:justify-center md:[&_a]:w-auto">
                   {actions}
                 </div>
               ) : null}

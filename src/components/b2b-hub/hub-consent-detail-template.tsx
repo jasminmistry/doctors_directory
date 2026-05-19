@@ -9,13 +9,11 @@ import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-se
 import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
 import Image from "next/image"
 import Link from "next/link"
-import {
-  ServiceProviderCollage,
-} from "@/components/b2b-hub/hub-pillar-detail-template"
 import { HubBuyerFaq, mapLegacyHubFaqs } from "@/components/b2b-hub/hub-buyer-faq"
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start"
 import { HubDetailHero } from "@/components/b2b-hub/hub-detail-hero"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section"
 import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links"
 import {
   CONSENT_FLOW_STEPS,
@@ -58,7 +56,7 @@ type Props = {
 function NavCard({ href, label }: { href: string; label: string }) {
   const external = href.startsWith("http")
   const className =
-    "flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
+    "flex min-h-[80px] w-full min-w-0 items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-4 py-4 text-center text-base font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white sm:min-h-[93px] sm:px-5 sm:py-[18px] sm:text-lg md:text-xl"
   if (external) {
     return (
       <a href={href} target="_blank" rel="noreferrer" className={className}>
@@ -220,7 +218,7 @@ export function HubConsentDetailTemplate({ entry }: Props) {
         </section>
 
         <section className="mb-10">
-          <div className="mx-auto grid max-w-[1072px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mx-auto grid w-full min-w-0 max-w-[1072px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {navLinks.map((item) => (
               <NavCard key={item.href} href={item.href} label={item.label} />
             ))}
@@ -236,36 +234,12 @@ export function HubConsentDetailTemplate({ entry }: Props) {
         </section>
 
         <HubTestimonialsSection title="What Clinics Say About Consentz" />
-
-        <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#F2EEE6] lg:h-[302px] lg:overflow-hidden">
-          <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-6 py-10 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">
-            <div className="flex min-w-0 max-w-[629px] flex-col gap-2 lg:max-h-[302px] lg:gap-3 lg:py-1">
-              <h2 className="text-[26px] font-semibold leading-[1.1] text-[#1A1A1A] sm:text-[30px] lg:text-[36px] lg:leading-[1.08]">
-                Are You A Service Provider?
-              </h2>
-              <p className="text-base font-medium leading-snug text-[#1A1A1A] sm:text-lg lg:text-[20px] lg:leading-normal">
-                Join Consentz to streamline your clinic operations, enhance patient experience, and grow your
-                business.
-              </p>
-              <div className="pt-3 lg:pt-2">
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className={HUB_CTA_PRIMARY_CLASS}
-                >
-                  Learn More
-                </a>
-              </div>
-            </div>
-            <div className="relative mx-auto h-[220px] w-full max-w-[400px] overflow-hidden sm:h-[260px] sm:max-w-[440px] lg:mx-0 lg:ml-auto lg:mr-0 lg:h-full lg:max-h-[302px] lg:w-[min(46vw,560px)] lg:max-w-[560px] lg:shrink-0">
-              <ServiceProviderCollage />
-            </div>
-          </div>
-        </section>
+        <HubServiceProviderSection />
 
         <HubBuyerFaq items={faqItems} />
 
 
-        <section className="mb-16 mx-auto max-w-[1280px]">
+        <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
           <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
           <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
             Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay

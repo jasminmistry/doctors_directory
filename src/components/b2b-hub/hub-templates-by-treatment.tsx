@@ -17,12 +17,12 @@ export function HubTemplatesByTreatment() {
         <p className="mx-auto mb-8 max-w-[640px] text-center text-sm text-[#6B6B6B] md:text-base">
           Open a treatment index first, then choose the template to preview and download.
         </p>
-        <ul className="flex flex-wrap justify-center gap-2">
+        <ul className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-center sm:gap-2">
           {featured.map((g) => (
-            <li key={g.slug}>
+            <li key={g.slug} className="min-w-0">
               <Link
                 href={templateTreatmentIndexHref(g.slug)}
-                className="inline-flex rounded-lg border border-[#E2DDD7] bg-white px-4 py-2 text-sm font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-neutral-50"
+                className="flex w-full items-center justify-center rounded-lg border border-[#E2DDD7] bg-white px-3 py-2.5 text-center text-sm font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-neutral-50"
               >
                 {g.label}
               </Link>

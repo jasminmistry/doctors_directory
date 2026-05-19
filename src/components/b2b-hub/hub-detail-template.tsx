@@ -3,6 +3,7 @@ import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq";
 import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start";
+import { HUB_CENTERED_MOBILE_CTAS } from "@/components/b2b-hub/hub-hero-layout-classes";
 import { HubDetailHero } from "@/components/b2b-hub/hub-detail-hero";
 import { HubMainDifferenceSection } from "@/components/b2b-hub/hub-main-difference-section";
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta";
@@ -115,7 +116,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
         />
 
 
-        <div className="flex flex-wrap gap-3 justify-center">
+        <div className={HUB_CENTERED_MOBILE_CTAS}>
           <a
             href={`${baseUrl}/book-demo`}
             className={HUB_CTA_PRIMARY_CLASS}

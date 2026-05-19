@@ -30,7 +30,6 @@ const defaultRows: Row[] = [
   },
 ]
 
-/** Pabau-style competitor comparison (Buyer Hub alternatives pages). */
 const alternativesRows: Row[] = [
   {
     feature: "Digital consent forms",
@@ -150,7 +149,6 @@ export function HubComparisonTable({
   competitorName,
 }: {
   variant?: "default" | "software" | "alternatives"
-  /** Shown as the third column header when variant is "alternatives". */
   competitorName?: string
 }) {
   const rows =
@@ -164,74 +162,65 @@ export function HubComparisonTable({
     variant === "software" || variant === "alternatives"
       ? "bg-[#1A1A1A] text-white"
       : "bg-[#111827] text-white"
-  const thCls = large ? "px-4 py-3 font-semibold text-sm" : "px-4 py-4 font-semibold"
+  const thCls = large
+    ? "px-3 py-3 text-sm font-semibold sm:px-4 sm:py-3"
+    : "px-3 py-3 text-sm font-semibold sm:px-4 sm:py-4"
   const tdBase = large
-    ? "px-4 py-3 border-b border-[#E5E7EB] text-sm"
-    : "px-4 py-4 border-b border-[#E5E7EB]"
+    ? "px-3 py-3 border-b border-[#E5E7EB] text-sm sm:px-4"
+    : "px-3 py-3 border-b border-[#E5E7EB] text-sm sm:px-4 sm:py-4"
   const featureTd = large
     ? `${tdBase} font-medium text-[#1A1A1A]`
     : `${tdBase} font-semibold text-neutral-900`
   const whyTd = large ? `${tdBase} text-[#1A1A1A] font-normal` : `${tdBase} text-neutral-600`
-
-  const shellCls = large
-    ? "w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 mb-12 overflow-x-auto"
-    : "mb-12 overflow-x-auto"
-  const innerCls = large
-    ? "px-4 sm:px-6 lg:px-12 max-w-[1440px] mx-auto"
-    : "inline-block min-w-full align-middle p-2"
-  const cardCls = large
-    ? "overflow-hidden rounded-xl border border-[#E5E7EB] bg-white w-full"
-    : "overflow-hidden rounded-xl border border-[#E5E7EB] bg-white max-w-[1120px] mx-auto"
+  const tableMinW = large ? "min-w-[720px]" : "min-w-[560px] sm:min-w-[640px]"
 
   return (
-    <section className={shellCls}>
-      <div className={innerCls}>
-        <div className={cardCls}>
-          <table
-            className={`w-full text-left text-sm table-fixed ${large ? "min-w-[720px]" : "min-w-[640px]"}`}
-          >
-            {large ? (
-              <colgroup>
-                <col style={{ width: "28%" }} />
-                <col style={{ width: "18%" }} />
-                <col style={{ width: "24%" }} />
-                <col style={{ width: "30%" }} />
-              </colgroup>
-            ) : null}
-            <thead>
-              <tr className={theadCls}>
-                <th className={thCls}>Feature</th>
-                <th className={thCls}>Consentz</th>
-                <th className={thCls}>
-                  {variant === "alternatives"
-                    ? (competitorName ?? "Competitor")
-                    : "Typical Booking Tool"}
-                </th>
-                <th className={thCls}>
-                  {variant === "alternatives" ? "Notes" : "Why It Matters"}
-                </th>
+    <section className="mb-12 w-full min-w-0">
+      <div className="w-full min-w-0 overflow-x-auto rounded-xl border border-[#E5E7EB] bg-white">
+        <table
+          className={`w-full border-collapse text-left text-sm ${large ? "table-fixed" : ""} ${tableMinW}`}
+        >
+          {large ? (
+            <colgroup>
+              <col style={{ width: "28%" }} />
+              <col style={{ width: "18%" }} />
+              <col style={{ width: "24%" }} />
+              <col style={{ width: "30%" }} />
+            </colgroup>
+          ) : null}
+          <thead>
+            <tr className={theadCls}>
+              <th className={thCls}>Feature</th>
+              <th className={thCls}>Consentz</th>
+              <th className={thCls}>
+                {variant === "alternatives"
+                  ? (competitorName ?? "Competitor")
+                  : "Typical Booking Tool"}
+              </th>
+              <th className={thCls}>
+                {variant === "alternatives" ? "Notes" : "Why It Matters"}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.feature} className="bg-white">
+                <td className={featureTd}>{row.feature}</td>
+                <td className={tdBase}>
+                  {row.consentz === "native" ? (
+                    <NativePill large={large} />
+                  ) : (
+                    row.consentz
+                  )}
+                </td>
+                <td className={tdBase}>
+                  <TypicalCell typical={row.typical} large={large} />
+                </td>
+                <td className={whyTd}>{row.why}</td>
               </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={row.feature} className="bg-white">
-                  <td className={featureTd}>{row.feature}</td>
-                  <td className={tdBase}>
-                    {row.consentz === "native" ? (
-                      <NativePill large={large} />
-                    ) : (
-                      row.consentz
-                    )}
-                  </td>
-                  <td className={tdBase}>
-                    <TypicalCell typical={row.typical} large={large} />
-                  </td>
-                  <td className={whyTd}>{row.why}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </section>
   )

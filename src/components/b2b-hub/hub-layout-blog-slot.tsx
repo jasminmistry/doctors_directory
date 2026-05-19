@@ -12,36 +12,48 @@ function pathWithoutBase(pathname: string) {
   return n;
 }
 
+function shouldHideBlogSlot(path: string) {
+  if (/^\/business\/(software|cqc)\/.+/.test(path)) {
+    return true;
+  }
+  if (/^\/business\/alternatives\/.+/.test(path)) {
+    return true;
+  }
+  if (/^\/business\/automation\//.test(path) && !/-automation-alternative\/?$/.test(path)) {
+    return true;
+  }
+  if (/^\/business\/migrate\/from-[^/]+\/?$/.test(path)) {
+    return true;
+  }
+  if (/^\/business\/templates(\/|$)/.test(path)) {
+    return true;
+  }
+  if (/^\/business\/compare\//.test(path)) {
+    return true;
+  }
+  if (/^\/business\/practitioners\//.test(path)) {
+    return true;
+  }
+  if (/^\/business\/consent\//.test(path)) {
+    return true;
+  }
+  if (/^\/business\/uk\/[^/]+\/[^/]+/.test(path)) {
+    return true;
+  }
+  return false;
+}
+
 export function HubLayoutBlogSlot() {
   const pathname = usePathname() ?? "";
   const p = pathWithoutBase(pathname);
-  if (/^\/business\/(software|cqc)\/.+/.test(p)) {
+
+  if (shouldHideBlogSlot(p)) {
     return null;
   }
-  if (/^\/business\/alternatives\/.+/.test(p)) {
-    return null;
-  }
-  if (/^\/business\/automation\//.test(p) && !/-automation-alternative\/?$/.test(p)) {
-    return null;
-  }
-  if (/^\/business\/migrate\/from-[^/]+\/?$/.test(p)) {
-    return null;
-  }
-  if (/^\/business\/templates(\/|$)/.test(p)) {
-    return null;
-  }
-  if (/^\/business\/compare\//.test(p)) {
-    return null;
-  }
-  if (/^\/business\/practitioners\//.test(p)) {
-    return null;
-  }
-  if (/^\/business\/consent\//.test(p)) {
-    return null;
-  }
-  // City scaled hub pages include their own blog strip; skip duplicate "Related Articles".
-  if (/^\/business\/uk\/[^/]+\/[^/]+/.test(p)) {
-    return null;
-  }
-  return <RelevantBlogGuides />;
+
+  return (
+    <div className="relative z-0 w-full shrink-0 bg-white pt-14 max-lg:mt-20 max-lg:pt-16 md:mt-16 md:pt-16">
+      <RelevantBlogGuides />
+    </div>
+  );
 }

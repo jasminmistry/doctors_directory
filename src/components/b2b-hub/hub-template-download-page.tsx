@@ -9,7 +9,9 @@ import Image from "next/image"
 import Link from "next/link"
 import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell"
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start"
+import { HUB_CENTERED_MOBILE_CTAS } from "@/components/b2b-hub/hub-hero-layout-classes"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section"
 import { HubTemplateDownloadForm } from "@/components/b2b-hub/hub-template-download-form"
 import { HubTemplateLibrarySection } from "@/components/b2b-hub/hub-template-library-section"
 import { HubTemplatePreviewPanel } from "@/components/b2b-hub/hub-template-preview-panel"
@@ -19,7 +21,6 @@ import {
   HUB_HERO_INTRO_CLASS,
   HUB_HERO_TITLE_CLASS,
 } from "@/components/b2b-hub/hub-hero-typography"
-import { ServiceProviderCollage } from "@/components/b2b-hub/hub-pillar-detail-template"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -182,10 +183,12 @@ export function HubTemplateDownloadPage({ entry }: Props) {
           </ul>
         </section>
 
-        <section className="mb-12 rounded-2xl border border-[#E2DDD7] bg-[#faf8f5] p-8 md:p-10">
+        <section className="mb-12 rounded-2xl border border-[#E2DDD7] bg-[#faf8f5] p-8 text-center md:p-10 md:text-left">
           <h2 className="mb-3 text-2xl font-bold text-[#111111]">Make It Digital With Consentz</h2>
-          <p className="mb-6 max-w-2xl text-base leading-relaxed text-[#1A1A1A]">{content.digitalPitch}</p>
-          <div className="flex flex-wrap gap-3">
+          <p className="mx-auto mb-6 max-w-2xl text-base leading-relaxed text-[#1A1A1A] md:mx-0">
+            {content.digitalPitch}
+          </p>
+          <div className={`${HUB_CENTERED_MOBILE_CTAS} md:justify-start`}>
             <a
               href={`${baseUrl}/book-demo`}
               className={HUB_CTA_PRIMARY_CLASS}
@@ -252,27 +255,7 @@ export function HubTemplateDownloadPage({ entry }: Props) {
             </details>
           </div>
         </section>
-
-        <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#F2EEE6] lg:h-[302px] lg:overflow-hidden">
-          <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-10 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:py-0">
-            <div className="flex min-w-0 max-w-[629px] flex-col gap-2">
-              <h2 className="text-[26px] font-semibold leading-[1.1] text-[#1A1A1A] sm:text-[30px] lg:text-[36px]">
-                Are You A Service Provider?
-              </h2>
-              <p className="text-base font-medium text-[#1A1A1A] sm:text-lg">
-                Join Consentz to streamline clinic operations and grow your business.
-              </p>
-              <div className="mt-3 w-fit">
-                <a href={`${baseUrl}/book-demo`} className={HUB_CTA_PRIMARY_CLASS}>
-                  Learn More
-                </a>
-              </div>
-            </div>
-            <div className="relative mx-auto h-[220px] w-full max-w-[400px] lg:mx-0 lg:h-full lg:max-h-[302px] lg:w-[min(46vw,560px)]">
-              <ServiceProviderCollage />
-            </div>
-          </div>
-        </section>
+        <HubServiceProviderSection />
       </HubContentStart>
 
       <HubSectionCta />

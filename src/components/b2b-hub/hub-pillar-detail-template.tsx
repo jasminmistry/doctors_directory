@@ -20,7 +20,10 @@ import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq";
 import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell";
 import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography";
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start";
+import { HUB_BLEED_FROM_CONTAINER } from "@/components/b2b-hub/hub-hero-layout-classes";
+import { cn } from "@/lib/utils";
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta";
+import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section";
 import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section";
 import {
   HUB_HERO_INTRO_CLASS,
@@ -154,10 +157,12 @@ function PhoneFanCollage({
   const cellW = (337.258 / w) * 100;
   const cellH = (288.695 / h) * 100;
   return (
-    <div className="relative h-full w-full overflow-hidden" aria-hidden>
-      <div className="absolute left-1/2 top-1/2 w-[min(122%,640px)] max-w-[130%] -translate-x-1/2 -translate-y-1/2 aspect-[915/846]">
-        <div className="absolute inset-0">
-          {layers.map(({ src, l, t }, i) => (
+    <div
+      className="relative mx-auto w-full aspect-[915/846] min-h-[220px] max-w-[400px] overflow-visible"
+      aria-hidden
+    >
+      <div className="absolute inset-0">
+        {layers.map(({ src, l, t }, i) => (
             <div
               key={`${src}-${i}`}
               className="absolute flex items-center justify-center"
@@ -188,9 +193,16 @@ function PhoneFanCollage({
                 />
               </div>
             </div>
-          ))}
-        </div>
+        ))}
       </div>
+    </div>
+  );
+}
+
+export function SoftwareHeroVisual() {
+  return (
+    <div className="relative mx-auto w-full max-w-[min(100%,400px)]">
+      <SoftwareHeroCollage />
     </div>
   );
 }
@@ -396,9 +408,7 @@ export function HubPillarDetailTemplate({
           pillar === "cqc" ? (
             <CqcHeroVisual />
           ) : (
-            <div className="relative h-full w-full min-h-[200px] max-w-[360px] lg:max-w-[400px]">
-              <SoftwareHeroCollage />
-            </div>
+            <SoftwareHeroVisual />
           )
         }
         visualAlign={pillar === "cqc" ? "wide" : "phone"}
@@ -487,7 +497,7 @@ export function HubPillarDetailTemplate({
         <HubComparisonTable variant="software" />
 
         {pillar === "software" ? (
-          <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 py-10 md:py-14">
+          <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-16 py-10 md:py-14")}>
             <div className="mx-auto max-w-[920px] px-4 sm:px-6">
               <div className="mx-auto flex w-full max-w-[781px] flex-col items-center">
                 <Image
@@ -513,7 +523,7 @@ export function HubPillarDetailTemplate({
         ) : null}
 
         {pillar === "cqc" ? (
-          <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 py-10 md:py-12">
+          <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-16 py-10 md:py-12")}>
             <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
               <div className="flex flex-col items-stretch gap-6 lg:flex-row lg:items-start lg:justify-center lg:gap-5">
                 <div className="relative w-full overflow-hidden rounded-[12px] border-4 border-[#1a1a1a] shadow-[0_2px_8px_rgba(105,71,71,0.25)] lg:min-w-0 lg:flex-[1.2]">
@@ -552,7 +562,7 @@ export function HubPillarDetailTemplate({
         {pillar === "cqc" ? <HubRelatedLinksGrid related={related} /> : null}
 
         {pillar === "cqc" ? (
-          <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 py-10 md:py-12">
+          <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-16 py-10 md:py-12")}>
             <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
               <div className="mx-auto max-w-[920px] overflow-hidden rounded-xl border-4 border-[#1a1a1a] shadow-[0_8px_28px_rgba(0,0,0,0.08)]">
                 <Image
@@ -580,30 +590,7 @@ export function HubPillarDetailTemplate({
 
         <HubTestimonialsSection />
 
-        <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#F2EEE6] lg:h-[302px] lg:overflow-hidden">
-          <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-6 py-10 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">
-            <div className="flex min-w-0 max-w-[629px] flex-col gap-2 lg:max-h-[302px] lg:gap-3 lg:py-1">
-              <h2 className="text-[26px] font-semibold leading-[1.1] text-[#1A1A1A] sm:text-[30px] lg:text-[36px] lg:leading-[1.08]">
-                Are You A Service Provider?
-              </h2>
-              <p className="text-base font-medium leading-snug text-[#1A1A1A] sm:text-lg lg:text-[20px] lg:leading-normal">
-                Join Consentz to streamline your clinic operations, enhance patient
-                experience, and grow your business.
-              </p>
-              <div className="pt-3 lg:pt-2">
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className={HUB_CTA_PRIMARY_CLASS}
-                >
-                  Learn More
-                </a>
-              </div>
-            </div>
-            <div className="relative mx-auto h-[220px] w-full max-w-[400px] overflow-hidden sm:h-[260px] sm:max-w-[440px] lg:mx-0 lg:ml-auto lg:mr-0 lg:h-full lg:max-h-[302px] lg:w-[min(46vw,560px)] lg:max-w-[560px] lg:shrink-0">
-              <ServiceProviderCollage />
-            </div>
-          </div>
-        </section>
+        <HubServiceProviderSection />
 
         <HubBuyerFaq
           items={[
@@ -632,8 +619,8 @@ export function HubPillarDetailTemplate({
         />
 
 
-        <section className="mb-16 max-w-[1280px] mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#111111] mb-3">
+        <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
+          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">
             {pillar === "cqc" ? "CQC guidance on the Buyer Hub" : "Our Latest Blogs"}
           </h2>
           <p className="text-xl text-[#1A1A1A] leading-snug mb-10 max-w-[1280px]">

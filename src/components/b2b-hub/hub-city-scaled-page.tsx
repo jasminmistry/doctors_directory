@@ -8,15 +8,21 @@ import {
   HUB_CTA_LINK_CLASS,
 } from "@/components/b2b-hub/hub-cta-buttons"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section"
 import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
 import Image from "next/image";
 import Link from "next/link"
 import { HUB_DETAIL_HERO_VIEWPORT_CLASS } from "@/lib/b2b-hub/hub-index-hero-layout"
+import {
+  HUB_HERO_ACTIONS_ROW,
+  HUB_SPLIT_HERO_CONTENT,
+  HUB_SPLIT_HERO_GRID_TWO_COL,
+  HUB_SPLIT_HERO_VISUAL_TALL,
+} from "@/components/b2b-hub/hub-hero-layout-classes"
 import { cn } from "@/lib/utils";
 import { Droplets, MapPin, Syringe, Users } from "lucide-react";
 import {
-  ServiceProviderCollage,
-  SoftwareHeroCollage,
+  SoftwareHeroVisual,
 } from "@/components/b2b-hub/hub-pillar-detail-template";
 import {
   Breadcrumb,
@@ -194,9 +200,12 @@ export function HubCityScaledPage({
         )}
       >
         <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col px-4 sm:px-6 lg:px-0">
-          <div className="relative box-border flex flex-1 overflow-hidden pt-8 pb-4 lg:grid lg:grid-cols-[minmax(0,700px)_minmax(0,1fr)] lg:items-center lg:gap-x-6 lg:px-0 lg:py-0">
-            <div className="relative z-10 flex min-w-0 flex-col items-start justify-center lg:min-h-0 lg:pr-2">
-              <Breadcrumb className="mb-6 flex justify-start">
+          <div className={HUB_SPLIT_HERO_GRID_TWO_COL}>
+            <div className={HUB_SPLIT_HERO_VISUAL_TALL} aria-hidden>
+              <SoftwareHeroVisual />
+            </div>
+            <div className={HUB_SPLIT_HERO_CONTENT}>
+              <Breadcrumb className="mb-6 flex w-full justify-center lg:justify-start">
                 <BreadcrumbList>
                   <BreadcrumbItem>
                     <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
@@ -227,7 +236,7 @@ export function HubCityScaledPage({
                 <p className="mb-9 max-w-[700px] text-lg font-medium leading-[1.65] text-[#1A1A1A] [font-family:Inter,system-ui,sans-serif] lg:text-2xl">
                   {hero.intro}
                 </p>
-                <div className="flex max-sm:flex-col max-sm:items-stretch gap-3 sm:flex-row sm:flex-nowrap sm:items-center sm:gap-2.5 sm:overflow-x-auto">
+                <div className={HUB_HERO_ACTIONS_ROW}>
                   <a
                     href={`${baseUrl}/book-demo`}
                     className={HUB_CTA_PRIMARY_HERO_CLASS}
@@ -248,14 +257,6 @@ export function HubCityScaledPage({
                   </a>
                 </div>
               </header>
-            </div>
-            <div
-              className="relative z-0 mt-8 flex h-[260px] w-full min-w-0 justify-center overflow-hidden sm:h-[300px] lg:mt-0 lg:h-full lg:justify-end"
-              aria-hidden
-            >
-              <div className="relative h-full w-full min-h-[220px] max-w-[720px] lg:max-w-none">
-                <SoftwareHeroCollage />
-              </div>
             </div>
           </div>
         </div>
@@ -317,112 +318,7 @@ export function HubCityScaledPage({
             ))}
           </div>
         </section>
-
-        <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 py-6 md:py-10">
-          <div className="mx-auto flex max-w-[1072px] flex-col items-center px-4">
-            <Image
-              src={CITY_MACBOOK_SRC}
-              alt=""
-              width={781}
-              height={415}
-              className="h-auto w-full max-w-[781px] object-contain"
-              loading="lazy"
-            />
-            <div className="mx-auto mt-10 grid w-full max-w-[1072px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {workflow.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-            <div className="mt-10 flex justify-center">
-              <a
-                href={`${baseUrl}/book-demo`}
-                className={HUB_CTA_PRIMARY_CLASS}
-              >
-                Book Demo
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <section className="mb-12 grid gap-3 sm:grid-cols-2">
-          <a
-            href={`/directory/clinics/${citySlug}/`}
-            className="rounded-lg border border-neutral-200 bg-white p-4 transition-all hover:border-neutral-400 hover:shadow-sm"
-          >
-            <p className="font-medium text-neutral-900">Clinics in {cityTitle}</p>
-            <p className="mt-1 text-sm text-neutral-500">Browse local clinic listings</p>
-          </a>
-          <a
-            href={`/directory/practitioners/${citySlug}/`}
-            className="rounded-lg border border-neutral-200 bg-white p-4 transition-all hover:border-neutral-400 hover:shadow-sm"
-          >
-            <p className="font-medium text-neutral-900">Practitioners in {cityTitle}</p>
-            <p className="mt-1 text-sm text-neutral-500">Browse local practitioner listings</p>
-          </a>
-        </section>
-
-        <section className="mb-16">
-          <h2 className="mb-10 text-center text-3xl font-bold text-neutral-900">
-            Most popular treatments
-          </h2>
-          <div className="flex flex-wrap items-start justify-center gap-8 md:gap-12">
-            {UK_POPULAR_TREATMENTS.map((treatment) => (
-              <Link
-                key={treatment.name}
-                href={treatment.href}
-                className="flex flex-col items-center gap-2"
-              >
-                <img
-                  src={treatment.image}
-                  alt={treatment.name}
-                  className="h-24 w-24 rounded-full object-cover"
-                />
-                <p className="text-sm font-medium text-neutral-900">{treatment.name}</p>
-              </Link>
-            ))}
-          </div>
-          <div className="mt-8 flex justify-center">
-            <Link
-              href="/treatments/"
-              className="inline-flex items-center rounded-[12px] bg-black px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-neutral-900"
-            >
-              See all treatments
-            </Link>
-          </div>
-        </section>
-
-        <HubTestimonialsSection />
-
-        <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[#F2EEE6] lg:h-[302px] lg:overflow-hidden">
-          <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-6 py-10 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">
-            <div className="flex min-w-0 max-w-[629px] flex-col gap-2 lg:max-h-[302px] lg:gap-3 lg:py-1">
-              <h2 className="text-[26px] font-semibold leading-[1.1] text-[#1A1A1A] sm:text-[30px] lg:text-[36px] lg:leading-[1.08]">
-                Are You A Service Provider?
-              </h2>
-              <p className="text-base font-medium leading-snug text-[#1A1A1A] sm:text-lg lg:text-[20px] lg:leading-normal">
-                Join Consentz to streamline your clinic operations, enhance patient experience,
-                and grow your business.
-              </p>
-              <div className="pt-3 lg:pt-2">
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className={HUB_CTA_PRIMARY_CLASS}
-                >
-                  Learn More
-                </a>
-              </div>
-            </div>
-            <div className="relative mx-auto h-[220px] w-full max-w-[400px] overflow-hidden sm:h-[260px] sm:max-w-[440px] lg:mx-0 lg:ml-auto lg:mr-0 lg:h-full lg:max-h-[302px] lg:w-[min(46vw,560px)] lg:max-w-[560px] lg:shrink-0">
-              <ServiceProviderCollage />
-            </div>
-          </div>
-        </section>
+        <HubServiceProviderSection />
 
         <HubBuyerFaq
           items={[
@@ -447,9 +343,9 @@ export function HubCityScaledPage({
         />
 
 
-        <section className="mb-16 max-w-[1280px] mx-auto">
+        <section className="mx-auto mb-16 max-w-[1280px] text-center md:text-left">
           <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our latest blogs</h2>
-          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+          <p className="mx-auto mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
             Explore insights and tips to help you manage and grow your aesthetics clinic
             efficiently. Stay informed with our latest articles.
           </p>

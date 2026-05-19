@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Mail, Phone } from "lucide-react";
 import { HUB_CTA_FOOTER_LIGHT_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
-import { toUrlSlug } from "@/lib/utils";
+import { cn, toUrlSlug } from "@/lib/utils";
 import {
   modalities,
   edu,
@@ -30,9 +30,16 @@ export function Footer() {
     process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
   return (
     <>
-      <footer className="bg-[var(--dune)] py-8 md:py-16 text-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center flex-col md:flex-row justify-between">
+      <footer
+        className={cn(
+          "overflow-visible bg-[var(--dune)] text-white",
+          isBusinessHub
+            ? "pb-8 pt-[clamp(7.5rem,28vw,10.5rem)] md:pb-16 md:pt-16"
+            : "py-8 md:py-16"
+        )}
+      >
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="flex flex-col items-center justify-between md:flex-row">
             <div className="w-full md:w-auto">
               <section className="text-lg md:text-4xl font-bold mb-2">
                 Ready To Get Started?

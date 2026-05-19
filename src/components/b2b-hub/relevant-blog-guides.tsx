@@ -4,9 +4,9 @@ import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links"
 
 export function RelevantBlogGuides() {
   return (
-    <section className="bg-white px-4 md:px-6 py-12 md:py-16 mt-10 max-w-7xl mx-auto">
-      <div className="max-w-[1280px] mx-auto">
-        <h2 className="text-center text-2xl md:text-3xl font-bold text-neutral-900 mb-10 tracking-tight">
+    <section className="relative z-0 mx-auto max-w-7xl px-4 pb-12 md:px-6 md:pb-16">
+      <div className="mx-auto max-w-[1280px]">
+        <h2 className="mb-10 text-center text-2xl font-bold tracking-tight text-neutral-900 md:text-3xl">
           Related Articles
         </h2>
         <div className="grid gap-6 md:grid-cols-3 md:gap-8">
@@ -16,7 +16,7 @@ export function RelevantBlogGuides() {
               href={post.href}
               target="_blank"
               rel="noreferrer"
-              className="group flex flex-col bg-white rounded-xl overflow-hidden border border-[#E5E7EB] hover:shadow-md transition-shadow"
+              className="group flex flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white transition-shadow hover:shadow-md"
             >
               <div className="relative aspect-video bg-neutral-100">
                 <Image
@@ -27,21 +27,21 @@ export function RelevantBlogGuides() {
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
               </div>
-              <div className="p-5 flex flex-col flex-1">
-                <span className="text-[10px] font-bold tracking-[0.12em] text-neutral-500 mb-3">
+              <div className="flex flex-1 flex-col p-5">
+                <span className="mb-3 text-[10px] font-bold tracking-[0.12em] text-neutral-500">
                   CONSENTZ
                 </span>
-                <span className="font-semibold text-neutral-900 text-base leading-snug group-hover:underline underline-offset-2">
+                <span className="text-base font-semibold leading-snug text-neutral-900 underline-offset-2 group-hover:underline">
                   {post.title}
                 </span>
-                <span className="text-sm text-neutral-500 mt-auto pt-4">
+                <span className="mt-auto pt-4 text-sm text-neutral-500">
                   {post.date}
                 </span>
               </div>
             </a>
           ))}
         </div>
-        <div className="flex justify-center mt-10">
+        <div className="mt-10 flex justify-center">
           <a
             href="https://www.consentz.com/blog/"
             target="_blank"

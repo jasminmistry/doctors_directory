@@ -10,10 +10,19 @@ import {
 import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
 import { HubMainDifferenceSection } from "@/components/b2b-hub/hub-main-difference-section"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import Image from "next/image";
 import Link from "next/link"
 import { HUB_DETAIL_HERO_VIEWPORT_CLASS } from "@/lib/b2b-hub/hub-index-hero-layout"
+import {
+  HUB_HERO_ACTIONS_ROW,
+  HUB_SECTION_MOBILE_CTA,
+  HUB_SPLIT_HERO_CONTENT,
+  HUB_SPLIT_HERO_GRID_TWO_COL,
+  HUB_SPLIT_HERO_VISUAL_TALL,
+} from "@/components/b2b-hub/hub-hero-layout-classes"
+
 import { cn } from "@/lib/utils";
 import {
   CalendarDays,
@@ -25,8 +34,7 @@ import {
 } from "lucide-react";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
 import {
-  ServiceProviderCollage,
-  SoftwareHeroCollage,
+  SoftwareHeroVisual,
 } from "@/components/b2b-hub/hub-pillar-detail-template";
 import {
   Breadcrumb,
@@ -117,9 +125,9 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
         )}
       >
         <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-0">
-          <div className="relative box-border flex flex-1 overflow-hidden pt-8 pb-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:px-0 lg:py-0">
-            <div className="relative z-10 flex min-w-0 flex-col items-start justify-center lg:min-h-0 lg:pr-2">
-              <Breadcrumb className="mb-6 flex justify-start">
+          <div className={HUB_SPLIT_HERO_GRID_TWO_COL}>
+            <div className={HUB_SPLIT_HERO_CONTENT}>
+              <Breadcrumb className="mb-6 flex w-full justify-center lg:justify-start">
                 <BreadcrumbList>
                   <BreadcrumbItem>
                     <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
@@ -145,7 +153,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
                 <p className="mb-9 max-w-[700px] text-lg font-medium leading-[1.65] text-[#1A1A1A] [font-family:Inter,system-ui,sans-serif] lg:text-2xl">
                   {intro}
                 </p>
-                <div className="flex max-sm:flex-col max-sm:items-stretch gap-3 sm:flex-row sm:flex-nowrap sm:items-center sm:gap-2.5 sm:overflow-x-auto">
+                <div className={HUB_HERO_ACTIONS_ROW}>
                   <a
                     href={`${baseUrl}/book-demo`}
                     className={HUB_CTA_PRIMARY_HERO_CLASS}
@@ -168,12 +176,10 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
               </header>
             </div>
             <div
-              className="relative z-0 mt-8 flex h-[260px] w-full min-w-0 justify-center overflow-hidden sm:h-[300px] lg:mt-0 lg:h-full lg:justify-end"
+              className={HUB_SPLIT_HERO_VISUAL_TALL}
               aria-hidden
             >
-              <div className="relative h-full w-full min-h-[220px] max-w-[720px] lg:max-w-none">
-                <SoftwareHeroCollage />
-              </div>
+              <SoftwareHeroVisual />
             </div>
           </div>
         
@@ -181,7 +187,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
 </div>
       </section>
 
-      <article className="mx-auto max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
+      <article className="mx-auto w-full min-w-0 max-w-[1280px] overflow-x-clip px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
         <HubMainDifferenceSection competitorLabel={competitorLabel} />
 
         <section className="mb-12">
@@ -213,14 +219,14 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
             {alternativesPainPoints.map(({ Icon, text }) => (
               <div
                 key={text}
-                className="flex min-h-[88px] items-center gap-6 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] py-[15px] pl-6 pr-4"
+                className="flex min-h-[80px] items-center gap-4 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-4 py-4 sm:min-h-[88px] sm:gap-6 sm:py-[15px] sm:pl-6 sm:pr-4"
               >
                 <Icon
                   className="h-12 w-12 shrink-0 text-[#1A1A1A]"
                   strokeWidth={1.25}
                   aria-hidden
                 />
-                <p className="text-lg font-medium leading-[1.45] text-[#1A1A1A] md:text-xl">
+                <p className="text-base font-medium leading-snug text-[#1A1A1A] sm:text-lg sm:leading-[1.45] md:text-xl">
                   {text}
                 </p>
               </div>
@@ -249,7 +255,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
 
         <section className="mb-16">
           <div className="mx-auto grid max-w-[1100px] grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-14">
-            <div className="min-w-0">
+            <div className="min-w-0 text-center lg:text-left">
               <h2 className="mb-4 text-[28px] font-bold tracking-tight text-[#111111] md:text-[34px]">
                 Migrating from {competitorLabel}?
               </h2>
@@ -258,12 +264,14 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
                 the process, what data transfers, and how we handle the transition without
                 disrupting your clinic.
               </p>
-              <a
-                href={`${baseUrl}/book-demo`}
-                className={HUB_CTA_PRIMARY_CLASS}
-              >
-                Book Demo
-              </a>
+              <div className={HUB_SECTION_MOBILE_CTA}>
+                <a
+                  href={`${baseUrl}/book-demo`}
+                  className={HUB_CTA_PRIMARY_CLASS}
+                >
+                  Book Demo
+                </a>
+              </div>
             </div>
             <div className="flex justify-center lg:justify-end">
               <Image
@@ -302,38 +310,14 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
         </section>
 
         <HubTestimonialsSection />
-
-        <section className="mb-16 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 bg-[var(--primary-bg-color)] lg:h-[302px] lg:overflow-hidden">
-          <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-10 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">
-            <div className="flex min-w-0 max-w-[629px] flex-col gap-2 lg:max-h-[302px] lg:gap-3 lg:py-1">
-              <h2 className="text-[26px] font-semibold leading-[1.1] text-[#1A1A1A] sm:text-[30px] lg:text-[36px] lg:leading-[1.08]">
-                Are You A Service Provider?
-              </h2>
-              <p className="text-base font-medium leading-snug text-[#1A1A1A] sm:text-lg lg:text-[20px] lg:leading-normal">
-                Join Consentz to streamline your clinic operations, enhance patient experience,
-                and grow your business.
-              </p>
-              <div className="pt-3 lg:pt-2">
-                <a
-                  href={`${baseUrl}/book-demo`}
-                  className={HUB_CTA_PRIMARY_CLASS}
-                >
-                  Learn More
-                </a>
-              </div>
-            </div>
-            <div className="relative mx-auto h-[220px] w-full max-w-[400px] overflow-hidden sm:h-[260px] sm:max-w-[440px] lg:mx-0 lg:ml-auto lg:mr-0 lg:h-full lg:max-h-[302px] lg:w-[min(46vw,560px)] lg:max-w-[560px] lg:shrink-0">
-              <ServiceProviderCollage />
-            </div>
-          </div>
-        </section>
+        <HubServiceProviderSection />
 
         <HubBuyerFaq
           title="Frequently Asked Questions"
           items={mapLegacyHubFaqs(faqs)}
         />
 
-        <section className="mb-16 mx-auto max-w-[1280px]">
+        <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
           <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
           <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
             Explore insights and tips to help you manage and grow your aesthetics clinic

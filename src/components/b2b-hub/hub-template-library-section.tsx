@@ -5,6 +5,8 @@ import Link from "next/link"
 import { Calendar, CloudDownload, Search } from "lucide-react"
 import { useMemo, useState } from "react"
 import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons"
+import { HUB_BLEED_FROM_CONTAINER } from "@/components/b2b-hub/hub-hero-layout-classes"
+import { cn } from "@/lib/utils"
 import {
   type HubTemplateLibraryFormat,
   countHubTemplateLibraryByFormat,
@@ -155,7 +157,12 @@ export function HubTemplateLibrarySection({
   }
 
   return (
-    <section className="mb-0 w-screen max-w-[100vw] relative left-1/2 -translate-x-1/2 border-t border-[#E5E7EB] bg-white px-4 py-12 sm:px-6 sm:py-16 md:py-20">
+    <section
+      className={cn(
+        HUB_BLEED_FROM_CONTAINER,
+        "mb-0 border-t border-[#E5E7EB] bg-white px-4 py-12 sm:px-6 sm:py-16 md:py-20"
+      )}
+    >
       <div className="mx-auto max-w-[1200px]">
         <h2 className="mb-3 text-center text-[28px] font-bold leading-tight tracking-tight text-[#111111] md:text-[34px] md:leading-snug">
           Find The Right Template For Your Clinic
@@ -165,7 +172,7 @@ export function HubTemplateLibrarySection({
           compliance docs.
         </p>
 
-        <div className="mx-auto mb-8 flex max-w-[720px] flex-col gap-3 sm:flex-row sm:items-stretch">
+        <div className="mx-auto mb-8 flex max-w-[720px] items-stretch gap-2 sm:gap-3">
           <label className="sr-only" htmlFor="template-library-search">
             Search templates
           </label>
