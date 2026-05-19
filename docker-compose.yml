@@ -47,6 +47,8 @@ services:
       SMTP_PASS: ${SMTP_PASS}
       EMAIL_FROM: ${EMAIL_FROM}
       TRACKING_DASHBOARD_TOKEN: ${TRACKING_DASHBOARD_TOKEN}
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -56,3 +58,4 @@ services:
 volumes:
   mariadb_data:
   redis_data:
+  uploads_data:

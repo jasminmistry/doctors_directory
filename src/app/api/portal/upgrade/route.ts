@@ -5,11 +5,30 @@ import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
 
-const DIRECTORY_BASE_URL =
-  process.env.NEXT_PUBLIC_DIRECTORY_BASE_URL ??
-  process.env.DIRECTORY_BASE_URL ??
-  process.env.NEXT_PUBLIC_BASE_URL ??
-  'http://localhost:3000'
+function resolveDirectoryBaseUrl(): string {
+  const candidates = [
+    process.env.NEXT_PUBLIC_DIRECTORY_BASE_URL,
+    process.env.DIRECTORY_BASE_URL,
+    process.env.NEXT_PUBLIC_BASE_URL,
+  ]
+
+  for (const candidate of candidates) {
+    const trimmed = candidate?.trim()
+    if (!trimmed) continue
+
+    const normalized = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+
+    try {
+      return new URL(normalized).origin
+    } catch {
+      continue
+    }
+  }
+
+  return 'http://localhost:3000'
+}
+
+const DIRECTORY_BASE_URL = resolveDirectoryBaseUrl()
 
 const PLAN_ORDER: Record<string, number> = { free: 0, pay_per_lead: 1, subscription: 2 }
 
