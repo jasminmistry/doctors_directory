@@ -165,14 +165,14 @@ export function HubTemplateDownloadPage({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-12 max-w-3xl">
-          <h2 className="mb-4 text-2xl font-bold text-[#111111]">Why You Need This</h2>
+        <section className="mx-auto mb-12 max-w-3xl text-center">
+          <h2 className="mb-4 text-2xl font-bold text-[#111111] md:text-3xl">Why You Need This</h2>
           <p className="text-base leading-relaxed text-[#1A1A1A]">{content.whyNeed}</p>
         </section>
 
-        <section className="mb-12">
-          <h2 className="mb-6 text-2xl font-bold text-[#111111]">What To Include</h2>
-          <ul className="flex max-w-3xl flex-col gap-3">
+        <section className="mx-auto mb-12 max-w-3xl text-center">
+          <h2 className="mb-6 text-2xl font-bold text-[#111111] md:text-3xl">What To Include</h2>
+          <ul className="mx-auto flex w-fit max-w-full flex-col gap-3 text-left">
             {content.whatToInclude.map((item) => (
               <li key={item} className="flex gap-3 text-base leading-relaxed text-[#1A1A1A]">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#1a877a]" aria-hidden />
@@ -262,12 +262,11 @@ export function HubTemplateDownloadPage({ entry }: Props) {
               <p className="text-base font-medium text-[#1A1A1A] sm:text-lg">
                 Join Consentz to streamline clinic operations and grow your business.
               </p>
-              <a
-                href={`${baseUrl}/book-demo`}
-                className={`mt-3 ${HUB_CTA_PRIMARY_CLASS}`}
-              >
-                Learn More
-              </a>
+              <div className="mt-3 w-fit">
+                <a href={`${baseUrl}/book-demo`} className={HUB_CTA_PRIMARY_CLASS}>
+                  Learn More
+                </a>
+              </div>
             </div>
             <div className="relative mx-auto h-[220px] w-full max-w-[400px] lg:mx-0 lg:h-full lg:max-h-[302px] lg:w-[min(46vw,560px)]">
               <ServiceProviderCollage />
