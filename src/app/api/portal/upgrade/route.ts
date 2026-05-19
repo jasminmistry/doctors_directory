@@ -5,7 +5,11 @@ import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+const DIRECTORY_BASE_URL =
+  process.env.NEXT_PUBLIC_DIRECTORY_BASE_URL ??
+  process.env.DIRECTORY_BASE_URL ??
+  process.env.NEXT_PUBLIC_BASE_URL ??
+  'http://localhost:3000'
 
 const PLAN_ORDER: Record<string, number> = { free: 0, pay_per_lead: 1, subscription: 2 }
 
@@ -74,8 +78,8 @@ export async function POST(req: NextRequest) {
       }],
       metadata: { claimId: String(claim.id), plan },
       subscription_data: { metadata: { claimId: String(claim.id), plan } },
-      success_url: `${BASE_URL}/directory/portal/upgrade/success?plan=${plan}`,
-      cancel_url: `${BASE_URL}/directory/portal/${user.entityType}`,
+      success_url: `${DIRECTORY_BASE_URL}/directory/portal/upgrade/success?plan=${plan}`,
+      cancel_url: `${DIRECTORY_BASE_URL}/directory/portal/${user.entityType}`,
     })
 
     return NextResponse.json({ redirect: session.url })

@@ -1,0 +1,3 @@
+- when clinic claim its auto filled clinic name but its not preserved when creating clinic account even i can see empty clinic name in dashboard
+- http://localhost:3000/directory/portal/clinic/ on this page its showing slug in left sidebar menu it should display clinic name
+- in clinic portal it should display subscription details like which plans is active 

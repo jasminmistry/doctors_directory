@@ -5,7 +5,11 @@ import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 import { selectPlanSchema } from '@/lib/schemas/claim.schema'
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+const DIRECTORY_BASE_URL =
+  process.env.NEXT_PUBLIC_DIRECTORY_BASE_URL ??
+  process.env.DIRECTORY_BASE_URL ??
+  process.env.NEXT_PUBLIC_BASE_URL ??
+  'http://localhost:3000'
 
 const SUBSCRIPTION_CONFIG = {
   name: 'Verified Subscription',
@@ -62,8 +66,8 @@ export async function POST(req: NextRequest) {
         payment_method_types: ['card'],
         customer_email: claim.claimerEmail,
         metadata: { claimId: String(claimId), plan },
-        success_url: `${BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${BASE_URL}/directory/claim/${entitySlug}?claimId=${claimId}&step=plan`,
+        success_url: `${DIRECTORY_BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${DIRECTORY_BASE_URL}/directory/claim/${entitySlug}?claimId=${claimId}&step=plan`,
       })
       await prisma.claimRequest.update({
         where: { id: claimId },
@@ -94,8 +98,8 @@ export async function POST(req: NextRequest) {
         customer_email: claim.claimerEmail,
         metadata: { claimId: String(claimId), plan },
         subscription_data: { metadata: { claimId: String(claimId), plan } },
-        success_url: `${BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${BASE_URL}/directory/claim/${entitySlug}?claimId=${claimId}&step=plan`,
+        success_url: `${DIRECTORY_BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${DIRECTORY_BASE_URL}/directory/claim/${entitySlug}?claimId=${claimId}&step=plan`,
       })
       await prisma.claimRequest.update({
         where: { id: claimId },

@@ -19,6 +19,8 @@ RUN --mount=type=cache,target=/root/.npm \
 
 # ── builder: compile the app ──────────────────────────────────────────────────
 FROM base AS builder
+ARG NEXT_PUBLIC_DIRECTORY_BASE_URL
+ENV NEXT_PUBLIC_DIRECTORY_BASE_URL=$NEXT_PUBLIC_DIRECTORY_BASE_URL
 ARG NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
