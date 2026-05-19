@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
 import { HubTemplateLibrarySection } from "@/components/b2b-hub/hub-template-library-section"
+import { HubTemplatesByTreatment } from "@/components/b2b-hub/hub-templates-by-treatment"
 import { HubTemplatesIndexHero } from "@/components/b2b-hub/hub-templates-index-hero"
 import { getHubTemplateLibraryItems } from "@/lib/b2b-hub/hub-template-library-data"
 import { TEMPLATE_CATEGORIES } from "@/lib/b2b-hub/templates-registry"
@@ -25,6 +26,8 @@ export default function TemplatesHubPage() {
         templateCount={libraryCount}
         categoryCount={TEMPLATE_CATEGORIES.length}
       />
+
+      <HubTemplatesByTreatment />
 
       <HubTemplateLibrarySection showViewAll={false} />
 

@@ -205,6 +205,14 @@ export function hubTemplatesIndexMetaDescription() {
   return `123+ free consent, intake, aftercare and CQC templates for aesthetic clinics. ${RATING} ${BRAND} — download and digitise.`
 }
 
+export function hubTemplateTreatmentIndexMetaTitle(treatmentLabel: string) {
+  return trimTitle(joinTitle(`Free ${treatmentLabel} Templates`, "Consent, Aftercare & Downloads"))
+}
+
+export function hubTemplateTreatmentIndexMetaDescription(treatmentLabel: string) {
+  return `Free ${treatmentLabel.toLowerCase()} templates — consent forms, aftercare and downloads. Preview on-site, then digitise with ${BRAND}.`
+}
+
 export function buildHubPageMetadata(opts: {
   title: string
   description: string

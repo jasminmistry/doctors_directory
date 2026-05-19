@@ -5,7 +5,7 @@ import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
 import {
   TEMPLATE_CATEGORY_LABEL,
   isTemplateCategory,
-  CONSENTZ_CONTROL_REGISTRATION_URL,
+  templatePageHref,
   templatesByCategory,
   type TemplateCategory,
 } from "@/lib/b2b-hub/templates-registry"
@@ -55,7 +55,7 @@ export default function TemplateCategoryPage({ params }: Props) {
 
   const cards = entries.map((e) => ({
     key: `${e.category}-${e.slug}`,
-    href: CONSENTZ_CONTROL_REGISTRATION_URL,
+    href: templatePageHref(e),
     title: toDisplayTitle(e.title),
     subtitle: e.summary,
   }))

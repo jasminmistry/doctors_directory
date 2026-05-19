@@ -5,6 +5,7 @@ import {
   type TemplateCategory,
   type TemplateEntry,
 } from "@/lib/b2b-hub/templates-registry"
+import { templateLibraryHrefForEntry } from "@/lib/b2b-hub/template-treatments"
 import type {
   HubTemplateLibraryFormat,
   HubTemplateLibraryItem,
@@ -66,12 +67,12 @@ export function hubLibraryItemFromEntry(entry: TemplateEntry): HubTemplateLibrar
     date: "May 2026",
     format: CATEGORY_FORMAT[entry.category],
     image: hubTemplateThumbnailForKey(id),
-    href: CONSENTZ_CONTROL_REGISTRATION_URL,
+    href: templateLibraryHrefForEntry(entry),
     tags: secondary ? [primary, secondary] : [primary],
     tagColors: [TAG_BADGE_CLASS, TAG_BADGE_CLASS],
     author: "Consentz Clinical Team",
     downloads: stableDownloads(entry.slug),
-    internal: false,
+    internal: true,
   }
 }
 

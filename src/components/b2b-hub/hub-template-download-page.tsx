@@ -35,6 +35,11 @@ import {
   relatedTemplateEntries,
   templatePageHref,
 } from "@/lib/b2b-hub/templates-registry"
+import {
+  getTemplateTreatmentGroup,
+  templateTreatmentIndexHref,
+  treatmentSlugFromEntry,
+} from "@/lib/b2b-hub/template-treatments"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
 
 const baseUrl =
@@ -47,6 +52,10 @@ type Props = {
 export function HubTemplateDownloadPage({ entry }: Props) {
   const content = getTemplatePageContent(entry)
   const related = relatedTemplateEntries(entry.category, entry.slug, 9)
+  const treatmentSlug = treatmentSlugFromEntry(entry)
+  const treatmentGroup = treatmentSlug
+    ? getTemplateTreatmentGroup(treatmentSlug)
+    : undefined
 
   const breadcrumb = (
     <Breadcrumb>
@@ -59,12 +68,25 @@ export function HubTemplateDownloadPage({ entry }: Props) {
           <BreadcrumbLink href="/business/templates/">Templates</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink href={`/business/templates/${entry.category}/`}>
-            {TEMPLATE_CATEGORY_LABEL[entry.category]}
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
+        {treatmentGroup ? (
+          <>
+            <BreadcrumbItem>
+              <BreadcrumbLink href={templateTreatmentIndexHref(treatmentSlug!)}>
+                {treatmentGroup.label} Templates
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+          </>
+        ) : (
+          <>
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/business/templates/${entry.category}/`}>
+                {TEMPLATE_CATEGORY_LABEL[entry.category]}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+          </>
+        )}
         <BreadcrumbItem>
           <BreadcrumbPage className="line-clamp-1">
             {toDisplayTitle(entry.title)}
