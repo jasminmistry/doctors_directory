@@ -17,13 +17,13 @@ export default function BusinessLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className={`${playfair.variable} min-h-[60vh] bg-white`}>
+    <div
+      className={`${playfair.variable} min-h-[60vh] bg-white [--hub-header-stack:9.5rem] sm:[--hub-header-stack:8.75rem] lg:[--hub-header-stack:8rem]`}
+    >
       <HubProductSchema />
       <HubChrome />
-      <div className="flex flex-col">
-        {children}
-        <HubLayoutBlogSlot />
-      </div>
+      <div className="flex flex-col">{children}</div>
+      <HubLayoutBlogSlot />
     </div>
   );
 }

@@ -47,7 +47,12 @@ export function HubIndexHeroSearch({
         fillViewport && HUB_INDEX_HERO_VIEWPORT_CLASS
       )}
     >
-      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 pt-8 pb-0 md:pt-10">
+      <div
+        className={cn(
+          "mx-auto flex h-full w-full max-w-7xl min-h-0 flex-col px-4 sm:px-6",
+          fillViewport ? "min-h-[inherit] flex-1 pt-8 pb-0 md:pt-10" : "pt-6 pb-0 md:pt-8"
+        )}
+      >
         <div
           className={cn(
             "grid flex-1 items-center gap-10 pb-4 md:gap-12 lg:grid-cols-2 lg:pb-6",

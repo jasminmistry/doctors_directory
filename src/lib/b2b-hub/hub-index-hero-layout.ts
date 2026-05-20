@@ -1,5 +1,5 @@
 export const HUB_INDEX_HERO_VIEWPORT_CLASS =
-  "flex min-h-[calc(100dvh-14rem)] flex-col sm:min-h-[calc(100dvh-12.5rem)] lg:min-h-[calc(100dvh-10.5rem)]"
+  "flex min-h-[calc(100dvh-var(--hub-header-stack,9.5rem))] flex-col"
 
 export const HUB_DETAIL_HERO_VIEWPORT_CLASS = HUB_INDEX_HERO_VIEWPORT_CLASS
 

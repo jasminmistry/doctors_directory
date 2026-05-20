@@ -34,7 +34,7 @@ export function HubDetailHeroShell({
         HUB_DETAIL_HERO_VIEWPORT_CLASS
       )}
     >
-      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6">
+      <div className="mx-auto flex h-full min-h-[inherit] w-full max-w-7xl flex-1 flex-col px-4 sm:px-6">
         <div className="grid flex-1 items-center gap-10 pt-8 pb-4 md:gap-12 md:pt-10 lg:grid-cols-2 lg:items-center lg:pb-6">
           <div className="relative z-10 flex min-w-0 flex-col items-start justify-center text-center md:text-left">
             <div className="mb-6 flex w-full justify-center md:justify-start">{breadcrumb}</div>

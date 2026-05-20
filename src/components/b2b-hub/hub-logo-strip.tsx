@@ -14,7 +14,10 @@ export function HubLogoStrip({ className }: { className?: string }) {
   return (
     <aside
       aria-label="Partner and certification logos"
-      className={cn("w-full border-t border-[#E5E7EB]/80 overflow-hidden", className)}
+      className={cn(
+        "w-full border-t border-[#E5E7EB]/80 overflow-hidden bg-[var(--primary-bg-color)]",
+        className
+      )}
     >
       <div className="py-8 md:py-10 relative overflow-hidden">
         <div className="hub-logo-marquee-track flex items-center gap-[110px] will-change-transform">
