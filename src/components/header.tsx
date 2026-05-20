@@ -3,10 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { SearchBar } from "@/components/search/search-bar";
-import { HUB_CTA_HEADER_OUTLINE_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
-
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -58,9 +55,38 @@ export default function Header() {
             <a href={`${baseUrl}/directory`} className="font-medium hover:text-black">
               HOME
             </a>
-            <a href={`${baseUrl}/features`} className="font-medium hover:text-black">
-              FEATURES
-            </a>
+            <div className="relative group">
+              <button
+                type="button"
+                className="font-medium hover:text-black flex items-center gap-1"
+                aria-haspopup="true"
+              >
+                FEATURES
+                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <a
+                  href={`${baseUrl}/features/`}
+                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg"
+                >
+                  All Features
+                </a>
+                <a
+                  href={`${baseUrl}/clinic-management-software/`}
+                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100"
+                >
+                  Clinic Management Software
+                </a>
+                <a
+                  href={`${baseUrl}/hipaa-compliant-medical-spa-software/`}
+                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg"
+                >
+                  HIPAA Compliant Medical Spa Software
+                </a>
+              </div>
+            </div>
             <a href={`${baseUrl}/blog`} className="font-medium hover:text-black">
               BLOG
             </a>
@@ -84,11 +110,7 @@ export default function Header() {
           </nav>
           <a
             href={`${baseUrl}/book-demo`}
-            className={
-              isBusinessHub
-                ? HUB_CTA_HEADER_OUTLINE_CLASS
-                : "font-bold rounded-lg border-2 py-2 px-5 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white"
-            }
+            className="font-bold rounded-lg border-2 py-2 px-5 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white"
           >
             BOOK DEMO
           </a>
@@ -149,9 +171,18 @@ export default function Header() {
             <button type="button" className="text-left font-bold hover:text-black">
               HOME
             </button>
-            <button type="button" className="text-left font-bold hover:text-black">
-              FEATURES
-            </button>
+            <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Features</p>
+              <a href={`${baseUrl}/features/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+                All Features
+              </a>
+              <a href={`${baseUrl}/clinic-management-software/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+                Clinic Management Software
+              </a>
+              <a href={`${baseUrl}/hipaa-compliant-medical-spa-software/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+                HIPAA Compliant Medical Spa Software
+              </a>
+            </div>
             <button type="button" className="text-left font-bold hover:text-black">
               BLOG
             </button>
@@ -170,7 +201,7 @@ export default function Header() {
           </nav>
           <a
             href={`${baseUrl}/book-demo`}
-            className={`mt-4 ${isBusinessHub ? HUB_CTA_HEADER_OUTLINE_CLASS : "inline-flex font-bold rounded-lg border-2 py-3 px-6 border-black bg-transparent text-black hover:bg-black hover:text-white"}`}
+            className="mt-4 inline-flex font-bold rounded-lg border-2 py-3 px-6 border-black bg-transparent text-black hover:bg-black hover:text-white"
           >
             BOOK DEMO
           </a>

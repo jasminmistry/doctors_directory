@@ -40,10 +40,10 @@ export function HubTestimonialsSection({ title, className }: Props) {
               />
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-[#2E2E2E]">{t.name}</p>
-                <p className="text-[11px] leading-snug text-[#928B82]">{t.role}</p>
+                <p className="text-[11px] leading-snug text-[#5C564E]">{t.role}</p>
               </div>
             </div>
-            <span className="inline-flex w-fit items-center rounded-md bg-[#EDE9E3] px-2 py-1 text-[9px] font-medium tracking-wide text-[#5C564E]">
+            <span className="inline-flex w-fit items-center rounded-md bg-[#EDE9E3] px-2 py-1 text-[10px] font-semibold tracking-wide text-[#1A1A1A]">
               ↑ {t.tag}
             </span>
           </article>

@@ -1,6 +1,10 @@
-import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
+import {
+  HUB_BTN_VIEW_ALL_BLOGS_CLASS,
+  HUB_SURFACE_CARD_CLASS,
+} from "@/components/b2b-hub/hub-marketing-typography"
 import Image from "next/image"
 import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links"
+import { cn } from "@/lib/utils"
 
 export function RelevantBlogGuides() {
   return (
@@ -16,7 +20,7 @@ export function RelevantBlogGuides() {
               href={post.href}
               target="_blank"
               rel="noreferrer"
-              className="group flex flex-col overflow-hidden rounded-xl border border-[#E5E7EB] bg-white transition-shadow hover:shadow-md"
+              className={cn("group", HUB_SURFACE_CARD_CLASS)}
             >
               <div className="relative aspect-video bg-neutral-100">
                 <Image

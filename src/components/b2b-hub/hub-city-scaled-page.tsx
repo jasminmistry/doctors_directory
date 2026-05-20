@@ -9,7 +9,10 @@ import {
 } from "@/components/b2b-hub/hub-cta-buttons"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
 import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section"
-import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
+import {
+  HUB_BTN_VIEW_ALL_BLOGS_CLASS,
+  HUB_SURFACE_CARD_CLASS,
+} from "@/components/b2b-hub/hub-marketing-typography"
 import Image from "next/image";
 import Link from "next/link"
 import { HUB_DETAIL_HERO_VIEWPORT_CLASS } from "@/lib/b2b-hub/hub-index-hero-layout"
@@ -195,11 +198,11 @@ export function HubCityScaledPage({
       />
       <section
         className={cn(
-          "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          "w-full overflow-x-clip border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
           HUB_DETAIL_HERO_VIEWPORT_CLASS
         )}
       >
-        <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col px-4 sm:px-6 lg:px-0">
+        <div className="mx-auto flex w-full min-w-0 max-w-[1440px] flex-1 flex-col overflow-x-clip px-4 sm:px-6 lg:px-0">
           <div className={HUB_SPLIT_HERO_GRID_TWO_COL}>
             <div className={HUB_SPLIT_HERO_VISUAL_TALL} aria-hidden>
               <SoftwareHeroVisual />
@@ -270,33 +273,33 @@ export function HubCityScaledPage({
           <div className="mx-auto mt-10 grid max-w-[1142px] grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
               <MapPin className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[36px] font-bold tracking-[-1.08px] text-[#111111]">
+              <p className="text-[28px] font-bold tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
                 {stats.clinicCount}
               </p>
-              <p className="text-xl leading-[1.45] text-[#6B6B6B]">
+              <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">
                 Clinics in {cityTitle}
               </p>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
               <Users className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[36px] font-bold tracking-[-1.08px] text-[#111111]">
+              <p className="text-[28px] font-bold tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
                 {stats.practitionerCount}
               </p>
-              <p className="text-xl leading-[1.45] text-[#6B6B6B]">Practitioners</p>
+              <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">Practitioners</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
               <Syringe className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[36px] font-bold tracking-[-1.08px] text-[#111111]">
+              <p className="text-[28px] font-bold tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
                 {stats.topTreatment}
               </p>
-              <p className="text-xl leading-[1.45] text-[#6B6B6B]">Top Treatment</p>
+              <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">Top Treatment</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
               <Droplets className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[36px] font-bold tracking-[-1.08px] text-[#111111]">
+              <p className="text-[28px] font-bold tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
                 {stats.secondTreatment}
               </p>
-              <p className="text-xl leading-[1.45] text-[#6B6B6B]">2nd Treatment</p>
+              <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">2nd Treatment</p>
             </div>
           </div>
         </section>
@@ -356,7 +359,7 @@ export function HubCityScaledPage({
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+                className={HUB_SURFACE_CARD_CLASS}
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image

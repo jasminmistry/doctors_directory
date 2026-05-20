@@ -18,7 +18,10 @@ import {
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
 import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq";
 import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell";
-import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography";
+import {
+  HUB_BTN_VIEW_ALL_BLOGS_CLASS,
+  HUB_SURFACE_CARD_CLASS,
+} from "@/components/b2b-hub/hub-marketing-typography";
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start";
 import { HUB_BLEED_FROM_CONTAINER } from "@/components/b2b-hub/hub-hero-layout-classes";
 import { cn } from "@/lib/utils";
@@ -631,8 +634,7 @@ export function HubPillarDetailTemplate({
           <div className="grid gap-6 md:grid-cols-3">
             {(pillar === "cqc" ? HUB_CQC_GUIDE_LINKS : HUB_BLOG_LINKS.slice(0, 3)).map(
               (post) => {
-                const cardClass =
-                  "flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] hover:shadow-md transition-shadow";
+                const cardClass = HUB_SURFACE_CARD_CLASS;
                 const cardBody = (
                   <>
                     <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
@@ -640,8 +642,9 @@ export function HubPillarDetailTemplate({
                         src={post.image}
                         alt=""
                         fill
-                        className="object-cover"
+                        className="object-cover object-top"
                         sizes="(max-width: 768px) 100vw, 33vw"
+                        loading="lazy"
                       />
                     </div>
                     <div className="flex flex-col gap-4 px-5 py-5 pb-6">

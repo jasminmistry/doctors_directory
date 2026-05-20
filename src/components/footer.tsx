@@ -67,7 +67,7 @@ export function Footer() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 mb-12">
             {/* CONSENTZ + Contact */}
-            <div className="col-span-2 md:col-span-1">
+            <div className={cn("md:col-span-1", isBusinessHub ? "col-span-1" : "col-span-2")}>
               <div className="font-bold text-lg mb-6">
                 <img
                   src="/directory/images/Consentz Logo light.svg"
@@ -75,21 +75,25 @@ export function Footer() {
                   width={180}
                 />
               </div>
-              <h3 className="sr-only">Contact Information</h3>
-              <div className="text-sm  space-y-2">
-                <p className="flex items-center gap-2">
-                  <Phone className="w-5 h-5 text-white mr-2 flex-shrink-0 mt-0.5" />
-                  <span>[UK] +44 (0) 208 050 3372</span>
-                </p>
-                <p className="flex items-center gap-2">
-                  <Phone className="w-5 h-5 text-white mr-2 flex-shrink-0 mt-0.5" />
-                  <span>(US) +1 646 786 1949</span>
-                </p>
-                <p className="flex items-center gap-2">
-                  <Mail className="w-5 h-5 text-white mr-2 flex-shrink-0 mt-0.5" />
-                  <span>contact@consentz.com</span>
-                </p>
-              </div>
+              {!isBusinessHub ? (
+                <>
+                  <h3 className="sr-only">Contact Information</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="flex items-center gap-2">
+                      <Phone className="mr-2 mt-0.5 h-5 w-5 shrink-0 text-white" />
+                      <span>[UK] +44 (0) 208 050 3372</span>
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Phone className="mr-2 mt-0.5 h-5 w-5 shrink-0 text-white" />
+                      <span>(US) +1 646 786 1949</span>
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Mail className="mr-2 mt-0.5 h-5 w-5 shrink-0 text-white" />
+                      <span>contact@consentz.com</span>
+                    </p>
+                  </div>
+                </>
+              ) : null}
             </div>
 
             {/* Consentz vs Column */}

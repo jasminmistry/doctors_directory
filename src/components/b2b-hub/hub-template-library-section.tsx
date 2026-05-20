@@ -4,6 +4,15 @@ import Image from "next/image"
 import Link from "next/link"
 import { Calendar, CloudDownload, Search } from "lucide-react"
 import { useMemo, useState } from "react"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons"
 import { HUB_BLEED_FROM_CONTAINER } from "@/components/b2b-hub/hub-hero-layout-classes"
 import { cn } from "@/lib/utils"
@@ -66,14 +75,14 @@ function TemplateLibraryCard({ item }: { item: HubTemplateLibraryItem }) {
           {item.title}
         </h3>
         <p className="line-clamp-2 text-sm leading-relaxed text-[#6B6B6B]">{item.description}</p>
-        <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[#F0EDE8] pt-3 text-xs text-[#6B6B6B]">
+        <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[#F0EDE8] pt-3 text-xs text-[#404040]">
           <span className="inline-flex items-center gap-1.5 font-medium text-[#111111]">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A1A] text-[10px] font-bold text-white">
               C
             </span>
             {item.author}
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#F4F2EE] px-2 py-1">
+          <span className="inline-flex items-center gap-1 rounded-full bg-[#EDE9E3] px-2 py-1 font-medium text-[#111111]">
             <CloudDownload className="h-3.5 w-3.5" aria-hidden />
             {item.downloads} downloads
           </span>
@@ -87,7 +96,7 @@ function TemplateLibraryCard({ item }: { item: HubTemplateLibraryItem }) {
   )
 
   const className =
-    "group flex h-full flex-col overflow-hidden rounded-2xl border border-[#E2DDD7] bg-white shadow-sm transition-shadow hover:shadow-md"
+    "group flex h-full flex-col overflow-hidden rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] transition-colors hover:border-neutral-400"
 
   if (item.internal) {
     return (
@@ -137,23 +146,23 @@ export function HubTemplateLibrarySection({
         : "border border-[#E2DDD7] bg-white text-[#111111] hover:border-neutral-400"
     }`
 
-  const pageNumbers = () => {
-    const total = pageCount
-    const cur = safePage
-    if (total <= 7) {
-      return Array.from({ length: total }, (_, i) => i + 1)
-    }
-    const out: (number | "ellipsis")[] = []
-    if (cur <= 3) {
-      for (let i = 1; i <= 4; i++) out.push(i)
-      out.push("ellipsis", total)
-    } else if (cur >= total - 2) {
-      out.push(1, "ellipsis")
-      for (let i = total - 3; i <= total; i++) out.push(i)
+  const pageNumbers = (): (number | "ellipsis")[] => {
+    const pages: (number | "ellipsis")[] = []
+    const VISIBLE = 4
+    if (pageCount <= VISIBLE + 2) {
+      for (let i = 1; i <= pageCount; i++) pages.push(i)
+    } else if (safePage <= VISIBLE) {
+      for (let i = 1; i <= VISIBLE; i++) pages.push(i)
+      pages.push("ellipsis", pageCount)
+    } else if (safePage >= pageCount - 1) {
+      pages.push(1, "ellipsis")
+      for (let i = pageCount - VISIBLE + 1; i <= pageCount; i++) pages.push(i)
     } else {
-      out.push(1, "ellipsis", cur - 1, cur, cur + 1, "ellipsis", total)
+      pages.push(1, "ellipsis")
+      for (let i = safePage - 1; i <= safePage + 1; i++) pages.push(i)
+      pages.push("ellipsis", pageCount)
     }
-    return out
+    return pages
   }
 
   return (
@@ -227,47 +236,38 @@ export function HubTemplateLibrarySection({
         </div>
 
         {pageCount > 1 ? (
-          <nav
-            className="mt-10 flex flex-wrap items-center justify-center gap-1 text-sm font-medium text-[#6B6B6B]"
-            aria-label="Pagination"
-          >
-            <button
-              type="button"
-              disabled={safePage <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="rounded-lg px-2 py-2 hover:bg-neutral-100 disabled:opacity-40"
-            >
-              « Previous
-            </button>
-            {pageNumbers().map((n, i) =>
-              n === "ellipsis" ? (
-                <span key={`e-${i}`} className="px-2">
-                  …
-                </span>
-              ) : (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => setPage(n)}
-                  className={`min-w-[2.25rem] rounded-full px-3 py-2 transition-colors ${
-                    n === safePage
-                      ? "bg-[#1A1A1A] text-white"
-                      : "hover:bg-neutral-100 text-[#111111]"
-                  }`}
-                >
-                  {n}
-                </button>
-              )
-            )}
-            <button
-              type="button"
-              disabled={safePage >= pageCount}
-              onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
-              className="rounded-lg px-2 py-2 hover:bg-neutral-100 disabled:opacity-40"
-            >
-              Next »
-            </button>
-          </nav>
+          <div className="mt-10">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={safePage <= 1}
+                  />
+                </PaginationItem>
+                {pageNumbers().map((n, i) => (
+                  <PaginationItem key={n === "ellipsis" ? `e-${i}` : n}>
+                    {n === "ellipsis" ? (
+                      <PaginationEllipsis />
+                    ) : (
+                      <PaginationLink
+                        isActive={n === safePage}
+                        onClick={() => setPage(n)}
+                      >
+                        {n}
+                      </PaginationLink>
+                    )}
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+                    disabled={safePage >= pageCount}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
         ) : null}
 
         {showViewAll ? (

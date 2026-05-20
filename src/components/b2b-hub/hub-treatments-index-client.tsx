@@ -110,7 +110,7 @@ export function HubTreatmentsIndexClient({ treatments }: Props) {
                       <Link
                         key={type}
                         href={`/business/treatments/${slug}/`}
-                        className="rounded-lg border border-[#E5E7EB] bg-white px-3 py-2.5 text-sm text-neutral-800 hover:border-neutral-400 hover:bg-white transition-all"
+                        className="rounded-lg border-2 border-[#111111] bg-white px-3 py-2.5 text-sm font-medium text-[#111111] hover:bg-neutral-50 transition-all"
                       >
                         {TYPE_LABEL[type]}
                       </Link>

@@ -16,3 +16,6 @@ export const HUB_BTN_MORE_ABOUT_PLATFORM_CLASS =
   "inline-flex shrink-0 items-center justify-center rounded-[10px] bg-[#000000] px-5 py-[15px] text-[20px] font-medium text-white transition-colors hover:bg-neutral-900 whitespace-nowrap"
 
 export const HUB_LINK_READ_MORE_CLASS = "text-base font-semibold text-[#000000]"
+
+export const HUB_SURFACE_CARD_CLASS =
+  "flex flex-col overflow-hidden rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] transition-colors hover:border-neutral-400"
