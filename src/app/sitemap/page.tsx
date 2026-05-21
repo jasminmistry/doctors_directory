@@ -4,7 +4,18 @@ import { readJsonFileSync } from '@/lib/json-cache'
 import { toUrlSlug } from '@/lib/utils'
 import { toDirectoryCanonical } from '@/lib/seo'
 import { modalities } from '@/lib/data'
-import { HUB_SEGMENTS, segmentLabel, type HubSegment } from '@/lib/b2b-hub/registry'
+import {
+  HUB_ENTRIES_BY_SEGMENT,
+  HUB_SEGMENTS,
+  hubSegmentCollectionHref,
+  segmentLabel,
+  type HubSegment,
+} from '@/lib/b2b-hub/registry'
+import {
+  TEMPLATE_CATEGORY_LABEL,
+  TEMPLATE_ENTRIES,
+  type TemplateCategory,
+} from '@/lib/b2b-hub/templates-registry'
 
 const ACCREDITATIONS = [
   { key: 'cqc', name: 'Care Quality Commission (CQC)', field: 'isCQC' },
@@ -131,10 +142,12 @@ export default function HtmlSitemapPage() {
               ['/products/brands', 'Product Brands'],
               ['/products/category', 'Product Categories'],
               ['/accredited', 'Accredited Providers'],
+              ['/clinics/treatment-by-city/', 'Top Clinics by Treatment & City'],
+              ['/practitioners/treatment-by-city/', 'Top Practitioners by Treatment & City'],
               ['/practitioners/credentials', 'Practitioner Credentials'],
-              ['/business/', 'B2B buyer hub'],
-              ['/register/clinic', 'Register a Clinic'],
-              ['/register/practitioner', 'Register as a Practitioner'],
+              ['/business/', 'B2B Software Buyer Hub'],
+              ['/register/clinic', 'Join Directory (Register a Clinic)'],
+              ['/register/practitioner', 'Update Profile (Register as a Practitioner)'],
               ['/sitemap', 'HTML Sitemap'],
             ].map(([href, label]) => (
               <li key={href}>
@@ -170,6 +183,85 @@ export default function HtmlSitemapPage() {
               </li>
             ))}
           </ul>
+        </SitemapSection>
+
+        <SitemapSection title="B2B Software Buyer Hub — HTML pages">
+          <p className="text-sm text-muted-foreground mb-6">
+            Canonical hub URLs use <span className="font-mono text-xs">/business/</span> (separate from the B2C directory).
+            City-localized and treatment workflow pages are listed in the XML feeds above.
+          </p>
+          <ul className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-8">
+            {[
+              ['/business/', 'Buyer hub home'],
+              ['/business/uk/', 'By city index'],
+              ['/business/treatments/', 'Treatment workflows index'],
+              ['/business/templates/', 'Template library'],
+            ].map(([href, label]) => (
+              <li key={href}>
+                <Link href={href} className="text-sm text-blue-700 hover:underline">{label}</Link>
+              </li>
+            ))}
+          </ul>
+          {HUB_SEGMENTS.filter((s) => s !== 'templates').map((segment) => {
+            const entries = HUB_ENTRIES_BY_SEGMENT[segment] ?? []
+            return (
+              <SubSection
+                key={segment}
+                title={`${segmentLabel(segment)} (${entries.length + 1} pages)`}
+              >
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 mb-3">
+                  <li>
+                    <Link
+                      href={hubSegmentCollectionHref(segment)}
+                      className="text-sm font-medium text-blue-800 hover:underline"
+                    >
+                      {segmentLabel(segment)} — index
+                    </Link>
+                  </li>
+                  {entries.map((entry) => (
+                    <li key={`${entry.segment}-${entry.slug}`}>
+                      <Link
+                        href={`/business/${entry.segment}/${entry.slug}/`}
+                        className="text-sm text-blue-700 hover:underline"
+                      >
+                        {entry.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </SubSection>
+            )
+          })}
+          <SubSection title={`Templates (${TEMPLATE_ENTRIES.length} pages)`}>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 mb-4">
+              <li>
+                <Link href="/business/templates/" className="text-sm font-medium text-blue-800 hover:underline">
+                  Template library — index
+                </Link>
+              </li>
+              {(Object.keys(TEMPLATE_CATEGORY_LABEL) as TemplateCategory[]).map((category) => (
+                <li key={category}>
+                  <Link
+                    href={`/business/templates/${category}/`}
+                    className="text-sm text-blue-700 hover:underline"
+                  >
+                    {TEMPLATE_CATEGORY_LABEL[category]}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="flex flex-wrap gap-x-4 gap-y-1.5 max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-3 bg-white/60">
+              {TEMPLATE_ENTRIES.map((entry) => (
+                <Link
+                  key={`${entry.category}-${entry.slug}`}
+                  href={`/business/templates/${entry.category}/${entry.slug}/`}
+                  className="text-xs text-blue-600 hover:underline"
+                >
+                  {entry.title}
+                </Link>
+              ))}
+            </div>
+          </SubSection>
         </SitemapSection>
 
         <SitemapSection title="Database URLs">

@@ -52,7 +52,7 @@ const FEATURES_MARKETING_LINKS = [
   ["Terms & Conditions", "/terms/"],
   ["Partners", "/partners/"],
   ["Privacy Policy", "/privacy-policy/"],
-  ["Sitemap", "/directory/sitemap/"],
+  ["Sitemap", "/sitemap"],
 ] as const;
 
 const ACCREDITATIONS = [
@@ -87,6 +87,10 @@ function FooterLinkList({
             <a href={path} className={FOOTER_WP_LINK}>
               {label}
             </a>
+          ) : path === "/sitemap" || path === "/sitemap/" ? (
+            <Link href="/sitemap" className={FOOTER_DIRECTORY_LINK}>
+              {label}
+            </Link>
           ) : path.startsWith("/directory") ? (
             <Link href={path.replace(/^\/directory/, "") || "/"} className={FOOTER_DIRECTORY_LINK}>
               {label}
