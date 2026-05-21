@@ -50,25 +50,25 @@ export default function PortalLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4">
+    <div className="flex items-center justify-center bg-[#fff] px-4 py-8">
       <div className="w-full max-w-[22rem]">
         {/* Brand */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
-            <Building2 className="h-6 w-6 text-white" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-black/10 ring-1 ring-white/20">
+            <Building2 className="h-6 w-6 text-black" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Clinic Portal</h1>
-          <p className="mt-1.5 text-sm text-slate-400">
+          <h1 className="text-2xl font-bold text-black">Clinic Portal</h1>
+          <p className="mt-1.5 text-sm text-slate-900">
             Sign in to manage your Consentz Directory profile
           </p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+        <div className="p-6 relative mb-2 bg-white border-b border-t-0 border-[#C4C4C4] md:border-t rounded-md md:border md:border-(--alto)">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
                 htmlFor="username"
-                className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.06em] text-slate-400"
+                className="mb-1.5 block text-base font-medium text-black mb-2"
               >
                 Username
               </label>
@@ -79,7 +79,7 @@ export default function PortalLoginPage() {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-slate-500 transition focus:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/10"
+                className="w-full px-3 py-2 text-base border rounded-md bg-white"
                 placeholder="Your username"
               />
             </div>
@@ -87,7 +87,7 @@ export default function PortalLoginPage() {
             <div>
               <label
                 htmlFor="password"
-                className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.06em] text-slate-400"
+                className="mb-1.5 block text-base font-medium text-black mb-2"
               >
                 Password
               </label>
@@ -98,41 +98,41 @@ export default function PortalLoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-slate-500 transition focus:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/10"
+                className="w-full px-3 py-2 text-base border rounded-md bg-white"
                 placeholder="Your password"
               />
             </div>
 
             {error && (
-              <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+              <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">
                 {error}
               </p>
             )}
 
             <Button
               type="submit"
-              className="h-10 w-full rounded-lg bg-white text-sm font-semibold text-slate-900 hover:bg-slate-100"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-9 px-4 py-2 has-[>svg]:px-3 w-full bg-black border border-black text-white hover:cursor-pointer hover:bg-white hover:text-black"
               disabled={loading}
             >
               {loading ? 'Signing in…' : 'Sign in'}
             </Button>
           </form>
 
-          <p className="mt-4 text-center text-xs text-slate-500">
+          <p className="mt-4 text-center text-xs text-black">
             New to Consentz?{' '}
-            <a href="/directory/register/clinic" className="text-slate-300 underline hover:text-white">
+            <a href="/directory/register/clinic" className="text-black underline hover:no-underline">
               Register a clinic
             </a>{' '}
             or{' '}
-            <a href="/directory/register/practitioner" className="text-slate-300 underline hover:text-white">
+            <a href="/directory/register/practitioner" className="text-black underline hover:no-underline">
               register as a practitioner
             </a>
           </p>
         </div>
 
-        <p className="mt-6 text-center text-xs text-slate-600">
+        <p className="mt-6 text-center text-sm text-black">
           Staff access?{' '}
-          <a href="/directory/admin/login" className="text-slate-500 hover:text-slate-400">
+          <a href="/directory/admin/login" className="hover:underline">
             Admin panel →
           </a>
         </p>
