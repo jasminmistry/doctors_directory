@@ -7,6 +7,10 @@ import {
   HUB_INDEX_HERO_TITLE_CLASS_SECTION,
 } from "@/components/b2b-hub/hub-index-hero-search"
 import {
+  HUB_CITY_CHIP_DIRECTORY_CLASS,
+  HUB_CITY_CHIP_PRIORITY_CLASS,
+} from "@/components/b2b-hub/hub-marketing-typography"
+import {
   UK_CITY_HUB_ENTRY_SLUG,
   UK_POPULAR_TREATMENTS,
   UK_PRIORITY_CITIES,
@@ -168,7 +172,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
                   <Link
                     key={city}
                     href={`/business/uk/${slug}/${UK_CITY_HUB_ENTRY_SLUG}/`}
-                    className="rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-3 py-2 text-sm text-neutral-800 text-center transition-colors hover:border-neutral-400 hover:bg-white hover:shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
+                    className={HUB_CITY_CHIP_PRIORITY_CLASS}
                   >
                     {city}
                   </Link>
@@ -194,7 +198,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
                         <Link
                           key={city}
                           href={`/business/uk/${slug}/${UK_CITY_HUB_ENTRY_SLUG}/`}
-                          className="rounded-md border border-[#E5E7EB] bg-[#FAFAFA] px-2.5 py-1 text-xs text-neutral-700 transition-colors hover:border-neutral-400 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-neutral-900"
+                          className={HUB_CITY_CHIP_DIRECTORY_CLASS}
                         >
                           {city}
                         </Link>

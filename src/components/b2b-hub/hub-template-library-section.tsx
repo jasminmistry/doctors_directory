@@ -14,6 +14,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons"
+import { HUB_TEMPLATE_LIBRARY_CARD_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
 import { HUB_BLEED_FROM_CONTAINER } from "@/components/b2b-hub/hub-hero-layout-classes"
 import { cn } from "@/lib/utils"
 import {
@@ -95,8 +96,7 @@ function TemplateLibraryCard({ item }: { item: HubTemplateLibraryItem }) {
     </>
   )
 
-  const className =
-    "group flex h-full flex-col overflow-hidden rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] transition-colors hover:border-neutral-400"
+  const className = HUB_TEMPLATE_LIBRARY_CARD_CLASS
 
   if (item.internal) {
     return (
