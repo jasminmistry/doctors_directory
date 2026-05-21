@@ -99,6 +99,10 @@ export function HubIndexHeroSearch({
             <img
               src={HUB_HERO_IMAGE_SRC}
               alt=""
+              width={400}
+              height={400}
+              decoding="async"
+              fetchPriority="high"
               className="max-w-[220px] w-full h-auto object-contain sm:max-w-xs"
             />
           </figure>

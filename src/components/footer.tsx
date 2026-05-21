@@ -19,12 +19,92 @@ const CONSENTZ_SOCIAL = {
   instagram: "https://www.instagram.com/consentz/",
 } as const;
 
+const CONSENTZ_VS_LINKS = [
+  ["Zenoti", "/zenoti-alternative/"],
+  ["AestheticsPro", "/aestheticspro-alternatives/"],
+  ["Pabau", "/pabau-alternatives/"],
+  ["Aesthetic Record", "/aesthetic-record-alternatives/"],
+  ["Clinicsense", "/consentz-vs-clinicsense/"],
+  ["Nextech", "/consentz-vs-nextech/"],
+  ["Vagaro", "/vagaro-alternative/"],
+  ["GlowdayPRO", "/glowdaypro-alternative/"],
+  ["PatientNow", "/patientnow-alternative/"],
+  ["Mangomint", "/mangomint-alternative/"],
+  ["Boulevard", "/boulevard-alternative/"],
+] as const;
+
+const FEATURES_PRODUCT_LINKS = [
+  ["Clinic Management", "/clinic-management-software/"],
+  ["Patient Engagement", "/what-is-patient-management-software/"],
+  ["Photos and Records", "/photos-records/"],
+  ["Personalise", "/personalise/"],
+  ["Analytics", "/analytics/"],
+  ["Stock and Billing", "/stock-and-billing/"],
+] as const;
+
+const FEATURES_MARKETING_LINKS = [
+  ["Marketing", "/healthcare-marketing-software/"],
+  ["Medical Templates", "/medical-templates/"],
+  ["FAQs", "/faqs/"],
+  ["Blog", "/blog/"],
+  ["Articles", "/category/articles/"],
+  ["Support", "mailto:care@consentz.com"],
+  ["Terms & Conditions", "/terms/"],
+  ["Partners", "/partners/"],
+  ["Privacy Policy", "/privacy-policy/"],
+  ["Sitemap", "/directory/sitemap/"],
+] as const;
+
+const ACCREDITATIONS = [
+  ["cqc", "CQC"],
+  ["his", "HIS"],
+  ["hiw", "HIW"],
+  ["jccp", "JCCP"],
+  ["rqia", "RQIA"],
+  ["saveface", "Save Face"],
+] as const;
+
 function isBusinessHubPath(pathname: string) {
   const normalized = pathname.replace(/\/$/, "") || "/";
   const path = normalized.startsWith("/directory")
     ? normalized.slice("/directory".length) || "/"
     : normalized;
   return path === "/business" || path.startsWith("/business/");
+}
+
+function FooterLinkList({
+  items,
+  baseUrl,
+}: {
+  items: readonly (readonly [string, string])[];
+  baseUrl: string;
+}) {
+  return (
+    <ul className="space-y-3 text-sm">
+      {items.map(([label, path]) => (
+        <li key={`${label}-${path}`}>
+          {path.startsWith("mailto:") ? (
+            <a href={path} className={FOOTER_WP_LINK}>
+              {label}
+            </a>
+          ) : path.startsWith("/directory") ? (
+            <Link href={path.replace(/^\/directory/, "") || "/"} className={FOOTER_DIRECTORY_LINK}>
+              {label}
+            </Link>
+          ) : (
+            <a
+              href={`${baseUrl}${path}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={FOOTER_WP_LINK}
+            >
+              {label}
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 function FooterSocialIcon({
@@ -72,7 +152,7 @@ export function Footer() {
           <div className="flex flex-col items-center justify-between md:flex-row">
             <div className="w-full md:w-auto">
               <section className="mb-2 text-lg font-bold md:text-4xl">
-                Ready To Get Started?
+                Are you a Practitioner?
               </section>
               <p>Join over 200+ clinics already growing with Consentz.</p>
             </div>
@@ -95,137 +175,43 @@ export function Footer() {
           <div className="my-6 border-t border-white md:my-12" />
 
           <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
-            <div
-              className={cn(
-                "md:col-span-1",
-                isBusinessHub ? "col-span-1" : "col-span-2",
-              )}
-            >
-              <div className="mb-6 text-lg font-bold">
-                <img
-                  src="/directory/images/Consentz Logo light.svg"
-                  alt="Consentz"
-                  width={180}
-                />
+            <div>
+              <h3 className={FOOTER_COLUMN_HEADING}>Contacts</h3>
+              <div className="space-y-2 text-sm">
+                <p className="flex items-center gap-2">
+                  <Phone className="h-5 w-5 shrink-0 text-white" aria-hidden />
+                  <a href="tel:+442080503372" className={FOOTER_WP_LINK}>
+                    (UK) +44 (0) 208 050 3372
+                  </a>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Phone className="h-5 w-5 shrink-0 text-white" aria-hidden />
+                  <a href="tel:+16467861949" className={FOOTER_WP_LINK}>
+                    (US) +1 646 786 1949
+                  </a>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Mail className="h-5 w-5 shrink-0 text-white" aria-hidden />
+                  <a href="mailto:contact@consentz.com" className={FOOTER_WP_LINK}>
+                    contact@consentz.com
+                  </a>
+                </p>
               </div>
-              {!isBusinessHub ? (
-                <>
-                  <h3 className="sr-only">Contact Information</h3>
-                  <div className="space-y-2 text-sm">
-                    <p className="flex items-center gap-2">
-                      <Phone className="mr-2 mt-0.5 h-5 w-5 shrink-0 text-white" />
-                      <a href="tel:+442080503372" className="hover:underline">
-                        (UK) +44 (0) 208 050 3372
-                      </a>
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <Phone className="mr-2 mt-0.5 h-5 w-5 shrink-0 text-white" />
-                      <a href="tel:+16467861949" className="hover:underline">
-                        (US) +1 646 786 1949
-                      </a>
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <Mail className="mr-2 mt-0.5 h-5 w-5 shrink-0 text-white" />
-                      <a
-                        href="mailto:contact@consentz.com"
-                        className="hover:underline"
-                      >
-                        contact@consentz.com
-                      </a>
-                    </p>
-                  </div>
-                </>
-              ) : null}
             </div>
 
             <div>
               <h3 className={FOOTER_COLUMN_HEADING}>Consentz vs</h3>
-              <ul className="space-y-3 text-sm">
-                {[
-                  ["Zenoti", "/zenoti-alternative/"],
-                  ["AestheticsPro", "/aestheticspro-alternatives/"],
-                  ["Pabau", "/pabau-alternatives/"],
-                  ["Aesthetic Record", "/aesthetic-record-alternatives/"],
-                  ["Clinicsense", "/consentz-vs-clinicsense/"],
-                  ["Nextech", "/consentz-vs-nextech/"],
-                  ["Vagaro", "/vagaro-alternative/"],
-                  ["GlowdayPRO", "/glowdaypro-alternative/"],
-                  ["PatientNow", "/patientnow-alternative/"],
-                  ["Mangomint", "/mangomint-alternative/"],
-                  ["Boulevard", "/boulevard-alternative/"],
-                ].map(([label, path]) => (
-                  <li key={path}>
-                    <a
-                      href={`${baseUrl}${path}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={FOOTER_WP_LINK}
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <FooterLinkList items={CONSENTZ_VS_LINKS} baseUrl={baseUrl} />
             </div>
 
             <div>
               <h3 className={FOOTER_COLUMN_HEADING}>Features</h3>
-              <ul className="space-y-3 text-sm">
-                {[
-                  ["Clinic Management", "/clinic-management-software/"],
-                  [
-                    "Patient Engagement",
-                    "/what-is-patient-management-software/",
-                  ],
-                  ["Photos and Records", "/photos-records/"],
-                  ["Personalise", "/personalise/"],
-                  ["Analytics", "/analytics/"],
-                  ["Stock and Billing", "/stock-and-billing/"],
-                ].map(([label, path]) => (
-                  <li key={path}>
-                    <a
-                      href={`${baseUrl}${path}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={FOOTER_WP_LINK}
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <FooterLinkList items={FEATURES_PRODUCT_LINKS} baseUrl={baseUrl} />
             </div>
 
             <div>
-              <h3 className={FOOTER_COLUMN_HEADING}>Marketing</h3>
-              <ul className="space-y-3 text-sm">
-                {[
-                  ["Marketing", "/healthcare-marketing-software/"],
-                  ["Medical Templates", "/medical-templates/"],
-                  ["FAQs", "/faqs/"],
-                  ["Blog", "/blog/"],
-                  ["Articles", "/category/articles/"],
-                  ["Terms & Conditions", "/terms/"],
-                  ["Partners", "/partners/"],
-                  ["Privacy Policy", "/privacy-policy/"],
-                ].map(([label, path]) => (
-                  <li key={path}>
-                    <a
-                      href={`${baseUrl}${path}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={FOOTER_WP_LINK}
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-                <li>
-                  <a href="mailto:care@consentz.com" className={FOOTER_WP_LINK}>
-                    Support
-                  </a>
-                </li>
-              </ul>
+              <h3 className={FOOTER_COLUMN_HEADING}>Features</h3>
+              <FooterLinkList items={FEATURES_MARKETING_LINKS} baseUrl={baseUrl} />
             </div>
 
             <div>
@@ -246,97 +232,32 @@ export function Footer() {
 
           <div className="my-6 border-t border-white md:my-8" />
 
-          <div className="grid grid-cols-1 gap-6 text-sm md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-            <div className="md:col-span-1">
-              <h3 className="sr-only">About the Directory</h3>
-              <p className="mb-3 text-base font-semibold leading-6 text-white">
+          <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
+            <div>
+              <img
+                src="/directory/images/Consentz Logo light.svg"
+                alt="Consentz"
+                width={180}
+                className="mb-6"
+              />
+              <p className="text-base font-semibold leading-6 text-white">
                 Find qualified healthcare and aesthetic practitioners in your
                 area. Verified profiles, authentic reviews, and regulatory
                 compliance.
               </p>
             </div>
 
-            <div className="space-y-4 md:col-span-1">
-              <div>
-                <h3 className={FOOTER_COLUMN_HEADING}>Directory</h3>
-                <ul className="space-y-3">
-                  <li>
-                    <Link prefetch={false} href="/treatments" className={FOOTER_DIRECTORY_LINK}>
-                      Aesthetic Treatments
-                    </Link>
-                  </li>
-                  <li>
-                    <Link prefetch={false} href="/practitioners" className={FOOTER_DIRECTORY_LINK}>
-                      Top Aesthetic Practitioners
-                    </Link>
-                  </li>
-                  <li>
-                    <Link prefetch={false} href="/clinics" className={FOOTER_DIRECTORY_LINK}>
-                      Top Aesthetic Clinics
-                    </Link>
-                  </li>
-                  <li>
-                    <Link prefetch={false} href="/accredited" className={FOOTER_DIRECTORY_LINK}>
-                      Accredited Clinics
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      prefetch={false}
-                      href="/clinics/treatment-by-city/"
-                      className={FOOTER_DIRECTORY_LINK}
-                    >
-                      Top Clinics by Treatment & City
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      prefetch={false}
-                      href="/practitioners/treatment-by-city/"
-                      className={FOOTER_DIRECTORY_LINK}
-                    >
-                      Top Practitioners by Treatment & City
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className={cn(FOOTER_COLUMN_HEADING, "mt-2")}>
-                  Clinics by Accreditation
-                </h3>
-                <ul className="space-y-3">
-                  {[
-                    ["CQC Accredited Clinics", "/accredited/cqc/clinics"],
-                    ["HIS Accredited Clinics", "/accredited/his/clinics"],
-                    ["HIW Accredited Clinics", "/accredited/hiw/clinics"],
-                    ["JCCP Accredited Clinics", "/accredited/jccp/clinics"],
-                    ["RQIA Accredited Clinics", "/accredited/rqia/clinics"],
-                    [
-                      "Save Face Accredited Clinics",
-                      "/accredited/saveface/clinics",
-                    ],
-                  ].map(([label, path]) => (
-                    <li key={path}>
-                      <Link prefetch={false} href={path} className={FOOTER_DIRECTORY_LINK}>
-                        {label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
             <div>
-              <h3 className={FOOTER_COLUMN_HEADING}>List Your Practice</h3>
+              <h3 className={FOOTER_COLUMN_HEADING}>For Practitioners</h3>
               <ul className="space-y-3">
                 <li>
                   <Link href="/register/clinic" className={FOOTER_DIRECTORY_LINK}>
-                    Register a Clinic
+                    Join Directory
                   </Link>
                 </li>
                 <li>
                   <Link href="/register/practitioner" className={FOOTER_DIRECTORY_LINK}>
-                    Register as a Practitioner
+                    Update Profile
                   </Link>
                 </li>
                 <li>
@@ -358,23 +279,90 @@ export function Footer() {
             </div>
 
             <div>
-              <h3 className={FOOTER_COLUMN_HEADING}>Contact</h3>
+              <h3 className={FOOTER_COLUMN_HEADING}>Directory</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="mailto:contact@consentz.com" className={FOOTER_WP_LINK}>
-                    contact@consentz.com
-                  </a>
+                  <Link prefetch={false} href="/treatments" className={FOOTER_DIRECTORY_LINK}>
+                    Aesthetic Treatments
+                  </Link>
                 </li>
                 <li>
-                  <a href="tel:+442080503372" className={FOOTER_WP_LINK}>
-                    +44 (0) 208 050 3372
-                  </a>
+                  <Link prefetch={false} href="/practitioners" className={FOOTER_DIRECTORY_LINK}>
+                    Top Aesthetic Practitioners
+                  </Link>
                 </li>
                 <li>
-                  <a href="tel:+16467861949" className={FOOTER_WP_LINK}>
-                    +1 646 786 1949
-                  </a>
+                  <Link prefetch={false} href="/clinics" className={FOOTER_DIRECTORY_LINK}>
+                    Top Aesthetic Clinics
+                  </Link>
                 </li>
+                <li>
+                  <Link prefetch={false} href="/accredited" className={FOOTER_DIRECTORY_LINK}>
+                    Accredited Clinics
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    prefetch={false}
+                    href="/clinics/treatment-by-city/"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
+                    Top Clinics by Treatment & City
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    prefetch={false}
+                    href="/practitioners/treatment-by-city/"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
+                    Top Practitioners by Treatment & City
+                  </Link>
+                </li>
+                <li>
+                  <Link prefetch={false} href="/products/brands" className={FOOTER_DIRECTORY_LINK}>
+                    Aesthetic Product Brands
+                  </Link>
+                </li>
+                <li>
+                  <Link prefetch={false} href="/products/category" className={FOOTER_DIRECTORY_LINK}>
+                    Aesthetic Product Categories
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className={FOOTER_COLUMN_HEADING}>Clinics by Accreditation</h3>
+              <ul className="space-y-3">
+                {ACCREDITATIONS.map(([slug, label]) => (
+                  <li key={`clinic-${slug}`}>
+                    <Link
+                      prefetch={false}
+                      href={`/accredited/${slug}/clinics`}
+                      className={FOOTER_DIRECTORY_LINK}
+                    >
+                      {label} Accredited Clinics
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className={FOOTER_COLUMN_HEADING}>Practitioners by Accreditation</h3>
+              <ul className="space-y-3">
+                {ACCREDITATIONS.map(([slug, label]) => (
+                  <li key={`practitioner-${slug}`}>
+                    <Link
+                      prefetch={false}
+                      href={`/accredited/${slug}/practitioners`}
+                      className={FOOTER_DIRECTORY_LINK}
+                    >
+                      {label} Accredited Practitioners
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

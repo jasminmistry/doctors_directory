@@ -164,8 +164,8 @@ function PhoneFanCollage({
       className="relative mx-auto w-full aspect-[915/846] min-h-[220px] max-w-[400px] overflow-visible"
       aria-hidden
     >
-      <div className="absolute inset-0">
-        {layers.map(({ src, l, t }, i) => (
+        <div className="absolute inset-0">
+          {layers.map(({ src, l, t }, i) => (
             <div
               key={`${src}-${i}`}
               className="absolute flex items-center justify-center"
@@ -361,20 +361,20 @@ export function HubPillarDetailTemplate({
 
   const breadcrumb = (
     <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
           <BreadcrumbLink href={`/business/${seg}/`}>{segmentLabel(seg)}</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
           <BreadcrumbPage className="line-clamp-1">{toDisplayTitle(entry.title)}</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
   )
 
   return (
@@ -385,25 +385,25 @@ export function HubPillarDetailTemplate({
         intro={<p className={HUB_HERO_INTRO_CLASS}>{intro}</p>}
         actions={
           <>
-            <a
-              href={`${baseUrl}/book-demo`}
+                  <a
+                    href={`${baseUrl}/book-demo`}
               className={HUB_CTA_PRIMARY_HERO_CLASS}
-            >
+                  >
               Book A Demo
-            </a>
-            <a
-              href={`${baseUrl}/book-demo`}
+                  </a>
+                  <a
+                    href={`${baseUrl}/book-demo`}
               className={HUB_CTA_SECONDARY_HERO_CLASS}
-            >
-              Get CQC Readiness Audit
-            </a>
+                  >
+                    Get CQC Readiness Audit
+                  </a>
             {pillar === "software" ? (
-              <a
-                href={`${baseUrl}/book-demo`}
+                  <a
+                    href={`${baseUrl}/book-demo`}
                 className={HUB_CTA_LINK_CLASS}
-              >
-                See How It Works →
-              </a>
+                  >
+                    See How It Works →
+                  </a>
             ) : null}
           </>
         }
@@ -430,7 +430,7 @@ export function HubPillarDetailTemplate({
               What the CQC dashboard covers
             </h2>
             <CqcEvidenceChecklist />
-          </section>
+      </section>
         ) : null}
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
@@ -501,28 +501,28 @@ export function HubPillarDetailTemplate({
 
         {pillar === "software" ? (
           <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-16 py-10 md:py-14")}>
-            <div className="mx-auto max-w-[920px] px-4 sm:px-6">
-              <div className="mx-auto flex w-full max-w-[781px] flex-col items-center">
-                <Image
-                  src={SOFTWARE_LAPTOP_MOCKUP_SRC}
-                  alt=""
-                  width={781}
-                  height={415}
-                  className="block h-auto w-full"
-                  loading="lazy"
-                  unoptimized
-                />
-                <div className="mt-6 flex w-full justify-center px-4">
-                  <a
-                    href={`${baseUrl}/book-demo`}
-                    className="inline-flex items-center justify-center rounded-[12px] bg-[#1A1A1A] px-6 py-2.5 text-base font-semibold text-white shadow-md hover:bg-neutral-900 transition-colors sm:px-7 sm:py-3 sm:text-lg"
-                  >
-                    Book a Demo
-                  </a>
-                </div>
+          <div className="mx-auto max-w-[920px] px-4 sm:px-6">
+            <div className="mx-auto flex w-full max-w-[781px] flex-col items-center">
+              <Image
+                src={SOFTWARE_LAPTOP_MOCKUP_SRC}
+                alt=""
+                width={781}
+                height={415}
+                className="block h-auto w-full"
+                loading="lazy"
+                unoptimized
+              />
+              <div className="mt-6 flex w-full justify-center px-4">
+                <a
+                  href={`${baseUrl}/book-demo`}
+                  className="inline-flex items-center justify-center rounded-[12px] bg-[#1A1A1A] px-6 py-2.5 text-base font-semibold text-white shadow-md hover:bg-neutral-900 transition-colors sm:px-7 sm:py-3 sm:text-lg"
+                >
+                  Book a Demo
+                </a>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
         ) : null}
 
         {pillar === "cqc" ? (
@@ -557,9 +557,9 @@ export function HubPillarDetailTemplate({
                 >
                   Book Demo
                 </a>
-              </div>
             </div>
-          </section>
+          </div>
+        </section>
         ) : null}
 
         {pillar === "cqc" ? <HubRelatedLinksGrid related={related} /> : null}
@@ -585,8 +585,8 @@ export function HubPillarDetailTemplate({
                   Book Demo
                 </a>
               </div>
-            </div>
-          </section>
+          </div>
+        </section>
         ) : null}
 
         {pillar === "software" ? <HubRelatedLinksGrid related={related} /> : null}
@@ -637,24 +637,24 @@ export function HubPillarDetailTemplate({
                 const cardClass = HUB_SURFACE_CARD_CLASS;
                 const cardBody = (
                   <>
-                    <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
-                      <Image
-                        src={post.image}
-                        alt=""
-                        fill
+                <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
+                  <Image
+                    src={post.image}
+                    alt=""
+                    fill
                         className="object-cover object-top"
-                        sizes="(max-width: 768px) 100vw, 33vw"
+                    sizes="(max-width: 768px) 100vw, 33vw"
                         loading="lazy"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-4 px-5 py-5 pb-6">
-                      <span className="text-[15px] leading-snug text-[#111111] underline underline-offset-2">
-                        {post.title}
-                      </span>
-                      <span className="text-sm text-[#111111] underline underline-offset-2">
-                        Read More →
-                      </span>
-                    </div>
+                  />
+                </div>
+                <div className="flex flex-col gap-4 px-5 py-5 pb-6">
+                  <span className="text-[15px] leading-snug text-[#111111] underline underline-offset-2">
+                    {post.title}
+                  </span>
+                  <span className="text-sm text-[#111111] underline underline-offset-2">
+                    Read More →
+                  </span>
+                </div>
                   </>
                 );
                 if (pillar === "cqc") {
@@ -687,14 +687,14 @@ export function HubPillarDetailTemplate({
                 View all CQC guides
               </Link>
             ) : (
-              <a
-                href="https://www.consentz.com/blog/"
-                target="_blank"
-                rel="noreferrer"
+            <a
+              href="https://www.consentz.com/blog/"
+              target="_blank"
+              rel="noreferrer"
                 className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
-              >
-                View All Blogs
-              </a>
+            >
+              View All Blogs
+            </a>
             )}
           </div>
         </section>
