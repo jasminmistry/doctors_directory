@@ -176,7 +176,7 @@ export function DataTable<T extends Record<string, any>>({
                         {onApprove && (
                           <Button
                             variant="ghost" size="sm"
-                            className="h-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                            className="h-8 text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                             onClick={() => onApprove(item)}
                           >
                             <CheckCircle className="h-3.5 w-3.5 mr-1" />

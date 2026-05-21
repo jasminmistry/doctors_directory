@@ -1,0 +1,263 @@
+import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section"
+import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section"
+import {
+  HUB_CTA_PRIMARY_CLASS,
+  HUB_CTA_PRIMARY_HERO_CLASS,
+  HUB_CTA_SECONDARY_CLASS,
+  HUB_CTA_SECONDARY_HERO_CLASS,
+  HUB_CTA_LINK_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
+import Image from "next/image";
+import Link from "next/link";
+import {
+} from "@/components/b2b-hub/hub-pillar-detail-template";
+import { HubTemplateLibrarySection } from "@/components/b2b-hub/hub-template-library-section";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links";
+import { templatesHubNavLinks } from "@/lib/b2b-hub/templates-hub-nav-links";
+import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry";
+import { segmentLabel } from "@/lib/b2b-hub/registry";
+import { toDisplayTitle } from "@/lib/b2b-hub/text";
+
+const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
+
+/** Templates hub hero — Figma export as SVG ([4345:847](https://www.figma.com/design/jcl0S9CTyKRH2q2PKcTspr/Consentz-Health-Directory?node-id=4345-847&m=dev)). `public/images/templates-hub/hero.svg`. */
+const TEMPLATES_HERO_SRC = "/directory/images/templates-hub/hero.svg";
+const templatesPricingFaqs = [
+  {
+    open: true,
+    q: "How Is Template Access Priced For Clinics?",
+    a: "Pricing is typically bundled with your Consentz workspace tier so templates stay governed in the same environment as consent and scheduling. Exact packaging is confirmed on a short scoping call.",
+  },
+  {
+    open: false,
+    q: "Can We Subscribe To Templates Without The Full Platform?",
+    a: "The buyer hub highlights what is possible inside Consentz. If you only need specific formats, we map that to the smallest viable subscription so you are not paying for unused modules.",
+  },
+  {
+    open: false,
+    q: "Do Subscription Changes Affect Already-Sent Campaigns?",
+    a: "No. Historical sends and evidence trails remain intact. Subscription changes only affect what you can create or edit going forward — we never delete audit-relevant artefacts.",
+  },
+] as const;
+
+type Props = {
+  entry: HubEntry;
+};
+
+function NavCard({ href, label }: { href: string; label: string }) {
+  const external = href.startsWith("http");
+  const className =
+    "flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors";
+  if (external) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer" className={className}>
+        <span className="line-clamp-3">{label}</span>
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className}>
+      <span className="line-clamp-3">{label}</span>
+    </Link>
+  );
+}
+
+export function HubTemplatesDetailTemplate({ entry }: Props) {
+  const seg = entry.segment as HubSegment;
+  const navLinks = templatesHubNavLinks(entry.slug);
+
+  return (
+    <>
+      <section className="w-full border-b border-[#E5E7EB] bg-[#F2EEE6]">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-0">
+          <div className="relative box-border overflow-hidden pt-8 pb-12 lg:grid lg:min-h-[520px] lg:max-h-[640px] lg:grid-cols-[minmax(0,700px)_minmax(0,1fr)] lg:items-center lg:gap-x-8 lg:px-0 lg:py-0">
+            <div className="relative z-10 flex min-w-0 flex-col items-start justify-center lg:min-h-0 lg:pr-2">
+              <Breadcrumb className="mb-6 flex justify-start">
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href={`/business/${seg}/`}>
+                      {segmentLabel(seg)}
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage className="line-clamp-1">
+                      {toDisplayTitle(entry.title)}
+                    </BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+              <header>
+                <h1 className="mb-5 max-w-[700px] text-[clamp(1.75rem,5vw,3.25rem)] font-medium leading-[1.08] tracking-[0.468px] text-[#1A1A1A] [font-family:var(--font-playfair),Georgia,serif] lg:text-[52px]">
+                  {toDisplayTitle(entry.title)}
+                </h1>
+                <p className="mb-9 max-w-[700px] text-lg font-medium leading-[1.65] text-[#1A1A1A] [font-family:Inter,system-ui,sans-serif] lg:text-2xl">
+                  Ready-made templates for modern aesthetic clinics.
+                </p>
+                <div className="flex max-sm:flex-col max-sm:items-stretch gap-3 sm:flex-row sm:flex-nowrap sm:items-center sm:gap-2.5 sm:overflow-x-auto">
+                  <a
+                    href={`${baseUrl}/medical-templates/`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={HUB_CTA_PRIMARY_HERO_CLASS}
+                  >
+                    Explore Templates
+                  </a>
+                </div>
+              </header>
+            </div>
+            <div
+              className="relative z-0 mt-8 flex w-full min-w-0 justify-center lg:mt-0 lg:justify-end lg:pr-4"
+              aria-hidden
+            >
+              <div className="relative w-full max-w-[560px] lg:max-w-none">
+                <Image
+                  src={TEMPLATES_HERO_SRC}
+                  alt=""
+                  width={604}
+                  height={373}
+                  className="h-auto w-full max-h-[320px] object-contain object-center sm:max-h-[380px] lg:max-h-[440px]"
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  unoptimized
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <article className="mx-auto w-full min-w-0 max-w-[1280px] overflow-x-clip px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
+        <section className="mb-12">
+          <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+              <h2 className="mb-3 text-lg font-semibold text-[#111111]">Operational Reality</h2>
+              <p className="text-base leading-relaxed text-[#1A1A1A]">
+                Teams outgrow generic tools when consent, payments, and clinical evidence sit in different
+                places. The result is slower bookings, weaker compliance confidence, and fragile patient
+                communication.
+              </p>
+            </div>
+            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+              <h2 className="mb-3 text-lg font-semibold text-[#111111]">What Changes With Consentz</h2>
+              <p className="text-base leading-relaxed text-[#1A1A1A]">
+                Consentz is built as an operating layer for clinics: structured consent, workflow automation,
+                and reporting that maps to how regulated teams actually work day to day.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-16">
+          <div className="mx-auto grid w-full min-w-0 max-w-[1072px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {navLinks.map((item) => (
+              <NavCard key={item.href} href={item.href} label={item.label} />
+            ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <a
+              href={`${baseUrl}/book-demo`}
+              className={HUB_CTA_PRIMARY_CLASS}
+            >
+              Book Demo
+            </a>
+          </div>
+        </section>
+
+        <HubTemplateLibrarySection />
+
+        <HubTestimonialsSection title="What Clinics Say About Templates" />
+        <HubServiceProviderSection />
+
+        <section className="mb-16 px-0 sm:px-4">
+          <h2 className="mb-3 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111]">
+            Pricing And Subscription Questions
+          </h2>
+          <div className="h-3" />
+          <div className="mx-auto max-w-[1056px] overflow-hidden rounded-xl border border-[#E2DDD7] bg-white">
+            {templatesPricingFaqs.map((item) => (
+              <details
+                key={item.q}
+                open={item.open}
+                className="group border-b border-[#EDE9E3] bg-white last:border-b-0 open:bg-white"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-xl font-semibold text-[#111111]">
+                  {item.q}
+                  <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
+                    ▾
+                  </span>
+                </summary>
+                <div className="px-6 pb-5">
+                  <p className="max-w-[1000px] text-base leading-[1.7] text-[#6B6B6B]">{item.a}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
+          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+            Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay
+            informed with our latest articles.
+          </p>
+          <div className="grid gap-6 md:grid-cols-3">
+            {HUB_BLOG_LINKS.slice(0, 3).map((post) => (
+              <a
+                key={post.id}
+                href={post.href}
+                target="_blank"
+                rel="noreferrer"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+              >
+                <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
+                  <Image
+                    src={post.image}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 px-5 py-5 pb-6">
+                  <span className="text-[15px] leading-snug text-[#111111] underline underline-offset-2">
+                    {post.title}
+                  </span>
+                  <span className="text-sm text-[#111111] underline underline-offset-2">
+                    Read more →
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <a
+              href="https://www.consentz.com/blog/"
+              target="_blank"
+              rel="noreferrer"
+              className={HUB_CTA_PRIMARY_CLASS}
+            >
+              View All Blogs
+            </a>
+          </div>
+        </section>
+
+      </article>
+      <HubSectionCta className="mb-0" tone="warm" withBorder={false} />
+    </>
+  );
+}

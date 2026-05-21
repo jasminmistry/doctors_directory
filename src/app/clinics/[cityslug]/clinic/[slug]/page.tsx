@@ -29,6 +29,12 @@ import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
 import { CityPricingContext } from "@/components/city-pricing-context";
 import { buildCityTreatmentPriceInsights } from "@/lib/city-pricing";
+import { BookingWidget } from "@/components/clinic/booking-widget";
+import { CoverPhoto } from "@/components/clinic/cover-photo";
+import { TransparencyBox } from "@/components/clinic/transparency-box";
+import { AccreditationBadges } from "@/components/clinic/accreditation-badges";
+import { ReviewsSection, type ReviewItem } from "@/components/clinic/reviews-section";
+import { prisma } from "@/lib/db";
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
   incoming: Record<string, ItemMeta>
@@ -132,6 +138,13 @@ function convertDbClinicToOldType(dbClinic: any): Clinic {
     })) || []) as any,
     x_twitter: dbClinic.xTwitter || '',
     Treatments: dbClinic.treatments?.map((t: any) => t.treatment.name) || [],
+    claimed: dbClinic.claimed ?? false,
+    verified: (dbClinic as any).verified ?? false,
+    domainVerified: (dbClinic as any).domainVerified ?? false,
+    gbpMatch: (dbClinic as any).gbpMatch ?? false,
+    gbpVerified: (dbClinic as any).gbpVerified ?? false,
+    idVerified: (dbClinic as any).idVerified ?? false,
+    manualVerified: (dbClinic as any).manualVerified ?? false,
   } as Clinic;
 }
 
@@ -140,7 +153,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const displayCityName = capitalize(cityslug);
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
 
-  const dbClinic = await getClinicBySlug(slug);
+  const [dbClinic, platformReviews] = await Promise.all([
+    getClinicBySlug(slug),
+    prisma.platformReview.findMany({
+      where: { clinic: { slug }, status: 'approved' },
+      orderBy: { createdAt: 'desc' },
+    }),
+  ]);
   if (!dbClinic) {
     notFound();
   }
@@ -170,6 +189,35 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     clinic?.weighted_analysis ?? {}
   );
 
+  const combinedReviews: ReviewItem[] = [
+    ...platformReviews.map(r => ({
+      id: `p-${r.id}`,
+      source: 'platform' as const,
+      patientName: r.patientName,
+      rating: r.rating,
+      reviewText: r.reviewText,
+      reviewDate: null,
+      treatment: r.treatment,
+      isVerifiedPatient: r.isVerifiedPatient,
+      clinicResponse: r.clinicResponse,
+      respondedAt: r.respondedAt,
+      createdAt: r.createdAt,
+    })),
+    ...(dbClinic.reviews ?? []).map(r => ({
+      id: `g-${r.id}`,
+      source: 'google' as const,
+      patientName: r.reviewerName ?? 'Anonymous',
+      rating: r.rating ? Math.round(Number(r.rating)) : 0,
+      reviewText: r.reviewText ?? '',
+      reviewDate: r.reviewDate,
+      treatment: null,
+      isVerifiedPatient: false,
+      clinicResponse: r.ownerResponse,
+      respondedAt: null,
+      createdAt: null,
+    })).filter(r => r.reviewText),
+  ];
+
   const overallScore = Math.round(
     boxplotData.find((datum) => datum.label === "Overall Aggregation")?.item.weighted_score ?? 0
   );
@@ -178,6 +226,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
   return (
     <main className="min-h-screen bg-background">
+      <CoverPhoto src={dbClinic.coverImage} alt={`${dbClinic.name ?? slug} cover photo`} />
+
       {/* Navigation */}
       <div className="bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
@@ -216,18 +266,49 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       </div>
 
       <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
-        <ProfileHeader clinic={clinic} />
+        <ProfileHeader
+          clinic={clinic}
+          clinicName={dbClinic.name ?? slug}
+          hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
+        />
 
 
         <div className="px-4 md:px-0">
           <ClinicTabs />
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-10 mb-4">
-            <div className="order-2 lg:order-1 col-span-1 lg:col-span-6">
+            <div className="order-2 lg:order-1 col-span-1 lg:col-span-6 space-y-8">
               <ClinicDetailsMarkdown clinic={clinic} />
+              <ReviewsSection clinicSlug={slug} reviews={combinedReviews} />
             </div>
 
             <div className="order-1 lg:order-2 col-span-1 lg:col-span-4">
+              <div className="mb-4 space-y-4">
+                <BookingWidget
+                  slug={slug}
+                  clinicName={dbClinic.name ?? slug}
+                  hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
+                />
+                <AccreditationBadges
+                  isSaveFace={clinic.isSaveFace}
+                  isDoctor={clinic.isDoctor}
+                  isJccp={clinic.isJCCP ? clinic.isJCCP[0] : null}
+                  jccpUrl={clinic.isJCCP ? clinic.isJCCP[1] : null}
+                  isCqc={clinic.isCQC ? clinic.isCQC[0] : null}
+                  cqcUrl={clinic.isCQC ? clinic.isCQC[1] : null}
+                  isHiw={clinic.isHIW ? clinic.isHIW[0] : null}
+                  hiwUrl={clinic.isHIW ? clinic.isHIW[1] : null}
+                  isHis={clinic.isHIS ? clinic.isHIS[0] : null}
+                  hisUrl={clinic.isHIS ? clinic.isHIS[1] : null}
+                  isRqia={clinic.isRQIA ? clinic.isRQIA[0] : null}
+                  rqiaUrl={clinic.isRQIA ? clinic.isRQIA[1] : null}
+                />
+                <TransparencyBox
+                  claimedAt={dbClinic.claimedAt}
+                  cqcStatus={dbClinic.cqcStatus}
+                  avgReplyTime={dbClinic.avgReplyTime}
+                />
+              </div>
               <div className="border border-gray-300 rounded-xl p-6">
                 <div className="flex flex-row gap-2 pt-2 mb-4 items-center justify-center text-sm">
                   <div className="inline-flex items-center gap-1">

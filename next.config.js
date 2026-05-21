@@ -7,7 +7,7 @@ const nextConfig = {
       formats: ["image/avif", "image/webp"], // enable AVIF + WebP
       minimumCacheTTL: 60 * 60 * 24 * 365,
 
-    domains: ['dynamic-media-cdn.tripadvisor.com','media-cdn.tripadvisor.com','encrypted-tbn0.gstatic.com','www.jccp.org.uk', 'lh3.googleusercontent.com','www.doctify.com','cdn.doctify.com','streetviewpixels-pa.googleapis.com'],
+    domains: ['dynamic-media-cdn.tripadvisor.com','media-cdn.tripadvisor.com','encrypted-tbn0.gstatic.com','www.jccp.org.uk', 'lh3.googleusercontent.com','www.doctify.com','cdn.doctify.com','streetviewpixels-pa.googleapis.com','www.consentz.com'],
     
   },
   basePath: '/directory',
@@ -39,6 +39,54 @@ const nextConfig = {
 
     return [
       ...barePaths,
+      {
+        source: '/business',
+        destination: '/directory/business/',
+        permanent: false,
+        basePath: false,
+      },
+      {
+        source: '/business/',
+        destination: '/directory/business/',
+        permanent: false,
+        basePath: false,
+      },
+      {
+        source: '/business/:path*',
+        destination: '/directory/business/:path*',
+        permanent: false,
+        basePath: false,
+      },
+      {
+        source: '/directory/business-resources.xml',
+        destination: '/directory/business-templates.xml',
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: '/directory/business/resources',
+        destination: '/directory/business/templates',
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: '/directory/business/resources/',
+        destination: '/directory/business/templates/',
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: '/directory/business/resources/:slug',
+        destination: '/directory/business/templates/:slug',
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: '/directory/business/resources/:slug/',
+        destination: '/directory/business/templates/:slug/',
+        permanent: true,
+        basePath: false,
+      },
       {
         source: '/clinics/middlesbrough/clinic/the-skin-clinic-5',
         destination: '/clinics/middlesbrough/clinic/the-skin-clinic',
