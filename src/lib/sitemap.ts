@@ -24,6 +24,28 @@ export const toDirectoryUrl = (pathname: string): string => {
   return `${getBaseUrl()}/directory${withSlash}`
 }
 
+export const toBusinessHubUrl = (pathname: string): string => {
+  const normalized = pathname.startsWith('/') ? pathname : `/${pathname}`
+  const withSlash =
+    normalized.endsWith('/') || normalized.endsWith('.xml')
+      ? normalized
+      : `${normalized}/`
+  return `${getBaseUrl()}${withSlash}`
+}
+
+export const mapBusinessHubPathsToSitemapUrls = (
+  paths: ReadonlyArray<string>,
+  lastmod = nowIso(),
+  changefreq: SitemapUrl['changefreq'] = 'weekly',
+  priority = 0.7
+): SitemapUrl[] =>
+  paths.map((path) => ({
+    loc: toBusinessHubUrl(path),
+    lastmod,
+    changefreq,
+    priority,
+  }))
+
 export const encodeSegment = (value: string): string =>
   encodeURIComponent(toUrlSlug(value))
 

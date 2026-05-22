@@ -1,0 +1,371 @@
+import { HubBuyerFaq, mapLegacyHubFaqs } from "@/components/b2b-hub/hub-buyer-faq"
+import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section"
+import {
+  HUB_CTA_PRIMARY_CLASS,
+  HUB_CTA_PRIMARY_HERO_CLASS,
+  HUB_CTA_SECONDARY_CLASS,
+  HUB_CTA_SECONDARY_HERO_CLASS,
+  HUB_CTA_LINK_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
+import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
+import { HubMainDifferenceSection } from "@/components/b2b-hub/hub-main-difference-section"
+import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section"
+import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
+import Image from "next/image";
+import Link from "next/link"
+import { HUB_DETAIL_HERO_VIEWPORT_CLASS } from "@/lib/b2b-hub/hub-index-hero-layout"
+import {
+  HUB_HERO_ACTIONS_ROW,
+  HUB_SECTION_MOBILE_CTA,
+  HUB_SPLIT_HERO_CONTENT,
+  HUB_SPLIT_HERO_GRID_TWO_COL,
+  HUB_SPLIT_HERO_VISUAL_TALL,
+} from "@/components/b2b-hub/hub-hero-layout-classes"
+
+import { cn } from "@/lib/utils";
+import {
+  CalendarDays,
+  FileWarning,
+  Layers,
+  Mail,
+  Table2,
+  UserRound,
+} from "lucide-react";
+import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
+import {
+  SoftwareHeroVisual,
+} from "@/components/b2b-hub/hub-pillar-detail-template";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links";
+import { alternativesHubNavLinks } from "@/lib/b2b-hub/alternatives-hub-nav-links";
+import { COMPETITOR_LABEL } from "@/lib/b2b-hub/competitors";
+import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry";
+import { segmentLabel } from "@/lib/b2b-hub/registry";
+import { toDisplayTitle } from "@/lib/b2b-hub/text";
+
+const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
+
+const SOFTWARE_LAPTOP_MOCKUP_SRC = "/directory/images/software-laptop-mockup.svg";
+const alternativesPainPoints = [
+  {
+    Icon: FileWarning,
+    text: "Paper consent forms get lost — creating direct CQC risk",
+  },
+  {
+    Icon: UserRound,
+    text: "Patients aren’t reactivated after treatment",
+  },
+  {
+    Icon: Table2,
+    text: "CQC evidence scattered across spreadsheets",
+  },
+  {
+    Icon: CalendarDays,
+    text: "Booking software doesn’t handle compliance requirements",
+  },
+  {
+    Icon: Mail,
+    text: "No automated follow-up or aftercare workflows",
+  },
+  {
+    Icon: Layers,
+    text: "Clinic data siloed across too many disconnected tools",
+  },
+] as const;
+
+function alternativesFaqCopy(competitorLabel: string) {
+  return [
+    {
+      open: true,
+      q: `Is Consentz a direct ${competitorLabel} replacement?`,
+      a: `Consentz is strongest where regulated clinics need governed consent, CQC-ready evidence, and automation tied to the patient record. ${competitorLabel} is often stronger on general booking and front-desk scheduling. Many teams use a phased approach: align consent and compliance first, then deepen scheduling and payments.`,
+    },
+    {
+      open: false,
+      q: `Can I keep my existing patient data when switching from ${competitorLabel}?`,
+      a: "Yes, in most cases core patient and appointment data can be migrated or connected. On a demo we map what transfers cleanly, what needs restructuring, and how to avoid disruption to live clinics.",
+    },
+    {
+      open: false,
+      q: `How long does migration from ${competitorLabel} take?`,
+      a: "Timelines depend on data quality and how many workflows you move first. A common pattern is weeks for consent and evidence, with wider scheduling and payments following once foundations are stable.",
+    },
+  ] as const;
+}
+
+type Props = {
+  entry: HubEntry;
+};
+
+export function HubAlternativesDetailTemplate({ entry }: Props) {
+  const seg = entry.segment as HubSegment;
+  const competitorSlug = entry.slug;
+  const competitorLabel = COMPETITOR_LABEL[competitorSlug] ?? toDisplayTitle(competitorSlug);
+  const intro =
+    entry.summary ||
+    `How clinics evaluate Consentz against ${competitorLabel} for operations, compliance, and growth.`;
+  const navLinks = alternativesHubNavLinks(competitorSlug);
+  const faqs = alternativesFaqCopy(competitorLabel);
+
+  return (
+    <>
+      <section
+        className={cn(
+          "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          HUB_DETAIL_HERO_VIEWPORT_CLASS
+        )}
+      >
+        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-0">
+          <div className={HUB_SPLIT_HERO_GRID_TWO_COL}>
+            <div className={HUB_SPLIT_HERO_CONTENT}>
+              <Breadcrumb className="mb-6 flex w-full justify-center lg:justify-start">
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href={`/business/${seg}/`}>
+                      {segmentLabel(seg)}
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage className="line-clamp-1">
+                      {toDisplayTitle(entry.title)}
+                    </BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+              <header>
+                <h1 className="mb-5 max-w-[700px] text-[clamp(1.75rem,5vw,3.25rem)] font-medium leading-[1.08] tracking-[0.468px] text-[#1A1A1A] [font-family:var(--font-playfair),Georgia,serif] lg:text-[52px]">
+                  {toDisplayTitle(entry.title)}
+                </h1>
+                <p className="mb-9 max-w-[700px] text-lg font-medium leading-[1.65] text-[#1A1A1A] [font-family:Inter,system-ui,sans-serif] lg:text-2xl">
+                  {intro}
+                </p>
+                <div className={HUB_HERO_ACTIONS_ROW}>
+                  <a
+                    href={`${baseUrl}/book-demo`}
+                    className={HUB_CTA_PRIMARY_HERO_CLASS}
+                  >
+                    Book a Demo
+                  </a>
+                  <a
+                    href={`${baseUrl}/book-demo`}
+                    className={HUB_CTA_SECONDARY_HERO_CLASS}
+                  >
+                    Get CQC Readiness Audit
+                  </a>
+                  <a
+                    href={`${baseUrl}/book-demo`}
+                    className={HUB_CTA_LINK_CLASS}
+                  >
+                    See How It Works →
+                  </a>
+                </div>
+              </header>
+            </div>
+            <div
+              className={HUB_SPLIT_HERO_VISUAL_TALL}
+              aria-hidden
+            >
+              <SoftwareHeroVisual />
+            </div>
+          </div>
+        
+        <HubLogoStrip className="mt-auto shrink-0" />
+</div>
+      </section>
+
+      <article className="mx-auto w-full min-w-0 max-w-[1280px] overflow-x-clip px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
+        <HubMainDifferenceSection competitorLabel={competitorLabel} />
+
+        <section className="mb-12">
+          <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+              <h2 className="mb-3 text-lg font-semibold text-[#111111]">Operational Reality</h2>
+              <p className="text-base leading-relaxed text-[#1A1A1A]">
+                Teams outgrow generic tools when consent, payments, and clinical evidence sit
+                in different places. The result is slower bookings, weaker compliance
+                confidence, and fragile patient communication.
+              </p>
+            </div>
+            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+              <h2 className="mb-3 text-lg font-semibold text-[#111111]">What Changes With Consentz</h2>
+              <p className="text-base leading-relaxed text-[#1A1A1A]">
+                Consentz is built as an operating layer for clinics: structured consent,
+                workflow automation, and reporting that maps to how regulated teams actually
+                work day to day.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-12">
+          <h2 className="mb-8 text-center text-3xl font-bold tracking-[-0.02em] text-[#111111] md:mb-10 md:text-4xl">
+            The Problem With Most Clinic Software
+          </h2>
+          <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
+            {alternativesPainPoints.map(({ Icon, text }) => (
+              <div
+                key={text}
+                className="flex min-h-[80px] items-center gap-4 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-4 py-4 sm:min-h-[88px] sm:gap-6 sm:py-[15px] sm:pl-6 sm:pr-4"
+              >
+                <Icon
+                  className="h-12 w-12 shrink-0 text-[#1A1A1A]"
+                  strokeWidth={1.25}
+                  aria-hidden
+                />
+                <p className="text-base font-medium leading-snug text-[#1A1A1A] sm:text-lg sm:leading-[1.45] md:text-xl">
+                  {text}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <a
+              href={`${baseUrl}/book-demo`}
+              className={HUB_CTA_PRIMARY_CLASS}
+            >
+              Book Demo
+            </a>
+          </div>
+        </section>
+
+        <div className="mx-auto mb-6 max-w-[900px] text-center">
+          <h2 className="mb-4 text-4xl font-bold tracking-[-0.02em] text-[#111111]">
+            {competitorLabel} vs Consentz
+          </h2>
+          <p className="text-xl font-normal leading-[1.6] text-[#1A1A1A] md:text-2xl">
+            No bolt-on integrations. No compliance gaps. No switching between tools.
+          </p>
+        </div>
+
+        <HubComparisonTable variant="alternatives" competitorName={competitorLabel} />
+
+        <section className="mb-16">
+          <div className="mx-auto grid max-w-[1100px] grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-14">
+            <div className="min-w-0 text-center lg:text-left">
+              <h2 className="mb-4 text-[28px] font-bold tracking-tight text-[#111111] md:text-[34px]">
+                Migrating from {competitorLabel}?
+              </h2>
+              <p className="mb-8 text-base leading-relaxed text-[#1A1A1A] md:text-lg">
+                We support migrations from {competitorLabel}. Book a demo and we will explain
+                the process, what data transfers, and how we handle the transition without
+                disrupting your clinic.
+              </p>
+              <div className={HUB_SECTION_MOBILE_CTA}>
+                <a
+                  href={`${baseUrl}/book-demo`}
+                  className={HUB_CTA_PRIMARY_CLASS}
+                >
+                  Book Demo
+                </a>
+              </div>
+            </div>
+            <div className="flex justify-center lg:justify-end">
+              <Image
+                src={SOFTWARE_LAPTOP_MOCKUP_SRC}
+                alt=""
+                width={640}
+                height={340}
+                className="h-auto w-full max-w-[560px] object-contain"
+                loading="lazy"
+                unoptimized
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-16">
+          <div className="mx-auto grid max-w-[1072px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {navLinks.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <a
+              href={`${baseUrl}/book-demo`}
+              className={HUB_CTA_PRIMARY_CLASS}
+            >
+              Book Demo
+            </a>
+          </div>
+        </section>
+
+        <HubTestimonialsSection />
+        <HubServiceProviderSection />
+
+        <HubBuyerFaq
+          title="Frequently Asked Questions"
+          items={mapLegacyHubFaqs(faqs)}
+        />
+
+        <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
+          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+            Explore insights and tips to help you manage and grow your aesthetics clinic
+            efficiently. Stay informed with our latest articles.
+          </p>
+          <div className="grid gap-6 md:grid-cols-3">
+            {HUB_BLOG_LINKS.slice(0, 3).map((post) => (
+              <a
+                key={post.id}
+                href={post.href}
+                target="_blank"
+                rel="noreferrer"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+              >
+                <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
+                  <Image
+                    src={post.image}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 px-5 py-5 pb-6">
+                  <span className="text-[15px] leading-snug text-[#111111] underline underline-offset-2">
+                    {post.title}
+                  </span>
+                  <span className="text-sm text-[#111111] underline underline-offset-2">
+                    Read more →
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <a
+              href="https://www.consentz.com/blog/"
+              target="_blank"
+              rel="noreferrer"
+              className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
+            >
+              View all blogs
+            </a>
+          </div>
+        </section>
+
+      </article>
+      <HubSectionCta className="mb-0" withBorder={false} />
+    </>
+  );
+}
