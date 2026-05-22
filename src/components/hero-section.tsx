@@ -58,7 +58,7 @@ export function HeroSection() {
                 className="text-3xl md:text-5xl mb-6 text-[var(--mineshaft)] font-[var(--font-noto)]"
                 style={{ fontFamily: "var(--font-noto)" }}
               >
-                The Premier Aesthetic Directory for Beauty & Wellbeing
+                Find top-rated Aesthetics & Wellness Practitioners near you
               </h1>
               <p className="text-sm md:text-lg mb-8">
               Browse certified aethetic professionals, compare real patient reviews, and book your next treatment with total confidence.

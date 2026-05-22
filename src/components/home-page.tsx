@@ -4,11 +4,8 @@ import { HeroSection } from "@/components/hero-section";
 import LogoLoop from "./LogoLoop";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  Handshake,
-  ChartBarDecreasing,
-  CircleCheck,
-} from "lucide-react";
+import { Handshake, ChartBarDecreasing, CircleCheck } from "lucide-react";
+import { Card } from "./ui/card";
 
 const cityList = [
   "Aberaeron",
@@ -810,11 +807,31 @@ const specialists = [
 ];
 
 const treatments = [
-  { name: "Facial", image: "directory/images/Facial Treatment.webp", url: "/treatments/facial-treatments" },
-  { name: "Massage", image: "directory/treatments/massage.webp", url: "/treatments/massage" },
-  { name: "Lips", image: "directory/treatments/lips.webp", url: "/treatments/lips" },
-  { name: "Skin", image: "directory/images/Skin Treatment.webp", url: "/treatments/skin-booster" },
-  { name: "Hairline", image: "directory/images/Hairline Treatment.webp", url: "/treatments/hair-treatments" },
+  {
+    name: "Facial",
+    image: "directory/images/Facial Treatment.webp",
+    url: "/treatments/facial-treatments",
+  },
+  {
+    name: "Massage",
+    image: "directory/treatments/massage.webp",
+    url: "/treatments/massage",
+  },
+  {
+    name: "Lips",
+    image: "directory/treatments/lips.webp",
+    url: "/treatments/lips",
+  },
+  {
+    name: "Skin",
+    image: "directory/images/Skin Treatment.webp",
+    url: "/treatments/skin-booster",
+  },
+  {
+    name: "Hairline",
+    image: "directory/images/Hairline Treatment.webp",
+    url: "/treatments/hair-treatments",
+  },
 ];
 
 const blogs = [
@@ -873,8 +890,13 @@ export default function HomePage() {
   return (
     <main>
       <HeroSection />
-      <section className="bg-white-50 py-15 md:py-20" aria-labelledby="specialists-heading">
-        <h2 id="specialists-heading" className="sr-only">Contact a Specialist</h2>
+      <section
+        className="bg-white-50 py-15 md:py-20"
+        aria-labelledby="specialists-heading"
+      >
+        <h2 id="specialists-heading" className="sr-only">
+          Contact a Specialist
+        </h2>
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-xl md:text-4xl font-bold text-center mb-16">
             Contact a Specialist
@@ -904,9 +926,99 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <section
+        className="bg-white-10 mb-8"
+        aria-labelledby="specialists-heading"
+      >
+        <section className="bg-white py-6 md:py-10">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_140px] gap-4 items-center">
+                <div className="bg-[#f8f8f8] rounded-xl p-4 md:p-6 flex items-start gap-4">
+                  <div className="min-w-[56px] min-h-[56px] md:min-w-[70px] md:min-h-[70px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-2xl md:text-3xl font-semibold text-black">
+                    1.
+                  </div>
+
+                  <div>
+                    <h2 className="text-xl md:text-3xl font-bold text-black leading-tight">
+                      Tell Us What You’re Looking For
+                    </h2>
+
+                    <p className="mt-2 text-sm md:text-xl text-[#222] leading-relaxed max-w-2xl">
+                      Answer a few questions so we can understand your goals.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/clipboard.png"
+                    alt="Clipboard Icon"
+                    className="w-20 md:w-28 h-auto object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_140px] gap-4 items-center">
+                <div className="bg-[#f8f8f8] rounded-xl p-4 md:p-6 flex items-start gap-4">
+                  <div className="min-w-[56px] min-h-[56px] md:min-w-[70px] md:min-h-[70px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-2xl md:text-3xl font-semibold text-black">
+                    2.
+                  </div>
+
+                  <div>
+                    <h2 className="text-xl md:text-3xl font-bold text-black leading-tight">
+                      Get Expert Guidance
+                    </h2>
+
+                    <p className="mt-2 text-sm md:text-xl text-[#222] leading-relaxed max-w-2xl">
+                      Receive personalized recommendations from our aesthetics
+                      and wellness experts.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/video-chat.png"
+                    alt="Video Chat Icon"
+                    className="w-20 md:w-28 h-auto object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_140px] gap-4 items-center">
+                <div className="bg-[#f8f8f8] rounded-xl p-4 md:p-6 flex items-start gap-4">
+                  <div className="min-w-[56px] min-h-[56px] md:min-w-[70px] md:min-h-[70px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-2xl md:text-3xl font-semibold text-black">
+                    3.
+                  </div>
+
+                  <div>
+                    <h2 className="text-xl md:text-3xl font-bold text-black leading-tight">
+                      Match & Book With a Practitioner
+                    </h2>
+
+                    <p className="mt-2 text-sm md:text-xl text-[#222] leading-relaxed max-w-2xl">
+                      We match you with a trusted practitioner and help you book
+                      with ease.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/check.png"
+                    alt="Check Icon"
+                    className="w-20 md:w-28 h-auto object-contain"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
       <section className="bg-white-50 py-5 md:py-5">
         <h2 className="text-xl md:text-3xl font-bold text-center mb-16">
-        Find Top-Rated Aesthetic Clinics Near You
+          Find Top-Rated Aesthetic Clinics Near You
         </h2>
         <div className="w-full">
           <LogoLoop
@@ -921,30 +1033,37 @@ export default function HomePage() {
         </div>
       </section>
       {/* Most Popular Treatments */}
-      <section className="py-15 md:py-20 relative" aria-labelledby="treatments-heading">
-        <h2 id="treatments-heading" className="sr-only">Most Popular Treatments</h2>
+      <section
+        className="py-15 md:py-20 relative"
+        aria-labelledby="treatments-heading"
+      >
+        <h2 id="treatments-heading" className="sr-only">
+          Most Popular Treatments
+        </h2>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center flex-col justify-between mb-12">
             <h2 className="text-xl md:text-4xl font-bold text-center mb-10">
               Most Popular Treatments
             </h2>
-
           </div>
           <div className="relative flex flex-col items-center justify-center">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 justify-items-center items-center gap-4 pb-4 w-full">
+            <div className="mb-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 justify-items-center items-center gap-4 pb-4 w-full">
               {treatments.map((treatment, index) => (
                 <article key={index} className="flex-shrink-0">
                   <div
-    className="mx-auto
+                    className="mx-auto
                w-32 aspect-square
                rounded-full overflow-hidden"
-  >               <Link href={treatment.url}>
-                  <img
-                   
-                    src={`/${treatment.image || "/placeholder.svg"}`}
-                    alt={treatment.name}
-                    className="w-32 h-32 md:w-38 md:h-38 lg:w-45 lg:h-45 ml-auto mr-auto object-cover object-center rounded-lg"
-                  /></Link></div>
+                  >
+                    {" "}
+                    <Link href={treatment.url}>
+                      <img
+                        src={`/${treatment.image || "/placeholder.svg"}`}
+                        alt={treatment.name}
+                        className="w-32 h-32 md:w-38 md:h-38 lg:w-45 lg:h-45 ml-auto mr-auto object-cover object-center rounded-lg"
+                      />
+                    </Link>
+                  </div>
                   <p className="mt-4 text-base font-medium text-center">
                     {treatment.name}
                   </p>
@@ -952,23 +1071,22 @@ export default function HomePage() {
               ))}
             </div>
             <Button
-  asChild
-  className="bg-[var(--text-color)] hover:bg-black
+              asChild
+              className="bg-[var(--text-color)] hover:bg-black
                          h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
->
-  <Link href="/treatments">
-    See all Treatments
-  </Link>
-</Button>
-
+            >
+              <Link href="/treatments">See all Treatments</Link>
+            </Button>
           </div>
-
-
-
-         </div>
-       </section>
-      <section className="py-10 md:py-15 relative" aria-labelledby="regulatory-heading">
-        <h2 id="regulatory-heading" className="sr-only">Trusted Regulatory Partners</h2>
+        </div>
+      </section>
+      <section
+        className="py-5 md:py-10 relative"
+        aria-labelledby="regulatory-heading"
+      >
+        <h2 id="regulatory-heading" className="sr-only">
+          Trusted Regulatory Partners
+        </h2>
         <LogoLoop
           logos={imageLogos}
           speed={100}
@@ -983,6 +1101,267 @@ export default function HomePage() {
           className="py-10 md:py-15 relative"
         />
       </section>
+
+      {/* Featured cards */}
+      <section className="py-15 md:py-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="md:bg--(--primary-bg-color) grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <article className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
+                  <img
+                    src="/directory/images/Eyes Treatment.webp"
+                    alt="K Trichology"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <h2 className="mt-4 text-xl font-semibold text-black">
+                  K Trichology
+                </h2>
+
+                <p className="text-gray-500 text-lg font-medium">Health spa</p>
+
+                <div className="flex items-center gap-2 mt-4 text-sm">
+                  <div className="flex text-black">★★★★★</div>
+
+                  <span className="border-l border-black pl-2 underline">
+                    (5 reviews)
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm">
+                  <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-map-pin h-4 w-4 mt-0 shrink-0"
+                      aria-hidden="true"
+                    >
+                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                  </span>
+                  <span className="truncate">4QR MK45 4QR, United Kingdom</span>
+                </div>
+
+                <button className="w-full mt-6 bg-black text-white py-2 rounded-lg font-medium hover:bg-white hover:text-black border border-black transition">
+                  Contact
+                </button>
+
+                <div className="flex flex-wrap gap-2 mt-5 justify-center">
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    Skin Booster
+                  </span>
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    Facial Treatments
+                  </span>
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    +2 more
+                  </span>
+                </div>
+              </div>
+            </article>
+            <article className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
+                  <img
+                    src="/directory/images/Eyes Treatment.webp"
+                    alt="K Trichology"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <h2 className="mt-4 text-xl font-semibold text-black">
+                  K Trichology
+                </h2>
+
+                <p className="text-gray-500 text-lg font-medium">Health spa</p>
+
+                <div className="flex items-center gap-2 mt-4 text-sm">
+                  <div className="flex text-black">★★★★★</div>
+
+                  <span className="border-l border-black pl-2 underline">
+                    (5 reviews)
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm">
+                  <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-map-pin h-4 w-4 mt-0 shrink-0"
+                      aria-hidden="true"
+                    >
+                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                  </span>
+                  <span className="truncate">4QR MK45 4QR, United Kingdom</span>
+                </div>
+
+                <button className="w-full mt-6 bg-black text-white py-2 rounded-lg font-medium hover:bg-white hover:text-black border border-black transition">
+                  Contact
+                </button>
+
+                <div className="flex flex-wrap gap-2 mt-5 justify-center">
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    Skin Booster
+                  </span>
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    Facial Treatments
+                  </span>
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    +2 more
+                  </span>
+                </div>
+              </div>
+            </article>
+            <article className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
+                  <img
+                    src="/directory/images/Eyes Treatment.webp"
+                    alt="K Trichology"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <h2 className="mt-4 text-xl font-semibold text-black">
+                  K Trichology
+                </h2>
+
+                <p className="text-gray-500 text-lg font-medium">Health spa</p>
+
+                <div className="flex items-center gap-2 mt-4 text-sm">
+                  <div className="flex text-black">★★★★★</div>
+
+                  <span className="border-l border-black pl-2 underline">
+                    (5 reviews)
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm">
+                  <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-map-pin h-4 w-4 mt-0 shrink-0"
+                      aria-hidden="true"
+                    >
+                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                  </span>
+                  <span className="truncate">4QR MK45 4QR, United Kingdom</span>
+                </div>
+
+                <button className="w-full mt-6 bg-black text-white py-2 rounded-lg font-medium hover:bg-white hover:text-black border border-black transition">
+                  Contact
+                </button>
+
+                <div className="flex flex-wrap gap-2 mt-5 justify-center">
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    Skin Booster
+                  </span>
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    Facial Treatments
+                  </span>
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    +2 more
+                  </span>
+                </div>
+              </div>
+            </article>
+            <article className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
+                  <img
+                    src="/directory/images/Eyes Treatment.webp"
+                    alt="K Trichology"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <h2 className="mt-4 text-xl font-semibold text-black">
+                  K Trichology
+                </h2>
+
+                <p className="text-gray-500 text-lg font-medium">Health spa</p>
+
+                <div className="flex items-center gap-2 mt-4 text-sm">
+                  <div className="flex text-black">★★★★★</div>
+
+                  <span className="border-l border-black pl-2 underline">
+                    (5 reviews)
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm">
+                  <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-map-pin h-4 w-4 mt-0 shrink-0"
+                      aria-hidden="true"
+                    >
+                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                  </span>
+                  <span className="truncate">4QR MK45 4QR, United Kingdom</span>
+                </div>
+
+                <button className="w-full mt-6 bg-black text-white py-2 rounded-lg font-medium hover:bg-white hover:text-black border border-black transition">
+                  Contact
+                </button>
+
+                <div className="flex flex-wrap gap-2 mt-5 justify-center">
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    Skin Booster
+                  </span>
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    Facial Treatments
+                  </span>
+                  <span className="px-3 py-1 border border-black rounded-full text-xs">
+                    +2 more
+                  </span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
       {/* Trust Section */}
       <section className="py-15 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
@@ -1021,6 +1400,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
       {/* For Service Providers Section */}
       <section className="py-10 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
@@ -1104,10 +1484,79 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="w-full bg-[#f3f1ef] py-10 lg:py-14 overflow-hidden">
+        <div className="mx-auto flex max-w-6xl flex-col items-start gap-10 px-4 lg:flex-row lg:justify-between lg:px-8">
+          <div className="flex justify-center lg:w-1/2 lg:self-start">
+            <img
+              src="/directory/images/img-00020.png"
+              alt="Practitioner Banner"
+              className="w-[240px] sm:w-[320px] lg:w-[420px] object-contain"
+            />
+          </div>
+
+          <div className="max-w-xl lg:w-1/2">
+            <h2 className="text-2xl font-bold leading-tight text-black sm:text-3xl">
+              Are You A Practitioner?
+            </h2>
+
+            <div className="mt-6 space-y-5">
+              {[
+                "Manage your clients, appointments, and follow-ups all in one place — your full practice, organized",
+                "Connect with clients who are actively looking for exactly what you offer",
+                "Fill your schedule with high-intent, pre-qualified bookings — no chasing leads",
+              ].map((item, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="flex h-7 w-7 min-w-[28px] items-center justify-center rounded-full border border-black">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2.5}
+                      stroke="currentColor"
+                      className="h-4 w-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4.5 12.75l6 6 9-13.5"
+                      />
+                    </svg>
+                  </div>
+
+                  <p className="text-sm leading-relaxed text-black sm:text-base">
+                    {item}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8">
+              <Button
+                asChild
+                className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white"
+              >
+                <a
+                  href="https://www.consentz.com/features/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Learn More
+                </a>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Latest blogs */}
-      <section className="max-w-7xl mx-auto px-4 md:px-6 py-12" aria-labelledby="blog-heading">
+      <section
+        className="max-w-7xl mx-auto px-4 md:px-6 py-12"
+        aria-labelledby="blog-heading"
+      >
         {/* Header */}
-        <h2 id="blog-heading" className="sr-only">Our Latest Blogs</h2>
+        <h2 id="blog-heading" className="sr-only">
+          Our Latest Blogs
+        </h2>
         <div className="max-w-3xl mb-10">
           <h2 className="text-lg md:text-3xl text-center md:text-left md:text-4xl font-bold mb-6">
             Our Latest Blogs
@@ -1155,7 +1604,9 @@ export default function HomePage() {
         </div>
         <div className="flex align-items-center justify-center pt-6 mt-6 mb-4">
           <Button
-            onClick={() => globalThis.location.href='https://www.consentz.com/blog'}
+            onClick={() =>
+              (globalThis.location.href = "https://www.consentz.com/blog")
+            }
             className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
           >
             View All Blogs
@@ -1163,8 +1614,14 @@ export default function HomePage() {
         </div>
       </section>
       {/* FAQ */}
-      <section className="max-w-4xl mx-auto pt-4 pb-20 px-6" aria-labelledby="faq-heading">
-        <h2 id="faq-heading" className="text-lg md:text-3xl text-center md:text-4xl font-bold mb-6">
+      <section
+        className="max-w-4xl mx-auto pt-4 pb-20 px-6"
+        aria-labelledby="faq-heading"
+      >
+        <h2
+          id="faq-heading"
+          className="text-lg md:text-3xl text-center md:text-4xl font-bold mb-6"
+        >
           Frequently Asked Questions
         </h2>
         <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
@@ -1198,7 +1655,9 @@ export default function HomePage() {
         </div>
         <div className="flex align-items-center justify-center pt-6 mt-6 mb-4">
           <Button
-            onClick={() => globalThis.location.href='https://www.consentz.com/faqs/'}
+            onClick={() =>
+              (globalThis.location.href = "https://www.consentz.com/faqs/")
+            }
             className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
           >
             Read All FAQ'S
