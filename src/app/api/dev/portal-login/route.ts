@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { COOKIE_USERNAME, COOKIE_ROLE, COOKIE_OPTS } from '@/lib/auth'
+import { COOKIE_TOKEN, COOKIE_USERNAME, COOKIE_ROLE, COOKIE_OPTS } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
 export async function GET() {
@@ -53,6 +53,7 @@ export async function POST(request: Request) {
   }
 
   const response = NextResponse.json({ success: true, username: targetUsername })
+  response.cookies.set(COOKIE_TOKEN, 'dev-token', COOKIE_OPTS)
   response.cookies.set(COOKIE_USERNAME, targetUsername, COOKIE_OPTS)
   response.cookies.set(COOKIE_ROLE, 'portal', COOKIE_OPTS)
   return response
