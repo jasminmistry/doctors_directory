@@ -710,7 +710,9 @@ model ClaimRequest {
   consentzClinicId  Int?
   consentzUserId    Int?
   consentzUsername  String? @db.VarChar(100)
-  mustResetPassword Boolean @default(false)
+  mustResetPassword  Boolean @default(false)
+  scheduleWizardDone  Boolean @default(false)
+  scheduleConfigured  Boolean @default(false)
 
   // Workflow
   status     ClaimStatus @default(pending_otp)
@@ -791,12 +793,16 @@ model ConsultationLead {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patientId Int?
+
+  clinic  Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient? @relation(fields: [patientId], references: [id], onDelete: SetNull)
 
   @@index([clinicId])
   @@index([isUnlocked])
   @@index([seenAt])
   @@index([createdAt])
+  @@index([patientId])
   @@map("consultation_leads")
 }
 
@@ -829,15 +835,23 @@ model Booking {
   syncedFromCore  Boolean   @default(false)
   lastSyncedAt    DateTime?
 
+  patientId Int?
+
+  // Video call fields — set when booked via /api/call/[slug]
+  videoCallMeetingId String? @db.VarChar(255)
+  videoCallJoinUrl   String? @db.Text
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  clinic  Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient? @relation(fields: [patientId], references: [id], onDelete: SetNull)
 
   @@index([clinicId])
   @@index([slotStart])
   @@index([status])
   @@index([coreBookingId])
+  @@index([patientId])
   @@map("bookings")
 }
 
@@ -887,11 +901,15 @@ model ChatSession {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
+  patientId Int?
+
   clinic   Clinic        @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient  Patient?      @relation(fields: [patientId], references: [id], onDelete: SetNull)
   messages ChatMessage[]
 
   @@index([clinicId])
   @@index([status])
+  @@index([patientId])
   @@map("chat_sessions")
 }
 
@@ -942,4 +960,41 @@ model MainSiteEvent {
   @@index([eventName], map: "idx_main_site_events_event_name")
   @@index([contentType], map: "idx_main_site_events_content_type")
   @@map("main_site_events")
+}
+
+// ============================================================
+// PATIENT ACCOUNTS
+// ============================================================
+
+model Patient {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique @db.VarChar(255)
+  firstName     String?  @db.VarChar(100)
+  lastName      String?  @db.VarChar(100)
+  phone         String?  @db.VarChar(30)
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  otps         PatientOtp[]
+  bookings     Booking[]
+  chatSessions ChatSession[]
+  leads        ConsultationLead[]
+
+  @@map("patients")
+}
+
+model PatientOtp {
+  id        Int      @id @default(autoincrement())
+  patientId Int
+  codeHash  String   @db.VarChar(64)
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId])
+  @@map("patient_otps")
 }

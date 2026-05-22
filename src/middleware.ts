@@ -19,14 +19,32 @@ function clearAuthAndRedirect(request: NextRequest, pathname: string, loginPath:
   return res
 }
 
+const PATIENT_COOKIE = 'patient_session'
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/api/admin')
   const isPortalRoute = pathname.startsWith('/portal') || pathname.startsWith('/api/portal') || pathname.startsWith('/verify')
+  const isAccountRoute = pathname.startsWith('/account') && pathname !== '/account/login' && pathname !== '/account/login/'
+  const isPatientApiRoute = pathname.startsWith('/api/patient') && !pathname.startsWith('/api/patient/auth')
   const isAdminLoginPage = pathname === '/admin/login' || pathname === '/admin/login/'
   const isPortalLoginPage = pathname === '/portal/login' || pathname === '/portal/login/'
 
   if (isAdminLoginPage || isPortalLoginPage) return NextResponse.next()
+
+  // Patient account + API routes — only require patient_session cookie
+  if (isAccountRoute || isPatientApiRoute) {
+    const patientSession = request.cookies.get(PATIENT_COOKIE)?.value
+    if (!patientSession) {
+      if (isPatientApiRoute) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      const loginUrl = request.nextUrl.clone()
+      loginUrl.pathname = '/account/login'
+      loginUrl.search = ''
+      loginUrl.searchParams.set('next', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+    return NextResponse.next()
+  }
 
   const token = request.cookies.get(COOKIE_TOKEN)?.value
 
@@ -65,5 +83,15 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   // Note: Next.js matcher paths are relative to the app root, not the basePath
-  matcher: ['/admin/:path*', '/api/admin/:path*', '/portal/:path*', '/api/portal/:path*', '/api/portal/upgrade', '/verify/:path*', '/portal/login'],
+  matcher: [
+    '/admin/:path*',
+    '/api/admin/:path*',
+    '/portal/:path*',
+    '/api/portal/:path*',
+    '/api/portal/upgrade',
+    '/verify/:path*',
+    '/portal/login',
+    '/account/:path*',
+    '/api/patient/:path*',
+  ],
 }

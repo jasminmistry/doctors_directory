@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { COOKIE_TOKEN } from '@/lib/auth'
+import { isClinicScheduleConfigured, SCHEDULE_NOT_CONFIGURED_RESPONSE } from '@/lib/schedule-check'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -15,12 +16,18 @@ export async function GET(
   try {
     const clinic = await prisma.clinic.findUnique({
       where: { slug: params.slug },
-      select: { coreClinicId: true },
+      select: { id: true, coreClinicId: true },
     })
 
     console.log(`[call/slots] slug=${params.slug} coreClinicId=${clinic?.coreClinicId ?? 'null'}`)
 
-    if (!clinic?.coreClinicId) {
+    if (!clinic) return NextResponse.json({ slots: [] })
+
+    if (!await isClinicScheduleConfigured(clinic.id)) {
+      return NextResponse.json(SCHEDULE_NOT_CONFIGURED_RESPONSE, { status: 422 })
+    }
+
+    if (!clinic.coreClinicId) {
       return NextResponse.json({ slots: [] })
     }
 

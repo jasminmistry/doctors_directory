@@ -304,6 +304,33 @@ ${portalUrl}
   })
 }
 
+export async function sendPatientOtp({ to, otp }: { to: string; otp: string }) {
+  const transport = createTransport()
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject: 'Your Consentz Directory login code',
+    text: `Your login code is: ${otp}\n\nThis code expires in 10 minutes. Do not share it with anyone.`,
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  <h2 style="margin-bottom:8px;">Your login code</h2>
+  <p>Use this code to sign in to your Consentz Directory account.</p>
+  <div style="margin:24px 0;padding:20px;background:#f5f5f5;border-radius:8px;text-align:center;">
+    <span style="font-size:36px;font-weight:700;letter-spacing:8px;color:#111;">${otp}</span>
+  </div>
+  <p style="color:#666;font-size:13px;">This code expires in <strong>10 minutes</strong>. Do not share it with anyone.</p>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">If you didn't request this, you can safely ignore this email.</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
 export async function sendGhostLeadHook({
   to,
   clinicName,

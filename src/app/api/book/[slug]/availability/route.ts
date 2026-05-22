@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getCoreAvailability, isCoreConfigured } from '@/lib/core-api'
 import { COOKIE_TOKEN } from '@/lib/auth'
+import { isClinicScheduleConfigured, SCHEDULE_NOT_CONFIGURED_RESPONSE } from '@/lib/schedule-check'
 
 export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
   const date = req.nextUrl.searchParams.get('date')
@@ -13,12 +14,17 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
 
   const clinic = await prisma.clinic.findUnique({
     where: { slug: params.slug },
-    select: { coreClinicId: true, claimedPlan: true },
+    select: { id: true, coreClinicId: true, claimedPlan: true },
   })
 
   console.log(`[book/availability] clinic=${JSON.stringify(clinic)}`)
 
   if (!clinic) return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
+
+  if (!await isClinicScheduleConfigured(clinic.id)) {
+    return NextResponse.json(SCHEDULE_NOT_CONFIGURED_RESPONSE, { status: 422 })
+  }
+
   if (!clinic.coreClinicId) {
     console.log('[book/availability] no coreClinicId — returning empty')
     return NextResponse.json({ available: [], slot_duration: 30 })

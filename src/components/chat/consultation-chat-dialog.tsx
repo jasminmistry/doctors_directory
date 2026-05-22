@@ -35,7 +35,7 @@ interface ConsultationChatDialogProps {
   buttonClassName?: string
 }
 
-type Phase = 'intro' | 'chat' | 'offline'
+type Phase = 'intro' | 'chat' | 'offline' | 'login_required'
 
 const POLL_INTERVAL_MS = 3_000
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000
@@ -105,6 +105,19 @@ export function ConsultationChatDialog({
     setPhase('chat')
     setIsRestored(true)
   }, [clinicSlug])
+
+  // Prefill name/contact from logged-in patient profile
+  useEffect(() => {
+    fetch('/directory/api/patient/me')
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (!data) return
+        const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ')
+        if (fullName) setName(fullName)
+        if (data.email) setContact(data.email)
+      })
+      .catch(() => { /* not logged in — fine */ })
+  }, [])
 
   // Scroll to bottom whenever messages change
   useEffect(() => {
@@ -177,9 +190,15 @@ export function ConsultationChatDialog({
     trackCtaClick({ ctaLabel: 'Request Consultation', pageType })
 
     if (sessionId && visitorToken) {
-      // Existing session — go straight to chat and reload history from server
       setPhase('chat')
       await loadHistory(sessionId, visitorToken)
+      return
+    }
+
+    // Require patient login before starting a new chat
+    const meRes = await fetch('/directory/api/patient/me')
+    if (!meRes.ok) {
+      setPhase('login_required')
       return
     }
 
@@ -267,6 +286,8 @@ export function ConsultationChatDialog({
     setIsRestored(false)
     lastCreatedAt.current = null
     if (pollRef.current) clearInterval(pollRef.current)
+    const meRes = await fetch('/directory/api/patient/me')
+    if (!meRes.ok) { setPhase('login_required'); return }
     await checkOnlineStatus()
   }
 
@@ -350,6 +371,22 @@ export function ConsultationChatDialog({
           {(checking || loadingHistory) && (
             <div className="flex h-full items-center justify-center">
               <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+            </div>
+          )}
+
+          {/* Login required */}
+          {!checking && !loadingHistory && phase === 'login_required' && (
+            <div className="flex flex-col h-full items-center justify-center gap-4 px-6 text-center">
+              <p className="text-sm text-gray-600">
+                You need to be <span className="font-semibold">signed in</span> to start a consultation.
+              </p>
+              <a
+                href={`/directory/account/login?next=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname : '')}`}
+                className="inline-flex h-9 items-center justify-center rounded-md bg-black px-4 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
+              >
+                Sign in / Create account
+              </a>
+              <p className="text-xs text-gray-400">Free and takes under a minute</p>
             </div>
           )}
 

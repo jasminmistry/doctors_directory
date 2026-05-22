@@ -323,8 +323,8 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       {/* Profile Enhancements */}
       <FormSection title="Profile" icon={Sparkles}>
         <div className="grid grid-cols-1 gap-5">
-          <Field label="Cover Photo URL" fullWidth>
-            <Input value={data.coverImage ?? ''} onChange={(e) => set('coverImage', e.target.value || null)} placeholder="https://…" />
+          <Field label="Cover Photo" fullWidth>
+            <ImageUpload value={data.coverImage ?? null} onChange={(url) => set('coverImage', url)} />
           </Field>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Field label="CQC Status">

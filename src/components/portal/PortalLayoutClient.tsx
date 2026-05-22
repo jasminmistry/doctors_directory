@@ -7,6 +7,7 @@ import { Building2, User, Globe, LogOut, Menu, X, Inbox, CalendarDays, MessageSq
 import { cn } from '@/lib/utils'
 import { LeadBadge } from '@/components/portal/lead-badge'
 import { ChatBadge } from '@/components/portal/chat-badge'
+import { WelcomeWizard } from '@/components/portal/welcome-wizard'
 
 const PRESENCE_INTERVAL_MS = 2 * 60 * 1000 // 2 minutes
 
@@ -21,6 +22,22 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
   const pathname = usePathname()
   const router = useRouter()
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
+  const [wizardVisible, setWizardVisible] = useState(false)
+  const [wizardHasConsentzId, setWizardHasConsentzId] = useState(false)
+
+  // Check whether to show the welcome wizard on first visit
+  useEffect(() => {
+    fetch('/directory/api/portal/wizard')
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (!data) return
+        if (!data.done) {
+          setWizardHasConsentzId(data.hasConsentzId ?? false)
+          setWizardVisible(true)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   // Keep clinic presence alive while portal is open
   useEffect(() => {
@@ -230,6 +247,14 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
           <main className="flex-1 p-4 sm:p-6">{children}</main>
         </div>
       </div>
+
+      {wizardVisible && (
+        <WelcomeWizard
+          entityName={entityName}
+          hasConsentzId={wizardHasConsentzId}
+          onDone={() => setWizardVisible(false)}
+        />
+      )}
     </div>
   )
 }

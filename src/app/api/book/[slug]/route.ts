@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { createCoreBooking, isCoreConfigured } from '@/lib/core-api'
 import { COOKIE_TOKEN } from '@/lib/auth'
 import { addMinutes } from 'date-fns'
+import { isClinicScheduleConfigured, SCHEDULE_NOT_CONFIGURED_RESPONSE } from '@/lib/schedule-check'
 
 const bodySchema = z.object({
   practitionerId: z.number().int().positive(),
@@ -30,6 +31,9 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
   })
 
   if (!clinic) return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
+  if (!await isClinicScheduleConfigured(clinic.id)) {
+    return NextResponse.json(SCHEDULE_NOT_CONFIGURED_RESPONSE, { status: 422 })
+  }
   if (!clinic.coreClinicId) return NextResponse.json({ error: 'Online booking not available for this clinic' }, { status: 422 })
   if (!isCoreConfigured()) return NextResponse.json({ error: 'Booking service unavailable' }, { status: 503 })
 

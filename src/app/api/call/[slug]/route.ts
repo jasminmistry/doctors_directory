@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { z } from 'zod'
 import { COOKIE_TOKEN } from '@/lib/auth'
+import { isClinicScheduleConfigured, SCHEDULE_NOT_CONFIGURED_RESPONSE } from '@/lib/schedule-check'
+import { getPatientClaims } from '@/lib/patient-auth'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -26,10 +28,18 @@ export async function POST(
   try {
     const clinic = await prisma.clinic.findUnique({
       where: { slug: params.slug },
-      select: { coreClinicId: true },
+      select: { id: true, coreClinicId: true },
     })
 
-    if (!clinic?.coreClinicId) {
+    if (!clinic) {
+      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
+    }
+
+    if (!await isClinicScheduleConfigured(clinic.id)) {
+      return NextResponse.json(SCHEDULE_NOT_CONFIGURED_RESPONSE, { status: 422 })
+    }
+
+    if (!clinic.coreClinicId) {
       return NextResponse.json({ error: 'Online call booking is not available for this clinic' }, { status: 400 })
     }
 
@@ -57,6 +67,29 @@ export async function POST(
       console.error('[call/booking POST]', res.status, data)
       return NextResponse.json({ error: data?.message ?? 'Booking failed' }, { status: res.status })
     }
+
+    // Mirror into local DB so the patient dashboard can show it
+    const patientClaims = getPatientClaims(req)
+    const slotStart = new Date(`${body.data.slot_start.replace(' ', 'T')}+00:00`)
+    const slotEnd = new Date(`${body.data.slot_end.replace(' ', 'T')}+00:00`)
+    prisma.booking.create({
+      data: {
+        clinicId: clinic.id,
+        coreBookingId: `call-${data.meeting_id ?? Date.now()}`,
+        patientName: `${body.data.first_name} ${body.data.last_name}`,
+        patientEmail: body.data.email,
+        patientPhone: body.data.phone ?? '',
+        treatment: 'Video Call',
+        slotStart,
+        slotEnd,
+        status: 'confirmed',
+        videoCallMeetingId: String(data.meeting_id ?? ''),
+        videoCallJoinUrl: data.join_url ?? null,
+        syncedFromCore: true,
+        lastSyncedAt: new Date(),
+        ...(patientClaims ? { patientId: patientClaims.id } : {}),
+      },
+    }).catch((err) => console.error('[call/booking] failed to mirror locally:', err))
 
     return NextResponse.json(data, { status: 201 })
   } catch (err) {

@@ -24,6 +24,7 @@ export default function Header() {
   const showSearch =
     normalizedPath !== "/" &&
     !normalizedPath.startsWith("/admin") &&
+    !normalizedPath.startsWith("/portal") &&
     !normalizedPath.includes("/search") &&
     normalizedPath !== "/clinics" &&
     normalizedPath !== "/practitioners" &&
