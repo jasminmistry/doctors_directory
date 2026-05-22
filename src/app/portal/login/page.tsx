@@ -1,9 +1,17 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Building2 } from 'lucide-react'
+
+type DevClaim = {
+  username: string
+  entityType: string
+  name: string
+  slug: string | null
+}
+
 
 export const dynamic = 'force-dynamic'
 
@@ -14,6 +22,42 @@ export default function PortalLoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isLocalhost, setIsLocalhost] = useState(false)
+  const [devClaims, setDevClaims] = useState<DevClaim[]>([])
+  const [devLoading, setDevLoading] = useState(false)
+
+  useEffect(() => {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      setIsLocalhost(true)
+      fetch('/directory/api/dev/portal-login')
+        .then((r) => r.json())
+        .then((data) => Array.isArray(data) && setDevClaims(data))
+        .catch(() => {})
+    }
+  }, [])
+
+  async function devLogin(devUsername?: string) {
+    setDevLoading(true)
+    try {
+      const res = await fetch('/directory/api/dev/portal-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: devUsername }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Dev login failed')
+        return
+      }
+      const next = searchParams.get('next') || '/portal'
+      router.push(next)
+      router.refresh()
+    } catch {
+      setError('Dev login failed')
+    } finally {
+      setDevLoading(false)
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -136,6 +180,43 @@ export default function PortalLoginPage() {
             Admin panel →
           </a>
         </p>
+
+        {isLocalhost && (
+          <div className="mt-6 rounded-md border border-dashed border-amber-400 bg-amber-50 p-4">
+            <p className="mb-3 text-center text-xs font-semibold uppercase tracking-wide text-amber-700">
+              Dev quick login
+            </p>
+            {devClaims.length === 0 ? (
+              <Button
+                type="button"
+                onClick={() => devLogin()}
+                disabled={devLoading}
+                className="w-full bg-amber-500 text-white hover:bg-amber-600"
+              >
+                {devLoading ? 'Logging in…' : 'Login as first approved user'}
+              </Button>
+            ) : (
+              <div className="space-y-1.5">
+                {devClaims.map((c) => (
+                  <button
+                    key={c.username}
+                    type="button"
+                    onClick={() => devLogin(c.username)}
+                    disabled={devLoading}
+                    className="w-full rounded-md border border-amber-300 bg-white px-3 py-2 text-left text-xs hover:bg-amber-100 disabled:opacity-50"
+                  >
+                    <span className="font-medium text-amber-900">{c.name || c.username}</span>
+                    {c.slug && (
+                      <span className="ml-2 text-amber-600">
+                        {c.entityType} · {c.slug}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
