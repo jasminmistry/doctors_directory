@@ -30,6 +30,7 @@ export default function Header() {
     normalizedPath !== "/" &&
     !normalizedPath.startsWith("/admin") &&
     !normalizedPath.startsWith("/portal") &&
+    !normalizedPath.startsWith("/account") &&
     !normalizedPath.includes("/search") &&
     normalizedPath !== "/clinics" &&
     normalizedPath !== "/practitioners" &&
@@ -111,10 +112,10 @@ export default function Header() {
             </div>
           </nav>
           <a
-            href={`${baseUrl}/book-demo`}
+            href="/directory/account/login"
             className="font-bold rounded-lg border-2 py-2 px-5 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white"
           >
-            BOOK DEMO
+            PATIENT SIGN IN
           </a>
         </div>
 
@@ -202,10 +203,11 @@ export default function Header() {
             </div>
           </nav>
           <a
-            href={`${baseUrl}/book-demo`}
+            href="/directory/account/login"
             className="mt-4 inline-flex font-bold rounded-lg border-2 py-3 px-6 border-black bg-transparent text-black hover:bg-black hover:text-white"
+            onClick={() => setMenuOpen(false)}
           >
-            BOOK DEMO
+            PATIENT SIGN IN
           </a>
         </div>
       )}

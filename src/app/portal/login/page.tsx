@@ -94,7 +94,7 @@ export default function PortalLoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-[#fff] px-4 py-8">
+    <div className="flex items-center justify-center bg-[var(--primary-bg-color)] min-h-[calc(100vh-72px)] px-4 py-8">
       <div className="w-full max-w-[22rem]">
         {/* Brand */}
         <div className="mb-8 text-center">
@@ -155,7 +155,7 @@ export default function PortalLoginPage() {
 
             <Button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-9 px-4 py-2 has-[>svg]:px-3 w-full bg-black border border-black text-white hover:cursor-pointer hover:bg-white hover:text-black"
+              className="w-full bg-black border border-black text-white hover:bg-white hover:text-black font-bold rounded-lg"
               disabled={loading}
             >
               {loading ? 'Signing in…' : 'Sign in'}

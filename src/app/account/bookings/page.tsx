@@ -30,50 +30,50 @@ export default function AccountBookingsPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
       </div>
     )
   }
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-bold text-white">Bookings</h1>
+      <h1 className="text-xl font-bold text-gray-900">Bookings</h1>
 
       {bookings.length === 0 ? (
-        <div className="rounded-xl bg-white/5 border border-white/10 px-6 py-10 text-center">
-          <CalendarDays className="h-8 w-8 text-slate-600 mx-auto mb-3" />
-          <p className="text-slate-400 text-sm">No bookings yet.</p>
+        <div className="rounded-xl bg-white border border-gray-200 px-6 py-10 text-center">
+          <CalendarDays className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-500 text-sm">No bookings yet.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {bookings.map((b) => (
             <Link
               key={b.id}
-              href={`/directory/account/bookings/${b.id}`}
-              className="block rounded-xl bg-white/5 border border-white/10 px-5 py-4 hover:bg-white/10 transition-colors"
+              href={`/account/bookings/${b.id}`}
+              className="block rounded-xl bg-white border border-gray-200 px-5 py-4 hover:border-gray-400 transition-colors"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-white truncate">{b.clinic.name}</p>
+                    <p className="text-sm font-semibold text-gray-900 truncate">{b.clinic.name}</p>
                     {b.videoCallMeetingId && (
-                      <span className="flex items-center gap-1 text-[10px] bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded-full shrink-0">
+                      <span className="flex items-center gap-1 text-[10px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full shrink-0">
                         <Video className="h-2.5 w-2.5" />
                         Video
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-gray-500 mt-0.5">
                     {b.treatment ?? 'Appointment'} · {format(new Date(b.slotStart), 'd MMM yyyy, HH:mm')}
                   </p>
                   {b.clinic.city && (
-                    <p className="text-xs text-slate-500 mt-0.5">{b.clinic.city}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{b.clinic.city}</p>
                   )}
                 </div>
                 <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
-                  b.status === 'confirmed' ? 'bg-green-500/20 text-green-400' :
-                  b.status === 'cancelled' ? 'bg-red-500/20 text-red-400' :
-                  'bg-slate-500/20 text-slate-400'
+                  b.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                  b.status === 'cancelled' ? 'bg-red-100 text-red-600' :
+                  'bg-gray-100 text-gray-500'
                 }`}>
                   {b.status}
                 </span>

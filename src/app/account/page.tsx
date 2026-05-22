@@ -41,15 +41,11 @@ export default function AccountDashboardPage() {
     fetch('/directory/api/patient/chats').then((r) => r.ok ? r.json() : null).then((d) => setSessions(d?.sessions?.slice(0, 3) ?? []))
   }, [])
 
-  const displayName = patient
-    ? [patient.firstName, patient.lastName].filter(Boolean).join(' ') || patient.email
-    : '...'
-
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Welcome back{patient?.firstName ? `, ${patient.firstName}` : ''}</h1>
-        <p className="text-sm text-slate-400 mt-1">{patient?.email ?? ''}</p>
+        <h1 className="text-2xl font-bold text-gray-900">Welcome back{patient?.firstName ? `, ${patient.firstName}` : ''}</h1>
+        <p className="text-sm text-gray-500 mt-1">{patient?.email ?? ''}</p>
       </div>
 
       {/* Quick stats */}
@@ -61,14 +57,14 @@ export default function AccountDashboardPage() {
         ].map(({ icon: Icon, label, count, href }) => (
           <Link
             key={href}
-            href={`/directory${href}`}
-            className="flex flex-col items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-4 py-5 hover:bg-white/10 transition-colors"
+            href={href}
+            className="flex flex-col items-center gap-2 rounded-xl bg-white border border-gray-200 px-4 py-5 hover:border-gray-400 transition-colors"
           >
-            <Icon className="h-5 w-5 text-slate-400" />
+            <Icon className="h-5 w-5 text-gray-400" />
             {count !== null && (
-              <span className="text-2xl font-bold text-white">{count}</span>
+              <span className="text-2xl font-bold text-gray-900">{count}</span>
             )}
-            <span className="text-xs text-slate-400">{label}</span>
+            <span className="text-xs text-gray-500">{label}</span>
           </Link>
         ))}
       </div>
@@ -77,8 +73,8 @@ export default function AccountDashboardPage() {
       {bookings.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">Recent Bookings</h2>
-            <Link href="/directory/account/bookings" className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Recent Bookings</h2>
+            <Link href="/account/bookings" className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700">
               View all <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
@@ -86,14 +82,14 @@ export default function AccountDashboardPage() {
             {bookings.map((b) => (
               <Link
                 key={b.id}
-                href={`/directory/account/bookings/${b.id}`}
-                className="flex items-center justify-between rounded-xl bg-white/5 border border-white/10 px-4 py-3 hover:bg-white/10 transition-colors"
+                href={`/account/bookings/${b.id}`}
+                className="flex items-center justify-between rounded-xl bg-white border border-gray-200 px-4 py-3 hover:border-gray-400 transition-colors"
               >
                 <div>
-                  <p className="text-sm font-medium text-white">{b.clinic.name}</p>
-                  <p className="text-xs text-slate-400">{b.treatment ?? 'Appointment'} · {format(new Date(b.slotStart), 'd MMM yyyy, HH:mm')}</p>
+                  <p className="text-sm font-medium text-gray-900">{b.clinic.name}</p>
+                  <p className="text-xs text-gray-500">{b.treatment ?? 'Appointment'} · {format(new Date(b.slotStart), 'd MMM yyyy, HH:mm')}</p>
                 </div>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${b.status === 'confirmed' ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${b.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                   {b.status}
                 </span>
               </Link>
@@ -106,8 +102,8 @@ export default function AccountDashboardPage() {
       {sessions.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">Recent Consultations</h2>
-            <Link href="/directory/account/chats" className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Recent Consultations</h2>
+            <Link href="/account/chats" className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700">
               View all <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
@@ -115,16 +111,16 @@ export default function AccountDashboardPage() {
             {sessions.map((s) => (
               <Link
                 key={s.id}
-                href={`/directory/account/chats/${s.id}`}
-                className="flex items-center justify-between rounded-xl bg-white/5 border border-white/10 px-4 py-3 hover:bg-white/10 transition-colors"
+                href={`/account/chats/${s.id}`}
+                className="flex items-center justify-between rounded-xl bg-white border border-gray-200 px-4 py-3 hover:border-gray-400 transition-colors"
               >
                 <div>
-                  <p className="text-sm font-medium text-white">{s.clinic.name}</p>
-                  <p className="text-xs text-slate-400 truncate max-w-[280px]">
+                  <p className="text-sm font-medium text-gray-900">{s.clinic.name}</p>
+                  <p className="text-xs text-gray-500 truncate max-w-[280px]">
                     {s.messages[0]?.content ?? 'No messages yet'}
                   </p>
                 </div>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${s.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${s.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                   {s.status}
                 </span>
               </Link>
@@ -134,9 +130,9 @@ export default function AccountDashboardPage() {
       )}
 
       {bookings.length === 0 && sessions.length === 0 && (
-        <div className="rounded-xl bg-white/5 border border-white/10 px-6 py-10 text-center">
-          <p className="text-slate-400 text-sm">No activity yet.</p>
-          <p className="text-slate-500 text-xs mt-1">Book a consultation or appointment to get started.</p>
+        <div className="rounded-xl bg-white border border-gray-200 px-6 py-10 text-center">
+          <p className="text-gray-500 text-sm">No activity yet.</p>
+          <p className="text-gray-400 text-xs mt-1">Book a consultation or appointment to get started.</p>
         </div>
       )}
     </div>

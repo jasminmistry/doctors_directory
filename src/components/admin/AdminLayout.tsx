@@ -77,13 +77,13 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-white/10 bg-gray-950 px-4 py-3 lg:hidden">
-        <h1 className="text-base font-semibold text-white">{title}</h1>
+    <div className="min-h-screen bg-[var(--primary-bg-color)]">
+      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
+        <h1 className="text-base font-semibold text-gray-900">{title}</h1>
         <button
           type="button"
           onClick={() => setIsMobileNavOpen((open) => !open)}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/15 text-gray-200"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-300 text-gray-600"
           aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMobileNavOpen}
         >
@@ -94,36 +94,27 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
       {isMobileNavOpen ? (
         <button
           type="button"
-          className="fixed inset-0 z-20 bg-black/40 lg:hidden"
+          className="fixed inset-0 z-20 bg-black/30 lg:hidden"
           onClick={() => setIsMobileNavOpen(false)}
           aria-label="Close navigation"
         />
       ) : null}
 
       <div className="flex w-full lg:min-h-screen">
-      {/* Sidebar */}
+        {/* Sidebar */}
         <aside
           className={cn(
-            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-gray-950 text-white transition-transform duration-200 lg:sticky lg:top-0 lg:h-[100svh] lg:w-56 lg:translate-x-0',
+            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-[var(--primary-bg-color)] border-r border-[#D4CFC5] transition-transform duration-200 lg:sticky lg:top-0 lg:h-[100svh] lg:w-56 lg:translate-x-0',
             isMobileNavOpen ? 'translate-x-0' : '-translate-x-full'
           )}
         >
-        {/* Brand */}
-          <div className="shrink-0 border-b border-white/10 px-4 py-4">
-            <div className="rounded-xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent px-3.5 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-                  Consentz
-                </span>
-                <span className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-2 py-0.5 text-[10px] font-medium text-cyan-100">
-                  v2
-                </span>
-              </div>
-              <div className="mt-1.5 text-lg font-semibold leading-tight text-white">Admin Console</div>
-            </div>
+          {/* Brand */}
+          <div className="shrink-0 border-b border-[#D4CFC5] px-4 py-4">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Consentz</p>
+            <p className="mt-1 text-sm font-bold text-gray-900">Admin Console</p>
           </div>
 
-        {/* Nav */}
+          {/* Nav */}
           <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
             {NAV.map((item) => {
               if ('children' in item) {
@@ -133,7 +124,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                   <div key={item.label}>
                     <div className={cn(
                       'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider',
-                      isGroupActive ? 'text-white' : 'text-gray-500'
+                      isGroupActive ? 'text-gray-900' : 'text-gray-400'
                     )}>
                       <Icon className="h-3.5 w-3.5 shrink-0" />
                       {item.label}
@@ -151,8 +142,8 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                             className={cn(
                               'flex items-center px-3 py-1.5 rounded-lg text-sm transition-colors',
                               pathname.startsWith(child.href)
-                                ? 'bg-white/10 text-white font-medium'
-                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                ? 'bg-black text-white font-medium'
+                                : 'text-gray-600 hover:bg-[#E8E3D8] hover:text-gray-900'
                             )}
                           >
                             {child.label}
@@ -178,8 +169,8 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                   className={cn(
                     'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     active
-                      ? 'bg-white/10 text-white'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-black text-white'
+                      : 'text-gray-600 hover:bg-[#E8E3D8] hover:text-gray-900'
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
@@ -189,13 +180,13 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
               )
             })}
 
-            <div className="my-2 mx-1 border-t border-white/10" />
+            <div className="my-2 mx-1 border-t border-[#D4CFC5]" />
             <Link
               href="/"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setIsMobileNavOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-500 hover:bg-[#E8E3D8] hover:text-gray-900 transition-colors"
             >
               <Globe className="h-4 w-4 shrink-0" />
               <span className="flex-1">View Directory</span>
@@ -203,7 +194,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
             </Link>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               Sign out
@@ -211,8 +202,8 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
           </nav>
         </aside>
 
-      {/* Main */}
-        <div className="min-w-0 flex-1 flex flex-col bg-gray-50">
+        {/* Main */}
+        <div className="min-w-0 flex-1 flex flex-col bg-[var(--primary-bg-color)]">
           <div
             role="banner"
             className="sticky top-0 z-10 hidden border-b border-gray-200 bg-white px-6 py-3.5 lg:block"

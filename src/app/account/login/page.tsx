@@ -56,7 +56,7 @@ export default function AccountLoginPage() {
         setError(data.error ?? 'Invalid code')
         return
       }
-      const next = searchParams.get('next') || '/directory/account'
+      const next = searchParams.get('next') || '/account'
       router.push(next)
       router.refresh()
     } catch {
@@ -67,27 +67,27 @@ export default function AccountLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4">
+    <div className="flex items-center justify-center bg-[var(--primary-bg-color)] min-h-[calc(100vh-72px)] px-4 py-8">
       <div className="w-full max-w-[22rem]">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
-            <UserCircle className="h-6 w-6 text-white" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-black/10 ring-1 ring-black/10">
+            <UserCircle className="h-6 w-6 text-black" />
           </div>
-          <h1 className="text-2xl font-bold text-white">My Account</h1>
-          <p className="mt-1.5 text-sm text-slate-400">
+          <h1 className="text-2xl font-bold text-black">My Account</h1>
+          <p className="mt-1.5 text-sm text-slate-600">
             {step === 'email'
               ? 'Enter your email to receive a login code'
               : `We sent a 6-digit code to ${email}`}
           </p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+        <div className="p-6 bg-white border border-[#C4C4C4] rounded-md">
           {step === 'email' ? (
             <form onSubmit={handleRequestOtp} className="space-y-4">
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.06em] text-slate-400"
+                  className="mb-2 block text-base font-medium text-black"
                 >
                   Email address
                 </label>
@@ -98,20 +98,20 @@ export default function AccountLoginPage() {
                   autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-slate-500 transition focus:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/10"
+                  className="w-full px-3 py-2 text-base border rounded-md bg-white"
                   placeholder="you@example.com"
                 />
               </div>
 
               {error && (
-                <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+                <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">
                   {error}
                 </p>
               )}
 
               <Button
                 type="submit"
-                className="h-10 w-full rounded-lg bg-white text-sm font-semibold text-slate-900 hover:bg-slate-100"
+                className="w-full bg-black border border-black text-white hover:bg-white hover:text-black"
                 disabled={loading}
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send login code'}
@@ -122,7 +122,7 @@ export default function AccountLoginPage() {
               <div>
                 <label
                   htmlFor="otp"
-                  className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.06em] text-slate-400"
+                  className="mb-2 block text-base font-medium text-black"
                 >
                   Login code
                 </label>
@@ -137,20 +137,20 @@ export default function AccountLoginPage() {
                   autoComplete="one-time-code"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-center text-xl tracking-[0.5em] font-mono text-white placeholder:text-slate-500 transition focus:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/10"
+                  className="w-full px-3 py-2.5 text-center text-xl tracking-[0.5em] font-mono border rounded-md bg-white"
                   placeholder="000000"
                 />
               </div>
 
               {error && (
-                <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+                <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">
                   {error}
                 </p>
               )}
 
               <Button
                 type="submit"
-                className="h-10 w-full rounded-lg bg-white text-sm font-semibold text-slate-900 hover:bg-slate-100"
+                className="w-full bg-black border border-black text-white hover:bg-white hover:text-black"
                 disabled={loading || otp.length !== 6}
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Sign in'}
@@ -158,7 +158,7 @@ export default function AccountLoginPage() {
 
               <button
                 type="button"
-                className="w-full text-center text-xs text-slate-500 hover:text-slate-300 transition-colors"
+                className="w-full text-center text-xs text-slate-500 hover:text-slate-700 transition-colors"
                 onClick={() => { setStep('email'); setOtp(''); setError('') }}
               >
                 Use a different email

@@ -37,7 +37,6 @@ export default function ChatDetailPage() {
   const lastCreatedAt = useRef<string | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // Load initial messages
   useEffect(() => {
     fetch(`/directory/api/patient/chats/${id}/messages`)
       .then((r) => {
@@ -55,12 +54,10 @@ export default function ChatDetailPage() {
       .finally(() => setLoading(false))
   }, [id])
 
-  // Scroll to bottom on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // Poll for new messages
   const poll = useCallback(async () => {
     const params = lastCreatedAt.current ? `?since=${encodeURIComponent(lastCreatedAt.current)}` : ''
     try {
@@ -106,7 +103,7 @@ export default function ChatDetailPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
       </div>
     )
   }
@@ -114,10 +111,10 @@ export default function ChatDetailPage() {
   if (notFound || !session) {
     return (
       <div className="max-w-lg space-y-4">
-        <Link href="/directory/account/chats" className="flex items-center gap-1 text-xs text-slate-400 hover:text-white">
+        <Link href="/account/chats" className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900">
           <ArrowLeft className="h-3.5 w-3.5" /> Back
         </Link>
-        <p className="text-slate-400">Conversation not found.</p>
+        <p className="text-gray-500">Conversation not found.</p>
       </div>
     )
   }
@@ -128,14 +125,14 @@ export default function ChatDetailPage() {
     <div className="max-w-2xl flex flex-col" style={{ height: 'calc(100dvh - 8rem)' }}>
       {/* Header */}
       <div className="shrink-0 flex items-center gap-3 mb-4">
-        <Link href="/directory/account/chats" className="text-slate-400 hover:text-white">
+        <Link href="/account/chats" className="text-gray-400 hover:text-gray-900">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
-          <p className="text-sm font-semibold text-white">{session.clinic.name}</p>
+          <p className="text-sm font-semibold text-gray-900">{session.clinic.name}</p>
           <span className={cn(
             'text-[10px] px-2 py-0.5 rounded-full',
-            isClosed ? 'bg-slate-500/20 text-slate-400' : 'bg-green-500/20 text-green-400',
+            isClosed ? 'bg-gray-100 text-gray-500' : 'bg-green-100 text-green-700',
           )}>
             {session.status}
           </span>
@@ -143,23 +140,23 @@ export default function ChatDetailPage() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto rounded-xl bg-white/5 border border-white/10 p-4 space-y-3 min-h-0">
+      <div className="flex-1 overflow-y-auto rounded-xl bg-white border border-gray-200 p-4 space-y-3 min-h-0">
         {messages.length === 0 && (
-          <p className="text-xs text-slate-500 text-center py-8">No messages yet</p>
+          <p className="text-xs text-gray-400 text-center py-8">No messages yet</p>
         )}
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={cn('flex flex-col gap-0.5', msg.sender === 'patient' ? 'items-end' : 'items-start')}
           >
-            <span className="text-[10px] text-slate-500 px-1">
+            <span className="text-[10px] text-gray-400 px-1">
               {msg.sender === 'patient' ? 'You' : session.clinic.name}
             </span>
             <div className={cn(
               'max-w-[80%] rounded-2xl px-3.5 py-2 text-sm',
               msg.sender === 'patient'
-                ? 'bg-white text-slate-900 rounded-br-sm'
-                : 'bg-white/10 text-white rounded-bl-sm',
+                ? 'bg-black text-white rounded-br-sm'
+                : 'bg-gray-100 text-gray-900 rounded-bl-sm',
             )}>
               {msg.content}
             </div>
@@ -170,11 +167,11 @@ export default function ChatDetailPage() {
 
       {/* Input */}
       {isClosed ? (
-        <p className="mt-3 text-center text-xs text-slate-500">This consultation has been closed.</p>
+        <p className="mt-3 text-center text-xs text-gray-400">This consultation has been closed.</p>
       ) : (
         <div className="shrink-0 mt-3 flex items-center gap-2">
           <Input
-            className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+            className="flex-1 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
             placeholder="Type a message…"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
@@ -183,7 +180,7 @@ export default function ChatDetailPage() {
           />
           <Button
             size="icon"
-            className="shrink-0 bg-white text-slate-900 hover:bg-slate-100"
+            className="shrink-0 bg-black text-white hover:bg-gray-800"
             disabled={!draft.trim() || sending}
             onClick={handleSend}
             aria-label="Send"

@@ -38,7 +38,7 @@ export default function BookingDetailPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
       </div>
     )
   }
@@ -46,10 +46,10 @@ export default function BookingDetailPage() {
   if (notFound || !booking) {
     return (
       <div className="max-w-lg space-y-4">
-        <Link href="/directory/account/bookings" className="flex items-center gap-1 text-xs text-slate-400 hover:text-white">
+        <Link href="/account/bookings" className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900">
           <ArrowLeft className="h-3.5 w-3.5" /> Back to bookings
         </Link>
-        <p className="text-slate-400">Booking not found.</p>
+        <p className="text-gray-500">Booking not found.</p>
       </div>
     )
   }
@@ -59,21 +59,21 @@ export default function BookingDetailPage() {
 
   return (
     <div className="max-w-lg space-y-6">
-      <Link href="/directory/account/bookings" className="flex items-center gap-1 text-xs text-slate-400 hover:text-white">
+      <Link href="/account/bookings" className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900">
         <ArrowLeft className="h-3.5 w-3.5" /> Back to bookings
       </Link>
 
-      <div className="rounded-xl bg-white/5 border border-white/10 p-6 space-y-5">
+      <div className="rounded-xl bg-white border border-gray-200 p-6 space-y-5">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h1 className="text-lg font-bold text-white">{booking.clinic.name}</h1>
-            <p className="text-sm text-slate-400">{booking.treatment ?? 'Appointment'}</p>
+            <h1 className="text-lg font-bold text-gray-900">{booking.clinic.name}</h1>
+            <p className="text-sm text-gray-500">{booking.treatment ?? 'Appointment'}</p>
           </div>
           <span className={`text-xs px-2.5 py-1 rounded-full shrink-0 font-medium ${
-            booking.status === 'confirmed' ? 'bg-green-500/20 text-green-400' :
-            booking.status === 'cancelled' ? 'bg-red-500/20 text-red-400' :
-            booking.status === 'completed' ? 'bg-blue-500/20 text-blue-400' :
-            'bg-slate-500/20 text-slate-400'
+            booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+            booking.status === 'cancelled' ? 'bg-red-100 text-red-600' :
+            booking.status === 'completed' ? 'bg-blue-100 text-blue-600' :
+            'bg-gray-100 text-gray-500'
           }`}>
             {booking.status}
           </span>
@@ -81,11 +81,11 @@ export default function BookingDetailPage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="flex items-start gap-2">
-            <CalendarDays className="h-4 w-4 text-slate-500 mt-0.5 shrink-0" />
+            <CalendarDays className="h-4 w-4 text-gray-400 mt-0.5 shrink-0" />
             <div>
-              <p className="text-xs text-slate-500">Date & time</p>
-              <p className="text-sm text-white">{format(new Date(booking.slotStart), 'd MMM yyyy')}</p>
-              <p className="text-sm text-white">
+              <p className="text-xs text-gray-400">Date & time</p>
+              <p className="text-sm text-gray-900">{format(new Date(booking.slotStart), 'd MMM yyyy')}</p>
+              <p className="text-sm text-gray-900">
                 {format(new Date(booking.slotStart), 'HH:mm')} – {format(new Date(booking.slotEnd), 'HH:mm')}
               </p>
             </div>
@@ -93,20 +93,20 @@ export default function BookingDetailPage() {
 
           {booking.clinic.city && (
             <div className="flex items-start gap-2">
-              <MapPin className="h-4 w-4 text-slate-500 mt-0.5 shrink-0" />
+              <MapPin className="h-4 w-4 text-gray-400 mt-0.5 shrink-0" />
               <div>
-                <p className="text-xs text-slate-500">Location</p>
-                <p className="text-sm text-white">{booking.clinic.city}</p>
+                <p className="text-xs text-gray-400">Location</p>
+                <p className="text-sm text-gray-900">{booking.clinic.city}</p>
               </div>
             </div>
           )}
         </div>
 
         {isVideoCall && (
-          <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 p-4 space-y-3">
+          <div className="rounded-lg bg-blue-50 border border-blue-200 p-4 space-y-3">
             <div className="flex items-center gap-2">
-              <Video className="h-4 w-4 text-blue-400" />
-              <p className="text-sm font-medium text-blue-300">Video consultation</p>
+              <Video className="h-4 w-4 text-blue-500" />
+              <p className="text-sm font-medium text-blue-700">Video consultation</p>
             </div>
             {canJoin ? (
               <a href={booking.videoCallJoinUrl!} target="_blank" rel="noopener noreferrer">
@@ -116,15 +116,15 @@ export default function BookingDetailPage() {
                 </Button>
               </a>
             ) : (
-              <p className="text-xs text-slate-400">The join link will appear here when your appointment starts.</p>
+              <p className="text-xs text-gray-500">The join link will appear here when your appointment starts.</p>
             )}
           </div>
         )}
 
         {booking.notes && (
           <div>
-            <p className="text-xs text-slate-500 mb-1">Notes</p>
-            <p className="text-sm text-slate-300">{booking.notes}</p>
+            <p className="text-xs text-gray-400 mb-1">Notes</p>
+            <p className="text-sm text-gray-700">{booking.notes}</p>
           </div>
         )}
       </div>
