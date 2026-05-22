@@ -14,7 +14,7 @@ interface FormSectionProps {
 
 export function FormSection({ title, description, icon: Icon, children, className }: FormSectionProps) {
   return (
-    <div className={cn('bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden', className)}>
+    <div className={cn('bg-white rounded-md border border-gray-200 overflow-hidden', className)}>
       <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
         {Icon && (
           <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">

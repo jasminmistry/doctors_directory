@@ -58,7 +58,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-[var(--primary-bg-color)]">
       {/* Mobile topbar */}
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
-        <span className="text-sm font-semibold text-gray-900 truncate">My Account</span>
+        <span className="text-sm font-semibold text-gray-300 truncate">My Account</span>
         <button
           type="button"
           onClick={() => setIsMobileNavOpen((o) => !o)}
@@ -83,14 +83,14 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
         {/* Sidebar */}
         <aside
           className={cn(
-            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-[var(--primary-bg-color)] border-r border-[#D4CFC5] transition-transform duration-200 lg:sticky lg:top-0 lg:h-[100svh] lg:w-56 lg:translate-x-0',
+            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-[#262422] border-r border-[#D4CFC5] transition-transform duration-200 lg:sticky lg:top-0 lg:h-[100svh] lg:w-56 lg:translate-x-0',
             isMobileNavOpen ? 'translate-x-0' : '-translate-x-full',
           )}
         >
           {/* Brand */}
           <div className="shrink-0 border-b border-[#D4CFC5] px-4 py-4">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">My Account</p>
-            <p className="mt-1 text-sm font-bold text-gray-900 truncate">{displayName || '…'}</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-300">My Account</p>
+            <p className="mt-1 text-sm font-bold text-white truncate">{displayName || '…'}</p>
           </div>
 
           {/* Nav */}
@@ -106,7 +106,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
                     'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     active
                       ? 'bg-black text-white'
-                      : 'text-gray-600 hover:bg-[#E8E3D8] hover:text-gray-900',
+                      : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900',
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
