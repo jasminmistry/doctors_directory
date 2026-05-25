@@ -67,7 +67,7 @@ export default function AccountLoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-[var(--primary-bg-color)] min-h-[calc(100vh-72px)] px-4 py-8">
+    <div className="flex items-center justify-center bg-white px-4 py-20">
       <div className="w-full max-w-[22rem]">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-black/10 ring-1 ring-black/10">

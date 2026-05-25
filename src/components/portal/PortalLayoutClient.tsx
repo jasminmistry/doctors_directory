@@ -63,7 +63,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
   }
 
   return (
-    <div className="min-h-screen bg-[var(--primary-bg-color)]">
+    <div className="min-h-screen bg-[var(--primary-bg-color)] bg-white">
       {/* Mobile topbar */}
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
         <span className="text-sm font-semibold text-gray-900 truncate">{entityName || 'My Portal'}</span>
@@ -101,18 +101,18 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
         />
       )}
 
-      <div className="flex w-full lg:min-h-screen">
+      <div className="flex items-start max-w-7xl px-4 mx-auto py-8 lg:min-h-screen">
         {/* Sidebar */}
         <aside
           className={cn(
-            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-[var(--primary-bg-color)] border-r border-[#D4CFC5] transition-transform duration-200 lg:sticky lg:top-0 lg:h-[100svh] lg:w-56 lg:translate-x-0',
+            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-[#262422] border-r border-[#D4CFC5] transition-transform duration-200 rounded-md lg:sticky lg:top-0 lg:w-56 lg:translate-x-0',
             isMobileNavOpen ? 'translate-x-0' : '-translate-x-full',
           )}
         >
           {/* Brand */}
-          <div className="shrink-0 border-b border-[#D4CFC5] px-4 py-4">
+          <div className="shrink-0 border-b border-[#5b5b5b] px-4 py-4">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Consentz Portal</p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-300">Consentz Portal</p>
               {plan && (
                 <span className={cn(
                   'rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border',
@@ -124,7 +124,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
                 </span>
               )}
             </div>
-            <p className="mt-1 text-sm font-bold text-gray-900 truncate">{entityName || 'My Portal'}</p>
+            <p className="mt-1 text-sm font-bold text-white truncate">{entityName || 'My Portal'}</p>
           </div>
 
           {/* Nav */}
@@ -138,7 +138,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
                   onClick={() => setIsMobileNavOpen(false)}
                   className={cn(
                     'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                    active ? 'bg-black text-white' : 'text-gray-600 hover:bg-[#E8E3D8] hover:text-gray-900',
+                    active ? 'bg-black text-white' : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900',
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
@@ -149,7 +149,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
 
             {entityType === 'clinic' && (
               <>
-                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
+                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-300">
                   Marketing
                 </p>
                 <Link
@@ -159,7 +159,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
                     'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     pathname.startsWith('/portal/clinic/prospects')
                       ? 'bg-black text-white'
-                      : 'text-gray-600 hover:bg-[#E8E3D8] hover:text-gray-900',
+                      : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900',
                   )}
                 >
                   <Inbox className="h-4 w-4 shrink-0" />
@@ -186,7 +186,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
                       'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                       pathname.startsWith('/portal/clinic/calendar')
                         ? 'bg-black text-white'
-                        : 'text-gray-600 hover:bg-[#E8E3D8] hover:text-gray-900',
+                        : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900',
                     )}
                   >
                     <CalendarDays className="h-4 w-4 shrink-0" />
@@ -201,7 +201,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
                     'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     pathname.startsWith('/portal/clinic/chat')
                       ? 'bg-black text-white'
-                      : 'text-gray-600 hover:bg-[#E8E3D8] hover:text-gray-900',
+                      : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900',
                   )}
                 >
                   <MessageSquare className="h-4 w-4 shrink-0" />
@@ -211,21 +211,21 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
               </>
             )}
 
-            <div className="my-2 mx-1 border-t border-[#D4CFC5]" />
+            <div className="my-2 mx-1 border-t border-[#5b5b5b]" />
             <Link
               href="/"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setIsMobileNavOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-500 hover:bg-[#E8E3D8] hover:text-gray-900 transition-colors"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-white hover:bg-[#E8E3D8] hover:text-gray-900 transition-colors"
             >
               <Globe className="h-4 w-4 shrink-0" />
               <span className="flex-1">View Directory</span>
-              <ExternalLink className="h-3 w-3 opacity-40" />
+              <ExternalLink className="h-3 w-3 opacity-80" />
             </Link>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-white hover:text-red-600 hover:bg-red-50 transition-colors"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               Sign out
@@ -234,8 +234,8 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
         </aside>
 
         {/* Main */}
-        <div className="min-w-0 flex-1 flex flex-col bg-[var(--primary-bg-color)]">
-          <main className="flex-1 p-4 sm:p-6">{children}</main>
+        <div className="min-w-0 flex-1 flex flex-col">
+          <main className="flex-1 px-4 pt-0 pb-0">{children}</main>
         </div>
       </div>
 

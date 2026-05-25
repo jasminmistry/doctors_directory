@@ -72,17 +72,17 @@ export default function PortalPractitionerPage() {
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
       {/* Subscription card */}
       {subscription && (
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Subscription</h2>
+        <div className="rounded-md border border-gray-200 bg-white p-5">
+          <h2 className="text-sm font-semibold text-black uppercase tracking-wide mb-4">Subscription</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div>
-              <p className="text-xs text-gray-400 mb-0.5">Plan</p>
+              <p className="text-xs text-gray-600 mb-0.5">Plan</p>
               <p className="font-semibold text-gray-900">
                 {PLAN_LABELS[subscription.plan ?? ''] ?? subscription.plan ?? '—'}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-400 mb-0.5">Status</p>
+              <p className="text-xs text-gray-600 mb-0.5">Status</p>
               <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
                 Active
@@ -90,7 +90,7 @@ export default function PortalPractitionerPage() {
             </div>
             {subscription.approvedAt && (
               <div>
-                <p className="text-xs text-gray-400 mb-0.5">Member since</p>
+                <p className="text-xs text-gray-600 mb-0.5">Member since</p>
                 <p className="text-sm text-gray-700">
                   {new Date(subscription.approvedAt).toLocaleDateString('en-GB', {
                     day: '2-digit', month: 'short', year: 'numeric',
@@ -100,7 +100,7 @@ export default function PortalPractitionerPage() {
             )}
             {subscription.stripeSubscriptionId && (
               <div className="col-span-2 sm:col-span-3">
-                <p className="text-xs text-gray-400 mb-0.5">Subscription ID</p>
+                <p className="text-xs text-gray-600 mb-0.5">Subscription ID</p>
                 <p className="text-xs text-gray-500 font-mono">{subscription.stripeSubscriptionId}</p>
               </div>
             )}
@@ -137,7 +137,7 @@ export default function PortalPractitionerPage() {
 
       {/* ID Verification */}
       {idVerified === false && entitySlug && (
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="rounded-md border border-gray-200 bg-white p-5">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Identity Verification</h2>
           <p className="text-sm text-gray-600 mb-4">
             Verify your identity to display an &ldquo;ID Verified&rdquo; badge on your profile, building trust with potential patients.

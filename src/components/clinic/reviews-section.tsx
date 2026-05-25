@@ -30,7 +30,7 @@ function StarRow({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' }
   return (
     <div className="flex">
       {Array.from({ length: 5 }, (_, i) => (
-        <Star key={i} className={cn(cls, i < rating ? 'fill-amber-400 text-amber-400' : 'text-gray-200')} />
+        <Star key={i} className={cn(cls, i < rating ? 'fill-black text-black' : 'text-gray-200')} />
       ))}
     </div>
   )
@@ -51,7 +51,7 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
             onClick={() => onChange(v)}
             className="focus:outline-none"
           >
-            <Star className={cn('h-7 w-7 transition-colors', (hover || value) >= v ? 'fill-amber-400 text-amber-400' : 'text-gray-300')} />
+            <Star className={cn('h-7 w-7 transition-colors', (hover || value) >= v ? 'fill-black text-black' : 'text-gray-300')} />
           </button>
         )
       })}
@@ -155,7 +155,7 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
               Cancel
             </button>
             <button type="submit" disabled={submitting || rating === 0 || text.trim().length < 10 || !name.trim()}
-              className="flex-1 rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors">
+              className="flex-1 rounded-lg bg-black px-3 py-2 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors">
               {submitting ? 'Submitting…' : 'Submit review'}
             </button>
           </div>

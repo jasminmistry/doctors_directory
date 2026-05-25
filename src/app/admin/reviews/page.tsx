@@ -23,7 +23,7 @@ function Stars({ rating }: { rating: number }) {
   return (
     <div className="flex">
       {Array.from({ length: 5 }, (_, i) => (
-        <Star key={i} className={cn('h-3.5 w-3.5', i < rating ? 'fill-amber-400 text-amber-400' : 'text-gray-200')} />
+        <Star key={i} className={cn('h-3.5 w-3.5', i < rating ? 'fill-black text-black' : 'text-gray-200')} />
       ))}
     </div>
   )
