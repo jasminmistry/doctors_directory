@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { COOKIE_TOKEN } from '@/lib/auth'
 import { isClinicScheduleConfigured, SCHEDULE_NOT_CONFIGURED_RESPONSE } from '@/lib/schedule-check'
 import { getPatientClaims } from '@/lib/patient-auth'
+import { getConsentzToken, generateConsentzPassword, initConsentzPatient } from '@/lib/patient-consentz'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -48,6 +49,23 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid request', issues: body.error.issues }, { status: 400 })
     }
 
+    // Resolve logged-in patient for token-linked booking
+    const patientClaims = getPatientClaims(req)
+    const patient = patientClaims
+      ? await prisma.patient.findUnique({ where: { id: patientClaims.id } })
+      : null
+
+    let pendingPassword: string | null = null
+    let patientToken: string | null = null
+
+    if (patient) {
+      if (patient.consentzPassword) {
+        patientToken = await getConsentzToken(patient)
+      } else {
+        pendingPassword = generateConsentzPassword()
+      }
+    }
+
     const sessionToken = req.cookies.get(COOKIE_TOKEN)?.value
     const res = await fetch(
       `${getCoreLiteBase()}/clinics/${clinic.coreClinicId}/call-booking`,
@@ -57,7 +75,11 @@ export async function POST(
           'Content-Type': 'application/json',
           ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),
         },
-        body: JSON.stringify(body.data),
+        body: JSON.stringify({
+          ...body.data,
+          ...(patientToken ? { patient_token: patientToken } : {}),
+          ...(pendingPassword ? { patient_password: pendingPassword } : {}),
+        }),
       },
     )
 
@@ -68,8 +90,14 @@ export async function POST(
       return NextResponse.json({ error: data?.message ?? 'Booking failed' }, { status: res.status })
     }
 
+    // Acquire Consentz tokens now that the account exists (first booking only)
+    if (patient && pendingPassword) {
+      initConsentzPatient(patient.id, body.data.email, pendingPassword).catch(
+        (err) => console.error('[call/booking] initConsentzPatient failed:', err),
+      )
+    }
+
     // Mirror into local DB so the patient dashboard can show it
-    const patientClaims = getPatientClaims(req)
     const slotStart = new Date(`${body.data.slot_start.replace(' ', 'T')}+00:00`)
     const slotEnd = new Date(`${body.data.slot_end.replace(' ', 'T')}+00:00`)
     prisma.booking.create({
@@ -87,7 +115,7 @@ export async function POST(
         videoCallJoinUrl: data.join_url ?? null,
         syncedFromCore: true,
         lastSyncedAt: new Date(),
-        ...(patientClaims ? { patientId: patientClaims.id } : {}),
+        ...(patient ? { patientId: patient.id } : {}),
       },
     }).catch((err) => console.error('[call/booking] failed to mirror locally:', err))
 

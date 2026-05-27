@@ -4,8 +4,22 @@ import { HeroSection } from "@/components/hero-section";
 import LogoLoop from "./LogoLoop";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Handshake, ChartBarDecreasing, CircleCheck } from "lucide-react";
+import { Handshake, ChartBarDecreasing, CircleCheck, MapPin } from "lucide-react";
 import { Card } from "./ui/card";
+import { cleanRouteSlug } from "@/lib/utils";
+import { FallbackImage, DEFAULT_PERSON } from "@/components/ui/fallback-image";
+
+export interface FeaturedClinic {
+  slug: string
+  name: string
+  image: string
+  rating: number
+  reviewCount: number
+  category: string
+  gmapsAddress: string
+  City: string
+  Treatments: string[]
+}
 
 const cityList = [
   "Aberaeron",
@@ -880,7 +894,7 @@ const faqData = [
 
 const ITEMS_PER_PAGE = 9;
 
-export default function HomePage() {
+export default function HomePage({ featuredClinics = [] }: { featuredClinics?: FeaturedClinic[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleFAQ = (index: number | null) => {
@@ -1103,264 +1117,84 @@ export default function HomePage() {
       </section>
 
       {/* Featured cards */}
-      <section className="py-15 md:py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="md:bg--(--primary-bg-color) grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <article className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
-                  <img
-                    src="/directory/images/Eyes Treatment.webp"
-                    alt="K Trichology"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+      {featuredClinics.length > 0 && (
+        <section className="py-15 md:py-20">
+          <div className="max-w-7xl mx-auto px-6">
+            <h2 className="text-xl md:text-4xl font-bold text-center mb-10">
+              Featured Clinics
+            </h2>
+            <div className="md:bg--(--primary-bg-color) grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {featuredClinics.map((clinic) => {
+                const citySlug = cleanRouteSlug(clinic.City)
+                const href = `/${citySlug}/clinic/${clinic.slug}`
+                const filledStars = Math.round(clinic.rating)
+                const visibleTreatments = clinic.Treatments.slice(0, 2)
+                const extraCount = clinic.Treatments.length - visibleTreatments.length
+                return (
+                  <article key={clinic.slug} className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md">
+                    <div className="flex flex-col items-center text-center">
+                      <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
+                        <FallbackImage
+                          src={clinic.image}
+                          alt={clinic.name}
+                          fallback={DEFAULT_PERSON}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
 
-                <h2 className="mt-4 text-xl font-semibold text-black">
-                  K Trichology
-                </h2>
+                      <h2 className="mt-4 text-xl font-semibold text-black">
+                        {clinic.name}
+                      </h2>
 
-                <p className="text-gray-500 text-lg font-medium">Health spa</p>
+                      {clinic.category && (
+                        <p className="text-gray-500 text-lg font-medium">{clinic.category}</p>
+                      )}
 
-                <div className="flex items-center gap-2 mt-4 text-sm">
-                  <div className="flex text-black">★★★★★</div>
+                      <div className="flex items-center gap-2 mt-4 text-sm">
+                        <div className="flex text-black">
+                          {'★'.repeat(filledStars)}{'☆'.repeat(5 - filledStars)}
+                        </div>
+                        <span className="border-l border-black pl-2 underline">
+                          ({clinic.reviewCount} reviews)
+                        </span>
+                      </div>
 
-                  <span className="border-l border-black pl-2 underline">
-                    (5 reviews)
-                  </span>
-                </div>
+                      {clinic.gmapsAddress && (
+                        <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm w-full">
+                          <MapPin className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
+                          <span className="min-w-0 text-left line-clamp-2">{clinic.gmapsAddress}</span>
+                        </div>
+                      )}
 
-                <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm">
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-map-pin h-4 w-4 mt-0 shrink-0"
-                      aria-hidden="true"
-                    >
-                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                  </span>
-                  <span className="truncate">4QR MK45 4QR, United Kingdom</span>
-                </div>
+                      <Link
+                        href={href}
+                        className="w-full mt-6 block bg-black text-white py-2 rounded-lg font-medium hover:bg-white hover:text-black border border-black transition text-center"
+                      >
+                        View clinic
+                      </Link>
 
-                <button className="w-full mt-6 bg-black text-white py-2 rounded-lg font-medium hover:bg-white hover:text-black border border-black transition">
-                  Contact
-                </button>
-
-                <div className="flex flex-wrap gap-2 mt-5 justify-center">
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    Skin Booster
-                  </span>
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    Facial Treatments
-                  </span>
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    +2 more
-                  </span>
-                </div>
-              </div>
-            </article>
-            <article className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
-                  <img
-                    src="/directory/images/Eyes Treatment.webp"
-                    alt="K Trichology"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <h2 className="mt-4 text-xl font-semibold text-black">
-                  K Trichology
-                </h2>
-
-                <p className="text-gray-500 text-lg font-medium">Health spa</p>
-
-                <div className="flex items-center gap-2 mt-4 text-sm">
-                  <div className="flex text-black">★★★★★</div>
-
-                  <span className="border-l border-black pl-2 underline">
-                    (5 reviews)
-                  </span>
-                </div>
-
-                <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm">
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-map-pin h-4 w-4 mt-0 shrink-0"
-                      aria-hidden="true"
-                    >
-                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                  </span>
-                  <span className="truncate">4QR MK45 4QR, United Kingdom</span>
-                </div>
-
-                <button className="w-full mt-6 bg-black text-white py-2 rounded-lg font-medium hover:bg-white hover:text-black border border-black transition">
-                  Contact
-                </button>
-
-                <div className="flex flex-wrap gap-2 mt-5 justify-center">
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    Skin Booster
-                  </span>
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    Facial Treatments
-                  </span>
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    +2 more
-                  </span>
-                </div>
-              </div>
-            </article>
-            <article className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
-                  <img
-                    src="/directory/images/Eyes Treatment.webp"
-                    alt="K Trichology"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <h2 className="mt-4 text-xl font-semibold text-black">
-                  K Trichology
-                </h2>
-
-                <p className="text-gray-500 text-lg font-medium">Health spa</p>
-
-                <div className="flex items-center gap-2 mt-4 text-sm">
-                  <div className="flex text-black">★★★★★</div>
-
-                  <span className="border-l border-black pl-2 underline">
-                    (5 reviews)
-                  </span>
-                </div>
-
-                <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm">
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-map-pin h-4 w-4 mt-0 shrink-0"
-                      aria-hidden="true"
-                    >
-                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                  </span>
-                  <span className="truncate">4QR MK45 4QR, United Kingdom</span>
-                </div>
-
-                <button className="w-full mt-6 bg-black text-white py-2 rounded-lg font-medium hover:bg-white hover:text-black border border-black transition">
-                  Contact
-                </button>
-
-                <div className="flex flex-wrap gap-2 mt-5 justify-center">
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    Skin Booster
-                  </span>
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    Facial Treatments
-                  </span>
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    +2 more
-                  </span>
-                </div>
-              </div>
-            </article>
-            <article className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
-                  <img
-                    src="/directory/images/Eyes Treatment.webp"
-                    alt="K Trichology"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <h2 className="mt-4 text-xl font-semibold text-black">
-                  K Trichology
-                </h2>
-
-                <p className="text-gray-500 text-lg font-medium">Health spa</p>
-
-                <div className="flex items-center gap-2 mt-4 text-sm">
-                  <div className="flex text-black">★★★★★</div>
-
-                  <span className="border-l border-black pl-2 underline">
-                    (5 reviews)
-                  </span>
-                </div>
-
-                <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm">
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-map-pin h-4 w-4 mt-0 shrink-0"
-                      aria-hidden="true"
-                    >
-                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                  </span>
-                  <span className="truncate">4QR MK45 4QR, United Kingdom</span>
-                </div>
-
-                <button className="w-full mt-6 bg-black text-white py-2 rounded-lg font-medium hover:bg-white hover:text-black border border-black transition">
-                  Contact
-                </button>
-
-                <div className="flex flex-wrap gap-2 mt-5 justify-center">
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    Skin Booster
-                  </span>
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    Facial Treatments
-                  </span>
-                  <span className="px-3 py-1 border border-black rounded-full text-xs">
-                    +2 more
-                  </span>
-                </div>
-              </div>
-            </article>
+                      {visibleTreatments.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-5 justify-center">
+                          {visibleTreatments.map((t) => (
+                            <span key={t} className="px-3 py-1 border border-black rounded-full text-xs">
+                              {t}
+                            </span>
+                          ))}
+                          {extraCount > 0 && (
+                            <span className="px-3 py-1 border border-black rounded-full text-xs">
+                              +{extraCount} more
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                )
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Trust Section */}
       <section className="py-15 md:py-20">

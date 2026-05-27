@@ -67,16 +67,16 @@ export default function AccountLoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-[var(--primary-bg-color)] min-h-[calc(100vh-72px)] px-4 py-8">
+    <div className="flex items-center justify-center bg-[var(--primary-bg-color)] min-h-[calc(100vh-72px)] px-4 py-6">
       <div className="w-full max-w-[22rem]">
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-black/10 ring-1 ring-black/10">
-            <UserCircle className="h-6 w-6 text-black" />
+        <div className="mb-5 text-center">
+          <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-black/10 ring-1 ring-black/10">
+            <UserCircle className="h-5 w-5 text-black" />
           </div>
-          <h1 className="text-2xl font-bold text-black">My Account</h1>
+          <h1 className="text-xl font-bold text-black">Sign in / Register</h1>
           <p className="mt-1.5 text-sm text-slate-600">
             {step === 'email'
-              ? 'Enter your email to receive a login code'
+              ? 'Enter your email — we\'ll create your account if you\'re new'
               : `We sent a 6-digit code to ${email}`}
           </p>
         </div>

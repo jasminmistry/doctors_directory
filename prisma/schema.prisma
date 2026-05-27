@@ -976,6 +976,13 @@ model Patient {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  // Consentz patient account — populated on first booking
+  consentzPassword         String?   @db.VarChar(255)
+  consentzSessionToken     String?   @db.VarChar(512)
+  consentzRefreshToken     String?   @db.VarChar(512)
+  consentzSessionExpiresAt DateTime?
+  consentzRefreshExpiresAt DateTime?
+
   otps         PatientOtp[]
   bookings     Booking[]
   chatSessions ChatSession[]
