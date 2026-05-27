@@ -1,7 +1,5 @@
-"use client"
-
-import { Suspense } from "react"
-import { TrackingDashboard } from "@/components/admin/tracking-dashboard"
+import { Suspense } from 'react'
+import { TrackingDashboard } from '@/components/admin/tracking-dashboard'
 
 export const dynamic = 'force-dynamic'
 

@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { AdminLayout } from "@/components/admin/AdminLayout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { TrackingTab } from "@/lib/tracking/dashboard-queries"
 
 declare global {
@@ -457,6 +458,9 @@ export function TrackingDashboard() {
           <Link href="/admin" className="ml-auto self-center text-sm underline">
             Admin home
           </Link>
+          <Link href="/admin/main-site-tracking" className="self-center text-sm underline">
+            Main site tracking
+          </Link>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
@@ -465,27 +469,29 @@ export function TrackingDashboard() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
-          <select
-            className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
-            value={pageType}
-            onChange={(e) => setPageType(e.target.value)}
-          >
-            <option value="">All page types</option>
-            <option value="practitioner_page">practitioner_page</option>
-            <option value="clinic_page">clinic_page</option>
-            <option value="collection_page">collection_page</option>
-            <option value="other">other</option>
-          </select>
+          <Select value={pageType || "all"} onValueChange={(value) => setPageType(value === "all" ? "" : value)}>
+            <SelectTrigger className="h-9 w-full text-sm">
+              <SelectValue placeholder="All page types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All page types</SelectItem>
+              <SelectItem value="practitioner_page">practitioner_page</SelectItem>
+              <SelectItem value="clinic_page">clinic_page</SelectItem>
+              <SelectItem value="collection_page">collection_page</SelectItem>
+              <SelectItem value="other">other</SelectItem>
+            </SelectContent>
+          </Select>
           <Input placeholder="Country code (e.g. GB)" value={country} onChange={(e) => setCountry(e.target.value)} />
-          <select
-            className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
-            value={deviceType}
-            onChange={(e) => setDeviceType(e.target.value)}
-          >
-            <option value="">All devices</option>
-            <option value="desktop">desktop</option>
-            <option value="mobile">mobile</option>
-          </select>
+          <Select value={deviceType || "all"} onValueChange={(value) => setDeviceType(value === "all" ? "" : value)}>
+            <SelectTrigger className="h-9 w-full text-sm">
+              <SelectValue placeholder="All devices" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All devices</SelectItem>
+              <SelectItem value="desktop">desktop</SelectItem>
+              <SelectItem value="mobile">mobile</SelectItem>
+            </SelectContent>
+          </Select>
           <Input type="datetime-local" value={from} onChange={(e) => setFrom(e.target.value)} />
           <Input type="datetime-local" value={to} onChange={(e) => setTo(e.target.value)} />
           <div className="flex flex-wrap gap-2 md:col-span-2 lg:col-span-3">

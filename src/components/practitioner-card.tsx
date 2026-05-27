@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Star, MapPin } from "lucide-react";
+import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Practitioner, Clinic, Product } from "@/lib/types";
@@ -262,15 +263,24 @@ export function PractitionerCard({
                         </div>
 
                         <div className="text-center flex-1 min-w-0 items-start sm:items-center flex flex-col">
-                          <div className="text-base font-semibold text-primary truncate ml-4 sm:ml-0">
-                            {practitionerName
-                              .split(" ")
-                              .slice(0, 4)
-                              .map(
-                                (word) =>
-                                  word.charAt(0).toUpperCase() + word.slice(1),
-                              )
-                              .join(" ")}
+                          <div className="flex items-center gap-1.5 ml-4 sm:ml-0">
+                            <span className="text-base font-semibold text-primary truncate">
+                              {practitionerName
+                                .split(" ")
+                                .slice(0, 4)
+                                .map(
+                                  (word) =>
+                                    word.charAt(0).toUpperCase() + word.slice(1),
+                                )
+                                .join(" ")}
+                            </span>
+                            {(isClinic(practitioner) || isPractitioner(practitioner)) && (
+                              <VerifiedBadge
+                                idVerified={(practitioner as any).idVerified}
+                                manualVerified={(practitioner as any).manualVerified}
+                                verified={(practitioner as any).verified}
+                              />
+                            )}
                           </div>
 
                           <div className="absolute top-2 -right-4 text-white text-xs font-semibold px-6 py-1">

@@ -1,0 +1,21 @@
+CREATE TABLE `main_site_events` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `timestamp` DATETIME(3) NOT NULL,
+  `page_url` TEXT NOT NULL,
+  `referrer` TEXT NOT NULL,
+  `country` VARCHAR(8) NOT NULL DEFAULT 'unknown',
+  `device_type` VARCHAR(16) NOT NULL DEFAULT 'desktop',
+  `event_type` VARCHAR(64) NOT NULL,
+  `event_name` VARCHAR(255) NOT NULL,
+  `target_url` TEXT NULL,
+  `content_type` VARCHAR(64) NULL,
+  `content_slug` VARCHAR(255) NULL,
+  `contact_name` VARCHAR(255) NULL,
+  `contact_value` VARCHAR(255) NULL,
+  `meta_json` LONGTEXT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_main_site_events_timestamp` (`timestamp`),
+  INDEX `idx_main_site_events_event_type` (`event_type`),
+  INDEX `idx_main_site_events_event_name` (`event_name`),
+  INDEX `idx_main_site_events_content_type` (`content_type`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

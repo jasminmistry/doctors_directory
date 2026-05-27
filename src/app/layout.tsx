@@ -2,14 +2,8 @@ import type React from "react";
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import { Analytics } from "@vercel/analytics/next";
-import { Suspense } from "react";
 import Script from "next/script";
-import { Toaster } from "sonner";
-import Header from "@/components/header";
-import { Footer } from "@/components/footer";
-import { ScrollToTop } from "@/components/scroll-to-top";
-import { CtaClickTracker } from "@/components/tracking/cta-click-tracker";
+import { AdminRootShell } from "@/components/admin/admin-root-shell";
 
 import "./globals.css";
 
@@ -67,15 +61,9 @@ export default async function RootLayout({
         className={`${GeistSans.variable} ${GeistMono.variable} font-base`}
         
       >
-        <div className="overflow-hidden">
-          <Header />
-          <Suspense fallback={null}>{children}</Suspense>
-          <Footer />
-          <Toaster position="top-right" richColors className="site-toaster" />
-          <ScrollToTop />
-          <CtaClickTracker />
-          <Analytics />
-        </div>
+        <AdminRootShell>
+          {children}
+        </AdminRootShell>
       </body>
     </html>
   );

@@ -1,0 +1,410 @@
+import { HubBuyerFaq, mapLegacyHubFaqs } from "@/components/b2b-hub/hub-buyer-faq"
+import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section"
+import {
+  HUB_CTA_PRIMARY_CLASS,
+  HUB_CTA_PRIMARY_HERO_CLASS,
+  HUB_CTA_SECONDARY_CLASS,
+  HUB_CTA_SECONDARY_HERO_CLASS,
+  HUB_CTA_LINK_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
+import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
+import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section"
+import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
+import Image from "next/image";
+import Link from "next/link"
+import { HUB_DETAIL_HERO_VIEWPORT_CLASS } from "@/lib/b2b-hub/hub-index-hero-layout"
+import {
+  HUB_BLEED_FROM_CONTAINER,
+  HUB_HERO_ACTIONS_ROW,
+  HUB_SPLIT_HERO_CONTENT,
+  HUB_SPLIT_HERO_GRID_TWO_COL,
+  HUB_SPLIT_HERO_VISUAL_TALL,
+} from "@/components/b2b-hub/hub-hero-layout-classes"
+
+import { cn } from "@/lib/utils";
+import { SoftwareHeroVisual } from "@/components/b2b-hub/hub-pillar-detail-template";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links";
+import { automationHubNavLinks } from "@/lib/b2b-hub/automation-hub-nav-links"
+import { automationToolDisplayName } from "@/lib/b2b-hub/automation-tool-entries"
+import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry";
+import { segmentLabel } from "@/lib/b2b-hub/registry";
+import { toDisplayTitle } from "@/lib/b2b-hub/text";
+
+const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
+
+const SOFTWARE_LAPTOP_MOCKUP_SRC = "/directory/images/software-laptop-mockup.svg";
+const reactivationWorkflowSteps = [
+  {
+    step: 1,
+    title: "Patient identified",
+    body: "Consentz identifies patients who haven't booked within your chosen timeframe (e.g. 90 days).",
+    circleVariant: "filled" as const,
+  },
+  {
+    step: 2,
+    title: "Message sent automatically",
+    body: "A personalised SMS or WhatsApp is sent referencing their last treatment and suggesting their next visit.",
+    circleVariant: "outlined" as const,
+  },
+  {
+    step: 3,
+    title: "Booking link included",
+    body: "The message includes a direct booking link. No manual follow-up needed from your team.",
+    circleVariant: "outlined" as const,
+  },
+  {
+    step: 4,
+    title: "Booking confirmed",
+    body: "Patient books. The appointment is logged and the automation closes the loop automatically.",
+    circleVariant: "outlined" as const,
+  },
+] as const;
+
+const spotlightTimeline = [
+  {
+    step: "01",
+    title: "Rules Engine",
+    body: "Triggers fire on dates, treatments, or risk flags — not manual list pulls.",
+  },
+  {
+    step: "02",
+    title: "Governed Channels",
+    body: "SMS, email, and portal nudges respect marketing consent and clinical boundaries.",
+  },
+  {
+    step: "03",
+    title: "Front Desk Handoff",
+    body: "Staff see suggested slots and context without digging through notes.",
+  },
+] as const;
+
+function HowReactivationRunsSection() {
+  return (
+    <section className="mb-16">
+      <div className="mx-auto flex w-full max-w-[778px] flex-col items-center gap-6">
+        <h2 className="text-center text-[30px] font-semibold leading-tight text-[#1a1a1a] md:text-[36px]">
+          How the reactivation workflow runs
+        </h2>
+        <div className="flex w-full flex-col gap-6">
+          {reactivationWorkflowSteps.map(({ step, title, body, circleVariant }) => (
+            <div
+              key={step}
+              className="flex w-full items-start gap-4 rounded-[12px] border border-[#E5E7EB] bg-white p-5"
+            >
+              <div
+                className={`relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[18px] text-center text-sm font-semibold text-[#1a1a1a] ${
+                  circleVariant === "filled"
+                    ? "bg-[#eef7f2]"
+                    : "border border-solid border-[#2e2e2e] bg-white"
+                }`}
+              >
+                <span className="leading-none">{step}</span>
+              </div>
+              <div className="flex min-w-0 flex-1 flex-col gap-1.5 text-left">
+                <p className="text-xl font-semibold leading-snug text-[#1a1a1a] md:text-2xl">{title}</p>
+                <p className="text-sm font-normal leading-[22px] text-[#1a1a1a]">{body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AutomationWorkflowSpotlight() {
+  return (
+    <section
+      className={cn(
+        HUB_BLEED_FROM_CONTAINER,
+        "mb-16 bg-[var(--primary-bg-color)] py-12 md:py-16"
+      )}
+    >
+      <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
+        <p className="mb-2 text-center text-xs font-semibold uppercase tracking-[0.2em] text-[#6B6B6B]">
+          Live Workflows
+        </p>
+        <h2 className="mb-10 text-center text-[28px] font-bold leading-tight text-[#111111] md:text-[34px]">
+          End-To-End Automation Your Clinic Can Rely On
+        </h2>
+        <div className="overflow-hidden rounded-2xl border border-[#E2DDD7] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
+          <div className="grid grid-cols-1 gap-10 p-8 md:grid-cols-2 md:gap-12 md:p-12 lg:items-center">
+            <div className="min-w-0">
+              <p className="mb-8 text-sm font-medium text-[#6B6B6B]">
+                Orchestration, consent, and scheduling stay linked — so operators trust what went out and why.
+              </p>
+              <ol className="relative space-y-0">
+                {spotlightTimeline.map(({ step, title, body }, i) => (
+                  <li key={step} className="relative flex gap-4 pb-10 last:pb-0">
+                    {i < spotlightTimeline.length - 1 ? (
+                      <span
+                        className="absolute left-[19px] top-10 bottom-0 w-px bg-[#E2DDD7]"
+                        aria-hidden
+                      />
+                    ) : null}
+                    <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-xs font-bold text-white">
+                      {step}
+                    </span>
+                    <div>
+                      <p className="text-lg font-semibold text-[#111111]">{title}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-[#6B6B6B]">{body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div className="flex items-center justify-center rounded-xl bg-[#F8F7F5] p-6 md:p-8">
+              <Image
+                src={SOFTWARE_LAPTOP_MOCKUP_SRC}
+                alt=""
+                width={640}
+                height={340}
+                className="h-auto w-full max-w-[480px] object-contain"
+                loading="lazy"
+                unoptimized
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const automationFaqs = [
+  {
+    open: true,
+    q: "Does automation replace my reception team?",
+    a: "No. It removes repetitive chasing so staff can focus on conversations that need a human. Rules and templates stay under your control.",
+  },
+  {
+    open: false,
+    q: "How do we stay compliant when messaging patients?",
+    a: "Consent preferences and clinical context travel with each workflow. Outreach is tied to the record so you can evidence what was sent and why.",
+  },
+  {
+    open: false,
+    q: "Can we start with reactivation only?",
+    a: "Yes. Many clinics begin with dormant cohorts and expand into journey automation once data and consent are structured.",
+  },
+] as const;
+
+type Props = {
+  entry: HubEntry
+  officialToolUrl?: string
+}
+
+export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
+  const seg = entry.segment as HubSegment;
+  const intro =
+    entry.summary ||
+    `${toDisplayTitle(entry.title)}: automate clinic workflows without losing governance.`;
+  const navLinks = automationHubNavLinks(entry.slug);
+  const toolName = officialToolUrl
+    ? automationToolDisplayName(entry.slug)
+    : null
+
+  return (
+    <>
+      <section
+        className={cn(
+          "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          HUB_DETAIL_HERO_VIEWPORT_CLASS
+        )}
+      >
+        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-0">
+          <div className={HUB_SPLIT_HERO_GRID_TWO_COL}>
+            <div className={HUB_SPLIT_HERO_CONTENT}>
+              <Breadcrumb className="mb-6 flex w-full justify-center lg:justify-start">
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href={`/business/${seg}/`}>
+                      {segmentLabel(seg)}
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage className="line-clamp-1">
+                      {toDisplayTitle(entry.title)}
+                    </BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+              <header>
+                <h1 className="mb-5 max-w-[700px] text-[clamp(1.75rem,5vw,3.25rem)] font-medium leading-[1.08] tracking-[0.468px] text-[#1A1A1A] [font-family:var(--font-playfair),Georgia,serif] lg:text-[52px]">
+                  {toDisplayTitle(entry.title)}
+                </h1>
+                <p className="mb-9 max-w-[700px] text-lg font-medium leading-[1.65] text-[#1A1A1A] [font-family:Inter,system-ui,sans-serif] lg:text-2xl">
+                  {intro}
+                </p>
+                <div className={HUB_HERO_ACTIONS_ROW}>
+                  <a
+                    href={`${baseUrl}/book-demo`}
+                    className={HUB_CTA_PRIMARY_HERO_CLASS}
+                  >
+                    Book a Demo
+                  </a>
+                  <a
+                    href={`${baseUrl}/book-demo`}
+                    className={HUB_CTA_SECONDARY_HERO_CLASS}
+                  >
+                    Get CQC Readiness Audit
+                  </a>
+                  {officialToolUrl && toolName ? (
+                    <a
+                      href={officialToolUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={HUB_CTA_LINK_CLASS}
+                    >
+                      Visit {toolName} →
+                    </a>
+                  ) : (
+                    <a
+                      href={`${baseUrl}/book-demo`}
+                      className={HUB_CTA_LINK_CLASS}
+                    >
+                      See How It Works →
+                    </a>
+                  )}
+                </div>
+              </header>
+            </div>
+            <div
+              className={HUB_SPLIT_HERO_VISUAL_TALL}
+              aria-hidden
+            >
+              <SoftwareHeroVisual />
+            </div>
+          </div>
+        
+        <HubLogoStrip className="mt-auto shrink-0" />
+</div>
+      </section>
+
+      <article className="mx-auto w-full min-w-0 max-w-[1280px] overflow-x-clip px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
+        <section className="mb-12">
+          <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+              <h2 className="mb-3 text-lg font-semibold text-[#111111]">Operational Reality</h2>
+              <p className="text-base leading-relaxed text-[#1A1A1A]">
+                Teams outgrow generic tools when consent, payments, and clinical evidence sit in different
+                places. The result is slower bookings, weaker compliance confidence, and fragile patient
+                communication.
+              </p>
+            </div>
+            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+              <h2 className="mb-3 text-lg font-semibold text-[#111111]">What Changes With Consentz</h2>
+              <p className="text-base leading-relaxed text-[#1A1A1A]">
+                Consentz is built as an operating layer for clinics: structured consent, workflow automation,
+                and reporting that maps to how regulated teams actually work day to day.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <HowReactivationRunsSection />
+
+        <AutomationWorkflowSpotlight />
+
+        <section className="mb-16">
+          <div className="mx-auto grid max-w-[1072px] grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {navLinks.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <a
+              href={`${baseUrl}/book-demo`}
+              className={HUB_CTA_PRIMARY_CLASS}
+            >
+              Book Demo
+            </a>
+          </div>
+        </section>
+
+        <HubTestimonialsSection />
+
+        <HubServiceProviderSection />
+
+        <HubBuyerFaq
+          title="Frequently Asked Questions"
+          items={mapLegacyHubFaqs(automationFaqs)}
+        />
+
+        <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
+          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+            Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay
+            informed with our latest articles.
+          </p>
+          <div className="grid gap-6 md:grid-cols-3">
+            {HUB_BLOG_LINKS.slice(0, 3).map((post) => (
+              <a
+                key={post.id}
+                href={post.href}
+                target="_blank"
+                rel="noreferrer"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+              >
+                <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
+                  <Image
+                    src={post.image}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 px-5 py-5 pb-6">
+                  <span className="text-[15px] leading-snug text-[#111111] underline underline-offset-2">
+                    {post.title}
+                  </span>
+                  <span className="text-sm text-[#111111] underline underline-offset-2">
+                    Read more →
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <a
+              href="https://www.consentz.com/blog/"
+              target="_blank"
+              rel="noreferrer"
+              className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
+            >
+              View all blogs
+            </a>
+          </div>
+        </section>
+
+      </article>
+      <HubSectionCta className="mb-0" withBorder={false} />
+    </>
+  );
+}
+
+export function isCoreAutomationHubSlug(slug: string) {
+  return !slug.endsWith("-automation-alternative")
+}

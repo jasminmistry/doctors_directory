@@ -77,8 +77,13 @@ export interface Clinic {
   Fees: string	
   x_twitter: string
   Treatments?: string[]
-
-
+  claimed?: boolean
+  verified?: boolean
+  domainVerified?: boolean
+  gbpMatch?: boolean
+  gbpVerified?: boolean
+  idVerified?: boolean
+  manualVerified?: boolean
 }
 
 export interface RankingMeta {
@@ -104,8 +109,7 @@ export interface Practitioner extends Partial<Clinic> {
   Treatments?: string[]
   Title?:string
   Associated_Clinics?: string
-
-
+  licensed?: boolean
 }
 export interface ItemMeta {
   weighted_score: number
