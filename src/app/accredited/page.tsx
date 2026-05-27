@@ -81,11 +81,11 @@ export default async function AccreditedPage() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory">Home</BreadcrumbLink>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory/accredited">
+                  <BreadcrumbLink href="/accredited">
                     Accredited Clinics & Practitioners
                   </BreadcrumbLink>
                 </BreadcrumbItem>

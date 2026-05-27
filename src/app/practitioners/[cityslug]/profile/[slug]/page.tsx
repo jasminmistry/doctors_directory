@@ -95,15 +95,15 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/directory">Home</BreadcrumbLink>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/directory/practitioners">Practitioners</BreadcrumbLink>
+              <BreadcrumbLink href="/practitioners">Practitioners</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/directory/practitioners/${practitioner.City}`}>{`${practitioner.City}`}</BreadcrumbLink>
+              <BreadcrumbLink href={`/practitioners/${practitioner.City}`}>{`${practitioner.City}`}</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

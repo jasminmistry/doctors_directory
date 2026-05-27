@@ -129,17 +129,17 @@ const serviceMatch = categories.some((cat: string) =>
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory">Home</BreadcrumbLink>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory/clinics">
+                  <BreadcrumbLink href="/clinics">
                     All Clinics
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                  <BreadcrumbItem>
-                  <BreadcrumbLink href={`/directory/clinics/${normalizedCitySlug}`}>{cityDisplayName}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/clinics/${normalizedCitySlug}`}>{cityDisplayName}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>

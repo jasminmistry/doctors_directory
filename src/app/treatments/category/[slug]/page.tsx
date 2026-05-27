@@ -98,7 +98,7 @@ export default function TreatmentCategoryPage({ params }: Readonly<CategoryPageP
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/directory/treatments">Treatments</BreadcrumbLink>
+              <BreadcrumbLink href="/treatments">Treatments</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

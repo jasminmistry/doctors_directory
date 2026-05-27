@@ -66,24 +66,24 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/directory">Home</BreadcrumbLink>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/directory/products">
+              <BreadcrumbLink href="/products">
                 Products
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/directory/products/category`}>
+              <BreadcrumbLink href={`/products/category`}>
                 Categories
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink
-                href={`/directory/products/category/${toUrlSlug(category)}`}
+                href={`/products/category/${toUrlSlug(category)}`}
               >{`${category}`}</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
