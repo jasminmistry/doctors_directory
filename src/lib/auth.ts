@@ -11,6 +11,7 @@ export const COOKIE_OPTS = {
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'lax' as const,
   path: COOKIE_PATH,
+  maxAge: 7 * 24 * 60 * 60, // 7 days
 }
 
 export function getConsentzAuthUrl(): string {
