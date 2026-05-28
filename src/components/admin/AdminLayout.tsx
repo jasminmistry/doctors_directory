@@ -79,7 +79,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
   return (
     <div className="min-h-screen bg-[var(--primary-bg-color)]">
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
-        <h1 className="text-base font-semibold text-gray-900">{title}</h1>
+        <h1 className="text-base font-semibold text-white">{title}</h1>
         <button
           type="button"
           onClick={() => setIsMobileNavOpen((open) => !open)}
@@ -104,14 +104,14 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
         {/* Sidebar */}
         <aside
           className={cn(
-            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-[var(--primary-bg-color)] border-r border-[#D4CFC5] transition-transform duration-200 lg:sticky lg:top-0 lg:h-[100svh] lg:w-56 lg:translate-x-0',
+            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-[#262422] border-r border-[#D4CFC5] transition-transform duration-200 lg:sticky lg:top-0 lg:h-[100svh] lg:w-56 lg:translate-x-0',
             isMobileNavOpen ? 'translate-x-0' : '-translate-x-full'
           )}
         >
           {/* Brand */}
-          <div className="shrink-0 border-b border-[#D4CFC5] px-4 py-4">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Consentz</p>
-            <p className="mt-1 text-sm font-bold text-gray-900">Admin Console</p>
+          <div className="shrink-0 border-b border-[#5b5b5b] px-4 py-4">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-300">Consentz</p>
+            <p className="mt-1 text-sm font-bold text-white">Admin Console</p>
           </div>
 
           {/* Nav */}
@@ -124,7 +124,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                   <div key={item.label}>
                     <div className={cn(
                       'flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider',
-                      isGroupActive ? 'text-gray-900' : 'text-gray-400'
+                      isGroupActive ? 'text-gray-300' : 'text-gray-300'
                     )}>
                       <Icon className="h-3.5 w-3.5 shrink-0" />
                       {item.label}
@@ -143,7 +143,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                               'flex items-center px-3 py-1.5 rounded-lg text-sm transition-colors',
                               pathname.startsWith(child.href)
                                 ? 'bg-black text-white font-medium'
-                                : 'text-gray-600 hover:bg-[#E8E3D8] hover:text-gray-900'
+                                : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900'
                             )}
                           >
                             {child.label}
@@ -170,7 +170,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                     'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     active
                       ? 'bg-black text-white'
-                      : 'text-gray-600 hover:bg-[#E8E3D8] hover:text-gray-900'
+                      : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900'
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
@@ -180,21 +180,21 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
               )
             })}
 
-            <div className="my-2 mx-1 border-t border-[#D4CFC5]" />
+            <div className="my-2 mx-1 border-t border-[#5b5b5b]" />
             <Link
               href="/"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setIsMobileNavOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-500 hover:bg-[#E8E3D8] hover:text-gray-900 transition-colors"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-white hover:bg-[#E8E3D8] hover:text-gray-900 transition-colors"
             >
               <Globe className="h-4 w-4 shrink-0" />
               <span className="flex-1">View Directory</span>
-              <ExternalLink className="h-3 w-3 opacity-40" />
+              <ExternalLink className="h-3 w-3 opacity-80" />
             </Link>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-white hover:text-red-600 hover:bg-red-50 transition-colors"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               Sign out
@@ -203,10 +203,10 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
         </aside>
 
         {/* Main */}
-        <div className="min-w-0 flex-1 flex flex-col bg-[var(--primary-bg-color)]">
+        <div className="min-w-0 flex-1 flex flex-col bg-white">
           <div
             role="banner"
-            className="sticky top-0 z-10 hidden border-b border-gray-200 bg-white px-6 py-3.5 lg:block"
+            className="sticky top-0 z-10 hidden bg-[var(--primary-bg-color)] border-b border-gray-200 px-6 py-3.5 lg:block"
           >
             <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
           </div>

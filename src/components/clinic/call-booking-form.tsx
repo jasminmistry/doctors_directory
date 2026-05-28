@@ -151,7 +151,7 @@ export function CallBookingForm({
     return (
       <div className={cn('flex flex-col items-center justify-center gap-4 text-center', compact ? 'py-8 px-5' : 'py-12 px-6')}>
         {isZoomWaiting ? (
-          <Clock className="h-10 w-10 text-amber-400 shrink-0" />
+          <Clock className="h-10 w-10 text-black shrink-0" />
         ) : (
           <CheckCircle2 className="h-10 w-10 text-green-500 shrink-0" />
         )}
@@ -165,7 +165,7 @@ export function CallBookingForm({
 
         {isZoomWaiting ? (
           <div className="flex flex-col items-center gap-2">
-            <Loader2 className="h-5 w-5 animate-spin text-amber-400" />
+            <Loader2 className="h-5 w-5 animate-spin text-black" />
             <p className="text-xs text-gray-500">Preparing your Zoom link — this usually takes under a minute…</p>
           </div>
         ) : (

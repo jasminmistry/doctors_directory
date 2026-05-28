@@ -67,7 +67,7 @@ export default function AdminDashboard() {
             <Link
               key={key}
               href={href}
-              className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+              className="flex flex-col gap-3 rounded-md border border-gray-200 bg-white p-5 transition-shadow hover:shadow-md"
             >
               <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${color}`}>
                 <Icon className="h-4 w-4" />
