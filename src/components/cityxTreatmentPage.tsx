@@ -3,7 +3,8 @@ import { fixMojibake, decodeUnicodeEscapes } from "@/lib/utils"
 type PageProps = {cityData: City, treatment: Record<string, any>, slug: string}
 type TreatmentSection = Record<string, unknown>
 
-function cleanText(text: string) {
+function cleanText(text: unknown): string {
+  if (typeof text !== 'string') return typeof text === 'number' ? String(text) : ''
   return decodeUnicodeEscapes(fixMojibake(fixMojibake(fixMojibake(text.trim()))))
 }
 function createBullets(text: unknown) {
@@ -245,11 +246,12 @@ export function CityTreatmentPage({ cityData, treatment, slug }: PageProps) {
          <ul className="list-disc list-inside">
           {Object.entries(costSection).map(([key, value]) => {
             if(Array.isArray(value)) {
-              return value.map((item:string, index:number) => (
+              return value.filter((item) => typeof item === 'string' || typeof item === 'number').map((item, index) => (
                 <li className="text-sm leading-relaxed pl-6" key={`${key}-${index}`} >{cleanText(item)}</li>
               ))
             }
-            else return ( <li className="text-sm leading-relaxed pl-6" key={key} >{cleanText(value as string)}</li>)
+            if (typeof value !== 'string' && typeof value !== 'number') return null
+            return ( <li className="text-sm leading-relaxed pl-6" key={key} >{cleanText(value)}</li>)
           })}
           </ul>
       </div>
@@ -398,11 +400,12 @@ export function CityTreatmentPage({ cityData, treatment, slug }: PageProps) {
          <ul className="list-disc list-inside">
           {Object.entries(recoverySection).map(([key, value]) => {
             if(Array.isArray(value)) {
-              return value.map((item:string, index:number) => (
+              return value.filter((item) => typeof item === 'string' || typeof item === 'number').map((item, index) => (
                 <li className="text-sm leading-relaxed pl-6" key={`${key}-${index}`} >{cleanText(item)}</li>
               ))
             }
-            else return ( <li className="text-sm leading-relaxed pl-6" key={key} >{cleanText(value as string)}</li>)
+            if (typeof value !== 'string' && typeof value !== 'number') return null
+            return ( <li className="text-sm leading-relaxed pl-6" key={key} >{cleanText(value)}</li>)
           })}
           </ul>
       </div>
