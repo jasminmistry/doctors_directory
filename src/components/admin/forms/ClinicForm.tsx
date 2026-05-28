@@ -274,9 +274,11 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
           <Field label="Category">
             <Input value={data.category ?? ''} onChange={(e) => set('category', e.target.value || null)} placeholder="e.g. Aesthetics" />
           </Field>
-          <Field label="Image" fullWidth>
-            <ImageUpload value={data.image ?? null} onChange={(url) => set('image', url)} />
-          </Field>
+          {!isPortal && (
+            <Field label="Image" fullWidth>
+              <ImageUpload value={data.image ?? null} onChange={(url) => set('image', url)} />
+            </Field>
+          )}
         </div>
       </FormSection>
 
@@ -323,9 +325,11 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       {/* Profile Enhancements */}
       <FormSection title="Profile" icon={Sparkles}>
         <div className="grid grid-cols-1 gap-5">
-          <Field label="Cover Photo" fullWidth>
-            <ImageUpload value={data.coverImage ?? null} onChange={(url) => set('coverImage', url)} />
-          </Field>
+          {!isPortal && (
+            <Field label="Cover Photo" fullWidth>
+              <ImageUpload value={data.coverImage ?? null} onChange={(url) => set('coverImage', url)} />
+            </Field>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Field label="CQC Status">
               <select

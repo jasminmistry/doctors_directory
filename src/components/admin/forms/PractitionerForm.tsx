@@ -291,9 +291,11 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
           <Field label="Specialty">
             <Input value={data.specialty ?? ''} onChange={(e) => set('specialty', e.target.value || null)} placeholder="e.g. Aesthetic Medicine" />
           </Field>
-          <Field label="Image" fullWidth>
-            <ImageUpload value={data.imageUrl ?? null} onChange={(url) => set('imageUrl', url)} shape="circle" />
-          </Field>
+          {!isPortal && (
+            <Field label="Image" fullWidth>
+              <ImageUpload value={data.imageUrl ?? null} onChange={(url) => set('imageUrl', url)} shape="circle" />
+            </Field>
+          )}
         </div>
       </FormSection>
 
