@@ -2,6 +2,8 @@ import HomePage from "@/components/home-page"
 import { toDirectoryCanonical } from "@/lib/seo"
 import { getAllClinicsForSearch } from "@/lib/data-access/clinics"
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   alternates: {
     canonical: toDirectoryCanonical("/"),
