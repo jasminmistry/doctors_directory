@@ -137,8 +137,8 @@ export default function PortalPractitionerPage() {
 
       {/* ID Verification */}
       {idVerified === false && entitySlug && (
-        <div className="rounded-md border border-gray-200 bg-white p-5">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Identity Verification</h2>
+        <div className="rounded-2xl border border-[#e4dccf] bg-[#f2eee5] p-6">
+          <h2 className="text-xs font-bold text-[#000000] uppercase tracking-[0.2em] mb-3">Identity Verification</h2>
           <p className="text-sm text-gray-600 mb-4">
             Verify your identity to display an &ldquo;ID Verified&rdquo; badge on your profile, building trust with potential patients.
           </p>

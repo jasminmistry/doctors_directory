@@ -209,7 +209,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
                   <ChatBadge />
                 </Link>
 
-                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
+                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-300">
                   Settings
                 </p>
                 <Link
@@ -219,7 +219,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
                     'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     pathname.startsWith('/portal/clinic/schedule')
                       ? 'bg-black text-white'
-                      : 'text-gray-600 hover:bg-[#E8E3D8] hover:text-gray-900',
+                      : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900',
                   )}
                 >
                   <Clock className="h-4 w-4 shrink-0" />
@@ -230,7 +230,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
 
             {entityType === 'practitioner' && (
               <>
-                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
+                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-300">
                   Settings
                 </p>
                 <Link
@@ -240,7 +240,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
                     'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     pathname.startsWith('/portal/practitioner/schedule')
                       ? 'bg-black text-white'
-                      : 'text-gray-600 hover:bg-[#E8E3D8] hover:text-gray-900',
+                      : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900',
                   )}
                 >
                   <Clock className="h-4 w-4 shrink-0" />
