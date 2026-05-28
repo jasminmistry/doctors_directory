@@ -90,11 +90,11 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory">Home</BreadcrumbLink>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory/accredited">
+                  <BreadcrumbLink href="/accredited">
                     Accredited Clinics & Practitioners
                   </BreadcrumbLink>
                 </BreadcrumbItem>
@@ -102,7 +102,7 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
 
                 <BreadcrumbItem>
                   <BreadcrumbLink
-                    href={`/directory/accredited/${accreditationSlug}/practitioners`}
+                    href={`/accredited/${accreditationSlug}/practitioners`}
                   >
                     {accreditationSlug}
                   </BreadcrumbLink>

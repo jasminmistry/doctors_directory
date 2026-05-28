@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft} from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { getProductsByBrand } from "@/lib/data-access/products";
+import { getProductsByBrand, getAllBrands } from "@/lib/data-access/products";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { toUrlSlug } from "@/lib/utils";
 
@@ -39,12 +38,60 @@ export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  let { brand } = params;
-  brand = decodeURIComponent(brand).replaceAll('%20', " ");
-  const similarProducts = await getProductsByBrand(brand);
+  const rawBrand = decodeURIComponent(params.brand).replaceAll('%20', " ");
+
+  // Resolve to the canonical brand name stored in the DB (handles slug-casing differences
+  // e.g. URL "allergan" → DB "Allergan", URL "abbvie" → DB "AbbVie")
+  const allBrands = await getAllBrands();
+  const resolvedBrand =
+    allBrands.find((b) => toUrlSlug(b) === toUrlSlug(rawBrand)) ?? rawBrand;
+
+  const similarProducts = await getProductsByBrand(resolvedBrand);
+  // Use the canonical brand name for all display purposes
+  const brand = resolvedBrand;
 
   if (similarProducts.length === 0) {
-    notFound();
+    return (
+      <main className="min-h-screen bg-(--primary-bg-color)">
+        <div className="sticky top-0 z-10">
+          <div className="container mx-auto max-w-6xl px-4 py-4">
+            <Link href="/products/brands" prefetch={false}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Brands
+              </Button>
+            </Link>
+          </div>
+        </div>
+        <div className="container mx-auto max-w-6xl px-4 py-16 space-y-8">
+          <div className="text-center space-y-3">
+            <h1 className="text-2xl font-bold text-foreground">Brand not found</h1>
+            <p className="text-gray-500 text-sm">
+              We couldn&apos;t find any products for &ldquo;{brand}&rdquo;. Browse our top product brands below.
+            </p>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Top Product Brands</h2>
+            <ul className="flex flex-wrap gap-2">
+              {allBrands.map((b) => (
+                <li key={b}>
+                  <Link
+                    href={`/products/brands/${toUrlSlug(b)}`}
+                    className="inline-block px-3 py-1.5 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:bg-black hover:text-white hover:border-black transition-colors"
+                  >
+                    {b}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -67,19 +114,19 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/directory">Home</BreadcrumbLink>
+                <BreadcrumbLink href="/">Home</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink href="/directory/products">
+                <BreadcrumbLink href="/products">
                   Products
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink
-                  href={`/directory/products/brand/${brand}`}
-                >{`${brand}`}</BreadcrumbLink>
+                  href={`/products/brands/${toUrlSlug(brand)}`}
+                >{brand}</BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -98,7 +145,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
             >
               <Link
                 prefetch={false}
-                href={`/products/brands/${brand}/${practitioner.slug}`}
+                href={`/products/brands/${toUrlSlug(brand)}/${practitioner.slug}`}
                 className="block"
               >
                 <Card className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">

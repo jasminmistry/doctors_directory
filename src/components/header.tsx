@@ -35,6 +35,7 @@ export default function Header() {
     normalizedPath !== "/clinics" &&
     normalizedPath !== "/practitioners" &&
     normalizedPath !== "/products" &&
+    normalizedPath !== "/products/brands" &&
     normalizedPath !== "/treatments" &&
     !normalizedPath.startsWith("/accredited") &&
     !isBusinessHub;

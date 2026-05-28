@@ -78,24 +78,24 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory">Home</BreadcrumbLink>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory/practitioners">
+                  <BreadcrumbLink href="/practitioners">
                     Practitioners
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory/practitioners/credentials">
+                  <BreadcrumbLink href="/practitioners/credentials">
                     Credentials
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbLink
-                    href={`/directory/practitioners/credentials/${cred
+                    href={`/practitioners/credentials/${cred
                       .replaceAll("%20", " ")
                       .split(" ")
                       .map(

@@ -172,21 +172,21 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory">Home</BreadcrumbLink>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/directory/practitioners">
+                  <BreadcrumbLink href="/practitioners">
                     Practitioners
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}`}>{cityDisplayName}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/practitioners/${normalizedCitySlug}`}>{cityDisplayName}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/directory/practitioners/${normalizedCitySlug}/treatments/${treatmentslug}`}>{treatmentDisplayName}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/practitioners/${normalizedCitySlug}/treatments/${treatmentslug}`}>{treatmentDisplayName}</BreadcrumbLink>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
