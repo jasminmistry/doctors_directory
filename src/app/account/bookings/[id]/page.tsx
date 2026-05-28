@@ -103,14 +103,14 @@ export default function BookingDetailPage() {
         </div>
 
         {isVideoCall && (
-          <div className="rounded-lg bg-blue-50 border border-blue-200 p-4 space-y-3">
+          <div className="rounded-lg bg-gray-50 border border-gray-200 p-4 space-y-3">
             <div className="flex items-center gap-2">
-              <Video className="h-4 w-4 text-blue-500" />
-              <p className="text-sm font-medium text-blue-700">Video consultation</p>
+              <Video className="h-4 w-4 text-gray-500" />
+              <p className="text-sm font-medium text-gray-900">Video consultation</p>
             </div>
             {canJoin ? (
               <a href={booking.videoCallJoinUrl!} target="_blank" rel="noopener noreferrer">
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white gap-1.5">
+                <Button size="sm" className="bg-gray-900 hover:bg-gray-700 text-white gap-1.5">
                   <ExternalLink className="h-3.5 w-3.5" />
                   Join video call
                 </Button>

@@ -19,6 +19,10 @@ export function getConsentzAuthUrl(): string {
   return url.replace(/\/$/, '')
 }
 
+export function getConsentzV1Url(): string {
+  return `${new URL(getConsentzAuthUrl()).origin}/api/v1`
+}
+
 export function getApplicationId(): string {
   return process.env.CONSENTZ_APPLICATION_ID || 'admin'
 }

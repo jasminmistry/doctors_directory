@@ -14,7 +14,28 @@ export async function GET(
 
   if (consentzToken) {
     try {
-      const booking = await fetchConsentzBooking(consentzToken, params.id)
+      const raw = await fetchConsentzBooking(consentzToken, params.id)
+      // Look up clinic slug/city from local DB by name (best-effort for linking)
+      const clinicRow = await prisma.clinic.findFirst({
+        where: { name: raw.clinicName },
+        select: { slug: true, city: { select: { name: true } } },
+      })
+      const booking = {
+        id: raw.id,
+        treatment: raw.treatment,
+        slotStart: raw.slotStart,
+        slotEnd: raw.slotEnd,
+        status: raw.status,
+        notes: null,
+        videoCallMeetingId: raw.bookingType === 'video' ? String(raw.id) : null,
+        videoCallJoinUrl: raw.videoCall?.joinUrlReady ? (raw.videoCall.joinUrl ?? null) : null,
+        clinic: {
+          id: null,
+          name: raw.clinicName,
+          slug: clinicRow?.slug ?? '',
+          city: clinicRow?.city?.name ?? null,
+        },
+      }
       return NextResponse.json({ booking, source: 'consentz' })
     } catch (err: unknown) {
       const status = (err as { status?: number }).status

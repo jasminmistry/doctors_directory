@@ -101,11 +101,15 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
         status: 'confirmed',
         syncedFromCore: true,
         lastSyncedAt: new Date(),
+        videoCallMeetingId: booking.video_call ? String(booking.id) : null,
+        videoCallJoinUrl: booking.video_call?.join_url ?? null,
         ...(patient ? { patientId: patient.id } : {}),
       },
       update: {
         status: 'confirmed',
         lastSyncedAt: new Date(),
+        videoCallMeetingId: booking.video_call ? String(booking.id) : null,
+        videoCallJoinUrl: booking.video_call?.join_url ?? null,
       },
     })
 

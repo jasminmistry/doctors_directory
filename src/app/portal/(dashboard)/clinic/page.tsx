@@ -40,40 +40,16 @@ export default function PortalClinicPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
       {/* Subscription */}
-      {subscription && (
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Subscription</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <div>
-              <p className="text-xs text-gray-400 mb-0.5">Plan</p>
-              <p className="text-sm font-semibold text-gray-900">
-                {PLAN_LABELS[subscription.plan ?? ''] ?? subscription.plan ?? '—'}
-              </p>
-            </div>
-            {subscription.approvedAt && (
-              <div>
-                <p className="text-xs text-gray-400 mb-0.5">Active since</p>
-                <p className="text-sm font-semibold text-gray-900">
-                  {format(new Date(subscription.approvedAt), 'd MMM yyyy')}
-                </p>
-              </div>
-            )}
-            {subscription.stripeSubscriptionId && (
-              <div>
-                <p className="text-xs text-gray-400 mb-0.5">Billing</p>
-                <p className="text-sm font-semibold text-gray-900">Monthly</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* ID Verification */}
       {idVerified === false && entitySlug && (
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Identity Verification</h2>
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            Identity Verification
+          </h2>
           <p className="text-sm text-gray-600 mb-4">
-            Verify your identity to display an &ldquo;ID Verified&rdquo; badge on your clinic profile, building trust with potential patients.
+            Verify your identity to display an &ldquo;ID Verified&rdquo; badge
+            on your clinic profile, building trust with potential patients.
           </p>
           <a
             href={`/directory/verify/clinic/${entitySlug}`}
@@ -94,6 +70,37 @@ export default function PortalClinicPage() {
           onSaved={() => {}}
         />
       )}
+      {subscription && (
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
+            Subscription
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div>
+              <p className="text-xs text-gray-400 mb-0.5">Plan</p>
+              <p className="text-sm font-semibold text-gray-900">
+                {PLAN_LABELS[subscription.plan ?? ""] ??
+                  subscription.plan ??
+                  "—"}
+              </p>
+            </div>
+            {subscription.approvedAt && (
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Active since</p>
+                <p className="text-sm font-semibold text-gray-900">
+                  {format(new Date(subscription.approvedAt), "d MMM yyyy")}
+                </p>
+              </div>
+            )}
+            {subscription.stripeSubscriptionId && (
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Billing</p>
+                <p className="text-sm font-semibold text-gray-900">Monthly</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
-  )
+  );
 }

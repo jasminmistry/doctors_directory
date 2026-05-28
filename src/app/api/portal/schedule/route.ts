@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
-import { consentzApi, COOKIE_TOKEN } from '@/lib/auth'
+import { getConsentzV1Url, getApplicationId, COOKIE_TOKEN } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,10 +33,18 @@ async function getClaimIds(user: Awaited<ReturnType<typeof getPortalUser>>) {
   })
 }
 
-function schedulePath(entityType: string, consentzId: number) {
-  return entityType === 'practitioner'
-    ? `/register/practitioner/${consentzId}/schedule`
-    : `/register/clinic/${consentzId}/schedule`
+// Self-service endpoint — portal users call /api/v1/practitioner/{id}/schedule.
+// Admin routes call /register/practitioner|clinic/{id}/schedule (admin token only).
+function scheduleUrl(consentzUserId: number) {
+  return `${getConsentzV1Url()}/practitioner/${consentzUserId}/schedule`
+}
+
+function coreHeaders(token: string | undefined) {
+  return {
+    'Content-Type': 'application/json',
+    'X-APPLICATION-ID': getApplicationId(),
+    ...(token ? { 'X-SESSION-TOKEN': token } : {}),
+  }
 }
 
 export async function GET() {
@@ -44,16 +52,15 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const claim = await getClaimIds(user)
-  const consentzId =
-    user.entityType === 'practitioner' ? claim?.consentzUserId : claim?.consentzClinicId
+  const consentzUserId = claim?.consentzUserId
 
-  if (!consentzId) return NextResponse.json({ schedule: [] })
+  if (!consentzUserId) return NextResponse.json({ schedule: [] })
 
   const cookieStore = await cookies()
   const token = cookieStore.get(COOKIE_TOKEN)?.value
 
   try {
-    const res = await consentzApi(schedulePath(user.entityType, consentzId), { sessionToken: token })
+    const res = await fetch(scheduleUrl(consentzUserId), { headers: coreHeaders(token) })
     if (res.status === 404) return NextResponse.json({ schedule: [] })
     if (!res.ok) return NextResponse.json({ schedule: [] })
     const data = await res.json()
@@ -74,11 +81,9 @@ export async function POST(req: NextRequest) {
   const claim = await getClaimIds(user)
   if (!claim) return NextResponse.json({ error: 'Claim not found' }, { status: 404 })
 
-  const consentzId =
-    user.entityType === 'practitioner' ? claim.consentzUserId : claim.consentzClinicId
+  const consentzUserId = claim.consentzUserId
 
-  if (!consentzId) {
-    // No Consentz account yet — just mark wizard done if requested
+  if (!consentzUserId) {
     if (wizardComplete) {
       await prisma.claimRequest.update({ where: { id: claim.id }, data: { scheduleWizardDone: true } })
     }
@@ -89,10 +94,10 @@ export async function POST(req: NextRequest) {
   const token = cookieStore.get(COOKIE_TOKEN)?.value
 
   try {
-    const res = await consentzApi(schedulePath(user.entityType, consentzId), {
+    const res = await fetch(scheduleUrl(consentzUserId), {
       method: 'POST',
-      body: schedule,
-      sessionToken: token,
+      headers: coreHeaders(token),
+      body: JSON.stringify(schedule),
     })
     if (!res.ok) {
       const errText = await res.text().catch(() => '')

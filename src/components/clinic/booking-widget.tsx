@@ -118,7 +118,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
             href={bookedVideoCall.join_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-700 transition-colors"
           >
             <Video className="h-4 w-4" />
             Join Video Call
@@ -131,13 +131,14 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-      <div className="p-5 space-y-4">
-      {/* Step indicator */}
-      <div className="flex items-center gap-1 text-[10px] text-gray-400">
+      {/* Step indicator — always visible */}
+      <div className="flex items-center gap-1 text-[10px] text-gray-400 px-5 pt-5 pb-0">
         <span className={cn('font-medium', step === 1 && 'text-gray-900')}>1. Date &amp; Time</span>
         <span>›</span>
         <span className={cn('font-medium', step === 2 && 'text-gray-900')}>2. Your Details</span>
       </div>
+      {/* Scrollable content capped at viewport height */}
+      <div className="overflow-y-auto max-h-[min(520px,calc(100vh-10rem))] p-5 pt-4 space-y-4">
 
       {step === 1 && (
         <div className="space-y-3">

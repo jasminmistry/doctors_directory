@@ -11,7 +11,17 @@ export async function GET(req: NextRequest) {
 
   if (consentzToken) {
     try {
-      const bookings = await fetchConsentzBookings(consentzToken)
+      const raw = await fetchConsentzBookings(consentzToken)
+      const bookings = raw.map((b) => ({
+        id: b.id,
+        treatment: b.treatment,
+        slotStart: b.slotStart,
+        slotEnd: b.slotEnd,
+        status: b.status,
+        videoCallMeetingId: b.bookingType === 'video' ? String(b.id) : null,
+        videoCallJoinUrl: b.videoCall?.joinUrl ?? null,
+        clinic: { name: b.clinicName, slug: '', city: null },
+      }))
       return NextResponse.json({ bookings, source: 'consentz' })
     } catch (err) {
       console.error('[patient/bookings] Consentz fetch failed, falling back to local DB:', err)
