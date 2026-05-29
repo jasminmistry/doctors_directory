@@ -502,7 +502,7 @@ export function PractitionerCard({
       {typeof practitioner === "string" && !isCity(practitioner) && (
         <Card
           asChild
-          className="gap-0 h-full relative px-4 md:px-0 shadow-none md:border-0 duration-300 cursor-pointer"
+          className="gap-0 h-full relative px-4 rounded-none md:rounded-md md:px-0 md:border duration-300 shadow-none cursor-pointer"
           aria-labelledby={`treatment-name-${practitioner}`}
           data-testid="practitioner-card"
         >

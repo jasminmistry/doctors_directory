@@ -104,7 +104,7 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
       )}
 
       {setupStatus === 'card_saved' && (
-        <div className="flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+        <div className="flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-black">
           <CreditCard className="h-4 w-4 shrink-0" />
           Card saved successfully. Click <strong>Unlock — £15</strong> on any lead below to reveal patient details.
         </div>

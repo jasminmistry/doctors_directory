@@ -63,7 +63,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
   }
 
   return (
-    <div className="min-h-screen bg-[var(--primary-bg-color)]">
+    <div className="min-h-screen bg-white">
       {/* Mobile topbar */}
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
         <span className="text-sm font-semibold text-gray-900 truncate">{entityName || 'My Portal'}</span>
@@ -101,11 +101,11 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
         />
       )}
 
-      <div className="flex items-start max-w-7xl px-4 mx-auto py-8 lg:min-h-screen">
+      <div className="flex mx-auto lg:min-h-screen">
         {/* Sidebar */}
         <aside
           className={cn(
-            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-[#262422] border-r border-[#D4CFC5] transition-transform duration-200 rounded-md lg:sticky lg:top-0 lg:w-56 lg:translate-x-0',
+            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-[#262422] border-r border-[#D4CFC5] transition-transform duration-200 rounded-none lg:sticky lg:top-0 lg:w-56 lg:translate-x-0',
             isMobileNavOpen ? 'translate-x-0' : '-translate-x-full',
           )}
         >
@@ -272,7 +272,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
         </aside>
 
         {/* Main */}
-        <div className="min-w-0 flex-1 flex flex-col">
+        <div className="min-w-0 flex-1 p-10 flex flex-col">
           <main className="flex-1 px-4 pt-0 pb-0">{children}</main>
         </div>
       </div>
