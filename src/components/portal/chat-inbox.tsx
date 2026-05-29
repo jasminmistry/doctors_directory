@@ -225,7 +225,7 @@ export function ChatInbox() {
                     className={cn(
                       'max-w-[75%] rounded-2xl px-3.5 py-2 text-sm',
                       msg.sender === 'clinic'
-                        ? 'bg-gray-900 text-white rounded-br-sm'
+                        ? 'bg-gray-100 text-gray-900 rounded-br-sm'
                         : 'bg-gray-100 text-gray-900 rounded-bl-sm',
                     )}
                   >
@@ -241,9 +241,9 @@ export function ChatInbox() {
 
             {/* Input */}
             {active?.status === 'active' && (
-              <div className="shrink-0 flex items-center gap-2 px-4 py-3 border-t border-gray-200">
+              <div className="shrink-0 flex items-center px-4 gap-2 border-t border-gray-200">
                 <Input
-                  className="flex-1 h-9 text-sm"
+                  className="flex-1 h-15 rounded-none border-none text-sm focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
                   placeholder="Reply…"
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}

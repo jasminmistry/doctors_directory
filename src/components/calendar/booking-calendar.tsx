@@ -50,7 +50,7 @@ interface BookingCalendarProps {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  confirmed: 'bg-blue-100 border-blue-300 text-blue-800',
+  confirmed: 'bg-blue-100 border-blue-300 text-black',
   pending: 'bg-amber-100 border-amber-300 text-amber-800',
   completed: 'bg-emerald-100 border-emerald-300 text-emerald-800',
   cancelled: 'bg-gray-100 border-gray-300 text-gray-500 line-through',
@@ -280,7 +280,7 @@ function WeekView({
                 <span className="text-gray-400">{format(day, 'EEE')}</span>
                 <span className={cn(
                   'font-semibold',
-                  isToday(day) ? 'text-blue-600' : 'text-gray-700',
+                  isToday(day) ? 'text-black' : 'text-gray-700',
                 )}>{format(day, 'd')}</span>
               </div>
 
@@ -448,13 +448,13 @@ function BookingDetail({
           {booking.patientPhone && (
             <div>
               <dt className="text-gray-400 mb-0.5">Phone</dt>
-              <dd><a href={`tel:${booking.patientPhone}`} className="text-blue-600 hover:underline">{booking.patientPhone}</a></dd>
+              <dd><a href={`tel:${booking.patientPhone}`} className="text-black hover:underline">{booking.patientPhone}</a></dd>
             </div>
           )}
           {booking.patientEmail && (
             <div className={booking.patientPhone ? '' : 'col-span-2'}>
               <dt className="text-gray-400 mb-0.5">Email</dt>
-              <dd><a href={`mailto:${booking.patientEmail}`} className="text-blue-600 hover:underline truncate block">{booking.patientEmail}</a></dd>
+              <dd><a href={`mailto:${booking.patientEmail}`} className="text-black hover:underline truncate block">{booking.patientEmail}</a></dd>
             </div>
           )}
           {booking.notes && (

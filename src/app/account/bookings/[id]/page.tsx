@@ -72,7 +72,7 @@ export default function BookingDetailPage() {
           <span className={`text-xs px-2.5 py-1 rounded-full shrink-0 font-medium ${
             booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
             booking.status === 'cancelled' ? 'bg-red-100 text-red-600' :
-            booking.status === 'completed' ? 'bg-blue-100 text-blue-600' :
+            booking.status === 'completed' ? 'bg-blue-100 text-black' :
             'bg-gray-100 text-gray-500'
           }`}>
             {booking.status}

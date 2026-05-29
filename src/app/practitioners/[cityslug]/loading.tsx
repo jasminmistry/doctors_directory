@@ -3,14 +3,14 @@ import { PractitionerCardSkeleton } from "@/components/loading-skeleton";
 
 export default function Loading() {
   return (
-    <main className="bg-(--primary-bg-color)">
+    <main className="bg-white">
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <Skeleton className="h-4 w-48 mb-2" />
           <Skeleton className="h-7 w-72 mb-4" />
         </div>
 
-        <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
+        <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7flex flex-col sm:flex-row justify-center w-full md:gap-10">
           <div className="hidden sm:block w-48 shrink-0">
             <Skeleton className="h-96 w-full rounded-lg" />
           </div>

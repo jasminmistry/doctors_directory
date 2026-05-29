@@ -57,7 +57,7 @@ export default function AccountBookingsPage() {
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-semibold text-gray-900 truncate">{b.clinic.name}</p>
                     {b.videoCallMeetingId && (
-                      <span className="flex items-center gap-1 text-[10px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full shrink-0">
+                      <span className="flex items-center gap-1 text-[10px] bg-blue-100 text-black px-1.5 py-0.5 rounded-full shrink-0">
                         <Video className="h-2.5 w-2.5" />
                         Video
                       </span>

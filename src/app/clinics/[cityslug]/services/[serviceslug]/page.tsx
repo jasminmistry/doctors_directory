@@ -112,11 +112,11 @@ const serviceMatch = categories.some((cat: string) =>
   }
 
   return (
-    <main className="bg-(--primary-bg-color)">
+    <main className="bg-white">
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
-            <Link className="mb-2 inline-block" href="/" prefetch={false}>
+            <Link className="mb-3 inline-block" href="/" prefetch={false}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -168,7 +168,7 @@ const serviceMatch = categories.some((cat: string) =>
           </div>
         )}
 
-        <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
+        <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7flex flex-col sm:flex-row justify-center w-full md:gap-10">
           <CollectionsFilter pageType="Clinic" />
           <div className="flex-1 min-w-0">
             {filteredClinics.length > 0 ? (
