@@ -263,8 +263,8 @@ export function PractitionerCard({
                         </div>
 
                         <div className="text-center flex-1 min-w-0 items-start sm:items-center flex flex-col">
-                          <div className="flex items-center gap-1.5 ml-4 sm:ml-0">
-                            <span className="text-base font-semibold text-primary truncate">
+                          <div className="flex items-center gap-1.5 ml-4 sm:ml-0 min-w-0">
+                            <span className="text-base font-semibold text-primary break-words min-w-0">
                               {practitionerName
                                 .split(" ")
                                 .slice(0, 4)
@@ -288,7 +288,7 @@ export function PractitionerCard({
                           </div>
 
                           {"practitioner_name" in practitioner && (
-                            <p className="text-muted-foreground mb-2 font-semibold leading-tight truncate ml-4 sm:ml-0">
+                            <p className="text-muted-foreground mb-2 font-semibold leading-tight break-words ml-4 sm:ml-0">
                               {practitioner.practitioner_title
                                 ?.split(",")[0]
                                 .split(" ")
@@ -304,7 +304,7 @@ export function PractitionerCard({
 
                           {!("practitioner_name" in practitioner) &&
                             practitioner.category && (
-                              <p className="text-muted-foreground mb-2 font-semibold leading-tight truncate ml-4 sm:ml-0">
+                              <p className="text-muted-foreground mb-2 font-semibold leading-tight break-words ml-4 sm:ml-0">
                                 {practitioner.category.trim()}
                               </p>
                             )}

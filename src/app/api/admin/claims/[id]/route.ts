@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { adminReviewClaimSchema } from '@/lib/schemas/claim.schema'
-import { sendClaimApprovedEmail, sendWelcomeEmail } from '@/lib/email'
+import { sendClaimApprovedEmail, sendClaimRejectedEmail, sendWelcomeEmail } from '@/lib/email'
 import {
   COOKIE_TOKEN,
   COOKIE_REFRESH,
@@ -260,6 +260,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         where: { id },
         data: { status: 'rejected', adminNotes: adminNotes ?? null, rejectedAt: new Date() },
       })
+
+      await sendClaimRejectedEmail({
+        to: claim.claimerEmail,
+        entityName,
+        adminNotes,
+      }).catch(err => console.error('[claim] sendClaimRejectedEmail failed:', err))
     }
 
     return NextResponse.json({ success: true })

@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useEffect, useState } from 'react'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
@@ -9,6 +9,9 @@ import {
   Menu, X, ShieldCheck, Star, BarChart3, Globe2, ExternalLink, Sparkles,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+
+const AdminCountsContext = createContext<{ refreshCounts: () => void }>({ refreshCounts: () => {} })
+export function useAdminCounts() { return useContext(AdminCountsContext) }
 
 interface AdminLayoutProps {
   children: ReactNode
@@ -65,12 +68,14 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
     pendingVerifications: 0,
   })
 
-  useEffect(() => {
+  function refreshCounts() {
     fetch('/directory/api/admin/pending-counts')
       .then((r) => r.ok ? r.json() : null)
       .then((data) => { if (data) setCounts(data) })
       .catch(() => {})
-  }, [pathname])
+  }
+
+  useEffect(() => { refreshCounts() }, [pathname])
 
   async function handleLogout() {
     await fetch('/directory/api/auth/logout', { method: 'POST' })
@@ -78,6 +83,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
   }
 
   return (
+    <AdminCountsContext.Provider value={{ refreshCounts }}>
     <div className="min-h-screen bg-[var(--primary-bg-color)]">
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
         <h1 className="text-base font-semibold text-white">{title}</h1>
@@ -217,5 +223,6 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
         </div>
       </div>
     </div>
+    </AdminCountsContext.Provider>
   )
 }

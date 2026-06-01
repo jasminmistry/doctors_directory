@@ -358,6 +358,50 @@ export async function sendPatientOtp({ to, otp }: { to: string; otp: string }) {
   })
 }
 
+export async function sendClaimRejectedEmail({
+  to,
+  entityName,
+  adminNotes,
+}: {
+  to: string
+  entityName: string
+  adminNotes?: string | null
+}) {
+  const transport = createTransport()
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject: `Your claim for ${entityName} was not approved`,
+    text: `
+Hi,
+
+Thank you for submitting your claim for ${entityName} on Consentz Directory.
+
+Unfortunately, we were unable to approve your claim at this time.${adminNotes ? `\n\nReason: ${adminNotes}` : ''}
+
+If you believe this is an error or would like to provide additional information, please contact us at support@consentz.com.
+
+— The Consentz Team
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  <h2 style="margin-bottom:8px;">Claim not approved</h2>
+  <p>Thank you for submitting your claim for <strong>${entityName}</strong> on Consentz Directory.</p>
+  <p>Unfortunately, we were unable to approve your claim at this time.</p>
+  ${adminNotes ? `<div style="margin:20px 0;padding:16px;background:#fff3f3;border-left:4px solid #e53e3e;border-radius:4px;"><p style="margin:0;font-size:14px;color:#333;"><strong>Reason:</strong> ${adminNotes}</p></div>` : ''}
+  <p style="color:#666;font-size:14px;">If you believe this is an error or would like to provide additional information, please contact us at <a href="mailto:support@consentz.com" style="color:#111;">support@consentz.com</a>.</p>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">— The Consentz Team</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
 export async function sendGhostLeadHook({
   to,
   clinicName,

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { AdminLayout } from '@/components/admin/AdminLayout'
+import { AdminLayout, useAdminCounts } from '@/components/admin/AdminLayout'
 import { DataTable } from '@/components/admin/DataTable'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -111,6 +111,7 @@ interface Claim {
 }
 
 export default function AdminClaimsPage() {
+  const { refreshCounts } = useAdminCounts()
   const [claims, setClaims] = useState<Claim[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('pending_approval')
@@ -195,6 +196,7 @@ export default function AdminClaimsPage() {
         toast.success(action === 'approve' ? 'Claim approved' : 'Claim rejected')
       }
       setClaims((prev) => prev.filter((c) => c.id !== reviewClaim.id))
+      refreshCounts()
       setReviewClaim(null)
       setAdminNotes('')
     } catch (err) {
