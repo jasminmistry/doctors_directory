@@ -381,7 +381,7 @@ export function ConsultationChatDialog({
                 You need to be <span className="font-semibold">signed in</span> to start a consultation.
               </p>
               <a
-                href={`/directory/account/login?next=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname : '')}`}
+                href={`/directory/account/login?next=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname.replace(/^\/directory/, '') || '/' : '/')}`}
                 className="inline-flex h-9 items-center justify-center rounded-md bg-black px-4 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
               >
                 Sign in / Create account

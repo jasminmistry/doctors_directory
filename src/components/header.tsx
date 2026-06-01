@@ -138,12 +138,22 @@ export default function Header() {
               </div>
             </div>
           ) : (
-            <a
-              href="/directory/account/login"
-              className="font-bold rounded-lg border-2 py-2 px-5 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white"
-            >
-              PATIENT SIGN IN
-            </a>
+            <div className="relative group">
+              <button type="button" className="font-bold rounded-lg border-2 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1">
+                LOG IN
+                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <Link href="/account/login" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg">
+                  Patient
+                </Link>
+                <Link href="/portal/login" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg">
+                  Clinic / Practitioner
+                </Link>
+              </div>
+            </div>
           )}
         </div>
 
@@ -239,13 +249,15 @@ export default function Header() {
               <a href="/directory/api/patient/auth/logout" className="text-sm font-medium text-red-600 hover:text-red-800" onClick={() => setMenuOpen(false)}>Sign out</a>
             </div>
           ) : (
-            <a
-              href="/directory/account/login"
-              className="mt-4 inline-flex font-bold rounded-lg border-2 py-3 px-6 border-black bg-transparent text-black hover:bg-black hover:text-white"
-              onClick={() => setMenuOpen(false)}
-            >
-              PATIENT SIGN IN
-            </a>
+            <div className="mt-4 border-t border-gray-100 pt-3 flex flex-col gap-2">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Log In</p>
+              <Link href="/account/login" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+                Patient
+              </Link>
+              <Link href="/portal/login" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+                Clinic / Practitioner
+              </Link>
+            </div>
           )}
         </div>
       )}

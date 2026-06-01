@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { z } from 'zod'
-import { hashOtp, setPatientCookie } from '@/lib/patient-auth'
+import { hashOtp, hashPassword, setPatientCookie } from '@/lib/patient-auth'
 
 const bodySchema = z.object({
   email: z.string().email(),
   otp: z.string().length(6),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 })
 
 const MAX_ATTEMPTS = 5
@@ -14,10 +15,10 @@ export async function POST(req: NextRequest) {
   try {
     const body = bodySchema.safeParse(await req.json())
     if (!body.success) {
-      return NextResponse.json({ error: 'Email and 6-digit code required' }, { status: 400 })
+      return NextResponse.json({ error: body.error.issues[0].message }, { status: 400 })
     }
 
-    const { email, otp } = body.data
+    const { email, otp, password } = body.data
 
     const patient = await prisma.patient.findUnique({ where: { email } })
     if (!patient) {
@@ -46,33 +47,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid code' }, { status: 400 })
     }
 
-    const isNewUser = !patient.emailVerified
-
-    // Mark OTP used and verify the patient's email
     await prisma.patientOtp.update({ where: { id: record.id }, data: { used: true } })
-    await prisma.patient.update({ where: { id: patient.id }, data: { emailVerified: true } })
 
-    // Backfill patientId on existing sessions/bookings/leads linked by email
-    await Promise.all([
-      prisma.chatSession.updateMany({
-        where: { patientEmail: email, patientId: null },
-        data: { patientId: patient.id },
-      }),
-      prisma.booking.updateMany({
-        where: { patientEmail: email, patientId: null },
-        data: { patientId: patient.id },
-      }),
-      prisma.consultationLead.updateMany({
-        where: { patientEmail: email, patientId: null },
-        data: { patientId: patient.id },
-      }),
-    ])
+    const passwordHash = await hashPassword(password)
+    await prisma.patient.update({
+      where: { id: patient.id },
+      data: { passwordHash, emailVerified: true },
+    })
 
-    const res = NextResponse.json({ success: true, isNewUser })
+    const res = NextResponse.json({ success: true })
     setPatientCookie(res, { id: patient.id, email: patient.email })
     return res
   } catch (err) {
-    console.error('[patient/auth/verify-otp]', err)
+    console.error('[patient/auth/reset-password]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

@@ -26,16 +26,6 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
   const returnTo = queryString ? `${pathname}?${queryString}` : pathname;
-  const normalizeExternalUrl = (value?: string) => {
-    if (!value) return null;
-    const cleaned = value.trim().replace(/^\.+|\.+$/g, "");
-    if (!cleaned) return null;
-    if (/^https?:\/\//i.test(cleaned)) return cleaned;
-    return `https://${cleaned}`;
-  };
-
-  const consultationHref =
-    normalizeExternalUrl(clinic.website) ?? normalizeExternalUrl(clinic.url);
   const practitionerName = clinic.slug!
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -154,12 +144,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
             variant="outline"
             className="w-full shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
           >
-            <a
-              href={consultationHref ?? "#fees"}
-              target={consultationHref ? "_blank" : undefined}
-              rel={consultationHref ? "noopener noreferrer" : undefined}
-              data-track-cta="true"
-            >
+            <a href="#fees" data-track-cta="true">
               Request Pricing
             </a>
           </Button>

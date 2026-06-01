@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { CalendarDays, MessageSquare, UserCircle, ArrowRight } from 'lucide-react'
 import { format } from 'date-fns'
 
@@ -31,6 +32,8 @@ interface ChatSession {
 }
 
 export default function AccountDashboardPage() {
+  const searchParams = useSearchParams()
+  const isNew = searchParams.get('new') === '1'
   const [patient, setPatient] = useState<PatientMe | null>(null)
   const [bookings, setBookings] = useState<Booking[]>([])
   const [sessions, setSessions] = useState<ChatSession[]>([])
@@ -44,7 +47,7 @@ export default function AccountDashboardPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Welcome back{patient?.firstName ? `, ${patient.firstName}` : ''}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{isNew ? 'Welcome' : 'Welcome back'}{patient?.firstName ? `, ${patient.firstName}` : ''}</h1>
         <p className="text-sm text-gray-500 mt-1">{patient?.email ?? ''}</p>
       </div>
 

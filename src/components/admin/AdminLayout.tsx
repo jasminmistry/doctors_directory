@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Building2, Users, Package,
   Stethoscope, Clock, FlaskConical, LogOut, Globe,
-  Menu, X, ShieldCheck, Star, BarChart3, Globe2, ExternalLink,
+  Menu, X, ShieldCheck, Star, BarChart3, Globe2, ExternalLink, Sparkles,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -34,6 +34,7 @@ function NavBadge({ count }: { count: number }) {
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/clinics', label: 'Clinics', icon: Building2 },
+  { href: '/admin/featured-profiles', label: 'Featured Profiles', icon: Sparkles },
   { href: '/admin/practitioners', label: 'Practitioners', icon: Users },
   { href: '/admin/products', label: 'Products', icon: Package },
   { href: '/admin/treatments', label: 'Treatments', icon: Stethoscope },

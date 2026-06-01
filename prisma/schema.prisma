@@ -973,6 +973,7 @@ model Patient {
   lastName      String?  @db.VarChar(100)
   phone         String?  @db.VarChar(30)
   emailVerified Boolean  @default(false)
+  passwordHash  String?  @db.VarChar(255)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -1004,4 +1005,15 @@ model PatientOtp {
 
   @@index([patientId])
   @@map("patient_otps")
+}
+
+model FeaturedProfile {
+  id         Int      @id @default(autoincrement())
+  clinicSlug String   @unique @db.VarChar(255)
+  position   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([position])
+  @@map("featured_profiles")
 }
