@@ -329,7 +329,7 @@ export default function AdminClaimsPage() {
                     {reviewClaim.clinicWebsite && (
                       <div>
                         <span className="text-muted-foreground">Website</span>
-                        <a href={reviewClaim.clinicWebsite} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 hover:underline truncate block">
+                        <a href={reviewClaim.clinicWebsite} target="_blank" rel="noopener noreferrer" className="font-medium text-black hover:underline truncate block">
                           {reviewClaim.clinicWebsite}
                         </a>
                       </div>
@@ -337,7 +337,7 @@ export default function AdminClaimsPage() {
                     {reviewClaim.googleBusinessLink && (
                       <div className="col-span-2">
                         <span className="text-muted-foreground">Google Business</span>
-                        <a href={reviewClaim.googleBusinessLink} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 hover:underline truncate block">
+                        <a href={reviewClaim.googleBusinessLink} target="_blank" rel="noopener noreferrer" className="font-medium text-black hover:underline truncate block">
                           {reviewClaim.googleBusinessLink}
                         </a>
                       </div>

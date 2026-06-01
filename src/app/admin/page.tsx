@@ -22,7 +22,7 @@ const STAT_CARDS = [
     label: 'Clinics',
     href: '/admin/clinics',
     icon: Building2,
-    color: 'text-blue-600 bg-blue-50',
+    color: 'text-black bg-blue-50',
   },
   {
     key: 'practitioners' as const,

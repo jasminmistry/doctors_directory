@@ -52,7 +52,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
   if (similarProducts.length === 0) {
     return (
-      <main className="min-h-screen bg-(--primary-bg-color)">
+      <main className="min-h-screen bg-white">
         <div className="sticky top-0 z-10">
           <div className="container mx-auto max-w-6xl px-4 py-4">
             <Link href="/products/brands" prefetch={false}>
@@ -95,7 +95,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   }
 
   return (
-    <main className="min-h-screen bg-(--primary-bg-color)">
+    <main className="min-h-screen bg-white">
       {/* Navigation */}
       <div className="sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">

@@ -77,7 +77,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
                   </Badge>
                 )}
                 {!clinic.idVerified && clinic.manualVerified && (
-                  <Badge className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 border-blue-200 text-xs font-medium shrink-0">
+                  <Badge className="inline-flex items-center gap-1 bg-blue-100 text-black border-blue-200 text-xs font-medium shrink-0">
                     <ShieldCheck className="h-3 w-3" />
                     Manually Verified
                   </Badge>

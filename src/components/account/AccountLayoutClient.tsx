@@ -55,7 +55,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
   if (isLoginPage) return <>{children}</>
 
   return (
-    <div className="min-h-screen bg-[var(--primary-bg-color)]">
+    <div className="min-h-screen bg-white">
       {/* Mobile topbar */}
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
         <span className="text-sm font-semibold text-gray-300 truncate">My Account</span>

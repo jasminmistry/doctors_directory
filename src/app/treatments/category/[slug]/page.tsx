@@ -74,8 +74,8 @@ export default function TreatmentCategoryPage({ params }: Readonly<CategoryPageP
   const treatments = getCategoryTreatments(categoryLabel);
 
   return (
-    <main className="min-h-screen bg-(--primary-bg-color)">
-      <div className="bg-(--primary-bg-color) backdrop-blur-sm sticky top-0 z-10">
+    <main className="min-h-screen bg-white">
+      <div className="bg-white backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-0 py-2">
           <Link href="/treatments" prefetch={false}>
             <Button
@@ -108,7 +108,7 @@ export default function TreatmentCategoryPage({ params }: Readonly<CategoryPageP
         </Breadcrumb>
       </div>
 
-      <section className="pt-2 py-10 md:px-4 bg-white md:bg-(--primary-bg-color)">
+      <section className="pt-2 py-10 md:px-4 bg-white">
         <div className="container mx-auto max-w-6xl space-y-8">
           <div className="m-0 md:mb-4">
             <h1 className="text-2xl md:text-3xl font-semibold text-foreground">{categoryLabel}</h1>

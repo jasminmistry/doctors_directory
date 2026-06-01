@@ -14,10 +14,10 @@ interface FormSectionProps {
 
 export function FormSection({ title, description, icon: Icon, children, className }: FormSectionProps) {
   return (
-    <div className={cn('rounded-2xl border border-[#e4dccf] overflow-hidden', className)}>
+    <div className={cn('rounded-2xl border border-gray-200 overflow-hidden', className)}>
       <div className="px-6 py-4 border-b border-[#e4dccf] flex items-center gap-3">
         {Icon && (
-          <div className="w-8 h-8 rounded-lg bg-white border border-[#ddd3c3] shadow-sm flex items-center justify-center shrink-0">
+          <div className=" h-10 w-10 flex items-center justify-center rounded-2xl bg-black/10 ring-1 ring-black/10">
             <Icon className="h-4 w-4 text-[#6b5b4d]" />
           </div>
         )}
