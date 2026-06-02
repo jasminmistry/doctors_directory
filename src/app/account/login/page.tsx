@@ -14,6 +14,8 @@ export default function AccountLoginPage() {
   const searchParams = useSearchParams()
   const [step, setStep] = useState<Step>('login')
   const [email, setEmail] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -65,7 +67,7 @@ export default function AccountLoginPage() {
       const res = await fetch('/directory/api/patient/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, firstName: firstName.trim() || undefined, lastName: lastName.trim() || undefined }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error ?? 'Registration failed'); return }
@@ -198,6 +200,26 @@ export default function AccountLoginPage() {
           {/* Register */}
           {step === 'register' && (
             <form onSubmit={handleRegister} className="space-y-4">
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label htmlFor="reg-firstname" className="mb-2 block text-base font-medium text-black">First name</label>
+                  <input
+                    id="reg-firstname" type="text" required autoComplete="given-name"
+                    value={firstName} onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                    placeholder="Jane"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="reg-lastname" className="mb-2 block text-base font-medium text-black">Last name</label>
+                  <input
+                    id="reg-lastname" type="text" autoComplete="family-name"
+                    value={lastName} onChange={(e) => setLastName(e.target.value)}
+                    className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                    placeholder="Smith"
+                  />
+                </div>
+              </div>
               <div>
                 <label htmlFor="reg-email" className="mb-2 block text-base font-medium text-black">Email address</label>
                 <input

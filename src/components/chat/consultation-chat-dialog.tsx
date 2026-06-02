@@ -288,6 +288,10 @@ export function ConsultationChatDialog({
     if (pollRef.current) clearInterval(pollRef.current)
     const meRes = await fetch('/directory/api/patient/me')
     if (!meRes.ok) { setPhase('login_required'); return }
+    const meData = await meRes.json()
+    const fullName = [meData.firstName, meData.lastName].filter(Boolean).join(' ')
+    if (fullName) setName(fullName)
+    if (meData.email) setContact(meData.email)
     await checkOnlineStatus()
   }
 

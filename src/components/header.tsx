@@ -7,6 +7,11 @@ import { SearchBar } from "@/components/search/search-bar";
 
 type PatientInfo = { firstName: string; lastName: string; email: string }
 
+async function signOut() {
+  await fetch('/directory/api/patient/auth/logout', { method: 'POST' }).catch(() => {})
+  window.location.replace('/directory')
+}
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [patient, setPatient] = useState<PatientInfo | null | undefined>(undefined);
@@ -134,7 +139,7 @@ export default function Header() {
                 <Link href="/account" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg">My Account</Link>
                 <Link href="/account/bookings" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100">Bookings</Link>
                 <Link href="/account/chats" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100">Chats</Link>
-                <a href="/directory/api/patient/auth/logout" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600">Sign out</a>
+                <button type="button" onClick={signOut} className="block w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600">Sign out</button>
               </div>
             </div>
           ) : (
@@ -246,7 +251,7 @@ export default function Header() {
               <Link href="/account" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>My Account</Link>
               <Link href="/account/bookings" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>Bookings</Link>
               <Link href="/account/chats" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>Chats</Link>
-              <a href="/directory/api/patient/auth/logout" className="text-sm font-medium text-red-600 hover:text-red-800" onClick={() => setMenuOpen(false)}>Sign out</a>
+              <button type="button" onClick={() => { setMenuOpen(false); signOut() }} className="text-sm font-medium text-red-600 hover:text-red-800 text-left">Sign out</button>
             </div>
           ) : (
             <div className="mt-4 border-t border-gray-100 pt-3 flex flex-col gap-2">

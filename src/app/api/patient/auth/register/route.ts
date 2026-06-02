@@ -6,6 +6,8 @@ import { hashPassword, setPatientCookie } from '@/lib/patient-auth'
 const bodySchema = z.object({
   email: z.string().email(),
   password: z.string().min(8, 'Password must be at least 8 characters'),
+  firstName: z.string().min(1).max(100).optional(),
+  lastName: z.string().max(100).optional(),
 })
 
 export async function POST(req: NextRequest) {
@@ -15,7 +17,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: body.error.issues[0].message }, { status: 400 })
     }
 
-    const { email, password } = body.data
+    const { email, password, firstName, lastName } = body.data
 
     const existing = await prisma.patient.findUnique({ where: { email } })
     if (existing?.passwordHash) {
@@ -26,8 +28,8 @@ export async function POST(req: NextRequest) {
 
     const patient = await prisma.patient.upsert({
       where: { email },
-      create: { email, passwordHash, emailVerified: true },
-      update: { passwordHash, emailVerified: true },
+      create: { email, passwordHash, emailVerified: true, firstName, lastName },
+      update: { passwordHash, emailVerified: true, ...(firstName && { firstName }), ...(lastName && { lastName }) },
     })
 
     await Promise.all([
