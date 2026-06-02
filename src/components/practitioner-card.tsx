@@ -18,6 +18,7 @@ import { Button } from "./ui/button";
 import { isClinic, isPractitioner, isProduct, toUrlSlug } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { OnlineDot } from "@/components/clinic/online-dot";
 type PractitionerOrClinic = Practitioner | Clinic | Product | string;
 interface PractitionerCardProps {
   practitioner: PractitionerOrClinic;
@@ -280,6 +281,9 @@ export function PractitionerCard({
                                 manualVerified={(practitioner as any).manualVerified}
                                 verified={(practitioner as any).verified}
                               />
+                            )}
+                            {(isClinic(practitioner) || isPractitioner(practitioner)) && practitioner.slug && (
+                              <OnlineDot slug={practitioner.slug} />
                             )}
                           </div>
 

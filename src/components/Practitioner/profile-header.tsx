@@ -19,6 +19,7 @@ import  Link  from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
 import { Link as LinkIcon} from "lucide-react"
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
+import { OnlineDot } from "@/components/clinic/online-dot";
 interface ProfileHeaderProps {
   clinic: Practitioner;
   k_value: any;
@@ -89,6 +90,9 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
                   <h1 className="inline text-left mb-0 md:m-0 font-semibold text-md md:text-2xl transition-colors md:text-left">
                     {practitionerName}
                   </h1>
+                  {k_value?.claimed && k_value?.slug && (
+                    <OnlineDot slug={k_value.slug} />
+                  )}
                   {clinic.idVerified && (
                     <Badge className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border-emerald-200 text-xs font-medium shrink-0">
                       <ShieldCheck className="h-3 w-3" />

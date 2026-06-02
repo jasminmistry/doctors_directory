@@ -15,6 +15,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dialog";
 import { ClinicOnlineStatus } from "@/components/clinic/online-status";
+import { OnlineDot } from "@/components/clinic/online-dot";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
@@ -70,6 +71,9 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
                 <h1 className="font-semibold text-lg md:text-2xl leading-tight">
                   {practitionerName}
                 </h1>
+                {clinic.claimed && clinic.slug && (
+                  <OnlineDot slug={clinic.slug} />
+                )}
                 {clinic.idVerified && (
                   <Badge className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border-emerald-200 text-xs font-medium shrink-0">
                     <ShieldCheck className="h-3 w-3" />

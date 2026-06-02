@@ -57,7 +57,7 @@ export function DesktopSearchView({
       <div className="flex flex-row items-center mb-2">
         <div className="relative">
           <button
-            className="flex-1 bg-white border border-r-0 border-gray-300 px-4 py-3 rounded-l-lg"
+            className="flex-none bg-white border border-r-0 border-gray-300 px-4 py-3 rounded-l-lg"
             onClick={() => { cancelClose(); setShowResults(!showResults); }}
             onBlur={scheduleClose}
           >
@@ -72,7 +72,7 @@ export function DesktopSearchView({
 
         <div className="relative flex-1 bg-white border rounded-r-lg sm:rounded-r-none border-gray-300 px-4 py-3">
           <Input
-            placeholder="I'm searching for"
+            placeholder="Treatment, clinic or practitioner"
             value={localFilters.query}
             onChange={(e) =>
               setLocalFilters((prev) => ({ ...prev, query: e.target.value }))
@@ -95,7 +95,7 @@ export function DesktopSearchView({
           )}
         </div>
 
-        <div className="hidden sm:flex relative bg-white rounded-r-lg border border-gray-300 px-4 py-3 items-center gap-2">
+        <div className="hidden sm:flex relative bg-white rounded-r-lg border border-gray-300 px-4 py-3 items-center gap-2 w-44 flex-none">
           <Locate className="w-5 h-5 text-gray-600" />
           <Input
             placeholder="Location"
