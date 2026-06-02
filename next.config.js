@@ -2,6 +2,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    trustProxyHeaders: true,
+  },
     images: {
       
       formats: ["image/avif", "image/webp"], // enable AVIF + WebP
