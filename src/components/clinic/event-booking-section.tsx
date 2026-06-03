@@ -171,6 +171,7 @@ export function EventBookingSection({ practitionerSlug }: EventBookingSectionPro
 
       const commonPayload = {
         event_id: selectedEvent.id,
+        practitioner_id: selectedSlot.practitioner_id,
         slot_start: slotStart,
         slot_end: slotEnd,
         patient_first_name: firstName.trim(),
