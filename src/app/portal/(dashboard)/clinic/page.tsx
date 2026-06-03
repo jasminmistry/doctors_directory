@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { format } from "date-fns";
 import { ClinicForm } from "@/components/admin/forms/ClinicForm";
 
@@ -26,7 +26,8 @@ export default function PortalClinicPage() {
     null,
   );
 
-  useEffect(() => {
+  const fetchClinicData = useCallback(() => {
+    setVerificationChecked(false);
     fetch("/directory/api/portal/clinic")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
@@ -38,6 +39,8 @@ export default function PortalClinicPage() {
       .catch(() => {})
       .finally(() => setVerificationChecked(true));
   }, []);
+
+  useEffect(() => { fetchClinicData(); }, [fetchClinicData]);
 
   return (
     <div className="w-full mx-auto px-0 space-y-6">
@@ -69,7 +72,7 @@ export default function PortalClinicPage() {
           saveUrl="/directory/api/portal/clinic"
           mode="portal"
           disabled={idVerified !== true}
-          onSaved={() => {}}
+          onSaved={fetchClinicData}
         />
       )}
       {subscription && (

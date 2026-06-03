@@ -22,6 +22,7 @@ import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { getPractitionerBySlug, getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 import { getAllTreatmentNames } from "@/lib/data-access/treatments";
+import { EventBookingSection } from "@/components/clinic/event-booking-section";
 
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
@@ -215,6 +216,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   String(practitioner.Payments) || "Not listed"
                 )}
               </Section>)}
+              <EventBookingSection practitionerSlug={slug} />
+
               <div className='flex flex-col sm:flex-row gap-2'>
 
 

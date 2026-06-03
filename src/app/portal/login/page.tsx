@@ -50,8 +50,7 @@ export default function PortalLoginPage() {
         return
       }
       const next = searchParams.get('next') || '/portal'
-      router.push(next)
-      router.refresh()
+      window.location.href = next.startsWith('/directory') ? next : `/directory${next}`
     } catch {
       setError('Dev login failed')
     } finally {
@@ -84,8 +83,7 @@ export default function PortalLoginPage() {
       }
 
       const next = searchParams.get('next') || '/portal'
-      router.push(next)
-      router.refresh()
+      window.location.href = next.startsWith('/directory') ? next : `/directory${next}`
     } catch {
       setError('Unable to connect. Please try again.')
     } finally {

@@ -4,6 +4,84 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 
+function getCoreLiteBase() {
+  const authUrl = process.env.CONSENTZ_AUTH_API_URL
+  if (!authUrl) throw new Error('CONSENTZ_AUTH_API_URL is not configured')
+  return `${new URL(authUrl).origin}/api/core-lite`
+}
+
+async function handleEventBookingPayment(session: Stripe.Checkout.Session) {
+  const meta = session.metadata!
+  const coreClinicId = parseInt(meta.coreClinicId, 10)
+  const clinicId = parseInt(meta.clinicId, 10)
+  const paymentIntentId = session.payment_intent as string | null
+  const amountPaid = session.amount_total ? session.amount_total / 100 : null
+
+  try {
+    const res = await fetch(`${getCoreLiteBase()}/clinics/${coreClinicId}/bookings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_id: parseInt(meta.event_id, 10),
+        practitioner_id: parseInt(meta.practitioner_id, 10),
+        slot_start: meta.slot_start,
+        slot_end: meta.slot_end,
+        patient_first_name: meta.patient_first_name,
+        patient_last_name: meta.patient_last_name,
+        patient_email: meta.patient_email,
+        ...(meta.patient_phone ? { patient_phone: meta.patient_phone } : {}),
+      }),
+    })
+
+    if (!res.ok) {
+      const body = await res.text().catch(() => '')
+      console.error(`[stripe/webhook] event_booking Core POST failed: HTTP ${res.status} — ${body}`)
+      return
+    }
+
+    const data = await res.json() as {
+      booking: {
+        id: number
+        slot_start: string
+        slot_end: string
+        video_call: { join_url: string | null } | null
+      }
+    }
+    const booking = data.booking
+
+    await prisma.booking.upsert({
+      where: { coreBookingId: String(booking.id) },
+      create: {
+        clinicId,
+        coreBookingId: String(booking.id),
+        patientName: `${meta.patient_first_name} ${meta.patient_last_name}`,
+        patientEmail: meta.patient_email,
+        patientPhone: meta.patient_phone ?? '',
+        treatment: meta.event_title ?? null,
+        slotStart: new Date(booking.slot_start),
+        slotEnd: new Date(booking.slot_end),
+        status: 'confirmed',
+        syncedFromCore: true,
+        lastSyncedAt: new Date(),
+        videoCallJoinUrl: booking.video_call?.join_url ?? null,
+        ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}),
+        ...(amountPaid !== null ? { depositAmount: amountPaid } : {}),
+      },
+      update: {
+        status: 'confirmed',
+        lastSyncedAt: new Date(),
+        videoCallJoinUrl: booking.video_call?.join_url ?? null,
+        ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}),
+        ...(amountPaid !== null ? { depositAmount: amountPaid } : {}),
+      },
+    })
+
+    console.info(`[stripe/webhook] event_booking created: coreBookingId=${booking.id} clinicId=${clinicId}`)
+  } catch (err) {
+    console.error('[stripe/webhook] event_booking handler error:', err)
+  }
+}
+
 export async function POST(req: NextRequest) {
   const body = await req.text()
   const sig = req.headers.get('stripe-signature')
@@ -70,6 +148,10 @@ export async function POST(req: NextRequest) {
         }).catch(err => console.error('[stripe] Failed to store stripeCustomerId from unlock setup:', err))
         console.info(`[stripe] Stored stripeCustomerId on clinic ${clinicId} from unlock setup flow`)
       }
+    // ── Event booking payment (directory patient flow) ───────────────────────
+    } else if (session.metadata?.type === 'event_booking') {
+      await handleEventBookingPayment(session)
+
     } else {
       console.warn('[stripe] checkout.session.completed — unhandled metadata', session.id, session.metadata)
     }

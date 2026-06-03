@@ -22,7 +22,7 @@ export default function Header() {
       .then((r) => r.ok ? r.json() : null)
       .then((data) => setPatient(data))
       .catch(() => setPatient(null))
-  }, [])
+  }, [pathname])
 
   useEffect(() => {
     if (menuOpen) {

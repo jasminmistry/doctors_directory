@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
@@ -92,6 +93,7 @@ export async function PUT(request: Request) {
       data: validation.data as any,
       select: CLINIC_PORTAL_SELECT,
     })
+    revalidatePath('/portal/clinic')
     const { city, ...rest } = clinic
     return NextResponse.json({ ...rest, citySlug: city?.slug ?? null })
   } catch (error) {

@@ -3,7 +3,7 @@
 import { ReactNode, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Building2, User, Globe, LogOut, Menu, X, Inbox, CalendarDays, MessageSquare, Lock, ExternalLink, Clock } from 'lucide-react'
+import { Building2, User, Globe, LogOut, Menu, X, Inbox, CalendarDays, MessageSquare, Lock, ExternalLink, Clock, CalendarCheck, PoundSterling } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { LeadBadge } from '@/components/portal/lead-badge'
 import { ChatBadge } from '@/components/portal/chat-badge'
@@ -59,7 +59,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
 
   async function handleLogout() {
     await fetch('/directory/api/auth/logout', { method: 'POST' })
-    router.push('/portal/login')
+    window.location.href = '/directory/portal/login'
   }
 
   return (
@@ -210,6 +210,36 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
                 </Link>
 
                 <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-300">
+                  Consultations
+                </p>
+                <Link
+                  href="/portal/practitioner/events"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className={cn(
+                    'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                    pathname.startsWith('/portal/practitioner/events')
+                      ? 'bg-black text-white'
+                      : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900',
+                  )}
+                >
+                  <CalendarCheck className="h-4 w-4 shrink-0" />
+                  My Events
+                </Link>
+                <Link
+                  href="/portal/practitioner/earnings"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className={cn(
+                    'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                    pathname.startsWith('/portal/practitioner/earnings')
+                      ? 'bg-black text-white'
+                      : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900',
+                  )}
+                >
+                  <PoundSterling className="h-4 w-4 shrink-0" />
+                  Earnings
+                </Link>
+
+                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-300">
                   Settings
                 </p>
                 <Link
@@ -230,6 +260,35 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
 
             {entityType === 'practitioner' && (
               <>
+                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-300">
+                  Consultations
+                </p>
+                <Link
+                  href="/portal/practitioner/events"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className={cn(
+                    'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                    pathname.startsWith('/portal/practitioner/events')
+                      ? 'bg-black text-white'
+                      : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900',
+                  )}
+                >
+                  <CalendarCheck className="h-4 w-4 shrink-0" />
+                  My Events
+                </Link>
+                <Link
+                  href="/portal/practitioner/earnings"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className={cn(
+                    'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                    pathname.startsWith('/portal/practitioner/earnings')
+                      ? 'bg-black text-white'
+                      : 'text-white hover:bg-[#E8E3D8] hover:text-gray-900',
+                  )}
+                >
+                  <PoundSterling className="h-4 w-4 shrink-0" />
+                  Earnings
+                </Link>
                 <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-300">
                   Settings
                 </p>

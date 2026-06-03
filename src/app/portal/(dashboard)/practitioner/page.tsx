@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { PractitionerForm } from '@/components/admin/forms/PractitionerForm'
 
 export const dynamic = 'force-dynamic'
@@ -32,7 +32,8 @@ export default function PortalPractitionerPage() {
   const [entitySlug, setEntitySlug] = useState<string | null>(null)
   const [verificationChecked, setVerificationChecked] = useState(false)
 
-  useEffect(() => {
+  const fetchPractitionerData = useCallback(() => {
+    setVerificationChecked(false)
     fetch('/directory/api/portal/practitioner')
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
@@ -47,6 +48,8 @@ export default function PortalPractitionerPage() {
       .catch(() => {})
       .finally(() => setVerificationChecked(true))
   }, [])
+
+  useEffect(() => { fetchPractitionerData() }, [fetchPractitionerData])
 
   async function handleUpgrade(plan: string) {
     setUpgrading(plan)
@@ -158,7 +161,7 @@ export default function PortalPractitionerPage() {
           saveUrl="/directory/api/portal/practitioner"
           mode="portal"
           disabled={idVerified !== true}
-          onSaved={() => {}}
+          onSaved={fetchPractitionerData}
           previewHref={profileUrl ?? undefined}
         />
       )}

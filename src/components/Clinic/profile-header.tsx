@@ -13,9 +13,9 @@ import ClinicLabels from "./clinicLabels";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dialog";
 import { ClinicOnlineStatus } from "@/components/clinic/online-status";
 import { OnlineDot } from "@/components/clinic/online-dot";
+import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
@@ -134,14 +134,13 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
           {clinic.claimed && (
             <ClinicOnlineStatus clinicSlug={clinic.slug ?? ''} />
           )}
-          <ConsultationChatDialog
+          <RequestConsultationDialog
             pageType="clinic_page"
-            clinicSlug={clinic.slug ?? ''}
-            clinicName={clinicName ?? clinic.slug ?? ''}
-            hasCoreCalendar={hasCoreCalendar}
+            clinicSlug={clinic.slug ?? undefined}
             treatment={clinic.Treatments?.[0]}
             location={clinic.City}
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
+            entityClinicSlug={clinic.slug ?? undefined}
           />
           <Button
             asChild
