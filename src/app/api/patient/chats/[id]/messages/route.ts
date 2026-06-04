@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { z } from 'zod'
@@ -32,7 +34,7 @@ export async function GET(
     orderBy: { createdAt: 'asc' },
   })
 
-  return NextResponse.json({ session, messages })
+  return NextResponse.json({ session, messages }, { headers: { 'Cache-Control': 'no-store' } })
 }
 
 export async function POST(

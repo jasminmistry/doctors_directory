@@ -47,13 +47,16 @@ export function getPatientClaims(req: NextRequest): PatientClaims | null {
 export async function requirePatient(
   req: NextRequest,
 ): Promise<{ patient: Patient; error: null } | { patient: null; error: NextResponse }> {
+  const NO_CACHE = { headers: { 'Cache-Control': 'no-store' } }
   const claims = getPatientClaims(req)
   if (!claims) {
-    return { patient: null, error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }
+    return { patient: null, error: NextResponse.json({ error: 'Unauthorized' }, { status: 401, ...NO_CACHE }) }
   }
   const patient = await prisma.patient.findUnique({ where: { id: claims.id } })
   if (!patient) {
-    return { patient: null, error: NextResponse.json({ error: 'Unauthorized Test' }, { status: 401 }) }
+    const res = NextResponse.json({ error: 'Unauthorized' }, { status: 401, ...NO_CACHE })
+    clearPatientCookie(res)
+    return { patient: null, error: res }
   }
   return { patient, error: null }
 }

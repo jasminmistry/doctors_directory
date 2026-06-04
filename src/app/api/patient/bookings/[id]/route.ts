@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { requirePatient } from '@/lib/patient-auth'
@@ -36,7 +38,7 @@ export async function GET(
           city: clinicRow?.city?.name ?? null,
         },
       }
-      return NextResponse.json({ booking, source: 'consentz' })
+      return NextResponse.json({ booking, source: 'consentz' }, { headers: { 'Cache-Control': 'no-store' } })
     } catch (err: unknown) {
       const status = (err as { status?: number }).status
       if (status === 404) return NextResponse.json({ error: 'Not found' }, { status: 404 })
@@ -60,5 +62,5 @@ export async function GET(
   const { clinic, ...rest } = row
   const booking = { ...rest, clinic: { ...clinic, city: clinic.city?.name ?? null } }
 
-  return NextResponse.json({ booking, source: 'local' })
+  return NextResponse.json({ booking, source: 'local' }, { headers: { 'Cache-Control': 'no-store' } })
 }

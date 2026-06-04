@@ -31,7 +31,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (isLoginPage) return
-    fetch('/directory/api/patient/me')
+    fetch('/directory/api/patient/me', { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data) { router.push('/account/login'); return }

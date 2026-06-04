@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { z } from 'zod'
@@ -19,7 +21,7 @@ export async function GET(req: NextRequest) {
     lastName: patient.lastName,
     phone: patient.phone,
     createdAt: patient.createdAt,
-  })
+  }, { headers: { 'Cache-Control': 'no-store' } })
 }
 
 export async function PUT(req: NextRequest) {
@@ -42,7 +44,7 @@ export async function PUT(req: NextRequest) {
     firstName: updated.firstName,
     lastName: updated.lastName,
     phone: updated.phone,
-  })
+  }, { headers: { 'Cache-Control': 'no-store' } })
 }
 
 export async function DELETE(req: NextRequest) {

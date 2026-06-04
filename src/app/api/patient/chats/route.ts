@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { requirePatient } from '@/lib/patient-auth'
@@ -19,5 +21,5 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: 'desc' },
   })
 
-  return NextResponse.json({ sessions })
+  return NextResponse.json({ sessions }, { headers: { 'Cache-Control': 'no-store' } })
 }
