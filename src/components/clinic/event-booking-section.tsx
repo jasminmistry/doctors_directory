@@ -63,19 +63,6 @@ function dateKey(d: Date) {
   return format(d, 'yyyy-MM-dd')
 }
 
-function toIso(datetimeStr: string, tzOffset: string): string {
-  // datetimeStr like "2026-06-15 09:00:00" → "2026-06-15T09:00:00+01:00"
-  return datetimeStr.replace(' ', 'T') + tzOffset
-}
-
-function detectTzOffset(): string {
-  const offset = -new Date().getTimezoneOffset()
-  const sign = offset >= 0 ? '+' : '-'
-  const h = String(Math.floor(Math.abs(offset) / 60)).padStart(2, '0')
-  const m = String(Math.abs(offset) % 60).padStart(2, '0')
-  return `${sign}${h}:${m}`
-}
-
 function detectTimezone(): string {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -163,11 +150,9 @@ export function EventBookingSection({ practitionerSlug }: EventBookingSectionPro
     setSubmitting(true)
     setError(null)
     try {
-      const tzOffset = detectTzOffset()
-      const slotStart = toIso(selectedSlot.datetime, tzOffset)
-      const slotEndDate = new Date(selectedSlot.datetime.replace(' ', 'T'))
-      slotEndDate.setMinutes(slotEndDate.getMinutes() + slotDuration)
-      const slotEnd = format(slotEndDate, "yyyy-MM-dd'T'HH:mm:ss") + tzOffset
+      // Core returns datetime in UTC; append Z to produce a valid UTC ISO-8601 string
+      const slotStart = selectedSlot.datetime.replace(' ', 'T') + 'Z'
+      const slotEnd = new Date(new Date(slotStart).getTime() + slotDuration * 60 * 1000).toISOString()
 
       const commonPayload = {
         event_id: selectedEvent.id,

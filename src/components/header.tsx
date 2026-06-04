@@ -7,18 +7,19 @@ import { SearchBar } from "@/components/search/search-bar";
 
 type PatientInfo = { firstName: string; lastName: string; email: string }
 
-async function signOut() {
-  await fetch('/directory/api/patient/auth/logout', { method: 'POST' }).catch(() => {})
-  window.location.replace('/directory')
-}
-
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [patient, setPatient] = useState<PatientInfo | null | undefined>(undefined);
   const pathname = usePathname();
 
+  async function signOut() {
+    setPatient(null)
+    await fetch('/directory/api/patient/auth/logout', { method: 'POST' }).catch(() => {})
+    window.location.replace('/directory')
+  }
+
   useEffect(() => {
-    fetch('/directory/api/patient/me')
+    fetch('/directory/api/patient/me', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((data) => setPatient(data))
       .catch(() => setPatient(null))
