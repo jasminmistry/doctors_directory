@@ -53,7 +53,7 @@ export async function requirePatient(
   }
   const patient = await prisma.patient.findUnique({ where: { id: claims.id } })
   if (!patient) {
-    return { patient: null, error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }
+    return { patient: null, error: NextResponse.json({ error: 'Unauthorized Test' }, { status: 401 }) }
   }
   return { patient, error: null }
 }
