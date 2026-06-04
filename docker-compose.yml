@@ -47,6 +47,7 @@ services:
       SMTP_PASS: ${SMTP_PASS}
       EMAIL_FROM: ${EMAIL_FROM}
       TRACKING_DASHBOARD_TOKEN: ${TRACKING_DASHBOARD_TOKEN}
+      PATIENT_SESSION_SECRET: ${PATIENT_SESSION_SECRET}
     volumes:
       - uploads_data:/app/uploads
     depends_on:
