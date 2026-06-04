@@ -43,6 +43,7 @@ export async function POST(
     const url = `${getCoreLiteBase()}/clinics/${coreClinicId}/bookings`
     const res = await fetch(url, {
       method: 'POST',
+      cache: 'no-store',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(parsed.data),
     })

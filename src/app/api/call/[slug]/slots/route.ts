@@ -46,6 +46,7 @@ export async function GET(
     console.log(`[call/slots] GET ${url} hasToken=${!!sessionToken}`)
 
     const res = await fetch(url, {
+      cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
         ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),

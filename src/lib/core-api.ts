@@ -11,6 +11,7 @@ function coreLiteApi(
   const { method = 'GET', body, sessionToken } = options
   return fetch(`${getCoreLiteBase()}${path}`, {
     method,
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),

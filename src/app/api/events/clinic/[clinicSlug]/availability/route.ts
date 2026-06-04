@@ -33,7 +33,7 @@ export async function GET(
 
     const qs = new URLSearchParams({ eventId, date, timezone })
     const url = `${getCoreLiteBase()}/clinics/${coreClinicId}/availability?${qs}`
-    const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } })
+    const res = await fetch(url, { cache: 'no-store', headers: { 'Content-Type': 'application/json' } })
 
     if (!res.ok) {
       console.error(`[events/clinic/availability] Core HTTP ${res.status}`)

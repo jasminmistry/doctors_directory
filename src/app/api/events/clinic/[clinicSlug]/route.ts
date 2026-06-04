@@ -24,7 +24,7 @@ export async function GET(
     }
 
     const url = `${getCoreLiteBase()}/clinics/${coreClinicId}/events`
-    const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } })
+    const res = await fetch(url, { cache: 'no-store', headers: { 'Content-Type': 'application/json' } })
 
     if (!res.ok) {
       console.error(`[events/clinic] Core HTTP ${res.status} for coreClinicId=${coreClinicId}`)

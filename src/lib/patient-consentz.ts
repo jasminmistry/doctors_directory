@@ -18,6 +18,7 @@ interface ConsentzTokenResponse {
 async function loginConsentzPatient(email: string, password: string): Promise<ConsentzTokenResponse> {
   const res = await fetch(`${getConsentzBase()}/api/v1/login`, {
     method: 'POST',
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'X-APPLICATION-ID': 'iphone',
@@ -36,6 +37,7 @@ async function loginConsentzPatient(email: string, password: string): Promise<Co
 async function refreshConsentzPatientToken(refreshToken: string): Promise<ConsentzTokenResponse> {
   const res = await fetch(`${getConsentzBase()}/api/v1/refresh-token`, {
     method: 'POST',
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'X-APPLICATION-ID': 'iphone',
@@ -140,6 +142,7 @@ export interface ConsentzBooking {
 
 export async function fetchConsentzBookings(sessionToken: string): Promise<ConsentzBooking[]> {
   const res = await fetch(`${getConsentzBase()}/api/patients/me/bookings`, {
+    cache: 'no-store',
     headers: { Authorization: `Bearer ${sessionToken}` },
   })
   if (!res.ok) {
@@ -153,6 +156,7 @@ export async function fetchConsentzBookings(sessionToken: string): Promise<Conse
 
 export async function fetchConsentzBooking(sessionToken: string, id: string | number): Promise<ConsentzBooking> {
   const res = await fetch(`${getConsentzBase()}/api/patients/me/bookings/${id}`, {
+    cache: 'no-store',
     headers: { Authorization: `Bearer ${sessionToken}` },
   })
   if (!res.ok) {

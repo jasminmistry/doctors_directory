@@ -26,7 +26,7 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid meeting ID' }, { status: 400 })
     }
 
-    const res = await fetch(`${getCoreLiteBase()}/call-booking/${meetingId}`)
+    const res = await fetch(`${getCoreLiteBase()}/call-booking/${meetingId}`, { cache: 'no-store' })
     const data = await res.json()
 
     if (!res.ok) {

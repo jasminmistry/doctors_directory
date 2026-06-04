@@ -47,6 +47,7 @@ export async function consentzApi(
 
   return fetch(`${base}${path}`, {
     method,
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'X-APPLICATION-ID': getApplicationId(),
@@ -59,7 +60,7 @@ export async function consentzApi(
 
 /** Legacy alias kept for callers that pass a full URL — wraps fetch unchanged. */
 export function consentzFetch(url: string, init: RequestInit): Promise<Response> {
-  return fetch(url, init)
+  return fetch(url, { ...init, cache: 'no-store' })
 }
 
 export function extractTokens(data: Record<string, unknown>) {

@@ -20,6 +20,7 @@ async function handleEventBookingPayment(session: Stripe.Checkout.Session) {
   try {
     const res = await fetch(`${getCoreLiteBase()}/clinics/${coreClinicId}/bookings`, {
       method: 'POST',
+      cache: 'no-store',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         event_id: parseInt(meta.event_id, 10),

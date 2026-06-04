@@ -71,6 +71,7 @@ export async function POST(
       `${getCoreLiteBase()}/clinics/${clinic.coreClinicId}/call-booking`,
       {
         method: 'POST',
+        cache: 'no-store',
         headers: {
           'Content-Type': 'application/json',
           ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),
