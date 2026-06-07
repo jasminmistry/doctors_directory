@@ -1,5 +1,5 @@
 import { Accreditation } from "@/lib/types";
-import { decodeUnicodeEscapes, fixMojibake } from "@/lib/utils";
+import { sanitizeDisplayText } from "@/lib/utils";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -12,10 +12,10 @@ import {
 function createBullets(text: string) {
   const spliText = text.split(";");
   if (spliText.length <= 1) {
-    return decodeUnicodeEscapes(text);
+    return sanitizeDisplayText(text);
   }
   const bulletItems = spliText.map((item, key) => (
-    <li className="text-sm leading-relaxed" key={key}>{decodeUnicodeEscapes(fixMojibake(fixMojibake(fixMojibake(item.trim())))).trim().charAt(0).toUpperCase() + decodeUnicodeEscapes(fixMojibake(fixMojibake(fixMojibake(item.trim()))).trim().slice(1))}</li>
+    <li className="text-sm leading-relaxed" key={key}>{sanitizeDisplayText(item.trim()).charAt(0).toUpperCase() + sanitizeDisplayText(item.trim()).slice(1)}</li>
   ));
   return (
     <div className="mt-2 space-y-2">

@@ -255,6 +255,14 @@ export function getTemplateEntry(
   return TEMPLATE_ENTRIES.find((e) => e.category === category && e.slug === slug)
 }
 
+export function getTemplateEntryBySlug(slug: string): TemplateEntry | undefined {
+  return TEMPLATE_ENTRIES.find((e) => e.slug === slug)
+}
+
+export function buildTemplateExpansionPath(templateSlug: string, citySlug: string) {
+  return `/business/templates/${templateSlug}/${citySlug}/`
+}
+
 export function templatesByCategory(category: TemplateCategory): TemplateEntry[] {
   return TEMPLATE_ENTRIES.filter((e) => e.category === category)
 }

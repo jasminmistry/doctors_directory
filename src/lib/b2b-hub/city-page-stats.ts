@@ -1,4 +1,4 @@
-import { getClinics, getPractitioners } from "@/lib/sitemap-data";
+import { getClinics, getEnrichedPractitioners } from "@/lib/sitemap-data";
 
 export type CityMarketStats = {
   clinicCount: number;
@@ -15,7 +15,7 @@ function normCity(s: string) {
 export function getCityMarketStats(cityDisplayName: string): CityMarketStats {
   const key = normCity(cityDisplayName);
   const clinics = getClinics().filter((c) => normCity(c.City || "") === key);
-  const practitioners = getPractitioners().filter(
+  const practitioners = getEnrichedPractitioners().filter(
     (p) => normCity((p.City as string | undefined) || "") === key,
   );
   const treatmentCounts = new Map<string, number>();
@@ -29,12 +29,12 @@ export function getCityMarketStats(cityDisplayName: string): CityMarketStats {
   const sorted = [...treatmentCounts.entries()].sort(
     (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
   );
-  const topTreatment = sorted[0]?.[0] ?? "Botox";
-  const secondTreatment = sorted[1]?.[0] ?? "Dermal filler";
+  const topTreatment = sorted[0]?.[0] ?? "";
+  const secondTreatment = sorted[1]?.[0] ?? "";
   return {
     clinicCount: clinics.length,
     practitionerCount: practitioners.length,
-    topTreatment,
-    secondTreatment,
+    topTreatment: topTreatment || "Botox",
+    secondTreatment: secondTreatment || "Dermal filler",
   };
 }

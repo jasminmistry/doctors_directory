@@ -16,11 +16,8 @@ import {
   TEMPLATE_ENTRIES,
   type TemplateCategory,
 } from '@/lib/b2b-hub/templates-registry'
-import {
-  countB2bScaledSitemapPages,
-  getB2bCitySitemapGroups,
-  getB2bTreatmentSitemapLinks,
-} from '@/lib/b2b-hub/html-sitemap-links'
+import { countB2bExpansionSitemapPages, countB2bScaledSitemapPages, getB2bCitySitemapGroups, getB2bExpansionSitemapGroups, getB2bTemplateExpansionSampleLinks, getB2bTreatmentSitemapLinks } from '@/lib/b2b-hub/html-sitemap-links'
+import { countB2cSitemapPages } from '@/lib/b2c-sitemap-counts'
 
 const ACCREDITATIONS = [
   { key: 'cqc', name: 'Care Quality Commission (CQC)', field: 'isCQC' },
@@ -61,6 +58,10 @@ const XML_SITEMAPS: { file: string; label: string }[] = [
   { file: 'accredited-practitioners.xml', label: 'Accredited — Practitioners' },
   { file: 'accredited-practitioners-cities.xml', label: 'Accredited — Practitioner Cities' },
   { file: 'treatments-base.xml', label: 'Treatments — Base' },
+  { file: 'service-city-pages.xml', label: 'Directory — Service category by city' },
+  { file: 'treatment-city-hub-pages.xml', label: 'Directory — Treatment hub by city' },
+  { file: 'standalone-treatment-product-pages.xml', label: 'Directory — Standalone treatments and products' },
+  { file: 'best-in-city-pages.xml', label: 'Directory — Best in city editorials' },
 ]
 
 const B2B_XML_SITEMAPS: { file: string; label: string }[] = [
@@ -68,6 +69,7 @@ const B2B_XML_SITEMAPS: { file: string; label: string }[] = [
   { file: 'business-hub.xml', label: 'B2B buyer hub — Hub root' },
   { file: 'business-uk.xml', label: 'B2B buyer hub — By city index' },
   { file: 'business-uk-city.xml', label: 'B2B buyer hub — City localized pages' },
+  { file: 'business-expansion-city.xml', label: 'B2B buyer hub — Segment × city + template × city (PDF expansion)' },
   { file: 'business-treatments.xml', label: 'B2B buyer hub — Treatment pages' },
   ...HUB_SEGMENTS.map((s: HubSegment) => ({
     file: `business-${s}.xml`,
@@ -142,9 +144,13 @@ export default function HtmlSitemapPage() {
     b2bTreatmentByLetter.get(letter)!.push(link)
   }
   const b2bTreatmentLetters = [...b2bTreatmentByLetter.keys()].sort()
+  const b2bExpansionCounts = countB2bExpansionSitemapPages()
+  const b2bExpansionGroups = getB2bExpansionSitemapGroups(24)
+  const b2bTemplateExpansionSample = getB2bTemplateExpansionSampleLinks(48)
+  const b2cCounts = countB2cSitemapPages()
 
   return (
-    <main className="bg-(--primary-bg-color) min-h-screen">
+    <main className="bg-white min-h-screen">
       <div className="mx-auto max-w-5xl px-4 py-8 md:py-14">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">HTML Sitemap</h1>
         <p className="text-sm text-muted-foreground mb-10">
@@ -172,7 +178,7 @@ export default function HtmlSitemapPage() {
               ['/sitemap', 'HTML Sitemap'],
             ].map(([href, label]) => (
               <li key={href}>
-                <Link href={href} className="text-sm text-blue-700 hover:underline">{label}</Link>
+                <Link href={href} className="text-sm text-black hover:underline">{label}</Link>
               </li>
             ))}
           </ul>
@@ -181,14 +187,14 @@ export default function HtmlSitemapPage() {
         <SitemapSection title="XML Sitemaps (machine-readable)">
           <p className="text-sm text-muted-foreground mb-4">
             Directory feeds are referenced from the{' '}
-            <Link href="/sitemap.xml" className="text-blue-700 hover:underline font-mono text-xs">sitemap.xml</Link>
+            <Link href="/sitemap.xml" className="text-black hover:underline font-mono text-xs">sitemap.xml</Link>
             {' '}index. The B2B buyer hub uses a separate index (below) with canonical page URLs under{' '}
             <span className="font-mono text-xs">/business/</span>.
           </p>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {XML_SITEMAPS.map(({ file, label }) => (
               <li key={file} className="flex items-baseline gap-2">
-                <Link href={`/${file}`} className="text-sm text-blue-700 hover:underline">{label}</Link>
+                <Link href={`/${file}`} className="text-sm text-black hover:underline">{label}</Link>
                 <span className="text-xs text-gray-400 font-mono">{file}</span>
               </li>
             ))}
@@ -199,7 +205,7 @@ export default function HtmlSitemapPage() {
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {B2B_XML_SITEMAPS.map(({ file, label }) => (
               <li key={file} className="flex items-baseline gap-2">
-                <Link href={`/${file}`} className="text-sm text-blue-700 hover:underline">{label}</Link>
+                <Link href={`/${file}`} className="text-sm text-black hover:underline">{label}</Link>
                 <span className="text-xs text-gray-400 font-mono">{file}</span>
               </li>
             ))}
@@ -219,7 +225,7 @@ export default function HtmlSitemapPage() {
               ['/business/templates/', 'Template library'],
             ].map(([href, label]) => (
               <li key={href}>
-                <Link href={href} className="text-sm text-blue-700 hover:underline">{label}</Link>
+                <Link href={href} className="text-sm text-black hover:underline">{label}</Link>
               </li>
             ))}
           </ul>
@@ -234,7 +240,7 @@ export default function HtmlSitemapPage() {
                   <li>
                     <Link
                       href={hubSegmentCollectionHref(segment)}
-                      className="text-sm font-medium text-blue-800 hover:underline"
+                      className="text-sm font-medium text-black hover:underline"
                     >
                       {segmentLabel(segment)} — index
                     </Link>
@@ -243,7 +249,7 @@ export default function HtmlSitemapPage() {
                     <li key={`${entry.segment}-${entry.slug}`}>
                       <Link
                         href={`/business/${entry.segment}/${entry.slug}/`}
-                        className="text-sm text-blue-700 hover:underline"
+                        className="text-sm text-black hover:underline"
                       >
                         {entry.title}
                       </Link>
@@ -274,7 +280,7 @@ export default function HtmlSitemapPage() {
                             <Link
                               key={link.href}
                               href={link.href}
-                              className="text-xs text-blue-600 hover:underline"
+                              className="text-xs text-black hover:underline"
                             >
                               {link.label}
                             </Link>
@@ -299,7 +305,7 @@ export default function HtmlSitemapPage() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="text-sm text-blue-700 hover:underline"
+                      className="text-sm text-black hover:underline"
                     >
                       {link.label}
                     </Link>
@@ -313,7 +319,7 @@ export default function HtmlSitemapPage() {
           >
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 mb-6">
               <li>
-                <Link href="/business/templates/" className="text-sm font-medium text-blue-800 hover:underline">
+                <Link href="/business/templates/" className="text-sm font-medium text-black hover:underline">
                   Template library — index
                 </Link>
               </li>
@@ -321,7 +327,7 @@ export default function HtmlSitemapPage() {
                 <li key={category}>
                   <Link
                     href={`/business/templates/${category}/`}
-                    className="text-sm text-blue-700 hover:underline"
+                    className="text-sm text-black hover:underline"
                   >
                     {TEMPLATE_CATEGORY_LABEL[category]}
                   </Link>
@@ -341,7 +347,7 @@ export default function HtmlSitemapPage() {
                       <Link
                         key={`${entry.category}-${entry.slug}`}
                         href={`/business/templates/${entry.category}/${entry.slug}/`}
-                        className="text-xs text-blue-600 hover:underline"
+                        className="text-xs text-black hover:underline"
                       >
                         {entry.title}
                       </Link>
@@ -351,6 +357,66 @@ export default function HtmlSitemapPage() {
               )
             })}
           </SubSection>
+          <SubSection
+            title={`B2B expansion — segment × city (${b2bExpansionCounts.segmentCityCount} pages, sample below)`}
+          >
+            <p className="text-sm text-muted-foreground mb-4">
+              PDF expansion URLs such as{' '}
+              <span className="font-mono text-xs">/business/consent/botox-consent-form-software/london/</span>.
+              Full list in{' '}
+              <Link href="/business-expansion-city.xml" className="text-black hover:underline font-mono text-xs">
+                business-expansion-city.xml
+              </Link>
+              .
+            </p>
+            {b2bExpansionGroups.map((group) => (
+              <div key={group.segment} className="mb-6">
+                <p className="text-sm font-medium text-gray-700 mb-2">{group.segmentLabel}</p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                  {group.links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="text-xs text-black hover:underline"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </SubSection>
+          <SubSection
+            title={`B2B expansion — templates × city (${b2bExpansionCounts.templateCityCount} pages, sample below)`}
+          >
+            <p className="text-sm text-muted-foreground mb-4">
+              Pattern:{' '}
+              <span className="font-mono text-xs">/business/templates/botox-consent-form-template/london/</span>
+            </p>
+            <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+              {b2bTemplateExpansionSample.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-xs text-black hover:underline"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </SubSection>
+        </SitemapSection>
+
+        <SitemapSection title={`B2C directory hub pages (${b2cCounts.hubStyleTotal.toLocaleString()} pages)`}>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+            <li className="text-sm">Treatment × City: <strong>{b2cCounts.treatmentCityHub.toLocaleString()}</strong></li>
+            <li className="text-sm">Best-in-city: <strong>{b2cCounts.bestInCity.toLocaleString()}</strong></li>
+            <li className="text-sm">Standalone national: <strong>{b2cCounts.standaloneTotal.toLocaleString()}</strong></li>
+            <li className="text-sm pl-4 text-muted-foreground">↳ Treatment × Product: {b2cCounts.treatmentProduct.toLocaleString()}</li>
+            <li className="text-sm pl-4 text-muted-foreground">↳ Treatment standalone: {b2cCounts.standaloneTreatment.toLocaleString()}</li>
+            <li className="text-sm pl-4 text-muted-foreground">↳ Product category: {b2cCounts.standaloneProductCategory.toLocaleString()}</li>
+            <li className="text-sm">Service × City: <strong>{b2cCounts.serviceCity.toLocaleString()}</strong></li>
+          </ul>
         </SitemapSection>
 
         <SitemapSection title="Database URLs">
@@ -369,7 +435,7 @@ export default function HtmlSitemapPage() {
                     <Link
                       key={city}
                       href={`/clinics/${toUrlSlug(city)}`}
-                      className="text-sm text-blue-700 hover:underline"
+                      className="text-sm text-black hover:underline"
                     >
                       {city}
                     </Link>
@@ -390,7 +456,7 @@ export default function HtmlSitemapPage() {
                     <Link
                       key={city}
                       href={`/practitioners/${toUrlSlug(city)}`}
-                      className="text-sm text-blue-700 hover:underline"
+                      className="text-sm text-black hover:underline"
                     >
                       {city}
                     </Link>
@@ -404,7 +470,7 @@ export default function HtmlSitemapPage() {
           <SubSection title={`Treatments (${modalities.length})`}>
             <div className="flex flex-wrap gap-x-5 gap-y-1.5">
               {modalities.map(t => (
-                <Link key={t} href={`/treatments/${toUrlSlug(t)}`} className="text-sm text-blue-700 hover:underline">
+                <Link key={t} href={`/treatments/${toUrlSlug(t)}`} className="text-sm text-black hover:underline">
                   {t}
                 </Link>
               ))}
@@ -430,24 +496,24 @@ export default function HtmlSitemapPage() {
                     <p className="text-sm font-semibold text-gray-800 mb-2">{name}</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-3 border-l-2 border-gray-200">
                       <div>
-                        <Link href={`/accredited/${key}/clinics`} className="text-sm text-blue-700 hover:underline font-medium block mb-1.5">
+                        <Link href={`/accredited/${key}/clinics`} className="text-sm text-black hover:underline font-medium block mb-1.5">
                           Clinics ({accClinicCities.length} cities)
                         </Link>
                         <div className="flex flex-wrap gap-x-3 gap-y-1">
                           {accClinicCities.map(city => (
-                            <Link key={city} href={`/accredited/${key}/clinics/${toUrlSlug(city)}`} className="text-xs text-blue-600 hover:underline">
+                            <Link key={city} href={`/accredited/${key}/clinics/${toUrlSlug(city)}`} className="text-xs text-black hover:underline">
                               {city}
                             </Link>
                           ))}
                         </div>
                       </div>
                       <div>
-                        <Link href={`/accredited/${key}/practitioners`} className="text-sm text-blue-700 hover:underline font-medium block mb-1.5">
+                        <Link href={`/accredited/${key}/practitioners`} className="text-sm text-black hover:underline font-medium block mb-1.5">
                           Practitioners ({accPractCities.length} cities)
                         </Link>
                         <div className="flex flex-wrap gap-x-3 gap-y-1">
                           {accPractCities.map(city => (
-                            <Link key={city} href={`/accredited/${key}/practitioners/${toUrlSlug(city)}`} className="text-xs text-blue-600 hover:underline">
+                            <Link key={city} href={`/accredited/${key}/practitioners/${toUrlSlug(city)}`} className="text-xs text-black hover:underline">
                               {city}
                             </Link>
                           ))}
@@ -466,7 +532,7 @@ export default function HtmlSitemapPage() {
               <p className="text-sm font-medium text-gray-700 mb-2">Categories</p>
               <div className="flex flex-wrap gap-x-5 gap-y-1.5">
                 {categories.map(cat => (
-                  <Link key={cat} href={`/products/category/${toUrlSlug(cat)}`} className="text-sm text-blue-700 hover:underline">
+                  <Link key={cat} href={`/products/category/${toUrlSlug(cat)}`} className="text-sm text-black hover:underline">
                     {cat}
                   </Link>
                 ))}
@@ -480,7 +546,7 @@ export default function HtmlSitemapPage() {
                   <h4 className="text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">{letter}</h4>
                   <div className="flex flex-wrap gap-x-4 gap-y-1">
                     {(brandsByLetter.get(letter) ?? []).map(brand => (
-                      <Link key={brand} href={`/products/brands/${toUrlSlug(brand)}`} className="text-xs text-blue-600 hover:underline">
+                      <Link key={brand} href={`/products/brands/${toUrlSlug(brand)}`} className="text-xs text-black hover:underline">
                         {brand}
                       </Link>
                     ))}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Clinic, City,Practitioner } from "@/lib/types";
+import type { Clinic, City, Practitioner } from "@/lib/types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,11 +11,11 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react"
-import  ItemsGrid  from "@/components/collectionGrid";
+import ItemsGrid from "@/components/collectionGrid";
 import { readJsonFileSync } from "@/lib/json-cache"
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { cityMap, locations } from "@/lib/data";
-import { capitalize, decodeUnicodeEscapes } from "@/lib/utils";
+import { capitalize, decodeUnicodeEscapes, toUrlSlug } from "@/lib/utils";
 import { MoreItems } from "@/components/MoreItems";
 import { CityPageData } from "@/components/cityPageData";
 import { EmptyCityState } from "@/components/empty-city-state";
@@ -23,6 +23,16 @@ import { BestRankedBlock } from "@/components/best-ranked-block";
 import { CityPricingContext } from "@/components/city-pricing-context";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
 import { buildCityTreatmentPriceInsights } from "@/lib/city-pricing";
+import { getClinics } from "@/lib/sitemap-data";
+import { toDirectoryCanonical } from "@/lib/seo";
+import { DirectoryJsonLd } from "@/components/directory-json-ld";
+import {
+  buildBreadcrumbListJsonLd,
+  buildItemListJsonLd,
+  buildMedicalClinicListJsonLd,
+  clinicItemListFromClinics,
+} from "@/lib/directory-json-ld";
+import { getClinicDisplayName } from "@/lib/clinic-display";
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -87,15 +97,15 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );
   const hasCityClinics = cityClinics.length > 0;
-  const rankedCityClinics = buildClinicRankedEntries(cityClinics, 5);
+  const rankedCityClinics = buildClinicRankedEntries(cityClinics, 4);
   const cityPricingInsights = buildCityTreatmentPriceInsights(cityClinics, displayCityName, 3);
   const uniqueTreatments = [
-  ...new Set(
-    cityClinics
-      .filter(c => Array.isArray(c.Treatments)).filter(c => c.Treatments !== undefined)
-      .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
-  )
-];
+    ...new Set(
+      cityClinics
+        .filter(c => Array.isArray(c.Treatments)).filter(c => c.Treatments !== undefined)
+        .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
+    )
+  ];
   const defaultClinics: Clinic[] = clinics.filter((p) => p.City === "London");
   const popularClinics = [...clinics]
     .filter((clinic) => clinic.slug)
@@ -106,117 +116,147 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     .slice(0, 6);
   const popularTreatments = getPopularTreatments(clinics);
   const defaultTreatments = [
-  ...new Set(
+    ...new Set(
       defaultClinics
-      .filter(c => Array.isArray(c.Treatments))
-      .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
-  )
-];
+        .filter(c => Array.isArray(c.Treatments))
+        .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
+    )
+  ];
 
 
+
+  const cityPath = `/clinics/${normalizedCitySlug}`
+  const jsonLdSchemas = [
+    buildBreadcrumbListJsonLd([
+      { name: "Home", path: "/" },
+      { name: "All Clinics", path: "/clinics" },
+      { name: displayCityName, path: cityPath },
+    ]),
+    buildItemListJsonLd(
+      `Clinics in ${displayCityName}`,
+      clinicItemListFromClinics(cityClinics, (clinic) =>
+        getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
+      )
+    ),
+    ...buildMedicalClinicListJsonLd(cityClinics, (clinic) =>
+      getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
+    ),
+  ]
 
   return (
-    <main className="bg-(--primary-bg-color)">
-      <div className="sm:hidden px-4 md:px-0">
-        <CollectionsFilter pageType="Clinic" />
-      </div>
-      <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
-        <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
-          <div className="sticky top-0 z-10">
-            <Link className="mb-2 inline-block" href="/" prefetch={false}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Directory
-              </Button>
-            </Link>
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/clinics">
-                    All Clinics
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>
-                    {displayCityName}
-                  </BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
+    <>
+      <DirectoryJsonLd schemas={jsonLdSchemas} />
+      <main className="bg-white">
+        <div className="sm:hidden px-4 md:px-0">
+          <CollectionsFilter pageType="Clinic" />
         </div>
-
-        <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
-          <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">Top Aesthetic Clinics in {displayCityName}</h1>
-        </div>
-
-        {hasCityClinics && (
-          <div className="px-4 md:px-0 pb-4">
-            <BestRankedBlock
-              title={`Best Clinics in ${displayCityName}`}
-              entries={rankedCityClinics}
-            />
+        <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
+          <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
+            <div className="sticky top-0 z-10">
+              <Link className="mb-3 inline-block" href="/" prefetch={false}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Directory
+                </Button>
+              </Link>
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/clinics">
+                      All Clinics
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>
+                      {displayCityName}
+                    </BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
           </div>
-        )}
 
-        {hasCityClinics && cityPricingInsights.length > 0 && (
-          <div className="px-4 md:px-0 pb-4">
-            <CityPricingContext city={displayCityName} insights={cityPricingInsights} />
+          <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
+            <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">Top Aesthetic Clinics in {displayCityName}</h1>
           </div>
-        )}
 
-        <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10 px-4 md:px-0">
-          <div className="hidden sm:block">
+          {hasCityClinics && (
+            <div className="px-4 md:px-0 pb-4">
+              <BestRankedBlock
+                title={`Best Clinics in ${displayCityName}`}
+                entries={rankedCityClinics}
+           />
+            </div>
+          )}
+             
+
+          {hasCityClinics && cityPricingInsights.length > 0 && (
+            <div className="px-4 md:px-0 pb-4">
+              <CityPricingContext city={displayCityName} insights={cityPricingInsights} />
+            </div>
+          )}
+
+        <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7 flex flex-col sm:flex-row justify-center w-full md:gap-10 px-4 md:px-0">
+                      <div className="hidden sm:block">
             <CollectionsFilter pageType="Clinic" />
           </div>
-          <div className="flex-1 min-w-0">
-            {hasCityClinics ? (
-              <ItemsGrid items={cityClinics} />
-            ) : (
-              <EmptyCityState
-                citySlug={citySlug}
-                pageLabel="clinics"
-                popularClinics={popularClinics}
-                popularPractitioners={popularPractitioners}
-                popularTreatments={popularTreatments}
-              />
-            )}
-          </div>
-        </div>
-        {/* City Overview */}
 
-        {hasCityClinics && (
-        <div className="px-4 md:px-0 space-y-6">
-          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${displayCityName}`}</h3>
-          <MoreItems
-            items={
-              uniqueTreatments.length === 0
-                ? defaultTreatments
-                : uniqueTreatments
-            }
-          />
-          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
-          <MoreItems items={locations} />
+            <div className="flex-1 min-w-0">
+              {hasCityClinics ? (
+                <ItemsGrid items={cityClinics} />
+              ) : (
+                <EmptyCityState
+                  citySlug={citySlug}
+                  pageLabel="clinics"
+                  popularClinics={popularClinics}
+                  popularPractitioners={popularPractitioners}
+                  popularTreatments={popularTreatments}
+                />
+              )}
+            </div>
+          </div>
+          {/* City Overview */}
+
+          {hasCityClinics && (
+            <div className="px-4 md:px-0 space-y-6">
+              <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${displayCityName}`}</h3>
+              <MoreItems
+                items={
+                  uniqueTreatments.length === 0
+                    ? defaultTreatments
+                    : uniqueTreatments
+                }
+              />
+              <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
+              <MoreItems items={locations} />
+            </div>
+          )}
+          {cityData && hasCityClinics && <CityPageData
+            cityData={cityData}
+            uniqueTreatments={uniqueTreatments as string[]}
+            cityClinics={cityClinics}
+            citySlug={citySlug}
+          />}
         </div>
-        )}
-        {cityData && hasCityClinics && <CityPageData
-          cityData={cityData}
-          uniqueTreatments={uniqueTreatments as string[]}
-          cityClinics={cityClinics}
-          citySlug={citySlug}
-        />}
-      </div>
-    </main>
+      </main>
+    </>
   );
+}
+
+export function generateStaticParams() {
+  const cities = [...new Set(getClinics().map((clinic) => clinic.City).filter(Boolean))]
+  return cities.map((city) => ({
+    cityslug: toUrlSlug(String(city)),
+  }))
 }
 
 // export async function generateStaticParams() {
@@ -229,14 +269,26 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 export async function generateMetadata({ params }: ProfilePageProps) {
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const displayCityName = capitalize(citySlug);
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
-  const canonicalUrl = `${baseUrl}/directory/clinics/${citySlug}`;
+  const canonicalUrl = toDirectoryCanonical(`/clinics/${citySlug}`);
+  const title = `Top Rated Aesthetic Clinics in ${displayCityName} - Reviews, Prices & Booking`
+  const description = `Find the best verified aesthetic clinics in ${displayCityName}. Compare real patient reviews, treatment prices and book with confidence.`
 
   return {
-    title: `Top Rated Aesthetic Clinics in ${displayCityName} - Reviews, Prices & Booking`,
-    description: `Find the best verified aesthetic clinics in ${displayCityName}. Compare real patient reviews, treatment prices and book with confidence.`,
+    title,
+    description,
     alternates: {
       canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
     },
   }
 }

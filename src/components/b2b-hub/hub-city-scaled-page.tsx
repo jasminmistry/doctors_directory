@@ -39,24 +39,32 @@ import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links";
 import { UK_POPULAR_TREATMENTS } from "@/lib/b2b-hub/uk-hub-index-data";
 import { getCityScaledHero } from "@/lib/b2b-hub/city-page-hero";
 import type { CityMarketStats } from "@/lib/b2b-hub/city-page-stats";
+import { getCityDataByName } from "@/lib/b2b-hub/city-directory-data";
+import { buildOperatorCitySections } from "@/lib/b2b-hub/operator-city-content";
+import {
+  buildCityOperationalInsight,
+} from "@/lib/b2b-hub/operational-insight";
 import { toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
+import { HubCityOperatorWriteup } from "@/components/b2b-hub/hub-city-operator-writeup";
+import { HubOperationalInsightBlock } from "@/components/b2b-hub/hub-operational-insight-block";
+import { HubTopClinicsSection } from "@/components/b2b-hub/hub-top-clinics-section";
+import {
+  getCityRegulator,
+  getNearbyCityLinks,
+  regulatorComplianceLine,
+  regulatorInspectionLine,
+  regulatorReadinessAuditLabel,
+} from "@/lib/b2b-hub/city-regulator";
+import {
+  buildCityHubFaqs,
+  buildCityHubFaqJsonLdAnswers,
+} from "@/lib/b2b-hub/city-localised-faq";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
 
 const CITY_HUB = "/directory/images/city-hub";
 const CITY_MACBOOK_SRC = `${CITY_HUB}/city-macbook-group.png`;
-
-const FAQ_JSONLD_ANSWERS: Record<string, string> = {
-  "What is aesthetic clinic management software?":
-    "Aesthetic clinic management software handles the core operations of a cosmetic or aesthetic clinic — including digital consent forms, patient records, appointment scheduling, CQC compliance evidence, automated messaging and clinic payments. Unlike generic booking tools, purpose-built aesthetic software is designed for the specific compliance requirements of UK aesthetic medicine.",
-  "Does Consentz include digital consent forms?":
-    "Yes. Consentz supports structured digital consent tied to treatments and visits so evidence stays consistent and retrievable.",
-  "Can Consentz help with CQC compliance?":
-    "Consentz is designed to help teams collect and organise evidence that maps to common inspection expectations, alongside operational workflows.",
-  "Can I migrate from Pabau or Fresha?":
-    "Many clinics phase migration by workflow. Start with consent, booking, and payments, then expand automation as data is structured.",
-};
 
 function cityWorkflowLinks(citySlug: string, cityTitle: string) {
   return [
@@ -99,19 +107,22 @@ function cityWorkflowLinks(citySlug: string, cityTitle: string) {
   ] as const;
 }
 
-function painPoints(cityTitle: string) {
-  const regionLine =
-    cityTitle.trim().toLowerCase() === "manchester"
-      ? "CQC inspections are increasing across Greater Manchester"
-      : `CQC inspections are increasing across ${cityTitle}`;
+function painPoints(cityTitle: string, citySlug: string) {
+  const regulator = getCityRegulator(citySlug);
   return [
-    regionLine,
-    "Paper consent forms don’t meet CQC evidence standards",
+    regulatorInspectionLine(cityTitle, regulator),
+    regulatorComplianceLine(regulator),
     "Patient reactivation is being lost to competitors",
     "Too many disconnected tools for one small clinic",
     "No time to manually chase follow-ups and aftercare",
   ] as const;
 }
+
+export type HubCityScaledHero = {
+  line1: string;
+  line2: string | null;
+  intro: string;
+};
 
 export type HubCityScaledPageProps = {
   citySlug: string;
@@ -119,6 +130,14 @@ export type HubCityScaledPageProps = {
   pageSlug: string;
   pageTitle: string;
   stats: CityMarketStats;
+  canonicalPath?: string;
+  heroOverride?: HubCityScaledHero;
+  expansionBreadcrumb?: {
+    segmentLabel: string;
+    segmentHref: string;
+    hubTitle: string;
+    hubHref: string;
+  };
 };
 
 export function HubCityScaledPage({
@@ -127,12 +146,25 @@ export function HubCityScaledPage({
   pageSlug,
   pageTitle,
   stats,
+  canonicalPath,
+  heroOverride,
+  expansionBreadcrumb,
 }: HubCityScaledPageProps) {
-  const hero = getCityScaledHero(cityTitle, pageSlug);
+  const regulator = getCityRegulator(citySlug);
+  const hero = heroOverride ?? getCityScaledHero(cityTitle, pageSlug);
   const workflow = cityWorkflowLinks(citySlug, cityTitle);
-  const pains = painPoints(cityTitle);
+  const pains = painPoints(cityTitle, citySlug);
+  const faqItems = buildCityHubFaqs(cityTitle, regulator);
+  const faqJsonLdAnswers = buildCityHubFaqJsonLdAnswers(cityTitle, regulator);
+  const nearbyCities = getNearbyCityLinks(citySlug);
+  const readinessAuditLabel = regulatorReadinessAuditLabel(regulator);
+  const cityData = getCityDataByName(cityTitle);
+  const operationalInsight = buildCityOperationalInsight(cityTitle, stats, cityData);
+  const operatorSections = cityData
+    ? buildOperatorCitySections(cityData, stats)
+    : [];
 
-  const pagePath = `/business/uk/${citySlug}/${pageSlug}/`;
+  const pagePath = canonicalPath ?? `/business/uk/${citySlug}/${pageSlug}/`;
   const pageUrl = toCurrentSiteUrl(pagePath);
   const jsonLdGraph = {
     "@context": "https://schema.org",
@@ -152,40 +184,14 @@ export function HubCityScaledPage({
       {
         "@type": "FAQPage",
         "@id": `${pageUrl}#faq`,
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is aesthetic clinic management software?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: FAQ_JSONLD_ANSWERS["What is aesthetic clinic management software?"],
-            },
+        mainEntity: faqItems.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faqJsonLdAnswers[item.question],
           },
-          {
-            "@type": "Question",
-            name: "Does Consentz include digital consent forms?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: FAQ_JSONLD_ANSWERS["Does Consentz include digital consent forms?"],
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can Consentz help with CQC compliance?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: FAQ_JSONLD_ANSWERS["Can Consentz help with CQC compliance?"],
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I migrate from Pabau or Fresha?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: FAQ_JSONLD_ANSWERS["Can I migrate from Pabau or Fresha?"],
-            },
-          },
-        ],
+        })),
       },
     ],
   };
@@ -214,15 +220,37 @@ export function HubCityScaledPage({
                     <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href="/business/uk/">By City</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage className="line-clamp-2">
-                      {pageTitle}
-                    </BreadcrumbPage>
-                  </BreadcrumbItem>
+                  {expansionBreadcrumb ? (
+                    <>
+                      <BreadcrumbItem>
+                        <BreadcrumbLink href={expansionBreadcrumb.segmentHref}>
+                          {expansionBreadcrumb.segmentLabel}
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        <BreadcrumbLink href={expansionBreadcrumb.hubHref}>
+                          {expansionBreadcrumb.hubTitle}
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        <BreadcrumbPage className="line-clamp-2">{cityTitle}</BreadcrumbPage>
+                      </BreadcrumbItem>
+                    </>
+                  ) : (
+                    <>
+                      <BreadcrumbItem>
+                        <BreadcrumbLink href="/business/uk/">By City</BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        <BreadcrumbPage className="line-clamp-2">
+                          {pageTitle}
+                        </BreadcrumbPage>
+                      </BreadcrumbItem>
+                    </>
+                  )}
                 </BreadcrumbList>
               </Breadcrumb>
               <header>
@@ -250,7 +278,7 @@ export function HubCityScaledPage({
                     href={`${baseUrl}/book-demo`}
                     className={HUB_CTA_SECONDARY_HERO_CLASS}
                   >
-                    Get CQC Readiness Audit
+                    {readinessAuditLabel}
                   </a>
                   <a
                     href={`${baseUrl}/book-demo`}
@@ -304,6 +332,12 @@ export function HubCityScaledPage({
           </div>
         </section>
 
+        <HubOperationalInsightBlock insight={operationalInsight} />
+
+        {operatorSections.length > 0 ? (
+          <HubCityOperatorWriteup cityTitle={cityTitle} sections={operatorSections} />
+        ) : null}
+
         <section className="mb-16">
           <h2 className="mb-10 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
             Why {cityTitle} Clinics Choose Consentz
@@ -321,29 +355,31 @@ export function HubCityScaledPage({
             ))}
           </div>
         </section>
+
+        <HubTopClinicsSection cityTitle={cityTitle} />
+
+        {nearbyCities.length > 0 ? (
+          <section className="mb-16 text-center">
+            <h2 className="mb-6 text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+              Also Serving Clinics Near {cityTitle}
+            </h2>
+            <div className="mx-auto flex max-w-[900px] flex-wrap justify-center gap-3">
+              {nearbyCities.map((nearby) => (
+                <Link
+                  key={nearby.slug}
+                  href={`/business/uk/${nearby.slug}/${pageSlug}/`}
+                  className="rounded-full border border-[#DEDBDB] bg-white px-5 py-2 text-sm font-medium text-[#111111] hover:bg-[#FAFAFA]"
+                >
+                  {nearby.label}
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <HubServiceProviderSection />
 
-        <HubBuyerFaq
-          items={[
-            {
-              question: "What is aesthetic clinic management software?",
-              answer: FAQ_JSONLD_ANSWERS["What is aesthetic clinic management software?"],
-              defaultOpen: true,
-            },
-            {
-              question: "Does Consentz include digital consent forms?",
-              answer: FAQ_JSONLD_ANSWERS["Does Consentz include digital consent forms?"],
-            },
-            {
-              question: "Can Consentz help with CQC compliance?",
-              answer: FAQ_JSONLD_ANSWERS["Can Consentz help with CQC compliance?"],
-            },
-            {
-              question: "Can I migrate from Pabau or Fresha?",
-              answer: FAQ_JSONLD_ANSWERS["Can I migrate from Pabau or Fresha?"],
-            },
-          ]}
-        />
+        <HubBuyerFaq items={faqItems} />
 
 
         <section className="mx-auto mb-16 max-w-[1280px] text-center md:text-left">

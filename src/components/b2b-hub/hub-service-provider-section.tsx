@@ -11,7 +11,7 @@ export function HubServiceProviderSection() {
     <section
       className={cn(
         HUB_BLEED_FROM_CONTAINER,
-        "mb-16 bg-[#faf8f5] lg:h-[302px] lg:overflow-hidden"
+        "mb-16 bg-[var(--primary-bg-color)] lg:h-[302px] lg:overflow-hidden"
       )}
     >
       <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-4 py-10 sm:gap-8 sm:px-6 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">

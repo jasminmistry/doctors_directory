@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 
 export const HUB_CONTENT_START_CLASS =
-  "w-full min-w-0 overflow-x-clip bg-white pt-10 md:pt-12 pb-0 [font-family:Inter,system-ui,sans-serif]"
+  "w-full min-w-0 bg-white pt-10 md:pt-12 pb-0 [font-family:Inter,system-ui,sans-serif]"
 
 type Props = {
   children: ReactNode

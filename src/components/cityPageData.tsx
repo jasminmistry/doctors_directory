@@ -1,5 +1,5 @@
 import { City, Practitioner } from "@/lib/types";
-import { capitalize, decodeUnicodeEscapes, fixMojibake, toUrlSlug } from "@/lib/utils";
+import { capitalize, sanitizeDisplayText, toUrlSlug } from "@/lib/utils";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 function createBullets(text: unknown) {
@@ -19,16 +19,14 @@ function createBullets(text: unknown) {
     .filter(Boolean);
 
   if (splitText.length <= 1) {
-    return decodeUnicodeEscapes(normalizedText);
+    return sanitizeDisplayText(normalizedText);
   }
 
   return (
     <div className='mt-2 space-y-2'>
       <ul className="list-disc list-inside pl-6 space-y-1">
         {splitText.map((item, key) => {
-          const cleanedItem = decodeUnicodeEscapes(
-            fixMojibake(fixMojibake(fixMojibake(item)))
-          );
+          const cleanedItem = sanitizeDisplayText(item);
 
           return (
             <li className="text-sm leading-relaxed" key={key}>

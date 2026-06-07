@@ -1,19 +1,32 @@
 import type { MetadataRoute } from "next"
+import { isProductSitemapCrawlHeld } from "@/lib/sitemap-crawl-hold"
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com"
 
 export default function robots(): MetadataRoute.Robots {
+  const productDisallow = isProductSitemapCrawlHeld()
+    ? ["/products/", "/products-brands-", "/products-categories-"]
+    : []
+
+  const sharedDisallow = [
+    "/admin/",
+    "/api/",
+    "/zapain/",
+    "/pain-relief/",
+    ...productDisallow,
+  ]
+
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/"],
+        disallow: sharedDisallow,
       },
       {
         userAgent: ["GPTBot", "Google-Extended", "ClaudeBot", "PerplexityBot"],
         allow: "/",
-        disallow: ["/admin/", "/api/"],
+        disallow: sharedDisallow,
       },
     ],
     sitemap: [`${baseUrl}/directory/sitemap.xml`, `${baseUrl}/directory/business-sitemap.xml`],

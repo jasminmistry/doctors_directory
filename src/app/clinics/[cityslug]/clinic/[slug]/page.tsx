@@ -29,12 +29,15 @@ import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
 import { CityPricingContext } from "@/components/city-pricing-context";
 import { buildCityTreatmentPriceInsights } from "@/lib/city-pricing";
-import { BookingWidget } from "@/components/clinic/booking-widget";
-import { CoverPhoto } from "@/components/clinic/cover-photo";
-import { TransparencyBox } from "@/components/clinic/transparency-box";
-import { AccreditationBadges } from "@/components/clinic/accreditation-badges";
-import { ReviewsSection, type ReviewItem } from "@/components/clinic/reviews-section";
+import { BookingWidget } from "@/components/Clinic/booking-widget";
+import { CoverPhoto } from "@/components/Clinic/cover-photo";
+import { TransparencyBox } from "@/components/Clinic/transparency-box";
+import { AccreditationBadges } from "@/components/Clinic/accreditation-badges";
+import { ReviewsSection, type ReviewItem } from "@/components/Clinic/reviews-section";
 import { prisma } from "@/lib/db";
+import { DirectoryJsonLd } from "@/components/directory-json-ld";
+import { buildMedicalClinicJsonLd } from "@/lib/directory-json-ld";
+import { getClinicDisplayName } from "@/lib/clinic-display";
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
   incoming: Record<string, ItemMeta>
@@ -223,15 +226,19 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   );
   const rankingSubtitle =
     clinic?.ranking?.subtitle_text ?? `${overallScore}/100 in ${clinic?.City ?? displayCityName}`;
+  const clinicDisplayName = getClinicDisplayName({ slug: clinic.slug, url: clinic.url });
+  const medicalClinicSchema = buildMedicalClinicJsonLd(clinic, clinicDisplayName);
 
   return (
+    <>
+      {medicalClinicSchema ? <DirectoryJsonLd schemas={[medicalClinicSchema]} /> : null}
     <main className="min-h-screen bg-background">
       <CoverPhoto src={dbClinic.coverImage} alt={`${dbClinic.name ?? slug} cover photo`} />
 
       {/* Navigation */}
       <div className="bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
-          <Link className="mb-2 inline-block" href="/" prefetch={false}>
+          <Link className="mb-3 inline-block" href="/" prefetch={false}>
             <Button
               variant="ghost"
               size="sm"
@@ -440,6 +447,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
       </div>
     </main>
+    </>
   );
 }
 

@@ -221,13 +221,63 @@ export const flattenObject = (obj: any, parentKey = "", result: any = {}) => {
 };
 
 export function fixMojibake(str: string) {
+  if (!str) return str
+  try {
+    const bytes = Uint8Array.from(str, (c) => c.charCodeAt(0) & 0xff)
+    const decoded = new TextDecoder("utf-8", { fatal: false }).decode(bytes)
+    if (decoded && !decoded.includes("\uFFFD")) {
+      return decoded
+    }
+  } catch {
+    /* fall through */
+  }
   try {
     return new TextDecoder("utf-8").decode(
-      Uint8Array.from(str, c => c.charCodeAt(0))
-    );
+      Uint8Array.from(str, (c) => c.charCodeAt(0))
+    )
   } catch {
-    return str;
+    return str
   }
+}
+
+const MOJIBAKE_REPLACEMENTS: ReadonlyArray<readonly [string, string]> = [
+  ["â€™", "'"],
+  ["â€˜", "'"],
+  ["â€œ", '"'],
+  ["â€\u009d", '"'],
+  ["Ã©", "é"],
+  ["Ã¨", "è"],
+  ["Ã¼", "ü"],
+  ["Ã¶", "ö"],
+  ["Ã¤", "ä"],
+  ["Ã±", "ñ"],
+  ["Â£", "£"],
+]
+
+export function sanitizeDisplayText(str: string): string {
+  if (!str || typeof str !== "string") return str
+  let out = str
+  for (let pass = 0; pass < 3; pass += 1) {
+    out = fixMojibake(out)
+    out = decodeUnicodeEscapes(out)
+    for (const [from, to] of MOJIBAKE_REPLACEMENTS) {
+      out = out.split(from).join(to)
+    }
+  }
+  out = out.replace(/\uFFFD/g, "'")
+  out = out.replace(/[\u2018\u2019\u201A\u2032]/g, "'")
+  out = out.replace(/[\u201C\u201D\u201E\u2033]/g, '"')
+  out = out.replace(/[\u00A0]/g, " ")
+  out = out.replace(/\byoull\b/gi, "you'll")
+  out = out.replace(/\bdoesnt\b/gi, "doesn't")
+  out = out.replace(/\bdont\b/gi, "don't")
+  out = out.replace(/\bisnt\b/gi, "isn't")
+  out = out.replace(/\barent\b/gi, "aren't")
+  out = out.replace(/\bwont\b/gi, "won't")
+  out = out.replace(/\bcant\b/gi, "can't")
+  out = out.replace(/\bIts\b/g, "It's")
+  out = out.replace(/\bits\b/g, "it's")
+  return out
 }
 
 export function isAward(obj: unknown): obj is {name:string; slug: string; image_url: string} {

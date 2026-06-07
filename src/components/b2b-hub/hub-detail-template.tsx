@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/card";
 import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
+import { HubPricingCalculator } from "@/components/b2b-hub/hub-pricing-calculator";
+import { HubCqcReadinessScore } from "@/components/b2b-hub/hub-cqc-readiness-score";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
@@ -45,6 +47,9 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
       <HubDetailHero seg={seg} title={entry.title} intro={intro} />
 
       <HubContentStart className="pb-16">
+        {seg === "pricing" ? <HubPricingCalculator /> : null}
+        {seg === "cqc" ? <HubCqcReadinessScore /> : null}
+
         <section className="grid md:grid-cols-2 gap-6 mb-12">
           <Card className="border-[#E5E7EB] bg-[#FAFAFA] shadow-sm">
             <CardHeader>

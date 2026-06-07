@@ -16,6 +16,7 @@ import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
 import { locations, TreatmentMap } from "@/lib/data";
 import { Button } from "./ui/button";
 import { isClinic, isPractitioner, isProduct, toUrlSlug } from "@/lib/utils";
+import { getClinicDisplayName } from "@/lib/clinic-display";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 type PractitionerOrClinic = Practitioner | Clinic | Product | string;
@@ -50,7 +51,7 @@ function getPractitionerName(
   }
 
   if (isClinic(practitioner)) {
-    return formatSlugText(practitioner.slug!);
+    return getClinicDisplayName(practitioner);
   }
 
   return "";
@@ -265,14 +266,17 @@ export function PractitionerCard({
                         <div className="text-center flex-1 min-w-0 items-start sm:items-center flex flex-col">
                           <div className="flex items-center gap-1.5 ml-4 sm:ml-0">
                             <span className="text-base font-semibold text-primary truncate">
-                              {practitionerName
-                                .split(" ")
-                                .slice(0, 4)
-                                .map(
-                                  (word) =>
-                                    word.charAt(0).toUpperCase() + word.slice(1),
-                                )
-                                .join(" ")}
+                              {isClinic(practitioner)
+                                ? practitionerName
+                                : practitionerName
+                                    .split(" ")
+                                    .slice(0, 4)
+                                    .map(
+                                      (word) =>
+                                        word.charAt(0).toUpperCase() +
+                                        word.slice(1),
+                                    )
+                                    .join(" ")}
                             </span>
                             {(isClinic(practitioner) || isPractitioner(practitioner)) && (
                               <VerifiedBadge
