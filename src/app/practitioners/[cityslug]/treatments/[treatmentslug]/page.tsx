@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
-import { PractitionerCard } from "@/components/practitioner-card";
 import { CityTreatmentPage } from "@/components/cityxTreatmentPage";
 import treatment_content from "@//../public/treatments.json";
 import ItemsGrid from "@/components/collectionGrid";
@@ -20,10 +19,17 @@ import { MoreItems } from "@/components/MoreItems";
 import { locations, modalities } from "@/lib/data";
 import { capitalize, toUrlSlug } from "@/lib/utils";
 import { BestRankedBlock } from "@/components/best-ranked-block";
-import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
+import {
+  buildClinicRankedEntries,
+  buildPractitionerRankedEntries,
+} from "@/lib/best-ranked";
 import { toDirectoryCanonical } from "@/lib/seo";
-import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
-import { getAllClinicsForSearch } from "@/lib/data-access/clinics";
+import {
+  getClinics,
+  getEnrichedPractitioners,
+} from "@/lib/sitemap-data";
+import { getClinicDisplayName } from "@/lib/clinic-display";
+import { treatmentMatchesSlug } from "@/lib/treatment-match";
 
 type TreatmentSlug = keyof typeof treatment_content
 
@@ -71,12 +77,9 @@ interface ProfilePageProps {
   };
 }
 
-export default async function ProfilePage({ params }: ProfilePageProps) {
-  const [practitioners, clinicsFromDb] = await Promise.all([
-    getAllPractitionersForSearch(),
-    getAllClinicsForSearch(),
-  ])
-  const clinics = clinicsFromDb as any[]
+export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+  const practitioners = getEnrichedPractitioners()
+  const clinics = getClinics()
 
   const { cityslug, treatmentslug } = params;
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
@@ -92,24 +95,26 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const cityDisplayName = capitalize(decodeURIComponent(cityslug));
   const treatmentDisplayName = capitalize(decodeURIComponent(treatmentslug));
 
-  const filteredClinics = practitioners.filter((practitioner) => {
-    // Filter by city
-    const cityMatch = practitioner.City?.toLowerCase() === decodedCitySlug.toLowerCase();
-    // Filter by offered service category
-    const categories =
-      practitioner.Treatments ?? [];
-    
-  
+  const matchesCityAndTreatment = (item: {
+    City?: string
+    Treatments?: string[]
+  }) => {
+    const cityMatch = item.City?.toLowerCase() === decodedCitySlug.toLowerCase()
+    return cityMatch && treatmentMatchesSlug(item.Treatments, decodedTreatmentSlug)
+  }
 
-
-    const serviceMatch = categories.some(
-      (cat: string) => cat.replaceAll(" ","").replaceAll("-","").toLowerCase() === decodedTreatmentSlug.replaceAll("%20","").toLowerCase()
-    );
-
-
-    return cityMatch && serviceMatch
-  });
-  const rankedPractitioners = buildPractitionerRankedEntries(filteredClinics, 5);
+  const filteredPractitioners = practitioners.filter(matchesCityAndTreatment)
+  const filteredClinics = clinics.filter(matchesCityAndTreatment)
+  const listingItems: Array<Clinic | (Clinic & Practitioner)> =
+    filteredPractitioners.length > 0 ? filteredPractitioners : filteredClinics
+  const priceOptions = {
+    treatmentSlug: treatmentslug,
+    treatmentName: treatmentDisplayName,
+  }
+  const rankedEntries =
+    filteredPractitioners.length > 0
+      ? buildPractitionerRankedEntries(filteredPractitioners, 4, priceOptions)
+      : buildClinicRankedEntries(filteredClinics, 4, priceOptions)
 
   const cityPractitioners = practitioners
     .filter((practitioner) => practitioner.City?.toLowerCase() === decodedCitySlug.toLowerCase())
@@ -138,7 +143,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   const uniqueTreatments = [
     ...new Set(
-      filteredClinics
+      listingItems
         .filter(c => Array.isArray(c.Treatments))
         .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
     )
@@ -155,11 +160,11 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   
   
   return (
-    <main className="bg-(--primary-bg-color)">
+    <main className="bg-white">
       <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
-            <Link className="mb-2 inline-block" href="/" prefetch={false}>
+            <Link className="mb-3 inline-block" href="/" prefetch={false}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -198,21 +203,21 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             </h1>
           </div>
 
-          {filteredClinics.length > 0 && (
+          {listingItems.length > 0 && (
             <div className="px-4 md:px-0 pb-4">
               <BestRankedBlock
                 title={`Best ${treatmentDisplayName} Practitioners in ${cityDisplayName}`}
-                entries={rankedPractitioners}
+                entries={rankedEntries}
               />
             </div>
           )}
 
         </div>
-        <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
+        <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7flex flex-col sm:flex-row justify-center w-full md:gap-10">
           <CollectionsFilter pageType="Practitioner" />
           <div className="flex-1 min-w-0">
-            {filteredClinics.length > 0 ? (
-              <ItemsGrid items={filteredClinics} />
+            {listingItems.length > 0 ? (
+              <ItemsGrid items={listingItems} />
             ) : (
               <div className="space-y-8 px-4 md:px-0">
                 <Card className="border-dashed bg-white">
@@ -243,7 +248,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <p className="text-sm text-muted-foreground">
-                        {capitalize(highestReviewedClinic.slug ?? "top clinic")} has {highestReviewedClinic.reviewCount} reviews and a {highestReviewedClinic.rating.toFixed(1)} average rating.
+                        {getClinicDisplayName(highestReviewedClinic)} has {highestReviewedClinic.reviewCount} reviews and a {highestReviewedClinic.rating.toFixed(1)} average rating.
                       </p>
                       <Link
                         href={`/clinics/${highestReviewedClinic.City.toLowerCase()}/clinic/${highestReviewedClinic.slug}`}
@@ -324,31 +329,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     </main>
   );
 }
-
-// export async function generateStaticParams() {
-//   const practitioners = await getPractitioners();
-//   return practitioners.map((practitioner) => ({
-//     slug: practitioner.slug,
-//   }))
-// }
-
-// export async function generateMetadata({ params }: ProfilePageProps) {
-//   const clinics = await getClinics();
-//   const clinic = clinics.find((p) => p.slug === params.slug)
-
-//   if (!clinic) {
-//     return {
-//       title: "Practitioner Not Found",
-//     }
-//   }
-
-//   const clinicName = clinic.slug
-
-//   return {
-//     title: `${clinicName} - Healthcare Directory`,
-//     description: `View the profile of ${clinicName}, a qualified ${clinic.category} offering professional healthcare services. Read reviews and book appointments.`,
-//   }
-// }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();

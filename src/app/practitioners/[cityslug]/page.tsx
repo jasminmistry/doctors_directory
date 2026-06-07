@@ -19,10 +19,15 @@ import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper
 import { EmptyCityState } from "@/components/empty-city-state";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
-import { capitalize } from "@/lib/utils";
+import { capitalize, toUrlSlug } from "@/lib/utils";
 import { toDirectoryCanonical } from "@/lib/seo";
-import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
-import { getAllClinicsForSearch } from "@/lib/data-access/clinics";
+import { getClinics, getEnrichedPractitioners } from "@/lib/sitemap-data";
+import { DirectoryJsonLd } from "@/components/directory-json-ld";
+import {
+  buildBreadcrumbListJsonLd,
+  buildItemListJsonLd,
+  practitionerItemListFromProfiles,
+} from "@/lib/directory-json-ld";
 
 function getPopularTreatments(items: Clinic[]): string[] {
   const counts = new Map<string, number>();
@@ -45,12 +50,10 @@ interface ProfilePageProps {
   };
 }
 
-export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const [practitioners, clinicsFromDb] = await Promise.all([
-    getAllPractitionersForSearch(),
-    getAllClinicsForSearch(),
-  ])
-  const clinics = clinicsFromDb as unknown as Clinic[]
+const practitioners = getEnrichedPractitioners()
+const clinics = getClinics()
+
+export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 
   const citySlug = params.cityslug;
   const displayCityName = capitalize(citySlug);
@@ -87,93 +90,116 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
         .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string")
     )
   ];
+  const cityPath = `/practitioners/${normalizedCitySlug}`
+  const jsonLdSchemas = [
+    buildBreadcrumbListJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Practitioners", path: "/practitioners" },
+      { name: displayCityName, path: cityPath },
+    ]),
+    buildItemListJsonLd(
+      `Practitioners in ${displayCityName}`,
+      practitionerItemListFromProfiles(cityClinics)
+    ),
+  ]
+
   return (
-    <main className="bg-(--primary-bg-color)">
-      <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
-        <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
-          <div className="sticky top-0 z-10">
-            <Link className="mb-2 inline-block" href="/" prefetch={false}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Directory
-              </Button>
-            </Link>
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/practitioners">
-                    Practitioners
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink href={`/practitioners/${normalizedCitySlug}`}>{displayCityName}</BreadcrumbLink>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div></div>
-          
-         
+    <>
+      <DirectoryJsonLd schemas={jsonLdSchemas} />
+      <main className="bg-white">
+        <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
+          <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
+            <div className="sticky top-0 z-10">
+              <Link className="mb-3 inline-block" href="/" prefetch={false}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Directory
+                </Button>
+              </Link>
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/practitioners">
+                      Practitioners
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href={`/practitioners/${normalizedCitySlug}`}>{displayCityName}</BreadcrumbLink>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div></div>
+
+
           <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
             <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">Top Aesthetic Practitioners in {displayCityName}</h1></div>
 
-        {hasCityPractitioners && (
-          <div className="px-4 md:px-0 pb-4">
-            <BestRankedBlock
-              title={`Best Practitioners in ${displayCityName}`}
-              entries={rankedCityPractitioners}
-            />
-          </div>
-        )}
-
-        <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 flex flex-col sm:flex-row justify-center w-full md:gap-10">
-          <CollectionsFilter pageType="Practitioner" />
-          <div className="flex-1 min-w-0">
-            {hasCityPractitioners ? (
-              <ItemsGrid items={cityClinics} />
-            ) : (
-              <EmptyCityState
-                citySlug={citySlug}
-                pageLabel="practitioners"
-                popularClinics={popularClinics}
-                popularPractitioners={popularPractitioners}
-                popularTreatments={popularTreatments}
+          {hasCityPractitioners && (
+            <div className="px-4 md:px-0 pb-4">
+              <BestRankedBlock
+                title={`Best Practitioners in ${displayCityName}`}
+                entries={rankedCityPractitioners}
               />
-            )}
-          </div>
-        </div>
+            </div>
+          )}
 
-        {hasCityPractitioners && (
-        <div className="px-4 md:px-0 space-y-6">
-          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${displayCityName}`}</h3>
-          <MoreItems
-            items={
-              uniqueTreatments.length === 0
-                ? defaultTreatments
-                : uniqueTreatments
-            }
-          />
-          <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
-          <MoreItems items={locations} />
+          <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7flex flex-col sm:flex-row justify-center w-full md:gap-10">
+            <CollectionsFilter pageType="Practitioner" />
+            <div className="flex-1 min-w-0">
+              {hasCityPractitioners ? (
+                <ItemsGrid items={cityClinics} />
+              ) : (
+                <EmptyCityState
+                  citySlug={citySlug}
+                  pageLabel="practitioners"
+                  popularClinics={popularClinics}
+                  popularPractitioners={popularPractitioners}
+                  popularTreatments={popularTreatments}
+                />
+              )}
+            </div>
+          </div>
+
+          {hasCityPractitioners && (
+            <div className="px-4 md:px-0 space-y-6">
+              <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Treatments in ${displayCityName}`}</h3>
+              <MoreItems
+                items={
+                  uniqueTreatments.length === 0
+                    ? defaultTreatments
+                    : uniqueTreatments
+                }
+              />
+              <h3 className="text-lg font-semibold text-foreground mb-2">{`Top Cities in the UK`}</h3>
+              <MoreItems items={locations} />
+            </div>
+          )}
+          {cityData && hasCityPractitioners && <CityPageData
+            cityData={cityData}
+            uniqueTreatments={uniqueTreatments as string[]}
+            citySlug={citySlug}
+            cityClinics={cityClinics}
+          />}
         </div>
-        )}
-        {cityData && hasCityPractitioners && <CityPageData
-          cityData={cityData}
-          uniqueTreatments={uniqueTreatments as string[]}
-          citySlug={citySlug}
-          cityClinics={cityClinics}
-        />}
-      </div>
-    </main>
+      </main>
+    </>
   );
+}
+
+export function generateStaticParams() {
+  const cities = [...new Set(getEnrichedPractitioners().map((entry) => entry.City).filter(Boolean))]
+  return cities.map((city) => ({
+    cityslug: toUrlSlug(String(city)),
+  }))
 }
 
 // export async function generateStaticParams() {
@@ -204,12 +230,26 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 export async function generateMetadata({ params }: ProfilePageProps) {
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const displayCityName = capitalize(citySlug);
+  const canonical = toDirectoryCanonical(`/practitioners/${citySlug}`)
+  const title = `Best Verified Aesthetic Practitioners in ${displayCityName} - Reviews & Booking`
+  const description = `Find the best verified aesthetic practitioners in ${displayCityName}. Compare qualifications, real patient reviews and book your consultation.`
 
   return {
-    title: `Best Verified Aesthetic Practitioners in ${displayCityName} - Reviews & Booking`,
-    description: `Find the best verified aesthetic practitioners in ${displayCityName}. Compare qualifications, real patient reviews and book your consultation.`,
+    title,
+    description,
     alternates: {
-      canonical: toDirectoryCanonical(`/practitioners/${citySlug}`),
+      canonical,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
     },
   };
 }

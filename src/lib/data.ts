@@ -1466,7 +1466,7 @@ export const product_categories = ["Aesthetic Injectables",
 "Pharmaceuticals",
 
 ]
-export const modalities: string[] = ['Acne', 'Alopecia', 'Anti Wrinkle Treatment', 'Aqualyx', 'Aviclear', 'B12 Injection', 'Birthmarks', 'Botox', 'Breast Augmentation', 'Cheek Enhancement', 'Chemical Peel', 'Chin Enhancement', 'Aesthetic Skin Consultation', 'Contact Dermatitis', 'CoolSculpting', 'Cysts Treatment', 'Dermapen Treatment', 'Dermatitis Treatment', 'Dermatology Treatments', 'Eczema Treatment', 'Eyebrows and Lashes', 'Facial Treatments', 'Hair Treatments', 'HIFU', 'Hives Treatment', 'Hyperhidrosis', 'Inflammatory Skin Conditions', 'IPL Treatment', 'Keloid Removal', 'Tattoo Removal', 'Laser Treatments', 'Fillers', 'Liposuction', 'Lips', 'Lymphatic Drainage', 'Marionettes', 'Massage', 'Melanoma Treatment', 'Melasma Treatment', 'Micro-needling', 'Microblading', 'Microneedling with Radiofrequency', 'Moles', 'Nails', 'Obagi', 'Patch Testing', 'Photodynamic Therapy (pdt)', 'Pigmentation Treatment', 'Polynucleotide Treatment', 'Profhilo', 'Platelet Rich Plasma', 'Psoriasis', 'Rash Treatment', 'Rosacea Treatment', 'Scarring', 'Seborrheic Keratosis Treatment', 'Seborrhoeic Dermatitis', 'Rhinoplasty', 'Skin Texture and Tightening', 'Skin Booster', 'Skin Cancer', 'Skin Lesions', 'Skin Tags', 'Tear Trough Treatment', 'Threading', 'Varicose Vein Procedure', 'Verruca Treatment', 'Vitamin Therapy', 'Vulval Dermatology', 'Weight Loss']
+export const modalities: string[] = ['Acne', 'Alopecia', 'Anti Wrinkle Treatment', 'Aqualyx', 'Aviclear', 'B12 Injection', 'Birthmarks', 'Botox', 'Breast Augmentation', 'Cheek Enhancement', 'Chemical Peel', 'Chin Enhancement', 'Aesthetic Skin Consultation', 'Contact Dermatitis', 'CoolSculpting', 'Cysts Treatment', 'Dermapen Treatment', 'Dermatitis Treatment', 'Dermatology Treatments', 'Eczema Treatment', 'Eyebrows and Lashes', 'Facial Treatments', 'Hair Treatments', 'HIFU', 'Hives Treatment', 'Hyperhidrosis', 'Inflammatory Skin Conditions', 'IPL Treatment', 'Keloid Removal', 'Tattoo Removal', 'Laser Treatments', 'Fillers', 'Liposuction', 'Lips', 'Lymphatic Drainage', 'Marionettes', 'Massage', 'Melanoma Treatment', 'Melasma Treatment', 'Micro-needling', 'Microblading', 'Microneedling with Radiofrequency', 'Morpheus8', 'Lemon Bottle', 'Profhilo Structura', 'Seventy Hyal', 'Jawline Filler', 'RF Microneedling', 'Moles', 'Nails', 'Obagi', 'Patch Testing', 'Photodynamic Therapy (pdt)', 'Pigmentation Treatment', 'Polynucleotide Treatment', 'Polynucleotides', 'Profhilo', 'Platelet Rich Plasma', 'Psoriasis', 'Rash Treatment', 'Rosacea Treatment', 'Scarring', 'Seborrheic Keratosis Treatment', 'Seborrhoeic Dermatitis', 'Rhinoplasty', 'Non-Surgical Rhinoplasty', 'Skin Texture and Tightening', 'Skin Booster', 'Skin Cancer', 'Skin Lesions', 'Skin Tags', 'Tear Trough Treatment', 'Threading', 'Varicose Vein Procedure', 'Verruca Treatment', 'Vitamin Therapy', 'Vulval Dermatology', 'Weight Loss']
 export const TreatmentMap: Record<string, string> = {
   "Acne": "/directory/treatments/acne.webp",
   "Alopecia": "/directory/treatments/alopecia.webp",
@@ -1510,6 +1510,12 @@ export const TreatmentMap: Record<string, string> = {
   "Micro-needling": "/directory/treatments/micro-needling.webp",
   "Microblading": "/directory/treatments/microblading.webp",
   "Microneedling With Radiofrequency": "/directory/treatments/microneedling with radiofrequency.webp",
+  "Morpheus8": "/directory/treatments/microneedling with radiofrequency.webp",
+  "Lemon Bottle": "/directory/treatments/aqualyx.webp",
+  "Profhilo Structura": "/directory/treatments/profhilo.webp",
+  "Seventy Hyal": "/directory/treatments/skin-booster.webp",
+  "Jawline Filler": "/directory/treatments/chin-enhancement.webp",
+  "RF Microneedling": "/directory/treatments/microneedling with radiofrequency.webp",
   "Moles": "/directory/treatments/moles.webp",
   "Nails": "/directory/treatments/nail-polish-2112358_640.webp",
   "Obagi": "/directory/treatments/obagi.webp",
@@ -1517,6 +1523,7 @@ export const TreatmentMap: Record<string, string> = {
   "Photodynamic Therapy (pdt)": "/directory/treatments/photodynamic therapy.webp",
   "Pigmentation Treatment": "/directory/treatments/pigmentation-treatments.webp",
   "Polynucleotide Treatment": "/directory/treatments/polynucleotide-treatment.webp",
+  "Polynucleotides": "/directory/treatments/polynucleotide-treatment.webp",
   "Profhilo": "/directory/treatments/profhilo.webp",
   "Platelet Rich Plasma": "/directory/treatments/prp.webp",
   "Psoriasis": "/directory/treatments/psoriasis.webp",
@@ -1526,6 +1533,7 @@ export const TreatmentMap: Record<string, string> = {
   "Seborrheic Keratosis Treatment": "/directory/treatments/seborrheic keratosis.webp",
   "Seborrhoeic Dermatitis": "/directory/treatments/seborrhoeic dermatitis.webp",
   "Rhinoplasty": "/directory/treatments/side-view-doctor-checking-patient-before-rhinoplasty.webp",
+  "Non-Surgical Rhinoplasty": "/directory/treatments/side-view-doctor-checking-patient-before-rhinoplasty.webp",
   "Skin Texture and Tightening": "/directory/treatments/skin texture and tightening.webp",
   "Skin Booster": "/directory/treatments/skin-booster.webp",
   "Skin Cancer": "/directory/treatments/skin-cancer.webp",

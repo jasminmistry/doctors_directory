@@ -20,6 +20,7 @@ export const BUSINESS_SITEMAP_INDEX_FILES = [
   "business-uk.xml",
   "business-uk-city.xml",
   "business-treatments.xml",
+  "business-expansion-city.xml",
   ...BUSINESS_SITEMAP_SEGMENT_FILES,
 ]
 

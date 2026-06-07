@@ -32,4 +32,4 @@ export const HUB_INLINE_CARD =
   "mx-auto w-full min-w-0 max-w-full sm:max-w-[520px] lg:mx-0 lg:max-w-[460px]"
 
 export const HUB_BLEED_FROM_CONTAINER =
-  "relative w-screen max-w-[100vw] ml-[calc(50%-50vw)]"
+  "relative w-screen max-w-[100vw] left-1/2 -translate-x-1/2"

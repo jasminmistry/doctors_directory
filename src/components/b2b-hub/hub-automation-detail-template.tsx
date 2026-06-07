@@ -296,7 +296,7 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
 </div>
       </section>
 
-      <article className="mx-auto w-full min-w-0 max-w-[1280px] overflow-x-clip px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
+      <article className="mx-auto w-full min-w-0 max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
             <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">

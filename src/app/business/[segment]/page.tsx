@@ -15,6 +15,7 @@ import {
 } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
 import { hubSegmentIndexPageMetadata } from "@/lib/b2b-hub/hub-page-metadata";
+import { HubPricingCalculator } from "@/components/b2b-hub/hub-pricing-calculator";
 
 type Props = { params: { segment: string } };
 
@@ -77,6 +78,13 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
         heroSubtitle={`${entries.length} pages in this section. Open any guide to compare workflows, consent patterns, and migration considerations.`}
         entries={cards}
       />
+      {seg === "pricing" ? (
+        <section className="bg-white px-4 pb-8">
+          <div className="max-w-[1280px] mx-auto">
+            <HubPricingCalculator />
+          </div>
+        </section>
+      ) : null}
       <section className="bg-white px-4 pb-12">
         <div className="max-w-[1280px] mx-auto">
           <h2 className="text-xl font-semibold text-neutral-900 mb-6 text-center">

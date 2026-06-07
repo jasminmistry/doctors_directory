@@ -3,8 +3,11 @@ import type { Clinic } from "@/lib/types";
 import type { Practitioner } from "@/lib/types";
 import type { Metadata } from "next";
 import { readJsonFileSync } from "@/lib/json-cache";
-import { getTreatmentBySlug } from "@/lib/data-access/treatments";
-import { getAllClinicsForSearch, type SearchClinic } from "@/lib/data-access/clinics";
+import { getClinics } from "@/lib/sitemap-data";
+import {
+  getTreatmentJsonRecord,
+  getTreatmentOverviewText,
+} from "@/lib/treatment-content";
 import { getTreatmentCategory, getTreatmentCategorySlug } from "@/lib/treatment-categories";
 import { toUrlSlug } from "@/lib/utils";
 import { TreatmentDetail } from "@/components/treatment-detail";
@@ -311,7 +314,7 @@ const getTreatmentAliases = (treatmentName: string, slug: string) => {
 };
 
 const clinicMatchesTreatment = (
-  clinic: SearchClinic,
+  clinic: Clinic,
   treatmentAliases: Set<string>,
 ) => {
   const treatments = Array.isArray(clinic.Treatments) ? clinic.Treatments : [];
@@ -319,46 +322,6 @@ const clinicMatchesTreatment = (
     treatmentAliases.has(normalizeTreatmentToken(String(entry))),
   );
 };
-
-// Convert SearchClinic to Clinic-compatible shape for components
-function searchClinicToClinic(clinic: SearchClinic): Clinic {
-  return {
-    slug: clinic.slug || undefined,
-    image: clinic.image || '',
-    url: undefined,
-    rating: clinic.rating ? Number(clinic.rating) : 0,
-    reviewCount: clinic.reviewCount || 0,
-    category: clinic.category || '',
-    gmapsAddress: clinic.gmapsAddress || '',
-    gmapsPhone: '',
-    City: clinic.City || '',
-    isSaveFace: clinic.isSaveFace,
-    isDoctor: clinic.isDoctor,
-    isJCCP: clinic.isJccp ? [true, ''] : null,
-    isCQC: clinic.isCqc ? [true, ''] : null,
-    isHIW: clinic.isHiw ? [true, ''] : null,
-    isHIS: clinic.isHis ? [true, ''] : null,
-    isRQIA: clinic.isRqia ? [true, ''] : null,
-    facebook: '',
-    twitter: '',
-    Linkedin: '',
-    instagram: '',
-    youtube: '',
-    website: '',
-    email: '',
-    about_section: '',
-    accreditations: '',
-    awards: '',
-    affiliations: '',
-    hours: '',
-    Practitioners: '',
-    Insurace: '',
-    Payments: '',
-    Fees: '',
-    x_twitter: '',
-    Treatments: clinic.Treatments || [],
-  } as Clinic;
-}
 
 const getPractitionerCount = (practitioners: Clinic['Practitioners']) => {
   if (Array.isArray(practitioners)) {
@@ -373,32 +336,8 @@ const getPractitionerCount = (practitioners: Clinic['Practitioners']) => {
   return 0;
 };
 
-// Build treatmentData in the keyed format that TreatmentDetail's findProperty() expects
-function buildTreatmentData(dbTreatment: NonNullable<Awaited<ReturnType<typeof getTreatmentBySlug>>>, treatmentName: string): Record<string, unknown> {
-  const n = treatmentName.replaceAll(/\s+/g, '_');
-  return {
-    [`What_is_${n}_How_does_it_work`]: dbTreatment.description,
-    [`Goals_of_${n}_treatment`]: dbTreatment.goals,
-    [`Pros_and_Cons_of_${n}_Treatments`]: dbTreatment.prosAndCons,
-    [`Cost_of_${n}_in_UK_and_Variations`]: dbTreatment.cost,
-    'What_to_Look_for_Choosing_Doctor_or_Clinic': dbTreatment.choosingDoctor,
-    [`How_${n}_Compairs_with_Non_surgical_or_Alternative_Options`]: dbTreatment.alternatives,
-    [`Who_is_a_Good_Candidate_for_${n}_Treatment`]: dbTreatment.goodCandidate,
-    [`How_to_Prepare_for_${n}_Appointment`]: dbTreatment.preparation,
-    'Safety_Considerations_and_Pain': dbTreatment.safetyAndPain,
-    'What_Happens_During_Appointment_and_Duration': dbTreatment.whatHappensDuring,
-    'Recovery_Process_Downtime_Possible_Side_Effects': dbTreatment.recovery,
-    'How_Long_Results_Last': dbTreatment.howLongResultsLast,
-    [`Mild_vs_Severe_${n}_and_Limits`]: dbTreatment.mildVsSevere,
-    [`Does_${n}_Require_Maintenance_and_How_Often`]: dbTreatment.maintenance,
-    'Qualifications_Practitioner_Should_Have': dbTreatment.qualifications,
-    [`Is_${n}_Regulated_in_UK_and_What_To_Do_If_Something_Goes_Wrong`]: dbTreatment.regulation,
-    'Are_There_NICE_FDA_MHRA_Guidelines': dbTreatment.niceGuidelines,
-  };
-}
-
-export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
-  const allClinics = await getAllClinicsForSearch();
+export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+  const allClinics = getClinics();
   const practitionerProfiles: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const { slug } = params;
 
@@ -410,13 +349,9 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       return Object.keys(TreatmentMap).find((name) => name === decoded) ?? decoded;
     })();
 
-  // Get treatment data from DB
-  const dbSlug = toUrlSlug(resolvedTreatmentName);
-  const dbTreatment = await getTreatmentBySlug(dbSlug);
+  const treatmentData = getTreatmentJsonRecord(resolvedTreatmentName);
+  const overviewFallback = `${resolvedTreatmentName} is a common treatment that helps address various skin and aesthetic concerns. Treatment options vary based on severity and individual needs.`;
 
-  const treatmentData = dbTreatment ? buildTreatmentData(dbTreatment, resolvedTreatmentName) : null;
-
-  // Create treatment object for TreatmentDetail component
   const treatment = {
     name: resolvedTreatmentName.charAt(0).toUpperCase() + resolvedTreatmentName.slice(1),
     image: TreatmentMap[resolvedTreatmentName],
@@ -425,7 +360,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     reviews: 47,
     downtime: "Minimal",
     practitioners: 101,
-    overview: dbTreatment?.description || `${resolvedTreatmentName} is a common treatment that helps address various skin and aesthetic concerns. Treatment options vary based on severity and individual needs.`,
+    overview: getTreatmentOverviewText(treatmentData, overviewFallback),
     symptoms: "Symptoms and severity information for this treatment.",
     treatmentOptions: "Various treatment options are available depending on your specific needs.",
     results: "Results vary based on individual factors and treatment approach.",
@@ -437,14 +372,12 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
   const treatmentAliases = getTreatmentAliases(treatment.name, slug);
 
-  const filteredSearchClinics = allClinics.filter((clinic) =>
+  const filteredClinics = allClinics.filter((clinic) =>
     clinicMatchesTreatment(clinic, treatmentAliases),
   );
 
-  const filteredClinics = filteredSearchClinics.map(searchClinicToClinic);
-
   const clinicSlugs = new Set(
-    filteredSearchClinics
+    filteredClinics
       .map((clinic) => clinic.slug)
       .filter((clinicSlug): clinicSlug is string => Boolean(clinicSlug)),
   );
@@ -482,7 +415,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       .filter((practitionerName): practitionerName is string => Boolean(practitionerName)),
   ).size;
 
-  const reviews = filteredSearchClinics.reduce((total, clinic) => {
+  const reviews = filteredClinics.reduce((total, clinic) => {
     const reviewCount = Number.parseInt(String(clinic.reviewCount ?? '0'), 10);
 
     if (Number.isNaN(reviewCount)) {
@@ -570,13 +503,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/treatments">
+                    <BreadcrumbLink href="/directory/treatments">
                       Treatments
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href={`/treatments/category/${treatmentCategorySlug}`}>
+                    <BreadcrumbLink href={`/directory/treatments/category/${treatmentCategorySlug}`}>
                       {treatmentCategory}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
@@ -623,13 +556,16 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
       return Object.keys(TreatmentMap).find((name) => name === decoded) ?? decoded;
     })();
 
-  const dbSlug = toUrlSlug(resolvedTreatmentName);
-  const dbTreatment = await getTreatmentBySlug(dbSlug);
-
   const treatmentName = resolvedTreatmentName.charAt(0).toUpperCase() + resolvedTreatmentName.slice(1);
-  const description = dbTreatment?.description
-    ? `${String(dbTreatment.description).substring(0, 155)}...`
-    : `Find qualified practitioners for ${treatmentName} treatment. Compare providers, read reviews, and book consultations for professional ${treatmentName} services.`;
+  const jsonRecord = getTreatmentJsonRecord(resolvedTreatmentName);
+  const overview = getTreatmentOverviewText(
+    jsonRecord,
+    `Find qualified practitioners for ${treatmentName} treatment.`
+  );
+  const description =
+    overview.length > 155
+      ? `${overview.substring(0, 155)}...`
+      : overview;
 
   const title = `${treatmentName} Treatment - Find Qualified Practitioners | Healthcare Directory`;
   const image = TreatmentMap[resolvedTreatmentName] || '/directory/treatments/default-treatment.webp';

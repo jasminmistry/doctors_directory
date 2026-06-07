@@ -11,6 +11,8 @@ import {
   hubTemplatesIndexMetaTitle,
 } from "@/lib/b2b-hub/hub-page-metadata"
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = buildHubPageMetadata({
   title: hubTemplatesIndexMetaTitle(),
   description: hubTemplatesIndexMetaDescription(),

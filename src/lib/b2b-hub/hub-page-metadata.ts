@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry"
+import { getCityRegulator, type UkRegulator } from "@/lib/b2b-hub/city-regulator"
 import { COMPETITOR_LABEL } from "@/lib/b2b-hub/competitors"
 import { segmentLabel } from "@/lib/b2b-hub/registry"
 import { b2bBaseUrl, b2bOgImageUrl, toCurrentSiteUrl } from "@/lib/b2b-hub/seo"
@@ -143,16 +144,55 @@ export function hubHomeMetaDescription() {
   return `Compare clinic software, consent, CQC, automation and templates for aesthetic clinics. ${RATING} ${BRAND} — structured guides that convert searchers into demos.`
 }
 
-export function hubCityPageMetaTitle(cityTitle: string, pageSlug: string, pageTitle: string) {
-  if (pageSlug === "aesthetic-clinic-software") {
-    return trimTitle(joinTitle(`Aesthetic Clinic Software ${cityTitle}`, CRM_TOOLS))
+function cityMetaComplianceSuffix(regulator: UkRegulator): string {
+  switch (regulator) {
+    case "HIS":
+      return "HIS Compliant Software"
+    case "HIW":
+      return "HIW Compliant Software"
+    case "RQIA":
+      return "RQIA Compliant Software"
+    default:
+      return CRM_TOOLS
   }
-  const topic = pageTitle.replace(new RegExp(`\\s*${cityTitle}\\s*`, "i"), "").trim() || pageTitle
-  return trimTitle(joinTitle(`${topic} ${cityTitle}`, CRM_TOOLS))
 }
 
-export function hubCityPageMetaDescription(cityTitle: string, pageTitle: string) {
-  return `${pageTitle} for ${cityTitle} clinics — local directory links plus ${RATING} ${BRAND} consent, CQC and booking workflows.`
+function cityMetaRegulatorPhrase(regulator: UkRegulator): string {
+  switch (regulator) {
+    case "HIS":
+      return "HIS"
+    case "HIW":
+      return "HIW"
+    case "RQIA":
+      return "RQIA"
+    default:
+      return "CQC"
+  }
+}
+
+export function hubCityPageMetaTitle(
+  cityTitle: string,
+  pageSlug: string,
+  pageTitle: string,
+  citySlug: string
+) {
+  const regulator = getCityRegulator(citySlug)
+  if (pageSlug === "aesthetic-clinic-software") {
+    return trimTitle(
+      joinTitle(`Aesthetic Clinic Software ${cityTitle}`, cityMetaComplianceSuffix(regulator))
+    )
+  }
+  const topic = pageTitle.replace(new RegExp(`\\s*${cityTitle}\\s*`, "i"), "").trim() || pageTitle
+  return trimTitle(joinTitle(`${topic} ${cityTitle}`, cityMetaComplianceSuffix(regulator)))
+}
+
+export function hubCityPageMetaDescription(
+  cityTitle: string,
+  pageTitle: string,
+  citySlug: string
+) {
+  const regulator = cityMetaRegulatorPhrase(getCityRegulator(citySlug))
+  return `${pageTitle} for ${cityTitle} clinics — local directory links plus ${RATING} ${BRAND} consent, ${regulator} and booking workflows.`
 }
 
 export function hubTreatmentPageMetaTitle(treatmentLabel: string, typeLabel: string) {
@@ -185,6 +225,14 @@ export function hubTemplateDetailMetaTitle(templateTitle: string) {
 
 export function hubTemplateDetailMetaDescription(summary: string) {
   return `${summary} Free template — customise for your clinic. ${RATING} ${BRAND} library.`
+}
+
+export function hubTemplateCityMetaTitle(templateTitle: string, cityTitle: string) {
+  return trimTitle(joinTitle(freeTemplateTitle(templateTitle), cityTitle, "Clinic Template"))
+}
+
+export function hubTemplateCityMetaDescription(summary: string, cityTitle: string) {
+  return `${summary} Free template for ${cityTitle} clinics — customise and digitise with ${BRAND}.`
 }
 
 export function hubTemplateCategoryMetaTitle(category: TemplateCategory) {

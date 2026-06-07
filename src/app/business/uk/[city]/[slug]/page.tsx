@@ -36,8 +36,8 @@ export function generateMetadata({ params }: Props): Metadata {
   const pageTitle = slugToTitle(params.slug);
   const displayTitle = `${cityTitle} ${pageTitle}`;
   return buildHubPageMetadata({
-    title: hubCityPageMetaTitle(cityTitle, params.slug, displayTitle),
-    description: hubCityPageMetaDescription(cityTitle, displayTitle),
+    title: hubCityPageMetaTitle(cityTitle, params.slug, displayTitle, params.city),
+    description: hubCityPageMetaDescription(cityTitle, displayTitle, params.city),
     canonicalPath: `/business/uk/${params.city}/${params.slug}/`,
     ogType: "article",
   });

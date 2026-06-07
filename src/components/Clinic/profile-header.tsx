@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dialog";
-import { ClinicOnlineStatus } from "@/components/clinic/online-status";
+import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;

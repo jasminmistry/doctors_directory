@@ -10,8 +10,11 @@ import Link from "next/link"
 import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell"
 import { HubContentStart } from "@/components/b2b-hub/hub-content-start"
 import { HUB_CENTERED_MOBILE_CTAS } from "@/components/b2b-hub/hub-hero-layout-classes"
+import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq"
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
 import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section"
+import { HUB_BTN_VIEW_ALL_BLOGS_CLASS } from "@/components/b2b-hub/hub-marketing-typography"
+import { HUB_BLOG_LINKS } from "@/lib/b2b-hub/hub-blog-links"
 import { HubTemplateDownloadForm } from "@/components/b2b-hub/hub-template-download-form"
 import { HubTemplateLibrarySection } from "@/components/b2b-hub/hub-template-library-section"
 import { HubTemplatePreviewPanel } from "@/components/b2b-hub/hub-template-preview-panel"
@@ -48,9 +51,11 @@ const baseUrl =
 
 type Props = {
   entry: TemplateEntry
+  cityTitle?: string
+  canonicalPath?: string
 }
 
-export function HubTemplateDownloadPage({ entry }: Props) {
+export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Props) {
   const content = getTemplatePageContent(entry)
   const related = relatedTemplateEntries(entry.category, entry.slug, 9)
   const treatmentSlug = treatmentSlugFromEntry(entry)
@@ -106,7 +111,11 @@ export function HubTemplateDownloadPage({ entry }: Props) {
             <span className="mb-3 inline-flex rounded-full bg-[#1a877a] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
               Free Download
             </span>
-            <h1 className={HUB_HERO_TITLE_CLASS}>{toDisplayTitle(entry.title)}</h1>
+            <h1 className={HUB_HERO_TITLE_CLASS}>
+              {cityTitle
+                ? `${toDisplayTitle(entry.title)} for ${cityTitle}`
+                : toDisplayTitle(entry.title)}
+            </h1>
           </>
         }
         intro={<p className={HUB_HERO_INTRO_CLASS}>{entry.summary}</p>}
@@ -220,42 +229,84 @@ export function HubTemplateDownloadPage({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-16">
-          <h2 className="mb-8 text-center text-2xl font-bold text-[#111111] md:text-3xl">
-            Frequently Asked Questions
-          </h2>
-          <div className="mx-auto max-w-[1056px] overflow-hidden rounded-xl border border-[#E2DDD7] bg-white">
-            <details open className="group border-b border-[#EDE9E3]">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-lg font-semibold text-[#111111]">
-                Is This Template Suitable For CQC-Registered Clinics?
-                <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-relaxed text-[#6B6B6B]">
-                  The structure is designed to support common governance expectations. Your responsible clinician
-                  should review and adapt wording to your scope of practice.
-                </p>
-              </div>
-            </details>
-            <details className="group border-b border-[#EDE9E3]">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-lg font-semibold text-[#111111]">
-                Can I Edit The Template For My Clinic?
-                <span className="shrink-0 text-sm text-neutral-400 transition-transform group-open:rotate-180">
-                  ▾
-                </span>
-              </summary>
-              <div className="px-6 pb-5">
-                <p className="text-base leading-relaxed text-[#6B6B6B]">
-                  Yes. Download the PDF and customise branding, contact details, and treatment-specific clauses before
-                  use.
-                </p>
-              </div>
-            </details>
+        <HubServiceProviderSection />
+
+        <HubBuyerFaq
+          title="Frequently Asked Questions"
+          intro={
+            cityTitle
+              ? `Common questions about this template for ${cityTitle} clinics.`
+              : "Find quick answers about downloading and using this template."
+          }
+          items={[
+            {
+              question: "Is this template suitable for CQC-registered clinics?",
+              answer:
+                "The structure is designed to support common governance expectations. Your responsible clinician should review and adapt wording to your scope of practice.",
+              defaultOpen: true,
+            },
+            {
+              question: "Can I edit the template for my clinic?",
+              answer:
+                "Yes. Download the PDF and customise branding, contact details, and treatment-specific clauses before use.",
+            },
+            {
+              question: cityTitle
+                ? `Can I use this template for patients in ${cityTitle}?`
+                : "Can I digitise this template in Consentz?",
+              answer: cityTitle
+                ? `Yes. Many ${cityTitle} clinics start with the PDF download, then move the same workflow into Consentz for governed digital consent and audit-ready records.`
+                : "Yes. Consentz supports the same treatment workflow digitally — send, sign, store, and retrieve evidence without retyping patient details.",
+            },
+          ]}
+        />
+
+        <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
+          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our latest blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+            Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay
+            informed with our latest articles.
+          </p>
+          <div className="grid gap-6 md:grid-cols-3">
+            {HUB_BLOG_LINKS.slice(0, 3).map((post) => (
+              <a
+                key={post.id}
+                href={post.href}
+                target="_blank"
+                rel="noreferrer"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+              >
+                <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
+                  <Image
+                    src={post.image}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 px-5 py-5 pb-6">
+                  <span className="text-[15px] leading-snug text-[#111111] underline underline-offset-2">
+                    {post.title}
+                  </span>
+                  <span className="text-sm text-[#111111] underline underline-offset-2">
+                    Read more →
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <div className="mt-10 flex justify-center md:justify-start">
+            <a
+              href="https://www.consentz.com/blog/"
+              target="_blank"
+              rel="noreferrer"
+              className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
+            >
+              View all blogs
+            </a>
           </div>
         </section>
-        <HubServiceProviderSection />
       </HubContentStart>
 
       <HubSectionCta />
