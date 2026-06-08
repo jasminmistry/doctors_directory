@@ -140,7 +140,6 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
             treatment={clinic.Treatments?.[0]}
             location={clinic.City}
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
-            entityClinicSlug={clinic.slug ?? undefined}
           />
           <Button
             asChild

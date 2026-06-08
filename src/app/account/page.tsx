@@ -37,11 +37,21 @@ export default function AccountDashboardPage() {
   const [patient, setPatient] = useState<PatientMe | null>(null)
   const [bookings, setBookings] = useState<Booking[]>([])
   const [sessions, setSessions] = useState<ChatSession[]>([])
+  const [bookingTotal, setBookingTotal] = useState(0)
+  const [sessionTotal, setSessionTotal] = useState(0)
 
   useEffect(() => {
     fetch('/directory/api/patient/me').then((r) => r.ok ? r.json() : null).then(setPatient)
-    fetch('/directory/api/patient/bookings').then((r) => r.ok ? r.json() : null).then((d) => setBookings(d?.bookings?.slice(0, 3) ?? []))
-    fetch('/directory/api/patient/chats').then((r) => r.ok ? r.json() : null).then((d) => setSessions(d?.sessions?.slice(0, 3) ?? []))
+    fetch('/directory/api/patient/bookings').then((r) => r.ok ? r.json() : null).then((d) => {
+      const all: Booking[] = d?.bookings ?? []
+      setBookingTotal(all.length)
+      setBookings(all.slice(0, 3))
+    })
+    fetch('/directory/api/patient/chats').then((r) => r.ok ? r.json() : null).then((d) => {
+      const all: ChatSession[] = d?.sessions ?? []
+      setSessionTotal(all.length)
+      setSessions(all.slice(0, 3))
+    })
   }, [])
 
   return (
@@ -54,8 +64,8 @@ export default function AccountDashboardPage() {
       {/* Quick stats */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { icon: CalendarDays, label: 'Bookings', count: bookings.length, href: '/account/bookings' },
-          { icon: MessageSquare, label: 'Consultations', count: sessions.length, href: '/account/chats' },
+          { icon: CalendarDays, label: 'Bookings', count: bookingTotal, href: '/account/bookings' },
+          { icon: MessageSquare, label: 'Consultations', count: sessionTotal, href: '/account/chats' },
           { icon: UserCircle, label: 'Profile', count: null, href: '/account/profile' },
         ].map(({ icon: Icon, label, count, href }) => (
           <Link

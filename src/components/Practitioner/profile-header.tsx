@@ -172,7 +172,6 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
             location={k_value?.City || clinic.City}
             consultationHref={consultationHref}
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
-            practitionerSlug={k_value?.slug ?? undefined}
           />
           <Button
             asChild

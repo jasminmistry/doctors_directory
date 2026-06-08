@@ -86,10 +86,15 @@ function LocationBadge({ location }: { location: 'zoom' | 'video_call' }) {
 }
 
 interface EventBookingSectionProps {
-  practitionerSlug: string
+  practitionerSlug?: string
+  clinicSlug?: string
 }
 
-export function EventBookingSection({ practitionerSlug }: EventBookingSectionProps) {
+export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBookingSectionProps) {
+  const basePath = clinicSlug
+    ? `/directory/api/events/clinic/${clinicSlug}`
+    : `/directory/api/events/${practitionerSlug}`
+
   const [events, setEvents] = useState<CoreEvent[] | null>(null)
   const [eventsLoading, setEventsLoading] = useState(true)
 
@@ -117,12 +122,12 @@ export function EventBookingSection({ practitionerSlug }: EventBookingSectionPro
   const weekDays = Array.from({ length: WEEK_SIZE }, (_, i) => addDays(weekStart, i))
 
   useEffect(() => {
-    fetch(`/directory/api/events/${practitionerSlug}`)
+    fetch(basePath)
       .then((r) => r.json())
       .then((d) => setEvents(d.events ?? []))
       .catch(() => setEvents([]))
       .finally(() => setEventsLoading(false))
-  }, [practitionerSlug])
+  }, [basePath])
 
   useEffect(() => {
     if (!selectedDate || !selectedEvent) return
@@ -135,7 +140,7 @@ export function EventBookingSection({ practitionerSlug }: EventBookingSectionPro
       date: dateKey(selectedDate),
       timezone: tz,
     })
-    fetch(`/directory/api/events/${practitionerSlug}/availability?${qs}`)
+    fetch(`${basePath}/availability?${qs}`)
       .then((r) => r.json())
       .then((d: AvailabilityResponse) => {
         setSlots(d.available ?? [])
@@ -143,7 +148,7 @@ export function EventBookingSection({ practitionerSlug }: EventBookingSectionPro
       })
       .catch(() => setSlots([]))
       .finally(() => setSlotsLoading(false))
-  }, [selectedDate, selectedEvent, practitionerSlug])
+  }, [selectedDate, selectedEvent, basePath])
 
   async function handleBook() {
     if (!selectedSlot || !selectedEvent) return
@@ -167,7 +172,7 @@ export function EventBookingSection({ practitionerSlug }: EventBookingSectionPro
 
       // Paid event → Stripe Checkout
       if (selectedEvent.price) {
-        const res = await fetch(`/directory/api/events/${practitionerSlug}/checkout`, {
+        const res = await fetch(`${basePath}/checkout`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -187,7 +192,7 @@ export function EventBookingSection({ practitionerSlug }: EventBookingSectionPro
       }
 
       // Free event → direct book
-      const res = await fetch(`/directory/api/events/${practitionerSlug}/book`, {
+      const res = await fetch(`${basePath}/book`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(commonPayload),

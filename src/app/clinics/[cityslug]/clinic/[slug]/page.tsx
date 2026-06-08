@@ -29,11 +29,11 @@ import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
 import { CityPricingContext } from "@/components/city-pricing-context";
 import { buildCityTreatmentPriceInsights } from "@/lib/city-pricing";
-import { BookingWidget } from "@/components/clinic/booking-widget";
 import { CoverPhoto } from "@/components/clinic/cover-photo";
 import { TransparencyBox } from "@/components/clinic/transparency-box";
 import { AccreditationBadges } from "@/components/clinic/accreditation-badges";
 import { ReviewsSection, type ReviewItem } from "@/components/clinic/reviews-section";
+import { EventBookingSection } from "@/components/clinic/event-booking-section";
 import { prisma } from "@/lib/db";
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
@@ -284,11 +284,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
             <div className="order-1 lg:order-2 col-span-1 lg:col-span-4">
               <div className="mb-4 space-y-4">
-                <BookingWidget
-                  slug={slug}
-                  clinicName={dbClinic.name ?? slug}
-                  hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
-                />
+                <EventBookingSection clinicSlug={slug} />
                 <AccreditationBadges
                   isSaveFace={clinic.isSaveFace}
                   isDoctor={clinic.isDoctor}
