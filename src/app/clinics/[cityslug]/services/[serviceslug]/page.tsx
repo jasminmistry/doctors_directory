@@ -78,7 +78,10 @@ const serviceMatch = categories.some((cat: string) =>
 
     return cityMatch && serviceMatch
   });
-  const rankedClinics = buildClinicRankedEntries(filteredClinics, 5);
+  const rankedClinics = buildClinicRankedEntries(filteredClinics, 4, {
+    treatmentSlug: serviceslug,
+    treatmentName: String(normalizedServiceName),
+  });
   const cityClinics = clinics.filter(
     (clinic) => clinic.City?.toLowerCase() === decodedCitySlug.toLowerCase()
   );

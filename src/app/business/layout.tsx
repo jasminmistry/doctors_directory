@@ -18,7 +18,7 @@ export default function BusinessLayout({
 }>) {
   return (
     <div
-      className={`${playfair.variable} min-h-[60vh] bg-white [--hub-header-stack:9.5rem] sm:[--hub-header-stack:8.75rem] lg:[--hub-header-stack:8rem]`}
+      className={`${playfair.variable} min-h-[60vh] overflow-x-hidden bg-white [--hub-header-stack:9.5rem] sm:[--hub-header-stack:8.75rem] lg:[--hub-header-stack:8rem]`}
     >
       <HubProductSchema />
       <HubChrome />

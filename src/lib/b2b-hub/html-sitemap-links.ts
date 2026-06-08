@@ -10,6 +10,21 @@ import {
   type TreatmentPageType,
 } from "@/lib/b2b-hub/scaled-pages"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
+import {
+  getB2bExpansionCities,
+  getCqcExpansionCities,
+  getExpansionCityTitle,
+} from "@/lib/b2b-hub/expansion-cities"
+import {
+  B2B_EXPANSION_SEGMENTS,
+  buildExpansionCanonicalPath,
+  getExpansionHubEntries,
+} from "@/lib/b2b-hub/expansion-pages"
+import {
+  buildTemplateExpansionPath,
+  TEMPLATE_ENTRIES,
+} from "@/lib/b2b-hub/templates-registry"
+import { segmentLabel } from "@/lib/b2b-hub/registry"
 
 export type HtmlSitemapLink = {
   href: string
@@ -49,7 +64,7 @@ export function getB2bTreatmentSitemapLinks(): HtmlSitemapLink[] {
     ...treatments.flatMap((t) =>
       TREATMENT_PAGE_TYPES.map((type) => ({
         href: `/business/treatments/${buildTreatmentPageSlug(t.slug, type)}/`,
-        label: `${t.label} — ${treatmentTypeLabel(type)}`,
+        label: `${t.label}: ${treatmentTypeLabel(type)}`,
       }))
     ),
   ]
@@ -67,4 +82,78 @@ export function countB2bScaledSitemapPages(): {
     cityPageCount,
     treatmentPageCount: getB2bTreatmentSitemapLinks().length,
   }
+}
+
+export type B2bExpansionSitemapGroup = {
+  segment: string
+  segmentLabel: string
+  links: HtmlSitemapLink[]
+}
+
+export function countB2bExpansionSitemapPages(): {
+  segmentCityCount: number
+  templateCityCount: number
+  total: number
+} {
+  const expansionCities = getB2bExpansionCities()
+  const cqcExpansionCities = getCqcExpansionCities()
+  const segmentCityCount = B2B_EXPANSION_SEGMENTS.reduce(
+    (sum, segment) =>
+      sum +
+      getExpansionHubEntries(segment).length *
+        (segment === "cqc" ? cqcExpansionCities.length : expansionCities.length),
+    0
+  )
+  const templateCityCount = TEMPLATE_ENTRIES.length * expansionCities.length
+  return {
+    segmentCityCount,
+    templateCityCount,
+    total: segmentCityCount + templateCityCount,
+  }
+}
+
+export function getB2bExpansionSitemapGroups(limitPerSegment = 40): B2bExpansionSitemapGroup[] {
+  const expansionCities = getB2bExpansionCities()
+  const cqcExpansionCities = getCqcExpansionCities()
+  return B2B_EXPANSION_SEGMENTS.map((segment) => {
+    const entries = getExpansionHubEntries(segment)
+    const cities = segment === "cqc" ? cqcExpansionCities : expansionCities
+    const links: HtmlSitemapLink[] = []
+    for (const entry of entries) {
+      for (const city of cities) {
+        links.push({
+          href: buildExpansionCanonicalPath(segment, entry.slug, city.slug),
+          label: `${entry.title} — ${getExpansionCityTitle(city.slug)}`,
+        })
+        if (links.length >= limitPerSegment) {
+          return {
+            segment,
+            segmentLabel: segmentLabel(segment),
+            links,
+          }
+        }
+      }
+    }
+    return {
+      segment,
+      segmentLabel: segmentLabel(segment),
+      links,
+    }
+  })
+}
+
+export function getB2bTemplateExpansionSampleLinks(limit = 60): HtmlSitemapLink[] {
+  const links: HtmlSitemapLink[] = []
+  for (const entry of TEMPLATE_ENTRIES) {
+    for (const city of getB2bExpansionCities()) {
+      links.push({
+        href: buildTemplateExpansionPath(entry.slug, city.slug),
+        label: `${entry.title} — ${city.title}`,
+      })
+      if (links.length >= limit) {
+        return links
+      }
+    }
+  }
+  return links
 }

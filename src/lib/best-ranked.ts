@@ -1,4 +1,10 @@
 import type { Clinic, Practitioner } from "@/lib/types"
+import { getClinicDisplayName } from "@/lib/clinic-display"
+import {
+  formatProfileDisplayPrice,
+  getProfileListingPrice,
+  type ProfilePriceOptions,
+} from "@/lib/profile-fees"
 
 export interface ClinicComparisonEntry {
   category: "Best value" | "Premium" | "Budget"
@@ -11,9 +17,11 @@ export interface ClinicComparisonEntry {
 
 export interface RankedEntry {
   name: string
+  subtitle?: string
   href: string
   image: string
   reviewCount: number
+  rating: number
   averagePrice: number | null
   displayPrice: string
   scoreValue: number
@@ -21,48 +29,6 @@ export interface RankedEntry {
   valueLabel: "Best value" | "Premium" | "Budget"
   verified?: boolean
   idVerified?: boolean
-}
-
-const toNumbers = (value: string): number[] => {
-  const matches = value.match(/\d+[\d,]*(?:\.\d+)?/g)
-  if (!matches) {
-    return []
-  }
-
-  return matches
-    .map((token) => Number.parseFloat(token.replaceAll(",", "")))
-    .filter((token) => Number.isFinite(token) && token > 0)
-}
-
-const collectPriceNumbers = (fees: unknown): number[] => {
-  if (!fees) {
-    return []
-  }
-
-  if (typeof fees === "string") {
-    return toNumbers(fees)
-  }
-
-  if (Array.isArray(fees)) {
-    return fees.flatMap((entry) => collectPriceNumbers(entry))
-  }
-
-  if (typeof fees === "object") {
-    return Object.values(fees as Record<string, unknown>).flatMap((entry) =>
-      collectPriceNumbers(entry)
-    )
-  }
-
-  return []
-}
-
-const average = (values: readonly number[]): number | null => {
-  if (values.length === 0) {
-    return null
-  }
-
-  const total = values.reduce((sum, value) => sum + value, 0)
-  return total / values.length
 }
 
 const median = (values: readonly number[]): number | null => {
@@ -85,14 +51,6 @@ const capitalizeWords = (value: string): string =>
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ")
 
-const formatPrice = (value: number | null): string => {
-  if (value === null) {
-    return "Price on request"
-  }
-
-  return `£${Math.round(value)} avg`
-}
-
 const getScore = (item: Clinic | Practitioner): number => {
   const overall = item.weighted_analysis?.["Overall Aggregation"]?.weighted_score
   if (typeof overall === "number" && Number.isFinite(overall)) {
@@ -112,8 +70,7 @@ const getScore = (item: Clinic | Practitioner): number => {
   return 0
 }
 
-const toClinicName = (item: Clinic): string =>
-  item.slug ? capitalizeWords(item.slug) : "Clinic"
+const toClinicName = (item: Clinic): string => getClinicDisplayName(item)
 
 const toPractitionerName = (item: Practitioner): string =>
   item.practitioner_name
@@ -144,11 +101,12 @@ const valueLabel = (
 const buildEntries = (
   items: Array<Clinic | Practitioner>,
   kind: "clinic" | "practitioner",
-  limit: number
+  limit: number,
+  priceOptions?: ProfilePriceOptions
 ): RankedEntry[] => {
   const priced = items
     .map((item) => {
-      const avgPrice = average(collectPriceNumbers(item.Fees))
+      const avgPrice = getProfileListingPrice(item.Fees, priceOptions)
       const score = getScore(item)
       return {
         item,
@@ -196,13 +154,20 @@ const buildEntries = (
           ? `/practitioners/${city}/profile/${practitionerName}`
           : "#"
 
+    const clinicItem = item as Clinic
+
     return {
-      name: kind === "clinic" ? toClinicName(item as Clinic) : toPractitionerName(item as Practitioner),
+      name: kind === "clinic" ? toClinicName(clinicItem) : toPractitionerName(item as Practitioner),
+      subtitle:
+        kind === "clinic" && clinicItem.category?.trim()
+          ? clinicItem.category.trim()
+          : undefined,
       href,
       image,
       reviewCount: Number(item.reviewCount ?? 0),
+      rating: Number(item.rating ?? 0),
       averagePrice: avgPrice,
-      displayPrice: formatPrice(avgPrice),
+      displayPrice: formatProfileDisplayPrice(avgPrice),
       scoreValue: score,
       scoreLabel:
         score > 0
@@ -217,11 +182,13 @@ const buildEntries = (
 
 export const buildClinicRankedEntries = (
   clinics: Clinic[],
-  limit = 4
-): RankedEntry[] => buildEntries(clinics, "clinic", Math.min(limit, 4))
+  limit = 4,
+  priceOptions?: ProfilePriceOptions
+): RankedEntry[] => buildEntries(clinics, "clinic", Math.min(limit, 4), priceOptions)
 
 export const buildPractitionerRankedEntries = (
   practitioners: Practitioner[],
-  limit = 4
+  limit = 4,
+  priceOptions?: ProfilePriceOptions
 ): RankedEntry[] =>
-  buildEntries(practitioners, "practitioner", Math.min(limit, 4))
+  buildEntries(practitioners, "practitioner", Math.min(limit, 4), priceOptions)

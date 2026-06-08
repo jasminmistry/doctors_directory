@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { Star } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -183,6 +184,37 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
               >
                 {entry.name}
               </Link>
+              {entry.subtitle ? (
+                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{entry.subtitle}</p>
+              ) : null}
+              {entry.reviewCount > 0 ? (
+                <div
+                  className="mt-2 flex flex-col items-center gap-1 text-xs text-muted-foreground"
+                  aria-label={`Rating: ${entry.rating} out of 5 stars, ${entry.reviewCount} reviews`}
+                >
+                  {entry.rating > 0 ? (
+                    <div className="flex items-center gap-0.5">
+                      {Array.from({ length: 5 }, (_, index) => (
+                        <Star
+                          key={index}
+                          aria-hidden
+                          className={`h-3.5 w-3.5 ${
+                            index < Math.round(entry.rating)
+                              ? 'fill-amber-500 text-amber-500'
+                              : 'text-muted-foreground/30'
+                          }`}
+                        />
+                      ))}
+                      <span className="ml-1 font-medium text-foreground">
+                        {entry.rating.toFixed(1)}
+                      </span>
+                    </div>
+                  ) : null}
+                  <span>
+                    ({entry.reviewCount} review{entry.reviewCount === 1 ? '' : 's'})
+                  </span>
+                </div>
+              ) : null}
               <p className="text-sm font-bold text-foreground mt-2">{entry.displayPrice}</p>
             </div>
 

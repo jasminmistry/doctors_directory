@@ -1,3 +1,4 @@
+import { filterSitemapIndexFiles } from '@/lib/sitemap-crawl-hold'
 import { buildSitemapIndexXml, toDirectoryUrl, xmlResponse } from '@/lib/sitemap'
 
 export async function GET() {
@@ -30,10 +31,14 @@ export async function GET() {
     'accredited-clinics-cities.xml',
     'accredited-practitioners.xml',
     'accredited-practitioners-cities.xml',
+    'service-city-pages.xml',
+    'treatment-city-hub-pages.xml',
+    'standalone-treatment-product-pages.xml',
+    'best-in-city-pages.xml',
   ]
 
   const xml = buildSitemapIndexXml(
-    files.map((file) => toDirectoryUrl(`/${file}`))
+    filterSitemapIndexFiles(files).map((file) => toDirectoryUrl(`/${file}`))
   )
 
   return xmlResponse(xml)

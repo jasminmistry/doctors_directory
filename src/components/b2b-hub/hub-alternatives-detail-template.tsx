@@ -187,7 +187,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
 </div>
       </section>
 
-      <article className="mx-auto w-full min-w-0 max-w-[1280px] overflow-x-clip px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
+      <article className="mx-auto w-full min-w-0 max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
         <HubMainDifferenceSection competitorLabel={competitorLabel} />
 
         <section className="mb-12">

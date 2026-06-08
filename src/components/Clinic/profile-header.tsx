@@ -13,9 +13,10 @@ import ClinicLabels from "./clinicLabels";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ClinicOnlineStatus } from "@/components/clinic/online-status";
-import { OnlineDot } from "@/components/clinic/online-dot";
+import { OnlineDot } from "@/components/Clinic/online-dot";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
+import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dialog";
+import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;

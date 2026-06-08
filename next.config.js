@@ -2,6 +2,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  staticPageGenerationTimeout: 600,
   experimental: {
     trustProxyHeaders: true,
   },
@@ -18,6 +19,82 @@ const nextConfig = {
   async redirects() {
     // Bare-path redirects (basePath: false) catch old indexed / external URLs
     // that are missing the /directory prefix and send them to the correct location.
+    const treatmentHubRedirectSlugs = [
+      'botox',
+      'profhilo',
+      'polynucleotides',
+      'fillers',
+      'chemical-peel',
+      'micro-needling',
+      'ipl-treatment',
+      'acne',
+      'hifu',
+      'microneedling-with-radiofrequency',
+      'morpheus8',
+      'lemon-bottle',
+      'profhilo-structura',
+      'seventy-hyal',
+      'jawline-filler',
+      'rf-microneedling',
+      'non-surgical-rhinoplasty',
+    ];
+
+    const polynucleotideLegacyRedirects = [
+      {
+        source: '/polynucleotide-treatment/:city/',
+        destination: '/polynucleotides/:city/',
+        permanent: true,
+      },
+      {
+        source: '/polynucleotide-treatment/:city',
+        destination: '/polynucleotides/:city/',
+        permanent: true,
+      },
+      {
+        source: '/polynucleotide-treatment-treatment/:city/',
+        destination: '/polynucleotides/:city/',
+        permanent: true,
+      },
+      {
+        source: '/polynucleotide-treatment-treatment/:city',
+        destination: '/polynucleotides/:city/',
+        permanent: true,
+      },
+      {
+        source: '/best-polynucleotide-treatment-clinics-:city/',
+        destination: '/best-polynucleotides-clinics-:city/',
+        permanent: true,
+      },
+      {
+        source: '/best-polynucleotide-treatment-clinics-:city',
+        destination: '/best-polynucleotides-clinics-:city/',
+        permanent: true,
+      },
+      {
+        source: '/treatments/polynucleotide-treatment/',
+        destination: '/treatments/polynucleotides/',
+        permanent: true,
+      },
+      {
+        source: '/treatments/polynucleotide-treatment',
+        destination: '/treatments/polynucleotides/',
+        permanent: true,
+      },
+    ];
+
+    const treatmentHubRedirects = treatmentHubRedirectSlugs.flatMap((slug) => [
+      {
+        source: `/${slug}-treatment/:city/`,
+        destination: `/${slug}/:city/`,
+        permanent: true,
+      },
+      {
+        source: `/${slug}-treatment/:city`,
+        destination: `/${slug}/:city/`,
+        permanent: true,
+      },
+    ]);
+
     const barePaths = [
       'accredited',
       'clinics',
@@ -40,7 +117,23 @@ const nextConfig = {
       },
     ]);
 
+    const b2bSoftwareCityRedirects = [
+      {
+        source: '/software/:city/',
+        destination: '/business/uk/:city/aesthetic-clinic-software/',
+        permanent: true,
+      },
+      {
+        source: '/software/:city',
+        destination: '/business/uk/:city/aesthetic-clinic-software/',
+        permanent: true,
+      },
+    ];
+
     return [
+      ...b2bSoftwareCityRedirects,
+      ...treatmentHubRedirects,
+      ...polynucleotideLegacyRedirects,
       ...barePaths,
       {
         source: '/business',
@@ -137,8 +230,8 @@ const nextConfig = {
         ],
       },
       {
-        // All HTML pages — short CDN cache with background revalidation
-        source: '/:path*',
+        // HTML pages only — exclude API routes which set their own Cache-Control
+        source: '/((?!api/).*)',
         headers: [
           { key: 'Cache-Control', value: 'public, s-maxage=300, stale-while-revalidate=86400' },
         ],

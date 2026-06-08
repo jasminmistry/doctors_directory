@@ -1,4 +1,10 @@
 import { MinusCircle, PlusCircle } from "lucide-react"
+import {
+  HUB_FAQ_ANSWER_CLASS,
+  HUB_FAQ_INTRO_CLASS,
+  HUB_FAQ_QUESTION_CLASS,
+  HUB_FAQ_TITLE_CLASS,
+} from "@/components/b2b-hub/hub-marketing-typography"
 
 export type HubFaqItem = {
   question: string
@@ -27,6 +33,8 @@ type Props = {
   intro?: string
   items: HubFaqItem[]
   className?: string
+  titleClassName?: string
+  introClassName?: string
 }
 
 export function HubBuyerFaq({
@@ -34,16 +42,14 @@ export function HubBuyerFaq({
   intro = "Find quick answers to common questions about using Consentz for your clinic management needs.",
   items,
   className = "",
+  titleClassName = HUB_FAQ_TITLE_CLASS,
+  introClassName = HUB_FAQ_INTRO_CLASS,
 }: Props) {
   return (
     <section className={`mb-16 px-4 sm:px-0 ${className}`.trim()}>
-      <h2 className="text-center text-[28px] font-semibold leading-tight text-black sm:text-[38px] lg:text-[48px]">
-        {title}
-      </h2>
+      <h2 className={titleClassName}>{title}</h2>
       {intro ? (
-        <p className="mx-auto mt-3 max-w-3xl text-center text-base font-normal leading-7 text-[#374151] sm:text-lg">
-          {intro}
-        </p>
+        <p className={introClassName}>{intro}</p>
       ) : null}
       <div className="mx-auto mt-8 max-w-[1056px] overflow-hidden rounded-xl border border-[#E2DDD7] bg-white">
         {items.map((item, index) => (
@@ -57,12 +63,10 @@ export function HubBuyerFaq({
                 <PlusCircle className="size-[22px] group-open:hidden" strokeWidth={1.75} />
                 <MinusCircle className="hidden size-[22px] group-open:block" strokeWidth={1.75} />
               </span>
-              <span className="flex-1 text-left text-xl font-medium leading-7 text-[#151C26] sm:text-[22px]">
-                {item.question}
-              </span>
+              <span className={HUB_FAQ_QUESTION_CLASS}>{item.question}</span>
             </summary>
             <div className="px-6 pb-5 pl-[52px] pr-6">
-              <p className="text-sm font-normal leading-relaxed text-[#5D636B]">{item.answer}</p>
+              <p className={HUB_FAQ_ANSWER_CLASS}>{item.answer}</p>
             </div>
           </details>
         ))}

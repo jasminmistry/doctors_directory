@@ -55,6 +55,13 @@ const FEATURES_MARKETING_LINKS = [
   ["Sitemap", "/sitemap"],
 ] as const;
 
+const CONSENTZ_HUB_LINKS = [
+  ["Buyer Hub", "/business/"],
+  ["Aesthetic Clinic Software", "/business/software/"],
+  ["Templates", "/business/templates/"],
+  ["By City", "/business/uk/"],
+] as const;
+
 const ACCREDITATIONS = [
   ["cqc", "CQC"],
   ["his", "HIS"],
@@ -265,14 +272,9 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <a
-                    href={`${baseUrl}/clinic-management-software/`}
-                    className={FOOTER_DIRECTORY_LINK}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <Link href="/claim/" className={FOOTER_DIRECTORY_LINK}>
                     Verification Process
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a href="mailto:care@consentz.com" className={FOOTER_DIRECTORY_LINK}>
@@ -372,6 +374,21 @@ export function Footer() {
           </div>
         </div>
       </footer>
+
+      <div className="border-t border-white bg-[var(--dune)] px-6 py-8">
+        <div className="mx-auto max-w-7xl">
+          <h3 className={`${FOOTER_COLUMN_HEADING} mb-4`}>Consentz Hub</h3>
+          <ul className="flex flex-wrap gap-x-6 gap-y-3">
+            {CONSENTZ_HUB_LINKS.map(([label, path]) => (
+              <li key={path}>
+                <Link href={path} className={FOOTER_DIRECTORY_LINK}>
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
       <div className="b-footer bg-[#191918] py-10">
         <div className="mx-auto max-w-7xl px-6">

@@ -16,11 +16,8 @@ import {
   TEMPLATE_ENTRIES,
   type TemplateCategory,
 } from '@/lib/b2b-hub/templates-registry'
-import {
-  countB2bScaledSitemapPages,
-  getB2bCitySitemapGroups,
-  getB2bTreatmentSitemapLinks,
-} from '@/lib/b2b-hub/html-sitemap-links'
+import { countB2bExpansionSitemapPages, countB2bScaledSitemapPages, getB2bCitySitemapGroups, getB2bExpansionSitemapGroups, getB2bTemplateExpansionSampleLinks, getB2bTreatmentSitemapLinks } from '@/lib/b2b-hub/html-sitemap-links'
+import { countB2cSitemapPages } from '@/lib/b2c-sitemap-counts'
 
 const ACCREDITATIONS = [
   { key: 'cqc', name: 'Care Quality Commission (CQC)', field: 'isCQC' },
@@ -61,6 +58,10 @@ const XML_SITEMAPS: { file: string; label: string }[] = [
   { file: 'accredited-practitioners.xml', label: 'Accredited — Practitioners' },
   { file: 'accredited-practitioners-cities.xml', label: 'Accredited — Practitioner Cities' },
   { file: 'treatments-base.xml', label: 'Treatments — Base' },
+  { file: 'service-city-pages.xml', label: 'Directory — Service category by city' },
+  { file: 'treatment-city-hub-pages.xml', label: 'Directory — Treatment hub by city' },
+  { file: 'standalone-treatment-product-pages.xml', label: 'Directory — Standalone treatments and products' },
+  { file: 'best-in-city-pages.xml', label: 'Directory — Best in city editorials' },
 ]
 
 const B2B_XML_SITEMAPS: { file: string; label: string }[] = [
@@ -68,6 +69,7 @@ const B2B_XML_SITEMAPS: { file: string; label: string }[] = [
   { file: 'business-hub.xml', label: 'B2B buyer hub — Hub root' },
   { file: 'business-uk.xml', label: 'B2B buyer hub — By city index' },
   { file: 'business-uk-city.xml', label: 'B2B buyer hub — City localized pages' },
+  { file: 'business-expansion-city.xml', label: 'B2B buyer hub — Segment × city + template × city (PDF expansion)' },
   { file: 'business-treatments.xml', label: 'B2B buyer hub — Treatment pages' },
   ...HUB_SEGMENTS.map((s: HubSegment) => ({
     file: `business-${s}.xml`,
@@ -142,6 +144,10 @@ export default function HtmlSitemapPage() {
     b2bTreatmentByLetter.get(letter)!.push(link)
   }
   const b2bTreatmentLetters = [...b2bTreatmentByLetter.keys()].sort()
+  const b2bExpansionCounts = countB2bExpansionSitemapPages()
+  const b2bExpansionGroups = getB2bExpansionSitemapGroups(24)
+  const b2bTemplateExpansionSample = getB2bTemplateExpansionSampleLinks(48)
+  const b2cCounts = countB2cSitemapPages()
 
   return (
     <main className="bg-white min-h-screen">
@@ -351,6 +357,66 @@ export default function HtmlSitemapPage() {
               )
             })}
           </SubSection>
+          <SubSection
+            title={`B2B expansion — segment × city (${b2bExpansionCounts.segmentCityCount} pages, sample below)`}
+          >
+            <p className="text-sm text-muted-foreground mb-4">
+              PDF expansion URLs such as{' '}
+              <span className="font-mono text-xs">/business/consent/botox-consent-form-software/london/</span>.
+              Full list in{' '}
+              <Link href="/business-expansion-city.xml" className="text-black hover:underline font-mono text-xs">
+                business-expansion-city.xml
+              </Link>
+              .
+            </p>
+            {b2bExpansionGroups.map((group) => (
+              <div key={group.segment} className="mb-6">
+                <p className="text-sm font-medium text-gray-700 mb-2">{group.segmentLabel}</p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                  {group.links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="text-xs text-black hover:underline"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </SubSection>
+          <SubSection
+            title={`B2B expansion — templates × city (${b2bExpansionCounts.templateCityCount} pages, sample below)`}
+          >
+            <p className="text-sm text-muted-foreground mb-4">
+              Pattern:{' '}
+              <span className="font-mono text-xs">/business/templates/botox-consent-form-template/london/</span>
+            </p>
+            <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+              {b2bTemplateExpansionSample.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-xs text-black hover:underline"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </SubSection>
+        </SitemapSection>
+
+        <SitemapSection title={`B2C directory hub pages (${b2cCounts.hubStyleTotal.toLocaleString()} pages)`}>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+            <li className="text-sm">Treatment × City: <strong>{b2cCounts.treatmentCityHub.toLocaleString()}</strong></li>
+            <li className="text-sm">Best-in-city: <strong>{b2cCounts.bestInCity.toLocaleString()}</strong></li>
+            <li className="text-sm">Standalone national: <strong>{b2cCounts.standaloneTotal.toLocaleString()}</strong></li>
+            <li className="text-sm pl-4 text-muted-foreground">↳ Treatment × Product: {b2cCounts.treatmentProduct.toLocaleString()}</li>
+            <li className="text-sm pl-4 text-muted-foreground">↳ Treatment standalone: {b2cCounts.standaloneTreatment.toLocaleString()}</li>
+            <li className="text-sm pl-4 text-muted-foreground">↳ Product category: {b2cCounts.standaloneProductCategory.toLocaleString()}</li>
+            <li className="text-sm">Service × City: <strong>{b2cCounts.serviceCity.toLocaleString()}</strong></li>
+          </ul>
         </SitemapSection>
 
         <SitemapSection title="Database URLs">

@@ -15,6 +15,8 @@ import { SearchBar } from "@/components/search/search-bar"
 import { Clinic } from "@/lib/types"
 import { readJsonFileSync } from "@/lib/json-cache"
 import { PractitionerCard } from "@/components/practitioner-card";
+import { filterCqcAccreditedCities } from '@/lib/accredited-city-filter'
+import { toUrlSlug } from '@/lib/utils'
 import { toDirectoryCanonical } from "@/lib/seo";
 function mapAccreditationToField(accreditation: string): keyof Clinic {
   const mapping: Record<string, keyof Clinic> = {
@@ -63,8 +65,13 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
     notFound()
   }
 
-  const cities = [...new Set(filteredClinics.map(c => c.City))]
-  .sort((a, b) => a.localeCompare(b));
+  const rawCities = [...new Set(filteredClinics.map((c) => c.City).filter(Boolean) as string[])].sort(
+    (a, b) => a.localeCompare(b)
+  )
+  const cities =
+    accreditation.toLowerCase() === 'cqc'
+      ? filterCqcAccreditedCities(rawCities)
+      : rawCities
   const accreditationName = getAccreditationName(accreditation)
   const accreditationSlug =
   accreditationName.split("(")[1]?.replace(")", "") ?? accreditationName;
@@ -122,7 +129,7 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
           {cities.map((city) => (
             <Link
               key={city}
-              href={`/accredited/${accreditation}/clinics/${city.toLowerCase()}`}
+              href={`/accredited/${accreditation}/clinics/${toUrlSlug(city)}`}
               className="block"
             >
               <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg ">

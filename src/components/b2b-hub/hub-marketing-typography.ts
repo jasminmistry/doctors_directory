@@ -1,6 +1,9 @@
 export const HUB_FAQ_TITLE_CLASS =
   "text-center text-[28px] font-semibold leading-tight text-black sm:text-[38px] lg:text-[48px]"
 
+export const HUB_FAQ_SECTION_TITLE_CLASS =
+  "text-center text-2xl font-bold leading-tight text-[#111111] md:text-3xl"
+
 export const HUB_FAQ_INTRO_CLASS =
   "mx-auto mt-3 max-w-3xl text-center text-base font-normal leading-7 text-[#374151] sm:text-lg"
 

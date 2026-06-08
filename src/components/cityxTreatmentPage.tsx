@@ -1,10 +1,11 @@
 import { City } from "@/lib/types"
-import { fixMojibake, decodeUnicodeEscapes } from "@/lib/utils"
+import { sanitizeDisplayText } from "@/lib/utils"
 type PageProps = {cityData: City, treatment: Record<string, any>, slug: string}
 type TreatmentSection = Record<string, unknown>
 
-function cleanText(text: string) {
-  return decodeUnicodeEscapes(fixMojibake(fixMojibake(fixMojibake(text.trim()))))
+function cleanText(text: string | number): string {
+  const normalized = typeof text === "number" ? String(text) : text
+  return sanitizeDisplayText(normalized.trim())
 }
 function createBullets(text: unknown) {
   const normalizedText = Array.isArray(text)
@@ -23,16 +24,14 @@ function createBullets(text: unknown) {
     .filter(Boolean)
 
   if (splitText.length <= 1) {
-    return decodeUnicodeEscapes(normalizedText)
+    return sanitizeDisplayText(normalizedText)
   }
 
   return (
     <div className='mt-2 space-y-2'>
       <ul className="list-disc list-inside pl-6 space-y-1">
         {splitText.map((item, key) => {
-          const cleanedItem = decodeUnicodeEscapes(
-            fixMojibake(fixMojibake(fixMojibake(item)))
-          )
+          const cleanedItem = sanitizeDisplayText(item)
 
           return (
             <li className="text-sm leading-relaxed pl-6" key={key}>
@@ -160,7 +159,7 @@ export function CityTreatmentPage({ cityData, treatment, slug }: PageProps) {
   
     <h2 className="text-sm md:text-2xl font-semibold mb-1 md:mb-2 mt-2">{treatmentName} Treatment in {cityData.City}</h2>
     <section className='text-muted-foreground gap-2 space-y-2'>
-      <div>{description}</div>
+      <div>{sanitizeDisplayText(description)}</div>
       <div>
       Our dataset currently has {cityData.market_size_indicators_number_of_clinics} clinic(s),
       with approximately {cityData.market_size_indicators_review_volume_total} reviews and
@@ -192,7 +191,7 @@ export function CityTreatmentPage({ cityData, treatment, slug }: PageProps) {
        
     <ul className="list-disc list-inside">
       {goals.map((goal: string, index:number) => (
-        <li className="text-sm leading-relaxed pl-6" key={index}>{goal}</li>
+        <li className="text-sm leading-relaxed pl-6" key={index}>{sanitizeDisplayText(goal)}</li>
       ))}
     </ul>
      
@@ -245,11 +244,14 @@ export function CityTreatmentPage({ cityData, treatment, slug }: PageProps) {
          <ul className="list-disc list-inside">
           {Object.entries(costSection).map(([key, value]) => {
             if(Array.isArray(value)) {
-              return value.map((item:string, index:number) => (
+              return value
+                .filter((item): item is string | number => typeof item === "string" || typeof item === "number")
+                .map((item, index) => (
                 <li className="text-sm leading-relaxed pl-6" key={`${key}-${index}`} >{cleanText(item)}</li>
               ))
             }
-            else return ( <li className="text-sm leading-relaxed pl-6" key={key} >{cleanText(value as string)}</li>)
+            if (typeof value !== 'string' && typeof value !== 'number') return null
+            return ( <li className="text-sm leading-relaxed pl-6" key={key} >{cleanText(value)}</li>)
           })}
           </ul>
       </div>
@@ -398,11 +400,14 @@ export function CityTreatmentPage({ cityData, treatment, slug }: PageProps) {
          <ul className="list-disc list-inside">
           {Object.entries(recoverySection).map(([key, value]) => {
             if(Array.isArray(value)) {
-              return value.map((item:string, index:number) => (
+              return value
+                .filter((item): item is string | number => typeof item === "string" || typeof item === "number")
+                .map((item, index) => (
                 <li className="text-sm leading-relaxed pl-6" key={`${key}-${index}`} >{cleanText(item)}</li>
               ))
             }
-            else return ( <li className="text-sm leading-relaxed pl-6" key={key} >{cleanText(value as string)}</li>)
+            if (typeof value !== 'string' && typeof value !== 'number') return null
+            return ( <li className="text-sm leading-relaxed pl-6" key={key} >{cleanText(value)}</li>)
           })}
           </ul>
       </div>

@@ -223,7 +223,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
 </div>
       </section>
 
-      <article className="mx-auto w-full min-w-0 max-w-[1280px] overflow-x-clip px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
+      <article className="mx-auto w-full min-w-0 max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
         <p className="mx-auto mb-10 max-w-[900px] text-center text-base leading-relaxed text-[#4a4a4a] md:text-lg">
           This page is for clinic teams switching from{" "}
           <span className="font-semibold text-[#1a1a1a]">{platform}</span> who want a structured, low-risk

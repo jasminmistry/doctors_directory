@@ -12,7 +12,9 @@ import {
 import { Clinic } from "@/lib/types"
 import { readJsonFileSync } from "@/lib/json-cache"
 import { PractitionerCard } from "@/components/practitioner-card"
+import { isAllowedCqcAccreditedCity } from '@/lib/accredited-city-filter'
 import { toDirectoryCanonical } from "@/lib/seo"
+import { notFound } from 'next/navigation'
 function mapAccreditationToField(accreditation: string): keyof Clinic {
   const mapping: Record<string, keyof Clinic> = {
     cqc: 'isCQC',
@@ -35,8 +37,12 @@ interface AccreditedClinicsPageProps {
 }
 
 export default async function AccreditedClinicsPage({ params }: Readonly<AccreditedClinicsPageProps>) {
-  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
   const { accreditation, cityslug } = params
+  if (accreditation.toLowerCase() === 'cqc' && !isAllowedCqcAccreditedCity(cityslug)) {
+    notFound()
+  }
+
+  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
   const accreditationField = mapAccreditationToField(accreditation)
 
   const filteredClinics = clinics.filter(clinic => {
@@ -146,6 +152,9 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
 
 export async function generateMetadata({ params }: AccreditedClinicsPageProps) {
   const { accreditation, cityslug } = params
+  if (accreditation.toLowerCase() === 'cqc' && !isAllowedCqcAccreditedCity(cityslug)) {
+    notFound()
+  }
   const accreditationName = accreditation.charAt(0).toUpperCase() + accreditation.slice(1)
   const canonicalAccreditation = decodeURIComponent(accreditation).toLowerCase()
   const canonicalCity = decodeURIComponent(cityslug).toLowerCase()
