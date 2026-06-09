@@ -19,7 +19,7 @@ import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper
 import { EmptyCityState } from "@/components/empty-city-state";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
-import { capitalize, toUrlSlug } from "@/lib/utils";
+import { capitalize } from "@/lib/utils";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { getClinics, getEnrichedPractitioners } from "@/lib/sitemap-data";
 import { DirectoryJsonLd } from "@/components/directory-json-ld";
@@ -49,6 +49,8 @@ interface ProfilePageProps {
     slug: string;
   };
 }
+
+export const dynamic = 'force-dynamic'
 
 const practitioners = getEnrichedPractitioners()
 const clinics = getClinics()
@@ -193,13 +195,6 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
       </main>
     </>
   );
-}
-
-export function generateStaticParams() {
-  const cities = [...new Set(getEnrichedPractitioners().map((entry) => entry.City).filter(Boolean))]
-  return cities.map((city) => ({
-    cityslug: toUrlSlug(String(city)),
-  }))
 }
 
 // export async function generateStaticParams() {

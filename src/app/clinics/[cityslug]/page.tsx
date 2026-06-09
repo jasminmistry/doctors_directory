@@ -15,7 +15,7 @@ import ItemsGrid from "@/components/collectionGrid";
 import { readJsonFileSync } from "@/lib/json-cache"
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { cityMap, locations } from "@/lib/data";
-import { capitalize, decodeUnicodeEscapes, toUrlSlug } from "@/lib/utils";
+import { capitalize, decodeUnicodeEscapes } from "@/lib/utils";
 import { MoreItems } from "@/components/MoreItems";
 import { CityPageData } from "@/components/cityPageData";
 import { EmptyCityState } from "@/components/empty-city-state";
@@ -39,6 +39,8 @@ interface ProfilePageProps {
     slug: string;
   };
 }
+
+export const dynamic = 'force-dynamic'
 
 const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
 const clinicIndex = new Map(
@@ -250,13 +252,6 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
       </main>
     </>
   );
-}
-
-export function generateStaticParams() {
-  const cities = [...new Set(getClinics().map((clinic) => clinic.City).filter(Boolean))]
-  return cities.map((city) => ({
-    cityslug: toUrlSlug(String(city)),
-  }))
 }
 
 // export async function generateStaticParams() {
