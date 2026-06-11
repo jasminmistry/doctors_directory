@@ -19,7 +19,7 @@ import  Link  from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
 import { Link as LinkIcon} from "lucide-react"
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
-import { OnlineDot } from "@/components/clinic/online-dot";
+import { OnlineDot } from "@/components/Clinic/online-dot";
 interface ProfileHeaderProps {
   clinic: Practitioner;
   k_value: any;
