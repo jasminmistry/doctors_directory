@@ -1,5 +1,4 @@
 "use client"
-import { AdminLayout } from '@/components/admin/AdminLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -321,8 +320,7 @@ export default function QATestReport({report}: {report: TestReport}) {
 console.log(failedTestMessages)
 
   return (
-    <AdminLayout title="QA Test Report">
-      <div className="space-y-6">
+    <div className="space-y-6">
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -792,7 +790,6 @@ console.log(failedTestMessages)
             </Accordion>
           </TabsContent>
         </Tabs>
-      </div>
-    </AdminLayout>
+    </div>
   )
 }
