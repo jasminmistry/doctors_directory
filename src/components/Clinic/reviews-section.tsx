@@ -149,6 +149,9 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
               className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-gray-400 focus:outline-none resize-none"
               placeholder="Share your experience (minimum 10 characters)…" />
           </div>
+          <p className="rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-500">
+            Reviews are moderated before publication. Submitting a review confirms it reflects your genuine experience.
+          </p>
           <div className="flex gap-2">
             <button type="button" onClick={() => setShowForm(false)}
               className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors">
@@ -199,12 +202,22 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-sm font-medium text-gray-900">{review.patientName}</span>
-                  {review.isVerifiedPatient && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                  {review.isVerifiedPatient ? (
+                    <span
+                      className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-medium text-blue-700"
+                      title="This reviewer completed a booking through Consentz Directory"
+                    >
                       <ShieldCheck className="h-3 w-3" />
-                      Verified Patient
+                      Verified patient
                     </span>
-                  )}
+                  ) : review.source === 'platform' ? (
+                    <span
+                      className="inline-flex items-center gap-1 rounded-full bg-gray-50 border border-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-500"
+                      title="This review was submitted publicly and has not been linked to a booking"
+                    >
+                      Public review
+                    </span>
+                  ) : null}
                   {review.source === 'google' && (
                     <span className="text-[10px] font-medium text-gray-400 border border-gray-200 rounded-full px-2 py-0.5">Google</span>
                   )}
@@ -223,7 +236,7 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
 
               {review.clinicResponse && (
                 <div className="mt-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-1">Clinic response</p>
+                  <p className="text-xs font-semibold text-gray-700 mb-1">Response from the clinic</p>
                   <p className="text-sm text-gray-600 leading-relaxed">{review.clinicResponse}</p>
                   {review.respondedAt && (
                     <p className="mt-1 text-xs text-gray-400">

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Loader2, Clock } from 'lucide-react'
+import { Loader2, Clock, Info, CalendarDays, RefreshCw, Video, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import { ScheduleEditor, DEFAULT_SCHEDULE, DAYS, type DaySchedule } from '@/components/portal/schedule-editor'
 
@@ -87,6 +87,8 @@ export function PortalScheduleView() {
     )
   }
 
+  const enabledDays = schedule.filter((d) => d.enabled)
+
   return (
     <div className="max-w-xl space-y-6">
       <ScheduleEditor value={schedule} onChange={setSchedule} disabled={saving} />
@@ -101,6 +103,69 @@ export function PortalScheduleView() {
           {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           {saving ? 'Saving…' : 'Save schedule'}
         </button>
+      </div>
+
+      {/* Patient-facing preview */}
+      {enabledDays.length > 0 && (
+        <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <Eye className="h-4 w-4 text-gray-400 shrink-0" />
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Patient view — bookable hours</p>
+          </div>
+          <div className="space-y-1">
+            {enabledDays.map((d) => (
+              <div key={d.day} className="flex items-center justify-between text-sm">
+                <span className="text-gray-700 w-28">{d.day}</span>
+                <span className="text-gray-500">{d.startTime} – {d.endTime}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-400">This is what patients see when choosing a booking slot.</p>
+        </div>
+      )}
+
+      {/* How schedule rules work */}
+      <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 space-y-3">
+        <div className="flex items-center gap-2 mb-1">
+          <Info className="h-4 w-4 text-blue-600 shrink-0" />
+          <p className="text-xs font-semibold text-blue-800 uppercase tracking-wide">How schedule rules work</p>
+        </div>
+        <div className="space-y-2.5 text-sm text-blue-900">
+          <div className="flex items-start gap-2">
+            <CalendarDays className="h-4 w-4 shrink-0 mt-0.5 text-blue-500" />
+            <p>
+              <span className="font-medium">Booking window: </span>
+              Patients can only book on days you have enabled, and only within your stated start–end hours.
+              Disabled days are completely hidden from the booking calendar.
+            </p>
+          </div>
+          <div className="flex items-start gap-2">
+            <Clock className="h-4 w-4 shrink-0 mt-0.5 text-blue-500" />
+            <p>
+              <span className="font-medium">Event duration: </span>
+              Each consultation event has a set duration (15, 30, or 60 minutes). Booking a 60-minute
+              slot at 14:00 blocks 14:00–15:00, so the next available slot is 15:00 — not 14:30.
+            </p>
+          </div>
+          <div className="flex items-start gap-2">
+            <Video className="h-4 w-4 shrink-0 mt-0.5 text-blue-500" />
+            <p>
+              <span className="font-medium">Online status: </span>
+              You appear online when your portal is open, you are within schedule hours, and your last
+              activity was within 5 minutes. Patients see an &apos;online now&apos; indicator on your profile.
+            </p>
+          </div>
+          {hasConsentzId && (
+            <div className="flex items-start gap-2">
+              <RefreshCw className="h-4 w-4 shrink-0 mt-0.5 text-blue-500" />
+              <p>
+                <span className="font-medium">Core calendar conflicts: </span>
+                Appointments already booked in your Consentz Core calendar are automatically blocked
+                in the directory booking flow — patients cannot double-book a slot you have already filled.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

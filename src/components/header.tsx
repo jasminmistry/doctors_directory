@@ -6,10 +6,12 @@ import { usePathname } from "next/navigation";
 import { SearchBar } from "@/components/search/search-bar";
 
 type PatientInfo = { firstName: string; lastName: string; email: string }
+type PortalInfo = { entityType: 'clinic' | 'practitioner'; entityName: string; claimerEmail: string }
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [patient, setPatient] = useState<PatientInfo | null | undefined>(undefined);
+  const [portalUser, setPortalUser] = useState<PortalInfo | null | undefined>(undefined);
   const pathname = usePathname();
 
   async function signOut() {
@@ -18,11 +20,21 @@ export default function Header() {
     window.location.replace('/directory')
   }
 
+  async function portalSignOut() {
+    setPortalUser(null)
+    await fetch('/directory/api/auth/logout', { method: 'POST' }).catch(() => {})
+    window.location.replace('/directory')
+  }
+
   useEffect(() => {
     fetch('/directory/api/patient/me', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((data) => setPatient(data))
       .catch(() => setPatient(null))
+    fetch('/directory/api/portal/me', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => setPortalUser(data))
+      .catch(() => setPortalUser(null))
   }, [pathname])
 
   useEffect(() => {
@@ -142,6 +154,24 @@ export default function Header() {
                 <button type="button" onClick={signOut} className="block w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600">Sign out</button>
               </div>
             </div>
+          ) : portalUser ? (
+            <div className="relative group">
+              <button type="button" className="font-bold rounded-lg border-2 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1">
+                {portalUser.entityName}
+                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <div className="px-4 py-2.5 border-b border-gray-100">
+                  <p className="text-xs text-gray-500 capitalize">{portalUser.entityType} portal</p>
+                </div>
+                <Link href="/portal/clinic" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg">
+                  My Portal
+                </Link>
+                <button type="button" onClick={portalSignOut} className="block w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600">Sign out</button>
+              </div>
+            </div>
           ) : (
             <div className="relative group">
               <button type="button" className="font-bold rounded-lg border-2 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1">
@@ -252,6 +282,13 @@ export default function Header() {
               <Link href="/account/bookings" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>Bookings</Link>
               <Link href="/account/chats" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>Chats</Link>
               <button type="button" onClick={() => { setMenuOpen(false); signOut() }} className="text-sm font-medium text-red-600 hover:text-red-800 text-left">Sign out</button>
+            </div>
+          ) : portalUser ? (
+            <div className="mt-4 flex flex-col gap-2">
+              <span className="text-sm font-semibold text-gray-600">{portalUser.entityName}</span>
+              <span className="text-xs text-gray-400 capitalize">{portalUser.entityType} portal</span>
+              <Link href="/portal/clinic" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>My Portal</Link>
+              <button type="button" onClick={() => { setMenuOpen(false); portalSignOut() }} className="text-sm font-medium text-red-600 hover:text-red-800 text-left">Sign out</button>
             </div>
           ) : (
             <div className="mt-4 border-t border-gray-100 pt-3 flex flex-col gap-2">

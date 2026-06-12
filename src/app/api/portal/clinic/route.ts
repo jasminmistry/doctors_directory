@@ -12,6 +12,8 @@ const CLINIC_PORTAL_SELECT = {
   city: { select: { slug: true } },
   idVerified: true,
   claimedPlan: true,
+  stripeSubscriptionStatus: true,
+  subscriptionCancelAt: true,
   image: true,
   gmapsUrl: true,
   gmapsAddress: true,
@@ -55,6 +57,8 @@ export async function GET() {
         plan: clinic.claimedPlan ?? null,
         stripeSubscriptionId: claim?.stripeSubscriptionId ?? null,
         approvedAt: claim?.approvedAt ?? null,
+        stripeStatus: clinic.stripeSubscriptionStatus ?? null,
+        cancelAt: clinic.subscriptionCancelAt ?? null,
       },
     })
   } catch (error) {

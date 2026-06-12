@@ -23,8 +23,13 @@ export async function GET(req: NextRequest) {
   }
 
   if (clinicIds.length === 0) {
-    return NextResponse.json({ summary: zeroed(), bookings: [] })
+    return NextResponse.json({ summary: zeroed(), bookings: [], claimedPlan: null })
   }
+
+  const primaryClinic = await prisma.clinic.findUnique({
+    where: { id: clinicIds[0] },
+    select: { claimedPlan: true },
+  })
 
   const { searchParams } = new URL(req.url)
   const period = searchParams.get('period') ?? 'all' // 'all' | 'this_month' | 'last_month'
@@ -97,6 +102,7 @@ export async function GET(req: NextRequest) {
       ...b,
       depositAmount: Number(b.depositAmount),
     })),
+    claimedPlan: primaryClinic?.claimedPlan ?? null,
   })
 }
 

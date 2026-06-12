@@ -61,6 +61,10 @@ enum VerificationStatus {
 enum LeadStatus {
   new
   contacted
+  booked
+  lost
+  spam
+  archived
   closed
 }
 
@@ -242,7 +246,10 @@ model Clinic {
   coreClinicId Int?
 
   // Stripe — stored after PPL SetupIntent completes so we can charge per-lead unlock
-  stripeCustomerId String? @db.VarChar(255)
+  stripeCustomerId         String?   @db.VarChar(255)
+  // Subscription lifecycle — kept in sync by webhook handlers
+  stripeSubscriptionStatus String?   @db.VarChar(50)   // active | past_due | unpaid | canceled | cancel_at_period_end
+  subscriptionCancelAt     DateTime?                    // set when cancel_at_period_end=true; cleared when restored
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -787,6 +794,12 @@ model ConsultationLead {
   isGhostLead     Boolean   @default(false)
   ghostNotifiedAt DateTime? // when FOMO email was sent to clinic's public contact
 
+  // Pipeline CRM fields
+  pipelineStatus LeadStatus @default(new)
+  notes          String?    @db.Text
+  ownerName      String?    @db.VarChar(100)
+  coreSynced     Boolean    @default(false)
+
   // Read tracking for nav badge
   seenAt DateTime?
 
@@ -803,6 +816,7 @@ model ConsultationLead {
   @@index([seenAt])
   @@index([createdAt])
   @@index([patientId])
+  @@index([pipelineStatus])
   @@map("consultation_leads")
 }
 

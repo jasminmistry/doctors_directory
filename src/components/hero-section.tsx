@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SearchBar } from "@/components/search/search-bar";
 import LogoLoop from "./LogoLoop";
 
@@ -68,6 +69,20 @@ export function HeroSection() {
                 <a href="/directory/search" className="font-medium hover:text-black">
                   Explore Aesthetics Directory →
                 </a>
+              </div>
+              <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link
+                  href="/account/login"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
+                >
+                  Join as a patient — it&apos;s free
+                </Link>
+                <Link
+                  href="/register/clinic"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors"
+                >
+                  List your practice
+                </Link>
               </div>
             </div>
             <figure className="flex justify-center">

@@ -1364,18 +1364,15 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
               ))}
             </div>
 
-            <div className="mt-8">
-              <Button
-                asChild
-                className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white"
-              >
-                <a
-                  href="https://www.consentz.com/features/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Learn More
-                </a>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button asChild className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-base px-6 py-3 text-white">
+                <Link href="/register/clinic">List your practice</Link>
+              </Button>
+              <Button asChild variant="outline" className="h-auto rounded-lg text-base px-6 py-3">
+                <Link href="/claim">Claim your profile</Link>
+              </Button>
+              <Button asChild variant="outline" className="h-auto rounded-lg text-base px-6 py-3">
+                <Link href="/register/practitioner">Register as practitioner</Link>
               </Button>
             </div>
           </div>

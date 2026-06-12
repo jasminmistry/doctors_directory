@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { UserCircle, Loader2, Eye, EyeOff } from 'lucide-react'
 
@@ -347,6 +348,22 @@ export default function AccountLoginPage() {
             </form>
           )}
 
+        </div>
+
+        {/* Provider registration links */}
+        <div className="mt-6 rounded-lg border border-gray-100 bg-gray-50 px-4 py-4 space-y-2">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Are you a clinic or practitioner?</p>
+          <div className="flex flex-col gap-1.5">
+            <Link href="/register/clinic" className="text-sm text-gray-700 hover:text-black hover:underline">
+              → List your practice
+            </Link>
+            <Link href="/claim" className="text-sm text-gray-700 hover:text-black hover:underline">
+              → Claim your existing profile
+            </Link>
+            <Link href="/register/practitioner" className="text-sm text-gray-700 hover:text-black hover:underline">
+              → Register as a practitioner
+            </Link>
+          </div>
         </div>
       </div>
     </div>

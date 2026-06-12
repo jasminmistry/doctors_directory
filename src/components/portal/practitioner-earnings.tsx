@@ -5,6 +5,8 @@ import { format } from 'date-fns'
 import { Loader2, PoundSterling, TrendingUp, CalendarDays, ReceiptText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+import { commissionRate, commissionPct, clinicNetRate } from '@/lib/pricing'
+
 type Period = 'all' | 'this_month' | 'last_month'
 
 interface EarningsSummary {
@@ -49,6 +51,7 @@ export function PractitionerEarnings() {
   const [period, setPeriod] = useState<Period>('all')
   const [summary, setSummary] = useState<EarningsSummary | null>(null)
   const [bookings, setBookings] = useState<EarningsBooking[]>([])
+  const [claimedPlan, setClaimedPlan] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -58,13 +61,17 @@ export function PractitionerEarnings() {
       .then((d) => {
         setSummary(d.summary ?? null)
         setBookings(d.bookings ?? [])
+        setClaimedPlan(d.claimedPlan ?? null)
       })
       .catch(() => {
         setSummary(null)
         setBookings([])
+        setClaimedPlan(null)
       })
       .finally(() => setLoading(false))
   }, [period])
+
+  const feeRate = commissionRate(claimedPlan)
 
   return (
     <div className="space-y-6">
@@ -107,20 +114,20 @@ export function PractitionerEarnings() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <SummaryCard
               icon={PoundSterling}
-              label="Total earned"
-              value={`£${fmt(summary?.total ?? 0)}`}
-              sub="all time"
+              label="Net earned"
+              value={`£${fmt((summary?.total ?? 0) * (1 - feeRate))}`}
+              sub={feeRate > 0 ? `after ${(feeRate * 100).toFixed(0)}% platform fee` : 'all time'}
             />
             <SummaryCard
               icon={TrendingUp}
-              label="This month"
-              value={`£${fmt(summary?.thisMonth ?? 0)}`}
+              label="This month (net)"
+              value={`£${fmt((summary?.thisMonth ?? 0) * (1 - feeRate))}`}
               sub="paid bookings"
             />
             <SummaryCard
               icon={CalendarDays}
-              label="Last month"
-              value={`£${fmt(summary?.lastMonth ?? 0)}`}
+              label="Last month (net)"
+              value={`£${fmt((summary?.lastMonth ?? 0) * (1 - feeRate))}`}
               sub="paid bookings"
             />
             <SummaryCard
@@ -151,7 +158,15 @@ export function PractitionerEarnings() {
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Patient</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide hidden sm:table-cell">Consultation</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Status</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">Amount</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">Gross</th>
+                    {feeRate > 0 && (
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide hidden lg:table-cell">
+                        Fee ({(feeRate * 100).toFixed(0)}%)
+                      </th>
+                    )}
+                    {feeRate > 0 && (
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">Net</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -183,13 +198,23 @@ export function PractitionerEarnings() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <p className="text-sm font-semibold text-gray-900">£{fmt(b.depositAmount)}</p>
+                        <p className="text-sm text-gray-500">£{fmt(b.depositAmount)}</p>
                         {b.stripePaymentIntentId && (
                           <p className="text-[10px] text-gray-400 font-mono">
                             {b.stripePaymentIntentId.slice(0, 12)}…
                           </p>
                         )}
                       </td>
+                      {feeRate > 0 && (
+                        <td className="px-4 py-3 text-right hidden lg:table-cell">
+                          <p className="text-sm text-red-500">−£{fmt(b.depositAmount * feeRate)}</p>
+                        </td>
+                      )}
+                      {feeRate > 0 && (
+                        <td className="px-4 py-3 text-right">
+                          <p className="text-sm font-semibold text-gray-900">£{fmt(b.depositAmount * (1 - feeRate))}</p>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -198,21 +223,63 @@ export function PractitionerEarnings() {
                     <td colSpan={3} className="px-4 py-3 text-xs text-gray-500 hidden sm:table-cell">
                       {bookings.length} {bookings.length === 1 ? 'booking' : 'bookings'} shown
                     </td>
-                    <td colSpan={2} className="px-4 py-3 text-right">
-                      <span className="text-xs text-gray-500 mr-2">Subtotal</span>
-                      <span className="text-sm font-bold text-gray-900">
-                        £{fmt(bookings.reduce((s, b) => s + b.depositAmount, 0))}
-                      </span>
-                    </td>
+                    {feeRate > 0 ? (
+                      <>
+                        <td className="px-4 py-3 text-right hidden md:table-cell" />
+                        <td className="px-4 py-3 text-right">
+                          <span className="text-xs text-gray-500 mr-2">Gross</span>
+                          <span className="text-sm text-gray-500">
+                            £{fmt(bookings.reduce((s, b) => s + b.depositAmount, 0))}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right hidden lg:table-cell">
+                          <span className="text-xs text-gray-500 mr-2">Fee</span>
+                          <span className="text-sm text-red-500">
+                            −£{fmt(bookings.reduce((s, b) => s + b.depositAmount * feeRate, 0))}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <span className="text-xs text-gray-500 mr-2">Net</span>
+                          <span className="text-sm font-bold text-gray-900">
+                            £{fmt(bookings.reduce((s, b) => s + b.depositAmount * (1 - feeRate), 0))}
+                          </span>
+                        </td>
+                      </>
+                    ) : (
+                      <td colSpan={2} className="px-4 py-3 text-right">
+                        <span className="text-xs text-gray-500 mr-2">Subtotal</span>
+                        <span className="text-sm font-bold text-gray-900">
+                          £{fmt(bookings.reduce((s, b) => s + b.depositAmount, 0))}
+                        </span>
+                      </td>
+                    )}
                   </tr>
                 </tfoot>
               </table>
             </div>
           )}
 
-          <p className="text-[10px] text-gray-400 text-center">
-            These are directory booking deposits processed through Stripe. Contact support for payout details.
-          </p>
+          {/* Commercial info */}
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-3 text-sm text-gray-700">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">How earnings work</p>
+            <p>
+              <span className="font-medium text-gray-900">Platform fee: </span>
+              {(claimedPlan === 'subscription' || claimedPlan === 'pay_per_lead')
+                ? `Consentz retains ${commissionPct(claimedPlan)}% of each teleconsult fee (inclusive of Stripe processing). You keep ${Math.round(clinicNetRate(claimedPlan) * 100)}% of what patients pay.`
+                : 'Teleconsult payments are not available on the Free plan.'}
+            </p>
+            <p>
+              <span className="font-medium text-gray-900">Payouts: </span>
+              Stripe pays out to your connected bank account on a rolling 7-day basis. Your first payout
+              may take up to 14 days. Settlement details are visible in your Stripe dashboard.
+            </p>
+            <p>
+              <span className="font-medium text-gray-900">No-refund policy: </span>
+              All teleconsult fees are non-refundable. No-shows and patient cancellations are not
+              automatically refunded. You may issue discretionary refunds from the Stripe dashboard
+              if you choose to do so.
+            </p>
+          </div>
         </>
       )}
     </div>
