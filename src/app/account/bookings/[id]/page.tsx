@@ -284,9 +284,7 @@ export default function BookingDetailPage() {
   const isCompleted = booking.status === 'completed'
   const isCancelled = booking.status === 'cancelled'
   const isVideoCall = Boolean(booking.videoCallMeetingId)
-  const canCancelLocally = booking.source === 'local' &&
-    (booking.status === 'pending' || booking.status === 'confirmed') &&
-    isUpcoming
+  const canCancel = (booking.status === 'pending' || booking.status === 'confirmed') && isUpcoming
 
   // Join call: within 15 min before start to 1 hour after end
   const joinWindowStart = addMinutes(start, -15)
@@ -438,21 +436,12 @@ export default function BookingDetailPage() {
           )}
 
           {/* Cancel booking */}
-          {canCancelLocally && (
+          {canCancel && (
             <CancelButton
               booking={booking}
               onCancelled={() => setBooking((b) => b ? { ...b, status: 'cancelled' } : b)}
             />
           )}
-
-          {/* Consentz-sourced: contact clinic to cancel */}
-          {booking.source === 'consentz' &&
-            (booking.status === 'pending' || booking.status === 'confirmed') &&
-            isUpcoming && (
-              <p className="text-xs text-gray-400 text-center px-2">
-                To reschedule or cancel, contact the clinic directly.
-              </p>
-            )}
 
           {/* Re-book after cancellation */}
           {isCancelled && booking.clinic.slug && (

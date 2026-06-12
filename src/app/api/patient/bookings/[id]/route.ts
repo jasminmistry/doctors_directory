@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { requirePatient } from '@/lib/patient-auth'
-import { getConsentzToken, fetchConsentzBooking } from '@/lib/patient-consentz'
+import { getConsentzToken, fetchConsentzBooking, cancelConsentzBooking } from '@/lib/patient-consentz'
 
 export async function GET(
   req: NextRequest,
@@ -109,8 +109,26 @@ export async function PATCH(
   })
   if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  if (row.status === 'cancelled' || row.status === 'completed') {
+  if (row.status === 'cancelled' || row.status === 'completed' || row.status === 'no_show') {
     return NextResponse.json({ error: 'Cannot cancel this booking' }, { status: 400 })
+  }
+
+  // Propagate to Core when this booking is linked to a Core record
+  if (row.coreBookingId && row.syncedFromCore) {
+    const consentzToken = await getConsentzToken(patient)
+    if (consentzToken) {
+      try {
+        await cancelConsentzBooking(consentzToken, row.coreBookingId)
+      } catch (err: unknown) {
+        const status = (err as { status?: number }).status
+        const message = (err as { message?: string }).message ?? 'Failed to cancel'
+        // 422 = Core already considers it terminal; treat as non-cancellable
+        if (status === 422) return NextResponse.json({ error: message }, { status: 400 })
+        // Any other Core error: surface it rather than partially cancelling
+        console.error('[patient/bookings/cancel] Core cancel failed:', err)
+        return NextResponse.json({ error: 'Failed to cancel with provider — please try again' }, { status: 502 })
+      }
+    }
   }
 
   const booking = await prisma.booking.update({

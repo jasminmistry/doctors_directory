@@ -166,3 +166,21 @@ export async function fetchConsentzBooking(sessionToken: string, id: string | nu
   }
   return res.json() as Promise<ConsentzBooking>
 }
+
+export async function cancelConsentzBooking(sessionToken: string, id: string | number): Promise<void> {
+  const res = await fetch(`${getConsentzBase()}/api/patients/me/bookings/${id}`, {
+    method: 'PATCH',
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${sessionToken}`,
+    },
+    body: JSON.stringify({ status: 'cancelled' }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({})) as { error?: string }
+    const err = new Error(body.error ?? `Cancel failed: ${res.status}`) as Error & { status: number }
+    err.status = res.status
+    throw err
+  }
+}
