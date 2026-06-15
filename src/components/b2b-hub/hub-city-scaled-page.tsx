@@ -1,4 +1,5 @@
 import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq"
+import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section"
 import {
   HUB_CTA_PRIMARY_CLASS,
@@ -290,6 +291,7 @@ export function HubCityScaledPage({
               </header>
             </div>
           </div>
+          <HubLogoStrip className="mt-auto shrink-0" />
         </div>
       </section>
 
