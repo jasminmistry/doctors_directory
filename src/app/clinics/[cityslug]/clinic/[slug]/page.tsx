@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { PageViewTracker } from "@/components/tracking/page-view-tracker";
 import { Star, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/components/Clinic/profile-header";
@@ -231,6 +232,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
   return (
     <>
+      <PageViewTracker />
       {medicalClinicSchema ? <DirectoryJsonLd schemas={[medicalClinicSchema]} /> : null}
     <main className="min-h-screen bg-background">
       <CoverPhoto src={dbClinic.coverImage} alt={`${dbClinic.name ?? slug} cover photo`} />

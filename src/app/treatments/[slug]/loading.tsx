@@ -28,7 +28,7 @@ export default async function Loading({ params }: { params: { slug: string } }) 
             <BreadcrumbSkeleton
               items={[
                 { label: "Home", href: "/" },
-                { label: "Treatments", href: "/directory/treatments" },
+                { label: "Treatments", href: "/treatments" },
                 { isLoading: true, skeletonWidth: "w-20" },
                 { isLoading: true, skeletonWidth: "w-32" },
               ]}

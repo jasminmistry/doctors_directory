@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { PageViewTracker } from "@/components/tracking/page-view-tracker";
 import { ArrowLeft, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/components/Practitioner/profile-header";
@@ -83,6 +84,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const associatedClinics: string[] = JSON.parse(clinic.Associated_Clinics ?? '[]')
 
   return (
+    <>
+    <PageViewTracker />
     <main className="min-h-screen bg-background">
       {/* Navigation */}
       <div className="sticky top-0 z-10">
@@ -250,6 +253,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
               </div>
 
     </main>
+    </>
   );
 }
 

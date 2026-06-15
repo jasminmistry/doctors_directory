@@ -24,8 +24,8 @@ export default async function Loading({ params }: { params: { category: string; 
         <div className="container mx-auto max-w-6xl px-4 py-2">
           <BreadcrumbSkeleton
             items={[
-              { label: "Home", href: "/directory" },
-              { label: "Products", href: "/directory/products" },
+              { label: "Home", href: "/" },
+              { label: "Products", href: "/products" },
               { isLoading: true, skeletonWidth: "w-24" },
               { isLoading: true, skeletonWidth: "w-32" },
             ]}

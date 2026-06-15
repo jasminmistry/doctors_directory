@@ -503,13 +503,13 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/directory/treatments">
+                    <BreadcrumbLink href="/treatments">
                       Treatments
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href={`/directory/treatments/category/${treatmentCategorySlug}`}>
+                    <BreadcrumbLink href={`/treatments/category/${treatmentCategorySlug}`}>
                       {treatmentCategory}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
