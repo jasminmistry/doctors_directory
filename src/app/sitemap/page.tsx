@@ -69,7 +69,11 @@ const B2B_XML_SITEMAPS: { file: string; label: string }[] = [
   { file: 'business-hub.xml', label: 'B2B buyer hub — Hub root' },
   { file: 'business-uk.xml', label: 'B2B buyer hub — By city index' },
   { file: 'business-uk-city.xml', label: 'B2B buyer hub — City localized pages' },
-  { file: 'business-expansion-city.xml', label: 'B2B buyer hub — Segment × city + template × city (PDF expansion)' },
+  { file: 'business-expansion-city.xml', label: 'B2B buyer hub — Expansion city (index → 4 chunks)' },
+  { file: 'business-expansion-city1.xml', label: 'B2B buyer hub — Expansion city chunk 1 (~40k URLs)' },
+  { file: 'business-expansion-city2.xml', label: 'B2B buyer hub — Expansion city chunk 2 (~40k URLs)' },
+  { file: 'business-expansion-city3.xml', label: 'B2B buyer hub — Expansion city chunk 3 (~40k URLs)' },
+  { file: 'business-expansion-city4.xml', label: 'B2B buyer hub — Expansion city chunk 4 (~40k URLs)' },
   { file: 'business-treatments.xml', label: 'B2B buyer hub — Treatment pages' },
   ...HUB_SEGMENTS.map((s: HubSegment) => ({
     file: `business-${s}.xml`,
@@ -363,11 +367,19 @@ export default function HtmlSitemapPage() {
             <p className="text-sm text-muted-foreground mb-4">
               PDF expansion URLs such as{' '}
               <span className="font-mono text-xs">/business/consent/botox-consent-form-software/london/</span>.
-              Full list in{' '}
+              Full list split across{' '}
+              <Link href="/business-expansion-city1.xml" className="text-black hover:underline font-mono text-xs">
+                business-expansion-city1.xml
+              </Link>
+              –{' '}
+              <Link href="/business-expansion-city4.xml" className="text-black hover:underline font-mono text-xs">
+                city4.xml
+              </Link>{' '}
+              (~40k URLs each; legacy{' '}
               <Link href="/business-expansion-city.xml" className="text-black hover:underline font-mono text-xs">
                 business-expansion-city.xml
-              </Link>
-              .
+              </Link>{' '}
+              indexes the chunks).
             </p>
             {b2bExpansionGroups.map((group) => (
               <div key={group.segment} className="mb-6">
