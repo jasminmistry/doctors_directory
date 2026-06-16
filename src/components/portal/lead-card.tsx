@@ -403,7 +403,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
 
       {!locked && (
         <div className="flex gap-2">
-          <Button asChild size="sm" className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white">
+          <Button asChild size="sm" className="flex-1 rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors">
             <a href={`tel:${lead.patientPhone}`}>
               <Phone className="h-3.5 w-3.5 mr-1.5" />
               Call

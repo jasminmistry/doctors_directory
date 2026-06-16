@@ -118,7 +118,7 @@ export default function AccountDashboardPage() {
   const hasActivity = bookingTotal > 0 || sessionTotal > 0
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
           {isNew ? 'Welcome' : 'Welcome back'}{patient?.firstName ? `, ${patient.firstName}` : ''}
