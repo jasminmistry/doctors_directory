@@ -1,20 +1,12 @@
-import { buildUrlSetXml, mapBusinessHubPathsToSitemapUrls, xmlResponse } from '@/lib/sitemap'
-import { buildExpansionSitemapPaths } from '@/lib/b2b-hub/expansion-pages'
-import { getB2bExpansionCities } from '@/lib/b2b-hub/expansion-cities'
 import {
-  buildTemplateExpansionPath,
-  TEMPLATE_ENTRIES,
-} from '@/lib/b2b-hub/templates-registry'
+  BUSINESS_EXPANSION_CITY_SITEMAP_FILES,
+} from '@/lib/b2b-hub/business-sitemap-xml'
+import { buildSitemapIndexXml, toDirectoryUrl, xmlResponse } from '@/lib/sitemap'
 
+/** Legacy URL: mini-index pointing at the four ~40k chunks (GSC transition). */
 export async function GET() {
-  const paths = [
-    ...buildExpansionSitemapPaths(),
-    ...TEMPLATE_ENTRIES.flatMap((entry) =>
-      getB2bExpansionCities().map((city) =>
-        buildTemplateExpansionPath(entry.slug, city.slug)
-      )
-    ),
-  ]
-  const xml = buildUrlSetXml(mapBusinessHubPathsToSitemapUrls(paths))
+  const xml = buildSitemapIndexXml(
+    BUSINESS_EXPANSION_CITY_SITEMAP_FILES.map((file) => toDirectoryUrl(`/${file}`))
+  )
   return xmlResponse(xml)
 }
