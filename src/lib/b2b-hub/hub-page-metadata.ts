@@ -51,17 +51,17 @@ export function hubDetailMetaTitle(segment: HubSegment, entry: HubEntry): string
 
   switch (segment) {
     case "software":
-      return trimTitle(joinTitle(entry.title, CRM_TOOLS, RATING))
+      return trimTitle(joinTitle(entry.title, CRM_TOOLS))
     case "compare":
       return trimTitle(
         joinTitle(`${rival ?? "Competitor"} vs Consentz`, "Which Is Better for Clinics?")
       )
     case "migrate":
-      return trimTitle(joinTitle(`Migrate from ${rival ?? entry.title}`, "Clinic Software Guide", RATING))
+      return trimTitle(joinTitle(`Migrate from ${rival ?? entry.title}`, "Clinic Software Guide"))
     case "pricing":
       return trimTitle(joinTitle(`${rival ?? entry.title} Pricing vs Consentz`, "Compare Plans"))
     case "alternatives":
-      return trimTitle(joinTitle(`Best ${rival ?? entry.title} Alternative for Aesthetic Clinics`, RATING))
+      return trimTitle(joinTitle(`Best ${rival ?? entry.title} Alternative for Aesthetic Clinics`))
     case "cqc":
       if (rival) {
         return trimTitle(joinTitle(`Best ${rival} CQC Alternative`, "Checklist & Tools"))
@@ -69,16 +69,16 @@ export function hubDetailMetaTitle(segment: HubSegment, entry: HubEntry): string
       return trimTitle(joinTitle("CQC Compliance for UK Aesthetic Clinics", "Checklist & Tools"))
     case "consent":
       if (rival) {
-        return trimTitle(joinTitle(`Best ${rival} Consent Form Alternative`, RATING))
+        return trimTitle(joinTitle(`Best ${rival} Consent Form Alternative`))
       }
-      return trimTitle(joinTitle(entry.title, "Digital Forms for Aesthetic Clinics", RATING))
+      return trimTitle(joinTitle(entry.title, "Digital Forms for Aesthetic Clinics"))
     case "automation":
       if (entry.slug.endsWith("-automation-alternative") && rival) {
-        return trimTitle(joinTitle(`Best ${rival} Automation Alternative`, RATING))
+        return trimTitle(joinTitle(`Best ${rival} Automation Alternative`))
       }
-      return trimTitle(joinTitle(entry.title, "Clinic Automation Guide", RATING))
+      return trimTitle(joinTitle(entry.title, "Clinic Automation Guide"))
     case "practitioners":
-      return trimTitle(joinTitle(entry.title, "Built for Aesthetic Practitioners", RATING))
+      return trimTitle(joinTitle(entry.title, "Built for Aesthetic Practitioners"))
     default:
       return trimTitle(joinTitle(entry.title, BRAND))
   }
@@ -114,16 +114,16 @@ export function hubDetailMetaDescription(segment: HubSegment, entry: HubEntry): 
 
 export function hubSegmentIndexMetaTitle(segment: HubSegment): string {
   const hooks: Partial<Record<HubSegment, string>> = {
-    software: joinTitle("Aesthetic Clinic Software", CRM_TOOLS, RATING),
+    software: joinTitle("Aesthetic Clinic Software", CRM_TOOLS),
     compare: joinTitle("Clinic Software Comparisons", "Which Platform Fits Your Clinic?"),
-    migrate: joinTitle("Clinic Software Migration Guides", RATING),
-    pricing: joinTitle("Clinic Software Pricing Compared", RATING),
-    alternatives: joinTitle("Best Clinic Software Alternatives", RATING),
+    migrate: joinTitle("Clinic Software Migration Guides"),
+    pricing: joinTitle("Clinic Software Pricing Compared"),
+    alternatives: joinTitle("Best Clinic Software Alternatives"),
     cqc: joinTitle("CQC Compliance for UK Aesthetic Clinics", "Checklist & Tools"),
-    consent: joinTitle("Digital Consent Forms for Aesthetic Clinics", RATING),
-    automation: joinTitle("Clinic Automation Software", RATING),
+    consent: joinTitle("Digital Consent Forms for Aesthetic Clinics"),
+    automation: joinTitle("Clinic Automation Software"),
     templates: joinTitle("Free Aesthetic Clinic Templates", "Forms, Policies & Emails"),
-    practitioners: joinTitle("Practitioner Software by Role", RATING),
+    practitioners: joinTitle("Practitioner Software by Role"),
   }
   return trimTitle(hooks[segment] ?? segmentLabel(segment))
 }
@@ -137,7 +137,7 @@ export function hubSegmentIndexMetaDescription(segment: HubSegment): string {
 }
 
 export function hubHomeMetaTitle() {
-  return trimTitle(joinTitle("Aesthetic Clinic CRM Built for Clinics", RATING))
+  return trimTitle(joinTitle("Aesthetic Clinic CRM Built for Clinics"))
 }
 
 export function hubHomeMetaDescription() {
@@ -196,7 +196,7 @@ export function hubCityPageMetaDescription(
 }
 
 export function hubTreatmentPageMetaTitle(treatmentLabel: string, typeLabel: string) {
-  return trimTitle(joinTitle(`${treatmentLabel} ${typeLabel}`, CRM_TOOLS, RATING))
+  return trimTitle(joinTitle(`${treatmentLabel} ${typeLabel}`, CRM_TOOLS))
 }
 
 export function hubTreatmentPageMetaDescription(treatmentLabel: string, typeLabel: string) {
@@ -204,7 +204,7 @@ export function hubTreatmentPageMetaDescription(treatmentLabel: string, typeLabe
 }
 
 export function hubTreatmentIndexMetaTitle() {
-  return trimTitle(joinTitle("Treatment Workflow Guides", RATING, BRAND))
+  return trimTitle(joinTitle("Treatment Workflow Guides", BRAND))
 }
 
 export function hubTreatmentIndexMetaDescription() {
@@ -212,7 +212,7 @@ export function hubTreatmentIndexMetaDescription() {
 }
 
 export function hubUkIndexMetaTitle() {
-  return trimTitle(joinTitle("Clinic Software by City", CRM_TOOLS, RATING))
+  return trimTitle(joinTitle("Clinic Software by City", CRM_TOOLS))
 }
 
 export function hubUkIndexMetaDescription() {

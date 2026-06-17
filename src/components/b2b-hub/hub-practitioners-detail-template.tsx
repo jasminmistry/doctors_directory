@@ -1,4 +1,5 @@
 import {
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
   HUB_CTA_PRIMARY_CLASS,
   HUB_CTA_PRIMARY_HERO_CLASS,
   HUB_CTA_SECONDARY_CLASS,
@@ -320,7 +321,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                 </p>
                 <div className={HUB_HERO_ACTIONS_ROW}>
                   <a
-                    href={`${baseUrl}/book-demo`}
+                    href={b2bBookDemoHref()}
                     className={HUB_CTA_PRIMARY_HERO_CLASS}
                   >
                     Book A Demo
@@ -391,7 +392,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
           </div>
           <div className="mt-10 flex justify-center">
             <a
-              href={`${baseUrl}/book-demo`}
+              href={b2bBookDemoHref()}
               className={HUB_CTA_PRIMARY_CLASS}
             >
               Book Demo

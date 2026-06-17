@@ -45,7 +45,7 @@ import { buildOperatorCitySections } from "@/lib/b2b-hub/operator-city-content";
 import {
   buildCityOperationalInsight,
 } from "@/lib/b2b-hub/operational-insight";
-import { toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
+import { b2bBookDemoHref, toCurrentSiteUrl } from "@/lib/b2b-hub/seo";
 import { HubCityOperatorWriteup } from "@/components/b2b-hub/hub-city-operator-writeup";
 import { HubOperationalInsightBlock } from "@/components/b2b-hub/hub-operational-insight-block";
 import { HubTopClinicsSection } from "@/components/b2b-hub/hub-top-clinics-section";
@@ -60,9 +60,6 @@ import {
   buildCityHubFaqs,
   buildCityHubFaqJsonLdAnswers,
 } from "@/lib/b2b-hub/city-localised-faq";
-
-const baseUrl =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
 
 const CITY_HUB = "/directory/images/city-hub";
 const CITY_MACBOOK_SRC = `${CITY_HUB}/city-macbook-group.png`;
@@ -270,19 +267,19 @@ export function HubCityScaledPage({
                 </p>
                 <div className={HUB_HERO_ACTIONS_ROW}>
                   <a
-                    href={`${baseUrl}/book-demo`}
+                    href={b2bBookDemoHref()}
                     className={HUB_CTA_PRIMARY_HERO_CLASS}
                   >
                     Book a Demo
                   </a>
                   <a
-                    href={`${baseUrl}/book-demo`}
+                    href={b2bBookDemoHref()}
                     className={HUB_CTA_SECONDARY_HERO_CLASS}
                   >
                     {readinessAuditLabel}
                   </a>
                   <a
-                    href={`${baseUrl}/book-demo`}
+                    href={b2bBookDemoHref()}
                     className={HUB_CTA_LINK_CLASS}
                   >
                     See How It Works →

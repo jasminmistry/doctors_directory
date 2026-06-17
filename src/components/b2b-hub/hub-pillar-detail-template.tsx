@@ -1,4 +1,5 @@
 import {
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
   HUB_CTA_PRIMARY_CLASS,
   HUB_CTA_PRIMARY_HERO_CLASS,
   HUB_CTA_SECONDARY_CLASS,
@@ -386,20 +387,20 @@ export function HubPillarDetailTemplate({
         actions={
           <>
                   <a
-                    href={`${baseUrl}/book-demo`}
+                    href={b2bBookDemoHref()}
               className={HUB_CTA_PRIMARY_HERO_CLASS}
                   >
               Book A Demo
                   </a>
                   <a
-                    href={`${baseUrl}/book-demo`}
+                    href={b2bBookDemoHref()}
               className={HUB_CTA_SECONDARY_HERO_CLASS}
                   >
                     Get CQC Readiness Audit
                   </a>
             {pillar === "software" ? (
                   <a
-                    href={`${baseUrl}/book-demo`}
+                    href={b2bBookDemoHref()}
                 className={HUB_CTA_LINK_CLASS}
                   >
                     See How It Works →
@@ -480,7 +481,7 @@ export function HubPillarDetailTemplate({
           </div>
           <div className="mt-10 flex justify-center">
             <a
-              href={`${baseUrl}/book-demo`}
+              href={b2bBookDemoHref()}
               className={HUB_CTA_PRIMARY_CLASS}
             >
               Book Demo
@@ -514,7 +515,7 @@ export function HubPillarDetailTemplate({
               />
               <div className="mt-6 flex w-full justify-center px-4">
                 <a
-                  href={`${baseUrl}/book-demo`}
+                  href={b2bBookDemoHref()}
                   className="inline-flex items-center justify-center rounded-[12px] bg-[#1A1A1A] px-6 py-2.5 text-base font-semibold text-white shadow-md hover:bg-neutral-900 transition-colors sm:px-7 sm:py-3 sm:text-lg"
                 >
                   Book a Demo
@@ -552,7 +553,7 @@ export function HubPillarDetailTemplate({
               </div>
               <div className="mt-10 flex justify-center">
                 <a
-                  href={`${baseUrl}/book-demo`}
+                  href={b2bBookDemoHref()}
                   className={HUB_CTA_PRIMARY_CLASS}
                 >
                   Book Demo
@@ -579,7 +580,7 @@ export function HubPillarDetailTemplate({
               </div>
               <div className="mt-10 flex justify-center">
                 <a
-                  href={`${baseUrl}/book-demo`}
+                  href={b2bBookDemoHref()}
                   className={HUB_CTA_PRIMARY_CLASS}
                 >
                   Book Demo

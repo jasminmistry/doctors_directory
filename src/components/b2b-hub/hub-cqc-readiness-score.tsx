@@ -1,3 +1,4 @@
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 "use client"
 
 import { useMemo, useState } from "react"
@@ -111,7 +112,7 @@ export function HubCqcReadinessScore() {
         <p className="mt-2 text-sm leading-relaxed">{result.detail}</p>
       </div>
 
-      <a href={`${baseUrl}/book-demo`} className={HUB_CTA_PRIMARY_CLASS}>
+      <a href={b2bBookDemoHref()} className={HUB_CTA_PRIMARY_CLASS}>
         {toDisplayTitle("Book a CQC readiness demo")}
       </a>
     </section>

@@ -1,8 +1,9 @@
 import Link from "next/link"
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import Image from "next/image"
 
 const site = "https://www.consentz.com"
-const bookDemoHref = `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com"}/book-demo`
+const bookDemoHref = b2bBookDemoHref()
 
 export function HubMarketingHeader() {
   return (

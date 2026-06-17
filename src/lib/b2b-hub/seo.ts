@@ -10,6 +10,11 @@ export function toCurrentSiteUrl(path: string) {
   return `${b2bBaseUrl()}${CURRENT_BASE_PATH}${normalizedPath}`
 }
 
+export function b2bBookDemoHref() {
+  const base = b2bBaseUrl().replace(/\/$/, "")
+  return `${base}/book-demo/?source=${encodeURIComponent(`${base}/`)}`
+}
+
 export function b2bOgImageUrl(candidates: string[] = []) {
   const firstImagePath = candidates[0] || "/images/Consentz Logo.webp"
   const normalizedPath = firstImagePath.startsWith("/")

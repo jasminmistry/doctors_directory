@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq";
 import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
@@ -123,7 +124,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
 
         <div className={HUB_CENTERED_MOBILE_CTAS}>
           <a
-            href={`${baseUrl}/book-demo`}
+            href={b2bBookDemoHref()}
             className={HUB_CTA_PRIMARY_CLASS}
           >
             Book A Demo

@@ -7,6 +7,21 @@ type FeeItem = {
 
 const currencyRegex = /(?:£|GBP\s*)([0-9][0-9,]*(?:\.\d+)?)/gi
 
+const isQuotableFeePrice = (price: string): boolean => {
+  const normalized = price.trim().toLowerCase()
+  if (!readCurrencyValues(price).length) {
+    return false
+  }
+  if (
+    /^(price varies|varies|enquire|contact|not listed|n\/a|upon request|on request)/i.test(
+      normalized
+    )
+  ) {
+    return false
+  }
+  return true
+}
+
 const readCurrencyValues = (value: string): number[] =>
   [...value.matchAll(currencyRegex)]
     .map((match) => Number.parseFloat(match[1].replaceAll(',', '')))
@@ -114,12 +129,13 @@ export const getProfileListingPrice = (
   options?: ProfilePriceOptions
 ): number | null => {
   const items = extractFeeItems(fees)
+  const quotable = items.filter((item) => isQuotableFeePrice(item.price))
   const scoped =
     options?.treatmentSlug || options?.treatmentName
-      ? items.filter((item) =>
+      ? quotable.filter((item) =>
           feeTreatmentMatchesContext(item.treatment, options.treatmentSlug, options.treatmentName)
         )
-      : items
+      : quotable
 
   const values = scoped.flatMap((item) => readCurrencyValues(item.price))
   if (values.length === 0) {

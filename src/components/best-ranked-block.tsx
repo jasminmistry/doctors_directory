@@ -215,7 +215,8 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
                   </span>
                 </div>
               ) : null}
-              <p className="text-sm font-bold text-foreground mt-2">{entry.displayPrice}</p>
+              <p className="text-xs text-muted-foreground mt-2">Treatments starting from</p>
+              <p className="text-sm font-bold text-foreground">{entry.displayPrice}</p>
             </div>
 
             {/* Value badge + View Profile button */}
