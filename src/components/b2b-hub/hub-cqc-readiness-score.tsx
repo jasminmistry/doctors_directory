@@ -1,6 +1,6 @@
-import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 "use client"
 
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import { useMemo, useState } from "react"
 import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
