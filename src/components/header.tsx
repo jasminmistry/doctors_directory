@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SearchBar } from "@/components/search/search-bar";
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,6 +19,7 @@ export default function Header() {
   }, [menuOpen]);
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com';
+  const bookDemoHref = b2bBookDemoHref();
 
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
   const pathWithoutDirectoryBase = normalizedPath.startsWith("/directory")
@@ -110,7 +112,7 @@ export default function Header() {
             </div>
           </nav>
           <a
-            href={`${baseUrl}/book-demo`}
+            href={bookDemoHref}
             className="font-bold rounded-lg border-2 py-2 px-5 w-auto h-auto border-black bg-transparent text-black hover:bg-black hover:text-white"
           >
             BOOK DEMO
@@ -201,7 +203,7 @@ export default function Header() {
             </div>
           </nav>
           <a
-            href={`${baseUrl}/book-demo`}
+            href={bookDemoHref}
             className="mt-4 inline-flex font-bold rounded-lg border-2 py-3 px-6 border-black bg-transparent text-black hover:bg-black hover:text-white"
           >
             BOOK DEMO
