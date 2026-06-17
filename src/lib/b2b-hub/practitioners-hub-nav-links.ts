@@ -1,7 +1,6 @@
 import { HUB_ENTRIES } from "@/lib/b2b-hub/registry"
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
-
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com"
 
 export type PractitionersNavLink = { label: string; href: string }
 
@@ -22,4 +21,4 @@ export function practitionersHubNavLinks(currentSlug: string): PractitionersNavL
   return [...peers, ...pad].slice(0, 9)
 }
 
-export const PRACTITIONER_TOOLS_EXTERNAL = `${baseUrl}/book-demo`
+export const PRACTITIONER_TOOLS_EXTERNAL = b2bBookDemoHref()

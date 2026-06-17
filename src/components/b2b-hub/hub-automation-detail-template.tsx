@@ -1,4 +1,5 @@
 import { HubBuyerFaq, mapLegacyHubFaqs } from "@/components/b2b-hub/hub-buyer-faq"
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section"
 import {
   HUB_CTA_PRIMARY_CLASS,
@@ -253,13 +254,13 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
                 </p>
                 <div className={HUB_HERO_ACTIONS_ROW}>
                   <a
-                    href={`${baseUrl}/book-demo`}
+                    href={b2bBookDemoHref()}
                     className={HUB_CTA_PRIMARY_HERO_CLASS}
                   >
                     Book a Demo
                   </a>
                   <a
-                    href={`${baseUrl}/book-demo`}
+                    href={b2bBookDemoHref()}
                     className={HUB_CTA_SECONDARY_HERO_CLASS}
                   >
                     Get CQC Readiness Audit
@@ -275,7 +276,7 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
                     </a>
                   ) : (
                     <a
-                      href={`${baseUrl}/book-demo`}
+                      href={b2bBookDemoHref()}
                       className={HUB_CTA_LINK_CLASS}
                     >
                       See How It Works →
@@ -335,7 +336,7 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
           </div>
           <div className="mt-10 flex justify-center">
             <a
-              href={`${baseUrl}/book-demo`}
+              href={b2bBookDemoHref()}
               className={HUB_CTA_PRIMARY_CLASS}
             >
               Book Demo
