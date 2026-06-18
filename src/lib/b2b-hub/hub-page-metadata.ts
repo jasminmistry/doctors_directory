@@ -8,7 +8,6 @@ import type { TemplateCategory } from "@/lib/b2b-hub/templates-registry"
 import { TEMPLATE_CATEGORY_LABEL } from "@/lib/b2b-hub/templates-registry"
 
 const BRAND = "Consentz"
-const RATING = "4.9★ Rated"
 const CRM_TOOLS = "CRM, Consent & CQC Tools"
 
 const OG_IMAGE = "/images/Consentz Logo.webp"
@@ -90,23 +89,23 @@ export function hubDetailMetaDescription(segment: HubSegment, entry: HubEntry): 
 
   switch (segment) {
     case "software":
-      return `${summary} ${RATING} — consent, CQC evidence, booking and automation in one platform.`
+      return `${summary} — consent, CQC evidence, booking and automation in one platform.`
     case "compare":
       return `Compare ${rival ?? "competitors"} vs Consentz for aesthetic clinics: consent, CQC, pricing and automation. See which platform fits your team.`
     case "migrate":
-      return `Plan your move from ${rival ?? "legacy software"} without losing patients or compliance evidence. ${RATING} ${BRAND} migration playbook.`
+      return `Plan your move from ${rival ?? "legacy software"} without losing patients or compliance evidence. ${BRAND} migration playbook.`
     case "pricing":
-      return `Compare ${rival ?? "competitor"} pricing with ${BRAND} for growing aesthetic clinics. ${RATING} — transparent plans, fewer hidden add-ons.`
+      return `Compare ${rival ?? "competitor"} pricing with ${BRAND} for growing aesthetic clinics — transparent plans, fewer hidden add-ons.`
     case "alternatives":
-      return `Best ${rival ?? "clinic software"} alternative for aesthetic clinics: consent, CRM, CQC and automation. ${RATING} ${BRAND} — book a demo.`
+      return `Best ${rival ?? "clinic software"} alternative for aesthetic clinics: consent, CRM, CQC and automation. ${BRAND} — book a demo.`
     case "cqc":
-      return `${summary} ${RATING} ${BRAND} helps UK clinics pass inspections with audit-ready evidence and checklists.`
+      return `${summary} ${BRAND} helps UK clinics pass inspections with audit-ready evidence and checklists.`
     case "consent":
-      return `${summary} ${RATING} digital consent for aesthetic clinics — fewer paper gaps, calmer inspections.`
+      return `${summary} Digital consent for aesthetic clinics — fewer paper gaps, calmer inspections.`
     case "automation":
-      return `${summary} ${RATING} workflows for aesthetic clinics — reactivation, intake and aftercare without brittle spreadsheets.`
+      return `${summary} Workflows for aesthetic clinics — reactivation, intake and aftercare without brittle spreadsheets.`
     case "practitioners":
-      return `${summary} ${RATING} ${BRAND} — built for practitioner roles, not generic salon tools.`
+      return `${summary} ${BRAND} — built for practitioner roles, not generic salon tools.`
     default:
       return summary
   }
@@ -131,9 +130,9 @@ export function hubSegmentIndexMetaTitle(segment: HubSegment): string {
 export function hubSegmentIndexMetaDescription(segment: HubSegment): string {
   const label = segmentLabel(segment).toLowerCase()
   if (segment === "cqc") {
-    return `Browse ${label} for UK aesthetic clinics. ${RATING} ${BRAND} — inspection checklists, policies and evidence-ready workflows.`
+    return `Browse ${label} for UK aesthetic clinics. ${BRAND} — inspection checklists, policies and evidence-ready workflows.`
   }
-  return `Browse ${label} for aesthetic clinics. ${RATING} ${BRAND} — structured buyer guides, comparisons and evidence-ready workflows.`
+  return `Browse ${label} for aesthetic clinics. ${BRAND} — structured buyer guides, comparisons and evidence-ready workflows.`
 }
 
 export function hubHomeMetaTitle() {
@@ -141,7 +140,7 @@ export function hubHomeMetaTitle() {
 }
 
 export function hubHomeMetaDescription() {
-  return `Compare clinic software, consent, CQC, automation and templates for aesthetic clinics. ${RATING} ${BRAND} — structured guides that convert searchers into demos.`
+  return `Compare clinic software, consent, CQC, automation and templates for aesthetic clinics. ${BRAND} — structured guides that convert searchers into demos.`
 }
 
 function cityMetaComplianceSuffix(regulator: UkRegulator): string {
@@ -192,7 +191,7 @@ export function hubCityPageMetaDescription(
   citySlug: string
 ) {
   const regulator = cityMetaRegulatorPhrase(getCityRegulator(citySlug))
-  return `${pageTitle} for ${cityTitle} clinics — local directory links plus ${RATING} ${BRAND} consent, ${regulator} and booking workflows.`
+  return `${pageTitle} for ${cityTitle} clinics — local directory links plus ${BRAND} consent, ${regulator} and booking workflows.`
 }
 
 export function hubTreatmentPageMetaTitle(treatmentLabel: string, typeLabel: string) {
@@ -200,7 +199,7 @@ export function hubTreatmentPageMetaTitle(treatmentLabel: string, typeLabel: str
 }
 
 export function hubTreatmentPageMetaDescription(treatmentLabel: string, typeLabel: string) {
-  return `${treatmentLabel} ${typeLabel.toLowerCase()} for aesthetic clinics — connect consent, automation and software pathways. ${RATING} ${BRAND}.`
+  return `${treatmentLabel} ${typeLabel.toLowerCase()} for aesthetic clinics — connect consent, automation and software pathways. ${BRAND}.`
 }
 
 export function hubTreatmentIndexMetaTitle() {
@@ -208,7 +207,7 @@ export function hubTreatmentIndexMetaTitle() {
 }
 
 export function hubTreatmentIndexMetaDescription() {
-  return `Treatment-specific consent, automation and clinic software pathways for aesthetic clinics. ${RATING} ${BRAND} buyer hub.`
+  return `Treatment-specific consent, automation and clinic software pathways for aesthetic clinics. ${BRAND} buyer hub.`
 }
 
 export function hubUkIndexMetaTitle() {
@@ -216,7 +215,7 @@ export function hubUkIndexMetaTitle() {
 }
 
 export function hubUkIndexMetaDescription() {
-  return `Local aesthetic clinic software, consent and practitioner guides for cities in our directory. ${RATING} ${BRAND}.`
+  return `Local aesthetic clinic software, consent and practitioner guides for cities in our directory. ${BRAND}.`
 }
 
 export function hubTemplateDetailMetaTitle(templateTitle: string) {
@@ -224,7 +223,7 @@ export function hubTemplateDetailMetaTitle(templateTitle: string) {
 }
 
 export function hubTemplateDetailMetaDescription(summary: string) {
-  return `${summary} Free template — customise for your clinic. ${RATING} ${BRAND} library.`
+  return `${summary} Free template — customise for your clinic. ${BRAND} library.`
 }
 
 export function hubTemplateCityMetaTitle(templateTitle: string, cityTitle: string) {
@@ -242,7 +241,7 @@ export function hubTemplateCategoryMetaTitle(category: TemplateCategory) {
 
 export function hubTemplateCategoryMetaDescription(category: TemplateCategory) {
   const label = TEMPLATE_CATEGORY_LABEL[category].toLowerCase()
-  return `Download free ${label} for aesthetic clinics. ${RATING} ${BRAND} — ready to customise.`
+  return `Download free ${label} for aesthetic clinics. ${BRAND} — ready to customise.`
 }
 
 export function hubTemplatesIndexMetaTitle() {
@@ -250,7 +249,7 @@ export function hubTemplatesIndexMetaTitle() {
 }
 
 export function hubTemplatesIndexMetaDescription() {
-  return `123+ free consent, intake, aftercare and CQC templates for aesthetic clinics. ${RATING} ${BRAND} — download and digitise.`
+  return `123+ free consent, intake, aftercare and CQC templates for aesthetic clinics. ${BRAND} — download and digitise.`
 }
 
 export function hubTemplateTreatmentIndexMetaTitle(treatmentLabel: string) {
