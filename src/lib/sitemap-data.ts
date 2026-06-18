@@ -2,6 +2,10 @@ import { Clinic, Practitioner } from '@/lib/types'
 import { readJsonFileSync } from '@/lib/json-cache'
 import { getAllPractitionersForSearch } from '@/lib/data-access/practitioners'
 import { getAllClinicsForSearch } from '@/lib/data-access/clinics'
+import {
+  filterRemovedClinics,
+  filterRemovedPractitioners,
+} from '@/lib/directory-removals'
 
 export const ACCREDITATION_KEYS = [
   'cqc',
@@ -23,9 +27,11 @@ const ACCREDITATION_FIELD_MAP: Record<AccreditationKey, keyof Clinic> = {
   saveface: 'isSaveFace',
 }
 
-export const getClinics = (): Clinic[] => readJsonFileSync('clinics_processed_new_data.json')
+export const getClinics = (): Clinic[] =>
+  filterRemovedClinics(readJsonFileSync('clinics_processed_new_data.json'))
 
-export const getPractitioners = (): Practitioner[] => readJsonFileSync('derms_processed_new_5403.json')
+export const getPractitioners = (): Practitioner[] =>
+  filterRemovedPractitioners(readJsonFileSync('derms_processed_new_5403.json'))
 
 export const getPractitionersFromDb = (): Promise<Practitioner[]> =>
   getAllPractitionersForSearch()

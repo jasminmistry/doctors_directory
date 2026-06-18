@@ -12,7 +12,7 @@ const FOOTER_COLUMN_HEADING =
 const FOOTER_WP_LINK =
   "text-left w-full hover:text-white transition text-base font-semibold leading-6";
 const FOOTER_DIRECTORY_LINK =
-  "block text-base font-semibold leading-6 hover:text-white transition";
+  "block text-base font-semibold leading-6 text-white hover:text-white transition";
 
 const CONSENTZ_SOCIAL = {
   linkedin: "https://www.linkedin.com/company/consentz",

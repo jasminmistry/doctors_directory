@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { Star, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
+import { DirectoryStarRating } from "@/components/directory-star-rating";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -315,30 +316,10 @@ export function PractitionerCard({
                         </div>
                       </div>
 
-                      <div className="sr-only">Rating</div>
-                      <div
-                        className="flex flex-row gap-2 pt-3 items-center justify-start md:justify-center w-full text-sm"
-                        aria-label={`Rating: ${practitioner.rating} out of 5 stars, ${practitioner.reviewCount} reviews`}
-                      >
-                        <div className="inline-flex items-center gap-1">
-                          <div className="flex items-center">
-                            {Array.from({ length: 5 }, (_, i) => (
-                              <Star
-                                key={i}
-                                aria-hidden="true"
-                                className={`h-4 w-4 ${
-                                  i < practitioner.rating!
-                                    ? "fill-black text-black"
-                                    : "text-muted-foreground/30"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        <span className="border-l border-black pl-2 underline">
-                          ({practitioner.reviewCount} reviews)
-                        </span>
-                      </div>
+                      <DirectoryStarRating
+                        reviewCount={practitioner.reviewCount ?? 0}
+                        className="pt-3 justify-start md:justify-center w-full"
+                      />
                     </div>
                   </div>
                 </CardHeader>
