@@ -58,7 +58,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-white">
       {/* Mobile topbar */}
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
-        <span className="text-sm font-semibold text-gray-300 truncate">My Account</span>
+        <span className="text-sm font-semibold text-black truncate">My Account</span>
         <button
           type="button"
           onClick={() => setIsMobileNavOpen((o) => !o)}
@@ -83,7 +83,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
         {/* Sidebar */}
         <aside
           className={cn(
-            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-[#262422] border-r border-[#D4CFC5] transition-transform duration-200 lg:sticky lg:top-0 lg:h-[100svh] lg:w-56 lg:translate-x-0',
+            'fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-[#262422] border-r border-[#D4CFC5] transition-transform duration-200 lg:sticky lg:top-0 lg:w-56 lg:translate-x-0',
             isMobileNavOpen ? 'translate-x-0' : '-translate-x-full',
           )}
         >
@@ -118,7 +118,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
             <div className="my-2 mx-1 border-t border-[#D4CFC5]" />
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-white hover:text-red-600 hover:bg-red-50 transition-colors"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               Sign out
@@ -127,7 +127,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
         </aside>
 
         {/* Main */}
-        <div className="min-w-0 flex-1 flex flex-col bg-[var(--primary-bg-color)]">
+        <div className="min-w-0 flex-1 flex flex-col bg-white">
           <main className="flex-1 p-4 sm:p-6">
             {children}
           </main>
