@@ -1,10 +1,36 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
+import crypto from 'crypto'
 import { prisma } from '@/lib/db'
 import { initiateClaimSchema } from '@/lib/schemas/claim.schema'
 import { generateOtp, otpExpiresAt, isGenericEmailDomain } from '@/lib/claim-utils'
 import { sendClaimOtp } from '@/lib/email'
+import { getConsentzV1Url } from '@/lib/auth'
+
+function generateLinkToken(): string {
+  return crypto.randomBytes(40).toString('hex')
+}
+
+function linkTokenExpiresAt(): Date {
+  return new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
+}
+
+async function isExistingConsentzUser(email: string): Promise<boolean> {
+  try {
+    const base = new URL(getConsentzV1Url()).origin
+    const res = await fetch(`${base}/api/core-lite/directory/check-user?email=${encodeURIComponent(email)}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(5000),
+    })
+    if (!res.ok) return false
+    const data = await res.json()
+    return data.exists === true
+  } catch {
+    return false
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,6 +55,46 @@ export async function POST(req: NextRequest) {
       }
       if (clinic.claimed) {
         return NextResponse.json({ error: 'This profile has already been claimed' }, { status: 409 })
+      }
+
+      // Check if the email is already registered in Consentz
+      const consentzUserExists = await isExistingConsentzUser(claimerEmail)
+      if (consentzUserExists) {
+        // Cancel any stale pending link records for this email + clinic
+        await prisma.claimRequest.updateMany({
+          where: {
+            clinicId: clinic.id,
+            claimerEmail,
+            status: 'awaiting_consentz_link',
+          },
+          data: { status: 'rejected' },
+        })
+
+        const token = generateLinkToken()
+        const claim = await prisma.claimRequest.create({
+          data: {
+            entityType: 'clinic',
+            clinicId: clinic.id,
+            clinicSlug: clinic.slug,
+            claimerName,
+            claimerEmail,
+            claimerPhone: clinicPhone,
+            clinicNameInput,
+            clinicPhone,
+            clinicWebsite: clinicWebsite || null,
+            googleBusinessLink: googleBusinessLink || null,
+            requiresManualReview: false,
+            status: 'awaiting_consentz_link',
+            linkToken: token,
+            linkTokenExpiresAt: linkTokenExpiresAt(),
+          },
+        })
+
+        return NextResponse.json({
+          consentzUserExists: true,
+          claimId: claim.id,
+          linkToken: token,
+        })
       }
 
       const requiresManualReview = isGenericEmailDomain(claimerEmail)
@@ -80,6 +146,45 @@ export async function POST(req: NextRequest) {
     }
     if (practitioner.claimed) {
       return NextResponse.json({ error: 'This profile has already been claimed' }, { status: 409 })
+    }
+
+    // Check if the email is already registered in Consentz
+    const consentzUserExists = await isExistingConsentzUser(claimerEmail)
+    if (consentzUserExists) {
+      await prisma.claimRequest.updateMany({
+        where: {
+          practitionerId: practitioner.id,
+          claimerEmail,
+          status: 'awaiting_consentz_link',
+        },
+        data: { status: 'rejected' },
+      })
+
+      const token = generateLinkToken()
+      const claim = await prisma.claimRequest.create({
+        data: {
+          entityType: 'practitioner',
+          practitionerId: practitioner.id,
+          practitionerSlug: practitioner.slug,
+          claimerName,
+          claimerEmail,
+          claimerPhone: claimerPhone ?? null,
+          profession,
+          clinicNameInput: clinicNameInput ?? null,
+          licenseNumber: licenseNumber ?? null,
+          registryName: registryName ?? null,
+          requiresManualReview: false,
+          status: 'awaiting_consentz_link',
+          linkToken: token,
+          linkTokenExpiresAt: linkTokenExpiresAt(),
+        },
+      })
+
+      return NextResponse.json({
+        consentzUserExists: true,
+        claimId: claim.id,
+        linkToken: token,
+      })
     }
 
     const requiresManualReview = isGenericEmailDomain(claimerEmail)

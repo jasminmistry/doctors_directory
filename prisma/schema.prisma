@@ -44,6 +44,7 @@ enum ClaimStatus {
   pending_approval
   approved
   rejected
+  awaiting_consentz_link
 }
 
 enum ClaimPlan {
@@ -720,6 +721,11 @@ model ClaimRequest {
   mustResetPassword  Boolean @default(false)
   scheduleWizardDone  Boolean @default(false)
   scheduleConfigured  Boolean @default(false)
+
+  // Consentz link token (used when claimant already has a Consentz account)
+  linkToken          String?   @unique @db.VarChar(80)
+  linkTokenExpiresAt DateTime?
+  linkTokenUsed      Boolean   @default(false)
 
   // Workflow
   status     ClaimStatus @default(pending_otp)

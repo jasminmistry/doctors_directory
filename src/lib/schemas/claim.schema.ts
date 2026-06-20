@@ -43,7 +43,16 @@ export const adminReviewClaimSchema = z.object({
   adminNotes: z.string().optional(),
 })
 
+export const consentzLinkSchema = z.object({
+  token:                 z.string().min(1),
+  consentzClinicId:      z.number().int().positive(),
+  consentzUserId:        z.number().int().positive(),
+  consentzUsername:      z.string().min(1),
+  consentzSessionToken:  z.string().nullable().optional(),
+})
+
 export type InitiateClaimInput = z.infer<typeof initiateClaimSchema>
 export type VerifyOtpInput = z.infer<typeof verifyOtpSchema>
 export type SelectPlanInput = z.infer<typeof selectPlanSchema>
 export type AdminReviewClaimInput = z.infer<typeof adminReviewClaimSchema>
+export type ConsentzLinkInput = z.infer<typeof consentzLinkSchema>

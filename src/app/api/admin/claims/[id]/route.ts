@@ -251,6 +251,11 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         ])
       }
 
+      // Consentz-linked claims already have an account — skip provisioning
+      if (claim.consentzUserId) {
+        return NextResponse.json({ success: true })
+      }
+
       const tokens = await provisionConsentzAccount(claim, entityName, authToken, storedRefreshToken)
       const res = NextResponse.json({ success: true })
       applyFreshTokens(res, tokens)

@@ -10,14 +10,14 @@ interface ClinicProps {
   entityType: 'clinic'
   entityName: string
   clinicSlug: string
-  onSent: (claimId: number, email: string) => void
+  onSent: (claimId: number, email: string, consentzExists?: boolean, linkToken?: string) => void
 }
 
 interface PractitionerProps {
   entityType: 'practitioner'
   entityName: string
   practitionerSlug: string
-  onSent: (claimId: number, email: string) => void
+  onSent: (claimId: number, email: string, consentzExists?: boolean, linkToken?: string) => void
 }
 
 type Props = ClinicProps | PractitionerProps
@@ -89,7 +89,7 @@ export function StepDetails(props: Readonly<Props>) {
         setError(typeof data.error === 'string' ? data.error : 'Something went wrong. Please try again.')
         return
       }
-      onSent(data.claimId, email)
+      onSent(data.claimId, email, data.consentzUserExists === true, data.linkToken)
     } catch {
       setError('Network error. Please check your connection and try again.')
     } finally {

@@ -4,6 +4,15 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { prisma } from '@/lib/db'
 import { ClaimWizard } from '@/components/claim/claim-wizard'
+import { getConsentzAuthUrl } from '@/lib/auth'
+
+function getConsentzLoginUrl(): string {
+  try {
+    return new URL(getConsentzAuthUrl()).origin + '/admin/login'
+  } catch {
+    return ''
+  }
+}
 
 interface Props {
   params: { slug: string }
@@ -82,6 +91,7 @@ export default async function ClaimPage({ params, searchParams }: Readonly<Props
                 clinicSlug={clinic.slug}
                 initialStep={searchParams.step}
                 initialClaimId={searchParams.claimId ? parseInt(searchParams.claimId, 10) : null}
+                consentzLoginUrl={getConsentzLoginUrl()}
               />
             </Suspense>
           </div>

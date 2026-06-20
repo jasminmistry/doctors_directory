@@ -21,9 +21,10 @@ interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
   hasCoreCalendar?: boolean;
+  consentzSsoUrl?: string;
 }
 
-export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: Readonly<ProfileHeaderProps>) {
+export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, consentzSsoUrl }: Readonly<ProfileHeaderProps>) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
@@ -50,6 +51,15 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
             Claim Profile
           </Badge>
         </Link>
+      )}
+      {clinic.claimed && consentzSsoUrl && (
+        <a
+          href={consentzSsoUrl}
+          className="absolute top-2 right-2 z-50 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground border border-border rounded-full px-3 py-1 bg-white md:bg-(--primary-bg-color) hover:bg-muted transition-colors"
+          title="Log in to manage this listing"
+        >
+          Manage listing
+        </a>
       )}
       <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-start">
         {/* Left: avatar + info */}

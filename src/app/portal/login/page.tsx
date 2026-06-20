@@ -20,6 +20,7 @@ export default function PortalLoginPage() {
   const searchParams = useSearchParams()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const ssoError = searchParams.get('error')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [isLocalhost, setIsLocalhost] = useState(false)
@@ -145,6 +146,18 @@ export default function PortalLoginPage() {
               />
             </div>
 
+            {ssoError === 'pending_approval' && (
+              <p className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700">
+                Your listing is linked and awaiting admin approval. You&apos;ll be able to access the portal once approved.
+              </p>
+            )}
+            {ssoError && ssoError !== 'pending_approval' && (
+              <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+                {ssoError === 'not_linked'
+                  ? 'No linked directory listing found. Please claim your listing first.'
+                  : 'Sign-in link was invalid or expired. Please try again.'}
+              </p>
+            )}
             {error && (
               <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">
                 {error}
