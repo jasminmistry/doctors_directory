@@ -87,13 +87,17 @@ export default function ItemsGrid({ items, customLink }: PractitionerCardProps) 
 
   return (
     <div className="w-full space-y-6">
-      <div className="md:bg--(--primary-bg-color) grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid items-stretch md:gap-6 md:grid-cols-2 lg:grid-cols-3">
         {itemsList.map((clinic) => (
-          <PractitionerCard
+          <div
             key={typeof clinic === "string" ? clinic : ("practitioner_name" in clinic ? clinic.practitioner_name! + clinic.practitioner_title : clinic.slug)}
-            practitioner={clinic}
-            customLink={customLink}
-          />
+            className="h-full"
+          >
+            <PractitionerCard
+              practitioner={clinic}
+              customLink={customLink}
+            />
+          </div>
         ))}
       </div>
       {USE_PAGINATION ? (

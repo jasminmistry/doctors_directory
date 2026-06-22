@@ -2,9 +2,10 @@ const REMOVED_CLINIC_SLUGS = new Set([
   "the-weardale-practice",
   "skinmedic",
   "dr-dan-dhunna-cosmetic-clinic-solihull",
+  "dorset-trichology",
 ])
 
-const REMOVED_PRACTITIONER_SLUGS = new Set(["dr-dan-dhunna"])
+const REMOVED_PRACTITIONER_SLUGS = new Set(["dr-dan-dhunna", "gina-lourens"])
 
 export function isRemovedClinicSlug(slug: string | null | undefined): boolean {
   if (!slug) return false

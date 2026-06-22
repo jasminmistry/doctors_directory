@@ -161,16 +161,22 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
   return (
     <section aria-label={title}>
       <h2 className="mb-3 text-lg font-semibold text-foreground">{title}</h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 items-stretch gap-3 md:grid-cols-4">
         {entries.map((entry, index) => (
           <article
             key={`${entry.href}-${index}`}
-            className="relative flex flex-col bg-white border border-[#C4C4C4] rounded-md"
+            className="relative flex h-full flex-col overflow-hidden rounded-md border border-[#C4C4C4] bg-white"
           >
             {/* Image + rank badge + name + score + price */}
-            <div className="flex flex-col items-center text-center px-3 pt-4 pb-2">
-              <div className="relative w-[80px] h-[80px] flex items-center justify-center overflow-hidden rounded-full bg-gray-300 mb-3">
-                <FallbackImage src={entry.image} alt={entry.name} className="object-cover w-full h-full" />
+            <div className="flex flex-col items-center px-3 pt-4 pb-2 text-center">
+              <div className="relative mx-auto mb-3 h-20 w-20 shrink-0 overflow-hidden rounded-full bg-gray-200">
+                <FallbackImage
+                  src={entry.image}
+                  alt={entry.name}
+                  className="h-full w-full object-cover"
+                  width={80}
+                  height={80}
+                />
                 {(entry.idVerified || entry.verified) && (
                   <span className="absolute bottom-0 right-0">
                     <VerifiedBadge idVerified={entry.idVerified} verified={entry.verified} />
@@ -180,22 +186,24 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
               <Link
                 href={entry.href}
                 prefetch={false}
-                className="block text-sm font-semibold text-primary line-clamp-2 hover:underline underline-offset-2"
+                className="flex min-h-[2.5rem] w-full items-center justify-center text-sm font-semibold text-primary line-clamp-2 hover:underline underline-offset-2"
               >
                 {entry.name}
               </Link>
-              {entry.subtitle ? (
-                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{entry.subtitle}</p>
-              ) : null}
-              {entry.reviewCount > 0 ? (
-                <DirectoryStarRating
-                  reviewCount={entry.reviewCount}
-                  starClassName="h-3.5 w-3.5 fill-amber-500 text-amber-500"
-                  className="mt-2 flex-col items-center gap-1 text-xs"
-                />
-              ) : null}
-              <p className="text-xs text-muted-foreground mt-2">Treatments starting from</p>
-              <p className="text-sm font-bold text-foreground">{entry.displayPrice}</p>
+              <p className="mt-1 min-h-[2rem] text-xs text-muted-foreground line-clamp-2">
+                {entry.subtitle ?? "\u00A0"}
+              </p>
+              <div className="flex min-h-[2.5rem] w-full items-center justify-center">
+                {entry.reviewCount > 0 ? (
+                  <DirectoryStarRating
+                    reviewCount={entry.reviewCount}
+                    starClassName="h-3.5 w-3.5 fill-amber-500 text-amber-500"
+                    className="mt-2 flex-col items-center gap-1 text-xs"
+                  />
+                ) : null}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">Treatments starting from</p>
+              <p className="min-h-[1.25rem] text-sm font-bold text-foreground">{entry.displayPrice}</p>
             </div>
 
             {/* Value badge + View Profile button */}

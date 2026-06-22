@@ -244,6 +244,10 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
+  if (isRemovedPractitionerSlug(params.slug)) {
+    notFound();
+  }
+
   const clinic = await getPractitionerBySlug(params.slug)
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const canonicalSlug = decodeURIComponent(params.slug).toLowerCase();

@@ -1,13 +1,11 @@
-import { getClinicsFromDb } from '@/lib/sitemap-data'
+import { getClinics } from '@/lib/sitemap-data'
 import { isRemovedClinicSlug } from '@/lib/directory-removals'
 import { buildUrlSetXml, encodeCitySegment, encodeSegment, mapPathsToSitemapUrls, xmlResponse } from '@/lib/sitemap'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const clinics = await getClinicsFromDb()
-
-  const paths = clinics
+  const paths = getClinics()
     .filter(
       (clinic) =>
         Boolean(clinic.slug) &&

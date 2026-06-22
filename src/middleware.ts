@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { isRemovedClinicSlug, isRemovedPractitionerSlug } from '@/lib/directory-removals'
 
 const COOKIE_TOKEN = 'consentz_token'
 const COOKIE_REFRESH = 'consentz_refresh_token'
@@ -21,6 +22,17 @@ function clearAuthAndRedirect(request: NextRequest, pathname: string, loginPath:
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  const clinicProfileMatch = pathname.match(/^\/clinics\/[^/]+\/clinic\/([^/]+)\/?$/)
+  if (clinicProfileMatch && isRemovedClinicSlug(decodeURIComponent(clinicProfileMatch[1]))) {
+    return NextResponse.rewrite(new URL('/listing-removed', request.url))
+  }
+
+  const practitionerProfileMatch = pathname.match(/^\/practitioners\/[^/]+\/profile\/([^/]+)\/?$/)
+  if (practitionerProfileMatch && isRemovedPractitionerSlug(decodeURIComponent(practitionerProfileMatch[1]))) {
+    return NextResponse.rewrite(new URL('/listing-removed', request.url))
+  }
+
   const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/api/admin')
   const isPortalRoute = pathname.startsWith('/portal') || pathname.startsWith('/api/portal') || pathname.startsWith('/verify')
   const isAdminLoginPage = pathname === '/admin/login' || pathname === '/admin/login/'
@@ -64,6 +76,15 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Note: Next.js matcher paths are relative to the app root, not the basePath
-  matcher: ['/admin/:path*', '/api/admin/:path*', '/portal/:path*', '/api/portal/:path*', '/api/portal/upgrade', '/verify/:path*', '/portal/login'],
+  matcher: [
+    '/admin/:path*',
+    '/api/admin/:path*',
+    '/portal/:path*',
+    '/api/portal/:path*',
+    '/api/portal/upgrade',
+    '/verify/:path*',
+    '/portal/login',
+    '/clinics/:cityslug/clinic/:slug',
+    '/practitioners/:cityslug/profile/:slug',
+  ],
 }

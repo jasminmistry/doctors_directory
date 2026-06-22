@@ -23,7 +23,7 @@ import { BestRankedBlock } from "@/components/best-ranked-block";
 import { CityPricingContext } from "@/components/city-pricing-context";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
 import { buildCityTreatmentPriceInsights } from "@/lib/city-pricing";
-import { getClinics } from "@/lib/sitemap-data";
+import { isRemovedClinicSlug } from "@/lib/directory-removals";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { DirectoryJsonLd } from "@/components/directory-json-ld";
 import {
@@ -93,7 +93,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const displayCityName = capitalize(citySlug);
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
   const cityClinics: Clinic[] = clinics.filter(
-    (p) => p.City?.toLowerCase() === normalizedCitySlug
+    (p) => p.City?.toLowerCase() === normalizedCitySlug && !isRemovedClinicSlug(p.slug)
   );
   const cityData = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
