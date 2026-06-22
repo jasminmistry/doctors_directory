@@ -165,7 +165,7 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
         {entries.map((entry, index) => (
           <article
             key={`${entry.href}-${index}`}
-            className="relative flex flex-col bg-white border border-[#C4C4C4] rounded-md"
+            className="relative flex flex-col bg-white border border-[#C4C4C4] rounded-lg"
           >
             {/* Image + rank badge + name + score + price */}
             <div className="flex flex-col items-center text-center px-3 pt-4 pb-2">

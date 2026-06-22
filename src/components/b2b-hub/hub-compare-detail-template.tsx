@@ -110,10 +110,10 @@ function CompareHeroPreviewCard({ competitorLabel }: { competitorLabel: string }
       </div>
       <div className="flex items-center gap-0 bg-[#f2eee6] px-3 py-2 text-[10px] font-semibold text-[#928b82] sm:px-6 sm:py-2.5 sm:text-[11px]">
         <span className="min-w-0 flex-1 truncate">Feature</span>
-        <span className="flex h-7 w-[72px] sm:w-[88px] shrink-0 items-center justify-center rounded-md bg-[#e0f1ed] text-[11px] font-semibold text-[#1a877a]">
+        <span className="flex h-7 w-[72px] sm:w-[88px] shrink-0 items-center justify-center rounded-lg bg-[#e0f1ed] text-[11px] font-semibold text-[#1a877a]">
           Consentz
         </span>
-        <span className="flex h-7 w-[72px] sm:w-[88px] shrink-0 items-center justify-center rounded-md bg-[#e6e0d8] text-[11px] font-semibold text-[#928b82]">
+        <span className="flex h-7 w-[72px] sm:w-[88px] shrink-0 items-center justify-center rounded-lg bg-[#e6e0d8] text-[11px] font-semibold text-[#928b82]">
           {competitorLabel}
         </span>
       </div>
@@ -160,7 +160,7 @@ function PlatformCard() {
             ))}
           </div>
         ))}
-        <div className="flex justify-center rounded-md bg-[#e0f1ed] px-3.5 py-2">
+        <div className="flex justify-center rounded-lg bg-[#e0f1ed] px-3.5 py-2">
           <span className="text-xs font-semibold text-[#1a877a]">
             All connected in one platform
           </span>
@@ -189,7 +189,7 @@ function TemplateLibraryCard() {
         {items.map(({ label, highlight }) => (
           <div
             key={label}
-            className={`flex items-center gap-2 rounded-md px-3 py-2.5 ${
+            className={`flex items-center gap-2 rounded-lg px-3 py-2.5 ${
               highlight ? "bg-[#e0f1ed]" : ""
             }`}
           >
@@ -201,7 +201,7 @@ function TemplateLibraryCard() {
             </span>
           </div>
         ))}
-        <div className="rounded-md border border-[#e6e0d8] bg-[#faf8f5] px-3.5 py-2 text-center text-xs text-[#928b82]">
+        <div className="rounded-lg border border-[#e6e0d8] bg-[#faf8f5] px-3.5 py-2 text-center text-xs text-[#928b82]">
           48 clinic-ready templates
         </div>
       </div>
@@ -227,7 +227,7 @@ function CqcEvidenceCard() {
         {rows.map((label, i) => (
           <div
             key={label}
-            className={`flex items-center justify-between gap-2 rounded-md px-3.5 py-3 ${
+            className={`flex items-center justify-between gap-2 rounded-lg px-3.5 py-3 ${
               i % 2 === 0 ? "bg-[#faf8f5]" : "bg-white"
             }`}
           >

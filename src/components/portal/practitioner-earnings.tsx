@@ -92,7 +92,7 @@ export function PractitionerEarnings() {
               type="button"
               onClick={() => setPeriod(p)}
               className={cn(
-                'rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+                'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
                 period === p
                   ? 'bg-white text-gray-900 shadow-sm'
                   : 'text-gray-500 hover:text-gray-700',

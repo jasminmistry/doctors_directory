@@ -204,7 +204,7 @@ function PractitionerHeroMockup() {
             (label) => (
               <div
                 key={label}
-                className={`rounded-md px-2.5 py-1.5 ${
+                className={`rounded-lg px-2.5 py-1.5 ${
                   label === "Tx Notes" ? "bg-[#e0f1ed] font-semibold text-[#106057]" : ""
                 }`}
               >

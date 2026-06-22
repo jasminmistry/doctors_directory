@@ -235,7 +235,7 @@ export function PractitionerCard({
     <>
       {(isPractitioner(practitioner) || isClinic(practitioner)) && (
         <article
-          className=" relative mb-2 bg-white border-b border-t-0 border-[#C4C4C4] md:border-t rounded-md md:border md:border-(--alto)"
+          className=" relative mb-2 bg-white border-b border-t-0 border-[#C4C4C4] md:border-t rounded-lg md:border md:border-(--alto)"
           aria-labelledby={`${practitionerOrClinicAriaPrefix}-name-${practitioner.slug}`}
         >
           <Card
@@ -510,7 +510,7 @@ export function PractitionerCard({
       {typeof practitioner === "string" && !isCity(practitioner) && (
         <Card
           asChild
-          className="gap-0 h-full relative px-4 rounded-none md:rounded-md md:px-0 md:border duration-300 shadow-none cursor-pointer"
+          className="gap-0 h-full relative px-4 rounded-none md:rounded-lg md:px-0 md:border duration-300 shadow-none cursor-pointer"
           aria-labelledby={`treatment-name-${practitioner}`}
           data-testid="practitioner-card"
         >

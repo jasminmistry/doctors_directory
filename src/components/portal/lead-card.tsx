@@ -151,14 +151,14 @@ function NotesSection({ leadId, initialNotes, onSaved }: { leadId: number; initi
           type="button"
           onClick={save}
           disabled={saving}
-          className="rounded-md bg-gray-900 px-2.5 py-1 text-xs font-medium text-white disabled:opacity-50"
+          className="rounded-lg bg-gray-900 px-2.5 py-1 text-xs font-medium text-white disabled:opacity-50"
         >
           {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Save'}
         </button>
         <button
           type="button"
           onClick={() => { setValue(initialNotes ?? ''); setEditing(false) }}
-          className="rounded-md border border-gray-200 px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-50"
+          className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-50"
         >
           Cancel
         </button>
@@ -209,14 +209,14 @@ function OwnerField({ leadId, initialOwner, onSaved }: { leadId: number; initial
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => { if (e.key === 'Enter') save(); if (e.key === 'Escape') { setValue(initialOwner ?? ''); setEditing(false) } }}
-        className="rounded-md border border-gray-200 px-2 py-1 text-xs focus:border-gray-400 focus:outline-none w-28"
+        className="rounded-lg border border-gray-200 px-2 py-1 text-xs focus:border-gray-400 focus:outline-none w-28"
         placeholder="Staff name"
       />
       <button
         type="button"
         onClick={save}
         disabled={saving}
-        className="rounded-md bg-gray-900 px-2 py-1 text-xs font-medium text-white disabled:opacity-50"
+        className="rounded-lg bg-gray-900 px-2 py-1 text-xs font-medium text-white disabled:opacity-50"
       >
         {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : 'OK'}
       </button>

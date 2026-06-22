@@ -271,7 +271,7 @@ function CqcDashboardBrowserMock() {
         <span className="h-3 w-3 shrink-0 rounded-full bg-[#ff5f56]" />
         <span className="h-3 w-3 shrink-0 rounded-full bg-[#ffbd2e]" />
         <span className="h-3 w-3 shrink-0 rounded-full bg-[#27c93f]" />
-        <div className="ml-2 min-w-0 flex-1 rounded-md bg-[#232327] px-4 py-2">
+        <div className="ml-2 min-w-0 flex-1 rounded-lg bg-[#232327] px-4 py-2">
           <p className="truncate text-[15px] text-[#9b9b9b]">
             CQC Evidence Dashboard — Consentz
           </p>

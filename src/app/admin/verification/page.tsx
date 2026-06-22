@@ -96,7 +96,7 @@ export default function AdminVerificationPage() {
               key={tab.value}
               onClick={() => setFilter(tab.value)}
               className={[
-                'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+                'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                 filter === tab.value
                   ? 'bg-foreground text-background'
                   : 'bg-muted text-muted-foreground hover:text-foreground',
@@ -201,7 +201,7 @@ export default function AdminVerificationPage() {
                         <img
                           src={fileUrl}
                           alt={doc.label}
-                          className="max-h-64 max-w-full rounded-md border object-contain bg-white"
+                          className="max-h-64 max-w-full rounded-lg border object-contain bg-white"
                         />
                       )}
                       {!isImage && (

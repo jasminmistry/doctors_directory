@@ -153,7 +153,7 @@ export default function FeaturedProfilesPage() {
                       src={clinic.image ?? ''}
                       alt={clinic.name ?? ''}
                       fallback={DEFAULT_PERSON}
-                      className="h-8 w-8 rounded-md object-cover shrink-0"
+                      className="h-8 w-8 rounded-lg object-cover shrink-0"
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-gray-900 truncate">{clinic.name || clinic.slug}</p>

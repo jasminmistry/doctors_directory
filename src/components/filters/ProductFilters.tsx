@@ -32,7 +32,7 @@ export function ProductFilters({ filters, onChange, onClear, setIsFilterActive }
           value={filters.query || ""}
           onChange={(e) => onChange("query", e.target.value)}
           placeholder="Search products..."
-          className="w-full px-3 py-2 text-base border rounded-md bg-white"
+          className="w-full px-3 py-2 text-base border rounded-lg bg-white"
         />
       </div>
 
@@ -50,7 +50,7 @@ export function ProductFilters({ filters, onChange, onClear, setIsFilterActive }
             if (open) setIsFilterActive(true);
           }}
         >
-          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-md">
+          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-lg">
             <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent>
@@ -76,7 +76,7 @@ export function ProductFilters({ filters, onChange, onClear, setIsFilterActive }
             if (open) setIsFilterActive(true);
           }}
         >
-          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-md">
+          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-lg">
             <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent>
@@ -102,7 +102,7 @@ export function ProductFilters({ filters, onChange, onClear, setIsFilterActive }
             if (open) setIsFilterActive(true);
           }}
         >
-          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-md">
+          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-lg">
             <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent>

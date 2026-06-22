@@ -121,7 +121,7 @@ export function DataTable<T extends Record<string, any>>({
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

@@ -1,24 +1,30 @@
 "use client";
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { HeroSection } from "@/components/hero-section";
 import LogoLoop from "./LogoLoop";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Handshake, ChartBarDecreasing, CircleCheck, MapPin } from "lucide-react";
+import {
+  Handshake,
+  ChartBarDecreasing,
+  CircleCheck,
+  MapPin,
+} from "lucide-react";
 import { Card } from "./ui/card";
 import { cleanRouteSlug } from "@/lib/utils";
 import { FallbackImage, DEFAULT_PERSON } from "@/components/ui/fallback-image";
 
 export interface FeaturedClinic {
-  slug: string
-  name: string
-  image: string
-  rating: number
-  reviewCount: number
-  category: string
-  gmapsAddress: string
-  City: string
-  Treatments: string[]
+  slug: string;
+  name: string;
+  image: string;
+  rating: number;
+  reviewCount: number;
+  category: string;
+  gmapsAddress: string;
+  City: string;
+  Treatments: string[];
 }
 
 const cityList = [
@@ -869,6 +875,10 @@ const blogs = [
   },
 ];
 
+const MeshBackground = dynamic(() => import("./MeshBackground"), {
+  ssr: false,
+});
+
 const faqData = [
   {
     q: "What is the Consentz Aesthetic Directory?",
@@ -894,7 +904,11 @@ const faqData = [
 
 const ITEMS_PER_PAGE = 9;
 
-export default function HomePage({ featuredClinics = [] }: { featuredClinics?: FeaturedClinic[] }) {
+export default function HomePage({
+  featuredClinics = [],
+}: {
+  featuredClinics?: FeaturedClinic[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleFAQ = (index: number | null) => {
@@ -903,6 +917,33 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
 
   return (
     <main>
+      <div className="absolute inset-0 h-100vh overflow-hidden z-[-1]">
+        <MeshBackground />
+
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: "url('/directory/images/wawes.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            zIndex: 1,
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: "url('/directory/images/noaise.avifa')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            zIndex: 2,
+            pointerEvents: "none",
+          }}
+        />
+      </div>
+
       <HeroSection />
       <section
         className="bg-white-50 py-15 md:py-20"
@@ -945,20 +986,21 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
         aria-labelledby="specialists-heading"
       >
         <section className="bg-white py-6 md:py-10">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_140px] gap-4 items-center">
-                <div className="bg-[#f8f8f8] rounded-xl p-4 md:p-6 flex items-start gap-4">
-                  <div className="min-w-[56px] min-h-[56px] md:min-w-[70px] md:min-h-[70px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-2xl md:text-3xl font-semibold text-black">
+          <div className="max-w-3xl mx-auto px-3 sm:px-4 lg:px-6">
+            <div className="space-y-3">
+              {/* Step 1 */}
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#f8f8f8] rounded-xl p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
                     1.
                   </div>
 
                   <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-black leading-tight">
+                    <h2 className="text-lg md:text-xl font-bold text-black leading-tight">
                       Tell Us What You’re Looking For
                     </h2>
 
-                    <p className="mt-2 text-sm md:text-xl text-[#222] leading-relaxed max-w-2xl">
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
                       Answer a few questions so we can understand your goals.
                     </p>
                   </div>
@@ -968,23 +1010,24 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
                   <img
                     src="/directory/images/clipboard.png"
                     alt="Clipboard Icon"
-                    className="w-20 md:w-28 h-auto object-contain"
+                    className="w-14 md:w-20 h-auto object-contain"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_140px] gap-4 items-center">
-                <div className="bg-[#f8f8f8] rounded-xl p-4 md:p-6 flex items-start gap-4">
-                  <div className="min-w-[56px] min-h-[56px] md:min-w-[70px] md:min-h-[70px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-2xl md:text-3xl font-semibold text-black">
+              {/* Step 2 */}
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#f8f8f8] rounded-xl p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
                     2.
                   </div>
 
                   <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-black leading-tight">
+                    <h2 className="text-lg md:text-xl font-bold text-black leading-tight">
                       Get Expert Guidance
                     </h2>
 
-                    <p className="mt-2 text-sm md:text-xl text-[#222] leading-relaxed max-w-2xl">
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
                       Receive personalized recommendations from our aesthetics
                       and wellness experts.
                     </p>
@@ -995,23 +1038,24 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
                   <img
                     src="/directory/images/video-chat.png"
                     alt="Video Chat Icon"
-                    className="w-20 md:w-28 h-auto object-contain"
+                    className="w-14 md:w-20 h-auto object-contain"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_140px] gap-4 items-center">
-                <div className="bg-[#f8f8f8] rounded-xl p-4 md:p-6 flex items-start gap-4">
-                  <div className="min-w-[56px] min-h-[56px] md:min-w-[70px] md:min-h-[70px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-2xl md:text-3xl font-semibold text-black">
+              {/* Step 3 */}
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#f8f8f8] rounded-xl p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
                     3.
                   </div>
 
                   <div>
-                    <h2 className="text-xl md:text-3xl font-bold text-black leading-tight">
+                    <h2 className="text-lg md:text-xl font-bold text-black leading-tight">
                       Match & Book With a Practitioner
                     </h2>
 
-                    <p className="mt-2 text-sm md:text-xl text-[#222] leading-relaxed max-w-2xl">
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
                       We match you with a trusted practitioner and help you book
                       with ease.
                     </p>
@@ -1022,7 +1066,7 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
                   <img
                     src="/directory/images/check.png"
                     alt="Check Icon"
-                    className="w-20 md:w-28 h-auto object-contain"
+                    className="w-14 md:w-20 h-auto object-contain"
                   />
                 </div>
               </div>
@@ -1086,8 +1130,7 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
             </div>
             <Button
               asChild
-              className="bg-[var(--text-color)] hover:bg-black
-                         h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
+              className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium rounded-lg text-white hover:bg-gray-800 transition-colors"
             >
               <Link href="/treatments">See all Treatments</Link>
             </Button>
@@ -1125,13 +1168,17 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
             </h2>
             <div className="md:bg--(--primary-bg-color) grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
               {featuredClinics.map((clinic) => {
-                const citySlug = cleanRouteSlug(clinic.City)
-                const href = `/clinics/${citySlug}/clinic/${clinic.slug}`
-                const filledStars = Math.round(clinic.rating)
-                const visibleTreatments = clinic.Treatments.slice(0, 2)
-                const extraCount = clinic.Treatments.length - visibleTreatments.length
+                const citySlug = cleanRouteSlug(clinic.City);
+                const href = `/clinics/${citySlug}/clinic/${clinic.slug}`;
+                const filledStars = Math.round(clinic.rating);
+                const visibleTreatments = clinic.Treatments.slice(0, 2);
+                const extraCount =
+                  clinic.Treatments.length - visibleTreatments.length;
                 return (
-                  <article key={clinic.slug} className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md">
+                  <article
+                    key={clinic.slug}
+                    className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md"
+                  >
                     <div className="flex flex-col items-center text-center">
                       <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
                         <FallbackImage
@@ -1147,12 +1194,15 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
                       </h2>
 
                       {clinic.category && (
-                        <p className="text-gray-500 text-lg font-medium">{clinic.category}</p>
+                        <p className="text-gray-500 text-lg font-medium">
+                          {clinic.category}
+                        </p>
                       )}
 
                       <div className="flex items-center gap-2 mt-4 text-sm">
                         <div className="flex text-black">
-                          {'★'.repeat(filledStars)}{'☆'.repeat(5 - filledStars)}
+                          {"★".repeat(filledStars)}
+                          {"☆".repeat(5 - filledStars)}
                         </div>
                         <span className="border-l border-black pl-2 underline">
                           ({clinic.reviewCount} reviews)
@@ -1161,14 +1211,19 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
 
                       {clinic.gmapsAddress && (
                         <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm w-full">
-                          <MapPin className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
-                          <span className="min-w-0 text-left line-clamp-2">{clinic.gmapsAddress}</span>
+                          <MapPin
+                            className="h-4 w-4 mt-0.5 shrink-0"
+                            aria-hidden="true"
+                          />
+                          <span className="min-w-0 text-left line-clamp-2">
+                            {clinic.gmapsAddress}
+                          </span>
                         </div>
                       )}
 
                       <Link
                         href={href}
-                        className="w-full mt-6 block bg-black text-white py-2 rounded-lg font-medium hover:bg-white hover:text-black border border-black transition text-center"
+                        className="w-full mt-3 flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
                       >
                         View clinic
                       </Link>
@@ -1176,7 +1231,10 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
                       {visibleTreatments.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-5 justify-center">
                           {visibleTreatments.map((t) => (
-                            <span key={t} className="px-3 py-1 border border-black rounded-full text-xs">
+                            <span
+                              key={t}
+                              className="px-3 py-1 border border-black rounded-full text-xs"
+                            >
                               {t}
                             </span>
                           ))}
@@ -1189,7 +1247,7 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
                       )}
                     </div>
                   </article>
-                )
+                );
               })}
             </div>
           </div>
@@ -1278,7 +1336,7 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
               <div className="text-center md:text-left mb-10 md:mb-0">
                 <Button
                   asChild
-                  className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white"
+                  className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium rounded-lg text-white hover:bg-gray-800 transition-colors"
                 >
                   <a
                     href="https://www.consentz.com/features/"
@@ -1364,16 +1422,25 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
               ))}
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-base px-6 py-3 text-white">
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Button
+                asChild
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition-colors">
                 <Link href="/register/clinic">List your practice</Link>
               </Button>
-              <Button asChild variant="outline" className="h-auto rounded-lg text-base px-6 py-3">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors"
+              >
                 <Link href="/claim">Claim your profile</Link>
               </Button>
-              <Button asChild variant="outline" className="h-auto rounded-lg text-base px-6 py-3">
-                <Link href="/register/practitioner">Register as practitioner</Link>
-              </Button>
+              <Link
+                href="/register/practitioner"
+                className="text-sm text-gray-600 hover:text-black transition-colors"
+              >
+                Register as practitioner  →
+              </Link>
             </div>
           </div>
         </div>
@@ -1404,7 +1471,7 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
           {blogs.map(({ id, title, img, link }) => (
             <article
               key={id}
-              className="bg-gray-100 border border-gray-400 rounded-xl p-6 relative overflow-hidden"
+              className="bg-white border border-gray-400 rounded-xl p-6 relative overflow-hidden"
             >
               <a href={link} className="block">
                 <img
@@ -1438,7 +1505,7 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
             onClick={() =>
               (globalThis.location.href = "https://www.consentz.com/blog")
             }
-            className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
+            className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium rounded-lg text-white hover:bg-gray-800 transition-colors"
           >
             View All Blogs
           </Button>
@@ -1468,7 +1535,7 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
                 key={index}
                 open={isOpen}
                 onToggle={() => toggleFAQ(index)}
-                className="border border-gray-300 rounded-3xl p-4 transition-all duration-300"
+                className="border border-gray-300 rounded-lg p-4 transition-all duration-300"
               >
                 <summary className="w-full flex items-center gap-4 text-left text-lg font-semibold cursor-pointer flex flex-row flex-wrap pl-10 relative list-none">
                   <span className="text-2xl font-normal text-center w-7 h-7 rounded-full leading-6 text-black transition-all select-none bg-black text-white absolute left-0">
@@ -1489,7 +1556,7 @@ export default function HomePage({ featuredClinics = [] }: { featuredClinics?: F
             onClick={() =>
               (globalThis.location.href = "https://www.consentz.com/faqs/")
             }
-            className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
+            className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium rounded-lg text-white hover:bg-gray-800 transition-colors"
           >
             Read All FAQ'S
           </Button>

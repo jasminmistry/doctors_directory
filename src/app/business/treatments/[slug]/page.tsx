@@ -102,7 +102,7 @@ export default function BusinessTreatmentDetailPage({ params }: Props) {
             <Link
               key={slug}
               href={`/business/treatments/${slug}/`}
-              className="rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-800 hover:border-neutral-400 hover:bg-neutral-50"
+              className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-800 hover:border-neutral-400 hover:bg-neutral-50"
             >
               {toDisplayTitle(slug.replaceAll("-", " "))}
             </Link>

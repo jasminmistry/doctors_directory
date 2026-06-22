@@ -268,7 +268,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
           ) : (
             <div className="flex flex-col justify-end">
               <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
-              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
+              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{data.slug}</code>
             </div>
           ))}
           <Field label="Category">
@@ -335,7 +335,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
               <select
                 value={data.cqcStatus ?? ''}
                 onChange={(e) => set('cqcStatus', (e.target.value || null) as ClinicData['cqcStatus'])}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value="">Not set</option>
                 <option value="not_applicable">N/A</option>
@@ -348,7 +348,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
               <select
                 value={data.avgReplyTime ?? ''}
                 onChange={(e) => set('avgReplyTime', (e.target.value || null) as ClinicData['avgReplyTime'])}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value="">Not set</option>
                 <option value="within_24hrs">Within 24 hours</option>

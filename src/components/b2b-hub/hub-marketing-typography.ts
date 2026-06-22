@@ -24,10 +24,10 @@ export const HUB_SURFACE_CARD_CLASS =
   "flex flex-col overflow-hidden rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] transition-colors hover:border-neutral-400"
 
 export const HUB_TEMPLATE_LIBRARY_CARD_CLASS =
-  "group flex h-full flex-col overflow-hidden rounded-md border border-[#C4C4C4] bg-white transition-colors hover:border-black"
+  "group flex h-full flex-col overflow-hidden rounded-lg border border-[#C4C4C4] bg-white transition-colors hover:border-black"
 
 export const HUB_CITY_CHIP_PRIORITY_CLASS =
   "rounded-[12px] border border-black bg-white px-3 py-2 text-sm text-neutral-800 text-center transition-colors hover:border-black hover:bg-black hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
 
 export const HUB_CITY_CHIP_DIRECTORY_CLASS =
-  "rounded-md border border-black bg-white px-2.5 py-1 text-xs text-neutral-700 transition-colors hover:border-black hover:bg-black hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-neutral-900"
+  "rounded-lg border border-black bg-white px-2.5 py-1 text-xs text-neutral-700 transition-colors hover:border-black hover:bg-black hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-neutral-900"

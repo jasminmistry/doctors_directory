@@ -27,7 +27,7 @@ export function TreatmentForm({ filters, onChange, onClear }: FilterFormProps) {
           value={filters.concern || "all"}
           onValueChange={(v) => onChange("concern", v)}
         >
-          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-md">
+          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-lg">
             <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent>
@@ -49,7 +49,7 @@ export function TreatmentForm({ filters, onChange, onClear }: FilterFormProps) {
           value={filters.treatmentType || "all"}
           onValueChange={(v) => onChange("treatmentType", v)}
         >
-          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-md">
+          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-lg">
             <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent>
@@ -71,7 +71,7 @@ export function TreatmentForm({ filters, onChange, onClear }: FilterFormProps) {
           value={filters.treatmentArea || "all"}
           onValueChange={(v) => onChange("treatmentArea", v)}
         >
-          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-md">
+          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-lg">
             <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent>

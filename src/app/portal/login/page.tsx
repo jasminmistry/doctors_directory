@@ -106,7 +106,7 @@ export default function PortalLoginPage() {
           </p>
         </div>
 
-        <div className="p-6 relative mb-2 bg-white border-b border-t-0 border-[#C4C4C4] md:border-t rounded-md md:border md:border-(--alto)">
+        <div className="p-6 relative mb-2 bg-white border-b border-t-0 border-[#C4C4C4] md:border-t rounded-lg md:border md:border-(--alto)">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
@@ -122,7 +122,7 @@ export default function PortalLoginPage() {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                className="w-full px-3 py-2 text-base border rounded-lg bg-white"
                 placeholder="Your username"
               />
             </div>
@@ -141,7 +141,7 @@ export default function PortalLoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                className="w-full px-3 py-2 text-base border rounded-lg bg-white"
                 placeholder="Your password"
               />
             </div>
@@ -193,7 +193,7 @@ export default function PortalLoginPage() {
         </p>
 
         {isLocalhost && (
-          <div className="mt-6 rounded-md border border-dashed border-amber-400 bg-amber-50 p-4">
+          <div className="mt-6 rounded-lg border border-dashed border-amber-400 bg-amber-50 p-4">
             <p className="mb-3 text-center text-xs font-semibold uppercase tracking-wide text-amber-700">
               Dev quick login
             </p>
@@ -214,7 +214,7 @@ export default function PortalLoginPage() {
                     type="button"
                     onClick={() => devLogin(c.username)}
                     disabled={devLoading}
-                    className="w-full rounded-md border border-amber-300 bg-white px-3 py-2 text-left text-xs hover:bg-amber-100 disabled:opacity-50"
+                    className="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-left text-xs hover:bg-amber-100 disabled:opacity-50"
                   >
                     <span className="font-medium text-amber-900">{c.name || c.username}</span>
                     {c.slug && (

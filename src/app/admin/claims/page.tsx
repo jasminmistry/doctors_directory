@@ -224,7 +224,7 @@ export default function AdminClaimsPage() {
               key={tab.value}
               onClick={() => setFilter(tab.value)}
               className={[
-                'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+                'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                 filter === tab.value
                   ? 'bg-foreground text-background'
                   : 'bg-muted text-muted-foreground hover:text-foreground',
@@ -247,7 +247,7 @@ export default function AdminClaimsPage() {
                     <button
                       onClick={(e) => { e.stopPropagation(); handleMarkPaid(row) }}
                       disabled={markingPaid === row.id}
-                      className="px-2 py-1 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-700 font-medium disabled:opacity-50"
+                      className="px-2 py-1 text-xs rounded-lg bg-gray-900 text-white hover:bg-gray-700 font-medium disabled:opacity-50"
                     >
                       {markingPaid === row.id ? 'Updating…' : 'Mark as Paid'}
                     </button>
@@ -258,7 +258,7 @@ export default function AdminClaimsPage() {
                     <button
                       onClick={(e) => { e.stopPropagation(); handleReprovision(row) }}
                       disabled={reprovisioning === row.id}
-                      className="px-2 py-1 text-xs rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium disabled:opacity-50"
+                      className="px-2 py-1 text-xs rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium disabled:opacity-50"
                     >
                       {reprovisioning === row.id ? 'Provisioning…' : 'Reprovision'}
                     </button>

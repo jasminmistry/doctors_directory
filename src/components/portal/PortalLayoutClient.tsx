@@ -83,7 +83,7 @@ export function PortalLayoutClient({ children, entityType, entityName, plan }: P
           <button
             type="button"
             onClick={() => setIsMobileNavOpen((o) => !o)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-300 text-gray-600"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-300 text-gray-600"
             aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileNavOpen}
           >

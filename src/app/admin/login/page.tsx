@@ -55,7 +55,7 @@ export default function AdminLoginPage() {
           <p className="mt-1.5 text-sm text-gray-500">Access your Consentz dashboard</p>
         </div>
 
-        <div className="p-6 bg-white border border-[#C4C4C4] rounded-md">
+        <div className="p-6 bg-white border border-[#C4C4C4] rounded-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="username" className="mb-2 block text-base font-medium text-black">
@@ -68,7 +68,7 @@ export default function AdminLoginPage() {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                className="w-full px-3 py-2 text-base border rounded-lg bg-white"
                 placeholder="Your username"
               />
             </div>
@@ -84,7 +84,7 @@ export default function AdminLoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                className="w-full px-3 py-2 text-base border rounded-lg bg-white"
                 placeholder="Your password"
               />
             </div>
