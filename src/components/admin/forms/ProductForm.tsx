@@ -93,7 +93,7 @@ function TagListField({
       {items.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {items.map((item, i) => (
-            <span key={i} className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md">
+            <span key={i} className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-lg">
               {item}
               <button onClick={() => remove(i)} className="text-gray-400 hover:text-gray-600 ml-0.5">
                 <X className="h-2.5 w-2.5" />
@@ -223,7 +223,7 @@ export function ProductForm() {
           ) : (
             <div className="flex flex-col justify-end">
               <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
-              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
+              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{data.slug}</code>
             </div>
           )}
           <Field label="Brand">

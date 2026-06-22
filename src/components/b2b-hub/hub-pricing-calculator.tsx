@@ -52,7 +52,7 @@ export function HubPricingCalculator() {
             type="button"
             onClick={() => setPeriod(value)}
             className={cn(
-              "rounded-md px-4 py-2 text-sm font-medium capitalize transition-colors",
+              "rounded-lg px-4 py-2 text-sm font-medium capitalize transition-colors",
               period === value
                 ? "bg-[#111111] text-white"
                 : "text-[#374151] hover:bg-[#F3F4F6]"

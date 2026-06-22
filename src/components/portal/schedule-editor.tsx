@@ -72,7 +72,7 @@ export function ScheduleEditor({ value, onChange, disabled }: Props) {
                 value={day.startTime}
                 disabled={disabled}
                 onChange={(e) => update(i, 'startTime', e.target.value)}
-                className="rounded-md border border-gray-200 px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 disabled:opacity-50"
+                className="rounded-lg border border-gray-200 px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 disabled:opacity-50"
               />
               <span className="text-xs text-gray-400">to</span>
               <input
@@ -80,7 +80,7 @@ export function ScheduleEditor({ value, onChange, disabled }: Props) {
                 value={day.endTime}
                 disabled={disabled}
                 onChange={(e) => update(i, 'endTime', e.target.value)}
-                className="rounded-md border border-gray-200 px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 disabled:opacity-50"
+                className="rounded-lg border border-gray-200 px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 disabled:opacity-50"
               />
             </div>
           ) : (

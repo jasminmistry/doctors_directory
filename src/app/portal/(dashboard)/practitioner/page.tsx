@@ -75,7 +75,7 @@ export default function PortalPractitionerPage() {
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
       {/* Subscription card */}
       {subscription && (
-        <div className="rounded-md border border-gray-200 bg-white p-5">
+        <div className="rounded-lg border border-gray-200 bg-white p-5">
           <h2 className="text-sm font-semibold text-black uppercase tracking-wide mb-4">Subscription</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div>

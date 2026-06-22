@@ -76,8 +76,8 @@ export function HubCqcReadinessScore() {
                 }
                 className={
                   answers[index] === "yes"
-                    ? "rounded-md bg-[#111111] px-4 py-2 text-sm font-medium text-white"
-                    : "rounded-md border border-[#D1D5DB] bg-white px-4 py-2 text-sm font-medium text-[#374151]"
+                    ? "rounded-lg bg-[#111111] px-4 py-2 text-sm font-medium text-white"
+                    : "rounded-lg border border-[#D1D5DB] bg-white px-4 py-2 text-sm font-medium text-[#374151]"
                 }
               >
                 Yes
@@ -93,8 +93,8 @@ export function HubCqcReadinessScore() {
                 }
                 className={
                   answers[index] === "no"
-                    ? "rounded-md bg-[#111111] px-4 py-2 text-sm font-medium text-white"
-                    : "rounded-md border border-[#D1D5DB] bg-white px-4 py-2 text-sm font-medium text-[#374151]"
+                    ? "rounded-lg bg-[#111111] px-4 py-2 text-sm font-medium text-white"
+                    : "rounded-lg border border-[#D1D5DB] bg-white px-4 py-2 text-sm font-medium text-[#374151]"
                 }
               >
                 No

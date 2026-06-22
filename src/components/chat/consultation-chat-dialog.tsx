@@ -363,7 +363,7 @@ export function ConsultationChatDialog({
           </div>
           <button
             onClick={handleClose}
-            className="ml-2 shrink-0 rounded-md p-1 text-gray-400 hover:text-gray-600 transition-colors"
+            className="ml-2 shrink-0 rounded-lg p-1 text-gray-400 hover:text-gray-600 transition-colors"
             aria-label="Close chat"
           >
             <X className="h-4 w-4" />
@@ -386,7 +386,7 @@ export function ConsultationChatDialog({
               </p>
               <a
                 href={`/directory/account/login?next=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname.replace(/^\/directory/, '') || '/' : '/')}`}
-                className="inline-flex h-9 items-center justify-center rounded-md bg-black px-4 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
+                className="inline-flex h-9 items-center justify-center rounded-lg bg-black px-4 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
               >
                 Sign in / Create account
               </a>

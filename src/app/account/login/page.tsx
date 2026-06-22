@@ -149,7 +149,7 @@ export default function AccountLoginPage() {
           <p className="mt-1.5 text-sm text-slate-600">{subtitles[step]}</p>
         </div>
 
-        <div className="p-6 bg-white border border-[#C4C4C4] rounded-md">
+        <div className="p-6 bg-white border border-[#C4C4C4] rounded-lg">
 
           {/* Login */}
           {step === 'login' && (
@@ -159,7 +159,7 @@ export default function AccountLoginPage() {
                 <input
                   id="email" type="email" required autoComplete="email"
                   value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                  className="w-full px-3 py-2 text-base border rounded-lg bg-white"
                   placeholder="you@example.com"
                 />
               </div>
@@ -175,7 +175,7 @@ export default function AccountLoginPage() {
                   <input
                     id="password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password"
                     value={password} onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-2 pr-10 text-base border rounded-md bg-white"
+                    className="w-full px-3 py-2 pr-10 text-base border rounded-lg bg-white"
                     placeholder="••••••••"
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)}
@@ -207,7 +207,7 @@ export default function AccountLoginPage() {
                   <input
                     id="reg-firstname" type="text" required autoComplete="given-name"
                     value={firstName} onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                    className="w-full px-3 py-2 text-base border rounded-lg bg-white"
                     placeholder="Jane"
                   />
                 </div>
@@ -216,7 +216,7 @@ export default function AccountLoginPage() {
                   <input
                     id="reg-lastname" type="text" autoComplete="family-name"
                     value={lastName} onChange={(e) => setLastName(e.target.value)}
-                    className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                    className="w-full px-3 py-2 text-base border rounded-lg bg-white"
                     placeholder="Smith"
                   />
                 </div>
@@ -226,7 +226,7 @@ export default function AccountLoginPage() {
                 <input
                   id="reg-email" type="email" required autoComplete="email"
                   value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                  className="w-full px-3 py-2 text-base border rounded-lg bg-white"
                   placeholder="you@example.com"
                 />
               </div>
@@ -236,7 +236,7 @@ export default function AccountLoginPage() {
                   <input
                     id="reg-password" type={showPassword ? 'text' : 'password'} required autoComplete="new-password"
                     minLength={8} value={password} onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-2 pr-10 text-base border rounded-md bg-white"
+                    className="w-full px-3 py-2 pr-10 text-base border rounded-lg bg-white"
                     placeholder="Min. 8 characters"
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)}
@@ -250,7 +250,7 @@ export default function AccountLoginPage() {
                 <input
                   id="reg-confirm" type={showPassword ? 'text' : 'password'} required autoComplete="new-password"
                   value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                  className="w-full px-3 py-2 text-base border rounded-lg bg-white"
                   placeholder="••••••••"
                 />
               </div>
@@ -275,7 +275,7 @@ export default function AccountLoginPage() {
                 <input
                   id="forgot-email" type="email" required autoComplete="email"
                   value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                  className="w-full px-3 py-2 text-base border rounded-lg bg-white"
                   placeholder="you@example.com"
                 />
               </div>
@@ -299,7 +299,7 @@ export default function AccountLoginPage() {
                   id="reset-otp" type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6}
                   required autoFocus autoComplete="one-time-code"
                   value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  className="w-full px-3 py-2.5 text-center text-xl tracking-[0.5em] font-mono border rounded-md bg-white"
+                  className="w-full px-3 py-2.5 text-center text-xl tracking-[0.5em] font-mono border rounded-lg bg-white"
                   placeholder="000000"
                 />
               </div>
@@ -323,7 +323,7 @@ export default function AccountLoginPage() {
                   <input
                     id="new-pw" type={showNewPassword ? 'text' : 'password'} required autoComplete="new-password"
                     minLength={8} value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-3 py-2 pr-10 text-base border rounded-md bg-white"
+                    className="w-full px-3 py-2 pr-10 text-base border rounded-lg bg-white"
                     placeholder="Min. 8 characters"
                   />
                   <button type="button" onClick={() => setShowNewPassword(!showNewPassword)}
@@ -337,7 +337,7 @@ export default function AccountLoginPage() {
                 <input
                   id="confirm-new-pw" type={showNewPassword ? 'text' : 'password'} required autoComplete="new-password"
                   value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)}
-                  className="w-full px-3 py-2 text-base border rounded-md bg-white"
+                  className="w-full px-3 py-2 text-base border rounded-lg bg-white"
                   placeholder="••••••••"
                 />
               </div>

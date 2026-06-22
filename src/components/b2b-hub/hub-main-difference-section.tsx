@@ -29,7 +29,7 @@ function CompetitorBrandMark({ name }: { name: string }) {
   const initial = name.trim().charAt(0).toUpperCase() || "?"
   return (
     <div
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#e8e4dc] text-sm font-bold text-[#111111]"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e8e4dc] text-sm font-bold text-[#111111]"
       aria-hidden
     >
       {initial}

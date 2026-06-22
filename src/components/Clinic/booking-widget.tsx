@@ -103,7 +103,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
 
   if (step === 3) {
     return (
-      <div className="rounded-md border border-gray-200 bg-white p-5 text-center space-y-3">
+      <div className="rounded-lg border border-gray-200 bg-white p-5 text-center space-y-3">
         <CheckCircle2 className="mx-auto h-10 w-10 text-green-500" />
         <h3 className="text-sm font-semibold text-gray-900">
           {bookedVideoCall ? 'Video call booked!' : 'Booking confirmed!'}

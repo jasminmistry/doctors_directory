@@ -7,11 +7,11 @@ import { HUB_CTA_FOOTER_LIGHT_CLASS } from "@/components/b2b-hub/hub-cta-buttons
 import { cn } from "@/lib/utils";
 
 const FOOTER_COLUMN_HEADING =
-  "font-bold text-[22px] leading-7 text-[#F3F4F6] font-inter mb-5";
+  "font-bold text-base leading-7 text-[#F3F4F6] font-inter mb-5";
 const FOOTER_WP_LINK =
-  "text-left w-full hover:text-white transition text-base font-semibold leading-6";
+  "block text-sm leading-6 text-white hover:opacity-70 transition";
 const FOOTER_DIRECTORY_LINK =
-  "block text-base font-semibold leading-6 hover:text-white transition";
+  "block text-sm leading-6 text-white hover:opacity-70 transition";
 
 const CONSENTZ_SOCIAL = {
   linkedin: "https://www.linkedin.com/company/consentz",
@@ -175,7 +175,7 @@ export function Footer() {
                 className={
                   isBusinessHub
                     ? HUB_CTA_FOOTER_LIGHT_CLASS
-                    : "inline-flex h-auto items-center justify-center rounded-lg bg-white px-4 py-2 text-base font-semibold text-black transition-colors hover:bg-gray-200 md:px-5 md:py-2 md:text-lg"
+                    : "w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-base font-medium text-black border border-gray-300 hover:bg-gray-100 transition-colors"
                 }
               >
                 BOOK DEMO
@@ -183,10 +183,26 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="my-6 border-t border-white md:my-12" />
+          <div className="my-6 md:my-12 border-t border-white/10" />
 
-          <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
-            <div>
+          <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+           
+             <div>
+
+              <div>
+              <img
+                src="/directory/images/Consentz Logo light.svg"
+                alt="Consentz"
+                width={140}
+                className="mb-6"
+              />
+              <p className="text-sm font-medium leading-6 text-white">
+                Find qualified healthcare and aesthetic practitioners in your
+                area. Verified profiles, authentic reviews, and regulatory
+                compliance.
+              </p>
+            </div>
+
               <h3 className={FOOTER_COLUMN_HEADING}>Contacts</h3>
               <div className="space-y-2 text-sm">
                 <p className="flex items-center gap-2">
@@ -209,7 +225,7 @@ export function Footer() {
                 </p>
               </div>
             </div>
-
+            
             <div>
               <h3 className={FOOTER_COLUMN_HEADING}>Consentz vs</h3>
               <FooterLinkList items={CONSENTZ_VS_LINKS} baseUrl={baseUrl} />
@@ -224,40 +240,14 @@ export function Footer() {
               <h3 className={FOOTER_COLUMN_HEADING}>Features</h3>
               <FooterLinkList items={FEATURES_MARKETING_LINKS} baseUrl={baseUrl} />
             </div>
+            
 
-            <div>
-              <h3 className={FOOTER_COLUMN_HEADING}>Get the app</h3>
-              <a
-                href="https://apps.apple.com/us/app/consentz/id1292663553"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src="/directory/images/Consentz Iphone App.webp"
-                  alt="Download Consentz on the App Store"
-                  width={139}
-                />
-              </a>
-            </div>
           </div>
 
-          <div className="my-6 border-t border-white md:my-8" />
+          <div className="my-6 border-t border-white/10 md:my-8" />
 
-          <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
-            <div>
-              <img
-                src="/directory/images/Consentz Logo light.svg"
-                alt="Consentz"
-                width={180}
-                className="mb-6"
-              />
-              <p className="text-base font-semibold leading-6 text-white">
-                Find qualified healthcare and aesthetic practitioners in your
-                area. Verified profiles, authentic reviews, and regulatory
-                compliance.
-              </p>
-            </div>
-
+          <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+        
             <div>
               <h3 className={FOOTER_COLUMN_HEADING}>For Practitioners</h3>
               <ul className="space-y-3">
@@ -372,21 +362,40 @@ export function Footer() {
               </ul>
             </div>
           </div>
+
         </div>
       </footer>
 
-      <div className="border-t border-white bg-[var(--dune)] px-6 py-8">
-        <div className="mx-auto max-w-7xl">
-          <h3 className={`${FOOTER_COLUMN_HEADING} mb-4`}>Consentz Hub</h3>
-          <ul className="flex flex-wrap gap-x-6 gap-y-3">
-            {CONSENTZ_HUB_LINKS.map(([label, path]) => (
-              <li key={path}>
-                <Link href={path} className={FOOTER_DIRECTORY_LINK}>
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+      <div className="border-t border-white/10 bg-[var(--dune)]">
+        <div className="mx-auto max-w-7xl grid grid-cols-1 gap-6 px-6 py-8 lg:grid-cols-2 flex items-center">
+            
+            <div>
+              <h3 className={`${FOOTER_COLUMN_HEADING} mb-4`}>Consentz Hub</h3>
+              <ul className="flex flex-wrap gap-x-6 gap-y-3">
+                {CONSENTZ_HUB_LINKS.map(([label, path]) => (
+                  <li key={path}>
+                    <Link href={path} className={FOOTER_DIRECTORY_LINK}>
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="lg:justify-end flex">
+              {/* <h3 className={FOOTER_COLUMN_HEADING}>Get the app</h3> */}
+              <a
+                href="https://apps.apple.com/us/app/consentz/id1292663553"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="/directory/images/Download_on_the_App.svg"
+                  alt="Download Consentz on the App Store"
+                  width={139}
+                />
+              </a>
+            </div>
         </div>
       </div>
 
