@@ -455,6 +455,10 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 // }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
+  if (isRemovedClinicSlug(params.slug)) {
+    notFound();
+  }
+
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const canonicalUrl = `${baseUrl}/directory/clinics/${citySlug}/clinic/${params.slug}`;

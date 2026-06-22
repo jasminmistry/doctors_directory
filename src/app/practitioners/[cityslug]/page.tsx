@@ -22,6 +22,7 @@ import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { capitalize } from "@/lib/utils";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { getClinics, getEnrichedPractitioners } from "@/lib/sitemap-data";
+import { isRemovedPractitionerSlug } from "@/lib/directory-removals";
 import { DirectoryJsonLd } from "@/components/directory-json-ld";
 import {
   buildBreadcrumbListJsonLd,
@@ -64,7 +65,9 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );
   const cityClinics: Practitioner[] = practitioners.filter(
-    (p) => p.City?.toLowerCase() === normalizedCitySlug
+    (p) =>
+      p.City?.toLowerCase() === normalizedCitySlug &&
+      !isRemovedPractitionerSlug(p.practitioner_name)
   );
   const hasCityPractitioners = cityClinics.length > 0;
   const rankedCityPractitioners = buildPractitionerRankedEntries(cityClinics, 5);
@@ -154,8 +157,10 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
             </div>
           )}
 
-          <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7flex flex-col sm:flex-row justify-center w-full md:gap-10">
+          <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7 flex flex-col sm:flex-row justify-center w-full md:gap-10 px-4 md:px-0">
+            <div className="hidden sm:block">
             <CollectionsFilter pageType="Practitioner" />
+            </div>
             <div className="flex-1 min-w-0">
               {hasCityPractitioners ? (
                 <ItemsGrid items={cityClinics} />
