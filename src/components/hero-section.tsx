@@ -55,7 +55,7 @@ export function HeroSection() {
         >
           {/* Clinic / Patient switcher */}
           <div className="flex-1 flex items-center flex-col justify-center w-full ">
-            <span className="block text-xs pt-4 mb-[-10px]">I AM A</span>
+            <span className="block font-semibold text-xs pt-4 mb-[-10px]">I AM A</span>
             <div className="flex justify-center pt-4 pb-3">
               <div className="inline-flex items-center bg-white border rounded-full p-1 gap-0.5">
                 <button
