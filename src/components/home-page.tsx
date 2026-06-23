@@ -824,6 +824,11 @@ const specialists = [
     image: "directory/images/Wellness Specialist.webp",
     url: "/treatments/massage",
   },
+  {
+    name: "Aqualyx",
+    image: "directory/images/Aqualyx.png",
+    url: "/treatments/aqualyx",
+  },
 ];
 
 const treatments = [
@@ -833,14 +838,14 @@ const treatments = [
     url: "/treatments/facial-treatments",
   },
   {
-    name: "Massage",
-    image: "directory/treatments/massage.webp",
-    url: "/treatments/massage",
+    name: "Dermapen Treatment",
+    image: "directory/treatments/dermapen.webp",
+    url: "/treatments/dermapen-treatment",
   },
   {
-    name: "Lips",
-    image: "directory/treatments/lips.webp",
-    url: "/treatments/lips",
+    name: "Botox",
+    image: "directory/treatments/botox.webp",
+    url: "/treatments/botox",
   },
   {
     name: "Skin",
@@ -851,6 +856,11 @@ const treatments = [
     name: "Hairline",
     image: "directory/images/Hairline Treatment.webp",
     url: "/treatments/hair-treatments",
+  },
+  {
+    name: "Acne",
+    image: "directory/images/acne.webp",
+    url: "/treatments/acne",
   },
 ];
 
@@ -917,11 +927,25 @@ export default function HomePage({
 
   return (
     <main>
-      <div className="absolute inset-0 h-100vh overflow-hidden z-[-1]">
-        <MeshBackground style={{ minHeight: "100vh" }} />
-      </div>
+      <div className="relative inset-0 overflow-hidden">
+        
+        <MeshBackground 
+        className="h-full"
+          noiseOpacity={1.1}
+          noiseTileSize={200}
+        />
+        <div className="relative z-3">
+          <HeroSection/>
+        </div> 
 
-      <HeroSection />
+        <img
+          src="/directory/images/wawes.png" 
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover z-2 opacity-25"
+        />
+
+      </div>
+      
       <section
         className="bg-white-50 py-15 md:py-20"
         aria-labelledby="specialists-heading"
@@ -933,7 +957,7 @@ export default function HomePage({
           <h2 className="text-xl md:text-4xl font-bold text-center mb-16">
             Contact a Specialist
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 align-items-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 align-items-center">
             {specialists.map((specialist, index) => (
               <article key={index} className="flex flex-col items-center gap-4">
                 <Link
@@ -1082,7 +1106,7 @@ export default function HomePage({
             </h2>
           </div>
           <div className="relative flex flex-col items-center justify-center">
-            <div className="mb-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 justify-items-center items-center gap-4 pb-4 w-full">
+            <div className="mb-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 justify-items-center items-center gap-4 pb-4 w-full">
               {treatments.map((treatment, index) => (
                 <article key={index} className="flex-shrink-0">
                   <div

@@ -68,7 +68,8 @@ export default function Header() {
     !isBusinessHub;
 
   return (
-    <header className="bg-[var(--primary-bg-color)] sticky top-0 z-40 shadow-sm">
+    <header
+      className="bg-[var(--primary-bg-color)] sticky top-0 z-40 shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-start md:justify-between">
         
         <div className="font-bold text-xl">
