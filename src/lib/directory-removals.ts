@@ -3,6 +3,7 @@ const REMOVED_CLINIC_SLUGS = new Set([
   "skinmedic",
   "dr-dan-dhunna-cosmetic-clinic-solihull",
   "dorset-trichology",
+  "emma-lock-aesthetics-and-skin-clinic",
 ])
 
 const REMOVED_PRACTITIONER_SLUGS = new Set(["dr-dan-dhunna", "gina-lourens"])
