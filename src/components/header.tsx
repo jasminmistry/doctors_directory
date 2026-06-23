@@ -68,16 +68,16 @@ export default function Header() {
     !isBusinessHub;
 
   return (
-    <header className="sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-center md:justify-between">
+    <header className="bg-[var(--primary-bg-color)] sticky top-0 z-40 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-start md:justify-between">
+        
         <div className="font-bold text-xl">
           <Link href="/" className="inline-block cursor-pointer" aria-label="Go to directory home">
             <img
-              src="/directory/images/Consentz Logo.webp"
-              alt="Logo"
-              width={140}
-              className="cursor-pointer"
-            />
+                src="/directory/images/Consentz Logo.webp"
+                alt="Logo"
+                className="w-[120px] md:w-[180px] h-auto cursor-pointer"
+              />
           </Link>
         </div>
 
@@ -194,7 +194,7 @@ export default function Header() {
 
         <div className="md:hidden">
           <button
-            className="absolute top-2 left-2 mt-2 ml-1"
+            className="absolute top-1 right-2 mt-2 ml-1"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >

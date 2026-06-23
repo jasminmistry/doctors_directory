@@ -918,30 +918,7 @@ export default function HomePage({
   return (
     <main>
       <div className="absolute inset-0 h-100vh overflow-hidden z-[-1]">
-        <MeshBackground />
-
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: "url('/directory/images/wawes.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            zIndex: 1,
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: "url('/directory/images/noaise.avifa')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            zIndex: 2,
-            pointerEvents: "none",
-          }}
-        />
+        <MeshBackground style={{ minHeight: "100vh" }} />
       </div>
 
       <HeroSection />
