@@ -4,6 +4,60 @@ import { getCoreAvailability, isCoreConfigured } from '@/lib/core-api'
 import { COOKIE_TOKEN } from '@/lib/auth'
 import { isClinicScheduleConfigured, SCHEDULE_NOT_CONFIGURED_RESPONSE } from '@/lib/schedule-check'
 
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const
+
+interface DaySchedule {
+  day: string
+  startTime: string
+  endTime: string
+  enabled: boolean
+}
+
+function computeLocalSlots(
+  scheduleJson: string,
+  date: string,
+  practitionerId: number,
+  practitionerName: string,
+) {
+  let schedule: DaySchedule[]
+  try {
+    schedule = JSON.parse(scheduleJson)
+  } catch {
+    return null
+  }
+
+  const d = new Date(`${date}T00:00:00`)
+  const dayName = DAY_NAMES[d.getDay()]
+  const entry = schedule.find((s) => s.day === dayName && s.enabled)
+  if (!entry) return { available: [], slot_duration: 30 }
+
+  const [startH, startM] = entry.startTime.split(':').map(Number)
+  const [endH, endM] = entry.endTime.split(':').map(Number)
+  const startMin = startH * 60 + startM
+  const endMin = endH * 60 + endM
+  const slotDuration = 30
+
+  const slots = []
+  for (let m = startMin; m + slotDuration <= endMin; m += slotDuration) {
+    const h = Math.floor(m / 60)
+    const min = m % 60
+    const hh = String(h).padStart(2, '0')
+    const mm = String(min).padStart(2, '0')
+    const ampm = h < 12 ? 'AM' : 'PM'
+    const h12 = h % 12 === 0 ? 12 : h % 12
+    const time12 = `${h12}:${mm} ${ampm}`
+    slots.push({
+      time: `${hh}:${mm}`,
+      time_12h: time12,
+      datetime: `${date} ${hh}:${mm}:00`,
+      practitioner_id: practitionerId,
+      practitioner: practitionerName,
+    })
+  }
+
+  return { available: slots, slot_duration: slotDuration }
+}
+
 export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
   const date = req.nextUrl.searchParams.get('date')
   console.log(`[book/availability] slug=${params.slug} date=${date}`)
@@ -30,7 +84,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     return NextResponse.json({ available: [], slot_duration: 30 })
   }
   if (!isCoreConfigured()) {
-    console.log('[book/availability] Core not configured (CONSENTZ_AUTH_API_URL missing?) — returning empty')
+    console.log('[book/availability] Core not configured — returning empty')
     return NextResponse.json({ available: [], slot_duration: 30 })
   }
 
@@ -44,6 +98,28 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     console.error('[book/availability] Core API error:', err)
     const status = (err as { status?: number }).status
     if (status === 404) return NextResponse.json({ available: [], slot_duration: 30 })
+
+    // Core returned auth error or is unreachable — fall back to local schedule
+    if (status === 401 || status === 403 || !status) {
+      console.log('[book/availability] Core auth failed — falling back to local schedule')
+      const claim = await prisma.claimRequest.findFirst({
+        where: { clinicId: clinic.id, status: 'approved', scheduleConfigured: true },
+        select: { scheduleJson: true, consentzUserId: true, consentzUsername: true },
+        orderBy: { createdAt: 'desc' },
+      })
+
+      if (claim?.scheduleJson) {
+        const practitionerId = claim.consentzUserId ?? 0
+        const practitionerName = claim.consentzUsername ?? ''
+        const result = computeLocalSlots(claim.scheduleJson, date, practitionerId, practitionerName)
+        if (result) {
+          console.log(`[book/availability] local fallback returned ${result.available.length} slots`)
+          return NextResponse.json(result)
+        }
+      }
+      return NextResponse.json({ available: [], slot_duration: 30 })
+    }
+
     return NextResponse.json({ error: 'Failed to fetch availability' }, { status: 502 })
   }
 }

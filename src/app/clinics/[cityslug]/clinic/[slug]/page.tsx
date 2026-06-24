@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getConsentzAuthUrl } from "@/lib/auth";
 import { PageViewTracker } from "@/components/tracking/page-view-tracker";
 import { Star, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -280,9 +279,6 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           clinic={clinic}
           clinicName={dbClinic.name ?? slug}
           hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
-          consentzSsoUrl={dbClinic.coreClinicId ? (() => {
-            try { return new URL(getConsentzAuthUrl()).origin + '/admin/directory-sso' } catch { return undefined }
-          })() : undefined}
         />
 
 

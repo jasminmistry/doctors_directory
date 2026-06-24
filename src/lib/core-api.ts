@@ -1,23 +1,35 @@
-import { getConsentzAuthUrl } from '@/lib/auth'
+import { getConsentzAuthUrl, getApplicationId } from '@/lib/auth'
 
 function getCoreLiteBase(): string {
   return `${new URL(getConsentzAuthUrl()).origin}/api/core-lite`
 }
 
-function coreLiteApi(
+async function coreLiteApi(
   path: string,
   options: { method?: string; body?: unknown; sessionToken?: string } = {},
 ): Promise<Response> {
   const { method = 'GET', body, sessionToken } = options
-  return fetch(`${getCoreLiteBase()}${path}`, {
+  const url = `${getCoreLiteBase()}${path}`
+  const appId = getApplicationId()
+  console.log(`[core-lite] ${method} ${url}  appId=${appId} hasToken=${!!sessionToken}`)
+  const res = await fetch(url, {
     method,
     cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
+      'X-APPLICATION-ID': appId,
       ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),
     },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   })
+  if (!res.ok) {
+    const clone = res.clone()
+    const errBody = await clone.text().catch(() => '')
+    console.error(`[core-lite] ${method} ${url} → HTTP ${res.status}  body=${errBody}`)
+  } else {
+    console.log(`[core-lite] ${method} ${url} → HTTP ${res.status}`)
+  }
+  return res
 }
 
 export interface CoreSlot {

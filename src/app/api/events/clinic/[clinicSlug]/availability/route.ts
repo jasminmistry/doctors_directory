@@ -33,10 +33,17 @@ export async function GET(
 
     const qs = new URLSearchParams({ eventId, date, timezone })
     const url = `${getCoreLiteBase()}/clinics/${coreClinicId}/availability?${qs}`
-    const res = await fetch(url, { cache: 'no-store', headers: { 'Content-Type': 'application/json' } })
+    const appId = process.env.CONSENTZ_APPLICATION_ID ?? 'admin'
+    console.log(`[events/clinic/availability] GET ${url}  appId=${appId}`)
+    const res = await fetch(url, {
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': appId },
+    })
+    console.log(`[events/clinic/availability] Core HTTP ${res.status}`)
 
     if (!res.ok) {
-      console.error(`[events/clinic/availability] Core HTTP ${res.status}`)
+      const body = await res.text().catch(() => '')
+      console.error(`[events/clinic/availability] Core error body: ${body}`)
       return NextResponse.json({ available: [], slot_duration: 30 })
     }
 

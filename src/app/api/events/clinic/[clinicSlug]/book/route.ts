@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
+import { getPatientClaims } from '@/lib/patient-auth'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -41,14 +42,30 @@ export async function POST(
     }
 
     const url = `${getCoreLiteBase()}/clinics/${coreClinicId}/bookings`
+    const appId = process.env.CONSENTZ_APPLICATION_ID ?? 'admin'
+    const requestPayload = JSON.stringify(parsed.data)
+    console.log(`[events/clinic/book] ── REQUEST ──────────────────────────`)
+    console.log(`[events/clinic/book]  URL     : POST ${url}`)
+    console.log(`[events/clinic/book]  Headers : X-APPLICATION-ID=${appId}  X-SESSION-TOKEN=none (public patient request)`)
+    console.log(`[events/clinic/book]  Payload : ${requestPayload}`)
+    console.log(`[events/clinic/book] ─────────────────────────────────────`)
     const res = await fetch(url, {
       method: 'POST',
       cache: 'no-store',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(parsed.data),
+      headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': appId },
+      body: requestPayload,
     })
 
     const body = await res.text()
+    console.log(`[events/clinic/book] ── RESPONSE ─────────────────────────`)
+    console.log(`[events/clinic/book]  Status  : ${res.status}`)
+    console.log(`[events/clinic/book]  Body    : ${body}`)
+    if (res.status === 401) {
+      console.error(`[events/clinic/book]  REASON  : Core requires X-SESSION-TOKEN for POST /bookings.`)
+      console.error(`[events/clinic/book]            This is a patient request — no session token available.`)
+      console.error(`[events/clinic/book]            Core must allow X-APPLICATION-ID-only access to this endpoint.`)
+    }
+    console.log(`[events/clinic/book] ─────────────────────────────────────`)
 
     if (!res.ok) {
       if (res.status === 409) {
@@ -57,7 +74,6 @@ export async function POST(
       if (res.status === 400) {
         return NextResponse.json({ error: 'Invalid booking data' }, { status: 400 })
       }
-      console.error(`[events/clinic/book] Core HTTP ${res.status}: ${body}`)
       return NextResponse.json({ error: 'Booking failed — please try again' }, { status: 502 })
     }
 
@@ -74,6 +90,13 @@ export async function POST(
         slot_end: string
         video_call: { join_url: string | null } | null
       }
+
+      // Prefer logged-in patient session; fall back to matching by booking email
+      const sessionClaims = getPatientClaims(req)
+      const patient = sessionClaims
+        ? await prisma.patient.findUnique({ where: { id: sessionClaims.id }, select: { id: true } })
+        : await prisma.patient.findUnique({ where: { email: parsed.data.patient_email }, select: { id: true } })
+
       await prisma.booking.upsert({
         where: { coreBookingId: String(b.id) },
         create: {
@@ -88,11 +111,13 @@ export async function POST(
           syncedFromCore: true,
           lastSyncedAt: new Date(),
           videoCallJoinUrl: b.video_call?.join_url ?? null,
+          ...(patient ? { patientId: patient.id } : {}),
         },
         update: {
           status: 'confirmed',
           lastSyncedAt: new Date(),
           videoCallJoinUrl: b.video_call?.join_url ?? null,
+          ...(patient ? { patientId: patient.id } : {}),
         },
       })
     }

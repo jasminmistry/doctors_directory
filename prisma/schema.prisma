@@ -721,6 +721,7 @@ model ClaimRequest {
   mustResetPassword  Boolean @default(false)
   scheduleWizardDone  Boolean @default(false)
   scheduleConfigured  Boolean @default(false)
+  scheduleJson        String? @db.Text
 
   // Consentz link token (used when claimant already has a Consentz account)
   linkToken          String?   @unique @db.VarChar(80)

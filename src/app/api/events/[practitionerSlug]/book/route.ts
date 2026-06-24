@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
+import { getPatientClaims } from '@/lib/patient-auth'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -48,12 +49,15 @@ export async function POST(
     }
 
     const url = `${getCoreLiteBase()}/clinics/${coreClinicId}/bookings`
+    const appId = process.env.CONSENTZ_APPLICATION_ID ?? 'admin'
+    console.log(`[events/book] POST ${url}  appId=${appId}`)
     const res = await fetch(url, {
       method: 'POST',
       cache: 'no-store',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': appId },
       body: JSON.stringify(parsed.data),
     })
+    console.log(`[events/book] Core HTTP ${res.status}`)
 
     const body = await res.text()
 
@@ -64,7 +68,7 @@ export async function POST(
       if (res.status === 400) {
         return NextResponse.json({ error: 'Invalid booking data' }, { status: 400 })
       }
-      console.error(`[events/book] Core HTTP ${res.status}: ${body}`)
+      console.error(`[events/book] Core error body: ${body}`)
       return NextResponse.json({ error: 'Booking failed — please try again' }, { status: 502 })
     }
 
@@ -81,6 +85,12 @@ export async function POST(
         slot_end: string
         video_call: { join_url: string | null } | null
       }
+
+      const sessionClaims = getPatientClaims(req)
+      const patient = sessionClaims
+        ? await prisma.patient.findUnique({ where: { id: sessionClaims.id }, select: { id: true } })
+        : await prisma.patient.findUnique({ where: { email: parsed.data.patient_email }, select: { id: true } })
+
       await prisma.booking.upsert({
         where: { coreBookingId: String(b.id) },
         create: {
@@ -95,11 +105,13 @@ export async function POST(
           syncedFromCore: true,
           lastSyncedAt: new Date(),
           videoCallJoinUrl: b.video_call?.join_url ?? null,
+          ...(patient ? { patientId: patient.id } : {}),
         },
         update: {
           status: 'confirmed',
           lastSyncedAt: new Date(),
           videoCallJoinUrl: b.video_call?.join_url ?? null,
+          ...(patient ? { patientId: patient.id } : {}),
         },
       })
     }

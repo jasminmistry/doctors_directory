@@ -30,10 +30,17 @@ export async function GET(
     }
 
     const url = `${getCoreLiteBase()}/clinics/${coreClinicId}/events`
-    const res = await fetch(url, { cache: 'no-store', headers: { 'Content-Type': 'application/json' } })
+    const appId = process.env.CONSENTZ_APPLICATION_ID ?? 'admin'
+    console.log(`[events] GET ${url}  appId=${appId}`)
+    const res = await fetch(url, {
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': appId },
+    })
+    console.log(`[events] Core HTTP ${res.status} for coreClinicId=${coreClinicId}`)
 
     if (!res.ok) {
-      console.error(`[events] Core HTTP ${res.status} for coreClinicId=${coreClinicId}`)
+      const body = await res.text().catch(() => '')
+      console.error(`[events] Core error body: ${body}`)
       return NextResponse.json({ events: [] })
     }
 

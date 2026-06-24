@@ -14,17 +14,15 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { OnlineDot } from "@/components/Clinic/online-dot";
-import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dialog";
 import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
   hasCoreCalendar?: boolean;
-  consentzSsoUrl?: string;
 }
 
-export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, consentzSsoUrl }: Readonly<ProfileHeaderProps>) {
+export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: Readonly<ProfileHeaderProps>) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
@@ -52,15 +50,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, con
           </Badge>
         </Link>
       )}
-      {clinic.claimed && consentzSsoUrl && (
-        <a
-          href={consentzSsoUrl}
-          className="absolute top-2 right-2 z-50 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground border border-border rounded-full px-3 py-1 bg-white md:bg-(--primary-bg-color) hover:bg-muted transition-colors"
-          title="Log in to manage this listing"
-        >
-          Manage listing
-        </a>
-      )}
+
       <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-start">
         {/* Left: avatar + info */}
         <div className="flex flex-row flex-wrap items-start gap-4 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0">
@@ -145,11 +135,13 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, con
           {clinic.claimed && (
             <ClinicOnlineStatus clinicSlug={clinic.slug ?? ''} />
           )}
-          <RequestConsultationDialog
-            pageType="clinic_page"
-            clinicSlug={clinic.slug ?? undefined}
+          <ConsultationChatDialog
+            clinicSlug={clinic.slug ?? ''}
+            clinicName={clinicName ?? practitionerName}
+            hasCoreCalendar={hasCoreCalendar}
             treatment={clinic.Treatments?.[0]}
             location={clinic.City}
+            pageType="clinic_page"
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
           />
           <Button
