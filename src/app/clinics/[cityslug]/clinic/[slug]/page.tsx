@@ -175,7 +175,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const dbCityClinics = await getClinicsByCity(normalizedCitySlug);
   const clinic = convertDbClinicToOldType(dbClinic);
   const cityClinics = dbCityClinics
-    .filter(c => c.slug !== slug)
+    .filter((c) => c.slug !== slug && !isRemovedClinicSlug(c.slug))
     .map(convertSearchClinicToOldType);
   const rankedCityClinics = buildClinicRankedEntries(cityClinics, 5);
   const uniqueTreatments = [
