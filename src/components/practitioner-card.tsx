@@ -261,7 +261,7 @@ export function PractitionerCard({
                 </div>
               </div>
 
-              <div className="flex min-h-[2.75rem] w-full items-center justify-center px-1">
+              <div className="flex min-h-[2.75rem] w-full items-center justify-center gap-1 px-1">
                 <span className="line-clamp-2 text-center text-base font-semibold leading-snug text-primary">
                   {isClinic(practitioner)
                     ? practitionerName
@@ -274,20 +274,19 @@ export function PractitionerCard({
                         )
                         .join(" ")}
                 </span>
+                {(isClinic(practitioner) || isPractitioner(practitioner)) && (
+                  <div className="flex shrink-0 items-center gap-1">
+                    <VerifiedBadge
+                      idVerified={(practitioner as any).idVerified}
+                      manualVerified={(practitioner as any).manualVerified}
+                      verified={(practitioner as any).verified}
+                    />
+                    {practitioner.slug && (
+                      <OnlineDot slug={practitioner.slug} />
+                    )}
+                  </div>
+                )}
               </div>
-
-              {(isClinic(practitioner) || isPractitioner(practitioner)) && (
-                <div className="mb-1 flex min-h-[1.25rem] items-center justify-center gap-1">
-                  <VerifiedBadge
-                    idVerified={(practitioner as any).idVerified}
-                    manualVerified={(practitioner as any).manualVerified}
-                    verified={(practitioner as any).verified}
-                  />
-                  {practitioner.slug && (
-                    <OnlineDot slug={practitioner.slug} />
-                  )}
-                </div>
-              )}
 
               <div className="mb-2 flex min-h-[1.25rem] w-full items-center justify-center px-1">
                 {"practitioner_name" in practitioner && practitioner.practitioner_title ? (
