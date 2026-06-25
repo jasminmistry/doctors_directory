@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { PageViewTracker } from "@/components/tracking/page-view-tracker";
-import { ArrowLeft, Star } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/components/Practitioner/profile-header";
 import { GoogleMapsEmbed } from "@/components/gmaps-embed";
@@ -23,6 +22,9 @@ import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { getPractitionerBySlug, getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 import { getAllTreatmentNames } from "@/lib/data-access/treatments";
+import { isRemovedPractitionerSlug } from "@/lib/directory-removals";
+import { DirectoryStarRating } from "@/components/directory-star-rating";
+import { PageViewTracker } from "@/components/tracking/page-view-tracker";
 import { EventBookingSection } from "@/components/Clinic/event-booking-section";
 
 function mergeBoxplotDataFromDict(
@@ -45,6 +47,10 @@ interface ProfilePageProps {
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const { slug } = params;
+
+  if (isRemovedPractitionerSlug(slug)) {
+    notFound();
+  }
 
   const [clinic, allPractitioners, uniqueTreatments] = await Promise.all([
     getPractitionerBySlug(slug),
@@ -131,28 +137,15 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                    </div>
                    <div className="order-1 lg:order-2 col-span-1 lg:col-span-4">
                      <div className="border border-gray-300 rounded-xl p-6">
-                       <div className="flex flex-row gap-2 pt-2 mb-4 items-center justify-center text-sm">
-                         <div className="inline-flex items-center gap-1">
-                           <div className="flex items-center">
-                             {Array.from({ length: 5 }, (_, i) => (
-                               <Star
-                                 key={i}
-                                 className={`h-4 w-4 ${
-                                   i < (practitioner.rating ?? 0)
-                                     ? "fill-black text-black"
-                                     : "/30"
-                                 }`}
-                               />
-                             ))}
-                           </div>
-                         </div>
-                         <span
-                           className="border-l border-black pl-2 underline"
-                           aria-label={`${practitioner.reviewCount} reviews`}
-                         >
-                           {practitioner.reviewCount ? practitioner.reviewCount+"+ Reviews Analysed" : "0"}
-                         </span>
-                       </div>
+                       <DirectoryStarRating
+                         reviewCount={practitioner.reviewCount ?? 0}
+                         reviewsLabel={
+                           practitioner.reviewCount
+                             ? `${practitioner.reviewCount}+ Reviews Analysed`
+                             : "0"
+                         }
+                         className="justify-center pt-2 mb-4"
+                       />
                        <div className="border-t border-gray-300 my-4"></div>
                        <div className="mb-4 flex items-center justify-center gap-2">
                          <h3 className="text-center text-lg font-semibold text-foreground">
@@ -258,6 +251,10 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 }
 
 export async function generateMetadata({ params }: ProfilePageProps) {
+  if (isRemovedPractitionerSlug(params.slug)) {
+    notFound();
+  }
+
   const clinic = await getPractitionerBySlug(params.slug)
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const canonicalSlug = decodeURIComponent(params.slug).toLowerCase();

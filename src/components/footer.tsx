@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Mail, Phone } from "lucide-react";
 import { HUB_CTA_FOOTER_LIGHT_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
 import { cn } from "@/lib/utils";
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 
 const FOOTER_COLUMN_HEADING =
   "font-bold text-base leading-7 text-[#F3F4F6] font-inter mb-5";
@@ -147,6 +148,7 @@ export function Footer() {
   const isBusinessHub = isBusinessHubPath(pathname);
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
+  const bookDemoHref = b2bBookDemoHref();
   const copyrightYear = new Date().getFullYear();
 
   return (
@@ -169,7 +171,7 @@ export function Footer() {
             </div>
             <div className="flex w-full justify-start pt-10 md:w-auto md:pt-0">
               <a
-                href={`${baseUrl}/book-demo/?source=${baseUrl}/`}
+                href={bookDemoHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={

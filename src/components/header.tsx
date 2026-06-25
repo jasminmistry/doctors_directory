@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SearchBar } from "@/components/search/search-bar";
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 
 type PatientInfo = { firstName: string; lastName: string; email: string }
 type PortalInfo = { entityType: 'clinic' | 'practitioner'; entityName: string; claimerEmail: string }
@@ -46,6 +47,7 @@ export default function Header() {
   }, [menuOpen]);
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com';
+  const bookDemoHref = b2bBookDemoHref();
 
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
   const pathWithoutDirectoryBase = normalizedPath.startsWith("/directory")

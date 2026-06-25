@@ -15,7 +15,7 @@ import ItemsGrid from "@/components/collectionGrid";
 import { readJsonFileSync } from "@/lib/json-cache"
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { cityMap, locations } from "@/lib/data";
-import { capitalize, decodeUnicodeEscapes, toUrlSlug } from "@/lib/utils";
+import { capitalize, decodeUnicodeEscapes } from "@/lib/utils";
 import { MoreItems } from "@/components/MoreItems";
 import { CityPageData } from "@/components/cityPageData";
 import { EmptyCityState } from "@/components/empty-city-state";
@@ -23,7 +23,7 @@ import { BestRankedBlock } from "@/components/best-ranked-block";
 import { CityPricingContext } from "@/components/city-pricing-context";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
 import { buildCityTreatmentPriceInsights } from "@/lib/city-pricing";
-import { getClinics } from "@/lib/sitemap-data";
+import { isRemovedClinicSlug } from "@/lib/directory-removals";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { DirectoryJsonLd } from "@/components/directory-json-ld";
 import {
@@ -39,6 +39,8 @@ interface ProfilePageProps {
     slug: string;
   };
 }
+
+export const dynamic = 'force-dynamic'
 
 const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
 const clinicIndex = new Map(
@@ -91,7 +93,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const displayCityName = capitalize(citySlug);
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
   const cityClinics: Clinic[] = clinics.filter(
-    (p) => p.City?.toLowerCase() === normalizedCitySlug
+    (p) => p.City?.toLowerCase() === normalizedCitySlug && !isRemovedClinicSlug(p.slug)
   );
   const cityData = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
@@ -250,13 +252,6 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
       </main>
     </>
   );
-}
-
-export function generateStaticParams() {
-  const cities = [...new Set(getClinics().map((clinic) => clinic.City).filter(Boolean))]
-  return cities.map((city) => ({
-    cityslug: toUrlSlug(String(city)),
-  }))
 }
 
 // export async function generateStaticParams() {
