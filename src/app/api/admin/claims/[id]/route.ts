@@ -251,8 +251,13 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         ])
       }
 
-      // Consentz-linked claims already have an account — skip provisioning
+      // Consentz-linked claims already have an account — skip provisioning but still notify
       if (claim.consentzUserId) {
+        await sendClaimApprovedEmail({
+          to: claim.claimerEmail,
+          clinicName: entityName,
+          plan: PLAN_LABELS[claim.selectedPlan ?? 'free'] ?? 'Free',
+        }).catch(err => console.error('[claim] sendClaimApprovedEmail (consentz-linked) failed:', err))
         return NextResponse.json({ success: true })
       }
 
@@ -265,6 +270,20 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         where: { id },
         data: { status: 'rejected', adminNotes: adminNotes ?? null, rejectedAt: new Date() },
       })
+
+      // Consentz-linked claims set clinic.claimed=true at link time (before admin approval),
+      // so rejection must undo that to allow the clinic to be claimed again.
+      if (claim.consentzClinicId && claim.clinicId) {
+        await prisma.clinic.update({
+          where: { id: claim.clinicId },
+          data: {
+            claimed:     false,
+            claimedAt:   null,
+            claimedPlan: null,
+            coreClinicId: null,
+          },
+        }).catch(err => console.error('[claim] Failed to reset clinic on Consentz-link rejection:', err))
+      }
 
       await sendClaimRejectedEmail({
         to: claim.claimerEmail,

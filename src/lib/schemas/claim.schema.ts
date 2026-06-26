@@ -49,6 +49,10 @@ export const consentzLinkSchema = z.object({
   consentzUserId:        z.number().int().positive(),
   consentzUsername:      z.string().min(1),
   consentzSessionToken:  z.string().nullable().optional(),
+  // HMAC-SHA256(DIRECTORY_LINK_SECRET, "{token}:{consentzClinicId}:{consentzUserId}")
+  // Optional for backwards compat; verified when present; should become required once
+  // ConsentzLive sends the field on every directoryLinkSubmit POST.
+  sig:                   z.string().optional(),
 })
 
 export type InitiateClaimInput = z.infer<typeof initiateClaimSchema>
