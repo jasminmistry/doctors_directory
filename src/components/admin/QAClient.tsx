@@ -343,7 +343,7 @@ console.log(failedTestMessages)
                   <CardTitle className="text-sm font-medium text-gray-500">Total Tests</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{report.numTotalTests}</div>
+                  <div className="text-3xl font-medium">{report.numTotalTests}</div>
                 </CardContent>
               </Card>
 
@@ -354,7 +354,7 @@ console.log(failedTestMessages)
                 <CardContent>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-600" />
-                    <div className="text-3xl font-bold text-green-600">{report.numPassedTests}</div>
+                    <div className="text-3xl font-medium text-green-600">{report.numPassedTests}</div>
                   </div>
                   <Badge variant="outline" className="mt-2 text-green-600 border-green-600">
                     {((report.numPassedTests / report.numTotalTests) * 100).toFixed(1)}% pass rate
@@ -369,7 +369,7 @@ console.log(failedTestMessages)
                 <CardContent>
                   <div className="flex items-center gap-2">
                     <XCircle className="w-5 h-5 text-red-600" />
-                    <div className="text-3xl font-bold text-red-600">{report.numFailedTests}</div>
+                    <div className="text-3xl font-medium text-red-600">{report.numFailedTests}</div>
                   </div>
                   <Badge variant="destructive" className="mt-2">
                     {((report.numFailedTests / report.numTotalTests) * 100).toFixed(1)}% failure rate
@@ -382,7 +382,7 @@ console.log(failedTestMessages)
                   <CardTitle className="text-sm font-medium text-gray-500">Test Suites</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{report.numTotalTestSuites}</div>
+                  <div className="text-3xl font-medium">{report.numTotalTestSuites}</div>
                   <div className="text-sm text-gray-500 mt-1">
                     {report.numPassedTestSuites} passed, {report.numFailedTestSuites} failed
                   </div>
@@ -396,7 +396,7 @@ console.log(failedTestMessages)
                 <CardContent>
                   <div className="flex items-center gap-2">
                     <Clock className="w-5 h-5 text-gray-600" />
-                    <div className="text-3xl font-bold">
+                    <div className="text-3xl font-medium">
                       {formatDuration(report.testResults.reduce((acc, suite) => acc + (suite.endTime - suite.startTime), 0))}
                     </div>
                   </div>
@@ -429,7 +429,7 @@ console.log(failedTestMessages)
             <Card className="flex flex-col space-y-4 p-4">
               <CardHeader>
                 <header className="space-y-4">
-                      <h1 className="text-4xl font-bold text-slate-800 tracking-tight">
+                      <h1 className="text-4xl font-medium text-slate-800 tracking-tight">
                         The Workflow 
                       </h1>
                       <p className="text-lg text-slate-600 leading-relaxed">
@@ -645,7 +645,7 @@ console.log(failedTestMessages)
                 
                 <AccordionItem value={suite[0]}>
                   <AccordionTrigger className="hover:no-underline">
-                    <div className="flex items-start text-lg font-bold">
+                    <div className="flex items-start text-lg font-medium">
                     {`${suite[0]}`}</div></AccordionTrigger>
 
                  <AccordionContent>

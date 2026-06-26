@@ -159,7 +159,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
         />
 
         <section className="mb-12">
-          <h2 className="mb-6 text-center text-2xl font-bold text-[#111111] md:text-3xl">
+          <h2 className="mb-6 text-center text-2xl font-medium text-[#111111] md:text-3xl">
             What&apos;s Included
           </h2>
           <div className="mx-auto grid max-w-[920px] grid-cols-1 gap-2.5 md:grid-cols-2">
@@ -168,7 +168,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
                 key={line}
                 className="flex items-center gap-3 rounded-xl bg-[#eef7f2] px-[18px] py-[14px]"
               >
-                <span className="shrink-0 text-sm font-bold text-[#1a6e45]">✓</span>
+                <span className="shrink-0 text-sm font-medium text-[#1a6e45]">✓</span>
                 <p className="text-base font-medium text-[#1a1a1a]">{line}</p>
               </div>
             ))}
@@ -176,12 +176,12 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
         </section>
 
         <section className="mx-auto mb-12 max-w-3xl text-center">
-          <h2 className="mb-4 text-2xl font-bold text-[#111111] md:text-3xl">Why You Need This</h2>
+          <h2 className="mb-4 text-2xl font-medium text-[#111111] md:text-3xl">Why You Need This</h2>
           <p className="text-base leading-relaxed text-[#1A1A1A]">{content.whyNeed}</p>
         </section>
 
         <section className="mx-auto mb-12 max-w-3xl text-center">
-          <h2 className="mb-6 text-2xl font-bold text-[#111111] md:text-3xl">What To Include</h2>
+          <h2 className="mb-6 text-2xl font-medium text-[#111111] md:text-3xl">What To Include</h2>
           <ul className="mx-auto flex w-fit max-w-full flex-col gap-3 text-left">
             {content.whatToInclude.map((item) => (
               <li key={item} className="flex gap-3 text-base leading-relaxed text-[#1A1A1A]">
@@ -193,7 +193,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
         </section>
 
         <section className="mb-12 rounded-2xl border border-[#E2DDD7] bg-[#faf8f5] p-8 text-center md:p-10 md:text-left">
-          <h2 className="mb-3 text-2xl font-bold text-[#111111]">Make It Digital With Consentz</h2>
+          <h2 className="mb-3 text-2xl font-medium text-[#111111]">Make It Digital With Consentz</h2>
           <p className="mx-auto mb-6 max-w-2xl text-base leading-relaxed text-[#1A1A1A] md:mx-0">
             {content.digitalPitch}
           </p>
@@ -262,8 +262,8 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
         />
 
         <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our latest blogs</h2>
-          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">Our latest blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-gray-600">
             Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay
             informed with our latest articles.
           </p>

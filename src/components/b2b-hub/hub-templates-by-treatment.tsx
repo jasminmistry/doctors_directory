@@ -11,7 +11,7 @@ export function HubTemplatesByTreatment() {
   return (
     <section className="border-t border-[#E5E7EB] bg-[#FAFAFA] px-4 py-10 sm:px-6">
       <div className="mx-auto max-w-[960px]">
-        <h2 className="mb-2 text-center text-xl font-bold text-[#111111] md:text-2xl">
+        <h2 className="mb-2 text-center text-xl font-medium text-[#111111] md:text-2xl">
           Browse Templates By Treatment
         </h2>
         <p className="mx-auto mb-8 max-w-[640px] text-center text-sm text-[#6B6B6B] md:text-base">

@@ -47,7 +47,7 @@ export function ScoreInfoTooltip({
     <div ref={wrapperRef} className="relative inline-flex">
       <button
         aria-label={`How the Consentz ${entityLabel} score is calculated`}
-        className="inline-flex cursor-help items-center justify-center rounded-full border border-gray-300 bg-white p-1.5 text-gray-700 transition-colors hover:border-black hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50"
+        className="inline-flex cursor-help items-center justify-center rounded-full border border-[#e0e0e0]  bg-white p-1.5 text-gray-700 transition-colors hover:border-black hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50"
         type="button"
         onPointerEnter={(e) => { lastPointerType.current = e.pointerType; if (e.pointerType === "mouse") setOpen(true) }}
         onPointerLeave={(e) => { if (e.pointerType === "mouse") setOpen(false) }}

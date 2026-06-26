@@ -13,7 +13,7 @@ export function HubCityOperatorWriteup({ cityTitle, sections }: Props) {
 
   return (
     <section className="mb-16">
-      <h2 className="mb-3 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px]">
+      <h2 className="mb-3 text-center text-[30px] font-medium tracking-[-0.02em] text-[#111111] md:text-[36px]">
         {toDisplayTitle(`Local context for ${cityTitle} operators`)}
       </h2>
       <p className="mx-auto mb-10 max-w-3xl text-center text-base text-[#6B6B6B] md:text-lg">

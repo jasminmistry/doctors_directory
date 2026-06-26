@@ -51,7 +51,7 @@ export function HubCompareFeatureTable({ id, competitorLabel }: Props) {
               <th className="px-3 py-3 text-sm font-semibold sm:px-6 sm:py-[18px] sm:text-base md:text-xl">
                 Feature
               </th>
-              <th className="w-[100px] bg-[#106057] px-2 py-3 text-center text-sm font-bold sm:w-[140px] sm:px-4 sm:py-[18px] sm:text-base md:w-[200px] md:text-xl">
+              <th className="w-[100px] bg-[#106057] px-2 py-3 text-center text-sm font-medium sm:w-[140px] sm:px-4 sm:py-[18px] sm:text-base md:w-[200px] md:text-xl">
                 Consentz
               </th>
               <th className="w-[100px] px-2 py-3 text-center text-xs font-semibold text-[#a6a6a6] sm:w-[140px] sm:px-4 sm:py-[18px] sm:text-sm md:w-[200px] md:text-xl">

@@ -286,7 +286,7 @@ function CqcDashboardBrowserMock() {
               className="flex flex-col rounded-xl border border-[#E2DDD7] bg-white p-5"
             >
               <p
-                className={`text-[34px] font-bold leading-none tracking-[-0.68px] ${row.pctColor}`}
+                className={`text-[34px] font-medium leading-none tracking-[-0.68px] ${row.pctColor}`}
               >
                 {row.pct}
               </p>
@@ -310,7 +310,7 @@ function CqcEvidenceChecklist() {
           key={label}
           className="flex items-center gap-3 rounded-xl border border-transparent bg-[#eef7f2] px-[18px] py-[14px]"
         >
-          <span className="shrink-0 text-sm font-bold text-[#1a6e45]">✓</span>
+          <span className="shrink-0 text-sm font-medium text-[#1a6e45]">✓</span>
           <p className="text-base font-medium text-[#1a1a1a] md:text-[20px]">{label}</p>
         </div>
       ))}
@@ -420,13 +420,13 @@ export function HubPillarDetailTemplate({
       <HubContentStart>
         {pillar === "cqc" ? (
           <section className="mb-16">
-            <h2 className="text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+            <h2 className="text-center text-[30px] font-medium tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
               CQC Evidence Dashboard
             </h2>
             <div className="mx-auto mt-10 max-w-[920px]">
               <CqcDashboardBrowserMock />
             </div>
-            <h2 className="mb-10 mt-16 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+            <h2 className="mb-10 mt-16 text-center text-[30px] font-medium tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
               What the CQC dashboard covers
             </h2>
             <CqcEvidenceChecklist />
@@ -458,7 +458,7 @@ export function HubPillarDetailTemplate({
         </section>
 
         <section className="mb-12">
-          <h2 className="text-center text-3xl md:text-4xl font-bold text-[#111111] tracking-[-0.02em] mb-8 md:mb-10">
+          <h2 className="text-center text-3xl md:text-4xl font-medium text-[#111111] tracking-[-0.02em] mb-8 md:mb-10">
             {problemSectionTitle}
           </h2>
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
@@ -489,7 +489,7 @@ export function HubPillarDetailTemplate({
         </section>
 
         <div className="text-center max-w-[900px] mx-auto mb-6">
-          <h2 className="text-4xl font-bold text-[#111111] tracking-[-0.02em] mb-4">
+          <h2 className="text-4xl font-medium text-[#111111] tracking-[-0.02em] mb-4">
             How Consentz Helps
           </h2>
           <p className="text-xl md:text-2xl text-[#1A1A1A] leading-[1.6] font-normal">
@@ -623,10 +623,10 @@ export function HubPillarDetailTemplate({
 
 
         <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">
             {pillar === "cqc" ? "CQC guidance on the Buyer Hub" : "Our Latest Blogs"}
           </h2>
-          <p className="text-xl text-[#1A1A1A] leading-snug mb-10 max-w-[1280px]">
+          <p className="text-xl text-gray-600 leading-snug mb-10 max-w-[1280px]">
             {pillar === "cqc"
               ? "Deep dives on evidence, inspection readiness, and how to run compliance as part of day-to-day operations."
               : "Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay informed with our latest articles."}

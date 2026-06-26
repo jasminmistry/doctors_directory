@@ -30,14 +30,14 @@ export default function AccountBookingsPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
       </div>
     )
   }
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-bold text-gray-900">Bookings</h1>
+      <h1 className="text-xl font-medium text-gray-900">Bookings</h1>
 
       {bookings.length === 0 ? (
         <div className="rounded-xl bg-white border border-gray-200 px-6 py-10 text-center">
@@ -67,7 +67,7 @@ export default function AccountBookingsPage() {
                     {b.treatment ?? 'Appointment'} · {format(new Date(b.slotStart), 'd MMM yyyy, HH:mm')}
                   </p>
                   {b.clinic.city && (
-                    <p className="text-xs text-gray-400 mt-0.5">{b.clinic.city}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{b.clinic.city}</p>
                   )}
                 </div>
                 <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${

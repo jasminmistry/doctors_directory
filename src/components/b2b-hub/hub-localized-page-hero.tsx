@@ -25,7 +25,7 @@ export function HubLocalizedPageHero({ eyebrow, title, description }: Props) {
             <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500 mb-2">
               {eyebrow}
             </p>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 tracking-tight mb-4 [font-family:var(--font-playfair),Georgia,serif]">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium text-neutral-900 tracking-tight mb-4 [font-family:var(--font-playfair),Georgia,serif]">
               {title}
             </h1>
             <p className="text-base md:text-lg text-neutral-600 max-w-3xl mx-auto md:mx-0 leading-relaxed">

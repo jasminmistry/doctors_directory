@@ -772,7 +772,7 @@ const cityItems: {
   node: (
     <Link
       href={`/clinics/${city.toLowerCase()}`}
-      className="flex items-center justify-center bg-[var(--alabaster)] border border-gray-300 rounded-full w-44 h-44 text-lg text-center font-medium hover:border-black transition-shadow"
+      className="flex items-center justify-center bg-[#fbfbfb] border border-[#e0e0e0] rounded-full w-44 h-44 text-lg text-center font-medium hover:border-black transition-shadow"
       title={`Find Top-Rated Aesthetic clinics in ${city}`}
       aria-label={`Find Top-Rated Aesthetic clinics in ${city}`}
     >
@@ -925,12 +925,15 @@ export default function HomePage({
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  const BRAND_BG = "#F2EEE6";
+
   return (
     <main>
       <div className="relative inset-0 overflow-hidden">
         
         <MeshBackground 
         className="h-full"
+        fallbackColor={BRAND_BG}
           noiseOpacity={1.1}
           noiseTileSize={200}
         />
@@ -954,7 +957,7 @@ export default function HomePage({
           Contact a Specialist
         </h2>
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-xl md:text-4xl font-bold text-center mb-16">
+          <h2 className="text-xl md:text-2xl font-medium text-center mb-16">
             Contact a Specialist
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 align-items-center">
@@ -991,13 +994,13 @@ export default function HomePage({
             <div className="space-y-3">
               {/* Step 1 */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
-                <div className="bg-[#f8f8f8] rounded-xl p-3 md:p-4 flex items-start gap-3">
+                <div className="bg-[#fbfbfb] rounded-xl p-3 md:p-4 flex items-start gap-3">
                   <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
                     1.
                   </div>
 
                   <div>
-                    <h2 className="text-lg md:text-xl font-bold text-black leading-tight">
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
                       Tell Us What You’re Looking For
                     </h2>
 
@@ -1018,13 +1021,13 @@ export default function HomePage({
 
               {/* Step 2 */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
-                <div className="bg-[#f8f8f8] rounded-xl p-3 md:p-4 flex items-start gap-3">
+                <div className="bg-[#fbfbfb] rounded-xl p-3 md:p-4 flex items-start gap-3">
                   <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
                     2.
                   </div>
 
                   <div>
-                    <h2 className="text-lg md:text-xl font-bold text-black leading-tight">
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
                       Get Expert Guidance
                     </h2>
 
@@ -1046,13 +1049,13 @@ export default function HomePage({
 
               {/* Step 3 */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
-                <div className="bg-[#f8f8f8] rounded-xl p-3 md:p-4 flex items-start gap-3">
+                <div className="bg-[#fbfbfb] rounded-xl p-3 md:p-4 flex items-start gap-3">
                   <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
                     3.
                   </div>
 
                   <div>
-                    <h2 className="text-lg md:text-xl font-bold text-black leading-tight">
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
                       Match & Book With a Practitioner
                     </h2>
 
@@ -1076,7 +1079,7 @@ export default function HomePage({
         </section>
       </section>
       <section className="bg-white-50 py-5 md:py-5">
-        <h2 className="text-xl md:text-3xl font-bold text-center mb-16">
+        <h2 className="text-xl md:text-2xl font-medium text-center mb-16">
           Find Top-Rated Aesthetic Clinics Near You
         </h2>
         <div className="w-full">
@@ -1101,7 +1104,7 @@ export default function HomePage({
         </h2>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center flex-col justify-between mb-12">
-            <h2 className="text-xl md:text-4xl font-bold text-center mb-10">
+            <h2 className="text-xl md:text-2xl font-medium text-center mb-10">
               Most Popular Treatments
             </h2>
           </div>
@@ -1131,7 +1134,7 @@ export default function HomePage({
             </div>
             <Button
               asChild
-              className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium rounded-lg text-white hover:bg-gray-800 transition-colors"
+              className=" w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
             >
               <Link href="/treatments">See all Treatments</Link>
             </Button>
@@ -1164,7 +1167,7 @@ export default function HomePage({
       {featuredClinics.length > 0 && (
         <section className="py-15 md:py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-xl md:text-4xl font-bold text-center mb-10">
+            <h2 className="text-xl md:text-2xl font-medium text-center mb-10">
               Featured Clinics
             </h2>
             <div className="md:bg--(--primary-bg-color) grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -1178,7 +1181,7 @@ export default function HomePage({
                 return (
                   <article
                     key={clinic.slug}
-                    className="mb-4 bg-white border border-gray-200 rounded-xl p-6 w-full max-w-md"
+                    className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md"
                   >
                     <div className="flex flex-col items-center text-center">
                       <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
@@ -1195,7 +1198,7 @@ export default function HomePage({
                       </h2>
 
                       {clinic.category && (
-                        <p className="text-gray-500 text-lg font-medium">
+                        <p className="text-black text-md font-medium">
                           {clinic.category}
                         </p>
                       )}
@@ -1224,7 +1227,7 @@ export default function HomePage({
 
                       <Link
                         href={href}
-                        className="w-full mt-3 flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
+                        className="w-full mt-4 h-auto sm:w-full inline-flex items-center justify-center gap-2 rounded-lg px-2 py-2 bg-[#f4f4f4]  text-sm font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
                       >
                         View clinic
                       </Link>
@@ -1234,13 +1237,13 @@ export default function HomePage({
                           {visibleTreatments.map((t) => (
                             <span
                               key={t}
-                              className="px-3 py-1 border border-black rounded-full text-xs"
+                              className="px-3 py-1 border border-[#e0e0e0] rounded-full text-xs"
                             >
                               {t}
                             </span>
                           ))}
                           {extraCount > 0 && (
-                            <span className="px-3 py-1 border border-black rounded-full text-xs">
+                            <span className="px-3 py-1 border border-[#e0e0e0] rounded-full text-xs">
                               +{extraCount} more
                             </span>
                           )}
@@ -1258,7 +1261,7 @@ export default function HomePage({
       {/* Trust Section */}
       <section className="py-15 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-xl md:text-4xl font-bold text-center mb-10 md:mb-16">
+          <h2 className="text-xl md:text-2xl font-medium text-center mb-10 md:mb-16">
             Building trust and clarity in healthcare
           </h2>
           <div className="grid md:grid-cols-3 gap-6 md:gap-12">
@@ -1281,10 +1284,10 @@ export default function HomePage({
             ].map((item, index) => (
               <div
                 key={index}
-                className="info-card bg-[var(--alabaster)] border-1 border-[var(--alto)] rounded-xl py-8 px-6 md:py-12 md:px-8 flex items-center flex-col"
+                className="info-card bg-[#fbfbfb] border-1 border-[var(--alto)] rounded-xl py-8 px-6 md:py-12 md:px-8 flex items-center flex-col"
               >
                 <item.icon className="w-12 h-12 mb-8 hidden md:flex" />
-                <h3 className="font-bold text-lg mb-4">{item.title}</h3>
+                <h3 className="font-medium text-lg mb-4">{item.title}</h3>
                 <p className="text-base font-normal text-center text-sm leading-relaxed">
                   {item.desc}
                 </p>
@@ -1299,7 +1302,7 @@ export default function HomePage({
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-2 items-center">
             <div>
-              <h2 className="text-lg md:text-3xl text-center md:text-left md:text-4xl font-bold mb-7">
+              <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-7">
                 For Service Providers
               </h2>
               <ul className="space-y-4 mb-8">
@@ -1337,7 +1340,7 @@ export default function HomePage({
               <div className="text-center md:text-left mb-10 md:mb-0">
                 <Button
                   asChild
-                  className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium rounded-lg text-white hover:bg-gray-800 transition-colors"
+                  className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
                 >
                   <a
                     href="https://www.consentz.com/features/"
@@ -1364,7 +1367,7 @@ export default function HomePage({
       <section className="bg-[var(--dune)] py-20 text-white hidden">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-2">
+            <h2 className="text-3xl md:text-4xl font-medium mb-2">
               Ready to Get Started?
             </h2>
             <p className="text-gray-300">
@@ -1377,7 +1380,7 @@ export default function HomePage({
         </div>
       </section>
 
-      <section className="w-full bg-[#f3f1ef] py-10 lg:py-14 overflow-hidden">
+      <section className="w-full bg-[var(--primary-bg-color)] py-10 lg:py-14 overflow-hidden">
         <div className="mx-auto flex max-w-6xl flex-col items-start gap-10 px-4 lg:flex-row lg:justify-between lg:px-8">
           <div className="flex justify-center lg:w-1/2 lg:self-start">
             <img
@@ -1388,7 +1391,7 @@ export default function HomePage({
           </div>
 
           <div className="max-w-xl lg:w-1/2">
-            <h2 className="text-2xl font-bold leading-tight text-black sm:text-3xl">
+            <h2 className="text-xl font-medium leading-tight text-black sm:text-2xl">
               Are You A Practitioner?
             </h2>
 
@@ -1426,19 +1429,20 @@ export default function HomePage({
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button
                 asChild
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition-colors">
+                className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium text-white hover:bg-neutral-800 transition-colors">
                 <Link href="/register/clinic">List your practice</Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors"
+                className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
+                
               >
                 <Link href="/claim">Claim your profile</Link>
               </Button>
               <Link
                 href="/register/practitioner"
-                className="text-sm text-gray-600 hover:text-black transition-colors"
+                className="text-md text-black hover:hover:opacity-70 transition-colors"
               >
                 Register as practitioner  →
               </Link>
@@ -1457,7 +1461,7 @@ export default function HomePage({
           Our Latest Blogs
         </h2>
         <div className="max-w-3xl mb-10">
-          <h2 className="text-lg md:text-3xl text-center md:text-left md:text-4xl font-bold mb-6">
+          <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-6">
             Our Latest Blogs
           </h2>
           <p className="text-gray-700 text-base leading-relaxed">
@@ -1506,7 +1510,7 @@ export default function HomePage({
             onClick={() =>
               (globalThis.location.href = "https://www.consentz.com/blog")
             }
-            className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium rounded-lg text-white hover:bg-gray-800 transition-colors"
+            className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#f4f4f4] px-6 py-3 text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
           >
             View All Blogs
           </Button>
@@ -1519,7 +1523,7 @@ export default function HomePage({
       >
         <h2
           id="faq-heading"
-          className="text-lg md:text-3xl text-center md:text-4xl font-bold mb-6"
+          className="text-xl md:text-2xl text-center font-medium mb-6"
         >
           Frequently Asked Questions
         </h2>
@@ -1536,7 +1540,7 @@ export default function HomePage({
                 key={index}
                 open={isOpen}
                 onToggle={() => toggleFAQ(index)}
-                className="border border-gray-300 rounded-lg p-4 transition-all duration-300"
+                className="border border-[#e0e0e0]  rounded-lg p-4 transition-all duration-300"
               >
                 <summary className="w-full flex items-center gap-4 text-left text-lg font-semibold cursor-pointer flex flex-row flex-wrap pl-10 relative list-none">
                   <span className="text-2xl font-normal text-center w-7 h-7 rounded-full leading-6 text-black transition-all select-none bg-black text-white absolute left-0">
@@ -1557,7 +1561,7 @@ export default function HomePage({
             onClick={() =>
               (globalThis.location.href = "https://www.consentz.com/faqs/")
             }
-            className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium rounded-lg text-white hover:bg-gray-800 transition-colors"
+            className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#f4f4f4] px-6 py-3 text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
           >
             Read All FAQ'S
           </Button>

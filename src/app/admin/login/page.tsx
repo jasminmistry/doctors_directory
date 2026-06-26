@@ -48,10 +48,10 @@ export default function AdminLoginPage() {
     <div className="flex items-center justify-center bg-white min-h-[calc(100vh-72px)] px-4 py-8">
       <div className="w-full max-w-[22rem]">
         <div className="mb-8 text-center">
-          <span className="inline-block rounded-full border border-gray-300 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500 mb-4">
+          <span className="inline-block rounded-full border border-[#e0e0e0]  bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500 mb-4">
             Admin Portal
           </span>
-          <h1 className="text-2xl font-bold text-black">Sign In</h1>
+          <h1 className="text-2xl font-medium text-black">Sign In</h1>
           <p className="mt-1.5 text-sm text-gray-500">Access your Consentz dashboard</p>
         </div>
 
@@ -97,7 +97,7 @@ export default function AdminLoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-black border border-black text-white hover:bg-white hover:text-black font-bold rounded-lg"
+              className="w-full bg-black border border-black text-white hover:bg-white hover:text-black font-medium rounded-lg"
               disabled={loading}
             >
               {loading ? 'Signing in…' : 'Sign in'}

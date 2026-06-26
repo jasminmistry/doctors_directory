@@ -123,7 +123,7 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
 
       {/* Leave review form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-4">
+        <form onSubmit={handleSubmit} className="rounded-xl border border-gray-200 bg-white p-4 space-y-4">
           <h4 className="text-sm font-semibold text-gray-900">Write a review</h4>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1.5">Your rating</label>
@@ -154,11 +154,11 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
           </p>
           <div className="flex gap-2">
             <button type="button" onClick={() => setShowForm(false)}
-              className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors">
+              className="flex-1 items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors">
               Cancel
             </button>
             <button type="submit" disabled={submitting || rating === 0 || text.trim().length < 10 || !name.trim()}
-              className="flex-1 rounded-lg bg-black px-3 py-2 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors">
+              className="flex-1 items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors">
               {submitting ? 'Submitting…' : 'Submit review'}
             </button>
           </div>
@@ -192,7 +192,7 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
 
       {/* Review list */}
       {filtered.length === 0 ? (
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-gray-500">
           {reviews.length === 0 ? 'No reviews yet. Be the first to leave one!' : 'No reviews match this filter.'}
         </p>
       ) : (
@@ -219,10 +219,10 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
                     </span>
                   ) : null}
                   {review.source === 'google' && (
-                    <span className="text-[10px] font-medium text-gray-400 border border-gray-200 rounded-full px-2 py-0.5">Google</span>
+                    <span className="text-[10px] font-medium text-gray-500 border border-gray-200 rounded-full px-2 py-0.5">Google</span>
                   )}
                 </div>
-                <span className="text-xs text-gray-400 shrink-0">
+                <span className="text-xs text-gray-500 shrink-0">
                   {review.createdAt
                     ? formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })
                     : review.reviewDate ?? ''}
@@ -230,7 +230,7 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
               </div>
               <StarRow rating={review.rating} />
               {review.treatment && (
-                <p className="mt-1 text-xs text-gray-400">{review.treatment}</p>
+                <p className="mt-1 text-xs text-gray-500">{review.treatment}</p>
               )}
               <p className="mt-2 text-sm text-gray-700 leading-relaxed">{review.reviewText}</p>
 
@@ -239,7 +239,7 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
                   <p className="text-xs font-semibold text-gray-700 mb-1">Response from the clinic</p>
                   <p className="text-sm text-gray-600 leading-relaxed">{review.clinicResponse}</p>
                   {review.respondedAt && (
-                    <p className="mt-1 text-xs text-gray-400">
+                    <p className="mt-1 text-xs text-gray-500">
                       {formatDistanceToNow(new Date(review.respondedAt), { addSuffix: true })}
                     </p>
                   )}

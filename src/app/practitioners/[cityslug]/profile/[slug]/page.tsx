@@ -130,7 +130,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                      <ClinicDetailsMarkdown clinic={practitioner} />
                    </div>
                    <div className="order-1 lg:order-2 col-span-1 lg:col-span-4">
-                     <div className="border border-gray-300 rounded-xl p-6">
+                     <div className="border border-[#e0e0e0]  rounded-xl p-6">
                        <div className="flex flex-row gap-2 pt-2 mb-4 items-center justify-center text-sm">
                          <div className="inline-flex items-center gap-1">
                            <div className="flex items-center">
@@ -153,7 +153,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                            {practitioner.reviewCount ? practitioner.reviewCount+"+ Reviews Analysed" : "0"}
                          </span>
                        </div>
-                       <div className="border-t border-gray-300 my-4"></div>
+                       <div className="border-t border-[#e0e0e0]  my-4"></div>
                        <div className="mb-4 flex items-center justify-center gap-2">
                          <h3 className="text-center text-lg font-semibold text-foreground">
                            Consentz® Practitioner Score
@@ -161,7 +161,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                          <ScoreInfoTooltip entityLabel="practitioner" />
                        </div>
                        <Stats data={boxplotData} />
-                       <p className="mt-3 text-xs font-bold text-black">
+                       <p className="mt-3 text-xs font-medium text-black">
                          {rankingSubtitle}
                        </p>
                      </div>

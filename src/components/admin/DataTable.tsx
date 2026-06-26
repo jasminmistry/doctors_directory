@@ -89,7 +89,7 @@ export function DataTable<T extends Record<string, any>>({
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="relative w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
           <Input
             placeholder="Search…"
             value={search}
@@ -156,7 +156,7 @@ export function DataTable<T extends Record<string, any>>({
                 ))
               ) : pageData.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length + 1} className="py-16 text-center text-gray-400 text-sm">
+                  <td colSpan={columns.length + 1} className="py-16 text-center text-gray-500 text-sm">
                     {search ? 'No results match your search.' : 'No records yet.'}
                   </td>
                 </tr>

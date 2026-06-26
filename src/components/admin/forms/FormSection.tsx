@@ -17,8 +17,8 @@ export function FormSection({ title, description, icon: Icon, children, classNam
     <div className={cn('rounded-2xl border border-gray-200 overflow-hidden', className)}>
       <div className="px-6 py-4 border-b border-[#e4dccf] flex items-center gap-3">
         {Icon && (
-          <div className=" h-10 w-10 flex items-center justify-center rounded-2xl bg-black/10 ring-1 ring-black/10">
-            <Icon className="h-4 w-4 text-[#6b5b4d]" />
+          <div className=" h-10 w-10 flex items-center justify-center rounded-full border border-[#e0e0e0] bg-white">
+            <Icon className="h-4 w-4 text-black" />
           </div>
         )}
         <div>
@@ -47,7 +47,7 @@ export function Field({ label, required, hint, fullWidth, children }: FieldProps
         {required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
       {children}
-      {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
+      {hint && <p className="text-xs text-gray-500 mt-1">{hint}</p>}
     </div>
   )
 }

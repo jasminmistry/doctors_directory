@@ -59,10 +59,10 @@ function fmt(n: number) {
 }
 
 function Delta({ current, previous }: { current: number; previous: number }) {
-  if (previous === 0 && current === 0) return <span className="text-xs text-gray-400">—</span>
+  if (previous === 0 && current === 0) return <span className="text-xs text-gray-500">—</span>
   if (previous === 0) return <span className="text-xs text-emerald-600 flex items-center gap-0.5"><ArrowUp className="h-3 w-3" />New</span>
   const pct = ((current - previous) / previous) * 100
-  if (Math.abs(pct) < 0.5) return <span className="text-xs text-gray-400 flex items-center gap-0.5"><Minus className="h-3 w-3" />Flat</span>
+  if (Math.abs(pct) < 0.5) return <span className="text-xs text-gray-500 flex items-center gap-0.5"><Minus className="h-3 w-3" />Flat</span>
   return pct > 0 ? (
     <span className="text-xs text-emerald-600 flex items-center gap-0.5"><ArrowUp className="h-3 w-3" />{pct.toFixed(0)}%</span>
   ) : (
@@ -96,9 +96,9 @@ function EarningsTile({
         {delta}
       </div>
       <div>
-        <p className="text-2xl font-bold text-gray-900">{primary}</p>
+        <p className="text-2xl font-medium text-gray-900">{primary}</p>
         {secondary && <p className="text-sm text-gray-500 mt-0.5">{secondary}</p>}
-        {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
+        {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
       </div>
       <p className="text-xs font-medium text-gray-500">{label}</p>
     </div>
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
                 <Icon className="h-4 w-4" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-medium text-gray-900">
                   {stats ? stats[key].toLocaleString() : <span className="text-gray-300">-</span>}
                 </div>
                 <div className="mt-0.5 text-sm text-gray-500">{label}</div>
@@ -205,7 +205,7 @@ export default function AdminDashboard() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Revenue</h2>
-            <p className="text-xs text-gray-400">Across all clinics · all time</p>
+            <p className="text-xs text-gray-500">Across all clinics · all time</p>
           </div>
 
           {earnings ? (
@@ -390,7 +390,7 @@ export default function AdminDashboard() {
               />
             </>
           ) : (
-            <div className="rounded-xl border border-gray-200 bg-white p-8 text-center text-sm text-gray-400">
+            <div className="rounded-xl border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
               Loading revenue data…
             </div>
           )}

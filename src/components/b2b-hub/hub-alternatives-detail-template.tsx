@@ -212,7 +212,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
         </section>
 
         <section className="mb-12">
-          <h2 className="mb-8 text-center text-3xl font-bold tracking-[-0.02em] text-[#111111] md:mb-10 md:text-4xl">
+          <h2 className="mb-8 text-center text-3xl font-medium tracking-[-0.02em] text-[#111111] md:mb-10 md:text-4xl">
             The Problem With Most Clinic Software
           </h2>
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
@@ -243,7 +243,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
         </section>
 
         <div className="mx-auto mb-6 max-w-[900px] text-center">
-          <h2 className="mb-4 text-4xl font-bold tracking-[-0.02em] text-[#111111]">
+          <h2 className="mb-4 text-4xl font-medium tracking-[-0.02em] text-[#111111]">
             {competitorLabel} vs Consentz
           </h2>
           <p className="text-xl font-normal leading-[1.6] text-[#1A1A1A] md:text-2xl">
@@ -256,7 +256,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
         <section className="mb-16">
           <div className="mx-auto grid max-w-[1100px] grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-14">
             <div className="min-w-0 text-center lg:text-left">
-              <h2 className="mb-4 text-[28px] font-bold tracking-tight text-[#111111] md:text-[34px]">
+              <h2 className="mb-4 text-[28px] font-medium tracking-tight text-[#111111] md:text-[34px]">
                 Migrating from {competitorLabel}?
               </h2>
               <p className="mb-8 text-base leading-relaxed text-[#1A1A1A] md:text-lg">
@@ -318,8 +318,8 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
         />
 
         <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
-          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">Our Latest Blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-gray-600">
             Explore insights and tips to help you manage and grow your aesthetics clinic
             efficiently. Stay informed with our latest articles.
           </p>

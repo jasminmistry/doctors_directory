@@ -29,7 +29,7 @@ function CompetitorBrandMark({ name }: { name: string }) {
   const initial = name.trim().charAt(0).toUpperCase() || "?"
   return (
     <div
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e8e4dc] text-sm font-bold text-[#111111]"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e8e4dc] text-sm font-medium text-[#111111]"
       aria-hidden
     >
       {initial}
@@ -54,7 +54,7 @@ function DifferenceCard({
         ) : (
           <>
             <CompetitorBrandMark name={brand} />
-            <h3 className="text-lg font-bold text-[#111111] sm:text-xl md:text-[22px]">{brand}</h3>
+            <h3 className="text-lg font-medium text-[#111111] sm:text-xl md:text-[22px]">{brand}</h3>
           </>
         )}
       </div>

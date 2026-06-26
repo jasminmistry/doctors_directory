@@ -51,7 +51,7 @@ export function PractitionerFilters({ filters, onChange, onClear, setIsFilterAct
             if (open) setIsFilterActive(true);
           }}
         >
-          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-lg">
+          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-[#e0e0e0]  rounded-lg">
             <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent>
@@ -79,7 +79,7 @@ export function PractitionerFilters({ filters, onChange, onClear, setIsFilterAct
             if (open) setIsFilterActive(true);
           }}
         >
-          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-lg">
+          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-[#e0e0e0]  rounded-lg">
             <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent>
@@ -107,7 +107,7 @@ export function PractitionerFilters({ filters, onChange, onClear, setIsFilterAct
             if (open) setIsFilterActive(true);
           }}
         >
-          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-lg">
+          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-[#e0e0e0]  rounded-lg">
             <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent>
@@ -135,7 +135,7 @@ export function PractitionerFilters({ filters, onChange, onClear, setIsFilterAct
             if (open) setIsFilterActive(true);
           }}
         >
-          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-gray-300 rounded-lg">
+          <SelectTrigger className="w-full h-12 px-4 py-3 bg-white border border-[#e0e0e0]  rounded-lg">
             <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent>

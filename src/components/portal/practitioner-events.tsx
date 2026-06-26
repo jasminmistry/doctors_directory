@@ -139,7 +139,7 @@ function EventModal({ event, onClose, onSaved }: EventModalProps) {
           <h2 className="text-sm font-semibold text-gray-900">
             {isEdit ? 'Edit Event' : 'New Event'}
           </h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <button type="button" onClick={onClose} className="text-gray-500 hover:text-gray-600">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -176,7 +176,7 @@ function EventModal({ event, onClose, onSaved }: EventModalProps) {
           {/* Description */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
-              Description <span className="text-gray-400">(optional)</span>
+              Description <span className="text-gray-500">(optional)</span>
             </label>
             <textarea
               value={form.description}
@@ -210,7 +210,7 @@ function EventModal({ event, onClose, onSaved }: EventModalProps) {
           {/* Price */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
-              Price (£) <span className="text-gray-400">(leave blank = Free)</span>
+              Price (£) <span className="text-gray-500">(leave blank = Free)</span>
             </label>
             <input
               type="number"
@@ -227,7 +227,7 @@ function EventModal({ event, onClose, onSaved }: EventModalProps) {
           <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-3">
             <div>
               <p className="text-sm font-medium text-gray-700">Active</p>
-              <p className="text-xs text-gray-400">Visible to patients on your profile</p>
+              <p className="text-xs text-gray-500">Visible to patients on your profile</p>
             </div>
             <button
               type="button"
@@ -415,13 +415,13 @@ export function PractitionerEvents() {
         {/* Content */}
         {loading ? (
           <div className="flex justify-center py-16">
-            <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+            <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
           </div>
         ) : events.length === 0 ? (
           <div className="rounded-xl border border-dashed border-gray-200 py-16 text-center">
             <Video className="mx-auto h-8 w-8 text-gray-300 mb-3" />
             <p className="text-sm font-medium text-gray-700">No events yet</p>
-            <p className="text-xs text-gray-400 mt-1">Add your first consultation event to let patients book online.</p>
+            <p className="text-xs text-gray-500 mt-1">Add your first consultation event to let patients book online.</p>
             <button
               type="button"
               onClick={() => setModalEvent('new')}
@@ -457,7 +457,7 @@ export function PractitionerEvents() {
                       <div className="flex flex-col gap-0.5">
                         <span className="font-medium text-gray-900">{event.title}</span>
                         {event.description && (
-                          <span className="text-xs text-gray-400 line-clamp-1">{event.description}</span>
+                          <span className="text-xs text-gray-500 line-clamp-1">{event.description}</span>
                         )}
                         {!event.status && (
                           <span className="inline-flex w-fit items-center rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-500">
@@ -471,7 +471,7 @@ export function PractitionerEvents() {
                       <LocationBadge location={event.location} />
                     </td>
                     <td className="px-4 py-3 font-medium text-gray-700 hidden sm:table-cell">
-                      {event.price ? `£${event.price}` : <span className="text-gray-400 font-normal">Free</span>}
+                      {event.price ? `£${event.price}` : <span className="text-gray-500 font-normal">Free</span>}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <button
@@ -499,7 +499,7 @@ export function PractitionerEvents() {
                           type="button"
                           onClick={() => setModalEvent(event)}
                           aria-label="Edit event"
-                          className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                          className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
                         >
                           <Pencil className="h-3.5 w-3.5" />
                         </button>
@@ -507,7 +507,7 @@ export function PractitionerEvents() {
                           type="button"
                           onClick={() => setDeleteEvent(event)}
                           aria-label="Delete event"
-                          className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                          className="rounded p-1.5 text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>

@@ -341,10 +341,10 @@ export function ConsultationChatDialog({
                 </span>
               )}
               {phase === 'chat' && isRestored && (
-                <span className="text-xs text-gray-400">Previous conversation</span>
+                <span className="text-xs text-gray-500">Previous conversation</span>
               )}
               {phase === 'offline' && (
-                <span className="flex items-center gap-1.5 text-xs text-gray-400">
+                <span className="flex items-center gap-1.5 text-xs text-gray-500">
                   <span className="h-2 w-2 rounded-full bg-gray-400" />
                   Currently offline
                 </span>
@@ -352,7 +352,7 @@ export function ConsultationChatDialog({
               {phase === 'chat' && (
                 <button
                   onClick={handleNewSession}
-                  className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-700 transition-colors"
+                  className="flex items-center gap-1 text-[11px] text-gray-500 hover:text-gray-700 transition-colors"
                   title="Start a new conversation"
                 >
                   <RotateCcw className="h-2.5 w-2.5" />
@@ -363,7 +363,7 @@ export function ConsultationChatDialog({
           </div>
           <button
             onClick={handleClose}
-            className="ml-2 shrink-0 rounded-lg p-1 text-gray-400 hover:text-gray-600 transition-colors"
+            className="ml-2 shrink-0 rounded-lg p-1 text-gray-500 hover:text-gray-600 transition-colors"
             aria-label="Close chat"
           >
             <X className="h-4 w-4" />
@@ -374,7 +374,7 @@ export function ConsultationChatDialog({
         <div className="flex-1 overflow-y-auto min-h-0">
           {(checking || loadingHistory) && (
             <div className="flex h-full items-center justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+              <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
             </div>
           )}
 
@@ -386,11 +386,11 @@ export function ConsultationChatDialog({
               </p>
               <a
                 href={`/directory/account/login?next=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname.replace(/^\/directory/, '') || '/' : '/')}`}
-                className="inline-flex h-9 items-center justify-center rounded-lg bg-black px-4 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
+                className="inline-flex h-9 items-center justify-center rounded-lg bg-black px-4 text-sm font-medium text-white hover:bg-neutral-800 transition-colors"
               >
                 Sign in / Create account
               </a>
-              <p className="text-xs text-gray-400">Free and takes under a minute</p>
+              <p className="text-xs text-gray-500">Free and takes under a minute</p>
             </div>
           )}
 
@@ -437,7 +437,7 @@ export function ConsultationChatDialog({
           {!checking && !loadingHistory && phase === 'chat' && (
             <div className="flex flex-col gap-2 px-4 py-3">
               {messages.length === 0 && (
-                <p className="text-xs text-gray-400 text-center py-4">
+                <p className="text-xs text-gray-500 text-center py-4">
                   Conversation started — say hello!
                 </p>
               )}
@@ -446,7 +446,7 @@ export function ConsultationChatDialog({
                   key={msg.id}
                   className={cn('flex w-full flex-col gap-0.5', msg.sender === 'patient' ? 'items-end' : 'items-start')}
                 >
-                  <span className="text-[10px] text-gray-400 px-1">
+                  <span className="text-[10px] text-gray-500 px-1">
                     {msg.sender === 'patient' ? 'You' : clinicName}
                   </span>
                   <div
@@ -543,7 +543,7 @@ export function ConsultationChatDialog({
           <DialogContent className="max-w-sm p-0 overflow-hidden">
             <DialogHeader className="px-4 pt-4 pb-0">
               <DialogTitle className="text-sm flex items-center gap-2">
-                <Video className="h-4 w-4 text-gray-400" />
+                <Video className="h-4 w-4 text-gray-500" />
                 Book a Video Call
               </DialogTitle>
             </DialogHeader>

@@ -134,7 +134,7 @@ function AutomationWorkflowSpotlight() {
         <p className="mb-2 text-center text-xs font-semibold uppercase tracking-[0.2em] text-[#6B6B6B]">
           Live Workflows
         </p>
-        <h2 className="mb-10 text-center text-[28px] font-bold leading-tight text-[#111111] md:text-[34px]">
+        <h2 className="mb-10 text-center text-[28px] font-medium leading-tight text-[#111111] md:text-[34px]">
           End-To-End Automation Your Clinic Can Rely On
         </h2>
         <div className="overflow-hidden rounded-2xl border border-[#E2DDD7] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
@@ -152,7 +152,7 @@ function AutomationWorkflowSpotlight() {
                         aria-hidden
                       />
                     ) : null}
-                    <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-xs font-bold text-white">
+                    <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-xs font-medium text-white">
                       {step}
                     </span>
                     <div>
@@ -353,8 +353,8 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
         />
 
         <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
-          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">Our Latest Blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-gray-600">
             Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay
             informed with our latest articles.
           </p>

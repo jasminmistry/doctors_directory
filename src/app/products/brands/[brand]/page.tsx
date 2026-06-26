@@ -69,7 +69,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
         </div>
         <div className="container mx-auto max-w-6xl px-4 py-16 space-y-8">
           <div className="text-center space-y-3">
-            <h1 className="text-2xl font-bold text-foreground">Brand not found</h1>
+            <h1 className="text-2xl font-medium text-foreground">Brand not found</h1>
             <p className="text-gray-500 text-sm">
               We couldn&apos;t find any products for &ldquo;{brand}&rdquo;. Browse our top product brands below.
             </p>
@@ -81,7 +81,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                 <li key={b}>
                   <Link
                     href={`/products/brands/${toUrlSlug(b)}`}
-                    className="inline-block px-3 py-1.5 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:bg-black hover:text-white hover:border-black transition-colors"
+                    className="inline-block px-3 py-1.5 rounded-full border border-[#e0e0e0]  bg-white text-sm text-gray-700 hover:bg-black hover:text-white hover:border-black transition-colors"
                   >
                     {b}
                   </Link>
@@ -99,15 +99,9 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       {/* Navigation */}
       <div className="sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
-          <Link href="/" prefetch={false}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-            >
+          <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
               <ArrowLeft className="h-4 w-4" />
               Back to Directory
-            </Button>
           </Link>
         </div>
         <div className="container mx-auto max-w-6xl px-4 py-2">

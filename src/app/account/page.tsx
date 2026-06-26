@@ -44,34 +44,34 @@ function NextActions() {
       <div className="space-y-2">
         <Link
           href="/search"
-          className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 text-sm text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 text-sm text-gray-700 hover:border-[#e0e0e0]  hover:bg-gray-50 transition-colors"
         >
-          <Search className="h-4 w-4 text-gray-400 shrink-0" />
+          <Search className="h-4 w-4 text-gray-500 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="font-medium">Find a clinic or practitioner</p>
-            <p className="text-xs text-gray-400 mt-0.5">Search by treatment, location, or name</p>
+            <p className="text-xs text-gray-500 mt-0.5">Search by treatment, location, or name</p>
           </div>
           <ChevronRight className="h-4 w-4 text-gray-300 shrink-0" />
         </Link>
         <Link
           href="/account/bookings"
-          className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 text-sm text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 text-sm text-gray-700 hover:border-[#e0e0e0]  hover:bg-gray-50 transition-colors"
         >
-          <CalendarDays className="h-4 w-4 text-gray-400 shrink-0" />
+          <CalendarDays className="h-4 w-4 text-gray-500 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="font-medium">View my bookings</p>
-            <p className="text-xs text-gray-400 mt-0.5">Upcoming appointments and history</p>
+            <p className="text-xs text-gray-500 mt-0.5">Upcoming appointments and history</p>
           </div>
           <ChevronRight className="h-4 w-4 text-gray-300 shrink-0" />
         </Link>
         <Link
           href="/search"
-          className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 text-sm text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 text-sm text-gray-700 hover:border-[#e0e0e0]  hover:bg-gray-50 transition-colors"
         >
-          <MessageSquare className="h-4 w-4 text-gray-400 shrink-0" />
+          <MessageSquare className="h-4 w-4 text-gray-500 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="font-medium">Book a consultation</p>
-            <p className="text-xs text-gray-400 mt-0.5">Find a clinic, open their profile, and start a chat</p>
+            <p className="text-xs text-gray-500 mt-0.5">Find a clinic, open their profile, and start a chat</p>
           </div>
           <ChevronRight className="h-4 w-4 text-gray-300 shrink-0" />
         </Link>
@@ -120,7 +120,7 @@ export default function AccountDashboardPage() {
   return (
     <div className="mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-medium text-gray-900">
           {isNew ? 'Welcome' : 'Welcome back'}{patient?.firstName ? `, ${patient.firstName}` : ''}
         </h1>
         <p className="text-sm text-gray-500 mt-1">{patient?.email ?? ''}</p>
@@ -157,8 +157,8 @@ export default function AccountDashboardPage() {
             href={href}
             className="flex flex-col items-center gap-2 rounded-xl bg-white border border-gray-200 px-4 py-5 hover:border-gray-400 transition-colors"
           >
-            <Icon className="h-5 w-5 text-gray-400" />
-            {count !== null && <span className="text-2xl font-bold text-gray-900">{count}</span>}
+            <Icon className="h-5 w-5 text-gray-500" />
+            {count !== null && <span className="text-2xl font-medium text-gray-900">{count}</span>}
             <span className="text-xs text-gray-500">{label}</span>
           </Link>
         ))}
@@ -188,7 +188,7 @@ export default function AccountDashboardPage() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Recent Bookings</h2>
-            <Link href="/account/bookings" className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700">
+            <Link href="/account/bookings" className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700">
               View all <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
@@ -222,7 +222,7 @@ export default function AccountDashboardPage() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Recent Consultations</h2>
-            <Link href="/account/chats" className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700">
+            <Link href="/account/chats" className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700">
               View all <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
@@ -257,14 +257,14 @@ export default function AccountDashboardPage() {
           <div className="rounded-xl bg-white border border-gray-200 px-6 py-8 text-center">
             <Star className="mx-auto h-8 w-8 text-gray-200 mb-3" />
             <p className="text-sm font-medium text-gray-700">Your account is ready</p>
-            <p className="text-xs text-gray-400 mt-1 max-w-sm mx-auto">
+            <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
               Search for a clinic or practitioner, open their profile, and click <strong className="text-gray-500">Chat</strong> to start a consultation. Bookings and consultations will appear here once you&apos;ve connected with a provider.
             </p>
           </div>
           <NextActions />
           {/* Support guidance */}
           <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50 px-4 py-4">
-            <HelpCircle className="h-4 w-4 text-gray-400 shrink-0 mt-0.5" />
+            <HelpCircle className="h-4 w-4 text-gray-500 shrink-0 mt-0.5" />
             <div className="text-xs text-gray-500 space-y-1">
               <p className="font-medium text-gray-700">Expected to see a consultation here?</p>
               <p>Chat sessions are created when you start a conversation from a clinic&apos;s profile page. If you started a chat but don&apos;t see it, it may have expired (sessions last 24 hours) or you may have been using a different email address. Try starting a new conversation from the clinic&apos;s profile.</p>

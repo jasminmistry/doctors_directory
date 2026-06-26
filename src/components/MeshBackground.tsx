@@ -177,9 +177,13 @@ const GRAIN_KEYFRAMES = `
 
 export interface CausticHeroProps {
   className?: string;
-  /** Image refracted by the surface. Swap in your own. */
+  /**
+   * Optional image refracted by the surface. Leave empty/undefined to
+   * keep the solid `fallbackColor` as the base — recommended when you
+   * want the brand color fully visible behind the animation.
+   */
   backgroundImageSrc?: string;
-  /** Solid fill shown until the image loads / if it fails. */
+  /** Solid base color shown behind all animations. */
   fallbackColor?: string;
   /** Color pushed into the wave troughs. Tune per background for contrast. */
   deepColor?: string;
@@ -205,14 +209,14 @@ export interface CausticHeroProps {
 
 export default function CausticHero({
   className = "",
-  backgroundImageSrc = "/hero/bg.webp",
-  fallbackColor = "#F2EEE5",
+  backgroundImageSrc = "",
+  fallbackColor = "#F2EEE6",
   deepColor = "#C9BFA6",
   causticAmount = 0.7,
-  flowAmount = 0.03,
+  flowAmount = 0.09,
   cursorAmount = 0.07,
-  tint = 0.12,
-  noiseImageSrc = "/hero/noise.avif",
+  tint = 0.05,
+  noiseImageSrc = "/directory/images/noise.avif",
   noiseOpacity = 0.18,
   noiseTileSize = 180,
   grainAnimationDuration = 1,
@@ -262,7 +266,12 @@ export default function CausticHero({
       deepColor: gl.getUniformLocation(program, "deepColor"),
     };
 
-    // --- background texture (1x1 fallback until the image loads) ---
+    // --- background texture ---
+    // The 1x1 fallback IS the solid base color. When no backgroundImageSrc
+    // is provided we never overwrite this texture, so the entire canvas
+    // is sampled from a single solid #F2EEE6 pixel — the caustic, flow,
+    // cursor, and grain animations then run on top of that solid base
+    // with nothing fading or gradient-ing the underlying color.
     const bgTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, bgTexture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -287,17 +296,21 @@ export default function CausticHero({
           : { x: canvasAspect / imgNaturalAspect, y: 1 };
     }
 
-    const image = new Image();
-    image.crossOrigin = "anonymous";
-    image.onload = () => {
-      if (unmounted) return;
-      imgNaturalAspect = image.naturalWidth / Math.max(1, image.naturalHeight);
-      gl.bindTexture(gl.TEXTURE_2D, bgTexture);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-      computeBgScale();
-    };
-    image.src = backgroundImageSrc;
+    // Only load an image if one was explicitly provided. Otherwise the
+    // solid #F2EEE6 fallback texture above stays in place forever.
+    if (backgroundImageSrc) {
+      const image = new Image();
+      image.crossOrigin = "anonymous";
+      image.onload = () => {
+        if (unmounted) return;
+        imgNaturalAspect = image.naturalWidth / Math.max(1, image.naturalHeight);
+        gl.bindTexture(gl.TEXTURE_2D, bgTexture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        computeBgScale();
+      };
+      image.src = backgroundImageSrc;
+    }
 
     // --- sizing ---
     function resize() {

@@ -96,7 +96,7 @@ export function HubPricingCalculator() {
         <p className="text-sm text-[#6B6B6B]">
           {totals.logins} login{totals.logins === 1 ? "" : "s"} × £{PRICE_PER_LOGIN}/month
         </p>
-        <p className="mt-2 text-3xl font-bold text-[#111111]">{displayMain}</p>
+        <p className="mt-2 text-3xl font-medium text-[#111111]">{displayMain}</p>
         {period === "annual" ? (
           <div className="mt-4 space-y-1 text-sm text-[#374151]">
             <p>

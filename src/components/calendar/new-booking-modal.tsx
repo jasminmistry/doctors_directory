@@ -101,7 +101,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
       <div className="w-full max-w-md rounded-2xl bg-white shadow-xl">
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
           <h2 className="text-sm font-semibold text-gray-900">{isEdit ? 'Edit Appointment' : 'New Appointment'}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-600 transition-colors">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -109,7 +109,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           {/* Patient details */}
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Patient</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Patient</p>
             <Field label="Name *">
               <input
                 type="text"
@@ -144,7 +144,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
 
           {/* Appointment details */}
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Appointment</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Appointment</p>
             <Field label="Treatment / Service">
               <input
                 type="text"
@@ -218,7 +218,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
             <Button
               type="submit"
               disabled={saving}
-              className="flex-1 h-9 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold"
+              className='flex-1'
             >
               {saving ? <><Loader2 className="h-4 w-4 animate-spin mr-1.5" />Saving…</> : isEdit ? 'Update Appointment' : 'Save Appointment'}
             </Button>
@@ -229,7 +229,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
   )
 }
 
-const inputCls = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+const inputCls = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

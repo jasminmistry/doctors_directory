@@ -103,7 +103,7 @@ export default function ChatDetailPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
       </div>
     )
   }
@@ -125,7 +125,7 @@ export default function ChatDetailPage() {
     <div className="max-w-2xl flex flex-col" style={{ height: 'calc(100dvh - 8rem)' }}>
       {/* Header */}
       <div className="shrink-0 flex items-center gap-3 mb-4">
-        <Link href="/account/chats" className="text-gray-400 hover:text-gray-900">
+        <Link href="/account/chats" className="text-gray-500 hover:text-gray-900">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
@@ -142,14 +142,14 @@ export default function ChatDetailPage() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto rounded-xl bg-white border border-gray-200 p-4 space-y-3 min-h-0">
         {messages.length === 0 && (
-          <p className="text-xs text-gray-400 text-center py-8">No messages yet</p>
+          <p className="text-xs text-gray-500 text-center py-8">No messages yet</p>
         )}
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={cn('flex flex-col gap-0.5', msg.sender === 'patient' ? 'items-end' : 'items-start')}
           >
-            <span className="text-[10px] text-gray-400 px-1">
+            <span className="text-[10px] text-gray-500 px-1">
               {msg.sender === 'patient' ? 'You' : session.clinic.name}
             </span>
             <div className={cn(
@@ -167,11 +167,11 @@ export default function ChatDetailPage() {
 
       {/* Input */}
       {isClosed ? (
-        <p className="mt-3 text-center text-xs text-gray-400">This consultation has been closed.</p>
+        <p className="mt-3 text-center text-xs text-gray-500">This consultation has been closed.</p>
       ) : (
         <div className="shrink-0 mt-3 flex items-center gap-2">
           <Input
-            className="flex-1 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
+            className="flex-1 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500"
             placeholder="Type a message…"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
@@ -180,7 +180,7 @@ export default function ChatDetailPage() {
           />
           <Button
             size="icon"
-            className="shrink-0 bg-black text-white hover:bg-gray-800"
+            className="shrink-0 bg-black text-white hover:bg-neutral-800"
             disabled={!draft.trim() || sending}
             onClick={handleSend}
             aria-label="Send"

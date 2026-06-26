@@ -216,7 +216,7 @@ export default function AdminClaimsPage() {
   return (
     <AdminLayout title="Claim Requests">
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">Claim Requests</h1>
+        <h1 className="text-2xl font-medium">Claim Requests</h1>
 
         <div className="flex gap-2">
           {filterTabs.map((tab) => (
@@ -258,7 +258,7 @@ export default function AdminClaimsPage() {
                     <button
                       onClick={(e) => { e.stopPropagation(); handleReprovision(row) }}
                       disabled={reprovisioning === row.id}
-                      className="px-2 py-1 text-xs rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium disabled:opacity-50"
+                      className="px-2 py-1 text-xs rounded-lg border border-[#e0e0e0]  text-gray-700 hover:bg-gray-50 font-medium disabled:opacity-50"
                     >
                       {reprovisioning === row.id ? 'Provisioning…' : 'Reprovision'}
                     </button>

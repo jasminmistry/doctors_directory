@@ -73,8 +73,8 @@ function StatCard({
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-xs font-medium text-gray-500 truncate">{label}</p>
-          <p className="mt-0.5 text-2xl font-bold text-gray-900">{value}</p>
-          {sub && <p className="mt-0.5 text-xs text-gray-400">{sub}</p>}
+          <p className="mt-0.5 text-2xl font-medium text-gray-900">{value}</p>
+          {sub && <p className="mt-0.5 text-xs text-gray-500">{sub}</p>}
         </div>
       </div>
     </div>
@@ -131,16 +131,16 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
             value={dateRange.from}
             max={dateRange.to}
             onChange={(e) => setDateRange((prev) => ({ ...prev, from: e.target.value }))}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="rounded-lg border border-[#e0e0e0]  bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
-          <span className="text-sm text-gray-400">to</span>
+          <span className="text-sm text-gray-500">to</span>
           <input
             type="date"
             value={dateRange.to}
             min={dateRange.from}
             max={new Date().toISOString().slice(0, 10)}
             onChange={(e) => setDateRange((prev) => ({ ...prev, to: e.target.value }))}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="rounded-lg border border-[#e0e0e0]  bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
           <button
             type="button"
@@ -169,7 +169,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
         <>
           {/* Internal metrics */}
           <div className="mb-4">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-500">
               Internal
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -197,7 +197,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
           {/* GSC metrics */}
           <div>
             <div className="mb-3 flex items-center gap-2">
-              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">
                 Google Search Console
               </p>
               {!data.gscConfigured && (
@@ -208,11 +208,11 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
             </div>
 
             {data.gscConfigured && !data.gsc && (
-              <p className="text-sm text-gray-400">No GSC data for this period.</p>
+              <p className="text-sm text-gray-500">No GSC data for this period.</p>
             )}
 
             {!data.gscConfigured && (
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-500">
                 Add <code className="rounded bg-gray-100 px-1 text-xs">GSC_SERVICE_ACCOUNT_CREDENTIALS</code> and{' '}
                 <code className="rounded bg-gray-100 px-1 text-xs">GSC_SITE_URL</code> to enable Google Search Console metrics.
               </p>
@@ -245,8 +245,8 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
                 {data.gsc.topKeywords.length > 0 && (
                   <div>
                     <div className="mb-2 flex items-center gap-2">
-                      <Search className="h-3.5 w-3.5 text-gray-400" />
-                      <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+                      <Search className="h-3.5 w-3.5 text-gray-500" />
+                      <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">
                         Top Keywords
                       </p>
                     </div>

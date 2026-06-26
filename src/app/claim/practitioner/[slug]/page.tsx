@@ -55,7 +55,7 @@ export default async function ClaimPractitionerPage({ params, searchParams }: Re
               {practitioner.specialty}
             </p>
           )}
-          <h1 className="text-2xl font-bold">{entityName}</h1>
+          <h1 className="text-2xl font-medium">{entityName}</h1>
         </div>
 
         {practitioner.claimed ? (

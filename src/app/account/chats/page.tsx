@@ -27,14 +27,14 @@ export default function AccountChatsPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
       </div>
     )
   }
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-bold text-gray-900">Consultations</h1>
+      <h1 className="text-xl font-medium text-gray-900">Consultations</h1>
 
       {sessions.length === 0 ? (
         <div className="rounded-xl bg-white border border-gray-200 px-6 py-10 text-center">
@@ -59,9 +59,9 @@ export default function AccountChatsPage() {
                         {last.sender === 'clinic' ? `${s.clinic.name}: ` : 'You: '}{last.content}
                       </p>
                     ) : (
-                      <p className="text-xs text-gray-400 mt-0.5">No messages</p>
+                      <p className="text-xs text-gray-500 mt-0.5">No messages</p>
                     )}
-                    <p className="text-xs text-gray-400 mt-1">{format(new Date(s.createdAt), 'd MMM yyyy')}</p>
+                    <p className="text-xs text-gray-500 mt-1">{format(new Date(s.createdAt), 'd MMM yyyy')}</p>
                   </div>
                   <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
                     s.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'

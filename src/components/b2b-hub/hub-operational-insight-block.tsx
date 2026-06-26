@@ -8,7 +8,7 @@ type Props = {
 export function HubOperationalInsightBlock({ insight }: Props) {
   return (
     <section className="mb-16 rounded-xl border border-[#DEDBDB] bg-[#F8FAF9] px-6 py-8 md:px-10">
-      <h2 className="mb-4 text-center text-[26px] font-bold tracking-[-0.02em] text-[#111111] md:text-[32px]">
+      <h2 className="mb-4 text-center text-[26px] font-medium tracking-[-0.02em] text-[#111111] md:text-[32px]">
         {toDisplayTitle(insight.title)}
       </h2>
       <ul className="mx-auto max-w-3xl space-y-3">

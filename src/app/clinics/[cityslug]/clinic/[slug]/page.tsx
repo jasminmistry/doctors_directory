@@ -250,8 +250,6 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
               Back to Directory
             </Button>
           </Link>
-        </div>
-        <div className="container mx-auto max-w-6xl px-4 py-2">
           <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -314,7 +312,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   avgReplyTime={dbClinic.avgReplyTime}
                 />
               </div>
-              <div className="border border-gray-300 rounded-xl p-6">
+              <div className="border border-[#e0e0e0]  rounded-xl p-6">
                 <div className="flex flex-row gap-2 pt-2 mb-4 items-center justify-center text-sm">
                   <div className="inline-flex items-center gap-1">
                     <div className="flex items-center">
@@ -337,7 +335,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                       : "0"}
                   </span>
                 </div>
-                <div className="border-t border-gray-300 my-4"></div>
+                <div className="border-t border-[#e0e0e0]  my-4"></div>
                 <div className="mb-4 flex items-center justify-center gap-2">
                   <h3 className="text-center text-lg font-semibold text-foreground">
                     Consentz® Clinic Score
@@ -345,7 +343,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   <ScoreInfoTooltip entityLabel="clinic" />
                 </div>
                 <Stats data={boxplotData} />
-                <p className="mt-3 text-xs font-bold text-black">
+                <p className="mt-3 text-xs font-medium text-black">
                   {rankingSubtitle}
                 </p>
               </div>

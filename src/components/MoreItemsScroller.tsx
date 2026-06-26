@@ -36,7 +36,7 @@ export function MoreItemsScroller({
     const update = () => {
       setCanScrollLeft(container.scrollLeft > 0);
       setCanScrollRight(
-        container.scrollLeft < container.scrollWidth - container.clientWidth
+        container.scrollLeft < container.scrollWidth - container.clientWidth,
       );
     };
 
@@ -59,18 +59,18 @@ export function MoreItemsScroller({
       {/* Always visible arrows */}
       <Button
         onClick={scrollLeft}
-        className="absolute left-0 top-1/2 -translate-y-1/2"
-        disabled={!canScrollLeft} // optional: disables button if cannot scroll
+        className="absolute left-0 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full p-0 flex items-center justify-center bg-[#f4f4f4] border border-[#e0e0e0] text-[#1f1f1f] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors disabled:opacity-50"
+        disabled={!canScrollLeft}
       >
-        <ChevronLeft />
+        <ChevronLeft className="h-5 w-5" />
       </Button>
 
       <Button
         onClick={scrollRight}
-        className="absolute right-0 top-1/2 -translate-y-1/2"
-        disabled={!canScrollRight} // optional
+        className="absolute right-0 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full p-0 flex items-center justify-center bg-[#f4f4f4] border border-[#e0e0e0] text-[#1f1f1f] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors disabled:opacity-50"
+        disabled={!canScrollRight}
       >
-        <ChevronRight />
+        <ChevronRight className="h-5 w-5" />
       </Button>
     </div>
   );

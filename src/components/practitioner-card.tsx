@@ -371,7 +371,7 @@ export function PractitionerCard({
                   className="z-10"
                   data-track-cta="true"
                 >
-                  <Button className="mt-4 mb-0 w-full flex border rounded-lg font-weight px-4 py-2 bg-black align-items-center cursor-pointer justify-center text-white hover:bg-white hover:text-black">
+                  <Button className="mt-4 mb-0 w-full mt-4 h-auto sm:w-full inline-flex items-center justify-center gap-2 rounded-lg px-2 py-2 bg-[#f4f4f4]  text-sm font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer">
                     Contact
                   </Button>
                 </Link>
@@ -534,7 +534,7 @@ export function PractitionerCard({
                       />
                     </div>
 
-                    <div className="mb-3 md:mb-0 flex text-left md:text-center md:align-items-center md:justify-center font-semibold text-md md:text-lg transition-colors text-balance">
+                    <div className="mb-3 md:mb-0 flex text-left md:text-center md:align-items-center md:justify-center font-normal text-sm transition-colors text-balance">
                       {treatmentName}
                     </div>
                   </div>
@@ -551,7 +551,7 @@ export function PractitionerCard({
         >
           <Link href={cityHref}>
             <div className="mt-2 flex flex-col items-center gap-2">
-              <span className="font-bold">{practitioner}</span>
+              <span className="font-normal text-sm">{practitioner}</span>
             </div>
           </Link>
         </Card>

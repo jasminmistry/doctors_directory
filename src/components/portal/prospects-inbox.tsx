@@ -102,7 +102,7 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
   if (loading) {
     return (
       <div className="flex flex-col items-center gap-3 py-16">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
         {setupStatus === 'activating' && (
           <p className="text-sm text-gray-500">Activating your payment method…</p>
         )}
@@ -171,7 +171,7 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
             {leads.length === 0 ? (
               <>
                 <p className="text-sm font-medium text-gray-600">No leads yet</p>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-500 mt-1">
                   When patients request a consultation from your profile, they will appear here.
                 </p>
               </>

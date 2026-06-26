@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { Loader2, Clock, Info, CalendarDays, RefreshCw, Video, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import { ScheduleEditor, DEFAULT_SCHEDULE, DAYS, type DaySchedule } from '@/components/portal/schedule-editor'
@@ -64,7 +65,7 @@ export function PortalScheduleView() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16 text-gray-400">
+      <div className="flex items-center justify-center py-16 text-gray-500">
         <Loader2 className="h-5 w-5 animate-spin mr-2" />
         <span className="text-sm">Loading schedule…</span>
       </div>
@@ -94,22 +95,21 @@ export function PortalScheduleView() {
       <ScheduleEditor value={schedule} onChange={setSchedule} disabled={saving} />
 
       <div className="flex justify-end">
-        <button
+        <Button
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 transition-colors disabled:opacity-50"
         >
           {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           {saving ? 'Saving…' : 'Save schedule'}
-        </button>
+        </Button>
       </div>
 
       {/* Patient-facing preview */}
       {enabledDays.length > 0 && (
         <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
           <div className="flex items-center gap-2">
-            <Eye className="h-4 w-4 text-gray-400 shrink-0" />
+            <Eye className="h-4 w-4 text-gray-500 shrink-0" />
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Patient view — bookable hours</p>
           </div>
           <div className="space-y-1">
@@ -120,19 +120,19 @@ export function PortalScheduleView() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-400">This is what patients see when choosing a booking slot.</p>
+          <p className="text-xs text-gray-500">This is what patients see when choosing a booking slot.</p>
         </div>
       )}
 
       {/* How schedule rules work */}
-      <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 space-y-3">
+      <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-3 text-sm text-gray-700">
         <div className="flex items-center gap-2 mb-1">
-          <Info className="h-4 w-4 text-blue-600 shrink-0" />
-          <p className="text-xs font-semibold text-blue-800 uppercase tracking-wide">How schedule rules work</p>
+          <Info className="h-4 w-4 text-gray-400 shrink-0" />
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">How schedule rules work</p>
         </div>
-        <div className="space-y-2.5 text-sm text-blue-900">
+        <div className="space-y-2.5 text-sm text-gray-900">
           <div className="flex items-start gap-2">
-            <CalendarDays className="h-4 w-4 shrink-0 mt-0.5 text-blue-500" />
+            <CalendarDays className="h-4 w-4 shrink-0 mt-0.5 text-gray-400" />
             <p>
               <span className="font-medium">Booking window: </span>
               Patients can only book on days you have enabled, and only within your stated start–end hours.
@@ -140,7 +140,7 @@ export function PortalScheduleView() {
             </p>
           </div>
           <div className="flex items-start gap-2">
-            <Clock className="h-4 w-4 shrink-0 mt-0.5 text-blue-500" />
+            <Clock className="h-4 w-4 shrink-0 mt-0.5 text-gray-400" />
             <p>
               <span className="font-medium">Event duration: </span>
               Each consultation event has a set duration (15, 30, or 60 minutes). Booking a 60-minute
@@ -148,7 +148,7 @@ export function PortalScheduleView() {
             </p>
           </div>
           <div className="flex items-start gap-2">
-            <Video className="h-4 w-4 shrink-0 mt-0.5 text-blue-500" />
+            <Video className="h-4 w-4 shrink-0 mt-0.5 text-gray-400" />
             <p>
               <span className="font-medium">Online status: </span>
               You appear online when your portal is open, you are within schedule hours, and your last
@@ -157,7 +157,7 @@ export function PortalScheduleView() {
           </div>
           {hasConsentzId && (
             <div className="flex items-start gap-2">
-              <RefreshCw className="h-4 w-4 shrink-0 mt-0.5 text-blue-500" />
+              <RefreshCw className="h-4 w-4 shrink-0 mt-0.5 text-gray-400" />
               <p>
                 <span className="font-medium">Core calendar conflicts: </span>
                 Appointments already booked in your Consentz Core calendar are automatically blocked

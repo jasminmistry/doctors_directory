@@ -43,7 +43,7 @@ const PIPELINE_STATUSES: { value: PipelineStatus; label: string; color: string }
   { value: 'booked',    label: 'Booked',    color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
   { value: 'lost',      label: 'Lost',      color: 'bg-gray-100 text-gray-500 border-gray-200' },
   { value: 'spam',      label: 'Spam',      color: 'bg-red-100 text-red-600 border-red-200' },
-  { value: 'archived',  label: 'Archived',  color: 'bg-gray-50 text-gray-400 border-gray-100' },
+  { value: 'archived',  label: 'Archived',  color: 'bg-gray-50 text-gray-500 border-gray-100' },
 ]
 
 function StatusPill({
@@ -92,7 +92,7 @@ function StatusPill({
             >
               <span className={cn('h-2 w-2 rounded-full shrink-0', s.color.split(' ')[0])} />
               {s.label}
-              {status === s.value && <CheckCircle2 className="ml-auto h-3.5 w-3.5 text-gray-400" />}
+              {status === s.value && <CheckCircle2 className="ml-auto h-3.5 w-3.5 text-gray-500" />}
             </button>
           ))}
         </div>
@@ -128,8 +128,8 @@ function NotesSection({ leadId, initialNotes, onSaved }: { leadId: number; initi
         onClick={() => setEditing(true)}
         className="flex w-full items-start gap-1.5 text-left group"
       >
-        <FileText className="h-3.5 w-3.5 mt-0.5 text-gray-300 group-hover:text-gray-400 shrink-0" />
-        <span className="text-xs text-gray-400 group-hover:text-gray-600 transition-colors">
+        <FileText className="h-3.5 w-3.5 mt-0.5 text-gray-300 group-hover:text-gray-500 shrink-0" />
+        <span className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
           {initialNotes ? initialNotes : 'Add note…'}
         </span>
       </button>
@@ -194,8 +194,8 @@ function OwnerField({ leadId, initialOwner, onSaved }: { leadId: number; initial
         onClick={() => setEditing(true)}
         className="flex items-center gap-1 group"
       >
-        <User className="h-3.5 w-3.5 text-gray-300 group-hover:text-gray-400" />
-        <span className="text-xs text-gray-400 group-hover:text-gray-600 transition-colors">
+        <User className="h-3.5 w-3.5 text-gray-300 group-hover:text-gray-500" />
+        <span className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
           {initialOwner ?? 'Assign…'}
         </span>
       </button>
@@ -300,7 +300,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
               )}
             </p>
             {lead.location && (
-              <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+              <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
                 <MapPin className="h-3 w-3" />
                 {lead.location}
               </p>
@@ -337,7 +337,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
       {/* Patient details */}
       <div className="space-y-1.5 mb-3">
         <div className="flex items-center gap-2 text-sm">
-          <span className="w-10 shrink-0 text-xs text-gray-400">Name</span>
+          <span className="w-10 shrink-0 text-xs text-gray-500">Name</span>
           {locked ? (
             <span className="h-4 w-32 rounded bg-gray-200 blur-[3px] select-none" aria-hidden="true" />
           ) : (
@@ -345,7 +345,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
           )}
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <span className="w-10 shrink-0 text-xs text-gray-400">Phone</span>
+          <span className="w-10 shrink-0 text-xs text-gray-500">Phone</span>
           {locked ? (
             <span className="h-4 w-28 rounded bg-gray-200 blur-[3px] select-none" aria-hidden="true" />
           ) : (
@@ -353,12 +353,12 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
           )}
         </div>
         {lead.preferredTime && (
-          <div className="flex items-center gap-2 text-xs text-gray-400">
+          <div className="flex items-center gap-2 text-xs text-gray-500">
             <Clock className="h-3 w-3" />
             Prefers {lead.preferredTime}
           </div>
         )}
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-gray-500">
           {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}
         </p>
       </div>
@@ -396,7 +396,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
       )}
 
       {locked && isFree && (
-        <Button asChild variant="outline" className="w-full h-9 text-sm border-gray-300">
+        <Button asChild variant="outline" className="w-full h-9 text-sm border-[#e0e0e0] ">
           <a href="/directory/portal/upgrade">Upgrade to unlock</a>
         </Button>
       )}
@@ -410,7 +410,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
             </a>
           </Button>
           {lead.patientEmail && (
-            <Button asChild size="sm" variant="outline" className="flex-1 border-gray-300">
+            <Button asChild size="sm" variant="outline" className="flex-1 border-[#e0e0e0] ">
               <a href={`mailto:${lead.patientEmail}`}>
                 <Mail className="h-3.5 w-3.5 mr-1.5" />
                 Email

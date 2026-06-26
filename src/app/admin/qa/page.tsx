@@ -24,7 +24,7 @@ export default async function Page() {
         <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
           <FileText className="h-12 w-12 text-gray-300" />
           <p className="text-lg font-medium text-gray-600">No report data available</p>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-500">
             Run the test suite to generate <code>test-reports/output.json</code>.
           </p>
         </div>
