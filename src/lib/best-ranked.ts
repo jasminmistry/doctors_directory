@@ -167,7 +167,7 @@ const buildEntries = (
       reviewCount: Number(item.reviewCount ?? 0),
       rating: Number(item.rating ?? 0),
       averagePrice: avgPrice,
-      displayPrice: formatProfileDisplayPrice(avgPrice),
+      displayPrice: formatProfileDisplayPrice(avgPrice, { from: true }),
       scoreValue: score,
       scoreLabel:
         score > 0

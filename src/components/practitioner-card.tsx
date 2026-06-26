@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { Star, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
+import { DirectoryStarRating } from "@/components/directory-star-rating";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -235,194 +236,158 @@ export function PractitionerCard({
     <>
       {(isPractitioner(practitioner) || isClinic(practitioner)) && (
         <article
-          className=" relative mb-2 bg-white border-b border-t-0 border-[#C4C4C4] md:border-t rounded-lg md:border md:border-(--alto)"
+          className="relative flex h-full flex-col overflow-hidden rounded-md border border-[#C4C4C4] bg-white"
           aria-labelledby={`${practitionerOrClinicAriaPrefix}-name-${practitioner.slug}`}
+          data-testid="practitioner-card"
         >
-          <Card
-            asChild
-            className="mt-2 gap-4 md:px-0 shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border-t rounded-27 md:border md:border-(--alto) cursor-pointer"
-            data-testid="practitioner-card"
+          <h2
+            id={`${practitionerOrClinicAriaPrefix}-name-${practitioner.slug}`}
+            className="sr-only"
           >
-            <>
-              <header>
-                <CardHeader className="pb-4 px-2">
-                  <h2
-                    id={`practitioner-name-${practitioner.slug} `}
-                    className="sr-only"
-                  >
-                    {practitionerName}
-                  </h2>
-
-                  <div className="flex items-start gap-4">
-                    <div className="flex flex-col flex-1 min-w-0 text-left items-stretch">
-                      <div className="flex w-full flex-row items-start md:border-0 md:flex-col md:items-center">
-                        <div className="mt-2 relative w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-full bg-gray-300 md:mb-3 mr-0">
-                          <FallbackImage
-                            src={profileImageSrc}
-                            alt="Profile"
-                            className="object-cover rounded-full min-w-full min-h-full"
-                          />
-                        </div>
-
-                        <div className="text-center flex-1 min-w-0 items-start sm:items-center flex flex-col">
-                          <div className="flex items-center gap-1.5 ml-4 sm:ml-0">
-                            <span className="text-base font-semibold text-primary truncate">
-                              {isClinic(practitioner)
-                                ? practitionerName
-                                : practitionerName
-                                    .split(" ")
-                                    .slice(0, 4)
-                                    .map(
-                                      (word) =>
-                                        word.charAt(0).toUpperCase() +
-                                        word.slice(1),
-                                    )
-                                    .join(" ")}
-                            </span>
-                            {(isClinic(practitioner) || isPractitioner(practitioner)) && (
-                              <VerifiedBadge
-                                idVerified={(practitioner as any).idVerified}
-                                manualVerified={(practitioner as any).manualVerified}
-                                verified={(practitioner as any).verified}
-                              />
-                            )}
-                            {(isClinic(practitioner) || isPractitioner(practitioner)) && practitioner.slug && (
-                              <OnlineDot slug={practitioner.slug} />
-                            )}
-                          </div>
-
-                          <div className="absolute top-2 -right-4 text-white text-xs font-semibold px-6 py-1">
-                            <ClinicLabels clinic={practitioner as Clinic} />
-                          </div>
-
-                          {"practitioner_name" in practitioner && (
-                            <p className="text-muted-foreground mb-2 font-semibold leading-tight break-words ml-4 sm:ml-0">
-                              {practitioner.practitioner_title
-                                ?.split(",")[0]
-                                .split(" ")
-                                .slice(0, 4)
-                                .map(
-                                  (word: string) =>
-                                    word.charAt(0).toUpperCase() +
-                                    word.slice(1),
-                                )
-                                .join(" ")}
-                            </p>
-                          )}
-
-                          {!("practitioner_name" in practitioner) &&
-                            practitioner.category && (
-                              <p className="text-muted-foreground mb-2 font-semibold leading-tight break-words ml-4 sm:ml-0">
-                                {practitioner.category.trim()}
-                              </p>
-                            )}
-                        </div>
-                      </div>
-
-                      <div className="sr-only">Rating</div>
-                      <div
-                        className="flex flex-row gap-2 pt-3 items-center justify-start md:justify-center w-full text-sm"
-                        aria-label={`Rating: ${practitioner.rating} out of 5 stars, ${practitioner.reviewCount} reviews`}
-                      >
-                        <div className="inline-flex items-center gap-1">
-                          <div className="flex items-center">
-                            {Array.from({ length: 5 }, (_, i) => (
-                              <Star
-                                key={i}
-                                aria-hidden="true"
-                                className={`h-4 w-4 ${
-                                  i < practitioner.rating!
-                                    ? "fill-black text-black"
-                                    : "text-muted-foreground/30"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        <span className="border-l border-black pl-2 underline">
-                          ({practitioner.reviewCount} reviews)
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
-              </header>
-
-              <CardContent className="pt-0 px-2 md:px-4 space-y-4">
-                <div className="sr-only">Location</div>
-                <div className="flex items-start gap-2 text-sm text-muted-foreground/80">
-                  <MapPin
-                    className="h-4 w-4 mt-0 shrink-0"
-                    aria-hidden="true"
-                  />
-                  <span className="leading-snug truncate">
-                    {practitioner.gmapsAddress!.split(",")[
-                      practitioner.gmapsAddress!.split(",").length - 2
-                    ] +
-                      ", " +
-                      practitioner.gmapsAddress!.split(",")[
-                        practitioner.gmapsAddress!.split(",").length - 1
-                      ]}
-                  </span>
+            {practitionerName}
+          </h2>
+          <div className="flex h-full flex-col">
+            <div className="flex flex-col items-center px-3 pt-4 text-center">
+              <div className="relative mb-3 h-20 w-20 shrink-0 overflow-hidden rounded-full bg-gray-200 md:h-[120px] md:w-[120px]">
+                <FallbackImage
+                  src={profileImageSrc}
+                  alt={practitionerName}
+                  className="h-full w-full object-cover"
+                  width={120}
+                  height={120}
+                />
+                <div className="absolute right-0 top-0">
+                  <ClinicLabels clinic={practitioner as Clinic} />
                 </div>
+              </div>
 
-                <Link
-                  href={practitionerOrClinicHref}
-                  className="z-10"
-                  data-track-cta="true"
-                >
-                  <Button className="mt-4 mb-0 w-full mt-4 h-auto sm:w-full inline-flex items-center justify-center gap-2 rounded-lg px-2 py-2 bg-[#f4f4f4]  text-sm font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer">
-                    Contact
-                  </Button>
-                </Link>
+              <div className="flex min-h-[2.75rem] w-full items-center justify-center gap-1 px-1">
+                <span className="line-clamp-2 text-center text-base font-semibold leading-snug text-primary">
+                  {isClinic(practitioner)
+                    ? practitionerName
+                    : practitionerName
+                        .split(" ")
+                        .slice(0, 4)
+                        .map(
+                          (word) =>
+                            word.charAt(0).toUpperCase() + word.slice(1),
+                        )
+                        .join(" ")}
+                </span>
+                {(isClinic(practitioner) || isPractitioner(practitioner)) && (
+                  <div className="flex shrink-0 items-center gap-1">
+                    <VerifiedBadge
+                      idVerified={(practitioner as any).idVerified}
+                      manualVerified={(practitioner as any).manualVerified}
+                      verified={(practitioner as any).verified}
+                    />
+                    {practitioner.slug && (
+                      <OnlineDot slug={practitioner.slug} />
+                    )}
+                  </div>
+                )}
+              </div>
 
-                {practitioner.Treatments?.length! > 0 && null}
-              </CardContent>
-              <div className="px-2 md:px-4 space-y-4 pb-4">
-                <div className="sr-only">Treatments offered</div>
-                <ul
-                  className="flex flex-wrap gap-1 pt-4"
-                  aria-label="Treatments offered"
-                >
-                  {practitioner.Treatments &&
-                    practitioner.Treatments.sort((a, b) => a.length - b.length)
-                      .slice(0, 2)
-                      .map((modality, index) => (
-                        <li key={index}>
-                          <Badge variant="outline" className="text-xs">
-                            <Link
-                              href={`/treatments/${toUrlSlug(modality)}`}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {modality
-                                .split(" ") // split into words
-                                .map(
-                                  (word) =>
-                                    word.charAt(0).toUpperCase() +
-                                    word.slice(1),
-                                ) // capitalize each
-                                .join(" ")}
-                            </Link>
-                          </Badge>
-                        </li>
-                      ))}
-                  {practitioner.Treatments &&
-                    practitioner.Treatments.length > 2 && (
-                      <li>
+              <div className="mb-2 flex min-h-[1.25rem] w-full items-center justify-center px-1">
+                {"practitioner_name" in practitioner && practitioner.practitioner_title ? (
+                  <p className="line-clamp-1 text-sm font-semibold leading-tight text-muted-foreground">
+                    {practitioner.practitioner_title
+                      .split(",")[0]
+                      .split(" ")
+                      .slice(0, 4)
+                      .map(
+                        (word: string) =>
+                          word.charAt(0).toUpperCase() + word.slice(1),
+                      )
+                      .join(" ")}
+                  </p>
+                ) : null}
+                {!("practitioner_name" in practitioner) && practitioner.category ? (
+                  <p className="line-clamp-1 text-sm font-semibold leading-tight text-muted-foreground">
+                    {practitioner.category.trim()}
+                  </p>
+                ) : null}
+              </div>
+
+              <div className="flex min-h-[1.5rem] w-full items-center justify-center">
+                <DirectoryStarRating
+                  reviewCount={practitioner.reviewCount ?? 0}
+                  className="justify-center"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-1 flex-col px-3 pt-4">
+              <div className="mb-4 flex min-h-[2.75rem] items-start gap-2 text-sm text-muted-foreground/80">
+                <MapPin
+                  className="mt-0.5 h-4 w-4 shrink-0"
+                  aria-hidden="true"
+                />
+                <span className="line-clamp-2 text-left leading-snug">
+                  {practitioner.gmapsAddress!.split(",")[
+                    practitioner.gmapsAddress!.split(",").length - 2
+                  ] +
+                    ", " +
+                    practitioner.gmapsAddress!.split(",")[
+                      practitioner.gmapsAddress!.split(",").length - 1
+                    ]}
+                </span>
+              </div>
+
+              <Link
+                href={practitionerOrClinicHref}
+                className="mt-auto pb-3"
+                data-track-cta="true"
+              >
+                <Button className="w-full rounded-lg border bg-black px-4 py-2 text-white hover:bg-white hover:text-black">
+                  Contact
+                </Button>
+              </Link>
+            </div>
+
+            <div className="min-h-[3.5rem] px-3 pb-4">
+              <ul
+                className="flex flex-wrap gap-1"
+                aria-label="Treatments offered"
+              >
+                {practitioner.Treatments &&
+                  practitioner.Treatments.sort((a, b) => a.length - b.length)
+                    .slice(0, 2)
+                    .map((modality, index) => (
+                      <li key={index}>
                         <Badge variant="outline" className="text-xs">
                           <Link
-                            href={`/treatments`}
+                            href={`/treatments/${toUrlSlug(modality)}`}
                             onClick={(e) => e.stopPropagation()}
                           >
-                            +{practitioner.Treatments.length - 2} more
+                            {modality
+                              .split(" ")
+                              .map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() +
+                                  word.slice(1),
+                              )
+                              .join(" ")}
                           </Link>
                         </Badge>
                       </li>
-                    )}
-                </ul>
-              </div>
-            </>
-          </Card>
+                    ))}
+                {practitioner.Treatments &&
+                  practitioner.Treatments.length > 2 && (
+                    <li>
+                      <Badge variant="outline" className="text-xs">
+                        <Link
+                          href={`/treatments`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          +{practitioner.Treatments.length - 2} more
+                        </Link>
+                      </Badge>
+                    </li>
+                  )}
+              </ul>
+            </div>
+          </div>
         </article>
       )}
       {isProduct(practitioner) && (

@@ -1,4 +1,5 @@
 import { HubSectionCta } from "@/components/b2b-hub/hub-section-cta"
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import { HubServiceProviderSection } from "@/components/b2b-hub/hub-service-provider-section"
 import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section"
 import {
@@ -170,7 +171,7 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
           </div>
           <div className="mt-10 flex justify-center">
             <a
-              href={`${baseUrl}/book-demo`}
+              href={b2bBookDemoHref()}
               className={HUB_CTA_PRIMARY_CLASS}
             >
               Book Demo

@@ -1,4 +1,5 @@
 import { HubBuyerFaq, mapLegacyHubFaqs } from "@/components/b2b-hub/hub-buyer-faq"
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import { HubTestimonialsSection } from "@/components/b2b-hub/hub-testimonials-section"
 import {
   HUB_CTA_PRIMARY_CLASS,
@@ -303,7 +304,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
                 </p>
                 <div className={HUB_HERO_ACTIONS_ROW}>
                   <a
-                    href={`${baseUrl}/book-demo`}
+                    href={b2bBookDemoHref()}
                     className={HUB_CTA_PRIMARY_HERO_CLASS}
                   >
                     Book A Demo
@@ -340,7 +341,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
           </div>
           <div className="mt-10 flex justify-center">
             <a
-              href={`${baseUrl}/book-demo`}
+              href={b2bBookDemoHref()}
               className={HUB_CTA_PRIMARY_CLASS}
             >
               Book Demo

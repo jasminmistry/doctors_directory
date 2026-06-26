@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { isRemovedClinicSlug, isRemovedPractitionerSlug } from '@/lib/directory-removals'
 
 const COOKIE_TOKEN = 'consentz_token'
 const COOKIE_REFRESH = 'consentz_refresh_token'
@@ -23,6 +24,17 @@ const PATIENT_COOKIE = 'patient_session'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  const clinicProfileMatch = pathname.match(/^\/clinics\/[^/]+\/clinic\/([^/]+)\/?$/)
+  if (clinicProfileMatch && isRemovedClinicSlug(decodeURIComponent(clinicProfileMatch[1]))) {
+    return NextResponse.rewrite(new URL('/listing-removed', request.url))
+  }
+
+  const practitionerProfileMatch = pathname.match(/^\/practitioners\/[^/]+\/profile\/([^/]+)\/?$/)
+  if (practitionerProfileMatch && isRemovedPractitionerSlug(decodeURIComponent(practitionerProfileMatch[1]))) {
+    return NextResponse.rewrite(new URL('/listing-removed', request.url))
+  }
+
   const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/api/admin')
   const isPortalRoute = pathname.startsWith('/portal') || pathname.startsWith('/api/portal') || pathname.startsWith('/verify')
   const isAccountRoute = pathname.startsWith('/account') && pathname !== '/account/login' && pathname !== '/account/login/'
@@ -93,5 +105,7 @@ export const config = {
     '/portal/login',
     '/account/:path*',
     '/api/patient/:path*',
+    '/clinics/:cityslug/clinic/:slug',
+    '/practitioners/:cityslug/profile/:slug',
   ],
 }

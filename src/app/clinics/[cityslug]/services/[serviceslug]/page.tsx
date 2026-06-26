@@ -165,7 +165,7 @@ const serviceMatch = categories.some((cat: string) =>
           </div>
         )}
 
-        <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7flex flex-col sm:flex-row justify-center w-full md:gap-10">
+        <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7 flex flex-col sm:flex-row justify-center w-full md:gap-10">
           <CollectionsFilter pageType="Clinic" />
           <div className="flex-1 min-w-0">
             {filteredClinics.length > 0 ? (

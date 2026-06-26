@@ -1,4 +1,5 @@
 import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons"
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import { HUB_BLEED_FROM_CONTAINER } from "@/components/b2b-hub/hub-hero-layout-classes"
 import { cn } from "@/lib/utils"
 import { ServiceProviderCollage } from "@/components/b2b-hub/hub-pillar-detail-template"
@@ -24,7 +25,7 @@ export function HubServiceProviderSection() {
             experience, and grow your business.
           </p>
           <div className="pt-1 lg:pt-2">
-            <a href={`${baseUrl}/book-demo`} className={HUB_CTA_PRIMARY_CLASS}>
+            <a href={b2bBookDemoHref()} className={HUB_CTA_PRIMARY_CLASS}>
               Learn More
             </a>
           </div>

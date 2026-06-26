@@ -5,10 +5,8 @@ import {
   HUB_CTA_SECONDARY_CLASS,
 } from "@/components/b2b-hub/hub-cta-buttons"
 import { HubCtaPhoneFigure } from "@/components/b2b-hub/hub-cta-phone-figure"
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import { cn } from "@/lib/utils"
-
-const baseUrl =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com"
 
 type Props = {
   heading?: string
@@ -46,12 +44,12 @@ function CtaButton({
 }
 
 export function HubSectionCta({
-  heading = "Ready To Run Your Clinic Properly?",
+  heading = "Ready To Run Your Clinic?",
   sub = "Join aesthetic clinics across the UK using Consentz.",
   primaryLabel = "Book A Demo",
   secondaryLabel = "Get CQC Readiness Audit",
-  primaryHref = `${baseUrl}/book-demo`,
-  secondaryHref = `${baseUrl}/book-demo`,
+  primaryHref = b2bBookDemoHref(),
+  secondaryHref = b2bBookDemoHref(),
   className,
   tone = "default",
   withBorder = true,

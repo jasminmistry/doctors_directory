@@ -1,3 +1,4 @@
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import {
   HUB_CTA_PRIMARY_CLASS,
   HUB_CTA_PRIMARY_HERO_CLASS,
@@ -124,7 +125,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
             href="#download-form"
             className={HUB_CTA_PRIMARY_HERO_CLASS}
           >
-            Download Template
+            Register to Download
           </a>
         }
         visual={
@@ -144,12 +145,12 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
       <HubContentStart>
         <section className="mb-12 grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-12">
           <div id="download-form" className="rounded-2xl border border-[#E2DDD7] bg-[#FAFAFA] p-6 md:p-8">
-            <h2 className="mb-2 text-xl font-semibold text-[#111111]">Download Your Free Template</h2>
+            <h2 className="mb-2 text-xl font-semibold text-[#111111]">Register to Download Your Template</h2>
             <p className="mb-6 text-sm text-[#6B6B6B]">
-              Enter your email to receive the PDF. We will also send practical tips for digitising this workflow in
+              Create your clinic account to download the PDF and get practical tips for digitising this workflow in
               Consentz.
             </p>
-            <HubTemplateDownloadForm />
+            <HubTemplateDownloadForm templateTitle={entry.title} />
           </div>
           <HubTemplatePreviewPanel entry={entry} />
         </section>
@@ -199,7 +200,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
           </p>
           <div className={`${HUB_CENTERED_MOBILE_CTAS} md:justify-start`}>
             <a
-              href={`${baseUrl}/book-demo`}
+              href={b2bBookDemoHref()}
               className={HUB_CTA_PRIMARY_CLASS}
             >
               Book A Demo

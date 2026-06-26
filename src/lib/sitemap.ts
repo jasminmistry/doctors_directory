@@ -24,14 +24,7 @@ export const toDirectoryUrl = (pathname: string): string => {
   return `${getBaseUrl()}/directory${withSlash}`
 }
 
-export const toBusinessHubUrl = (pathname: string): string => {
-  const normalized = pathname.startsWith('/') ? pathname : `/${pathname}`
-  const withSlash =
-    normalized.endsWith('/') || normalized.endsWith('.xml')
-      ? normalized
-      : `${normalized}/`
-  return `${getBaseUrl()}${withSlash}`
-}
+export const toBusinessHubUrl = (pathname: string): string => toDirectoryUrl(pathname)
 
 export const mapBusinessHubPathsToSitemapUrls = (
   paths: ReadonlyArray<string>,
@@ -121,6 +114,7 @@ export const buildSitemapIndexXml = (
 export const xmlResponse = (xml: string): NextResponse =>
   new NextResponse(xml, {
     headers: {
-      'Content-Type': 'application/xml',
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
     },
   })

@@ -6,11 +6,12 @@ import { prisma } from '@/lib/db'
 import { COOKIE_TOKEN, COOKIE_USERNAME, COOKIE_ROLE, COOKIE_REFRESH, COOKIE_OPTS } from '@/lib/auth'
 
 interface SsoPayload {
-  consentzClinicId:     number
-  consentzUserId:       number
-  consentzUsername:     string
-  consentzSessionToken: string | null
-  exp:                  number
+  consentzClinicId:      number
+  consentzUserId:        number
+  consentzUsername:      string
+  consentzSessionToken:  string | null
+  consentzRefreshToken:  string | null | undefined
+  exp:                   number
 }
 
 function getSecret(): string {
@@ -81,12 +82,21 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL(`${loginUrl}?error=pending_approval`, req.url))
   }
 
+  // Verify the SSO token's username matches the one stored on the claim to prevent a different
+  // Consentz user at the same clinic from hijacking the portal session.
+  if (claim.consentzUsername && claim.consentzUsername !== payload.consentzUsername) {
+    return NextResponse.redirect(new URL(`${loginUrl}?error=username_mismatch`, req.url))
+  }
+
   const response = NextResponse.redirect(new URL('/directory/portal/clinic', req.url))
 
   response.cookies.set(COOKIE_USERNAME, payload.consentzUsername, COOKIE_OPTS)
   response.cookies.set(COOKIE_ROLE, 'portal', COOKIE_OPTS)
   if (payload.consentzSessionToken) {
     response.cookies.set(COOKIE_TOKEN, payload.consentzSessionToken, COOKIE_OPTS)
+  }
+  if (payload.consentzRefreshToken) {
+    response.cookies.set(COOKIE_REFRESH, payload.consentzRefreshToken, COOKIE_OPTS)
   }
 
   return response

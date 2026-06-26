@@ -1,3 +1,4 @@
+import { filterRemovedPractitioners } from '@/lib/directory-removals'
 import {
   buildUrlSetXml,
   encodeCitySegment,
@@ -5,12 +6,12 @@ import {
   mapPathsToSitemapUrls,
   xmlResponse,
 } from '@/lib/sitemap'
-import { getEnrichedPractitionersFromDb } from '@/lib/sitemap-data'
+import { getEnrichedPractitioners } from '@/lib/sitemap-data'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const paths = (await getEnrichedPractitionersFromDb())
+  const paths = filterRemovedPractitioners(getEnrichedPractitioners())
     .filter(
       (entry) =>
         typeof entry.practitioner_name === 'string' &&
