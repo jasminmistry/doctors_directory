@@ -157,7 +157,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
     <>
       <section
         className={cn(
-          "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          "w-full border-b border-[#e0e0e0] bg-[var(--primary-bg-color)]",
           HUB_DETAIL_HERO_VIEWPORT_CLASS
         )}
       >
@@ -233,7 +233,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
 
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">Operational Reality</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Teams outgrow generic tools when consent, payments, and clinical evidence sit in different
@@ -241,7 +241,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
                 communication.
               </p>
             </div>
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">What Changes With Consentz</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Consentz is built as an operating layer for clinics: structured consent, workflow automation,
@@ -287,7 +287,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
         </section>
 
         <section className="mb-16" aria-labelledby="migrate-progress-heading">
-          <div className="mx-auto max-w-[920px] overflow-hidden rounded-2xl border border-[#E2DDD7] bg-white shadow-sm">
+          <div className="mx-auto max-w-[920px] overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white shadow-sm">
             <div className="border-b border-[#ECEAE6] bg-[#faf9f7] px-6 py-4">
               <p
                 id="migrate-progress-heading"
@@ -332,7 +332,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
             {migrationHandledSteps.map((step, i) => (
               <div
                 key={step.title}
-                className="flex flex-col rounded-xl border border-[#E2DDD7] bg-[#FAFAFA] p-5 text-left"
+                className="flex flex-col rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] p-5 text-left"
               >
                 <span className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#1a1a1a] text-sm font-medium text-white">
                   {i + 1}
@@ -346,7 +346,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-16 rounded-2xl border border-[#E2DDD7] bg-[#FAFAFA] px-6 py-10 md:px-12 md:py-12">
+        <section className="mb-16 rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] px-6 py-10 md:px-12 md:py-12">
           <h2 className="mb-2 text-center text-3xl font-medium text-[#111111] md:text-[32px]">
             Everything Comes With You
           </h2>
@@ -371,7 +371,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
             ].map((s) => (
               <div
                 key={s.label}
-                className="rounded-xl border border-[#E2DDD7] bg-white px-4 py-5 text-center"
+                className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-5 text-center"
               >
                 <p className="text-3xl font-medium tracking-tight text-[#111111] md:text-4xl">{s.value}</p>
                 <p className="mt-1 text-sm font-medium text-[#6B6B6B]">{s.label}</p>
@@ -380,7 +380,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-16 w-full min-w-0 rounded-2xl border border-[#E2DDD7] bg-white px-4 py-10 text-center sm:px-6 md:px-12 md:py-14">
+        <section className="mb-16 w-full min-w-0 rounded-2xl border border-[#e0e0e0] bg-white px-4 py-10 text-center sm:px-6 md:px-12 md:py-14">
           <h2 className="text-2xl font-medium text-[#111111] md:text-3xl">
             We Have A Dedicated Migration Path For {platform}
           </h2>
@@ -389,13 +389,13 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
             patterns — so imports are predictable and inspection-friendly.
           </p>
           <div className="mx-auto mt-10 flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-xl sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4 md:gap-8">
-            <div className="w-full rounded-xl border-2 border-[#E2DDD7] bg-[#FAFAFA] px-6 py-4 text-center text-lg font-medium text-[#1a1a1a] sm:w-auto sm:px-8 sm:py-5 sm:text-xl">
+            <div className="w-full rounded-lg border-2 border-[#e0e0e0] bg-[#fbfbfb] px-6 py-4 text-center text-lg font-medium text-[#1a1a1a] sm:w-auto sm:px-8 sm:py-5 sm:text-xl">
               {platform}
             </div>
             <span className="text-center text-2xl font-light text-[#6B6B6B] sm:text-3xl" aria-hidden>
               →
             </span>
-            <div className="w-full rounded-xl border-2 border-[#1a1a1a] bg-[#1a1a1a] px-6 py-4 text-center text-lg font-medium text-white sm:w-auto sm:px-8 sm:py-5 sm:text-xl">
+            <div className="w-full rounded-lg border-2 border-[#1a1a1a] bg-[#1a1a1a] px-6 py-4 text-center text-lg font-medium text-white sm:w-auto sm:px-8 sm:py-5 sm:text-xl">
               Consentz
             </div>
           </div>
@@ -420,7 +420,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex min-h-[80px] w-full min-w-0 items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-4 py-4 text-center text-base font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white sm:min-h-[93px] sm:px-5 sm:py-[18px] sm:text-lg md:text-xl"
+                className="flex min-h-[80px] w-full min-w-0 items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-4 py-4 text-center text-base font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white sm:min-h-[93px] sm:px-5 sm:py-[18px] sm:text-lg md:text-xl"
               >
                 {item.label}
               </Link>
@@ -455,7 +455,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image
@@ -484,7 +484,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
               rel="noreferrer"
               className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
             >
-              View all blogs
+              View All Blogs
             </a>
           </div>
         </section>

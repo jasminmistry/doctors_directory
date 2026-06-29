@@ -317,7 +317,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   avgReplyTime={dbClinic.avgReplyTime}
                 />
               </div>
-              <div className="border border-gray-300 rounded-xl p-6">
+              <div className="border border-gray-300 rounded-lg p-6">
                 <DirectoryStarRating
                   reviewCount={clinic.reviewCount ?? 0}
                   reviewsLabel={

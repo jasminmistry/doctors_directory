@@ -119,7 +119,7 @@ function ReviewPanel({ booking }: { booking: Booking }) {
 
   if (submitted) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-5 text-center space-y-1">
+      <div className="rounded-lg border border-gray-200 bg-white p-5 text-center space-y-1">
         <p className="text-sm font-medium text-gray-900">Review submitted</p>
         <p className="text-xs text-gray-500">Thanks! It will appear once approved.</p>
       </div>
@@ -127,7 +127,7 @@ function ReviewPanel({ booking }: { booking: Booking }) {
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+    <div className="rounded-lg border border-gray-200 bg-white p-5 space-y-4">
       <div>
         <p className="text-sm font-semibold text-gray-900">How was your appointment?</p>
         <p className="text-xs text-gray-500 mt-0.5">Your review helps others choose the right clinic.</p>
@@ -182,7 +182,7 @@ function CancelButton({ booking, onCancelled }: { booking: Booking; onCancelled:
 
   if (confirming) {
     return (
-      <div className="rounded-xl border border-red-100 bg-red-50 p-4 space-y-3">
+      <div className="rounded-lg border border-red-100 bg-red-50 p-4 space-y-3">
         <p className="text-sm text-red-800 font-medium">Cancel this booking?</p>
         <p className="text-xs text-red-600">This cannot be undone.</p>
         <div className="flex gap-2">
@@ -212,7 +212,7 @@ function CancelButton({ booking, onCancelled }: { booking: Booking; onCancelled:
     <button
       type="button"
       onClick={() => setConfirming(true)}
-      className="flex w-full items-center gap-2.5 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors"
+      className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors"
     >
       <X className="h-4 w-4 shrink-0" />
       Cancel booking
@@ -306,7 +306,7 @@ export default function BookingDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* ── Left: booking info ─────────────────────────────────────── */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="rounded-xl bg-white border border-gray-200 p-6 space-y-5">
+          <div className="rounded-lg bg-white border border-gray-200 p-6 space-y-5">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h1 className="text-lg font-medium text-gray-900">{booking.clinic.name}</h1>
@@ -379,14 +379,14 @@ export default function BookingDetailPage() {
                 href={booking.videoCallJoinUrl!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 hover:bg-green-700 transition-colors px-4 py-3.5 text-sm font-semibold text-white"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 hover:bg-green-700 transition-colors px-4 py-3.5 text-sm font-semibold text-white"
               >
                 <Video className="h-4 w-4" />
                 Join video call
                 <ExternalLink className="h-3.5 w-3.5 opacity-70" />
               </a>
             ) : isUpcoming ? (
-              <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 flex items-center gap-2.5">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3.5 flex items-center gap-2.5">
                 <Video className="h-4 w-4 text-gray-500 shrink-0" />
                 <p className="text-sm text-gray-500">
                   Join link available from{' '}
@@ -402,7 +402,7 @@ export default function BookingDetailPage() {
           {booking.clinic.slug && !isCancelled && (
             <Link
               href={`/account/chats`}
-              className="flex w-full items-center gap-2.5 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
             >
               <MessageCircle className="h-4 w-4 shrink-0 text-gray-500" />
               Message clinic
@@ -415,7 +415,7 @@ export default function BookingDetailPage() {
               href={calUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-full items-center gap-2.5 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
             >
               <CalendarPlus className="h-4 w-4 shrink-0 text-gray-500" />
               Add to Google Calendar
@@ -428,7 +428,7 @@ export default function BookingDetailPage() {
               href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-full items-center gap-2.5 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
             >
               <Navigation className="h-4 w-4 shrink-0 text-gray-500" />
               Get directions
@@ -447,7 +447,7 @@ export default function BookingDetailPage() {
           {isCancelled && booking.clinic.slug && (
             <Link
               href={`/directory`}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Find a new appointment
             </Link>

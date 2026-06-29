@@ -136,7 +136,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                      <ClinicDetailsMarkdown clinic={practitioner} />
                    </div>
                    <div className="order-1 lg:order-2 col-span-1 lg:col-span-4">
-                     <div className="border border-gray-300 rounded-xl p-6">
+                     <div className="border border-gray-300 rounded-lg p-6">
                        <DirectoryStarRating
                          reviewCount={practitioner.reviewCount ?? 0}
                          reviewsLabel={

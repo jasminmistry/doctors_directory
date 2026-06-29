@@ -132,7 +132,7 @@ export function NavigationHeader() {
                   <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isPatientOpen && "rotate-180")} />
                 </button>
                 {isPatientOpen && (
-                  <div className="absolute right-0 top-full mt-1.5 w-52 rounded-xl border border-border bg-background shadow-lg py-1 z-50">
+                  <div className="absolute right-0 top-full mt-1.5 w-52 rounded-lg border border-border bg-background py-1 z-50">
                     <div className="px-4 py-2.5 border-b border-border">
                       <p className="text-xs font-medium text-foreground truncate">{patientUser.email}</p>
                     </div>
@@ -179,7 +179,7 @@ export function NavigationHeader() {
                   <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isPortalOpen && "rotate-180")} />
                 </Button>
                 {isPortalOpen && (
-                  <div className="absolute right-0 top-full mt-1.5 w-52 rounded-xl border border-border bg-background shadow-lg py-1 z-50">
+                  <div className="absolute right-0 top-full mt-1.5 w-52 rounded-lg border border-border bg-background py-1 z-50">
                     <div className="px-4 py-2.5 border-b border-border">
                       <p className="text-xs font-medium text-foreground truncate">{portalUser.claimerEmail}</p>
                       <p className="text-xs text-muted-foreground capitalize mt-0.5">{portalUser.entityType} portal</p>
@@ -217,7 +217,7 @@ export function NavigationHeader() {
                   <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isProviderOpen && "rotate-180")} />
                 </Button>
                 {isProviderOpen && (
-                  <div className="absolute right-0 top-full mt-1.5 w-52 rounded-xl border border-border bg-background shadow-lg py-1 z-50">
+                  <div className="absolute right-0 top-full mt-1.5 w-52 rounded-lg border border-border bg-background py-1 z-50">
                     <Link
                       href="/register/clinic"
                       onClick={() => setIsProviderOpen(false)}

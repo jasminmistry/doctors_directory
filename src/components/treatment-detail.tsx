@@ -391,7 +391,7 @@ export function TreatmentDetail({
 
           {/* Treatment Info */}
           <div className="flex-1 space-y-4">
-            <h1 className="text-2xl font-medium text-gray-900">
+            <h1 className="text-xl font-medium text-gray-900">
               {treatment.name}
             </h1>
 
@@ -433,7 +433,7 @@ export function TreatmentDetail({
         {/* Book Consultation Button */}
         <div className="mt-6">
           <Button
-            className="w-full bg-black text-white hover:bg-neutral-800 rounded-xl py-3 text-lg font-medium"
+            className="w-full bg-black text-white hover:bg-neutral-800 rounded-lg py-3 text-lg font-medium"
             data-track-cta="true"
           >
             Book Consultation
@@ -458,7 +458,7 @@ export function TreatmentDetail({
         {/* Treatment Info */}
         <div className="grow">
           <header>
-            <h1 className="text-3xl font-medium text-gray-900">
+            <h1 className="text-2xl font-medium text-gray-900">
               {treatment.name} Treatment
             </h1>
           </header>
@@ -490,7 +490,7 @@ export function TreatmentDetail({
                     aria-hidden="true"
                   />
                   <div>
-                    <dd className="text-2xl font-medium" itemProp="ratingValue">
+                    <dd className="text-xl font-medium" itemProp="ratingValue">
                       {treatment.satisfaction}%
                     </dd>
                     <div className="text-sm text-gray-600">
@@ -547,7 +547,7 @@ export function TreatmentDetail({
                     aria-hidden="true"
                   />
                   <div>
-                    <dd className="text-2xl font-medium" itemProp="reviewCount">
+                    <dd className="text-xl font-medium" itemProp="reviewCount">
                       {treatment.reviews}
                     </dd>
                     <div className="text-sm text-gray-600">Reviews</div>
@@ -571,7 +571,7 @@ export function TreatmentDetail({
                   />
                   <div>
                     <dd
-                      className="text-2xl font-medium"
+                      className="text-xl font-medium"
                       itemProp="numberOfEmployees"
                     >
                       {treatment.practitioners}

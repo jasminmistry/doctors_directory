@@ -512,7 +512,7 @@ export function PractitionerCard({
       {isCity(practitioner) === true && (
         <Card
           asChild
-          className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-sm "
+          className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer  "
         >
           <Link href={cityHref}>
             <div className="mt-2 flex flex-col items-center gap-2">
@@ -535,7 +535,7 @@ export function PractitionerCard({
           href={awardHref}
           className="block"
         >
-          <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg ">
+          <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer ">
             <CardHeader className=" h-55 pb-4 px-2">
               <div className="flex justify-center mb-4">
                 <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg bg-gray-300">

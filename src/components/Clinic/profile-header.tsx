@@ -39,7 +39,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
   const [imgSrc, setImgSrc] = useState(proxyUrl);
 
   return (
-    <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-xl px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t md:border md:border-(--alto) bg-white md:bg-(--primary-bg-color)">
+    <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-lg px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t md:border md:border-(--alto) bg-white md:bg-(--primary-bg-color)">
       {!clinic.claimed && (
         <Link prefetch={false} href={`/claim/${clinic.slug}`}>
           <Badge

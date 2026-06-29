@@ -144,7 +144,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
 
       <HubContentStart>
         <section className="mb-12 grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-12">
-          <div id="download-form" className="rounded-2xl border border-[#E2DDD7] bg-[#FAFAFA] p-6 md:p-8">
+          <div id="download-form" className="rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] p-6 md:p-8">
             <h2 className="mb-2 text-xl font-semibold text-[#111111]">Register to Download Your Template</h2>
             <p className="mb-6 text-sm text-[#6B6B6B]">
               Create your clinic account to download the PDF and get practical tips for digitising this workflow in
@@ -167,7 +167,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
             {content.includes.map((line) => (
               <div
                 key={line}
-                className="flex items-center gap-3 rounded-xl bg-[#eef7f2] px-[18px] py-[14px]"
+                className="flex items-center gap-3 rounded-lg bg-[#eef7f2] px-[18px] py-[14px]"
               >
                 <span className="shrink-0 text-sm font-medium text-[#1a6e45]">✓</span>
                 <p className="text-base font-medium text-[#1a1a1a]">{line}</p>
@@ -193,7 +193,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
           </ul>
         </section>
 
-        <section className="mb-12 rounded-2xl border border-[#E2DDD7] bg-[#faf8f5] p-8 text-center md:p-10 md:text-left">
+        <section className="mb-12 rounded-2xl border border-[#e0e0e0] bg-[#faf8f5] p-8 text-center md:p-10 md:text-left">
           <h2 className="mb-3 text-2xl font-medium text-[#111111]">Make It Digital With Consentz</h2>
           <p className="mx-auto mb-6 max-w-2xl text-base leading-relaxed text-[#1A1A1A] md:mx-0">
             {content.digitalPitch}
@@ -209,7 +209,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
               href={`${baseUrl}/medical-templates/`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-[48px] items-center justify-center rounded-[12px] border border-[#E2DDD7] bg-white px-6 text-base font-medium text-[#111111] transition-colors hover:bg-neutral-50"
+              className="inline-flex h-[48px] items-center justify-center rounded-lg border border-[#e0e0e0] bg-white px-6 text-base font-medium text-[#111111] transition-colors hover:bg-neutral-50"
             >
               Create Workflow
             </a>
@@ -222,7 +222,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
               <Link
                 key={`${r.category}-${r.slug}`}
                 href={templatePageHref(r)}
-                className="flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-lg font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white"
+                className="flex min-h-[93px] items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-5 py-[18px] text-center text-lg font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white"
               >
                 {toDisplayTitle(r.title)}
               </Link>
@@ -275,7 +275,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image
@@ -304,7 +304,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
               rel="noreferrer"
               className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
             >
-              View all blogs
+              View All Blogs
             </a>
           </div>
         </section>

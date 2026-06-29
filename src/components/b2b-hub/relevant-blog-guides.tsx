@@ -52,7 +52,7 @@ export function RelevantBlogGuides() {
             rel="noreferrer"
             className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
           >
-            View all blogs
+            View All Blogs
           </a>
         </div>
       </div>

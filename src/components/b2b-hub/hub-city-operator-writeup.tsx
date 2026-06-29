@@ -24,7 +24,7 @@ export function HubCityOperatorWriteup({ cityTitle, sections }: Props) {
         {sections.map((section) => (
           <div
             key={section.title}
-            className="rounded-xl border border-[#E5E7EB] bg-white px-6 py-6 shadow-sm"
+            className="rounded-lg border border-[#e0e0e0] bg-white px-6 py-6 shadow-sm"
           >
             <h3 className="mb-2 text-xl font-semibold text-[#111111]">
               {toDisplayTitle(section.title)}

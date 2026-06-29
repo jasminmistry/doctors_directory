@@ -44,7 +44,7 @@ export function HubCompareFeatureTable({ id, competitorLabel }: Props) {
           Why Choose Consentz Over {competitorLabel}?
         </h2>
       </div>
-      <div className="w-full min-w-0 overflow-x-auto rounded-xl border border-[#e6e0d8] bg-white">
+      <div className="w-full min-w-0 overflow-x-auto rounded-lg border border-[#e6e0d8] bg-white">
         <table className="w-full min-w-[520px] border-collapse text-left text-sm sm:min-w-[640px] md:text-base">
           <thead>
             <tr className="bg-[#1a1a1a] text-white">

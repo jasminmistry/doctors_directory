@@ -145,7 +145,7 @@ export function ProfileHeaderSkeleton() {
 
 export function StatsCardSkeleton() {
   return (
-    <div className="border border-[#e0e0e0]  rounded-xl p-6 space-y-6">
+    <div className="border border-[#e0e0e0]  rounded-lg p-6 space-y-6">
       <div className="flex flex-row gap-2 items-center justify-center">
         <div className="flex gap-1">
           {Array.from({ length: 5 }, (_, i) => (

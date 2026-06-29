@@ -61,7 +61,7 @@ export function HubIndexSearchCards({
             {filtered.map((e) => {
               const external = e.href.startsWith("http")
               const className =
-                "w-full max-w-[404px] rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-4 flex flex-col gap-1.5 hover:border-neutral-400 hover:shadow-sm transition-all text-left min-h-[78px]"
+                "w-full max-w-[404px] rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] px-4 py-4 flex flex-col gap-1.5 hover:border-neutral-400  transition-all text-left min-h-[78px]"
               const body = (
                 <>
                   <span className="font-semibold text-neutral-900 leading-snug">

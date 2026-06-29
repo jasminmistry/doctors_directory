@@ -79,7 +79,7 @@ function StatusPill({
         <ChevronDown className={cn('h-3 w-3 transition-transform', open && 'rotate-180')} />
       </button>
       {open && (
-        <div className="absolute left-0 top-full mt-1 z-20 w-36 rounded-xl border border-gray-200 bg-white shadow-lg py-1">
+        <div className="absolute left-0 top-full mt-1 z-20 w-36 rounded-lg border border-gray-200 bg-white py-1">
           {PIPELINE_STATUSES.map((s) => (
             <button
               key={s.value}
@@ -281,7 +281,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
   return (
     <div
       className={cn(
-        'rounded-xl border bg-white p-4 transition-shadow hover:shadow-sm',
+        'rounded-lg border bg-white p-4 transition-shadow ',
         lead.isNew ? 'border-blue-200 shadow-[0_0_0_1px_rgba(59,130,246,0.15)]' : 'border-gray-200',
       )}
       onMouseEnter={handleSeen}

@@ -140,7 +140,7 @@ export default function ChatDetailPage() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto rounded-xl bg-white border border-gray-200 p-4 space-y-3 min-h-0">
+      <div className="flex-1 overflow-y-auto rounded-lg bg-white border border-gray-200 p-4 space-y-3 min-h-0">
         {messages.length === 0 && (
           <p className="text-xs text-gray-500 text-center py-8">No messages yet</p>
         )}

@@ -134,7 +134,7 @@ function EventModal({ event, onClose, onSaved }: EventModalProps) {
         onClick={onClose}
         aria-label="Close"
       />
-      <div className="relative w-full max-w-lg bg-white rounded-xl shadow-xl overflow-hidden">
+      <div className="relative w-full max-w-lg bg-white rounded-lg shadow-xl overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <h2 className="text-sm font-semibold text-gray-900">
             {isEdit ? 'Edit Event' : 'New Event'}
@@ -310,7 +310,7 @@ function DeleteConfirm({ event, onClose, onDeleted }: DeleteConfirmProps) {
         onClick={onClose}
         aria-label="Close"
       />
-      <div className="relative w-full max-w-sm bg-white rounded-xl shadow-xl p-6 space-y-4">
+      <div className="relative w-full max-w-sm bg-white rounded-lg shadow-xl p-6 space-y-4">
         <h2 className="text-sm font-semibold text-gray-900">Delete Event</h2>
         <p className="text-sm text-gray-600">
           Are you sure you want to delete{' '}
@@ -418,7 +418,7 @@ export function PractitionerEvents() {
             <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
           </div>
         ) : events.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-gray-200 py-16 text-center">
+          <div className="rounded-lg border border-dashed border-gray-200 py-16 text-center">
             <Video className="mx-auto h-8 w-8 text-gray-300 mb-3" />
             <p className="text-sm font-medium text-gray-700">No events yet</p>
             <p className="text-xs text-gray-500 mt-1">Add your first consultation event to let patients book online.</p>
@@ -432,7 +432,7 @@ export function PractitionerEvents() {
             </button>
           </div>
         ) : (
-          <div className="rounded-xl border border-gray-200 overflow-hidden">
+          <div className="rounded-lg border border-gray-200 overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50">

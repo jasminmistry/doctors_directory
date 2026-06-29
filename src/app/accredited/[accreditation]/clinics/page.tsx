@@ -126,7 +126,7 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
               href={`/accredited/${accreditation}/clinics/${toUrlSlug(city)}`}
               className="block"
             >
-              <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg ">
+              <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer ">
                 <CardHeader className="pb-4">
                   <h3 className="mb-2 flex font-semibold text-md md:text-lg transition-colors text-balance group-hover:text-black">
                     {city}

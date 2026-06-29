@@ -69,7 +69,7 @@ export function RegisterForm({ entityType }: Readonly<Props>) {
   if (submitted) {
     return (
       <div className="flex flex-col items-center gap-4 py-8 text-center">
-        <CheckCircle2 className="h-12 w-12 text-emerald-500" />
+        <CheckCircle2 className="h-12 w-12 text-black" />
         <div>
           <h3 className="text-lg font-semibold mb-1">Application received</h3>
           <p className="text-sm text-muted-foreground max-w-sm">

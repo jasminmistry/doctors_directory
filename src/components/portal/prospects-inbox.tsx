@@ -112,21 +112,21 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
 
   if (error) {
     return (
-      <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+      <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
     )
   }
 
   return (
     <div className="space-y-4">
       {setupStatus === 'unlocked' && (
-        <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
           <CheckCircle className="h-4 w-4 shrink-0" />
           Card saved and lead unlocked — patient details are now visible below.
         </div>
       )}
 
       {setupStatus === 'card_saved' && (
-        <div className="flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-black">
+        <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-black">
           <CreditCard className="h-4 w-4 shrink-0" />
           Card saved successfully. Click <strong>Unlock — £15</strong> on any lead below to reveal patient details.
         </div>
@@ -165,7 +165,7 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
       )}
 
       {visibleLeads.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-gray-200 py-16 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-gray-200 py-16 text-center">
           <Inbox className="h-8 w-8 text-gray-300" />
           <div>
             {leads.length === 0 ? (

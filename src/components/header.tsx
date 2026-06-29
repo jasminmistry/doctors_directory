@@ -100,7 +100,7 @@ export default function Header() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <a
                   href={`${baseUrl}/features/`}
                   className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg"
@@ -132,7 +132,7 @@ export default function Header() {
                 List Your Practice
                 <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </button>
-              <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <Link href="/register/clinic" className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg">
                   Register a Clinic
                 </Link>
@@ -150,7 +150,7 @@ export default function Header() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <Link href="/account" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg">My Account</Link>
                 <Link href="/account/bookings" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100">Bookings</Link>
                 <Link href="/account/chats" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100">Chats</Link>
@@ -165,7 +165,7 @@ export default function Header() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <div className="px-4 py-2.5 border-b border-gray-100">
                   <p className="text-xs text-gray-500 capitalize">{portalUser.entityType} portal</p>
                 </div>
@@ -183,7 +183,7 @@ export default function Header() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <Link href="/account/login" className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg">
                   Patient
                 </Link>
@@ -237,7 +237,7 @@ export default function Header() {
       </div>
 
       {showSearch && (
-        <div className="border-t border-gray-200 px-6 py-3">
+        <div className="border-t border-[#e0d9ca] px-6 py-3">
           <div className="max-w-6xl mx-auto">
             <SearchBar />
           </div>

@@ -202,11 +202,11 @@ export function HubCityScaledPage({
       />
       <section
         className={cn(
-          "w-full overflow-x-clip border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          "w-full overflow-x-clip border-b border-[#e0e0e0] bg-[var(--primary-bg-color)]",
           HUB_DETAIL_HERO_VIEWPORT_CLASS
         )}
       >
-        <div className="mx-auto flex w-full min-w-0 max-w-[1440px] flex-1 flex-col overflow-x-clip px-4 sm:px-6 lg:px-0">
+        <div className="max-w-7xl mx-auto p-6 flex min-w-0 flex-1 flex-col">
           <div className={HUB_SPLIT_HERO_GRID_TWO_COL}>
             <div className={HUB_SPLIT_HERO_VISUAL_TALL} aria-hidden>
               <SoftwareHeroVisual />
@@ -262,7 +262,7 @@ export function HubCityScaledPage({
                     hero.line1
                   )}
                 </h1>
-                <p className="mb-9 max-w-[700px] text-lg font-medium leading-[1.65] text-[#1A1A1A] [font-family:Inter,system-ui,sans-serif] lg:text-2xl">
+                <p className="mb-9 max-w-[700px] text-md text-[#1A1A1A]">
                   {hero.intro}
                 </p>
                 <div className={HUB_HERO_ACTIONS_ROW}>
@@ -292,41 +292,41 @@ export function HubCityScaledPage({
         </div>
       </section>
 
-      <article className="mx-auto max-w-[1280px] px-4 pb-0 pt-10 md:pt-12 [font-family:Inter,system-ui,sans-serif]">
+      <article className="mx-auto max-w-7xl px-4 pb-0 pt-10 md:pt-12 [font-family:Inter,system-ui,sans-serif]">
         <section className="mb-12 text-center">
-          <h2 className="text-[30px] font-medium tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+          <h2 className="text-[30px] font-medium  text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
             The {cityTitle} Aesthetic Market
           </h2>
           <div className="mx-auto mt-10 grid max-w-[1142px] grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
-              <MapPin className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[28px] font-medium tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
+            <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-2 py-7 text-center">
+              <MapPin className="h-12 w-12 mb-4 text-[#111111]" strokeWidth={1.25} aria-hidden />
+              <p className="text-lg font-medium  text-[#111111]  ">
                 {stats.clinicCount}
               </p>
-              <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">
+              <p className="text-base leading-snug sm:text-md">
                 Clinics in {cityTitle}
               </p>
             </div>
-            <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
-              <Users className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[28px] font-medium tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
+            <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-2 py-7 text-center">
+              <Users className="h-12 w-12 mb-4 text-[#111111]" strokeWidth={1.25} aria-hidden />
+              <p className="text-lg font-medium  text-[#111111]  ">
                 {stats.practitionerCount}
               </p>
-              <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">Practitioners</p>
+              <p className="text-base leading-snug sm:text-md">Practitioners</p>
             </div>
-            <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
-              <Syringe className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[28px] font-medium tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
+            <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-2 py-7 text-center">
+              <Syringe className="h-12 w-12 mb-4 text-[#111111]" strokeWidth={1.25} aria-hidden />
+              <p className="text-lg font-medium  text-[#111111]  ">
                 {stats.topTreatment}
               </p>
-              <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">Top Treatment</p>
+              <p className="text-base leading-snug sm:text-md">Top Treatment</p>
             </div>
-            <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
-              <Droplets className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[28px] font-medium tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
+            <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-2 py-7 text-center">
+              <Droplets className="h-12 w-12 mb-4 text-[#111111]" strokeWidth={1.25} aria-hidden />
+              <p className="text-lg font-medium  text-[#111111]  ">
                 {stats.secondTreatment}
               </p>
-              <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">2nd Treatment</p>
+              <p className="text-base leading-snug sm:text-md">2nd Treatment</p>
             </div>
           </div>
         </section>
@@ -338,16 +338,16 @@ export function HubCityScaledPage({
         ) : null}
 
         <section className="mb-16">
-          <h2 className="mb-10 text-center text-[30px] font-medium tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+          <h2 className="mb-10 text-center text-[30px] font-medium  text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
             Why {cityTitle} Clinics Choose Consentz
           </h2>
           <div className="mx-auto grid max-w-[1070px] grid-cols-1 gap-6 md:grid-cols-2">
             {pains.map((text) => (
               <div
                 key={text}
-                className="flex min-h-[88px] items-start rounded-xl bg-[#eef7f2] px-10 py-[15px]"
+                className="flex items-start rounded-lg bg-[#fbfbfb] px-10 py-[15px]"
               >
-                <p className="text-lg font-medium leading-[1.45] text-[#1A1A1A] md:text-xl">
+                <p className="text-md font-normal text-[#1A1A1A]">
                   {text}
                 </p>
               </div>
@@ -359,7 +359,7 @@ export function HubCityScaledPage({
 
         {nearbyCities.length > 0 ? (
           <section className="mb-16 text-center">
-            <h2 className="mb-6 text-[30px] font-medium tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+            <h2 className="mb-6 text-[30px] font-medium  text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
               Also Serving Clinics Near {cityTitle}
             </h2>
             <div className="mx-auto flex max-w-[900px] flex-wrap justify-center gap-3">
@@ -367,7 +367,7 @@ export function HubCityScaledPage({
                 <Link
                   key={nearby.slug}
                   href={`/business/uk/${nearby.slug}/${pageSlug}/`}
-                  className="rounded-full border border-[#DEDBDB] bg-white px-5 py-2 text-sm font-medium text-[#111111] hover:bg-[#FAFAFA]"
+                  className="rounded-full border border-[#DEDBDB] bg-white px-5 py-2 text-sm font-medium text-[#111111] hover:bg-[#fbfbfb]"
                 >
                   {nearby.label}
                 </Link>
@@ -423,7 +423,7 @@ export function HubCityScaledPage({
               rel="noreferrer"
               className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
             >
-              View all blogs
+             View All Blogs
             </a>
           </div>
         </section>

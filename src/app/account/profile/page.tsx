@@ -84,7 +84,7 @@ export default function AccountProfilePage() {
         <p className="text-sm text-gray-500 mt-1">{profile.email}</p>
       </div>
 
-      <form onSubmit={handleSave} className="space-y-4 rounded-xl bg-white border border-gray-200 p-6">
+      <form onSubmit={handleSave} className="space-y-4 rounded-lg bg-white border border-gray-200 p-6">
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">First name</label>
@@ -124,7 +124,7 @@ export default function AccountProfilePage() {
       </form>
 
       {/* GDPR delete */}
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 space-y-3">
+      <div className="rounded-lg border border-red-200 bg-red-50 p-6 space-y-3">
         <h2 className="text-sm font-semibold text-red-600">Delete account</h2>
         <p className="text-xs text-gray-500">
           Permanently delete your account and anonymise all associated bookings and consultations. This action cannot be undone.

@@ -166,7 +166,7 @@ export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
               k !== "Source" && (
                 <article
                   key={k}
-                  className="group relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:shadow-md hover:border-primary/50"
+                  className="group relative overflow-hidden rounded-lg border border-border bg-card transition-all duration-300 hover:shadow-md hover:border-primary/50"
                 >
                   <Link prefetch={false} href={`/practitioners/${clinic.City.toLowerCase()}/profile/${v.practitioner_name}`}>
                   <div className="p-5">

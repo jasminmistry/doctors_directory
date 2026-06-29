@@ -447,7 +447,7 @@ console.log(failedTestMessages)
                     
 
 
-                    <section className="bg-white shadow-lg rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-2xl p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         1. One Test = One Page Render
                       </h2>
@@ -475,7 +475,7 @@ console.log(failedTestMessages)
                     </section>
 
 
-                    <section className="bg-white shadow-lg rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-2xl p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         2. A Failed Test Does Not Always Mean the Page Is Broken
                       </h2>
@@ -508,7 +508,7 @@ console.log(failedTestMessages)
                     </section>
 
 
-                    <section className="bg-white shadow-lg rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-2xl p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         3. The Testing Mindset & Workflow
                       </h2>
@@ -558,7 +558,7 @@ console.log(failedTestMessages)
                     </section>
 
 
-                    <section className="bg-white shadow-lg rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-2xl p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         4. Expanding the Horizon
                       </h2>
@@ -569,7 +569,7 @@ console.log(failedTestMessages)
 
                       <div className="grid md:grid-cols-2 gap-6">
 
-                        <div className="bg-slate-100 rounded-xl p-6">
+                        <div className="bg-slate-100 rounded-lg p-6">
                           <h3 className="font-semibold text-slate-800 mb-3">Data Quality Testing</h3>
                           <ul className="list-disc pl-6 space-y-1 text-slate-700">
                             <li>Minimum content length checks</li>
@@ -578,7 +578,7 @@ console.log(failedTestMessages)
                           </ul>
                         </div>
 
-                        <div className="bg-slate-100 rounded-xl p-6">
+                        <div className="bg-slate-100 rounded-lg p-6">
                           <h3 className="font-semibold text-slate-800 mb-3">UX & Structural Testing</h3>
                           <ul className="list-disc pl-6 space-y-1 text-slate-700">
                             <li>Required section presence</li>
@@ -587,7 +587,7 @@ console.log(failedTestMessages)
                           </ul>
                         </div>
 
-                        <div className="bg-slate-100 rounded-xl p-6">
+                        <div className="bg-slate-100 rounded-lg p-6">
                           <h3 className="font-semibold text-slate-800 mb-3">Regression Prevention</h3>
                           <ul className="list-disc pl-6 space-y-1 text-slate-700">
                             <li>Ensure future updates don’t break existing pages</li>
@@ -596,7 +596,7 @@ console.log(failedTestMessages)
                           </ul>
                         </div>
 
-                        <div className="bg-slate-100 rounded-xl p-6">
+                        <div className="bg-slate-100 rounded-lg p-6">
                           <h3 className="font-semibold text-slate-800 mb-3">Team Alignment</h3>
                           <ul className="list-disc pl-6 space-y-1 text-slate-700">
                             <li>Clear, readable failure messages</li>
@@ -614,7 +614,7 @@ console.log(failedTestMessages)
                       </div>
                       
                     </section>
-                    <section className="bg-white shadow-lg rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-2xl p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">CMS</h2>
                       <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded">
                       <li className="text-indigo-900 font-medium">/directory/admin/clinics</li>
@@ -673,7 +673,7 @@ console.log(failedTestMessages)
           <TabsContent value="failed" className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-900">
               Unique Error Codes:
-              <pre className="bg-slate-900 text-slate-100 text-sm p-4 rounded-xl overflow-x-auto"><code>{Array.from(failedTestMessages).join('\n')}</code></pre>
+              <pre className="bg-slate-900 text-slate-100 text-sm p-4 rounded-lg overflow-x-auto"><code>{Array.from(failedTestMessages).join('\n')}</code></pre>
             </h3>
             {failedTests.length === 0 ? (
               <Card>
