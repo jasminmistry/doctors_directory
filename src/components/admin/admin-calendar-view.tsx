@@ -75,7 +75,7 @@ export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
   if (loading) {
     return (
       <div className="flex justify-center py-24">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
       </div>
     )
   }

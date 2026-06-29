@@ -34,7 +34,7 @@ export default function RegisterClinicPage() {
             <Building2 className="h-5 w-5 text-muted-foreground" />
             <span className="text-xs uppercase tracking-wide text-muted-foreground font-medium">For Clinics</span>
           </div>
-          <h1 className="text-2xl font-bold mb-3">Register your clinic</h1>
+          <h1 className="text-2xl font-medium mb-3">Register your clinic</h1>
           <p className="text-sm text-muted-foreground">
             Submit your clinic details below. Our team will review your application and create your listing within 1–2 business days.
           </p>
@@ -48,14 +48,14 @@ export default function RegisterClinicPage() {
             ))}
           </ul>
 
-          <p className="mt-4 text-sm text-muted-foreground">
+          <p className="mt-4 text-sm text-black">
             Already listed?{' '}
             <Link href="/clinics" className="text-foreground underline underline-offset-2">
               Find your clinic
             </Link>{' '}
             and use the &quot;Claim this profile&quot; link.
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-black">
             Already have an account?{' '}
             <Link href="/portal/login" className="text-foreground underline underline-offset-2">
               Sign in to your portal

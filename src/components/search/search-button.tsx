@@ -14,7 +14,7 @@ export function SearchButton({ isLoading, onClick }: SearchButtonProps) {
       <Button
         onClick={onClick}
         size="lg"
-        className="ml-4 h-12 w-12 sm:h-12.5 sm:w-12 rounded-full hover:cursor-pointer rounded-lg text-white hover:bg-gray-800 transition-colors flex items-center justify-center flex-shrink-0"
+        className="ml-4 h-12 w-12 sm:h-12.5 sm:w-12 rounded-full hover:cursor-pointer rounded-lg text-white hover:bg-neutral-800 transition-colors flex items-center justify-center flex-shrink-0"
       >
         {isLoading ? (
           <Loader2 className="h-6 w-6 animate-spin" />

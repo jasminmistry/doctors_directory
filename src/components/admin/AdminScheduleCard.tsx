@@ -77,7 +77,7 @@ export function AdminScheduleCard({ entityType, slug }: Props) {
       <div className="p-6">
         {loading ? (
           <div className="flex justify-center py-8">
-            <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+            <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
           </div>
         ) : noConsentzId ? (
           <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">

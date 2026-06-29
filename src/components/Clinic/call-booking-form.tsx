@@ -181,7 +181,7 @@ export function CallBookingForm({
           </a>
         )}
 
-        <p className="text-[10px] text-gray-400">
+        <p className="text-[10px] text-gray-500">
           {isZoomWaiting
             ? 'Your join link will appear here once the host has set up the call.'
             : 'Save this link — you\'ll need it at the scheduled time.'}
@@ -265,7 +265,7 @@ export function CallBookingForm({
   return (
     <div className={cn('space-y-4', pad)}>
       {/* Step indicator */}
-      <div className="flex items-center gap-1 text-[10px] text-gray-400">
+      <div className="flex items-center gap-1 text-[10px] text-gray-500">
         <span className="font-medium text-gray-900">1. Date &amp; Time</span>
         <span>›</span>
         <span className="font-medium">2. Your Details</span>
@@ -277,7 +277,7 @@ export function CallBookingForm({
           type="button"
           onClick={() => setWeekOffset((o) => Math.max(0, o - 1))}
           disabled={weekOffset === 0}
-          className="rounded p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30"
+          className="rounded p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -287,7 +287,7 @@ export function CallBookingForm({
         <button
           type="button"
           onClick={() => setWeekOffset((o) => o + 1)}
-          className="rounded p-1 text-gray-400 hover:text-gray-700"
+          className="rounded p-1 text-gray-500 hover:text-gray-700"
         >
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -324,10 +324,10 @@ export function CallBookingForm({
         <div>
           {slotsLoading ? (
             <div className="flex justify-center py-4">
-              <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+              <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
             </div>
           ) : slots.length === 0 ? (
-            <p className="text-center text-xs text-gray-400 py-3">No call slots available on this day</p>
+            <p className="text-center text-xs text-gray-500 py-3">No call slots available on this day</p>
           ) : (
             <div className="grid grid-cols-2 gap-1.5">
               {slots.map((slot, i) => (
@@ -345,7 +345,7 @@ export function CallBookingForm({
                   )}
                 >
                   <div className="font-medium">{slot.start} – {slot.end}</div>
-                  <div className={cn('text-[10px] truncate', selectedSlot?.start === slot.start ? 'opacity-70' : 'text-gray-400')}>
+                  <div className={cn('text-[10px] truncate', selectedSlot?.start === slot.start ? 'opacity-70' : 'text-gray-500')}>
                     {slot.practitioner}
                   </div>
                 </button>

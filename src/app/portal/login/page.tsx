@@ -100,7 +100,7 @@ export default function PortalLoginPage() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-black/10 ring-1 ring-white/20">
             <Building2 className="h-6 w-6 text-black" />
           </div>
-          <h1 className="text-2xl font-bold text-black">Clinic Portal</h1>
+          <h1 className="text-2xl font-medium text-black">Clinic Portal</h1>
           <p className="mt-1.5 text-sm text-slate-900">
             Sign in to manage your Consentz Directory profile
           </p>
@@ -122,7 +122,7 @@ export default function PortalLoginPage() {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 text-base border rounded-lg bg-white"
+                className="w-full px-3 py-2 text-base border rounded-lg bg-white autofill:shadow-[inset_0_0_0px_1000px_white] autofill:[-webkit-text-fill-color:black]"
                 placeholder="Your username"
               />
             </div>
@@ -141,7 +141,7 @@ export default function PortalLoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 text-base border rounded-lg bg-white"
+                className="w-full px-3 py-2 text-base border rounded-lg bg-white autofill:shadow-[inset_0_0_0px_1000px_white] autofill:[-webkit-text-fill-color:black]"
                 placeholder="Your password"
               />
             </div>
@@ -166,7 +166,7 @@ export default function PortalLoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-black border border-black text-white hover:bg-white hover:text-black font-bold rounded-lg"
+              className="w-full items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition"
               disabled={loading}
             >
               {loading ? 'Signing in…' : 'Sign in'}

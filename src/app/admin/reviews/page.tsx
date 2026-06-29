@@ -151,7 +151,7 @@ export default function AdminReviewsPage() {
                 </button>
                 <button type="button" disabled={bulkActioning}
                   onClick={() => bulkAction('reject')}
-                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                  className="rounded-lg border border-[#e0e0e0]  px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
                   Reject all
                 </button>
               </>
@@ -166,7 +166,7 @@ export default function AdminReviewsPage() {
             {tab === 'approved' && (
               <button type="button" disabled={bulkActioning}
                 onClick={() => bulkAction('reject')}
-                className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                className="rounded-lg border border-[#e0e0e0]  px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
                 Reject all
               </button>
             )}
@@ -180,19 +180,19 @@ export default function AdminReviewsPage() {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+        <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-gray-500" /></div>
       ) : reviews.length === 0 ? (
-        <p className="text-sm text-gray-400 py-8 text-center">No {tab} reviews.</p>
+        <p className="text-sm text-gray-500 py-8 text-center">No {tab} reviews.</p>
       ) : (
         <div className="space-y-3">
           {/* Select-all row */}
           <div className="flex items-center gap-3 px-1">
-            <button type="button" onClick={toggleAll} className="text-gray-400 hover:text-gray-700">
+            <button type="button" onClick={toggleAll} className="text-gray-500 hover:text-gray-700">
               {allSelected
                 ? <CheckSquare className="h-4 w-4 text-gray-700" />
                 : <Square className="h-4 w-4" />}
             </button>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-500">
               {allSelected ? 'Deselect all' : 'Select all'}
             </span>
           </div>
@@ -203,7 +203,7 @@ export default function AdminReviewsPage() {
                 selected.has(r.id) ? 'border-gray-400 bg-gray-50' : 'border-gray-200')}>
               <div className="flex items-start gap-3">
                 {/* Checkbox */}
-                <button type="button" onClick={() => toggleOne(r.id)} className="mt-0.5 shrink-0 text-gray-400 hover:text-gray-700">
+                <button type="button" onClick={() => toggleOne(r.id)} className="mt-0.5 shrink-0 text-gray-500 hover:text-gray-700">
                   {selected.has(r.id)
                     ? <CheckSquare className="h-4 w-4 text-gray-700" />
                     : <Square className="h-4 w-4" />}
@@ -218,15 +218,15 @@ export default function AdminReviewsPage() {
                       </span>
                     )}
                     <a href={`/directory/admin/clinics/${r.clinic.slug}`}
-                      className="text-xs text-gray-400 hover:text-gray-700 underline underline-offset-2">
+                      className="text-xs text-gray-500 hover:text-gray-700 underline underline-offset-2">
                       {r.clinic.name ?? r.clinic.slug}
                     </a>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-gray-500">
                       {formatDistanceToNow(new Date(r.createdAt), { addSuffix: true })}
                     </span>
                   </div>
                   <Stars rating={r.rating} />
-                  {r.treatment && <p className="mt-1 text-xs text-gray-400">{r.treatment}</p>}
+                  {r.treatment && <p className="mt-1 text-xs text-gray-500">{r.treatment}</p>}
                   <p className="mt-2 text-sm text-gray-700 leading-relaxed">{r.reviewText}</p>
                 </div>
 
@@ -240,7 +240,7 @@ export default function AdminReviewsPage() {
                       </button>
                       <button type="button" disabled={actioning === r.id}
                         onClick={() => action(r.id, 'approve', false)}
-                        className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                        className="rounded-lg border border-[#e0e0e0]  px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
                         Approve
                       </button>
                       <button type="button" disabled={actioning === r.id}
@@ -260,7 +260,7 @@ export default function AdminReviewsPage() {
                   {tab === 'approved' && (
                     <button type="button" disabled={actioning === r.id}
                       onClick={() => action(r.id, 'reject')}
-                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                      className="rounded-lg border border-[#e0e0e0]  px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
                       Reject
                     </button>
                   )}

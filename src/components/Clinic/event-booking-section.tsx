@@ -287,7 +287,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
           <button
             type="button"
             onClick={resetToEvents}
-            className="text-xs text-gray-400 underline hover:text-gray-600 mt-2"
+            className="text-xs text-gray-500 underline hover:text-gray-600 mt-2"
           >
             Book another consultation
           </button>
@@ -306,7 +306,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
           <button
             type="button"
             onClick={() => { setStep('date-slot'); setError(null) }}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-500 hover:text-gray-600"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -354,7 +354,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
           {isPaid && (
             <div className="rounded-lg bg-gray-50 border border-gray-100 px-4 py-3 flex items-center justify-between">
               <span className="text-xs text-gray-500">Amount due</span>
-              <span className="text-sm font-bold text-gray-900">£{selectedEvent!.price}</span>
+              <span className="text-sm font-medium text-gray-900">£{selectedEvent!.price}</span>
             </div>
           )}
 
@@ -376,7 +376,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
           </button>
 
           {isPaid && !submitting && (
-            <p className="text-center text-[10px] text-gray-400">
+            <p className="text-center text-[10px] text-gray-500">
               You&apos;ll be redirected to Stripe to complete payment securely
             </p>
           )}
@@ -393,7 +393,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
           <button
             type="button"
             onClick={resetToEvents}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-500 hover:text-gray-600"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -412,7 +412,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
 
         <div className="px-5 py-4 space-y-4">
           {/* Step indicator */}
-          <div className="flex items-center gap-1 text-[10px] text-gray-400">
+          <div className="flex items-center gap-1 text-[10px] text-gray-500">
             <span className="font-medium text-gray-900">1. Date &amp; Time</span>
             <span>›</span>
             <span>2. Your Details</span>
@@ -424,7 +424,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
               type="button"
               onClick={() => setWeekOffset((o) => Math.max(0, o - 1))}
               disabled={weekOffset === 0}
-              className="rounded p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30"
+              className="rounded p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -434,7 +434,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
             <button
               type="button"
               onClick={() => setWeekOffset((o) => o + 1)}
-              className="rounded p-1 text-gray-400 hover:text-gray-700"
+              className="rounded p-1 text-gray-500 hover:text-gray-700"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -471,10 +471,10 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
             <div>
               {slotsLoading ? (
                 <div className="flex justify-center py-4">
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                  <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
                 </div>
               ) : slots.length === 0 ? (
-                <p className="text-center text-xs text-gray-400 py-3">
+                <p className="text-center text-xs text-gray-500 py-3">
                   No slots available on this date
                 </p>
               ) : (

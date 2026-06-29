@@ -57,7 +57,7 @@ export function DesktopSearchView({
       <div className="flex flex-row items-center mb-2">
         <div className="relative">
           <button
-            className="flex-none bg-white border border-r-0 border-gray-300 px-4 py-3 rounded-l-lg"
+            className="flex-none bg-white border border-r-0 border-[#e0e0e0]  px-4 py-3 rounded-l-lg"
             onClick={() => { cancelClose(); setShowResults(!showResults); }}
             onBlur={scheduleClose}
           >
@@ -70,7 +70,7 @@ export function DesktopSearchView({
           </button>
         </div>
 
-        <div className="relative flex-1 bg-white border rounded-r-lg sm:rounded-r-none border-gray-300 px-4 py-3">
+        <div className="relative flex-1 bg-white border rounded-r-lg sm:rounded-r-none border-[#e0e0e0]  px-4 py-3">
           <Input
             placeholder="Treatment, clinic or practitioner"
             value={localFilters.query}
@@ -86,7 +86,7 @@ export function DesktopSearchView({
             <button
               type="button"
               aria-label="Clear search query"
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-gray-700"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 transition-colors hover:bg-neutral-800"
               onMouseDown={(e) => e.preventDefault()}
               onClick={clearQuery}
             >
@@ -95,7 +95,7 @@ export function DesktopSearchView({
           )}
         </div>
 
-        <div className="hidden sm:flex relative bg-white rounded-r-lg border border-gray-300 px-4 py-3 items-center gap-2 w-44 flex-none">
+        <div className="hidden sm:flex relative bg-white rounded-r-lg border border-[#e0e0e0]  px-4 py-3 items-center gap-2 w-44 flex-none">
           <Locate className="w-5 h-5 text-gray-600" />
           <Input
             placeholder="Location"
@@ -116,7 +116,7 @@ export function DesktopSearchView({
             <button
               type="button"
               aria-label="Clear location"
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-gray-700"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 transition-colors hover:bg-neutral-800"
               onMouseDown={(e) => e.preventDefault()}
               onClick={clearLocation}
             >

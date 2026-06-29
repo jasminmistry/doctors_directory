@@ -499,7 +499,7 @@ export function PractitionerCard({
                       />
                     </div>
 
-                    <div className="mb-3 md:mb-0 flex text-left md:text-center md:align-items-center md:justify-center font-semibold text-md md:text-lg transition-colors text-balance">
+                    <div className="mb-3 md:mb-0 flex text-left md:text-center md:align-items-center md:justify-center font-normal text-sm transition-colors text-balance">
                       {treatmentName}
                     </div>
                   </div>
@@ -516,7 +516,7 @@ export function PractitionerCard({
         >
           <Link href={cityHref}>
             <div className="mt-2 flex flex-col items-center gap-2">
-              <span className="font-bold">{practitioner}</span>
+              <span className="font-normal text-sm">{practitioner}</span>
             </div>
           </Link>
         </Card>

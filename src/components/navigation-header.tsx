@@ -96,7 +96,7 @@ export function NavigationHeader() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 font-bold text-xl text-foreground hover:text-accent transition-colors"
+            className="flex items-center gap-2 font-medium text-xl text-foreground hover:text-accent transition-colors"
           >
             <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
               <Search className="h-4 w-4 text-accent-foreground" />

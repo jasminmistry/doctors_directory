@@ -78,7 +78,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-900">
               <CalendarDays className="h-7 w-7 text-white" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-medium text-gray-900">
               Welcome{entityName ? `, ${entityName}` : ''}!
             </h2>
             <p className="mt-2 text-sm text-gray-500">
@@ -106,7 +106,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
                 type="button"
                 onClick={skip}
                 disabled={saving || loadingSchedule}
-                className="text-sm text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
+                className="text-sm text-gray-500 hover:text-gray-600 transition-colors disabled:opacity-50"
               >
                 Skip for now
               </button>
@@ -117,7 +117,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
         {step === 'schedule' && (
           <div className="p-6">
             <div className="mb-5">
-              <h2 className="text-lg font-bold text-gray-900">Weekly schedule</h2>
+              <h2 className="text-lg font-medium text-gray-900">Weekly schedule</h2>
               <p className="mt-1 text-sm text-gray-500">
                 Toggle each day and set your opening hours. Bookings are only accepted on enabled days.
               </p>
@@ -132,7 +132,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
                 type="button"
                 onClick={() => setStep('welcome')}
                 disabled={saving}
-                className="text-sm text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
+                className="text-sm text-gray-500 hover:text-gray-600 transition-colors disabled:opacity-50"
               >
                 Back
               </button>
@@ -141,7 +141,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
                   type="button"
                   onClick={skip}
                   disabled={saving}
-                  className="text-sm text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
+                  className="text-sm text-gray-500 hover:text-gray-600 transition-colors disabled:opacity-50"
                 >
                   Skip
                 </button>

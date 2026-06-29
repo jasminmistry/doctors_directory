@@ -71,10 +71,10 @@ export default function Header() {
 
   return (
     <header
-      className="bg-[var(--primary-bg-color)] sticky top-0 z-40 shadow-sm">
+      className="bg-[var(--primary-bg-color)] sticky top-0 z-40 border border-b-[#e0d9ca]">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-start md:justify-between">
         
-        <div className="font-bold text-xl">
+        <div className="font-medium text-xl">
           <Link href="/" className="inline-block cursor-pointer" aria-label="Go to directory home">
             <img
                 src="/directory/images/Consentz Logo.webp"
@@ -87,7 +87,7 @@ export default function Header() {
         <div className="nav-drop hidden md:flex gap-8 items-center w-full justify-between">
           <nav className="flex gap-8 items-center mx-auto">
             <a href={`${baseUrl}/directory`} className="font-medium hover:text-black">
-              HOME
+              Home
             </a>
             <div className="relative group">
               <button
@@ -95,7 +95,7 @@ export default function Header() {
                 className="font-medium hover:text-black flex items-center gap-1"
                 aria-haspopup="true"
               >
-                FEATURES
+                Features
                 <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -103,40 +103,40 @@ export default function Header() {
               <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <a
                   href={`${baseUrl}/features/`}
-                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg"
                 >
                   All Features
                 </a>
                 <a
                   href={`${baseUrl}/clinic-management-software/`}
-                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100"
                 >
                   Clinic Management Software
                 </a>
                 <a
                   href={`${baseUrl}/hipaa-compliant-medical-spa-software/`}
-                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100 rounded-b-lg"
                 >
                   HIPAA Compliant Medical Spa Software
                 </a>
               </div>
             </div>
             <a href={`${baseUrl}/blog`} className="font-medium hover:text-black">
-              BLOG
+              Blog
             </a>
             <a href={`${baseUrl}/faqs`} className="font-medium hover:text-black">
-              FAQS
+              Faq's
             </a>
             <div className="relative group">
               <button type="button" className="font-medium hover:text-black flex items-center gap-1">
-                LIST YOUR PRACTICE
+                List Your Practice
                 <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </button>
               <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <Link href="/register/clinic" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg">
+                <Link href="/register/clinic" className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg">
                   Register a Clinic
                 </Link>
-                <Link href="/register/practitioner" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-b-lg border-t border-gray-100">
+                <Link href="/register/practitioner" className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-b-lg border-t border-gray-100">
                   Register as a Practitioner
                 </Link>
               </div>
@@ -144,7 +144,7 @@ export default function Header() {
           </nav>
           {patient ? (
             <div className="relative group">
-              <button type="button" className="font-bold rounded-lg border-2 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1">
+              <button type="button" className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1">
                 {patient.firstName || patient.email}
                 <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -159,7 +159,7 @@ export default function Header() {
             </div>
           ) : portalUser ? (
             <div className="relative group">
-              <button type="button" className="font-bold rounded-lg border-2 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1">
+              <button type="button" className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1">
                 {portalUser.entityName}
                 <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -177,17 +177,17 @@ export default function Header() {
             </div>
           ) : (
             <div className="relative group">
-              <button type="button" className="font-bold rounded-lg border-2 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1">
-                LOG IN
+              <button type="button" className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black caplized hover:text-white flex items-center gap-1">
+                Log In
                 <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
               <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <Link href="/account/login" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg">
+                <Link href="/account/login" className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg">
                   Patient
                 </Link>
-                <Link href="/portal/login" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg">
+                <Link href="/portal/login" className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100 rounded-b-lg">
                   Clinic / Practitioner
                 </Link>
               </div>
@@ -247,11 +247,11 @@ export default function Header() {
       {menuOpen && (
         <div className="md:hidden px-6 py-4">
           <nav className="flex flex-col gap-4">
-            <button type="button" className="text-left font-bold hover:text-black">
+            <button type="button" className="text-left font-medium hover:text-black">
               HOME
             </button>
             <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Features</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Features</p>
               <a href={`${baseUrl}/features/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
                 All Features
               </a>
@@ -262,14 +262,14 @@ export default function Header() {
                 HIPAA Compliant Medical Spa Software
               </a>
             </div>
-            <button type="button" className="text-left font-bold hover:text-black">
+            <button type="button" className="text-left font-medium hover:text-black">
               BLOG
             </button>
-            <button type="button" className="text-left font-bold hover:text-black">
+            <button type="button" className="text-left font-medium hover:text-black">
               FAQS
             </button>
             <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">List Your Practice</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">List Your Practice</p>
               <Link href="/register/clinic" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
                 Register a Clinic
               </Link>
@@ -289,13 +289,13 @@ export default function Header() {
           ) : portalUser ? (
             <div className="mt-4 flex flex-col gap-2">
               <span className="text-sm font-semibold text-gray-600">{portalUser.entityName}</span>
-              <span className="text-xs text-gray-400 capitalize">{portalUser.entityType} portal</span>
+              <span className="text-xs text-gray-500 capitalize">{portalUser.entityType} portal</span>
               <Link href="/portal/clinic" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>My Portal</Link>
               <button type="button" onClick={() => { setMenuOpen(false); portalSignOut() }} className="text-sm font-medium text-red-600 hover:text-red-800 text-left">Sign out</button>
             </div>
           ) : (
             <div className="mt-4 border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Log In</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Log In</p>
               <Link href="/account/login" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
                 Patient
               </Link>

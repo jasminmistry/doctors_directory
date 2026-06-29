@@ -109,7 +109,7 @@ export function HeroSection() {
                         <div className="mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
                           <Link
                             href="/account/login"
-                            className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
+                            className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
                           >
                             Join as a patient — it&apos;s free
                           </Link>
@@ -169,7 +169,7 @@ export function HeroSection() {
                       <div className="max-w-4xl m-auto md:px-5 mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
                         <Link
                           href="/register/clinic"
-                          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
+                          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
                         >
                           List your practice
                         </Link>

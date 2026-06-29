@@ -214,7 +214,7 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
                 </Badge>
               </div>
               <Link href={entry.href} prefetch={false}>
-                <Button className="w-full flex border rounded-lg px-4 py-2 bg-black text-white hover:bg-white hover:text-black cursor-pointer justify-center text-sm">
+                <Button className="whitespace-nowrap disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive has-[>svg]:px-3 mb-0 w-full mt-4 h-auto sm:w-full inline-flex items-center justify-center gap-2 rounded-lg px-2 py-2 bg-[#f4f4f4] text-sm font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer">
                   View Profile
                 </Button>
               </Link>

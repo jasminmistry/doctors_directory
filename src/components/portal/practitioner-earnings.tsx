@@ -106,7 +106,7 @@ export function PractitionerEarnings() {
 
       {loading ? (
         <div className="flex justify-center py-16">
-          <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+          <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
         </div>
       ) : (
         <>
@@ -145,7 +145,7 @@ export function PractitionerEarnings() {
               <p className="text-sm font-medium text-gray-700">
                 {period === 'all' ? 'No paid bookings yet' : `No paid bookings for ${PERIOD_LABELS[period].toLowerCase()}`}
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Earnings appear here when patients pay for consultations through the directory.
               </p>
             </div>
@@ -176,14 +176,14 @@ export function PractitionerEarnings() {
                         <p className="text-xs font-medium text-gray-900">
                           {format(new Date(b.slotStart), 'd MMM yyyy')}
                         </p>
-                        <p className="text-[10px] text-gray-400">
+                        <p className="text-[10px] text-gray-500">
                           {format(new Date(b.slotStart), 'HH:mm')}
                         </p>
                       </td>
                       <td className="px-4 py-3">
                         <p className="text-sm font-medium text-gray-900">{b.patientName}</p>
                         {b.patientEmail && (
-                          <p className="text-[10px] text-gray-400 truncate max-w-[140px]">{b.patientEmail}</p>
+                          <p className="text-[10px] text-gray-500 truncate max-w-[140px]">{b.patientEmail}</p>
                         )}
                       </td>
                       <td className="px-4 py-3 hidden sm:table-cell">
@@ -200,7 +200,7 @@ export function PractitionerEarnings() {
                       <td className="px-4 py-3 text-right">
                         <p className="text-sm text-gray-500">£{fmt(b.depositAmount)}</p>
                         {b.stripePaymentIntentId && (
-                          <p className="text-[10px] text-gray-400 font-mono">
+                          <p className="text-[10px] text-gray-500 font-mono">
                             {b.stripePaymentIntentId.slice(0, 12)}…
                           </p>
                         )}
@@ -240,7 +240,7 @@ export function PractitionerEarnings() {
                         </td>
                         <td className="px-4 py-3 text-right">
                           <span className="text-xs text-gray-500 mr-2">Net</span>
-                          <span className="text-sm font-bold text-gray-900">
+                          <span className="text-sm font-medium text-gray-900">
                             £{fmt(bookings.reduce((s, b) => s + b.depositAmount * (1 - feeRate), 0))}
                           </span>
                         </td>
@@ -248,7 +248,7 @@ export function PractitionerEarnings() {
                     ) : (
                       <td colSpan={2} className="px-4 py-3 text-right">
                         <span className="text-xs text-gray-500 mr-2">Subtotal</span>
-                        <span className="text-sm font-bold text-gray-900">
+                        <span className="text-sm font-medium text-gray-900">
                           £{fmt(bookings.reduce((s, b) => s + b.depositAmount, 0))}
                         </span>
                       </td>
@@ -305,8 +305,8 @@ function SummaryCard({
         </div>
         <p className="text-xs text-gray-500">{label}</p>
       </div>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
-      <p className="text-[10px] text-gray-400">{sub}</p>
+      <p className="text-2xl font-medium text-gray-900">{value}</p>
+      <p className="text-[10px] text-gray-500">{sub}</p>
     </div>
   )
 }

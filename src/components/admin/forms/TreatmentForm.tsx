@@ -147,7 +147,7 @@ export function TreatmentForm() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="min-w-0">
-            <p className="text-xs text-gray-400 font-medium">Treatments</p>
+            <p className="text-xs text-gray-500 font-medium">Treatments</p>
             <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
           </div>
         </div>
@@ -184,7 +184,7 @@ export function TreatmentForm() {
             </Field>
           ) : (
             <div className="flex flex-col justify-end">
-              <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
+              <span className="text-xs text-gray-500 mb-1.5 font-medium">Slug</span>
               <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{data.slug}</code>
             </div>
           )}
@@ -211,7 +211,7 @@ export function TreatmentForm() {
             <div key={key} className="py-5 first:pt-0 last:pb-0">
               <div className="mb-2">
                 <p className="text-sm font-medium text-gray-700">{label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{hint}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{hint}</p>
               </div>
               <JsonFieldEditor
                 value={data[key]}

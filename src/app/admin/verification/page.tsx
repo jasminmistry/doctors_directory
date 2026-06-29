@@ -88,7 +88,7 @@ export default function AdminVerificationPage() {
   return (
     <AdminLayout title="ID Verification">
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">ID Verification Requests</h1>
+        <h1 className="text-2xl font-medium">ID Verification Requests</h1>
 
         <div className="flex gap-2">
           {filterTabs.map((tab) => (

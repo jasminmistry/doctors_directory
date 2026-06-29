@@ -142,11 +142,11 @@ export default function AccountLoginPage() {
     <div className="flex items-center justify-center bg-white px-4 py-20">
       <div className="w-full max-w-[22rem]">
         <div className="mb-5 text-center">
-          <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-black/10 ring-1 ring-black/10">
+          <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center border border-[#e0e0e0] rounded-full bg-white">
             <UserCircle className="h-5 w-5 text-black" />
           </div>
-          <h1 className="text-xl font-bold text-black">{titles[step]}</h1>
-          <p className="mt-1.5 text-sm text-slate-600">{subtitles[step]}</p>
+          <h1 className="text-xl font-medium text-black">{titles[step]}</h1>
+          <p className="mt-1.5 text-sm text-slate-900">{subtitles[step]}</p>
         </div>
 
         <div className="p-6 bg-white border border-[#C4C4C4] rounded-lg">
@@ -159,7 +159,7 @@ export default function AccountLoginPage() {
                 <input
                   id="email" type="email" required autoComplete="email"
                   value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 text-base border rounded-lg bg-white"
+                  className="w-full px-3 py-2 text-base border rounded-lg bg-white autofill:bg-white autofill:shadow-[inset_0_0_0px_1000px_white] autofill:[-webkit-text-fill-color:black]"
                   placeholder="you@example.com"
                 />
               </div>
@@ -175,20 +175,20 @@ export default function AccountLoginPage() {
                   <input
                     id="password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password"
                     value={password} onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-2 pr-10 text-base border rounded-lg bg-white"
+                    className="w-full px-3 py-2 pr-10 text-base border rounded-lg bg-white autofill:shadow-[inset_0_0_0px_1000px_white] autofill:[-webkit-text-fill-color:black]"
                     placeholder="••••••••"
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-600">
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
               {error && <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">{error}</p>}
-              <Button type="submit" className="w-full bg-black border border-black text-white hover:bg-white hover:text-black" disabled={loading}>
+              <Button type="submit" className=" w-full items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition" disabled={loading}>
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Sign in'}
               </Button>
-              <p className="text-center text-xs text-slate-500">
+              <p className="text-center text-xs text-black">
                 Don&apos;t have an account?{' '}
                 <button type="button" onClick={() => { setStep('register'); setError('') }}
                   className="font-medium text-black hover:underline">
@@ -240,7 +240,7 @@ export default function AccountLoginPage() {
                     placeholder="Min. 8 characters"
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-600">
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
@@ -258,7 +258,7 @@ export default function AccountLoginPage() {
               <Button type="submit" className="w-full bg-black border border-black text-white hover:bg-white hover:text-black" disabled={loading}>
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create account'}
               </Button>
-              <p className="text-center text-xs text-slate-500">
+              <p className="text-center text-xs text-black">
                 Already have an account?{' '}
                 <button type="button" onClick={resetToLogin} className="font-medium text-black hover:underline">
                   Sign in
@@ -327,7 +327,7 @@ export default function AccountLoginPage() {
                     placeholder="Min. 8 characters"
                   />
                   <button type="button" onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-600">
                     {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>

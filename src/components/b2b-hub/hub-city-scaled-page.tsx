@@ -294,13 +294,13 @@ export function HubCityScaledPage({
 
       <article className="mx-auto max-w-[1280px] px-4 pb-0 pt-10 md:pt-12 [font-family:Inter,system-ui,sans-serif]">
         <section className="mb-12 text-center">
-          <h2 className="text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+          <h2 className="text-[30px] font-medium tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
             The {cityTitle} Aesthetic Market
           </h2>
           <div className="mx-auto mt-10 grid max-w-[1142px] grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
               <MapPin className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[28px] font-bold tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
+              <p className="text-[28px] font-medium tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
                 {stats.clinicCount}
               </p>
               <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">
@@ -309,21 +309,21 @@ export function HubCityScaledPage({
             </div>
             <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
               <Users className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[28px] font-bold tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
+              <p className="text-[28px] font-medium tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
                 {stats.practitionerCount}
               </p>
               <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">Practitioners</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
               <Syringe className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[28px] font-bold tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
+              <p className="text-[28px] font-medium tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
                 {stats.topTreatment}
               </p>
               <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">Top Treatment</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-7 py-7 text-center">
               <Droplets className="h-14 w-14 text-[#111111]" strokeWidth={1.25} aria-hidden />
-              <p className="text-[28px] font-bold tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
+              <p className="text-[28px] font-medium tracking-[-0.02em] text-[#111111] sm:text-[36px] sm:tracking-[-1.08px]">
                 {stats.secondTreatment}
               </p>
               <p className="text-base leading-snug text-[#6B6B6B] sm:text-xl sm:leading-[1.45]">2nd Treatment</p>
@@ -338,7 +338,7 @@ export function HubCityScaledPage({
         ) : null}
 
         <section className="mb-16">
-          <h2 className="mb-10 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+          <h2 className="mb-10 text-center text-[30px] font-medium tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
             Why {cityTitle} Clinics Choose Consentz
           </h2>
           <div className="mx-auto grid max-w-[1070px] grid-cols-1 gap-6 md:grid-cols-2">
@@ -359,7 +359,7 @@ export function HubCityScaledPage({
 
         {nearbyCities.length > 0 ? (
           <section className="mb-16 text-center">
-            <h2 className="mb-6 text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+            <h2 className="mb-6 text-[30px] font-medium tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
               Also Serving Clinics Near {cityTitle}
             </h2>
             <div className="mx-auto flex max-w-[900px] flex-wrap justify-center gap-3">
@@ -382,8 +382,8 @@ export function HubCityScaledPage({
 
 
         <section className="mx-auto mb-16 max-w-[1280px] text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our latest blogs</h2>
-          <p className="mx-auto mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">Our latest blogs</h2>
+          <p className="mx-auto mb-10 max-w-[1280px] text-xl leading-snug text-gray-600">
             Explore insights and tips to help you manage and grow your aesthetics clinic
             efficiently. Stay informed with our latest articles.
           </p>

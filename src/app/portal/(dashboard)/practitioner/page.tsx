@@ -128,7 +128,7 @@ export default function PortalPractitionerPage() {
                       <p className="text-sm font-semibold text-gray-900">
                         {upgrading === opt.key ? 'Redirecting…' : opt.label}
                       </p>
-                      <p className="text-xs text-gray-400 mt-0.5">{opt.description}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{opt.description}</p>
                     </button>
                   ))}
                 </div>
@@ -141,7 +141,7 @@ export default function PortalPractitionerPage() {
       {/* ID Verification */}
       {idVerified === false && entitySlug && (
         <div className="rounded-2xl border border-[#e4dccf] bg-[#f2eee5] p-6">
-          <h2 className="text-xs font-bold text-[#000000] uppercase tracking-[0.2em] mb-3">Identity Verification</h2>
+          <h2 className="text-xs font-medium text-[#000000] uppercase tracking-[0.2em] mb-3">Identity Verification</h2>
           <p className="text-sm text-gray-600 mb-4">
             Verify your identity to display an &ldquo;ID Verified&rdquo; badge on your profile, building trust with potential patients.
           </p>

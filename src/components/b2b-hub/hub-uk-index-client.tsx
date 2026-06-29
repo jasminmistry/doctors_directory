@@ -211,7 +211,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
           </section>
 
           <section className="mb-12">
-            <h2 className="text-3xl font-bold text-center text-neutral-900 mb-10">
+            <h2 className="text-3xl font-medium text-center text-neutral-900 mb-10">
               Most Popular Treatments
             </h2>
             <div className="flex flex-wrap justify-center items-start gap-8 md:gap-12">

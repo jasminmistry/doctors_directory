@@ -65,7 +65,7 @@ export default async function ClaimPage({ params, searchParams }: Readonly<Props
           <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
             {clinic.category}
           </p>
-          <h1 className="text-2xl font-bold">{clinicName}</h1>
+          <h1 className="text-2xl font-medium">{clinicName}</h1>
           {clinic.gmapsAddress && (
             <p className="text-sm text-muted-foreground mt-1">{clinic.gmapsAddress}</p>
           )}

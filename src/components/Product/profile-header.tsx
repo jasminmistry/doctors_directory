@@ -46,7 +46,7 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
     );
   
 
-    return rule?.className ?? "bg-gray-100 text-gray-800 border-gray-300";
+    return rule?.className ?? "bg-gray-100 text-gray-800 border-[#e0e0e0] ";
 
 
   }
@@ -81,7 +81,7 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
             </div>
 
             <div className="flex flex-row gap-2 mb-0 items-center">
-              <p className="text-pretty md:font-bold text-sm md:text-md">
+              <p className="text-pretty md:font-medium text-sm md:text-md">
                 {roleTitle}
               </p>
               <span className="relative pl-3 text-sm before:absolute before:left-0 before:top-1/2 before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full before:bg-black">

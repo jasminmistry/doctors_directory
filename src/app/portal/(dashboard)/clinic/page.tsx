@@ -85,7 +85,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
     <div className="rounded-2xl border border-[#e4dccf] bg-[#f2eee5] p-6 space-y-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-xs font-bold text-black uppercase tracking-[0.2em] mb-1">
+          <h2 className="text-xs font-medium text-black uppercase tracking-[0.2em] mb-1">
             Plan &amp; Commercial
           </h2>
           <p className="text-sm text-gray-600">Your plan, fees, payouts, and cancellation rules.</p>
@@ -255,7 +255,7 @@ export default function PortalClinicPage() {
       {/* ID Verification */}
       {idVerified === false && entitySlug && (
         <div className="rounded-2xl border border-[#e4dccf] bg-[#f2eee5] p-6">
-          <h2 className="text-xs font-bold text-black uppercase tracking-[0.2em] mb-3">
+          <h2 className="text-xs font-medium text-black uppercase tracking-[0.2em] mb-3">
             Identity Verification
           </h2>
           <p className="text-sm text-gray-600 mb-4">

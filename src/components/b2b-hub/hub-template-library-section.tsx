@@ -66,19 +66,19 @@ function TemplateLibraryCard({ item }: { item: HubTemplateLibraryItem }) {
           {item.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded px-2 py-0.5 text-[10px] font-bold tracking-wide bg-[#1A1A1A] text-white"
+              className="rounded px-2 py-0.5 text-[10px] font-medium tracking-wide bg-[#1A1A1A] text-white"
             >
               {tag}
             </span>
           ))}
         </div>
-        <h3 className="text-base font-bold leading-snug text-[#111111] line-clamp-2 group-hover:text-neutral-700">
+        <h3 className="text-base font-medium leading-snug text-[#111111] line-clamp-2 group-hover:text-neutral-700">
           {item.title}
         </h3>
         <p className="line-clamp-2 text-sm leading-relaxed text-[#6B6B6B]">{item.description}</p>
         <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[#F0EDE8] pt-3 text-xs text-[#404040]">
           <span className="inline-flex items-center gap-1.5 font-medium text-[#111111]">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A1A] text-[10px] font-bold text-white">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A1A] text-[10px] font-medium text-white">
               C
             </span>
             {item.author}
@@ -173,7 +173,7 @@ export function HubTemplateLibrarySection({
       )}
     >
       <div className="mx-auto max-w-[1200px]">
-        <h2 className="mb-3 text-center text-[28px] font-bold leading-tight tracking-tight text-[#111111] md:text-[34px] md:leading-snug">
+        <h2 className="mb-3 text-center text-[28px] font-medium leading-tight tracking-tight text-[#111111] md:text-[34px] md:leading-snug">
           Find The Right Template For Your Clinic
         </h2>
         <p className="mx-auto mb-10 max-w-[720px] text-center text-base leading-relaxed text-[#4a4a4a] md:text-lg">

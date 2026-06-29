@@ -352,7 +352,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
         <HubCompareFeatureTable id="feature-comparison" competitorLabel={competitorLabel} />
 
         <section className="mb-20">
-          <h2 className="mb-10 text-center text-3xl font-bold tracking-tight text-[#111111] md:text-4xl">
+          <h2 className="mb-10 text-center text-3xl font-medium tracking-tight text-[#111111] md:text-4xl">
             Ready To Switch To Consentz?
           </h2>
           <ol className="mx-auto grid w-full min-w-0 max-w-[900px] list-none gap-6">
@@ -361,7 +361,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
                 key={step.title}
                 className="flex w-full min-w-0 gap-5 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 md:p-8"
               >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-lg font-bold text-white">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-lg font-medium text-white">
                   {idx + 1}
                 </span>
                 <div className="min-w-0">
@@ -439,8 +439,8 @@ export function HubCompareDetailTemplate({ entry }: Props) {
         />
 
         <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
-          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">Our Latest Blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-gray-600">
             Explore insights and tips to help you manage and grow your aesthetics clinic efficiently.
             Stay informed with our latest articles.
           </p>

@@ -154,7 +154,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                          <ScoreInfoTooltip entityLabel="practitioner" />
                        </div>
                        <Stats data={boxplotData} />
-                       <p className="mt-3 text-xs font-bold text-black">
+                       <p className="mt-3 text-xs font-medium text-black">
                          {rankingSubtitle}
                        </p>
                      </div>

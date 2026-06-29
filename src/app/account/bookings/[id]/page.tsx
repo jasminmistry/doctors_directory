@@ -143,7 +143,7 @@ function ReviewPanel({ booking }: { booking: Booking }) {
       <Button
         onClick={handleSubmit}
         disabled={!rating || !reviewText.trim() || submitting}
-        className="w-full"
+        className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
         size="sm"
       >
         {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : null}
@@ -262,7 +262,7 @@ export default function BookingDetailPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
       </div>
     )
   }
@@ -309,10 +309,10 @@ export default function BookingDetailPage() {
           <div className="rounded-xl bg-white border border-gray-200 p-6 space-y-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h1 className="text-lg font-bold text-gray-900">{booking.clinic.name}</h1>
+                <h1 className="text-lg font-medium text-gray-900">{booking.clinic.name}</h1>
                 <p className="text-sm text-gray-500 mt-0.5">{booking.treatment ?? 'Appointment'}</p>
                 {booking.practitionerName && (
-                  <p className="text-xs text-gray-400 mt-0.5">with {booking.practitionerName}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">with {booking.practitionerName}</p>
                 )}
               </div>
               <StatusBadge status={booking.status} />
@@ -320,9 +320,9 @@ export default function BookingDetailPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-start gap-2">
-                <CalendarDays className="h-4 w-4 text-gray-400 mt-0.5 shrink-0" />
+                <CalendarDays className="h-4 w-4 text-gray-500 mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-xs text-gray-400">Date &amp; time</p>
+                  <p className="text-xs text-gray-500">Date &amp; time</p>
                   <p className="text-sm font-medium text-gray-900">{format(start, 'd MMM yyyy')}</p>
                   <p className="text-sm text-gray-700">
                     {format(start, 'HH:mm')} – {format(end, 'HH:mm')}
@@ -332,9 +332,9 @@ export default function BookingDetailPage() {
 
               {(booking.clinic.gmapsAddress || booking.clinic.city) && (
                 <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5 shrink-0" />
+                  <MapPin className="h-4 w-4 text-gray-500 mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-xs text-gray-400">Location</p>
+                    <p className="text-xs text-gray-500">Location</p>
                     {isVideoCall ? (
                       <p className="text-sm text-gray-700">Video call</p>
                     ) : (
@@ -363,7 +363,7 @@ export default function BookingDetailPage() {
 
             {booking.notes && (
               <div>
-                <p className="text-xs text-gray-400 mb-1">Notes</p>
+                <p className="text-xs text-gray-500 mb-1">Notes</p>
                 <p className="text-sm text-gray-700">{booking.notes}</p>
               </div>
             )}
@@ -387,7 +387,7 @@ export default function BookingDetailPage() {
               </a>
             ) : isUpcoming ? (
               <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 flex items-center gap-2.5">
-                <Video className="h-4 w-4 text-gray-400 shrink-0" />
+                <Video className="h-4 w-4 text-gray-500 shrink-0" />
                 <p className="text-sm text-gray-500">
                   Join link available from{' '}
                   <span className="font-medium text-gray-700">

@@ -132,7 +132,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
   return (
     <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
       {/* Step indicator — always visible */}
-      <div className="flex items-center gap-1 text-[10px] text-gray-400 px-5 pt-5 pb-0">
+      <div className="flex items-center gap-1 text-[10px] text-gray-500 px-5 pt-5 pb-0">
         <span className={cn('font-medium', step === 1 && 'text-gray-900')}>1. Date &amp; Time</span>
         <span>›</span>
         <span className={cn('font-medium', step === 2 && 'text-gray-900')}>2. Your Details</span>
@@ -148,7 +148,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
               type="button"
               onClick={() => setWeekOffset(o => Math.max(0, o - 1))}
               disabled={weekOffset === 0}
-              className="rounded p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30"
+              className="rounded p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -158,7 +158,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
             <button
               type="button"
               onClick={() => setWeekOffset(o => o + 1)}
-              className="rounded p-1 text-gray-400 hover:text-gray-700"
+              className="rounded p-1 text-gray-500 hover:text-gray-700"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -195,10 +195,10 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
             <div>
               {slotsLoading ? (
                 <div className="flex justify-center py-4">
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                  <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
                 </div>
               ) : slots.length === 0 ? (
-                <p className="text-center text-xs text-gray-400 py-3">No availability on this day</p>
+                <p className="text-center text-xs text-gray-500 py-3">No availability on this day</p>
               ) : (
                 <div className="grid grid-cols-2 gap-1.5">
                   {slots.map(slot => (
@@ -228,7 +228,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
               type="checkbox"
               checked={videoCall}
               onChange={(e) => setVideoCall(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 accent-gray-900"
+              className="h-4 w-4 rounded border-[#e0e0e0]  accent-gray-900"
             />
             <span className="flex items-center gap-1.5 text-xs text-gray-700">
               <Video className="h-3.5 w-3.5 text-gray-500" />

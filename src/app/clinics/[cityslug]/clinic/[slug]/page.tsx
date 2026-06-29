@@ -255,8 +255,6 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
               Back to Directory
             </Button>
           </Link>
-        </div>
-        <div className="container mx-auto max-w-6xl px-4 py-2">
           <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -337,7 +335,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   <ScoreInfoTooltip entityLabel="clinic" />
                 </div>
                 <Stats data={boxplotData} />
-                <p className="mt-3 text-xs font-bold text-black">
+                <p className="mt-3 text-xs font-medium text-black">
                   {rankingSubtitle}
                 </p>
               </div>

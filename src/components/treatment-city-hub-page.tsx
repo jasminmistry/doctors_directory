@@ -119,11 +119,9 @@ export function TreatmentCityHubPage({ entry }: Props) {
       <main>
         <div className="bg-[var(--primary-bg-color)]">
           <div className="mx-auto max-w-7xl px-4 pt-6">
-            <Link href="/" prefetch={false} className="mb-2 inline-block">
-              <Button variant="ghost" size="sm" className="gap-2 hover:bg-white hover:text-black">
-                <ArrowLeft className="h-4 w-4" />
-                Back to Directory
-              </Button>
+            <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Directory
             </Link>
             <Breadcrumb>
               <BreadcrumbList>

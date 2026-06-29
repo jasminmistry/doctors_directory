@@ -185,7 +185,7 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
         <HubServiceProviderSection />
 
         <section className="mb-16 px-0 sm:px-4">
-          <h2 className="mb-3 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111]">
+          <h2 className="mb-3 text-center text-[30px] font-medium tracking-[-0.02em] text-[#111111]">
             Pricing And Subscription Questions
           </h2>
           <div className="h-3" />
@@ -211,8 +211,8 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
         </section>
 
         <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
-          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">Our Latest Blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-gray-600">
             Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay
             informed with our latest articles.
           </p>

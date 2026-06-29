@@ -192,7 +192,7 @@ function PractitionerHeroMockup() {
   return (
     <div className="flex h-[min(400px,70vw)] w-full max-w-[560px] flex-col overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm lg:h-[400px]">
       <div className="flex items-center gap-4 border-b border-[#1a1a1a] bg-[#1a1a1a] px-5 py-3 text-[11px] text-white">
-        <span className="font-bold">Consentz</span>
+        <span className="font-medium">Consentz</span>
         <span className="h-px flex-1 bg-white/20" />
         <span className="text-[#999]">Patients</span>
         <span className="text-[#999]">Consent</span>
@@ -403,7 +403,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
         <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-0 bg-[#fcfbf9] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]")}>
           <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-12">
             <div className="max-w-[900px] text-center">
-              <h2 className="text-3xl font-bold leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
+              <h2 className="text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
                 Built Around How Practitioners Actually Work
               </h2>
               <p className="mt-4 text-lg font-medium leading-7 text-[#928b82] md:text-xl">
@@ -420,7 +420,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#e0f1ed]">
                     <Icon className="h-6 w-6 text-[#106057]" strokeWidth={1.5} aria-hidden />
                   </div>
-                  <h3 className="text-[22px] font-bold leading-[30px] text-[#2e2e2e]">{title}</h3>
+                  <h3 className="text-[22px] font-medium leading-[30px] text-[#2e2e2e]">{title}</h3>
                   <p className="text-[15px] leading-6 text-[#928b82]">{body}</p>
                   <div className="h-px w-10 bg-[#e6e0d8]" />
                   <ul className="flex flex-col gap-2">
@@ -443,7 +443,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
                 Practitioner Reality
               </p>
-              <h2 className="text-3xl font-bold leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
+              <h2 className="text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
                 Less Admin Between You And Your Patients
               </h2>
               <p className="mt-4 text-lg leading-7 text-[#928b82] md:text-[18px]">
@@ -474,7 +474,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
                 Practitioner Workflow
               </p>
-              <h2 className="text-3xl font-bold leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
+              <h2 className="text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
                 One Workflow From Consultation To Follow-Up
               </h2>
               <p className="mt-4 text-lg leading-7 text-[#928b82] md:text-[18px]">
@@ -492,7 +492,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                     aria-hidden
                   />
                   <div className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1a1a1a] text-sm font-bold text-white">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1a1a1a] text-sm font-medium text-white">
                       {i + 1}
                     </span>
                     <span className="text-[11px] font-normal tracking-wide text-[#928b82]">
@@ -513,7 +513,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
                 Practitioner Toolkit
               </p>
-              <h2 className="text-3xl font-bold leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
+              <h2 className="text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
                 Everything A Practitioner Needs To Run A Professional Clinic Workflow
               </h2>
               <p className="mt-4 text-lg leading-7 text-[#928b82] md:text-[18px]">
@@ -545,7 +545,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                 <p className="text-[10px] font-semibold tracking-[2px] text-[#1a877a]">
                   {copy.spotlight.eyebrow}
                 </p>
-                <h2 className="text-xl font-bold leading-7 text-[#2e2e2e] md:text-[22px]">
+                <h2 className="text-xl font-medium leading-7 text-[#2e2e2e] md:text-[22px]">
                   {copy.spotlight.title}
                 </h2>
                 <p className="text-[15px] leading-6 text-[#928b82]">{copy.spotlight.body}</p>
@@ -570,7 +570,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
                 Records & Compliance
               </p>
-              <h2 className="text-3xl font-bold leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
+              <h2 className="text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
                 Professional Records Without The Admin Overwhelm
               </h2>
               <p className="mt-4 text-lg leading-[30px] text-[#928b82] md:text-[18px]">
@@ -587,7 +587,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#e0f1ed]">
                     <FileText className="h-6 w-6 text-[#106057]" strokeWidth={1.5} aria-hidden />
                   </div>
-                  <h3 className="text-xl font-bold leading-7 text-[#2e2e2e]">{title}</h3>
+                  <h3 className="text-xl font-medium leading-7 text-[#2e2e2e]">{title}</h3>
                   <p className="text-[15px] leading-6 text-[#928b82]">{body}</p>
                 </div>
               ))}

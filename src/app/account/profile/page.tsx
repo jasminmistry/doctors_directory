@@ -72,7 +72,7 @@ export default function AccountProfilePage() {
   if (!profile) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
       </div>
     )
   }
@@ -80,7 +80,7 @@ export default function AccountProfilePage() {
   return (
     <div className="max-w-lg space-y-8">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Profile</h1>
+        <h1 className="text-xl font-medium text-gray-900">Profile</h1>
         <p className="text-sm text-gray-500 mt-1">{profile.email}</p>
       </div>
 
@@ -92,7 +92,7 @@ export default function AccountProfilePage() {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="First name"
-              className="bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
+              className="bg-white border-gray-200 text-gray-900 placeholder:text-gray-500"
             />
           </div>
           <div className="space-y-1.5">
@@ -101,7 +101,7 @@ export default function AccountProfilePage() {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               placeholder="Last name"
-              className="bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
+              className="bg-white border-gray-200 text-gray-900 placeholder:text-gray-500"
             />
           </div>
         </div>
@@ -111,7 +111,7 @@ export default function AccountProfilePage() {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="+44 7xxx xxxxxx"
-            className="bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
+            className="bg-white border-gray-200 text-gray-900 placeholder:text-gray-500"
           />
         </div>
         <Button
@@ -150,7 +150,7 @@ export default function AccountProfilePage() {
               {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Yes, delete permanently'}
             </Button>
             <button
-              className="text-xs text-gray-400 hover:text-gray-700 transition-colors"
+              className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
               onClick={() => setConfirmDelete(false)}
             >
               Cancel
