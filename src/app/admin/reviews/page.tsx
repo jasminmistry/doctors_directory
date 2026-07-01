@@ -139,7 +139,7 @@ export default function AdminReviewsPage() {
 
       {/* Bulk action toolbar */}
       {someSelected && (
-        <div className="mb-4 flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+        <div className="mb-4 flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
           <span className="text-sm font-medium text-gray-700">{selected.size} selected</span>
           <div className="flex items-center gap-2 ml-auto">
             {tab === 'pending' && (
@@ -199,7 +199,7 @@ export default function AdminReviewsPage() {
 
           {reviews.map(r => (
             <div key={r.id}
-              className={cn('rounded-xl border bg-white p-5 transition-colors',
+              className={cn('rounded-lg border bg-white p-5 transition-colors',
                 selected.has(r.id) ? 'border-gray-400 bg-gray-50' : 'border-gray-200')}>
               <div className="flex items-start gap-3">
                 {/* Checkbox */}

@@ -266,7 +266,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
     <>
       <section
         className={cn(
-          "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          "w-full border-b border-[#e0e0e0] bg-[var(--primary-bg-color)]",
           HUB_DETAIL_HERO_VIEWPORT_CLASS
         )}
       >
@@ -333,7 +333,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex min-h-[80px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-4 py-4 text-center text-base font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white sm:min-h-[93px] sm:px-5 sm:py-[18px] sm:text-lg md:text-xl"
+                className="flex min-h-[80px] items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-4 py-4 text-center text-base font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white sm:min-h-[93px] sm:px-5 sm:py-[18px] sm:text-lg md:text-xl"
               >
                 <span className="line-clamp-3">{item.label}</span>
               </Link>
@@ -359,7 +359,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
             {readyToSwitchSteps.map((step, idx) => (
               <li
                 key={step.title}
-                className="flex w-full min-w-0 gap-5 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 md:p-8"
+                className="flex w-full min-w-0 gap-5 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 md:p-8"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-lg font-medium text-white">
                   {idx + 1}
@@ -451,7 +451,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image

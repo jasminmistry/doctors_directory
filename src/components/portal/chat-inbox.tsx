@@ -135,7 +135,7 @@ export function ChatInbox() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] rounded-xl border border-gray-200 bg-white overflow-hidden">
+    <div className="flex h-[calc(100vh-8rem)] rounded-lg border border-gray-200 bg-white overflow-hidden">
       {/* Session list */}
       <div className="w-72 shrink-0 flex flex-col border-r border-gray-200">
         <div className="px-4 py-3 border-b border-gray-200">

@@ -42,7 +42,7 @@ export default function RegisterPractitionerPage() {
           <ul className="mt-4 space-y-2">
             {BENEFITS.map((b) => (
               <li key={b} className="flex items-start gap-2 text-sm text-muted-foreground">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                <CheckCircle2 className="h-4 w-4 text-black shrink-0 mt-0.5" />
                 {b}
               </li>
             ))}
@@ -63,7 +63,7 @@ export default function RegisterPractitionerPage() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-border p-6">
+        <div className="rounded-lg border border-border p-6">
           <RegisterForm entityType="practitioner" />
         </div>
       </div>

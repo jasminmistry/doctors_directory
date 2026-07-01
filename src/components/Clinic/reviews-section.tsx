@@ -123,7 +123,7 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
 
       {/* Leave review form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="rounded-xl border border-gray-200 bg-white p-4 space-y-4">
+        <form onSubmit={handleSubmit} className="rounded-lg border border-gray-200 bg-white p-4 space-y-4">
           <h4 className="text-sm font-semibold text-gray-900">Write a review</h4>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1.5">Your rating</label>
@@ -166,7 +166,7 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
       )}
 
       {submitted && (
-        <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+        <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
           Thanks! Your review has been submitted and will appear after moderation.
         </div>
       )}

@@ -925,27 +925,13 @@ export default function HomePage({
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const BRAND_BG = "#F2EEE6";
-
   return (
     <main>
-      <div className="relative inset-0 overflow-hidden">
+      <div className="bg-[var(--primary-bg-color)] relative inset-0 overflow-hidden">
         
-        <MeshBackground 
-        className="h-full"
-        fallbackColor={BRAND_BG}
-          noiseOpacity={1.1}
-          noiseTileSize={200}
-        />
         <div className="relative z-3">
           <HeroSection/>
         </div> 
-
-        <img
-          src="/directory/images/wawes.png" 
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover z-2 opacity-25"
-        />
 
       </div>
       
@@ -994,7 +980,7 @@ export default function HomePage({
             <div className="space-y-3">
               {/* Step 1 */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
-                <div className="bg-[#fbfbfb] rounded-xl p-3 md:p-4 flex items-start gap-3">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
                   <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
                     1.
                   </div>
@@ -1021,7 +1007,7 @@ export default function HomePage({
 
               {/* Step 2 */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
-                <div className="bg-[#fbfbfb] rounded-xl p-3 md:p-4 flex items-start gap-3">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
                   <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
                     2.
                   </div>
@@ -1049,7 +1035,7 @@ export default function HomePage({
 
               {/* Step 3 */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
-                <div className="bg-[#fbfbfb] rounded-xl p-3 md:p-4 flex items-start gap-3">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
                   <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
                     3.
                   </div>
@@ -1284,7 +1270,7 @@ export default function HomePage({
             ].map((item, index) => (
               <div
                 key={index}
-                className="info-card bg-[#fbfbfb] border-1 border-[var(--alto)] rounded-xl py-8 px-6 md:py-12 md:px-8 flex items-center flex-col"
+                className="info-card bg-[#fbfbfb] border-1 border-[var(--alto)] rounded-lg py-8 px-6 md:py-12 md:px-8 flex items-center flex-col"
               >
                 <item.icon className="w-12 h-12 mb-8 hidden md:flex" />
                 <h3 className="font-medium text-lg mb-4">{item.title}</h3>
@@ -1380,17 +1366,18 @@ export default function HomePage({
         </div>
       </section>
 
-      <section className="w-full bg-[var(--primary-bg-color)] py-10 lg:py-14 overflow-hidden">
-        <div className="mx-auto flex max-w-6xl flex-col items-start gap-10 px-4 lg:flex-row lg:justify-between lg:px-8">
-          <div className="flex justify-center lg:w-1/2 lg:self-start">
+      <section className="w-full py-10 px-4 lg:px-0 lg:py-20 overflow-hidden">
+        <div className="mx-auto bg-white border border-[#e0e0e0] overflow-hidden rounded-lg flex max-w-7xl flex-col items-start gap-10 lg:flex-row lg:justify-between">
+          
+          <div className="flex justify-center items-start lg:justify-start lg:w-1/2 lg:self-start">
             <img
               src="/directory/images/img-00020.png"
               alt="Practitioner Banner"
-              className="w-[240px] sm:w-[320px] lg:w-[420px] object-contain"
+              className="lg:ml-0"
             />
           </div>
 
-          <div className="max-w-xl lg:w-1/2">
+         <div className="max-w-xl lg:w-1/2 p-10">
             <h2 className="text-xl font-medium leading-tight text-black sm:text-2xl">
               Are You A Practitioner?
             </h2>
@@ -1429,25 +1416,28 @@ export default function HomePage({
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button
                 asChild
-                className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium text-white hover:bg-neutral-800 transition-colors">
+                className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium text-white hover:bg-neutral-800 transition-colors"
+              >
                 <Link href="/register/clinic">List your practice</Link>
               </Button>
+
               <Button
                 asChild
                 variant="outline"
-                className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
-                
+                className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4] text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
               >
                 <Link href="/claim">Claim your profile</Link>
               </Button>
+
               <Link
                 href="/register/practitioner"
-                className="text-md text-black hover:hover:opacity-70 transition-colors"
+                className="text-md text-black hover:opacity-70 transition-colors"
               >
-                Register as practitioner  →
+                Register as practitioner →
               </Link>
             </div>
           </div>
+
         </div>
       </section>
 
@@ -1476,7 +1466,7 @@ export default function HomePage({
           {blogs.map(({ id, title, img, link }) => (
             <article
               key={id}
-              className="bg-white border border-gray-400 rounded-xl p-6 relative overflow-hidden"
+              className="bg-white border border-[#e0e0e0] rounded-lg p-6 relative overflow-hidden"
             >
               <a href={link} className="block">
                 <img

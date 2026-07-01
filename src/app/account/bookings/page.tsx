@@ -40,7 +40,7 @@ export default function AccountBookingsPage() {
       <h1 className="text-xl font-medium text-gray-900">Bookings</h1>
 
       {bookings.length === 0 ? (
-        <div className="rounded-xl bg-white border border-gray-200 px-6 py-10 text-center">
+        <div className="rounded-lg bg-white border border-gray-200 px-6 py-10 text-center">
           <CalendarDays className="h-8 w-8 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500 text-sm">No bookings yet.</p>
         </div>
@@ -50,7 +50,7 @@ export default function AccountBookingsPage() {
             <Link
               key={b.id}
               href={`/account/bookings/${b.id}`}
-              className="block rounded-xl bg-white border border-gray-200 px-5 py-4 hover:border-gray-400 transition-colors"
+              className="block rounded-lg bg-white border border-gray-200 px-5 py-4 hover:border-gray-400 transition-colors"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">

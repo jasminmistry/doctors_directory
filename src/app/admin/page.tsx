@@ -88,7 +88,7 @@ function EarningsTile({
   delta?: React.ReactNode
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-3">
+    <div className="rounded-lg border border-gray-200 bg-white p-5 space-y-3">
       <div className="flex items-center justify-between">
         <div className={cn('flex h-8 w-8 items-center justify-center rounded-lg', iconBg)}>
           <Icon className="h-4 w-4" />
@@ -112,7 +112,7 @@ function PlanBar({ free, ppl, sub }: { free: number; ppl: number; sub: number })
   const pplW  = (ppl / total) * 100
   const subW  = (sub / total) * 100
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+    <div className="rounded-lg border border-gray-200 bg-white p-5 space-y-4">
       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Plan distribution — {total} claimed</p>
       <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
         {freeW > 0 && <div className="bg-gray-300 rounded-l-full" style={{ width: `${freeW}%` }} title={`Free: ${free}`} />}
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
 
         {/* Pending approvals */}
         {pending > 0 && stats && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
               <Clock className="h-4 w-4 text-amber-600" />
             </div>
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
         )}
 
         {stats && pending === 0 && (
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm font-medium text-emerald-800">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-sm font-medium text-emerald-800">
             No pending approvals.
           </div>
         )}
@@ -250,7 +250,7 @@ export default function AdminDashboard() {
               {/* By type */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Subscriptions */}
-                <div className="rounded-xl border border-cyan-100 bg-cyan-50 p-5 space-y-4">
+                <div className="rounded-lg border border-cyan-100 bg-cyan-50 p-5 space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-100">
                       <RotateCcw className="h-3.5 w-3.5 text-cyan-700" />
@@ -279,7 +279,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Pay per lead */}
-                <div className="rounded-xl border border-violet-100 bg-violet-50 p-5 space-y-4">
+                <div className="rounded-lg border border-violet-100 bg-violet-50 p-5 space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-100">
                       <Unlock className="h-3.5 w-3.5 text-violet-700" />
@@ -312,7 +312,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Booking deposits */}
-                <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-5 space-y-4">
+                <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-5 space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100">
                       <CalendarDays className="h-3.5 w-3.5 text-emerald-700" />
@@ -341,7 +341,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Directory commission */}
-                <div className="rounded-xl border border-orange-100 bg-orange-50 p-5 space-y-4">
+                <div className="rounded-lg border border-orange-100 bg-orange-50 p-5 space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-100">
                       <Percent className="h-3.5 w-3.5 text-orange-700" />
@@ -390,7 +390,7 @@ export default function AdminDashboard() {
               />
             </>
           ) : (
-            <div className="rounded-xl border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+            <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
               Loading revenue data…
             </div>
           )}

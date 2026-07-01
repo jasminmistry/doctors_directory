@@ -50,7 +50,7 @@ export function TransparencyBox({ claimedAt, cqcStatus, avgReplyTime }: Transpar
   if (rows.length === 0) return null
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+    <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
       <h3 className="text-sm font-semibold text-gray-900">Transparency</h3>
       {rows.map(({ icon: Icon, label, value, extra }) => (
         <div key={label} className="flex items-start gap-3">

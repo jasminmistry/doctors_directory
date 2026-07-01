@@ -72,7 +72,7 @@ export default async function ClaimPage({ params, searchParams }: Readonly<Props
         </div>
 
         {clinic.claimed ? (
-          <div className="rounded-xl border border-border p-6 text-center">
+          <div className="rounded-lg border border-border p-6 text-center">
             <p className="font-medium">This profile has already been claimed.</p>
             <p className="text-sm text-muted-foreground mt-1">
               If you believe this is an error, contact{' '}
@@ -83,7 +83,7 @@ export default async function ClaimPage({ params, searchParams }: Readonly<Props
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-border p-6">
+          <div className="rounded-lg border border-border p-6">
             <Suspense fallback={null}>
               <ClaimWizard
                 entityType="clinic"

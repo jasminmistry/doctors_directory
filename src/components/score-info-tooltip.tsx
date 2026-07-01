@@ -57,7 +57,7 @@ export function ScoreInfoTooltip({
       </button>
 
       {open && (
-        <div className="absolute bottom-full right-0 z-50 mb-2 w-[320px] rounded-xl border border-gray-200 bg-white p-0 text-gray-900 shadow-xl">
+        <div className="absolute bottom-full right-0 z-50 mb-2 w-[320px] rounded-lg border border-gray-200 bg-white p-0 text-gray-900 shadow-xl">
           <div className="border-b border-gray-100 px-4 py-3">
             <p className="text-sm font-semibold">How the Consentz Score is calculated</p>
             <p className="mt-1 text-xs leading-relaxed text-gray-600">{tooltipText}</p>

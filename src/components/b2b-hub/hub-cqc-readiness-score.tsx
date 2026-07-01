@@ -51,7 +51,7 @@ export function HubCqcReadinessScore() {
   const result = readinessLabel(score)
 
   return (
-    <section className="mb-12 rounded-xl border border-[#E5E7EB] bg-white p-6 md:p-8 shadow-sm">
+    <section className="mb-12 rounded-lg border border-[#e0e0e0] bg-white p-6 md:p-8 shadow-sm">
       <h2 className="mb-2 text-2xl font-semibold text-[#111111]">
         {toDisplayTitle("Is your clinic inspection-ready?")}
       </h2>
@@ -61,7 +61,7 @@ export function HubCqcReadinessScore() {
 
       <ol className="mb-8 space-y-4">
         {QUESTIONS.map((question, index) => (
-          <li key={question} className="rounded-lg border border-[#E5E7EB] bg-[#FAFAFA] p-4">
+          <li key={question} className="rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] p-4">
             <p className="mb-3 text-sm font-medium text-[#111111] md:text-base">
               {index + 1}. {question}
             </p>

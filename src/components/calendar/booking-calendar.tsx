@@ -94,7 +94,7 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
       : `${format(weekStart, 'd MMM')} – ${format(weekEnd, 'd MMM yyyy')}`
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+    <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-4 py-3">
         <div className="flex items-center gap-2">

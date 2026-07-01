@@ -121,7 +121,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
     <>
       <section
         className={cn(
-          "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          "w-full border-b border-[#e0e0e0] bg-[var(--primary-bg-color)]",
           HUB_DETAIL_HERO_VIEWPORT_CLASS
         )}
       >
@@ -193,7 +193,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
 
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">Operational Reality</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Teams outgrow generic tools when consent, payments, and clinical evidence sit
@@ -201,7 +201,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
                 confidence, and fragile patient communication.
               </p>
             </div>
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">What Changes With Consentz</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Consentz is built as an operating layer for clinics: structured consent,
@@ -220,7 +220,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
             {alternativesPainPoints.map(({ Icon, text }) => (
               <div
                 key={text}
-                className="flex min-h-[80px] items-center gap-4 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-4 py-4 sm:min-h-[88px] sm:gap-6 sm:py-[15px] sm:pl-6 sm:pr-4"
+                className="flex min-h-[80px] items-center gap-4 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-4 py-4 sm:min-h-[88px] sm:gap-6 sm:py-[15px] sm:pl-6 sm:pr-4"
               >
                 <Icon
                   className="h-12 w-12 shrink-0 text-[#1A1A1A]"
@@ -294,7 +294,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
+                className="flex min-h-[93px] items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
               >
                 {item.label}
               </Link>
@@ -331,7 +331,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image
@@ -360,7 +360,7 @@ export function HubAlternativesDetailTemplate({ entry }: Props) {
               rel="noreferrer"
               className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
             >
-              View all blogs
+              View All Blogs
             </a>
           </div>
         </section>

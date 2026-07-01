@@ -39,7 +39,7 @@ interface ChatSession {
 
 function NextActions() {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+    <div className="rounded-lg border border-gray-200 bg-white p-5 space-y-4">
       <p className="text-sm font-semibold text-gray-900">What would you like to do?</p>
       <div className="space-y-2">
         <Link
@@ -132,7 +132,7 @@ export default function AccountDashboardPage() {
           href={upcomingCall.videoCallJoinUrl!}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-3 rounded-xl bg-green-600 hover:bg-green-700 transition-colors px-5 py-4 text-white"
+          className="flex items-center gap-3 rounded-lg bg-green-600 hover:bg-green-700 transition-colors px-5 py-4 text-white"
         >
           <Video className="h-5 w-5 shrink-0" />
           <div className="flex-1 min-w-0">
@@ -155,7 +155,7 @@ export default function AccountDashboardPage() {
           <Link
             key={href}
             href={href}
-            className="flex flex-col items-center gap-2 rounded-xl bg-white border border-gray-200 px-4 py-5 hover:border-gray-400 transition-colors"
+            className="flex flex-col items-center gap-2 rounded-lg bg-white border border-gray-200 px-4 py-5 hover:border-gray-400 transition-colors"
           >
             <Icon className="h-5 w-5 text-gray-500" />
             {count !== null && <span className="text-2xl font-medium text-gray-900">{count}</span>}
@@ -168,7 +168,7 @@ export default function AccountDashboardPage() {
       {nextBooking && !upcomingCall && (
         <Link
           href={`/account/bookings/${nextBooking.id}`}
-          className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3.5 hover:bg-blue-100 transition-colors"
+          className="flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3.5 hover:bg-blue-100 transition-colors"
         >
           <CalendarDays className="h-5 w-5 text-blue-600 shrink-0" />
           <div className="flex-1 min-w-0">
@@ -197,7 +197,7 @@ export default function AccountDashboardPage() {
               <Link
                 key={b.id}
                 href={`/account/bookings/${b.id}`}
-                className="flex items-center justify-between rounded-xl bg-white border border-gray-200 px-4 py-3 hover:border-gray-400 transition-colors"
+                className="flex items-center justify-between rounded-lg bg-white border border-gray-200 px-4 py-3 hover:border-gray-400 transition-colors"
               >
                 <div>
                   <p className="text-sm font-medium text-gray-900">{b.clinic.name}</p>
@@ -231,7 +231,7 @@ export default function AccountDashboardPage() {
               <Link
                 key={s.id}
                 href={`/account/chats/${s.id}`}
-                className="flex items-center justify-between rounded-xl bg-white border border-gray-200 px-4 py-3 hover:border-gray-400 transition-colors"
+                className="flex items-center justify-between rounded-lg bg-white border border-gray-200 px-4 py-3 hover:border-gray-400 transition-colors"
               >
                 <div>
                   <p className="text-sm font-medium text-gray-900">{s.clinic.name}</p>
@@ -254,7 +254,7 @@ export default function AccountDashboardPage() {
       {/* Empty state */}
       {!hasActivity && (
         <div className="space-y-4">
-          <div className="rounded-xl bg-white border border-gray-200 px-6 py-8 text-center">
+          <div className="rounded-lg bg-white border border-gray-200 px-6 py-8 text-center">
             <Star className="mx-auto h-8 w-8 text-gray-200 mb-3" />
             <p className="text-sm font-medium text-gray-700">Your account is ready</p>
             <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
@@ -263,7 +263,7 @@ export default function AccountDashboardPage() {
           </div>
           <NextActions />
           {/* Support guidance */}
-          <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50 px-4 py-4">
+          <div className="flex items-start gap-3 rounded-lg border border-gray-100 bg-gray-50 px-4 py-4">
             <HelpCircle className="h-4 w-4 text-gray-500 shrink-0 mt-0.5" />
             <div className="text-xs text-gray-500 space-y-1">
               <p className="font-medium text-gray-700">Expected to see a consultation here?</p>

@@ -27,7 +27,7 @@ export default async function ProspectsPage() {
       </div>
 
       {plan === 'free' && (
-        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
           <strong>Upgrade to see patient details.</strong> Free accounts can view that leads exist but names and contact
           details are hidden. Upgrade to Pay-Per-Lead (£15/lead) or Verified Subscription (£99/mo) to unlock them.
         </div>

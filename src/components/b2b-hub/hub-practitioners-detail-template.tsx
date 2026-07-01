@@ -283,7 +283,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
     <>
       <section
         className={cn(
-          "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          "w-full border-b border-[#e0e0e0] bg-[var(--primary-bg-color)]",
           HUB_DETAIL_HERO_VIEWPORT_CLASS
         )}
       >
@@ -346,7 +346,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
       <article className="mx-auto w-full min-w-0 max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">Operational Reality</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Teams outgrow generic tools when consent, payments, and clinical evidence sit in different
@@ -354,7 +354,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                 communication.
               </p>
             </div>
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">What Changes With Consentz</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Consentz is built as an operating layer for clinics: structured consent, workflow automation,
@@ -369,7 +369,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
             {navLinks.map((item) => {
               const external = item.href.startsWith("http")
               const className =
-                "flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white"
+                "flex min-h-[93px] items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white"
               if (external) {
                 return (
                   <a
@@ -417,7 +417,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   key={title}
                   className="flex flex-col gap-4 rounded-2xl border border-[#e6e0d8] bg-white p-8"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#e0f1ed]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#e0f1ed]">
                     <Icon className="h-6 w-6 text-[#106057]" strokeWidth={1.5} aria-hidden />
                   </div>
                   <h3 className="text-[22px] font-medium leading-[30px] text-[#2e2e2e]">{title}</h3>
@@ -584,7 +584,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   key={title}
                   className="flex flex-col gap-4 rounded-2xl border border-[#e6e0d8] bg-white p-8"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#e0f1ed]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#e0f1ed]">
                     <FileText className="h-6 w-6 text-[#106057]" strokeWidth={1.5} aria-hidden />
                   </div>
                   <h3 className="text-xl font-medium leading-7 text-[#2e2e2e]">{title}</h3>

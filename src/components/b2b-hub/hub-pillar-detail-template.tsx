@@ -267,7 +267,7 @@ const cqcReadinessScores = [
 
 function CqcDashboardBrowserMock() {
   return (
-    <div className="overflow-hidden rounded-xl border border-[#E2DDD7] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
+    <div className="overflow-hidden rounded-lg border border-[#e0e0e0] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
       <div className="flex items-center gap-3 bg-[#19191c] px-5 py-4">
         <span className="h-3 w-3 shrink-0 rounded-full bg-[#ff5f56]" />
         <span className="h-3 w-3 shrink-0 rounded-full bg-[#ffbd2e]" />
@@ -284,7 +284,7 @@ function CqcDashboardBrowserMock() {
           {cqcReadinessScores.map((row) => (
             <div
               key={row.label}
-              className="flex flex-col rounded-xl border border-[#E2DDD7] bg-white p-5"
+              className="flex flex-col rounded-lg border border-[#e0e0e0] bg-white p-5"
             >
               <p
                 className={`text-[34px] font-medium leading-none tracking-[-0.68px] ${row.pctColor}`}
@@ -309,7 +309,7 @@ function CqcEvidenceChecklist() {
       {cqcEvidenceChecklist.map((label) => (
         <div
           key={label}
-          className="flex items-center gap-3 rounded-xl border border-transparent bg-[#eef7f2] px-[18px] py-[14px]"
+          className="flex items-center gap-3 rounded-lg border border-transparent bg-[#eef7f2] px-[18px] py-[14px]"
         >
           <span className="shrink-0 text-sm font-medium text-[#1a6e45]">✓</span>
           <p className="text-base font-medium text-[#1a1a1a] md:text-[20px]">{label}</p>
@@ -327,7 +327,7 @@ function HubRelatedLinksGrid({ related }: { related: HubEntry[] }) {
           <Link
             key={`${r.segment}-${r.slug}`}
             href={`/business/${r.segment}/${r.slug}/`}
-            className="flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
+            className="flex min-h-[93px] items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
           >
             {toDisplayTitle(r.title)}
           </Link>
@@ -435,7 +435,7 @@ export function HubPillarDetailTemplate({
         ) : null}
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 md:p-8 shadow-sm">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 md:p-8 shadow-sm">
               <h2 className="text-lg font-semibold text-[#111111] mb-3">
                 Operational Reality
               </h2>
@@ -445,7 +445,7 @@ export function HubPillarDetailTemplate({
                 confidence, and fragile patient communication.
               </p>
             </div>
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 md:p-8 shadow-sm">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 md:p-8 shadow-sm">
               <h2 className="text-lg font-semibold text-[#111111] mb-3">
                 What Changes With Consentz
               </h2>
@@ -466,7 +466,7 @@ export function HubPillarDetailTemplate({
             {activePainPoints.map(({ Icon, text }) => (
               <div
                 key={text}
-                className="flex min-h-[88px] items-center gap-6 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] py-[15px] pl-6 pr-4"
+                className="flex min-h-[88px] items-center gap-6 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] py-[15px] pl-6 pr-4"
               >
                 <Icon
                   className="h-12 w-12 shrink-0 text-[#1A1A1A]"
@@ -516,7 +516,7 @@ export function HubPillarDetailTemplate({
               <div className="mt-6 flex w-full justify-center px-4">
                 <a
                   href={b2bBookDemoHref()}
-                  className="inline-flex items-center justify-center rounded-[12px] bg-[#1A1A1A] px-6 py-2.5 text-base font-semibold text-white shadow-md hover:bg-neutral-900 transition-colors sm:px-7 sm:py-3 sm:text-lg"
+                  className="inline-flex items-center justify-center rounded-lg bg-[#1A1A1A] px-6 py-2.5 text-base font-semibold text-white shadow-md hover:bg-neutral-900 transition-colors sm:px-7 sm:py-3 sm:text-lg"
                 >
                   Book a Demo
                 </a>
@@ -530,7 +530,7 @@ export function HubPillarDetailTemplate({
           <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-16 py-10 md:py-12")}>
             <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
               <div className="flex flex-col items-stretch gap-6 lg:flex-row lg:items-start lg:justify-center lg:gap-5">
-                <div className="relative w-full overflow-hidden rounded-[12px] border-4 border-[#1a1a1a] shadow-[0_2px_8px_rgba(105,71,71,0.25)] lg:min-w-0 lg:flex-[1.2]">
+                <div className="relative w-full overflow-hidden rounded-lg border-4 border-[#1a1a1a] shadow-[0_2px_8px_rgba(105,71,71,0.25)] lg:min-w-0 lg:flex-[1.2]">
                   <Image
                     src={CQC_MID_DOMAINS}
                     alt=""
@@ -568,7 +568,7 @@ export function HubPillarDetailTemplate({
         {pillar === "cqc" ? (
           <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-16 py-10 md:py-12")}>
             <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
-              <div className="mx-auto max-w-[920px] overflow-hidden rounded-xl border-4 border-[#1a1a1a] shadow-[0_8px_28px_rgba(0,0,0,0.08)]">
+              <div className="mx-auto max-w-[920px] overflow-hidden rounded-lg border-4 border-[#1a1a1a] shadow-[0_8px_28px_rgba(0,0,0,0.08)]">
                 <Image
                   src={CQC_MID_HEATMAP}
                   alt=""

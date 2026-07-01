@@ -37,7 +37,7 @@ export function HubPricingCalculator() {
       : `£${totals.annualTotal.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/year`
 
   return (
-    <section className="mb-12 rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] p-6 md:p-8">
+    <section className="mb-12 rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] p-6 md:p-8">
       <h2 className="mb-2 text-2xl font-semibold text-[#111111]">
         {toDisplayTitle("Estimate your Consentz cost")}
       </h2>
@@ -92,7 +92,7 @@ export function HubPricingCalculator() {
         </label>
       </div>
 
-      <div className="rounded-lg border border-[#E5E7EB] bg-white p-6">
+      <div className="rounded-lg border border-[#e0e0e0] bg-white p-6">
         <p className="text-sm text-[#6B6B6B]">
           {totals.logins} login{totals.logins === 1 ? "" : "s"} × £{PRICE_PER_LOGIN}/month
         </p>

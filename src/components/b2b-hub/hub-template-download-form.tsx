@@ -64,7 +64,7 @@ export function HubTemplateDownloadForm({ templateTitle }: Props) {
 
   if (submitted) {
     return (
-      <p className="rounded-xl bg-[#eef7f2] px-4 py-3 text-sm font-medium text-[#1a6e45]">
+      <p className="rounded-lg bg-[#eef7f2] px-4 py-3 text-sm font-medium text-[#1a6e45]">
         Thank you for registering — we will email your template download shortly.
       </p>
     )
@@ -80,7 +80,7 @@ export function HubTemplateDownloadForm({ templateTitle }: Props) {
           value={clinicName}
           onChange={(e) => setClinicName(e.target.value)}
           placeholder="e.g. The Skin Clinic London"
-          className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
+          className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
         />
       </label>
       <label className="flex flex-col gap-1.5 text-sm font-medium text-[#111111]">
@@ -92,7 +92,7 @@ export function HubTemplateDownloadForm({ templateTitle }: Props) {
           onChange={(e) => setContactName(e.target.value)}
           placeholder="Jane Smith"
           autoComplete="name"
-          className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
+          className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
         />
       </label>
       <label className="flex flex-col gap-1.5 text-sm font-medium text-[#111111]">
@@ -104,7 +104,7 @@ export function HubTemplateDownloadForm({ templateTitle }: Props) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@yourclinic.co.uk"
           autoComplete="email"
-          className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
+          className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
         />
       </label>
       <label className="flex flex-col gap-1.5 text-sm font-medium text-[#111111]">
@@ -116,7 +116,7 @@ export function HubTemplateDownloadForm({ templateTitle }: Props) {
           onChange={(e) => setPhone(e.target.value)}
           placeholder="020 7123 4567"
           autoComplete="tel"
-          className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
+          className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
         />
       </label>
       <label className="flex flex-col gap-1.5 text-sm font-medium text-[#111111]">
@@ -127,7 +127,7 @@ export function HubTemplateDownloadForm({ templateTitle }: Props) {
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           placeholder="123 Harley Street, London"
-          className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
+          className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
         />
       </label>
       <label className="flex flex-col gap-1.5 text-sm font-medium text-[#111111]">
@@ -138,7 +138,7 @@ export function HubTemplateDownloadForm({ templateTitle }: Props) {
           value={city}
           onChange={(e) => setCity(e.target.value)}
           placeholder="London"
-          className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
+          className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
         />
       </label>
       <label className="flex flex-col gap-1.5 text-sm font-medium text-[#111111]">
@@ -148,7 +148,7 @@ export function HubTemplateDownloadForm({ templateTitle }: Props) {
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           placeholder="e.g. Aesthetics, Dermatology"
-          className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
+          className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
         />
       </label>
       <label className="flex flex-col gap-1.5 text-sm font-medium text-[#111111]">
@@ -159,7 +159,7 @@ export function HubTemplateDownloadForm({ templateTitle }: Props) {
           onChange={(e) => setWebsite(e.target.value)}
           placeholder="https://yourclinic.co.uk"
           autoComplete="url"
-          className="rounded-lg border border-[#E2DDD7] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
+          className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-[#1a877a]/20"
         />
       </label>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}

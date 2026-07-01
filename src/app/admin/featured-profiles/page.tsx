@@ -141,7 +141,7 @@ export default function FeaturedProfilesPage() {
           </div>
 
           {filtered.length > 0 && (
-            <ul className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg overflow-hidden">
+            <ul className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white overflow-hidden">
               {filtered.map((clinic) => (
                 <li key={clinic.slug}>
                   <button

@@ -16,7 +16,7 @@ export function HubLogoStrip({ className }: { className?: string }) {
     <aside
       aria-label="Partner and certification logos"
       className={cn(
-        "w-full border-t border-[#E5E7EB]/80 overflow-hidden bg-[var(--primary-bg-color)]",
+        "w-full overflow-hidden",
         className
       )}
     >
@@ -28,8 +28,8 @@ export function HubLogoStrip({ className }: { className?: string }) {
               src={logo.src}
               alt={logo.alt}
               width={10}
-              height={48}
-              className="h-12 w-auto max-w-[160px] shrink-0 object-contain"
+              height={40}
+              className="h-11 w-auto max-w-[160px] shrink-0 object-contain"
               loading="lazy"
               decoding="async"
             />

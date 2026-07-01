@@ -252,7 +252,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
     const joinUrl = confirmation.video_call?.join_url ?? null
 
     return (
-      <section className="border border-gray-200 rounded-xl overflow-hidden">
+      <section className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100">
           <h2 className="text-base font-semibold text-gray-900">Booking Confirmed</h2>
         </div>
@@ -301,7 +301,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
     const canSubmit = firstName.trim() && lastName.trim() && email.trim() && !submitting
     const isPaid = !!selectedEvent?.price
     return (
-      <section className="border border-gray-200 rounded-xl overflow-hidden">
+      <section className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
           <button
             type="button"
@@ -388,7 +388,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
   // ── Date + slot picker ───────────────────────────────────────────────────────
   if (step === 'date-slot') {
     return (
-      <section className="border border-gray-200 rounded-xl overflow-hidden">
+      <section className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
           <button
             type="button"
@@ -517,7 +517,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
 
   // ── Event cards ──────────────────────────────────────────────────────────────
   return (
-    <section className="border border-gray-200 rounded-xl overflow-hidden">
+    <section className="border border-gray-200 rounded-lg overflow-hidden">
       <div className="px-5 py-4 border-b border-gray-100">
         <h2 className="text-base font-semibold text-gray-900">Book a consultation</h2>
       </div>

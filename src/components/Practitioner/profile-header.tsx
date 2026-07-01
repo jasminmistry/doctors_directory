@@ -60,7 +60,7 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
   })
 
   return (
-    <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-xl px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t-[1px] md:border md:border-[var(--alto)] bg-white md:bg-[var(--primary-bg-color)]">
+    <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-lg px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t-[1px] md:border md:border-[var(--alto)] bg-white md:bg-[var(--primary-bg-color)]">
       {!clinic.claimed && (
         <Link prefetch={false} href={`/claim/practitioner/${clinic.practitioner_name}`}>
           <Badge

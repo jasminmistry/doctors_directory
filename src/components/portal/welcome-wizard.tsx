@@ -91,7 +91,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
                   type="button"
                   disabled={loadingSchedule}
                   onClick={() => setStep('schedule')}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-700 transition-colors disabled:opacity-50"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-700 transition-colors disabled:opacity-50"
                 >
                   {loadingSchedule
                     ? <><Loader2 className="h-4 w-4 animate-spin" /> Loading your schedule…</>
@@ -149,7 +149,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
                   type="button"
                   onClick={save}
                   disabled={saving}
-                  className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 transition-colors disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 transition-colors disabled:opacity-50"
                 >
                   {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                   Save & continue

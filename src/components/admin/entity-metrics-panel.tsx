@@ -66,7 +66,7 @@ function StatCard({
     amber: 'bg-amber-50 text-amber-600',
   }
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+    <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
       <div className="flex items-start gap-3">
         <div className={`rounded-lg p-2 ${colors[color]}`}>
           <Icon className="h-4 w-4" />
@@ -160,7 +160,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
       {loading && !data && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-24 rounded-xl border border-gray-100 bg-gray-50 animate-pulse" />
+            <div key={i} className="h-24 rounded-lg border border-gray-100 bg-gray-50 animate-pulse" />
           ))}
         </div>
       )}
@@ -250,7 +250,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
                         Top Keywords
                       </p>
                     </div>
-                    <div className="overflow-x-auto rounded-xl border border-gray-100">
+                    <div className="overflow-x-auto rounded-lg border border-gray-100">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="border-b border-gray-100 bg-gray-50">

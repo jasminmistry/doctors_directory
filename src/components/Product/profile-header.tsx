@@ -52,7 +52,7 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
   }
 
   return (
-    <Card className="md:mt-2 flex flex-col gap-6 md:rounded-xl px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t-[1px] md:border md:border-[var(--alto)] bg-white md:bg-[var(--primary-bg-color)]">
+    <Card className="md:mt-2 flex flex-col gap-6 md:rounded-lg px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t-[1px] md:border md:border-[var(--alto)] bg-white md:bg-[var(--primary-bg-color)]">
       <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-center">
         <div className="flex flex-row flex-wrap pb-4 md:pb-0 md:mb-4 px-0 lg:mb-0 items-start border-b border-[#C4C4C4] md:border-0">
           {/* Profile Image Section */}

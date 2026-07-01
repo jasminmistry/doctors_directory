@@ -38,8 +38,8 @@ export function SearchDropdown({
   if (!isMobile && !showResults && !activeDropdown) return null;
 
   const dropdownClasses = isMobile
-    ? "absolute top-full left-0 w-full bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 mt-1"
-    : "flex w-full bg-white rounded-lg shadow-lg border border-gray-200 p-6";
+    ? "absolute top-full left-0 w-full bg-white rounded-lg border border-gray-200 p-4 z-50 mt-1"
+    : "flex w-full bg-white rounded-lg border border-gray-200 p-6";
 
   const clsgrd = "gap-4";
   const gridClasses = isMobile

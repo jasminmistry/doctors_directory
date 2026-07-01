@@ -130,7 +130,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+    <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
       {/* Step indicator — always visible */}
       <div className="flex items-center gap-1 text-[10px] text-gray-500 px-5 pt-5 pb-0">
         <span className={cn('font-medium', step === 1 && 'text-gray-900')}>1. Date &amp; Time</span>

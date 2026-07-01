@@ -31,7 +31,7 @@ export function HubChrome() {
     p === `/business/${seg}` || p.startsWith(`/business/${seg}/`);
 
   return (
-    <div className="border-b border-[#E5E7EB] bg-[var(--primary-bg-color)] mb-0">
+    <div className="border-b border-[#e0d9ca] bg-[var(--primary-bg-color)] mb-0">
       <div className="mx-auto max-w-[1280px] px-4 py-2">
         <div
           className="flex items-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -41,7 +41,7 @@ export function HubChrome() {
           <Link
             href="/business/"
             className={cn(
-              "shrink-0 whitespace-nowrap text-sm font-medium px-[13px] py-[5px] rounded-[12px] transition-colors",
+              "shrink-0 whitespace-nowrap text-sm font-medium px-[13px] py-[5px] rounded-full transition-colors",
               hubHomeActive
                 ? "bg-[#111111] text-white"
                 : "text-neutral-900 hover:bg-white/70"
@@ -54,7 +54,7 @@ export function HubChrome() {
               key={seg}
               href={`/business/${seg}/`}
               className={cn(
-                "shrink-0 whitespace-nowrap text-sm font-medium px-[13px] py-[5px] rounded-[12px] transition-colors",
+                "shrink-0 whitespace-nowrap text-sm font-medium px-[13px] py-[5px] rounded-full transition-colors",
                 segmentActive(seg)
                   ? "bg-[#111111] text-white"
                   : "text-neutral-900 hover:bg-white/70"
@@ -66,7 +66,7 @@ export function HubChrome() {
           <Link
             href="/business/uk/"
             className={cn(
-              "shrink-0 whitespace-nowrap text-sm font-medium px-[13px] py-[5px] rounded-[12px] transition-colors",
+              "shrink-0 whitespace-nowrap text-sm font-medium px-[13px] py-[5px] rounded-full transition-colors",
               byCityActive
                 ? "bg-[#111111] text-white"
                 : "text-neutral-900 hover:bg-white/70"
@@ -77,7 +77,7 @@ export function HubChrome() {
           <Link
             href="/business/treatments/"
             className={cn(
-              "shrink-0 whitespace-nowrap text-sm font-medium px-[13px] py-[5px] rounded-[12px] transition-colors",
+              "shrink-0 whitespace-nowrap text-sm font-medium px-[13px] py-[5px] rounded-full transition-colors",
               byTreatmentActive
                 ? "bg-[#111111] text-white"
                 : "text-neutral-900 hover:bg-white/70"

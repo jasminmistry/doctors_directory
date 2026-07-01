@@ -75,17 +75,17 @@ export default function BusinessTreatmentDetailPage({ params }: Props) {
         title={title}
         description="Treatment-focused page built with controlled combinations to keep scale useful: treatment × consent, treatment × automation, and treatment × software."
       />
-      <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-12 pb-16">
+      <div className="max-w-7xl mx-auto px-4 pt-10 md:pt-12 pb-10">
       <HubOperationalInsightBlock insight={operationalInsight} />
 
       <section className="mb-12 grid sm:grid-cols-2 gap-3">
-        <Link href="/business/consent/" className="rounded-lg border border-neutral-200 bg-white p-4 hover:border-neutral-400 hover:shadow-sm transition-all">
+        <Link href="/business/consent/" className="rounded-lg border border-neutral-200 bg-white p-4 hover:border-neutral-400  transition-all">
           <p className="font-medium text-neutral-900">Consent</p>
           <p className="text-sm text-neutral-500 mt-1">
             {toDisplayTitle("Treatment consent workflows")}
           </p>
         </Link>
-        <Link href="/business/automation/" className="rounded-lg border border-neutral-200 bg-white p-4 hover:border-neutral-400 hover:shadow-sm transition-all">
+        <Link href="/business/automation/" className="rounded-lg border border-neutral-200 bg-white p-4 hover:border-neutral-400  transition-all">
           <p className="font-medium text-neutral-900">Automation</p>
           <p className="text-sm text-neutral-500 mt-1">
             {toDisplayTitle("Treatment automation pathways")}
@@ -93,7 +93,7 @@ export default function BusinessTreatmentDetailPage({ params }: Props) {
         </Link>
       </section>
 
-      <section className="rounded-xl border border-neutral-200 bg-neutral-50 px-6 py-6">
+      <section className="rounded-lg border border-neutral-200 bg-white px-6 py-6">
         <h2 className="text-xl font-semibold text-neutral-900 mb-3">
           {toDisplayTitle("Related Treatment Pages")}
         </h2>

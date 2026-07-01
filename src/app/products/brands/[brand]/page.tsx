@@ -142,7 +142,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                 href={`/products/brands/${toUrlSlug(brand)}/${practitioner.slug}`}
                 className="block"
               >
-                <Card className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
+                <Card className="group bg-white transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
                   <CardHeader className="pb-2 px-2">
                     <h2
                       id={`product-name-${practitioner.slug}`}

@@ -60,7 +60,7 @@ export function MobileSearchView({
           <ChevronDown className="w-5 h-5 text-gray-500" />
         </button>
       ) : (
-        <div className="rounded-lg p-4 shadow-lg z-50">
+        <div className="rounded-lg p-4 z-50">
           <div className="space-y-4">
             <div className="relative">
               <button

@@ -140,7 +140,7 @@ export function PractitionerEarnings() {
 
           {/* Bookings table */}
           {bookings.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-gray-200 py-16 text-center">
+            <div className="rounded-lg border border-dashed border-gray-200 py-16 text-center">
               <PoundSterling className="mx-auto h-8 w-8 text-gray-300 mb-3" />
               <p className="text-sm font-medium text-gray-700">
                 {period === 'all' ? 'No paid bookings yet' : `No paid bookings for ${PERIOD_LABELS[period].toLowerCase()}`}
@@ -150,7 +150,7 @@ export function PractitionerEarnings() {
               </p>
             </div>
           ) : (
-            <div className="rounded-xl border border-gray-200 overflow-hidden">
+            <div className="rounded-lg border border-gray-200 overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50">
@@ -260,7 +260,7 @@ export function PractitionerEarnings() {
           )}
 
           {/* Commercial info */}
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-3 text-sm text-gray-700">
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3 text-sm text-gray-700">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">How earnings work</p>
             <p>
               <span className="font-medium text-gray-900">Platform fee: </span>
@@ -298,7 +298,7 @@ function SummaryCard({
   sub: string
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white px-4 py-4 space-y-2">
+    <div className="rounded-lg border border-gray-200 bg-white px-4 py-4 space-y-2">
       <div className="flex items-center gap-2">
         <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100">
           <Icon className="h-3.5 w-3.5 text-gray-600" />

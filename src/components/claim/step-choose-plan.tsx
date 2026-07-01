@@ -117,7 +117,7 @@ export function StepChoosePlan({ claimId, entitySlug, onPending }: Readonly<Prop
             type="button"
             onClick={() => setSelected(plan.id)}
             className={cn(
-              'relative text-left rounded-xl border-2 p-4 transition-all cursor-pointer',
+              'relative text-left rounded-lg border-2 p-4 transition-all cursor-pointer',
               selected === plan.id
                 ? 'border-foreground bg-muted/50'
                 : 'border-border hover:border-muted-foreground/50'

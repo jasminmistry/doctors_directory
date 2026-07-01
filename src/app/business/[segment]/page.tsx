@@ -95,7 +95,7 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
               <Link
                 key={s}
                 href={hubSegmentCollectionHref(s)}
-                className="inline-flex items-center justify-center rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-center text-sm font-medium text-neutral-900 transition-all hover:border-neutral-400 hover:bg-white"
+                className="inline-flex items-center justify-center rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] px-4 py-2.5 text-center text-sm font-medium text-neutral-900 transition-all hover:border-neutral-400 hover:bg-white"
               >
                 {segmentLabel(s)}
                 <span className="text-neutral-500 font-normal ml-1.5">
@@ -105,7 +105,7 @@ export default function BusinessSegmentIndexPage({ params }: Props) {
             ))}
             <Link
               href="/business/uk/"
-              className="inline-flex items-center justify-center rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-center text-sm font-medium text-neutral-900 transition-all hover:border-neutral-400 hover:bg-white sm:col-span-1"
+              className="inline-flex items-center justify-center rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] px-4 py-2.5 text-center text-sm font-medium text-neutral-900 transition-all hover:border-neutral-400 hover:bg-white sm:col-span-1"
             >
               By City
             </Link>

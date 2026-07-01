@@ -242,7 +242,7 @@ export default function AdminForm({ entityType, apiBasePath, redirectPath }: Adm
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         {slugValue && (
           <div className="mb-5 pb-5 border-b border-gray-100">
             <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</Label>

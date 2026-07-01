@@ -74,7 +74,7 @@ export function PortalScheduleView() {
 
   if (hasConsentzId === false) {
     return (
-      <div className="max-w-lg rounded-xl border border-amber-200 bg-amber-50 p-6">
+      <div className="max-w-lg rounded-lg border border-amber-200 bg-amber-50 p-6">
         <div className="flex items-start gap-3">
           <Clock className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
           <div>
@@ -107,7 +107,7 @@ export function PortalScheduleView() {
 
       {/* Patient-facing preview */}
       {enabledDays.length > 0 && (
-        <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+        <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
           <div className="flex items-center gap-2">
             <Eye className="h-4 w-4 text-gray-500 shrink-0" />
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Patient view — bookable hours</p>
@@ -125,7 +125,7 @@ export function PortalScheduleView() {
       )}
 
       {/* How schedule rules work */}
-      <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-3 text-sm text-gray-700">
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3 text-sm text-gray-700">
         <div className="flex items-center gap-2 mb-1">
           <Info className="h-4 w-4 text-gray-400 shrink-0" />
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">How schedule rules work</p>
