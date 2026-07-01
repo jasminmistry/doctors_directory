@@ -1,6 +1,7 @@
 "use client"
 
 import { FormEvent, useMemo, useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,6 +24,13 @@ interface RequestConsultationDialogProps {
   buttonClassName?: string
 }
 
+interface PatientProfile {
+  id: number
+  email: string
+  firstName?: string
+  lastName?: string
+}
+
 export function RequestConsultationDialog({
   pageType,
   clinicSlug,
@@ -31,32 +39,45 @@ export function RequestConsultationDialog({
   consultationHref,
   buttonClassName,
 }: Readonly<RequestConsultationDialogProps>) {
+  const router = useRouter()
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
-  const [name, setName] = useState("")
-  const [contact, setContact] = useState("")
+  const [patient, setPatient] = useState<PatientProfile | null>(null)
   const [leadTreatment, setLeadTreatment] = useState(treatment ?? "")
   const [leadLocation, setLeadLocation] = useState(location ?? "")
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const isDisabled = useMemo(
-    () => !name.trim() || !contact.trim() || isSubmitting,
-    [name, contact, isSubmitting],
-  )
+  const patientName = patient
+    ? [patient.firstName, patient.lastName].filter(Boolean).join(" ") || patient.email
+    : ""
 
-  const handleOpen = (nextOpen: boolean) => {
-    setOpen(nextOpen)
-    if (nextOpen) {
-      trackCtaClick({
-        ctaLabel: "Request a callback",
-        ctaTargetUrl: consultationHref ?? undefined,
-        pageType,
-      })
+  const isDisabled = useMemo(() => !patient || isSubmitting, [patient, isSubmitting])
+
+  const handleButtonClick = async () => {
+    trackCtaClick({
+      ctaLabel: "Request a callback",
+      ctaTargetUrl: consultationHref ?? undefined,
+      pageType,
+    })
+
+    const res = await fetch("/directory/api/patient/me")
+    if (!res.ok) {
+      router.push(`/directory/account/login?next=${encodeURIComponent(pathname)}`)
+      return
     }
+    const data = await res.json() as PatientProfile
+    setPatient(data)
+    setOpen(true)
+  }
+
+  const handleClose = (next: boolean) => {
+    setOpen(next)
+    if (!next) setPatient(null)
   }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (isDisabled) return
+    if (isDisabled || !patient) return
     setIsSubmitting(true)
     try {
       if (clinicSlug) {
@@ -65,8 +86,8 @@ export function RequestConsultationDialog({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             clinicSlug,
-            patientName: name.trim(),
-            contact: contact.trim(),
+            patientName,
+            contact: patient.email,
             treatment: leadTreatment.trim() || undefined,
             location: leadLocation.trim() || undefined,
           }),
@@ -84,8 +105,7 @@ export function RequestConsultationDialog({
       })
       toast.success("Thanks! Your request has been sent to the clinic.")
       setOpen(false)
-      setName("")
-      setContact("")
+      setPatient(null)
     } catch {
       toast.error("Something went wrong, please try again.")
     } finally {
@@ -94,10 +114,10 @@ export function RequestConsultationDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpen}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <Button
         type="button"
-        onClick={() => handleOpen(true)}
+        onClick={handleButtonClick}
         className={buttonClassName}
         data-no-auto-track="true"
       >
@@ -108,23 +128,11 @@ export function RequestConsultationDialog({
         <DialogHeader>
           <DialogTitle>Request a callback</DialogTitle>
           <DialogDescription>
-            Share your details and the clinic will be in touch.
+            The clinic will contact you at <strong>{patient?.email}</strong>.
           </DialogDescription>
         </DialogHeader>
 
         <form className="space-y-3" onSubmit={handleSubmit}>
-          <Input
-            required
-            placeholder="Your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Input
-            required
-            placeholder="Email or phone number"
-            value={contact}
-            onChange={(e) => setContact(e.target.value)}
-          />
           <Input
             placeholder="Treatment (optional)"
             value={leadTreatment}

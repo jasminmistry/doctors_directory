@@ -4,7 +4,10 @@ import {
   MapPin,
   Phone,
   ShieldCheck,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Clinic } from "@/lib/types";
@@ -24,9 +27,48 @@ interface ProfileHeaderProps {
 
 export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: Readonly<ProfileHeaderProps>) {
   const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
   const returnTo = queryString ? `${pathname}?${queryString}` : pathname;
+  const [pricingLoading, setPricingLoading] = useState(false);
+  const [pricingDone, setPricingDone] = useState(false);
+
+  async function handleRequestPricing() {
+    if (pricingDone || pricingLoading) return;
+    setPricingLoading(true);
+    try {
+      const res = await fetch('/directory/api/patient/me');
+      if (!res.ok) {
+        router.push(`/directory/account/login?next=${encodeURIComponent(pathname)}`);
+        return;
+      }
+      const patient = await res.json() as { firstName?: string; lastName?: string; email: string };
+      const patientName = [patient.firstName, patient.lastName].filter(Boolean).join(' ') || patient.email;
+
+      const leadRes = await fetch('/directory/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clinicSlug: clinic.slug ?? '',
+          patientName,
+          contact: patient.email,
+          treatment: 'Pricing Enquiry',
+        }),
+      });
+      if (!leadRes.ok) {
+        toast.error('Something went wrong. Please try again.');
+        return;
+      }
+      setPricingDone(true);
+      toast.success('Your pricing request has been sent to the clinic.');
+      document.getElementById('fees')?.scrollIntoView({ behavior: 'smooth' });
+    } catch {
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setPricingLoading(false);
+    }
+  }
   const practitionerName = clinic.slug!
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -145,13 +187,18 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
           />
           <Button
-            asChild
             variant="outline"
+            onClick={handleRequestPricing}
+            disabled={pricingLoading || pricingDone}
             className="w-full shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
           >
-            <a href="#fees" data-track-cta="true">
-              Request Pricing
-            </a>
+            {pricingLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : pricingDone ? (
+              'Request sent'
+            ) : (
+              'Request Pricing'
+            )}
           </Button>
           <SocialMediaIcons clinic={clinic} />
         </div>

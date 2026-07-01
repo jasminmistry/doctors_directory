@@ -6,7 +6,10 @@ import {
   Phone,
   Mail,
   ShieldCheck,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,9 +32,49 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileHeaderProps>) {
   const [selectedClinic, setSelectedClinic] = useState(clinic_list[0])
   const pathname = usePathname()
+  const router = useRouter()
   const searchParams = useSearchParams()
   const queryString = searchParams.toString()
   const returnTo = queryString ? `${pathname}?${queryString}` : pathname
+  const [pricingLoading, setPricingLoading] = useState(false)
+  const [pricingDone, setPricingDone] = useState(false)
+
+  async function handleRequestPricing() {
+    if (pricingDone || pricingLoading) return
+    setPricingLoading(true)
+    try {
+      const res = await fetch('/directory/api/patient/me')
+      if (!res.ok) {
+        router.push(`/directory/account/login?next=${encodeURIComponent(pathname)}`)
+        return
+      }
+      const patient = await res.json() as { firstName?: string; lastName?: string; email: string }
+      const patientName = [patient.firstName, patient.lastName].filter(Boolean).join(' ') || patient.email
+      const clinicSlug = k_value?.slug ?? ''
+
+      const leadRes = await fetch('/directory/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clinicSlug,
+          patientName,
+          contact: patient.email,
+          treatment: 'Pricing Enquiry',
+        }),
+      })
+      if (!leadRes.ok) {
+        toast.error('Something went wrong. Please try again.')
+        return
+      }
+      setPricingDone(true)
+      toast.success('Your pricing request has been sent to the clinic.')
+      document.getElementById('fees')?.scrollIntoView({ behavior: 'smooth' })
+    } catch {
+      toast.error('Something went wrong. Please try again.')
+    } finally {
+      setPricingLoading(false)
+    }
+  }
   const normalizeExternalUrl = (value?: string) => {
     if (!value) return null
     const cleaned = value.trim().replace(/^\.+|\.+$/g, "")
@@ -168,17 +211,25 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
         <div className="flex flex-col gap-3 justify-center">
           <RequestConsultationDialog
             pageType="practitioner_page"
+            clinicSlug={k_value?.slug}
             treatment={Array.isArray(k_value?.Treatments) ? k_value.Treatments[0] : clinic.Treatments?.[0]}
             location={k_value?.City || clinic.City}
             consultationHref={consultationHref}
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
           />
           <Button
-            asChild
             variant="outline"
+            onClick={handleRequestPricing}
+            disabled={pricingLoading || pricingDone}
             className="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
           >
-            <a href="#fees" data-track-cta="true">Request Pricing</a>
+            {pricingLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : pricingDone ? (
+              'Request sent'
+            ) : (
+              'Request Pricing'
+            )}
           </Button>
           <SocialMediaIcons clinic={k_value} />
         </div>

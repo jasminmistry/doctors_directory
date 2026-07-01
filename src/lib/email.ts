@@ -331,25 +331,26 @@ ${portalUrl}
   })
 }
 
-export async function sendPatientOtp({ to, otp }: { to: string; otp: string }) {
+export async function sendMagicLinkEmail({ to, magicLink }: { to: string; magicLink: string }) {
   const transport = createTransport()
 
   await transport.sendMail({
     from: FROM,
     to,
-    subject: 'Your Consentz Directory login code',
-    text: `Your login code is: ${otp}\n\nThis code expires in 10 minutes. Do not share it with anyone.`,
+    subject: 'Sign in to Consentz Directory',
+    text: `Hi,\n\nClick the link below to sign in to your Consentz Directory account:\n\n${magicLink}\n\nThis link expires in 15 minutes and can only be used once.\n\nIf you didn't request this, you can safely ignore this email.\n\n— The Consentz Team`,
     html: `
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" /></head>
 <body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
-  <h2 style="margin-bottom:8px;">Your login code</h2>
-  <p>Use this code to sign in to your Consentz Directory account.</p>
-  <div style="margin:24px 0;padding:20px;background:#f5f5f5;border-radius:8px;text-align:center;">
-    <span style="font-size:36px;font-weight:700;letter-spacing:8px;color:#111;">${otp}</span>
-  </div>
-  <p style="color:#666;font-size:13px;">This code expires in <strong>10 minutes</strong>. Do not share it with anyone.</p>
+  <h2 style="margin-bottom:8px;">Sign in to Consentz Directory</h2>
+  <p>Click the button below to sign in to your account. No password needed.</p>
+  <a href="${magicLink}"
+     style="display:inline-block;margin:24px 0;padding:14px 28px;background:#111;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">
+    Sign in to your account
+  </a>
+  <p style="color:#666;font-size:13px;">This link expires in <strong>15 minutes</strong> and can only be used once.</p>
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
   <p style="color:#999;font-size:12px;">If you didn't request this, you can safely ignore this email.</p>
 </body>

@@ -1,141 +1,56 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { UserCircle, Loader2, Eye, EyeOff } from 'lucide-react'
+import { UserCircle, Loader2, Mail } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
-type Step = 'login' | 'register' | 'forgot-email' | 'forgot-otp' | 'forgot-newpw'
+const ERROR_MESSAGES: Record<string, string> = {
+  oauth_failed: 'Sign-in failed. Please try again.',
+  state_mismatch: 'Sign-in failed. Please try again.',
+  token_exchange_failed: 'Sign-in failed. Please try again.',
+  profile_fetch_failed: 'Could not retrieve your profile. Please try again.',
+  server_error: 'Something went wrong. Please try again.',
+  link_used: 'This sign-in link has already been used. Request a new one.',
+  link_expired: 'This sign-in link has expired. Request a new one.',
+  invalid_link: 'This sign-in link is invalid. Request a new one.',
+}
 
 export default function AccountLoginPage() {
-  const router = useRouter()
   const searchParams = useSearchParams()
-  const [step, setStep] = useState<Step>('login')
+  const next = searchParams.get('next') ?? '/account'
+  const errorKey = searchParams.get('error')
+
   const [email, setEmail] = useState('')
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmNewPassword, setConfirmNewPassword] = useState('')
-  const [otp, setOtp] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [showNewPassword, setShowNewPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [sent, setSent] = useState(false)
+  const [error, setError] = useState(errorKey ? (ERROR_MESSAGES[errorKey] ?? 'Something went wrong.') : '')
 
-  const next = searchParams.get('next') || '/account'
+  const nextParam = next !== '/account' ? `?next=${encodeURIComponent(next)}` : ''
 
-  function resetToLogin() {
-    setStep('login')
-    setPassword('')
-    setConfirmPassword('')
-    setOtp('')
-    setError('')
-    setShowPassword(false)
-  }
-
-  async function handleLogin(e: React.FormEvent) {
+  async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault()
     setError('')
     setLoading(true)
     try {
-      const res = await fetch('/directory/api/patient/auth/login', {
+      const res = await fetch('/directory/api/patient/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), next: next !== '/account' ? next : undefined }),
       })
-      const data = await res.json()
-      if (!res.ok) { setError(data.error ?? 'Invalid email or password'); return }
-      router.push(next)
-      router.refresh()
+      if (!res.ok) {
+        setError('Something went wrong. Please try again.')
+        return
+      }
+      setSent(true)
     } catch {
       setError('Unable to connect. Please try again.')
     } finally {
       setLoading(false)
     }
-  }
-
-  async function handleRegister(e: React.FormEvent) {
-    e.preventDefault()
-    setError('')
-    if (password !== confirmPassword) { setError('Passwords do not match'); return }
-    setLoading(true)
-    try {
-      const res = await fetch('/directory/api/patient/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, firstName: firstName.trim() || undefined, lastName: lastName.trim() || undefined }),
-      })
-      const data = await res.json()
-      if (!res.ok) { setError(data.error ?? 'Registration failed'); return }
-      router.push(next.includes('?') ? `${next}&new=1` : `${next}?new=1`)
-      router.refresh()
-    } catch {
-      setError('Unable to connect. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function handleForgotSend(e: React.FormEvent) {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
-    try {
-      const res = await fetch('/directory/api/patient/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      })
-      if (!res.ok) { setError('Something went wrong'); return }
-      setStep('forgot-otp')
-    } catch {
-      setError('Unable to connect. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function handleResetPassword(e: React.FormEvent) {
-    e.preventDefault()
-    setError('')
-    if (newPassword !== confirmNewPassword) { setError('Passwords do not match'); return }
-    setLoading(true)
-    try {
-      const res = await fetch('/directory/api/patient/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp, password: newPassword }),
-      })
-      const data = await res.json()
-      if (!res.ok) { setError(data.error ?? 'Reset failed'); return }
-      router.push(next)
-      router.refresh()
-    } catch {
-      setError('Unable to connect. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const titles: Record<Step, string> = {
-    login: 'Sign in',
-    register: 'Create account',
-    'forgot-email': 'Reset password',
-    'forgot-otp': 'Enter reset code',
-    'forgot-newpw': 'Set new password',
-  }
-
-  const subtitles: Record<Step, string> = {
-    login: 'Sign in to your patient account',
-    register: 'Create your free patient account',
-    'forgot-email': 'We\'ll send a reset code to your email',
-    'forgot-otp': `We sent a 6-digit code to ${email}`,
-    'forgot-newpw': 'Choose a new password for your account',
   }
 
   return (
@@ -145,212 +60,91 @@ export default function AccountLoginPage() {
           <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center border border-[#e0e0e0] rounded-full bg-white">
             <UserCircle className="h-5 w-5 text-black" />
           </div>
-          <h1 className="text-xl font-medium text-black">{titles[step]}</h1>
-          <p className="mt-1.5 text-sm text-slate-900">{subtitles[step]}</p>
+          <h1 className="text-xl font-medium text-black">Sign in to your account</h1>
+          <p className="mt-1.5 text-sm text-slate-500">Book consultations and manage your appointments</p>
         </div>
 
-        <div className="p-6 bg-white border border-[#C4C4C4] rounded-lg">
+        <div className="p-6 bg-white border border-[#C4C4C4] rounded-lg space-y-4">
+          {error && (
+            <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">{error}</p>
+          )}
 
-          {/* Login */}
-          {step === 'login' && (
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label htmlFor="email" className="mb-2 block text-base font-medium text-black">Email address</label>
-                <input
-                  id="email" type="email" required autoComplete="email"
-                  value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 text-base border rounded-lg bg-white autofill:bg-white autofill:shadow-[inset_0_0_0px_1000px_white] autofill:[-webkit-text-fill-color:black]"
-                  placeholder="you@example.com"
-                />
+          {sent ? (
+            <div className="text-center space-y-3">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-50 border border-green-200">
+                <Mail className="h-5 w-5 text-green-600" />
               </div>
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label htmlFor="password" className="text-base font-medium text-black">Password</label>
-                  <button type="button" onClick={() => { setStep('forgot-email'); setError('') }}
-                    className="text-xs text-slate-500 hover:text-slate-700">
-                    Forgot password?
-                  </button>
-                </div>
-                <div className="relative">
-                  <input
-                    id="password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password"
-                    value={password} onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-2 pr-10 text-base border rounded-lg bg-white autofill:shadow-[inset_0_0_0px_1000px_white] autofill:[-webkit-text-fill-color:black]"
-                    placeholder="••••••••"
-                  />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-600">
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-              {error && <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">{error}</p>}
-              <Button type="submit" className=" w-full items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition" disabled={loading}>
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Sign in'}
-              </Button>
-              <p className="text-center text-xs text-black">
-                Don&apos;t have an account?{' '}
-                <button type="button" onClick={() => { setStep('register'); setError('') }}
-                  className="font-medium text-black hover:underline">
-                  Create one
-                </button>
+              <p className="text-sm font-medium text-black">Check your inbox</p>
+              <p className="text-sm text-slate-500">
+                We sent a sign-in link to <strong>{email}</strong>. Click the link to continue — it expires in 15 minutes.
               </p>
-            </form>
-          )}
-
-          {/* Register */}
-          {step === 'register' && (
-            <form onSubmit={handleRegister} className="space-y-4">
-              <div className="flex gap-3">
-                <div className="flex-1">
-                  <label htmlFor="reg-firstname" className="mb-2 block text-base font-medium text-black">First name</label>
-                  <input
-                    id="reg-firstname" type="text" required autoComplete="given-name"
-                    value={firstName} onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full px-3 py-2 text-base border rounded-lg bg-white"
-                    placeholder="Jane"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label htmlFor="reg-lastname" className="mb-2 block text-base font-medium text-black">Last name</label>
-                  <input
-                    id="reg-lastname" type="text" autoComplete="family-name"
-                    value={lastName} onChange={(e) => setLastName(e.target.value)}
-                    className="w-full px-3 py-2 text-base border rounded-lg bg-white"
-                    placeholder="Smith"
-                  />
-                </div>
-              </div>
-              <div>
-                <label htmlFor="reg-email" className="mb-2 block text-base font-medium text-black">Email address</label>
-                <input
-                  id="reg-email" type="email" required autoComplete="email"
-                  value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 text-base border rounded-lg bg-white"
-                  placeholder="you@example.com"
-                />
-              </div>
-              <div>
-                <label htmlFor="reg-password" className="mb-2 block text-base font-medium text-black">Password</label>
-                <div className="relative">
-                  <input
-                    id="reg-password" type={showPassword ? 'text' : 'password'} required autoComplete="new-password"
-                    minLength={8} value={password} onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-2 pr-10 text-base border rounded-lg bg-white"
-                    placeholder="Min. 8 characters"
-                  />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-600">
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-              <div>
-                <label htmlFor="reg-confirm" className="mb-2 block text-base font-medium text-black">Confirm password</label>
-                <input
-                  id="reg-confirm" type={showPassword ? 'text' : 'password'} required autoComplete="new-password"
-                  value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-3 py-2 text-base border rounded-lg bg-white"
-                  placeholder="••••••••"
-                />
-              </div>
-              {error && <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">{error}</p>}
-              <Button type="submit" className="w-full bg-black border border-black text-white hover:bg-white hover:text-black" disabled={loading}>
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create account'}
-              </Button>
-              <p className="text-center text-xs text-black">
-                Already have an account?{' '}
-                <button type="button" onClick={resetToLogin} className="font-medium text-black hover:underline">
-                  Sign in
-                </button>
-              </p>
-            </form>
-          )}
-
-          {/* Forgot — enter email */}
-          {step === 'forgot-email' && (
-            <form onSubmit={handleForgotSend} className="space-y-4">
-              <div>
-                <label htmlFor="forgot-email" className="mb-2 block text-base font-medium text-black">Email address</label>
-                <input
-                  id="forgot-email" type="email" required autoComplete="email"
-                  value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 text-base border rounded-lg bg-white"
-                  placeholder="you@example.com"
-                />
-              </div>
-              {error && <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">{error}</p>}
-              <Button type="submit" className="w-full bg-black border border-black text-white hover:bg-white hover:text-black" disabled={loading}>
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send reset code'}
-              </Button>
-              <button type="button" onClick={resetToLogin}
-                className="w-full text-center text-xs text-slate-500 hover:text-slate-700">
-                Back to sign in
-              </button>
-            </form>
-          )}
-
-          {/* Forgot — enter OTP */}
-          {step === 'forgot-otp' && (
-            <form onSubmit={(e) => { e.preventDefault(); setStep('forgot-newpw') }} className="space-y-4">
-              <div>
-                <label htmlFor="reset-otp" className="mb-2 block text-base font-medium text-black">Reset code</label>
-                <input
-                  id="reset-otp" type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6}
-                  required autoFocus autoComplete="one-time-code"
-                  value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  className="w-full px-3 py-2.5 text-center text-xl tracking-[0.5em] font-mono border rounded-lg bg-white"
-                  placeholder="000000"
-                />
-              </div>
-              {error && <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">{error}</p>}
-              <Button type="submit" className="w-full bg-black border border-black text-white hover:bg-white hover:text-black" disabled={otp.length !== 6}>
-                Continue
-              </Button>
-              <button type="button" onClick={() => { setStep('forgot-email'); setOtp(''); setError('') }}
-                className="w-full text-center text-xs text-slate-500 hover:text-slate-700">
+              <button
+                type="button"
+                onClick={() => { setSent(false); setEmail('') }}
+                className="text-xs text-slate-400 hover:text-slate-600 underline"
+              >
                 Use a different email
               </button>
-            </form>
-          )}
+            </div>
+          ) : (
+            <>
+              {/* Social buttons */}
+              <a
+                href={`/directory/api/patient/auth/google${nextParam}`}
+                className="flex w-full items-center justify-center gap-3 rounded-lg border border-[#C4C4C4] px-4 py-2.5 text-sm font-medium text-black hover:bg-gray-50 transition"
+              >
+                <svg className="h-4 w-4 flex-shrink-0" viewBox="0 0 24 24">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                Continue with Google
+              </a>
 
-          {/* Forgot — set new password */}
-          {step === 'forgot-newpw' && (
-            <form onSubmit={handleResetPassword} className="space-y-4">
-              <div>
-                <label htmlFor="new-pw" className="mb-2 block text-base font-medium text-black">New password</label>
-                <div className="relative">
+              <a
+                href={`/directory/api/patient/auth/apple${nextParam}`}
+                className="flex w-full items-center justify-center gap-3 rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white hover:bg-neutral-800 transition"
+              >
+                <svg className="h-4 w-4 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11"/>
+                </svg>
+                Continue with Apple
+              </a>
+
+              <div className="flex items-center gap-3">
+                <div className="flex-1 border-t border-[#e0e0e0]" />
+                <span className="text-xs text-slate-400">or</span>
+                <div className="flex-1 border-t border-[#e0e0e0]" />
+              </div>
+
+              {/* Magic link */}
+              <form onSubmit={handleMagicLink} className="space-y-3">
+                <div>
+                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-black">Email address</label>
                   <input
-                    id="new-pw" type={showNewPassword ? 'text' : 'password'} required autoComplete="new-password"
-                    minLength={8} value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-3 py-2 pr-10 text-base border rounded-lg bg-white"
-                    placeholder="Min. 8 characters"
+                    id="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3 py-2 text-base border border-[#C4C4C4] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-black/20"
+                    placeholder="you@example.com"
                   />
-                  <button type="button" onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-600">
-                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
                 </div>
-              </div>
-              <div>
-                <label htmlFor="confirm-new-pw" className="mb-2 block text-base font-medium text-black">Confirm new password</label>
-                <input
-                  id="confirm-new-pw" type={showNewPassword ? 'text' : 'password'} required autoComplete="new-password"
-                  value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)}
-                  className="w-full px-3 py-2 text-base border rounded-lg bg-white"
-                  placeholder="••••••••"
-                />
-              </div>
-              {error && <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">{error}</p>}
-              <Button type="submit" className="w-full bg-black border border-black text-white hover:bg-white hover:text-black" disabled={loading}>
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Set new password'}
-              </Button>
-            </form>
+                <Button
+                  type="submit"
+                  className="w-full bg-white border border-[#C4C4C4] text-black hover:bg-gray-50 transition"
+                  disabled={loading}
+                >
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send magic link'}
+                </Button>
+              </form>
+            </>
           )}
-
         </div>
 
-        {/* Provider registration links */}
         <div className="mt-6 rounded-lg border border-gray-100 bg-gray-50 px-4 py-4 space-y-2">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Are you a clinic or practitioner?</p>
           <div className="flex flex-col gap-1.5">

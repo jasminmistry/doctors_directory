@@ -1008,27 +1008,39 @@ model Patient {
   consentzSessionExpiresAt DateTime?
   consentzRefreshExpiresAt DateTime?
 
-  otps         PatientOtp[]
-  bookings     Booking[]
-  chatSessions ChatSession[]
-  leads        ConsultationLead[]
+  bookings      Booking[]
+  chatSessions  ChatSession[]
+  leads         ConsultationLead[]
+  oauthAccounts PatientOAuthAccount[]
 
   @@map("patients")
 }
 
-model PatientOtp {
-  id        Int      @id @default(autoincrement())
-  patientId Int
-  codeHash  String   @db.VarChar(64)
+model PatientMagicLink {
+  id        Int       @id @default(autoincrement())
+  tokenHash String    @unique @db.VarChar(64)
+  email     String    @db.VarChar(255)
   expiresAt DateTime
-  attempts  Int      @default(0)
-  used      Boolean  @default(false)
-  createdAt DateTime @default(now())
+  usedAt    DateTime?
+  next      String?   @db.VarChar(500)
+  createdAt DateTime  @default(now())
+
+  @@index([email])
+  @@map("patient_magic_links")
+}
+
+model PatientOAuthAccount {
+  id                Int     @id @default(autoincrement())
+  patientId         Int
+  provider          String  @db.VarChar(20)
+  providerAccountId String  @db.VarChar(255)
+  email             String? @db.VarChar(255)
 
   patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
 
+  @@unique([provider, providerAccountId])
   @@index([patientId])
-  @@map("patient_otps")
+  @@map("patient_oauth_accounts")
 }
 
 model FeaturedProfile {

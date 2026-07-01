@@ -72,31 +72,3 @@ export function clearPatientCookie(res: NextResponse) {
   res.cookies.set(PATIENT_COOKIE, '', { ...COOKIE_OPTS, maxAge: 0 })
 }
 
-export function generateOtp(): string {
-  return String(crypto.randomInt(100000, 999999))
-}
-
-export function hashOtp(otp: string): string {
-  return crypto.createHash('sha256').update(otp).digest('hex')
-}
-
-export async function hashPassword(password: string): Promise<string> {
-  const salt = crypto.randomBytes(16).toString('hex')
-  const hash = await new Promise<Buffer>((resolve, reject) => {
-    crypto.scrypt(password, salt, 64, (err, key) => (err ? reject(err) : resolve(key)))
-  })
-  return `${salt}:${hash.toString('hex')}`
-}
-
-export async function verifyPassword(password: string, stored: string): Promise<boolean> {
-  const [salt, hash] = stored.split(':')
-  if (!salt || !hash) return false
-  const derived = await new Promise<Buffer>((resolve, reject) => {
-    crypto.scrypt(password, salt, 64, (err, key) => (err ? reject(err) : resolve(key)))
-  })
-  try {
-    return crypto.timingSafeEqual(derived, Buffer.from(hash, 'hex'))
-  } catch {
-    return false
-  }
-}

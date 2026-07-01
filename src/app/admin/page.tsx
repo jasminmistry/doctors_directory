@@ -7,6 +7,7 @@ import {
   Building2, Clock, Package, Stethoscope, Users,
   PoundSterling, TrendingUp, Unlock, CalendarDays,
   RotateCcw, ArrowUp, ArrowDown, Minus, Percent,
+  UserCheck, Mail, Chrome, Apple, MessageSquare, BookOpen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -19,6 +20,25 @@ interface Stats {
   treatments: number
   pendingClinics: number
   pendingPractitioners: number
+}
+
+interface PatientStats {
+  patients: {
+    total: number
+    newThisMonth: number
+    newLastMonth: number
+    authMethods: { google: number; apple: number; magicLink: number }
+    withBookings: number
+    withChats: number
+  }
+  leads: {
+    total: number
+    thisMonth: number
+    lastMonth: number
+    unlocked: number
+    ghost: number
+    byType: { pricing: number; callback: number }
+  }
 }
 
 interface EarningsData {
@@ -131,10 +151,12 @@ function PlanBar({ free, ppl, sub }: { free: number; ppl: number; sub: number })
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [earnings, setEarnings] = useState<EarningsData | null>(null)
+  const [patientStats, setPatientStats] = useState<PatientStats | null>(null)
 
   useEffect(() => {
     fetch('/directory/api/admin/stats').then((r) => r.json()).then(setStats).catch(() => {})
     fetch('/directory/api/admin/earnings').then((r) => r.ok ? r.json() : null).then(setEarnings).catch(() => {})
+    fetch('/directory/api/admin/patient-stats').then((r) => r.ok ? r.json() : null).then(setPatientStats).catch(() => {})
   }, [])
 
   const pending = stats ? stats.pendingClinics + stats.pendingPractitioners : 0
@@ -392,6 +414,157 @@ export default function AdminDashboard() {
           ) : (
             <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
               Loading revenue data…
+            </div>
+          )}
+        </div>
+
+        {/* ── Patients & Prospects ─────────────────────────────── */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Patients &amp; Prospects</h2>
+            <p className="text-xs text-gray-500">Registered patient accounts · all time</p>
+          </div>
+
+          {patientStats ? (
+            <>
+              {/* Top-line patient counts */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <EarningsTile
+                  icon={Users}
+                  iconBg="bg-indigo-50 text-indigo-600"
+                  label="Registered patients"
+                  primary={patientStats.patients.total.toLocaleString()}
+                  secondary={`+${patientStats.patients.newThisMonth} this month`}
+                  delta={<Delta current={patientStats.patients.newThisMonth} previous={patientStats.patients.newLastMonth} />}
+                />
+                <EarningsTile
+                  icon={UserCheck}
+                  iconBg="bg-emerald-50 text-emerald-600"
+                  label="With bookings"
+                  primary={patientStats.patients.withBookings.toLocaleString()}
+                  secondary={`${patientStats.patients.total > 0 ? Math.round((patientStats.patients.withBookings / patientStats.patients.total) * 100) : 0}% of all patients`}
+                />
+                <EarningsTile
+                  icon={MessageSquare}
+                  iconBg="bg-blue-50 text-blue-600"
+                  label="With chat sessions"
+                  primary={patientStats.patients.withChats.toLocaleString()}
+                  secondary={`${patientStats.patients.total > 0 ? Math.round((patientStats.patients.withChats / patientStats.patients.total) * 100) : 0}% of all patients`}
+                />
+                <EarningsTile
+                  icon={BookOpen}
+                  iconBg="bg-violet-50 text-violet-600"
+                  label="Total leads generated"
+                  primary={patientStats.leads.total.toLocaleString()}
+                  secondary={`+${patientStats.leads.thisMonth} this month`}
+                  delta={<Delta current={patientStats.leads.thisMonth} previous={patientStats.leads.lastMonth} />}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Auth method breakdown */}
+                <div className="rounded-lg border border-gray-200 bg-white p-5 space-y-4">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Sign-in methods</p>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50">
+                        <Chrome className="h-3.5 w-3.5 text-red-500" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-600">Google</span>
+                          <span className="font-semibold text-gray-900">{patientStats.patients.authMethods.google}</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                          <div
+                            className="h-full bg-red-400 rounded-full"
+                            style={{ width: patientStats.patients.total > 0 ? `${(patientStats.patients.authMethods.google / patientStats.patients.total) * 100}%` : '0%' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100">
+                        <Apple className="h-3.5 w-3.5 text-gray-700" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-600">Apple</span>
+                          <span className="font-semibold text-gray-900">{patientStats.patients.authMethods.apple}</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                          <div
+                            className="h-full bg-gray-700 rounded-full"
+                            style={{ width: patientStats.patients.total > 0 ? `${(patientStats.patients.authMethods.apple / patientStats.patients.total) * 100}%` : '0%' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50">
+                        <Mail className="h-3.5 w-3.5 text-blue-500" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-600">Magic link</span>
+                          <span className="font-semibold text-gray-900">{patientStats.patients.authMethods.magicLink}</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                          <div
+                            className="h-full bg-blue-400 rounded-full"
+                            style={{ width: patientStats.patients.total > 0 ? `${(patientStats.patients.authMethods.magicLink / patientStats.patients.total) * 100}%` : '0%' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Lead breakdown */}
+                <div className="rounded-lg border border-gray-200 bg-white p-5 space-y-4">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Lead breakdown</p>
+                  <div className="space-y-2.5">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Total leads</span>
+                      <span className="font-semibold text-gray-900">{patientStats.leads.total}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Callback requests</span>
+                      <span className="font-semibold text-gray-900">{patientStats.leads.byType.callback}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Pricing enquiries</span>
+                      <span className="font-semibold text-gray-900">{patientStats.leads.byType.pricing}</span>
+                    </div>
+                    <div className="border-t border-gray-100 pt-2.5 flex justify-between text-sm">
+                      <span className="text-gray-600">Unlocked by clinics</span>
+                      <span className="font-semibold text-emerald-700">
+                        {patientStats.leads.unlocked}
+                        {patientStats.leads.total > 0 && (
+                          <span className="text-gray-400 font-normal ml-1">
+                            ({Math.round((patientStats.leads.unlocked / patientStats.leads.total) * 100)}%)
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Ghost leads (unclaimed clinics)</span>
+                      <span className="font-semibold text-amber-600">{patientStats.leads.ghost}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">This month</span>
+                      <span className="flex items-center gap-2 font-semibold text-gray-900">
+                        {patientStats.leads.thisMonth}
+                        <Delta current={patientStats.leads.thisMonth} previous={patientStats.leads.lastMonth} />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+              Loading patient data…
             </div>
           )}
         </div>
