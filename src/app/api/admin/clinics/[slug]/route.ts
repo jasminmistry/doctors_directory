@@ -44,6 +44,7 @@ const CLINIC_EDIT_SELECT = {
   cqcStatus: true,
   avgReplyTime: true,
   coreClinicId: true,
+  coreUnlinkRequestedAt: true,
 }
 
 export async function GET(

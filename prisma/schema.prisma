@@ -244,7 +244,8 @@ model Clinic {
   avgReplyTime AvgReplyTime?
 
   // Consentz Core — populated at claim approval; used for calendar + booking API calls
-  coreClinicId Int? @unique
+  coreClinicId            Int?      @unique
+  coreUnlinkRequestedAt   DateTime?
 
   // Stripe — stored after PPL SetupIntent completes so we can charge per-lead unlock
   stripeCustomerId         String?   @db.VarChar(255)

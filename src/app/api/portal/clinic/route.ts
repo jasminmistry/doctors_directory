@@ -14,6 +14,8 @@ const CLINIC_PORTAL_SELECT = {
   claimedPlan: true,
   stripeSubscriptionStatus: true,
   subscriptionCancelAt: true,
+  coreClinicId: true,
+  coreUnlinkRequestedAt: true,
   image: true,
   gmapsUrl: true,
   gmapsAddress: true,

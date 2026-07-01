@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { format, addMonths } from "date-fns";
 import { CheckCircle2, Info, PoundSterling, Clock, RotateCcw, AlertCircle, XCircle, CreditCard } from "lucide-react";
 import { ClinicForm } from "@/components/admin/forms/ClinicForm";
+import { CoreIntegrationPanel } from "@/components/portal/CoreIntegrationPanel";
 import { cn } from "@/lib/utils";
 import { commissionPct, clinicNetRate } from "@/lib/pricing";
 
@@ -233,6 +234,8 @@ export default function PortalClinicPage() {
   const [entitySlug, setEntitySlug] = useState<string | null>(null);
   const [verificationChecked, setVerificationChecked] = useState(false);
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
+  const [hasCoreLink, setHasCoreLink] = useState(false);
+  const [coreUnlinkRequestedAt, setCoreUnlinkRequestedAt] = useState<string | null>(null);
 
   const fetchClinicData = useCallback(() => {
     setVerificationChecked(false);
@@ -243,6 +246,8 @@ export default function PortalClinicPage() {
         setIdVerified(data.idVerified ?? false);
         setEntitySlug(data.slug ?? null);
         setSubscription(data.subscription ?? null);
+        setHasCoreLink(!!data.coreClinicId);
+        setCoreUnlinkRequestedAt(data.coreUnlinkRequestedAt ?? null);
       })
       .catch(() => {})
       .finally(() => setVerificationChecked(true));
@@ -284,6 +289,13 @@ export default function PortalClinicPage() {
 
       {/* Commercial panel */}
       {subscription && <CommercialPanel subscription={subscription} />}
+
+      {/* Core integration */}
+      <CoreIntegrationPanel
+        hasCoreLink={hasCoreLink}
+        unlinkRequestedAt={coreUnlinkRequestedAt}
+        onRefresh={fetchClinicData}
+      />
     </div>
   );
 }
