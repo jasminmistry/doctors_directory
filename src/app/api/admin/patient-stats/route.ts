@@ -68,7 +68,8 @@ export async function GET() {
       },
     })
   } catch (err) {
-    console.error('patient-stats error', err)
-    return NextResponse.json({ error: 'Failed to load stats' }, { status: 500 })
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('patient-stats error', msg)
+    return NextResponse.json({ error: 'Failed to load stats', detail: msg }, { status: 500 })
   }
 }
