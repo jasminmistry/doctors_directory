@@ -83,7 +83,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
   const isCancelled  = subscription.stripeStatus === 'canceled' || subscription.plan === 'free';
 
   return (
-    <div className="rounded-2xl border border-[#e4dccf] bg-[#f2eee5] p-6 space-y-5">
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-xs font-medium text-black uppercase tracking-[0.2em] mb-1">
@@ -139,7 +139,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
       )}
 
       {/* Plan details */}
-      <div className="rounded-lg border border-[#e2d8c8] bg-white divide-y divide-gray-100">
+      <div className="rounded-lg border border-gray-200 bg-white divide-y divide-gray-100 p-4">
         <InfoRow icon={PoundSterling} label="Price" value={`${meta.price} — ${meta.cadence}`} />
         {subscription.approvedAt && (
           <InfoRow
@@ -165,7 +165,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
       </div>
 
       {/* Features */}
-      <div className="rounded-lg border border-[#e2d8c8] bg-white p-4 space-y-2">
+      <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Included features</p>
         {meta.features.map((f) => (
           <div key={f} className="flex items-start gap-2">
@@ -176,7 +176,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
       </div>
 
       {/* Fees */}
-      <div className="rounded-lg border border-[#e2d8c8] bg-white p-4 space-y-2">
+      <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Platform fees &amp; payouts</p>
         <div className="space-y-3 text-sm text-gray-700">
           <p>
@@ -259,7 +259,7 @@ export default function PortalClinicPage() {
     <div className="w-full mx-auto px-0 space-y-6">
       {/* ID Verification */}
       {idVerified === false && entitySlug && (
-        <div className="rounded-2xl border border-[#e4dccf] bg-[#f2eee5] p-6">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6">
           <h2 className="text-xs font-medium text-black uppercase tracking-[0.2em] mb-3">
             Identity Verification
           </h2>
