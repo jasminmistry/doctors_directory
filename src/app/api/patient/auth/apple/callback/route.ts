@@ -1,7 +1,8 @@
 export const runtime = 'nodejs'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { decodeOAuthState, verifyAppleToken, buildAppleClientSecret } from '@/lib/oauth'
+import { decodeOAuthState } from '@/lib/oauth'
+import { verifyAppleToken, buildAppleClientSecret } from '@/lib/apple-oauth'
 import { prisma } from '@/lib/db'
 import { setPatientCookie } from '@/lib/patient-auth'
 
