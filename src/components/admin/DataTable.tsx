@@ -27,6 +27,7 @@ interface DataTableProps<T extends Record<string, any>> {
   onApprove?: (item: T) => void
   loading?: boolean
   addLabel?: string
+  filters?: React.ReactNode
 }
 
 const PAGE_SIZES = [10, 25, 50, 100]
@@ -46,7 +47,7 @@ function getPages(current: number, total: number): (number | '…')[] {
 }
 
 export function DataTable<T extends Record<string, any>>({
-  data, columns, onEdit, onDelete, onAdd, onApprove, loading, addLabel = 'Add New',
+  data, columns, onEdit, onDelete, onAdd, onApprove, loading, addLabel = 'Add New', filters,
 }: Readonly<DataTableProps<T>>) {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -88,14 +89,17 @@ export function DataTable<T extends Record<string, any>>({
     <div className="space-y-3">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="relative w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
-          <Input
-            placeholder="Search…"
-            value={search}
-            onChange={e => { setSearch(e.target.value); setPage(1) }}
-            className="pl-9 h-9 text-sm"
-          />
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
+            <Input
+              placeholder="Search…"
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1) }}
+              className="pl-9 h-9 text-sm"
+            />
+          </div>
+          {filters}
         </div>
         <div className="flex items-center gap-2 ml-auto">
           <div className="flex items-center gap-1.5 text-sm text-gray-500">

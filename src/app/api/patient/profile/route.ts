@@ -6,9 +6,10 @@ import { z } from 'zod'
 import { requirePatient, clearPatientCookie } from '@/lib/patient-auth'
 
 const updateSchema = z.object({
-  firstName: z.string().min(1).max(100).optional(),
-  lastName: z.string().min(1).max(100).optional(),
+  firstName: z.string().min(1).max(100).optional().nullable(),
+  lastName: z.string().min(1).max(100).optional().nullable(),
   phone: z.string().max(30).optional().nullable(),
+  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
 })
 
 export async function GET(req: NextRequest) {
@@ -20,6 +21,7 @@ export async function GET(req: NextRequest) {
     firstName: patient.firstName,
     lastName: patient.lastName,
     phone: patient.phone,
+    dateOfBirth: patient.dateOfBirth ? patient.dateOfBirth.toISOString().slice(0, 10) : null,
     createdAt: patient.createdAt,
   }, { headers: { 'Cache-Control': 'no-store' } })
 }
@@ -33,9 +35,15 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: body.error.flatten() }, { status: 400 })
   }
 
+  const { dateOfBirth, ...rest } = body.data
   const updated = await prisma.patient.update({
     where: { id: patient.id },
-    data: body.data,
+    data: {
+      ...rest,
+      ...(dateOfBirth !== undefined
+        ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
+        : {}),
+    },
   })
 
   return NextResponse.json({
@@ -44,6 +52,7 @@ export async function PUT(req: NextRequest) {
     firstName: updated.firstName,
     lastName: updated.lastName,
     phone: updated.phone,
+    dateOfBirth: updated.dateOfBirth ? updated.dateOfBirth.toISOString().slice(0, 10) : null,
   }, { headers: { 'Cache-Control': 'no-store' } })
 }
 

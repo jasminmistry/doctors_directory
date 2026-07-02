@@ -49,7 +49,6 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
         return
       }
       const patient = await res.json() as { firstName?: string; lastName?: string; email: string }
-      const patientName = [patient.firstName, patient.lastName].filter(Boolean).join(' ') || patient.email
       const clinicSlug = k_value?.slug ?? ''
 
       const leadRes = await fetch('/directory/api/leads', {
@@ -57,8 +56,9 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           clinicSlug,
-          patientName,
-          contact: patient.email,
+          firstName: patient.firstName ?? patient.email,
+          lastName: patient.lastName ?? '',
+          email: patient.email,
           treatment: 'Pricing Enquiry',
         }),
       })
@@ -212,7 +212,7 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
           <RequestConsultationDialog
             pageType="practitioner_page"
             clinicSlug={k_value?.slug}
-            treatment={Array.isArray(k_value?.Treatments) ? k_value.Treatments[0] : clinic.Treatments?.[0]}
+            treatments={Array.isArray(k_value?.Treatments) ? k_value.Treatments : (clinic.Treatments ?? [])}
             location={k_value?.City || clinic.City}
             consultationHref={consultationHref}
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"

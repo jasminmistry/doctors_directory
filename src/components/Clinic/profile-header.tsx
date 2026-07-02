@@ -44,15 +44,15 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
         return;
       }
       const patient = await res.json() as { firstName?: string; lastName?: string; email: string };
-      const patientName = [patient.firstName, patient.lastName].filter(Boolean).join(' ') || patient.email;
 
       const leadRes = await fetch('/directory/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           clinicSlug: clinic.slug ?? '',
-          patientName,
-          contact: patient.email,
+          firstName: patient.firstName ?? patient.email,
+          lastName: patient.lastName ?? '',
+          email: patient.email,
           treatment: 'Pricing Enquiry',
         }),
       });
@@ -181,7 +181,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
             clinicSlug={clinic.slug ?? ''}
             clinicName={clinicName ?? practitionerName}
             hasCoreCalendar={hasCoreCalendar}
-            treatment={clinic.Treatments?.[0]}
+            treatments={clinic.Treatments ?? []}
             location={clinic.City}
             pageType="clinic_page"
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"

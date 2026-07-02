@@ -1,12 +1,25 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable } from '@/components/admin/DataTable'
 import { DEFAULT_PERSON, FallbackImage } from '@/components/ui/fallback-image'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export const dynamic = 'force-dynamic'
+
+const PLAN_LABELS: Record<string, string> = {
+  subscription: 'Subscription',
+  pay_per_lead: 'Pay Per Lead',
+  free: 'Free',
+}
+
+const PLAN_COLORS: Record<string, string> = {
+  subscription: 'bg-cyan-100 text-cyan-700',
+  pay_per_lead: 'bg-violet-100 text-violet-700',
+  free: 'bg-gray-100 text-gray-600',
+}
 
 const columns = [
   {
@@ -20,14 +33,36 @@ const columns = [
     ),
   },
   { key: 'displayName', label: 'Name' },
-  { key: 'slug', label: 'Slug' },
   { key: 'specialty', label: 'Specialty' },
   { key: 'title', label: 'Title', render: (value: string) => value || <span className="text-gray-300">—</span> },
+  {
+    key: 'claimed',
+    label: 'Claimed',
+    render: (value: boolean) => value
+      ? <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Claimed</span>
+      : <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">Unclaimed</span>,
+  },
+  {
+    key: 'verified',
+    label: 'Verified',
+    render: (value: boolean) => value
+      ? <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">Verified</span>
+      : <span className="text-gray-300 text-xs">—</span>,
+  },
+  {
+    key: 'claimedPlan',
+    label: 'Plan',
+    render: (value: string | null) => value
+      ? <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${PLAN_COLORS[value] ?? 'bg-gray-100 text-gray-600'}`}>{PLAN_LABELS[value] ?? value}</span>
+      : <span className="text-gray-300 text-xs">—</span>,
+  },
 ]
 
 export default function PractitionersList() {
   const [practitioners, setPractitioners] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [filterClaimed, setFilterClaimed] = useState<'all' | 'claimed' | 'unclaimed'>('all')
+  const [filterVerified, setFilterVerified] = useState<'all' | 'verified' | 'unverified'>('all')
   const router = useRouter()
 
   useEffect(() => {
@@ -37,12 +72,58 @@ export default function PractitionersList() {
       .catch(() => setLoading(false))
   }, [])
 
+  const filtered = useMemo(() => {
+    return practitioners.filter((p) => {
+      if (filterClaimed === 'claimed' && !p.claimed) return false
+      if (filterClaimed === 'unclaimed' && p.claimed) return false
+      if (filterVerified === 'verified' && !p.verified) return false
+      if (filterVerified === 'unverified' && p.verified) return false
+      return true
+    })
+  }, [practitioners, filterClaimed, filterVerified])
+
+  const filterControls = (
+    <>
+      <Select value={filterClaimed} onValueChange={(v) => setFilterClaimed(v as typeof filterClaimed)}>
+        <SelectTrigger className="h-9 w-36 text-sm">
+          <SelectValue placeholder="Claimed" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All practitioners</SelectItem>
+          <SelectItem value="claimed">Claimed only</SelectItem>
+          <SelectItem value="unclaimed">Unclaimed only</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select value={filterVerified} onValueChange={(v) => setFilterVerified(v as typeof filterVerified)}>
+        <SelectTrigger className="h-9 w-36 text-sm">
+          <SelectValue placeholder="Verified" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Any verified</SelectItem>
+          <SelectItem value="verified">Verified only</SelectItem>
+          <SelectItem value="unverified">Unverified only</SelectItem>
+        </SelectContent>
+      </Select>
+
+      {(filterClaimed !== 'all' || filterVerified !== 'all') && (
+        <button
+          onClick={() => { setFilterClaimed('all'); setFilterVerified('all') }}
+          className="text-xs text-gray-500 underline hover:text-gray-700"
+        >
+          Clear
+        </button>
+      )}
+    </>
+  )
+
   return (
     <AdminLayout title="Practitioners">
       <DataTable
-        data={practitioners}
+        data={filtered}
         columns={columns}
         loading={loading}
+        filters={filterControls}
         onEdit={(p) => router.push(`/admin/practitioners/${p.slug}`)}
         onDelete={async (p) => {
           if (!confirm(`Delete practitioner "${p.displayName || p.slug}"?`)) return

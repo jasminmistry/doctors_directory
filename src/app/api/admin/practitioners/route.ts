@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 export async function GET() {
   try {
     const practitioners = await prisma.practitioner.findMany({
-      select: { slug: true, displayName: true, specialty: true, imageUrl: true, title: true },
+      select: { slug: true, displayName: true, specialty: true, imageUrl: true, title: true, claimed: true, verified: true, claimedPlan: true },
       orderBy: { displayName: 'asc' },
     })
     return NextResponse.json(practitioners)

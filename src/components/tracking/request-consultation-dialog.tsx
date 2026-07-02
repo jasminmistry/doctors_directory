@@ -1,57 +1,85 @@
 "use client"
 
-import { FormEvent, useMemo, useState } from "react"
-import { usePathname, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { InlineLogin } from "@/components/consultation/inline-login"
+import { ConsultationRichForm } from "@/components/consultation/consultation-form"
+import type { ConsultationFormData } from "@/components/consultation/consultation-form"
 import { trackCtaClick } from "@/lib/tracking/client"
 import type { DirectoryPageType } from "@/lib/tracking/types"
 
 interface RequestConsultationDialogProps {
   pageType: Extract<DirectoryPageType, "practitioner_page" | "clinic_page" | "collection_page">
   clinicSlug?: string
-  treatment?: string
+  treatments?: string[]
   location?: string
   consultationHref?: string | null
   buttonClassName?: string
 }
 
-interface PatientProfile {
+interface PatientMe {
   id: number
   email: string
   firstName?: string
   lastName?: string
+  phone?: string
+  dateOfBirth?: string
 }
+
+type Phase = 'login' | 'form' | 'submitted'
 
 export function RequestConsultationDialog({
   pageType,
   clinicSlug,
-  treatment,
+  treatments,
   location,
   consultationHref,
   buttonClassName,
 }: Readonly<RequestConsultationDialogProps>) {
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [open, setOpen] = useState(false)
-  const [patient, setPatient] = useState<PatientProfile | null>(null)
-  const [leadTreatment, setLeadTreatment] = useState(treatment ?? "")
-  const [leadLocation, setLeadLocation] = useState(location ?? "")
+  const [phase, setPhase] = useState<Phase>('login')
+  const [patientMe, setPatientMe] = useState<PatientMe | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const patientName = patient
-    ? [patient.firstName, patient.lastName].filter(Boolean).join(" ") || patient.email
-    : ""
+  const consultationNext = `${pathname}?consult=open`
 
-  const isDisabled = useMemo(() => !patient || isSubmitting, [patient, isSubmitting])
+  // Auto-open when returning from magic link / OAuth with ?consult=open
+  useEffect(() => {
+    if (searchParams.get('consult') !== 'open') return
+    router.replace(pathname, { scroll: false })
+    void openDialog()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  async function fetchAndSetPatient(): Promise<PatientMe | null> {
+    try {
+      const res = await fetch('/directory/api/patient/me')
+      if (!res.ok) return null
+      const data: PatientMe = await res.json()
+      setPatientMe(data)
+      return data
+    } catch {
+      return null
+    }
+  }
+
+  async function openDialog() {
+    const patient = await fetchAndSetPatient()
+    setPhase(patient ? 'form' : 'login')
+    setOpen(true)
+  }
 
   const handleButtonClick = async () => {
     trackCtaClick({
@@ -59,25 +87,19 @@ export function RequestConsultationDialog({
       ctaTargetUrl: consultationHref ?? undefined,
       pageType,
     })
-
-    const res = await fetch("/directory/api/patient/me")
-    if (!res.ok) {
-      router.push(`/directory/account/login?next=${encodeURIComponent(pathname)}`)
-      return
-    }
-    const data = await res.json() as PatientProfile
-    setPatient(data)
-    setOpen(true)
+    await openDialog()
   }
 
   const handleClose = (next: boolean) => {
     setOpen(next)
-    if (!next) setPatient(null)
+    if (!next) {
+      setPatientMe(null)
+      setPhase('login')
+    }
   }
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (isDisabled || !patient) return
+  const handleSubmit = async (data: ConsultationFormData) => {
+    if (isSubmitting) return
     setIsSubmitting(true)
     try {
       if (clinicSlug) {
@@ -86,15 +108,18 @@ export function RequestConsultationDialog({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             clinicSlug,
-            patientName,
-            contact: patient.email,
-            treatment: leadTreatment.trim() || undefined,
-            location: leadLocation.trim() || undefined,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            phone: data.phone,
+            treatment: data.treatment || undefined,
+            dateOfBirth: data.dateOfBirth,
+            location: location ?? undefined,
           }),
         })
         if (!res.ok) {
-          const data = await res.json()
-          toast.error(data.error ?? "Something went wrong, please try again.")
+          const errData = await res.json().catch(() => ({}))
+          toast.error((errData as { error?: string }).error ?? "Something went wrong, please try again.")
           return
         }
       }
@@ -103,15 +128,22 @@ export function RequestConsultationDialog({
         ctaTargetUrl: consultationHref ?? undefined,
         pageType,
       })
-      toast.success("Thanks! Your request has been sent to the clinic.")
-      setOpen(false)
-      setPatient(null)
+      setPhase('submitted')
     } catch {
       toast.error("Something went wrong, please try again.")
     } finally {
       setIsSubmitting(false)
     }
   }
+
+  const formDefaults = patientMe ? {
+    firstName: patientMe.firstName ?? '',
+    lastName: patientMe.lastName ?? '',
+    email: patientMe.email ?? '',
+    phone: patientMe.phone ?? '',
+    dateOfBirth: patientMe.dateOfBirth ?? '',
+    treatment: treatments?.[0] ?? '',
+  } : undefined
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -124,29 +156,35 @@ export function RequestConsultationDialog({
         Request a callback
       </Button>
 
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="max-w-sm p-0 overflow-hidden">
+        <DialogHeader className="px-6 pt-5 pb-0">
           <DialogTitle>Request a callback</DialogTitle>
-          <DialogDescription>
-            The clinic will contact you at <strong>{patient?.email}</strong>.
-          </DialogDescription>
         </DialogHeader>
 
-        <form className="space-y-3" onSubmit={handleSubmit}>
-          <Input
-            placeholder="Treatment (optional)"
-            value={leadTreatment}
-            onChange={(e) => setLeadTreatment(e.target.value)}
+        {phase === 'login' && (
+          <InlineLogin next={consultationNext} />
+        )}
+
+        {phase === 'form' && (
+          <ConsultationRichForm
+            key={patientMe?.email ?? 'form'}
+            defaultValues={formDefaults}
+            treatments={treatments}
+            submitLabel="Send request"
+            submitting={isSubmitting}
+            onSubmit={handleSubmit}
           />
-          <Input
-            placeholder="Your location (optional)"
-            value={leadLocation}
-            onChange={(e) => setLeadLocation(e.target.value)}
-          />
-          <Button disabled={isDisabled} type="submit" className="w-full">
-            {isSubmitting ? "Sending..." : "Send request"}
-          </Button>
-        </form>
+        )}
+
+        {phase === 'submitted' && (
+          <div className="px-6 py-8 text-center space-y-2">
+            <p className="text-2xl">✓</p>
+            <p className="font-semibold">Request sent!</p>
+            <p className="text-sm text-gray-500">
+              The clinic will contact you at <strong>{patientMe?.email}</strong>.
+            </p>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   )
