@@ -61,7 +61,7 @@ export default async function ClaimPage({ params, searchParams }: Readonly<Props
           Back to profile
         </Link>
 
-        <div className="mb-6">
+        <div className="mb-6 text-center">
           <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
             {clinic.category}
           </p>
