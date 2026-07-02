@@ -45,6 +45,12 @@ export async function GET(
     }
 
     const data = await res.json()
+    const eventsArr = data.events ?? []
+    console.log(`[events/practitioner] Core returned ${eventsArr.length} events`)
+    if (eventsArr.length > 0) {
+      console.log(`[events/practitioner] first event keys:`, Object.keys(eventsArr[0]))
+      console.log(`[events/practitioner] first event sample:`, JSON.stringify(eventsArr[0]))
+    }
     return NextResponse.json(data)
   } catch (err) {
     console.error('[events] unexpected error:', err)
