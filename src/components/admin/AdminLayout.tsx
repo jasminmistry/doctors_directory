@@ -27,6 +27,7 @@ import {
   Globe2,
   ExternalLink,
   Sparkles,
+  Link2Off,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +48,7 @@ interface PendingCounts {
   pendingPractitioners: number;
   pendingClaims: number;
   pendingVerifications: number;
+  pendingUnlinkRequests: number;
 }
 
 function NavBadge({ count }: { count: number }) {
@@ -77,6 +79,7 @@ const NAV = [
       { href: "/admin/pending/practitioners", label: "Practitioners" },
     ],
   },
+  { href: "/admin/unlink-requests", label: "Unlink Requests", icon: Link2Off },
   { href: "/admin/claims", label: "Claims", icon: ShieldCheck },
   { href: "/admin/verification", label: "ID Verification", icon: ShieldCheck },
   { href: "/admin/reviews", label: "Reviews", icon: Star },
@@ -98,6 +101,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
     pendingPractitioners: 0,
     pendingClaims: 0,
     pendingVerifications: 0,
+    pendingUnlinkRequests: 0,
   });
 
   function refreshCounts() {
@@ -223,11 +227,13 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                     : pathname.startsWith(item.href);
 
                 const topCount =
-                  item.href === "/admin/claims"
-                    ? counts.pendingClaims
-                    : item.href === "/admin/verification"
-                      ? counts.pendingVerifications
-                      : 0;
+                  item.href === "/admin/unlink-requests"
+                    ? counts.pendingUnlinkRequests
+                    : item.href === "/admin/claims"
+                      ? counts.pendingClaims
+                      : item.href === "/admin/verification"
+                        ? counts.pendingVerifications
+                        : 0;
 
                 return (
                   <Link

@@ -169,7 +169,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       orderBy: { createdAt: 'desc' },
     }),
   ]);
-  if (!dbClinic) {
+  if (!dbClinic || dbClinic.isHidden) {
     notFound();
   }
 

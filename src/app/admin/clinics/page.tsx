@@ -33,8 +33,9 @@ const columns = [
     ),
   },
   { key: 'name', label: 'Name' },
-  { key: 'category', label: 'Category' },
-  { key: 'gmapsAddress', label: 'Address', render: (value: string) => value ? <span className="block max-w-xs truncate text-gray-500">{value}</span> : <span className="text-gray-300">—</span> },
+  { key: 'email', label: 'Email', render: (value: string) => value ? <span className="text-gray-600 text-xs">{value}</span> : <span className="text-gray-300">—</span> },
+  { key: 'gmapsPhone', label: 'Phone', render: (value: string) => value ? <span className="text-gray-600 text-xs whitespace-nowrap">{value}</span> : <span className="text-gray-300">—</span> },
+  { key: 'gmapsAddress', label: 'Address', render: (value: string) => value ? <span className="block max-w-xs text-gray-500 text-xs leading-snug">{value}</span> : <span className="text-gray-300">—</span> },
   {
     key: 'claimed',
     label: 'Claimed',

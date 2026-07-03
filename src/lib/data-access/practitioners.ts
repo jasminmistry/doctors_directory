@@ -124,6 +124,7 @@ const CLINIC_SELECT = {
  */
 export const getAllPractitionersForSearch = cache(async (): Promise<Practitioner[]> => {
   const rows = await prisma.practitioner.findMany({
+    where: { isHidden: false },
     include: {
       ranking: true,
       treatments: {
@@ -151,8 +152,8 @@ export const getAllPractitionersForSearch = cache(async (): Promise<Practitioner
  * Single practitioner by slug with full clinic data including hours (cached)
  */
 export const getPractitionerBySlug = cache(async (slug: string): Promise<Practitioner | null> => {
-  const p = await prisma.practitioner.findUnique({
-    where: { slug },
+  const p = await prisma.practitioner.findFirst({
+    where: { slug, isHidden: false },
     include: {
       ranking: true,
       treatments: {

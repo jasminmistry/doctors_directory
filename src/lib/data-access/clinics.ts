@@ -51,6 +51,7 @@ export type SearchClinic = Pick<
  */
 export const getAllClinicsForSearch = cache(async (): Promise<SearchClinic[]> => {
   const clinics = await prisma.clinic.findMany({
+    where: { isHidden: false },
     select: {
       id: true,
       slug: true,
@@ -144,6 +145,7 @@ export const getClinicsByCity = cache(
   async (cityName: string): Promise<SearchClinic[]> => {
     const clinics = await prisma.clinic.findMany({
       where: {
+        isHidden: false,
         city: {
           name: {
             equals: cityName,
@@ -261,7 +263,7 @@ export async function searchClinics(params: {
   rating?: number
   treatments?: string[]
 }): Promise<SearchClinic[]> {
-  const where: Prisma.ClinicWhereInput = {}
+  const where: Prisma.ClinicWhereInput = { isHidden: false }
 
   // Text search across name and address
   if (params.query) {

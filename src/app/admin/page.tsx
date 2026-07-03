@@ -8,6 +8,7 @@ import {
   PoundSterling, TrendingUp, Unlock, CalendarDays,
   RotateCcw, ArrowUp, ArrowDown, Minus, Percent,
   UserCheck, Mail, Chrome, Apple, MessageSquare, BookOpen,
+  Link2Off,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -20,6 +21,7 @@ interface Stats {
   treatments: number
   pendingClinics: number
   pendingPractitioners: number
+  pendingUnlinkRequests: number
 }
 
 interface PatientStats {
@@ -220,6 +222,29 @@ export default function AdminDashboard() {
         {stats && pending === 0 && (
           <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-sm font-medium text-emerald-800">
             No pending approvals.
+          </div>
+        )}
+
+        {/* Pending unlink requests */}
+        {stats && stats.pendingUnlinkRequests > 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+              <Link2Off className="h-4 w-4 text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-amber-900">
+                {stats.pendingUnlinkRequests} Core unlink request{stats.pendingUnlinkRequests !== 1 ? 's' : ''} pending
+              </p>
+              <p className="text-xs text-amber-700 mt-0.5">
+                Clinic{stats.pendingUnlinkRequests !== 1 ? 's have' : ' has'} requested to disconnect from Consentz Core
+              </p>
+            </div>
+            <Link
+              href="/admin/unlink-requests"
+              className="text-xs font-medium text-amber-700 hover:text-amber-900 underline underline-offset-2"
+            >
+              Review
+            </Link>
           </div>
         )}
 

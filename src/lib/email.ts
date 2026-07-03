@@ -16,6 +16,7 @@ function createTransport() {
 
 const FROM = process.env.EMAIL_FROM ?? 'Consentz Directory <noreply@consentz.com>'
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+export const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'dax@consent.com'
 
 export async function sendClaimOtp({
   to,
@@ -397,6 +398,69 @@ If you believe this is an error or would like to provide additional information,
   <p style="color:#666;font-size:14px;">If you believe this is an error or would like to provide additional information, please contact us at <a href="mailto:support@consentz.com" style="color:#111;">support@consentz.com</a>.</p>
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
   <p style="color:#999;font-size:12px;">— The Consentz Team</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
+export async function sendUnlinkRequestNotification({
+  clinicName,
+  clinicSlug,
+  coreClinicId,
+  requestedAt,
+}: {
+  clinicName: string
+  clinicSlug: string
+  coreClinicId: number
+  requestedAt: Date
+}) {
+  const transport = createTransport()
+  const reviewUrl = `${BASE_URL}/directory/admin/unlink-requests`
+  const dateStr = requestedAt.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })
+
+  await transport.sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    subject: `Core unlink request — ${clinicName}`,
+    text: `
+${clinicName} has requested to disconnect their Consentz Core account from the directory.
+
+Core Clinic ID: ${coreClinicId}
+Requested at: ${dateStr}
+
+Review and action this request:
+${reviewUrl}
+
+— Consentz Directory
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  <h2 style="margin-bottom:8px;">Core unlink request</h2>
+  <p><strong>${clinicName}</strong> has requested to disconnect their Consentz Core account from the directory.</p>
+  <table style="margin:20px 0;background:#f5f5f5;border-radius:8px;width:100%;border-collapse:collapse;">
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;width:40%;border-bottom:1px solid #e5e5e5;">Clinic</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${clinicName}</td>
+    </tr>
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;border-bottom:1px solid #e5e5e5;">Core Clinic ID</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${coreClinicId}</td>
+    </tr>
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;">Requested at</td>
+      <td style="padding:10px 16px;">${dateStr}</td>
+    </tr>
+  </table>
+  <a href="${reviewUrl}"
+     style="display:inline-block;margin:0 0 24px;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
+    Review unlink requests
+  </a>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">— Consentz Directory</p>
 </body>
 </html>
     `.trim(),

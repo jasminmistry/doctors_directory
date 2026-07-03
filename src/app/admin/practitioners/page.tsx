@@ -34,7 +34,6 @@ const columns = [
   },
   { key: 'displayName', label: 'Name' },
   { key: 'specialty', label: 'Specialty' },
-  { key: 'title', label: 'Title', render: (value: string) => value || <span className="text-gray-300">—</span> },
   {
     key: 'claimed',
     label: 'Claimed',

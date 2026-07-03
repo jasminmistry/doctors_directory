@@ -237,6 +237,7 @@ model Clinic {
   gbpVerified    Boolean    @default(false)
   idVerified     Boolean    @default(false)
   manualVerified Boolean    @default(false)
+  isHidden       Boolean    @default(false)
 
   // Profile enhancements
   coverImage   String?       @db.Text
@@ -423,6 +424,7 @@ model Practitioner {
   licensed       Boolean    @default(false)
   idVerified     Boolean    @default(false)
   manualVerified Boolean    @default(false)
+  isHidden       Boolean    @default(false)
 
   // Consentz Core — set when claimed via Consentz link; used for calendar + booking API calls
   coreClinicId Int?

@@ -7,8 +7,8 @@ export async function GET() {
   try {
     const clinics = await prisma.clinic.findMany({
       select: {
-        slug: true, name: true, image: true, category: true, rating: true, reviewCount: true,
-        gmapsAddress: true, claimed: true, idVerified: true, claimedPlan: true,
+        slug: true, name: true, image: true, rating: true, reviewCount: true,
+        gmapsAddress: true, gmapsPhone: true, email: true, claimed: true, idVerified: true, claimedPlan: true,
       },
       orderBy: { name: 'asc' },
     })
