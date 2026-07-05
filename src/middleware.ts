@@ -20,17 +20,7 @@ function clearAuthAndRedirect(request: NextRequest, pathname: string, loginPath:
   return res
 }
 
-function redirectWithoutRscParam(request: NextRequest): NextResponse | null {
-  if (!request.nextUrl.searchParams.has('_rsc')) return null
-  const clean = request.nextUrl.clone()
-  clean.searchParams.delete('_rsc')
-  return NextResponse.redirect(clean, 308)
-}
-
 export async function middleware(request: NextRequest) {
-  const rscRedirect = redirectWithoutRscParam(request)
-  if (rscRedirect) return rscRedirect
-
   const { pathname } = request.nextUrl
 
   const clinicProfileMatch = pathname.match(/^\/clinics\/[^/]+\/clinic\/([^/]+)\/?$/)
@@ -87,6 +77,14 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|xml|json|txt|woff2?)$).*)',
+    '/admin/:path*',
+    '/api/admin/:path*',
+    '/portal/:path*',
+    '/api/portal/:path*',
+    '/api/portal/upgrade',
+    '/verify/:path*',
+    '/portal/login',
+    '/clinics/:cityslug/clinic/:slug',
+    '/practitioners/:cityslug/profile/:slug',
   ],
 }
