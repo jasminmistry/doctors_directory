@@ -17,4 +17,4 @@ export const HUB_CTA_HEADER_OUTLINE_CLASS =
   "inline-flex shrink-0 items-center justify-center rounded-lg border-2 border-black bg-transparent px-6 py-[13px] text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white whitespace-nowrap"
 
 export const HUB_CTA_FOOTER_LIGHT_CLASS =
-  "h-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium text-white hover:bg-neutral-800 transition-colors"
+  "w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
