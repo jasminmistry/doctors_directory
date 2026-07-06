@@ -58,8 +58,8 @@ const EMPTY: ClinicData = {
   category: null, rating: null, reviewCount: null, aboutSection: null, accreditations: null,
   awards: null, affiliations: null, website: null, email: null, facebook: null, twitter: null,
   xTwitter: null, instagram: null, youtube: null, linkedin: null,
-  isSaveFace: false, isDoctor: false, isJccp: null, jccpUrl: null, isCqc: null, cqcUrl: null,
-  isHiw: null, hiwUrl: null, isHis: null, hisUrl: null, isRqia: null, rqiaUrl: null,
+  isSaveFace: false, isDoctor: false, isJccp: false, jccpUrl: null, isCqc: false, cqcUrl: null,
+  isHiw: false, hiwUrl: null, isHis: false, hisUrl: null, isRqia: false, rqiaUrl: null,
   coverImage: null, cqcStatus: null, avgReplyTime: null, coreClinicId: null,
 }
 
@@ -174,7 +174,12 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
         }
       } else {
         const err = await res.json().catch(() => ({}))
-        toast.error(err.error || 'Failed to save')
+        if (Array.isArray(err.details) && err.details.length > 0) {
+          const messages = err.details.map((d: { path: (string | number)[]; message: string }) => `${d.path.join('.')}: ${d.message}`)
+          toast.error(messages.join('\n'))
+        } else {
+          toast.error(err.error || 'Failed to save')
+        }
       }
     } catch {
       toast.error('Failed to save')
