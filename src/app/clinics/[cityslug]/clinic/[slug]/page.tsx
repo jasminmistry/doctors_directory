@@ -41,6 +41,12 @@ import { buildMedicalClinicJsonLd } from "@/lib/directory-json-ld";
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { isRemovedClinicSlug } from "@/lib/directory-removals";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
+
+// Clinic profile data changes infrequently (admin edits) — serve from Next's
+// route cache and revalidate in the background instead of hitting Prisma on
+// every request. Admin write routes call revalidatePath() for immediate updates.
+export const revalidate = 300;
+
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
   incoming: Record<string, ItemMeta>

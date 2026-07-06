@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
 import { prisma } from '@/lib/db'
+import { invalidateQueryCache } from '@/lib/query-cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,6 +49,7 @@ export async function POST(request: Request) {
         isRqia: isRqia ?? false,
       } as any,
     })
+    invalidateQueryCache('clinics:all-search')
     return NextResponse.json({ ...clinic, rating: clinic.rating ? Number(clinic.rating) : null }, { status: 201 })
   } catch (error) {
     console.error('Failed to create clinic:', error)

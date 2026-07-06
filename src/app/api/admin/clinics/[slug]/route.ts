@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
 import { prisma } from '@/lib/db'
 import { deleteClinic } from '@/lib/data-access/clinics'
+import { invalidateQueryCache } from '@/lib/query-cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -84,6 +86,14 @@ export async function PUT(
       data: validation.data as any,
       select: CLINIC_EDIT_SELECT,
     })
+    invalidateQueryCache(
+      `clinic:slug:${params.slug}`,
+      'clinics:all-search',
+      ...(clinic.city?.slug ? [`clinic:city:${clinic.city.slug.toLowerCase()}`] : [])
+    )
+    if (clinic.city?.slug) {
+      revalidatePath(`/clinics/${clinic.city.slug}/clinic/${params.slug}`)
+    }
     return NextResponse.json({ ...clinic, rating: clinic.rating ? Number(clinic.rating) : null })
   } catch (error) {
     console.error('Failed to update clinic:', error)

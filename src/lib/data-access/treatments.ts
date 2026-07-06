@@ -1,13 +1,16 @@
 import { prisma } from '@/lib/db'
 import { Prisma } from '@prisma/client'
 import { cache } from 'react'
+import { withQueryCache, invalidateQueryCache } from '@/lib/query-cache'
 
 export const getAllTreatmentNames = cache(async (): Promise<string[]> => {
-  const treatments = await prisma.treatment.findMany({
-    select: { name: true },
-    orderBy: { name: 'asc' },
+  return withQueryCache('treatments:all-names', async () => {
+    const treatments = await prisma.treatment.findMany({
+      select: { name: true },
+      orderBy: { name: 'asc' },
+    })
+    return treatments.map((t) => t.name)
   })
-  return treatments.map((t) => t.name)
 })
 
 export async function getTreatmentBySlug(slug: string) {
@@ -19,13 +22,19 @@ export async function getAllTreatments() {
 }
 
 export async function createTreatment(data: Prisma.TreatmentCreateInput) {
-  return await prisma.treatment.create({ data })
+  const treatment = await prisma.treatment.create({ data })
+  invalidateQueryCache('treatments:all-names')
+  return treatment
 }
 
 export async function updateTreatment(slug: string, data: Prisma.TreatmentUpdateInput) {
-  return await prisma.treatment.update({ where: { slug }, data })
+  const treatment = await prisma.treatment.update({ where: { slug }, data })
+  invalidateQueryCache('treatments:all-names')
+  return treatment
 }
 
 export async function deleteTreatment(slug: string) {
-  return await prisma.treatment.delete({ where: { slug } })
+  const treatment = await prisma.treatment.delete({ where: { slug } })
+  invalidateQueryCache('treatments:all-names')
+  return treatment
 }
