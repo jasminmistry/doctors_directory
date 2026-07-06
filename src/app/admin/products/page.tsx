@@ -13,6 +13,7 @@ const columns = [
     key: 'imageUrl',
     label: 'Image',
     sortable: false,
+    searchable: false,
     render: (value: string) => (
       value
         ? <FallbackImage src={value.replaceAll('"', '')} alt="Product" className="w-9 h-9 rounded-lg object-cover" fallback={DEFAULT_PRODUCT} />

@@ -15,6 +15,7 @@ export interface Column<T> {
   key: keyof T | string
   label: string
   sortable?: boolean
+  searchable?: boolean
   render?: (value: any, item: T) => React.ReactNode
 }
 
@@ -61,13 +62,22 @@ export function DataTable<T extends Record<string, any>>({
     setPage(1)
   }
 
+  const nonSearchableKeys = useMemo(
+    () => new Set(columns.filter(c => c.searchable === false).map(c => String(c.key))),
+    [columns]
+  )
+
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase()
+    const q = search.trim().toLowerCase().replace(/\s+/g, '')
     if (!q) return data
     return data.filter(item =>
-      Object.values(item).some(v => String(v ?? '').toLowerCase().includes(q))
+      Object.entries(item).some(
+        ([key, v]) =>
+          !nonSearchableKeys.has(key) &&
+          String(v ?? '').toLowerCase().replace(/\s+/g, '').includes(q)
+      )
     )
-  }, [data, search])
+  }, [data, search, nonSearchableKeys])
 
   const sorted = useMemo(() => {
     if (!sortKey) return filtered

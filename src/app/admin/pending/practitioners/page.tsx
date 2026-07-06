@@ -20,6 +20,7 @@ const columns = [
     key: 'practitioner_image_link',
     label: 'Image',
     sortable: false,
+    searchable: false,
     render: (value: string) => (
       value
         ? <FallbackImage src={value.replaceAll('"', '')} alt="Practitioner" className="w-9 h-9 rounded-lg object-cover" fallback={DEFAULT_PERSON} />
