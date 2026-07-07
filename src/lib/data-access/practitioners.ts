@@ -2,7 +2,6 @@ import { prisma } from '@/lib/db'
 import { Prisma } from '@prisma/client'
 import { cache } from 'react'
 import type { Practitioner, RankingMeta, ItemMeta } from '@/lib/types'
-import { withQueryCache, invalidateQueryCache } from '@/lib/query-cache'
 
 const DAY_LABELS: Record<string, string> = {
   MONDAY: 'Monday',
@@ -124,69 +123,63 @@ const CLINIC_SELECT = {
  * All practitioners with primary clinic merged — for search, city pages, sitemaps (cached)
  */
 export const getAllPractitionersForSearch = cache(async (): Promise<Practitioner[]> => {
-  return withQueryCache('practitioners:all-search', async () => {
-    const rows = await prisma.practitioner.findMany({
-      where: { isHidden: false },
-      include: {
-        ranking: true,
-        treatments: {
-          select: {
-            treatment: { select: { name: true } },
-          },
-        },
-        clinicAssociations: {
-          orderBy: { clinicId: 'asc' },
-          take: 1,
-          include: {
-            clinic: { select: CLINIC_SELECT },
-          },
+  const rows = await prisma.practitioner.findMany({
+    where: { isHidden: false },
+    include: {
+      ranking: true,
+      treatments: {
+        select: {
+          treatment: { select: { name: true } },
         },
       },
-      orderBy: { displayName: 'asc' },
-    })
-
-    return rows
-      .filter((p) => p.clinicAssociations.length > 0)
-      .map(convertDbPractitionerToOldType)
+      clinicAssociations: {
+        orderBy: { clinicId: 'asc' },
+        take: 1,
+        include: {
+          clinic: { select: CLINIC_SELECT },
+        },
+      },
+    },
+    orderBy: { displayName: 'asc' },
   })
+
+  return rows
+    .filter((p) => p.clinicAssociations.length > 0)
+    .map(convertDbPractitionerToOldType)
 })
 
 /**
  * Single practitioner by slug with full clinic data including hours (cached)
  */
 export const getPractitionerBySlug = cache(async (slug: string): Promise<Practitioner | null> => {
-  return withQueryCache(`practitioner:slug:${slug}`, async () => {
-    const p = await prisma.practitioner.findFirst({
-      where: { slug, isHidden: false },
-      include: {
-        ranking: true,
-        treatments: {
-          select: {
-            treatment: { select: { name: true } },
-          },
+  const p = await prisma.practitioner.findFirst({
+    where: { slug, isHidden: false },
+    include: {
+      ranking: true,
+      treatments: {
+        select: {
+          treatment: { select: { name: true } },
         },
-        clinicAssociations: {
-          orderBy: { clinicId: 'asc' },
-          include: {
-            clinic: {
-              select: {
-                ...CLINIC_SELECT,
-                hours: {
-                  select: { dayOfWeek: true, hours: true },
-                },
+      },
+      clinicAssociations: {
+        orderBy: { clinicId: 'asc' },
+        include: {
+          clinic: {
+            select: {
+              ...CLINIC_SELECT,
+              hours: {
+                select: { dayOfWeek: true, hours: true },
               },
             },
           },
         },
       },
-    })
-
-    return p ? convertDbPractitionerToOldType(p) : null
+    },
   })
+
+  return p ? convertDbPractitionerToOldType(p) : null
 })
 
 export async function updatePractitioner(slug: string, data: Prisma.PractitionerUpdateInput) {
-  const practitioner = await prisma.practitioner.update({ where: { slug }, data })
-  invalidateQueryCache(`practitioner:slug:${slug}`, 'practitioners:all-search')
-  return practitioner
+  return await prisma.practitioner.update({ where: { slug }, data })
 }

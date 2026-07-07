@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/db'
-import { invalidateQueryCache } from '@/lib/query-cache'
 
 export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
@@ -11,7 +9,6 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       select: {
         id: true,
         isHidden: true,
-        city: { select: { slug: true } },
         practitionerAssociations: { select: { practitionerId: true } },
       },
     })
@@ -35,16 +32,6 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
           ]
         : []),
     ])
-
-    invalidateQueryCache(
-      `clinic:slug:${params.slug}`,
-      'clinics:all-search',
-      'practitioners:all-search',
-      ...(clinic.city?.slug ? [`clinic:city:${clinic.city.slug.toLowerCase()}`] : [])
-    )
-    if (clinic.city?.slug) {
-      revalidatePath(`/clinics/${clinic.city.slug}/clinic/${params.slug}`)
-    }
 
     return NextResponse.json({ ok: true, hidden: nextHidden, practitionersAffected: practitionerIds.length })
   } catch (error) {

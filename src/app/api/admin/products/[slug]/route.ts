@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
-import { invalidateQueryCache } from '@/lib/query-cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -86,7 +85,6 @@ export async function PUT(
       data: validation.data as any,
       select: PRODUCT_EDIT_SELECT,
     })
-    invalidateQueryCache(`product:slug:${params.slug}`, 'products:all-list')
     return NextResponse.json(product)
   } catch (error) {
     console.error('Failed to update product:', error)
@@ -103,7 +101,6 @@ export async function DELETE(
 ) {
   try {
     await prisma.product.delete({ where: { slug: params.slug } })
-    invalidateQueryCache(`product:slug:${params.slug}`, 'products:all-list')
     return NextResponse.json({ success: true })
   } catch (error: any) {
     if (error?.code === 'P2025') {

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { invalidateQueryCache } from '@/lib/query-cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,7 +29,6 @@ export async function POST(request: Request) {
     const record = await prisma.product.create({
       data: { slug, productName, ...rest } as any,
     })
-    invalidateQueryCache('products:all-list', 'products:brands', 'products:categories')
     return NextResponse.json(record, { status: 201 })
   } catch (error) {
     console.error('Failed to create product:', error)

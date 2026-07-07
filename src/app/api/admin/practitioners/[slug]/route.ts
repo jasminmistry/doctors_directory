@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
-import { invalidateQueryCache } from '@/lib/query-cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,7 +64,6 @@ export async function PUT(
       data: validation.data,
       select: PRACTITIONER_EDIT_SELECT,
     })
-    invalidateQueryCache(`practitioner:slug:${params.slug}`, 'practitioners:all-search')
     return NextResponse.json(practitioner)
   } catch (error) {
     console.error('Failed to update practitioner:', error)
@@ -82,7 +80,6 @@ export async function DELETE(
 ) {
   try {
     await prisma.practitioner.delete({ where: { slug: params.slug } })
-    invalidateQueryCache(`practitioner:slug:${params.slug}`, 'practitioners:all-search')
     return NextResponse.json({ success: true })
   } catch (error: any) {
     if (error?.code === 'P2025') {
