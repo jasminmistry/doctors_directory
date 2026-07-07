@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db'
 import { Clinic as PrismaClinic, Prisma } from '@prisma/client'
 import { cache } from 'react'
+import { unstable_cache } from 'next/cache'
 
 // Full clinic type with all relations
 type ClinicWithRelations = Prisma.ClinicGetPayload<{
@@ -49,70 +50,76 @@ export type SearchClinic = Pick<
 /**
  * Get all clinics with basic info for search (cached)
  */
-export const getAllClinicsForSearch = cache(async (): Promise<SearchClinic[]> => {
-  const clinics = await prisma.clinic.findMany({
-    where: { isHidden: false },
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-      image: true,
-      rating: true,
-      reviewCount: true,
-      category: true,
-      gmapsAddress: true,
-      isSaveFace: true,
-      isDoctor: true,
-      isJccp: true,
-      isCqc: true,
-      isHiw: true,
-      isHis: true,
-      isRqia: true,
-      claimed: true,
-      verified: true,
-      idVerified: true,
-      manualVerified: true,
-      city: {
+export const getAllClinicsForSearch = cache(
+  unstable_cache(
+    async (): Promise<SearchClinic[]> => {
+      const clinics = await prisma.clinic.findMany({
+        where: { isHidden: false },
         select: {
+          id: true,
+          slug: true,
           name: true,
-        },
-      },
-      treatments: {
-        include: {
-          treatment: {
+          image: true,
+          rating: true,
+          reviewCount: true,
+          category: true,
+          gmapsAddress: true,
+          isSaveFace: true,
+          isDoctor: true,
+          isJccp: true,
+          isCqc: true,
+          isHiw: true,
+          isHis: true,
+          isRqia: true,
+          claimed: true,
+          verified: true,
+          idVerified: true,
+          manualVerified: true,
+          city: {
             select: {
               name: true,
             },
           },
+          treatments: {
+            include: {
+              treatment: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
         },
-      },
-    },
-  })
+      })
 
-  return clinics.map((clinic) => ({
-    id: clinic.id,
-    slug: clinic.slug,
-    name: clinic.name,
-    image: clinic.image,
-    rating: clinic.rating,
-    reviewCount: clinic.reviewCount,
-    category: clinic.category,
-    gmapsAddress: clinic.gmapsAddress,
-    isSaveFace: clinic.isSaveFace,
-    isDoctor: clinic.isDoctor,
-    isJccp: clinic.isJccp,
-    isCqc: clinic.isCqc,
-    isHiw: clinic.isHiw,
-    isHis: clinic.isHis,
-    isRqia: clinic.isRqia,
-    claimed: clinic.claimed,
-    verified: clinic.verified,
-    idVerified: clinic.idVerified,
-    manualVerified: clinic.manualVerified,
-    City: clinic.city?.name,
-    Treatments: clinic.treatments.map((ct) => ct.treatment.name),
-  }))
-})
+      return clinics.map((clinic) => ({
+        id: clinic.id,
+        slug: clinic.slug,
+        name: clinic.name,
+        image: clinic.image,
+        rating: clinic.rating,
+        reviewCount: clinic.reviewCount,
+        category: clinic.category,
+        gmapsAddress: clinic.gmapsAddress,
+        isSaveFace: clinic.isSaveFace,
+        isDoctor: clinic.isDoctor,
+        isJccp: clinic.isJccp,
+        isCqc: clinic.isCqc,
+        isHiw: clinic.isHiw,
+        isHis: clinic.isHis,
+        isRqia: clinic.isRqia,
+        claimed: clinic.claimed,
+        verified: clinic.verified,
+        idVerified: clinic.idVerified,
+        manualVerified: clinic.manualVerified,
+        City: clinic.city?.name,
+        Treatments: clinic.treatments.map((ct) => ct.treatment.name),
+      }))
+    },
+    ['clinics-for-search'],
+    { revalidate: 300 }
+  )
+)
 
 /**
  * Get a single clinic by slug with all relations (cached)

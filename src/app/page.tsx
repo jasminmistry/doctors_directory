@@ -3,8 +3,15 @@ import type { FeaturedClinic } from "@/components/home-page"
 import { toDirectoryCanonical } from "@/lib/seo"
 import { getAllClinicsForSearch } from "@/lib/data-access/clinics"
 import { prisma } from "@/lib/db"
+import { unstable_cache } from "next/cache"
 
 export const dynamic = 'force-dynamic'
+
+const getFeaturedProfiles = unstable_cache(
+  () => prisma.featuredProfile.findMany({ orderBy: { position: 'asc' } }),
+  ['featured-profiles'],
+  { revalidate: 300 }
+)
 
 export const metadata = {
   alternates: {
@@ -15,7 +22,7 @@ export const metadata = {
 export default async function Home() {
   const [allClinics, featuredRows] = await Promise.all([
     getAllClinicsForSearch(),
-    prisma.featuredProfile.findMany({ orderBy: { position: 'asc' } }),
+    getFeaturedProfiles(),
   ])
 
   let featuredClinics: FeaturedClinic[]
