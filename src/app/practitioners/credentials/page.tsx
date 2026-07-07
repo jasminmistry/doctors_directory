@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
 
 export default async function ProfilePage() {
   const [practitioners, accreditationsJson] = await Promise.all([

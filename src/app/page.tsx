@@ -4,7 +4,7 @@ import { toDirectoryCanonical } from "@/lib/seo"
 import { getAllClinicsForSearch } from "@/lib/data-access/clinics"
 import { prisma } from "@/lib/db"
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   alternates: {
