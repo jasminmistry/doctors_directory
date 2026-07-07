@@ -18,7 +18,7 @@ import { buildTreatmentOperationalInsight } from "@/lib/b2b-hub/operational-insi
 
 type Props = { params: { slug: string } }
 
-export const dynamic = "force-dynamic"
+export const revalidate = 300
 
 const TYPE_LABEL: Record<TreatmentPageType, string> = {
   "consent-workflows": "Consent Workflows",

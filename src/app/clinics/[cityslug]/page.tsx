@@ -40,7 +40,7 @@ interface ProfilePageProps {
   };
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
 const clinicIndex = new Map(

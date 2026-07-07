@@ -44,7 +44,7 @@ type PageProps = {
 
 const MIN_TREATMENT_CLINICS = 3
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 export function generateMetadata({ params }: PageProps): Metadata {
   if (isDeindexedStandaloneSlug(params.slug)) {

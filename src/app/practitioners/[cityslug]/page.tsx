@@ -51,7 +51,7 @@ interface ProfilePageProps {
   };
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 const practitioners = getEnrichedPractitioners()
 const clinics = getClinics()

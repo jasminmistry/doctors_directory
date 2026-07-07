@@ -14,7 +14,7 @@ import {
 import { getCityMarketStats } from '@/lib/b2b-hub/city-page-stats'
 import { getHubEntry, hubSegmentCollectionHref } from '@/lib/b2b-hub/registry'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 type Props = { params: { segment: string; slug: string; city: string } }
 
