@@ -7,6 +7,8 @@ interface InlineLoginProps {
   next: string
 }
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 export function InlineLogin({ next }: InlineLoginProps) {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
@@ -18,15 +20,23 @@ export function InlineLogin({ next }: InlineLoginProps) {
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+
+    const trimmedEmail = email.trim()
+    if (!EMAIL_REGEX.test(trimmedEmail)) {
+      setError('Please enter a valid email address.')
+      return
+    }
+
     setLoading(true)
     try {
       const res = await fetch('/directory/api/patient/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), next }),
+        body: JSON.stringify({ email: trimmedEmail, next }),
       })
       if (!res.ok) {
-        setError('Something went wrong. Please try again.')
+        const data = await res.json().catch(() => null)
+        setError(data?.error ?? 'Something went wrong. Please try again.')
         return
       }
       setSent(true)

@@ -8,6 +8,8 @@ import { UserCircle, Loader2, Mail } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 const ERROR_MESSAGES: Record<string, string> = {
   oauth_failed: 'Sign-in failed. Please try again.',
   state_mismatch: 'Sign-in failed. Please try again.',
@@ -34,15 +36,23 @@ export default function AccountLoginPage() {
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+
+    const trimmedEmail = email.trim()
+    if (!EMAIL_REGEX.test(trimmedEmail)) {
+      setError('Please enter a valid email address.')
+      return
+    }
+
     setLoading(true)
     try {
       const res = await fetch('/directory/api/patient/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), next: next !== '/account' ? next : undefined }),
+        body: JSON.stringify({ email: trimmedEmail, next: next !== '/account' ? next : undefined }),
       })
       if (!res.ok) {
-        setError('Something went wrong. Please try again.')
+        const data = await res.json().catch(() => null)
+        setError(data?.error ?? 'Something went wrong. Please try again.')
         return
       }
       setSent(true)

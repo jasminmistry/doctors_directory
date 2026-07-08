@@ -1,18 +1,31 @@
 import crypto from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 import { prisma } from '@/lib/db'
+import { domainHasMailServer } from '@/lib/email-domain-check'
 import { sendMagicLinkEmail } from '@/lib/email'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
 
+const magicLinkSchema = z.object({
+  email: z.string().trim().email('Please enter a valid email address.'),
+  next: z.string().optional(),
+})
+
 export async function POST(req: NextRequest) {
   try {
-    const { email, next } = await req.json()
-    if (!email || typeof email !== 'string') {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 })
+    const body = await req.json()
+    const parsed = magicLinkSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
+    }
+    const { email, next } = parsed.data
+    const normalised = email.trim().toLowerCase()
+
+    if (!(await domainHasMailServer(normalised))) {
+      return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
 
-    const normalised = email.trim().toLowerCase()
     const rawToken = crypto.randomBytes(32).toString('hex')
     const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex')
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000)

@@ -13,6 +13,12 @@ interface Props {
   entityType: EntityType
 }
 
+const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+
+function isValidUkPhone(value: string): boolean {
+  return UK_PHONE_RE.test(value.trim().replace(/\s/g, ''))
+}
+
 export function RegisterForm({ entityType }: Readonly<Props>) {
   const isClinic = entityType === 'clinic'
 
@@ -38,14 +44,58 @@ export function RegisterForm({ entityType }: Readonly<Props>) {
   const [error, setError] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
 
+  function getRequiredFieldError(): string | null {
+    if (isClinic) {
+      if (!clinicName.trim()) return 'Clinic Name is required.'
+      if (!contactName.trim()) return 'Please enter your full name.'
+      if (!email.trim()) return 'Business Email is required.'
+      if (!phone.trim()) return 'Phone Number is required.'
+      if (!isValidUkPhone(phone)) return 'Please enter a valid UK phone number.'
+      if (!address.trim()) return 'Address is required.'
+      if (!city.trim()) return 'City is required.'
+    } else {
+      if (!fullName.trim()) return 'Please enter your full name.'
+      if (!profession.trim()) return 'Profession is required.'
+      if (!email.trim()) return 'Email is required.'
+      if (phone.trim() && !isValidUkPhone(phone)) return 'Please enter a valid UK phone number.'
+      if (!city.trim()) return 'City is required.'
+    }
+    return null
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
+
+    const requiredFieldError = getRequiredFieldError()
+    if (requiredFieldError) {
+      setError(requiredFieldError)
+      return
+    }
+
     setLoading(true)
 
     const payload = isClinic
-      ? { clinicName, contactName, email, phone, address, city, website: website || undefined, category: category || undefined, about: about || undefined }
-      : { fullName, email, phone: phone || undefined, profession, clinicName: practClinicName || undefined, city, about: about || undefined }
+      ? {
+          clinicName: clinicName.trim(),
+          contactName: contactName.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          address: address.trim(),
+          city: city.trim(),
+          website: website.trim() || undefined,
+          category: category.trim() || undefined,
+          about: about.trim() || undefined,
+        }
+      : {
+          fullName: fullName.trim(),
+          email: email.trim(),
+          phone: phone.trim() || undefined,
+          profession: profession.trim(),
+          clinicName: practClinicName.trim() || undefined,
+          city: city.trim(),
+          about: about.trim() || undefined,
+        }
 
     try {
       const res = await fetch(`/directory/api/register/${entityType}`, {
