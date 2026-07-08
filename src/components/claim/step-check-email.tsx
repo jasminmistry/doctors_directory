@@ -44,7 +44,7 @@ export function StepVerifyOtp({ email, claimId, entityType, onVerified, onResend
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       <div>
         <h2 className="text-xl font-semibold mb-1">Enter your verification code</h2>
         <p className="text-sm text-muted-foreground">
@@ -61,9 +61,8 @@ export function StepVerifyOtp({ email, claimId, entityType, onVerified, onResend
           placeholder="000000"
           maxLength={6}
           value={otp}
-          onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+          onChange={(e) => { setOtp(e.target.value.replace(/\D/g, '')); setError(null) }}
           className="text-2xl tracking-widest text-center font-mono"
-          required
           autoComplete="one-time-code"
           autoFocus
         />

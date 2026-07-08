@@ -5,6 +5,7 @@ import crypto from 'crypto'
 import { prisma } from '@/lib/db'
 import { initiateClaimSchema } from '@/lib/schemas/claim.schema'
 import { generateOtp, otpExpiresAt, isGenericEmailDomain } from '@/lib/claim-utils'
+import { domainHasMailServer } from '@/lib/email-domain-check'
 import { sendClaimOtp } from '@/lib/email'
 import { getConsentzV1Url } from '@/lib/auth'
 
@@ -37,10 +38,15 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const parsed = initiateClaimSchema.safeParse(body)
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+      const message = parsed.error.issues[0]?.message ?? 'Please check the form and try again.'
+      return NextResponse.json({ error: message }, { status: 400 })
     }
 
     const data = parsed.data
+
+    if (!(await domainHasMailServer(data.claimerEmail))) {
+      return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
+    }
 
     if (data.entityType === 'clinic') {
       const { clinicSlug, claimerName, claimerEmail, clinicNameInput, clinicPhone, clinicWebsite, googleBusinessLink } = data

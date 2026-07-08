@@ -68,6 +68,8 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
   const [treatment, setTreatment] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [nameError, setNameError] = useState('')
+  const [textError, setTextError] = useState('')
 
   const filtered = filter === 0 ? reviews : reviews.filter(r => r.rating === filter)
 
@@ -77,7 +79,20 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!name.trim() || rating === 0 || text.trim().length < 10) return
+    setNameError('')
+    setTextError('')
+
+    let hasError = false
+    if (!name.trim()) {
+      setNameError('Your name is required.')
+      hasError = true
+    }
+    if (text.trim().length < 10) {
+      setTextError('Please write at least 10 characters.')
+      hasError = true
+    }
+    if (rating === 0 || hasError) return
+
     setSubmitting(true)
     try {
       const res = await fetch('/directory/api/reviews', {
@@ -85,7 +100,11 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ clinicSlug, patientName: name.trim(), rating, reviewText: text.trim(), treatment: treatment.trim() || undefined }),
       })
-      if (!res.ok) { toast.error('Failed to submit review'); return }
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        toast.error(typeof data?.error === 'string' ? data.error : 'Failed to submit review')
+        return
+      }
       setSubmitted(true)
       setShowForm(false)
       toast.success('Review submitted — it will appear after moderation.')
@@ -123,7 +142,7 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
 
       {/* Leave review form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="rounded-lg border border-gray-200 bg-white p-4 space-y-4">
+        <form onSubmit={handleSubmit} noValidate className="rounded-lg border border-gray-200 bg-white p-4 space-y-4">
           <h4 className="text-sm font-semibold text-gray-900">Write a review</h4>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1.5">Your rating</label>
@@ -132,9 +151,10 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Your name</label>
-              <input value={name} onChange={e => setName(e.target.value)} required
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
+              <input value={name} onChange={e => { setName(e.target.value); setNameError('') }}
+                className={cn('w-full rounded-lg border bg-white px-3 py-2 text-sm focus:outline-none', nameError ? 'border-red-400' : 'border-gray-200 focus:border-gray-400')}
                 placeholder="Jane D." />
+              {nameError && <p className="mt-1 text-xs text-red-600">{nameError}</p>}
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Treatment (optional)</label>
@@ -145,9 +165,10 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">Your review</label>
-            <textarea value={text} onChange={e => setText(e.target.value)} required rows={4}
-              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-gray-400 focus:outline-none resize-none"
+            <textarea value={text} onChange={e => { setText(e.target.value); setTextError('') }} rows={4}
+              className={cn('w-full rounded-lg border bg-white px-3 py-2 text-sm focus:outline-none resize-none', textError ? 'border-red-400' : 'border-gray-200 focus:border-gray-400')}
               placeholder="Share your experience (minimum 10 characters)…" />
+            {textError && <p className="mt-1 text-xs text-red-600">{textError}</p>}
           </div>
           <p className="rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-500">
             Reviews are moderated before publication. Submitting a review confirms it reflects your genuine experience.

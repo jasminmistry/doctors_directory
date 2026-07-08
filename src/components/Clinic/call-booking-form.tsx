@@ -32,8 +32,19 @@ interface CallBookingFormProps {
 }
 
 type Step = 1 | 2 | 3
+type FieldErrors = Record<string, string>
 
 const WEEK_SIZE = 7
+const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function isValidUkPhone(value: string): boolean {
+  return UK_PHONE_RE.test(value.trim().replace(/\s/g, ''))
+}
+
+function isValidEmail(value: string): boolean {
+  return EMAIL_RE.test(value.trim())
+}
 
 function dateKey(d: Date) {
   return format(d, 'yyyy-MM-dd')
@@ -65,6 +76,7 @@ export function CallBookingForm({
 
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [result, setResult] = useState<BookingResult | null>(null)
   const [joinUrl, setJoinUrl] = useState<string | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -105,10 +117,37 @@ export function CallBookingForm({
     return () => { if (pollRef.current) clearInterval(pollRef.current) }
   }, [result, clinicSlug])
 
+  function getFieldErrors(): FieldErrors {
+    const errors: FieldErrors = {}
+    if (!firstName.trim()) errors.firstName = 'First name is required.'
+    if (!lastName.trim()) errors.lastName = 'Last name is required.'
+    if (!email.trim()) errors.email = 'Email address is required.'
+    else if (!isValidEmail(email)) errors.email = 'Please enter a valid email address.'
+    if (phone.trim() && !isValidUkPhone(phone)) errors.phone = 'Please enter a valid UK phone number.'
+    return errors
+  }
+
+  function mapServerErrorToField(message: string): FieldErrors | null {
+    const lower = message.toLowerCase()
+    if (lower.includes('first name')) return { firstName: message }
+    if (lower.includes('last name')) return { lastName: message }
+    if (lower.includes('email')) return { email: message }
+    if (lower.includes('phone')) return { phone: message }
+    return null
+  }
+
   async function handleConfirm() {
     if (!selectedDate || !selectedSlot) return
-    setSubmitting(true)
     setError(null)
+
+    const errors = getFieldErrors()
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
+      return
+    }
+    setFieldErrors({})
+
+    setSubmitting(true)
     try {
       const res = await fetch(`/directory/api/call/${clinicSlug}`, {
         method: 'POST',
@@ -125,7 +164,13 @@ export function CallBookingForm({
       })
       const data: BookingResult = await res.json()
       if (!res.ok) {
-        setError((data as unknown as { error?: string }).error ?? 'Booking failed — please try again')
+        const message = (data as unknown as { error?: string }).error ?? 'Booking failed — please try again'
+        const mapped = mapServerErrorToField(message)
+        if (mapped) {
+          setFieldErrors(mapped)
+        } else {
+          setError(message)
+        }
         return
       }
       setResult(data)
@@ -206,35 +251,59 @@ export function CallBookingForm({
         <div className="space-y-2">
           <label className={labelCls}>Your details</label>
           <div className="grid grid-cols-2 gap-2">
-            <input
-              type="text"
-              placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
-            />
-            <input
-              type="text"
-              placeholder="Last name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
-            />
+            <div>
+              <input
+                type="text"
+                placeholder="First name"
+                value={firstName}
+                onChange={(e) => { setFirstName(e.target.value); setFieldErrors((p) => ({ ...p, firstName: '' })) }}
+                className={cn(
+                  'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
+                  fieldErrors.firstName ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
+                )}
+              />
+              {fieldErrors.firstName && <p className="mt-1 text-xs text-red-600">{fieldErrors.firstName}</p>}
+            </div>
+            <div>
+              <input
+                type="text"
+                placeholder="Last name"
+                value={lastName}
+                onChange={(e) => { setLastName(e.target.value); setFieldErrors((p) => ({ ...p, lastName: '' })) }}
+                className={cn(
+                  'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
+                  fieldErrors.lastName ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
+                )}
+              />
+              {fieldErrors.lastName && <p className="mt-1 text-xs text-red-600">{fieldErrors.lastName}</p>}
+            </div>
           </div>
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
-          />
-          <input
-            type="tel"
-            placeholder="Phone (optional)"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
-          />
+          <div>
+            <input
+              type="email"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: '' })) }}
+              className={cn(
+                'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
+                fieldErrors.email ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
+              )}
+            />
+            {fieldErrors.email && <p className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>}
+          </div>
+          <div>
+            <input
+              type="tel"
+              placeholder="Phone (optional)"
+              value={phone}
+              onChange={(e) => { setPhone(e.target.value); setFieldErrors((p) => ({ ...p, phone: '' })) }}
+              className={cn(
+                'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
+                fieldErrors.phone ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
+              )}
+            />
+            {fieldErrors.phone && <p className="mt-1 text-xs text-red-600">{fieldErrors.phone}</p>}
+          </div>
         </div>
 
         {error && <p className="text-xs text-red-600">{error}</p>}

@@ -7,6 +7,9 @@ import { createCoreBooking, isCoreConfigured } from '@/lib/core-api'
 import { splitName, COOKIE_TOKEN } from '@/lib/auth'
 import type { PortalUser } from '@/lib/portal'
 
+const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 /**
  * Resolves the directory clinicId to use for local Booking records.
  * - Clinic portal users: their own clinicId.
@@ -136,7 +139,13 @@ export async function POST(req: NextRequest) {
   const { patientName, patientPhone, patientEmail, treatment, notes, slotStart, slotEnd, status } = body
 
   if (!patientName?.trim() || !slotStart || !slotEnd) {
-    return NextResponse.json({ error: 'patientName, slotStart and slotEnd are required' }, { status: 400 })
+    return NextResponse.json({ error: 'Patient name is required.' }, { status: 400 })
+  }
+  if (patientEmail?.trim() && !EMAIL_RE.test(patientEmail.trim())) {
+    return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
+  }
+  if (patientPhone?.trim() && !UK_PHONE_RE.test(patientPhone.trim().replace(/\s/g, ''))) {
+    return NextResponse.json({ error: 'Please enter a valid UK phone number.' }, { status: 400 })
   }
   if (new Date(slotEnd) <= new Date(slotStart)) {
     return NextResponse.json({ error: 'End time must be after start time' }, { status: 400 })

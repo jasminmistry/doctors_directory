@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 const DURATIONS = ['15 min', '30 min', '45 min', '60 min', '90 min', '120 min', '150 min', '180 min', '240 min'] as const
 
 const updateSchema = z.object({
-  title: z.string().min(1).max(255).optional(),
+  title: z.string().trim().min(1, 'Event name is required.').max(255).optional(),
   duration: z.enum(DURATIONS).optional(),
   description: z.string().nullable().optional(),
   location: z.number().int().min(0).max(1).optional(),
@@ -53,7 +53,8 @@ export async function PUT(
   const body = await req.json().catch(() => null)
   const parsed = updateSchema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+    const message = parsed.error.issues[0]?.message ?? 'Please check the form and try again.'
+    return NextResponse.json({ error: message }, { status: 400 })
   }
 
   const claim = await getClaimConsentzUserId(user)

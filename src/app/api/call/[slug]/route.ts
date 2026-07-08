@@ -5,6 +5,7 @@ import { COOKIE_TOKEN } from '@/lib/auth'
 import { isClinicScheduleConfigured, SCHEDULE_NOT_CONFIGURED_RESPONSE } from '@/lib/schedule-check'
 import { getPatientClaims } from '@/lib/patient-auth'
 import { getConsentzToken, generateConsentzPassword, initConsentzPatient } from '@/lib/patient-consentz'
+import { domainHasMailServer } from '@/lib/email-domain-check'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -12,14 +13,17 @@ function getCoreLiteBase() {
   return `${new URL(authUrl).origin}/api/core-lite`
 }
 
+const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+
 const bodySchema = z.object({
   practitioner_id: z.number().int(),
   slot_start: z.string(), // "YYYY-MM-DD HH:MM"
   slot_end: z.string(),
-  first_name: z.string().min(1).max(100),
-  last_name: z.string().min(1).max(100),
-  email: z.string().email(),
-  phone: z.string().max(30).optional(),
+  first_name: z.string().trim().min(1, 'First name is required.').max(100),
+  last_name: z.string().trim().min(1, 'Last name is required.').max(100),
+  email: z.string().trim().min(1, 'Email address is required.').email('Please enter a valid email address.'),
+  phone: z.string().trim().max(30).optional()
+    .refine((v) => !v || UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
 })
 
 export async function POST(
@@ -46,7 +50,12 @@ export async function POST(
 
     const body = bodySchema.safeParse(await req.json())
     if (!body.success) {
-      return NextResponse.json({ error: 'Invalid request', issues: body.error.issues }, { status: 400 })
+      const message = body.error.issues[0]?.message ?? 'Please check the form and try again.'
+      return NextResponse.json({ error: message }, { status: 400 })
+    }
+
+    if (!(await domainHasMailServer(body.data.email))) {
+      return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
 
     // Resolve logged-in patient for token-linked booking

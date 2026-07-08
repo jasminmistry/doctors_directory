@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { CheckCircle2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type EntityType = 'clinic' | 'practitioner'
 
@@ -13,10 +14,17 @@ interface Props {
   entityType: EntityType
 }
 
+type FieldErrors = Record<string, string>
+
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function isValidUkPhone(value: string): boolean {
   return UK_PHONE_RE.test(value.trim().replace(/\s/g, ''))
+}
+
+function isValidEmail(value: string): boolean {
+  return EMAIL_RE.test(value.trim())
 }
 
 export function RegisterForm({ entityType }: Readonly<Props>) {
@@ -41,37 +49,63 @@ export function RegisterForm({ entityType }: Readonly<Props>) {
   const [practClinicName, setPractClinicName] = useState('')
 
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const [formError, setFormError] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
 
-  function getRequiredFieldError(): string | null {
+  function clearFieldError(field: string) {
+    setFieldErrors((prev) => {
+      if (!(field in prev)) return prev
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
+
+  function getFieldErrors(): FieldErrors {
+    const errors: FieldErrors = {}
     if (isClinic) {
-      if (!clinicName.trim()) return 'Clinic Name is required.'
-      if (!contactName.trim()) return 'Please enter your full name.'
-      if (!email.trim()) return 'Business Email is required.'
-      if (!phone.trim()) return 'Phone Number is required.'
-      if (!isValidUkPhone(phone)) return 'Please enter a valid UK phone number.'
-      if (!address.trim()) return 'Address is required.'
-      if (!city.trim()) return 'City is required.'
+      if (clinicName.trim().length < 2) errors.clinicName = 'Clinic Name is required.'
+      if (contactName.trim().length < 2) errors.contactName = 'Please enter your full name.'
+      if (!email.trim()) errors.email = 'Business Email is required.'
+      else if (!isValidEmail(email)) errors.email = 'Please enter a valid email address.'
+      if (!phone.trim()) errors.phone = 'Phone Number is required.'
+      else if (!isValidUkPhone(phone)) errors.phone = 'Please enter a valid UK phone number.'
+      if (address.trim().length < 2) errors.address = 'Address is required.'
+      if (city.trim().length < 2) errors.city = 'City is required.'
     } else {
-      if (!fullName.trim()) return 'Please enter your full name.'
-      if (!profession.trim()) return 'Profession is required.'
-      if (!email.trim()) return 'Email is required.'
-      if (phone.trim() && !isValidUkPhone(phone)) return 'Please enter a valid UK phone number.'
-      if (!city.trim()) return 'City is required.'
+      if (fullName.trim().length < 2) errors.fullName = 'Please enter your full name.'
+      if (profession.trim().length < 2) errors.profession = 'Profession is required.'
+      if (!email.trim()) errors.email = 'Email is required.'
+      else if (!isValidEmail(email)) errors.email = 'Please enter a valid email address.'
+      if (phone.trim() && !isValidUkPhone(phone)) errors.phone = 'Please enter a valid UK phone number.'
+      if (city.trim().length < 2) errors.city = 'City is required.'
     }
+    return errors
+  }
+
+  function mapServerErrorToField(message: string): FieldErrors | null {
+    const lower = message.toLowerCase()
+    if (lower.includes('clinic name')) return { clinicName: message }
+    if (lower.includes('full name')) return isClinic ? { contactName: message } : { fullName: message }
+    if (lower.includes('email')) return { email: message }
+    if (lower.includes('phone')) return { phone: message }
+    if (lower.includes('address')) return { address: message }
+    if (lower.includes('city')) return { city: message }
+    if (lower.includes('profession')) return { profession: message }
     return null
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError(null)
+    setFormError(null)
 
-    const requiredFieldError = getRequiredFieldError()
-    if (requiredFieldError) {
-      setError(requiredFieldError)
+    const errors = getFieldErrors()
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
       return
     }
+    setFieldErrors({})
 
     setLoading(true)
 
@@ -105,12 +139,18 @@ export function RegisterForm({ entityType }: Readonly<Props>) {
       })
       const data = await res.json()
       if (!res.ok) {
-        setError(typeof data.error === 'string' ? data.error : 'Something went wrong. Please try again.')
+        const message = typeof data.error === 'string' ? data.error : 'Something went wrong. Please try again.'
+        const mapped = mapServerErrorToField(message)
+        if (mapped) {
+          setFieldErrors(mapped)
+        } else {
+          setFormError(message)
+        }
         return
       }
       setSubmitted(true)
     } catch {
-      setError('Network error. Please check your connection and try again.')
+      setFormError('Network error. Please check your connection and try again.')
     } finally {
       setLoading(false)
     }
@@ -131,32 +171,85 @@ export function RegisterForm({ entityType }: Readonly<Props>) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       {isClinic ? (
         <>
           <div className="flex flex-col gap-2">
             <Label htmlFor="clinic-name">Clinic name</Label>
-            <Input id="clinic-name" value={clinicName} onChange={(e) => setClinicName(e.target.value)} placeholder="e.g. The Skin Clinic London" required />
+            <Input
+              id="clinic-name"
+              value={clinicName}
+              onChange={(e) => { setClinicName(e.target.value); clearFieldError('clinicName') }}
+              placeholder="e.g. The Skin Clinic London"
+              aria-invalid={!!fieldErrors.clinicName}
+              className={cn(fieldErrors.clinicName && 'border-destructive')}
+            />
+            {fieldErrors.clinicName && <p className="text-xs text-destructive">{fieldErrors.clinicName}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="contact-name">Your full name</Label>
-            <Input id="contact-name" value={contactName} onChange={(e) => setContactName(e.target.value)} placeholder="Jane Smith" required autoComplete="name" />
+            <Input
+              id="contact-name"
+              value={contactName}
+              onChange={(e) => { setContactName(e.target.value); clearFieldError('contactName') }}
+              placeholder="Jane Smith"
+              autoComplete="name"
+              aria-invalid={!!fieldErrors.contactName}
+              className={cn(fieldErrors.contactName && 'border-destructive')}
+            />
+            {fieldErrors.contactName && <p className="text-xs text-destructive">{fieldErrors.contactName}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="email">Business email</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@yourclinic.co.uk" required autoComplete="email" />
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); clearFieldError('email') }}
+              placeholder="you@yourclinic.co.uk"
+              autoComplete="email"
+              aria-invalid={!!fieldErrors.email}
+              className={cn(fieldErrors.email && 'border-destructive')}
+            />
+            {fieldErrors.email && <p className="text-xs text-destructive">{fieldErrors.email}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="phone">Phone number</Label>
-            <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="020 7123 4567" required autoComplete="tel" />
+            <Input
+              id="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => { setPhone(e.target.value); clearFieldError('phone') }}
+              placeholder="020 7123 4567"
+              autoComplete="tel"
+              aria-invalid={!!fieldErrors.phone}
+              className={cn(fieldErrors.phone && 'border-destructive')}
+            />
+            {fieldErrors.phone && <p className="text-xs text-destructive">{fieldErrors.phone}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="address">Address</Label>
-            <Input id="address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="123 Harley Street, London" required />
+            <Input
+              id="address"
+              value={address}
+              onChange={(e) => { setAddress(e.target.value); clearFieldError('address') }}
+              placeholder="123 Harley Street, London"
+              aria-invalid={!!fieldErrors.address}
+              className={cn(fieldErrors.address && 'border-destructive')}
+            />
+            {fieldErrors.address && <p className="text-xs text-destructive">{fieldErrors.address}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="city">City</Label>
-            <Input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="London" required />
+            <Input
+              id="city"
+              value={city}
+              onChange={(e) => { setCity(e.target.value); clearFieldError('city') }}
+              placeholder="London"
+              aria-invalid={!!fieldErrors.city}
+              className={cn(fieldErrors.city && 'border-destructive')}
+            />
+            {fieldErrors.city && <p className="text-xs text-destructive">{fieldErrors.city}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="category">
@@ -175,25 +268,70 @@ export function RegisterForm({ entityType }: Readonly<Props>) {
         <>
           <div className="flex flex-col gap-2">
             <Label htmlFor="full-name">Full name</Label>
-            <Input id="full-name" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Dr Jane Smith" required autoComplete="name" />
+            <Input
+              id="full-name"
+              value={fullName}
+              onChange={(e) => { setFullName(e.target.value); clearFieldError('fullName') }}
+              placeholder="Dr Jane Smith"
+              autoComplete="name"
+              aria-invalid={!!fieldErrors.fullName}
+              className={cn(fieldErrors.fullName && 'border-destructive')}
+            />
+            {fieldErrors.fullName && <p className="text-xs text-destructive">{fieldErrors.fullName}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="profession">Profession / specialty</Label>
-            <Input id="profession" value={profession} onChange={(e) => setProfession(e.target.value)} placeholder="e.g. Aesthetic Nurse, Dermatologist" required />
+            <Input
+              id="profession"
+              value={profession}
+              onChange={(e) => { setProfession(e.target.value); clearFieldError('profession') }}
+              placeholder="e.g. Aesthetic Nurse, Dermatologist"
+              aria-invalid={!!fieldErrors.profession}
+              className={cn(fieldErrors.profession && 'border-destructive')}
+            />
+            {fieldErrors.profession && <p className="text-xs text-destructive">{fieldErrors.profession}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="email">Email address</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required autoComplete="email" />
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); clearFieldError('email') }}
+              placeholder="you@example.com"
+              autoComplete="email"
+              aria-invalid={!!fieldErrors.email}
+              className={cn(fieldErrors.email && 'border-destructive')}
+            />
+            {fieldErrors.email && <p className="text-xs text-destructive">{fieldErrors.email}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="phone">
               Phone <span className="text-muted-foreground font-normal">(optional)</span>
             </Label>
-            <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="07700 123456" autoComplete="tel" />
+            <Input
+              id="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => { setPhone(e.target.value); clearFieldError('phone') }}
+              placeholder="07700 123456"
+              autoComplete="tel"
+              aria-invalid={!!fieldErrors.phone}
+              className={cn(fieldErrors.phone && 'border-destructive')}
+            />
+            {fieldErrors.phone && <p className="text-xs text-destructive">{fieldErrors.phone}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="city">City</Label>
-            <Input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="London" required />
+            <Input
+              id="city"
+              value={city}
+              onChange={(e) => { setCity(e.target.value); clearFieldError('city') }}
+              placeholder="London"
+              aria-invalid={!!fieldErrors.city}
+              className={cn(fieldErrors.city && 'border-destructive')}
+            />
+            {fieldErrors.city && <p className="text-xs text-destructive">{fieldErrors.city}</p>}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="clinic-name-pract">
@@ -217,7 +355,7 @@ export function RegisterForm({ entityType }: Readonly<Props>) {
         />
       </div>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {formError && <p className="text-sm text-destructive">{formError}</p>}
 
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Submitting…' : 'Submit application'}

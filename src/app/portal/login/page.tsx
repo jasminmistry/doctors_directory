@@ -22,6 +22,8 @@ export default function PortalLoginPage() {
   const [password, setPassword] = useState('')
   const ssoError = searchParams.get('error')
   const [error, setError] = useState('')
+  const [usernameError, setUsernameError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const [loading, setLoading] = useState(false)
   const [isLocalhost, setIsLocalhost] = useState(false)
   const [devClaims, setDevClaims] = useState<DevClaim[]>([])
@@ -62,6 +64,20 @@ export default function PortalLoginPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError('')
+    setUsernameError('')
+    setPasswordError('')
+
+    let hasError = false
+    if (!username.trim()) {
+      setUsernameError('Username is required.')
+      hasError = true
+    }
+    if (!password) {
+      setPasswordError('Password is required.')
+      hasError = true
+    }
+    if (hasError) return
+
     setLoading(true)
 
     try {
@@ -107,7 +123,7 @@ export default function PortalLoginPage() {
         </div>
 
         <div className="p-6 relative mb-2 bg-white border-b border-t-0 border-[#C4C4C4] md:border-t rounded-lg md:border md:border-(--alto)">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div>
               <label
                 htmlFor="username"
@@ -119,12 +135,12 @@ export default function PortalLoginPage() {
                 id="username"
                 type="text"
                 autoComplete="username"
-                required
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 text-base border rounded-lg bg-white autofill:shadow-[inset_0_0_0px_1000px_white] autofill:[-webkit-text-fill-color:black]"
+                onChange={(e) => { setUsername(e.target.value); setUsernameError('') }}
+                className={`w-full px-3 py-2 text-base border rounded-lg bg-white autofill:shadow-[inset_0_0_0px_1000px_white] autofill:[-webkit-text-fill-color:black] ${usernameError ? 'border-red-400' : ''}`}
                 placeholder="Your username"
               />
+              {usernameError && <p className="mt-1 text-xs text-red-600">{usernameError}</p>}
             </div>
 
             <div>
@@ -138,12 +154,12 @@ export default function PortalLoginPage() {
                 id="password"
                 type="password"
                 autoComplete="current-password"
-                required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 text-base border rounded-lg bg-white autofill:shadow-[inset_0_0_0px_1000px_white] autofill:[-webkit-text-fill-color:black]"
+                onChange={(e) => { setPassword(e.target.value); setPasswordError('') }}
+                className={`w-full px-3 py-2 text-base border rounded-lg bg-white autofill:shadow-[inset_0_0_0px_1000px_white] autofill:[-webkit-text-fill-color:black] ${passwordError ? 'border-red-400' : ''}`}
                 placeholder="Your password"
               />
+              {passwordError && <p className="mt-1 text-xs text-red-600">{passwordError}</p>}
             </div>
 
             {ssoError === 'pending_approval' && (

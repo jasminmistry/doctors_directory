@@ -167,7 +167,16 @@ export default function AccountProfilePage() {
           dateOfBirth: dateOfBirth || null,
         }),
       })
-      if (!res.ok) throw new Error()
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        const message = typeof data?.error === 'string' ? data.error : 'Failed to save — please try again'
+        if (message.toLowerCase().includes('phone')) {
+          setPhoneError(message)
+        } else {
+          toast.error(message)
+        }
+        return
+      }
       const updated = await res.json() as PatientProfile
       setProfile((p) => p ? { ...p, ...updated } : p)
       setIsDirty(false)
@@ -214,7 +223,7 @@ export default function AccountProfilePage() {
       <ProfileCompleteness profile={{ ...profile, firstName, lastName, phone, dateOfBirth }} dob={dateOfBirth} />
 
       {/* Personal details form */}
-      <form onSubmit={handleSave} className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100">
+      <form onSubmit={handleSave} noValidate className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100">
         <div className="px-5 py-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Personal details</p>
         </div>

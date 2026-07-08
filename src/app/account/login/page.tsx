@@ -29,17 +29,18 @@ export default function AccountLoginPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
-  const [error, setError] = useState(errorKey ? (ERROR_MESSAGES[errorKey] ?? 'Something went wrong.') : '')
+  const [oauthError] = useState(errorKey ? (ERROR_MESSAGES[errorKey] ?? 'Something went wrong.') : '')
+  const [emailError, setEmailError] = useState('')
 
   const nextParam = next !== '/account' ? `?next=${encodeURIComponent(next)}` : ''
 
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault()
-    setError('')
+    setEmailError('')
 
     const trimmedEmail = email.trim()
     if (!EMAIL_REGEX.test(trimmedEmail)) {
-      setError('Please enter a valid email address.')
+      setEmailError('Please enter a valid email address.')
       return
     }
 
@@ -52,12 +53,12 @@ export default function AccountLoginPage() {
       })
       if (!res.ok) {
         const data = await res.json().catch(() => null)
-        setError(data?.error ?? 'Something went wrong. Please try again.')
+        setEmailError(data?.error ?? 'Something went wrong. Please try again.')
         return
       }
       setSent(true)
     } catch {
-      setError('Unable to connect. Please try again.')
+      setEmailError('Unable to connect. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -75,8 +76,8 @@ export default function AccountLoginPage() {
         </div>
 
         <div className="p-6 bg-white border border-[#C4C4C4] rounded-lg space-y-4">
-          {error && (
-            <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">{error}</p>
+          {oauthError && (
+            <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">{oauthError}</p>
           )}
 
           {sent ? (
@@ -129,19 +130,20 @@ export default function AccountLoginPage() {
               </div>
 
               {/* Magic link */}
-              <form onSubmit={handleMagicLink} className="space-y-3">
+              <form onSubmit={handleMagicLink} noValidate className="space-y-3">
                 <div>
                   <label htmlFor="email" className="mb-2 block text-sm font-medium text-black">Email address</label>
                   <input
                     id="email"
                     type="email"
-                    required
                     autoComplete="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3 py-2 text-base border border-[#C4C4C4] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-black/20"
+                    onChange={(e) => { setEmail(e.target.value); setEmailError('') }}
+                    aria-invalid={!!emailError}
+                    className={`w-full px-3 py-2 text-base border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-black/20 ${emailError ? 'border-red-400' : 'border-[#C4C4C4]'}`}
                     placeholder="you@example.com"
                   />
+                  {emailError && <p className="mt-1.5 text-xs text-red-500">{emailError}</p>}
                 </div>
                 <Button
                   type="submit"

@@ -2,19 +2,20 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { getPatientClaims } from '@/lib/patient-auth'
+import { domainHasMailServer } from '@/lib/email-domain-check'
 import { sendGhostLeadHook, sendLeadNotificationEmail, sendPplLeadTeaserEmail } from '@/lib/email'
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 
 const schema = z.object({
-  clinicSlug: z.string().min(1),
-  firstName: z.string().min(1).max(100),
-  lastName: z.string().min(1).max(100),
-  email: z.string().email().max(255),
-  phone: z.string().max(20).optional(),
-  treatment: z.string().max(255).optional(),
+  clinicSlug: z.string().trim().min(1),
+  firstName: z.string().trim().min(1, 'First name is required.').max(100),
+  lastName: z.string().trim().min(1, 'Last name is required.').max(100),
+  email: z.string().trim().min(1, 'Email address is required.').email('Please enter a valid email address.').max(255),
+  phone: z.string().trim().max(20).optional(),
+  treatment: z.string().trim().max(255).optional(),
   dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  location: z.string().max(255).optional(),
+  location: z.string().trim().max(255).optional(),
 })
 
 function isOver18(dob: string): boolean {
@@ -29,18 +30,23 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const parsed = schema.safeParse(body)
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+      const message = parsed.error.issues[0]?.message ?? 'Please check the form and try again.'
+      return NextResponse.json({ error: message }, { status: 400 })
     }
 
     const { clinicSlug, firstName, lastName, email, phone, treatment, dateOfBirth, location } = parsed.data
 
     const cleanPhone = phone ? phone.replace(/\s/g, '') : ''
     if (phone && !UK_PHONE_RE.test(cleanPhone)) {
-      return NextResponse.json({ error: 'A valid UK phone number is required' }, { status: 400 })
+      return NextResponse.json({ error: 'Please enter a valid UK phone number.' }, { status: 400 })
     }
 
     if (dateOfBirth && !isOver18(dateOfBirth)) {
-      return NextResponse.json({ error: 'Must be 18 or over to submit a consultation request' }, { status: 400 })
+      return NextResponse.json({ error: 'You must be 18 or over to use this service.' }, { status: 400 })
+    }
+
+    if (!(await domainHasMailServer(email))) {
+      return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
 
     const patientName = `${firstName} ${lastName}`.trim()

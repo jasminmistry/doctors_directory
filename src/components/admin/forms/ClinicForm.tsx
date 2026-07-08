@@ -148,6 +148,10 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
   async function handleSave() {
     if (!data.name?.trim()) { toast.error('Name is required'); return }
     if (isNew && !data.slug.trim()) { toast.error('Slug is required'); return }
+    if (data.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
+      toast.error('Please enter a valid email address')
+      return
+    }
 
     setSaving(true)
     const { slug: _s, ...rest } = data

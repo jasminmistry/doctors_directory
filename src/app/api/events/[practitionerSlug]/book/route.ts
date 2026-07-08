@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { getPatientClaims } from '@/lib/patient-auth'
+import { domainHasMailServer } from '@/lib/email-domain-check'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -9,15 +10,18 @@ function getCoreLiteBase() {
   return `${new URL(authUrl).origin}/api/core-lite`
 }
 
+const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+
 const bodySchema = z.object({
   event_id: z.number().int().positive(),
   practitioner_id: z.number().int().positive(),
   slot_start: z.string().min(1),
   slot_end: z.string().min(1).optional(),
-  patient_first_name: z.string().min(1).max(100),
-  patient_last_name: z.string().min(1).max(100),
-  patient_email: z.string().email(),
-  patient_phone: z.string().min(7).max(30).optional(),
+  patient_first_name: z.string().trim().min(1, 'First name is required.').max(100),
+  patient_last_name: z.string().trim().min(1, 'Last name is required.').max(100),
+  patient_email: z.string().trim().min(1, 'Email address is required.').email('Please enter a valid email address.'),
+  patient_phone: z.string().trim().max(30).optional()
+    .refine((v) => !v || UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
 })
 
 export async function POST(
@@ -26,7 +30,12 @@ export async function POST(
 ) {
   const parsed = bodySchema.safeParse(await req.json())
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+    const message = parsed.error.issues[0]?.message ?? 'Please check the form and try again.'
+    return NextResponse.json({ error: message }, { status: 400 })
+  }
+
+  if (!(await domainHasMailServer(parsed.data.patient_email))) {
+    return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
   }
 
   try {

@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 const DURATIONS = ['15 min', '30 min', '45 min', '60 min', '90 min', '120 min', '150 min', '180 min', '240 min'] as const
 
 const createSchema = z.object({
-  title: z.string().min(1).max(255),
+  title: z.string().trim().min(1, 'Event name is required.').max(255),
   duration: z.enum(DURATIONS),
   description: z.string().optional().nullable(),
   location: z.number().int().min(0).max(1),
@@ -78,7 +78,8 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null)
   const parsed = createSchema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+    const message = parsed.error.issues[0]?.message ?? 'Please check the form and try again.'
+    return NextResponse.json({ error: message }, { status: 400 })
   }
 
   const claim = await getClaimConsentzUserId(user)

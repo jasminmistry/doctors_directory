@@ -112,16 +112,16 @@ export function InlineLogin({ next }: InlineLoginProps) {
       </div>
 
       {/* Magic link form */}
-      <form onSubmit={handleMagicLink} className="space-y-2.5">
+      <form onSubmit={handleMagicLink} noValidate className="space-y-2.5">
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1.5">Email address</label>
           <input
             type="email"
-            required
             autoComplete="email"
             value={email}
             onChange={(e) => { setEmail(e.target.value); setError('') }}
-            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 transition-colors focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-100"
+            aria-invalid={!!error}
+            className={`w-full rounded-lg border bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none focus:ring-2 ${error ? 'border-red-400 focus:ring-red-100' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-100'}`}
             placeholder="you@example.com"
           />
           {error && <p className="mt-1 text-xs text-red-500">{error}</p>}

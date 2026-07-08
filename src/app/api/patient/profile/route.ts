@@ -5,10 +5,13 @@ import { prisma } from '@/lib/db'
 import { z } from 'zod'
 import { requirePatient, clearPatientCookie } from '@/lib/patient-auth'
 
+const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+
 const updateSchema = z.object({
-  firstName: z.string().min(1).max(100).optional().nullable(),
-  lastName: z.string().min(1).max(100).optional().nullable(),
-  phone: z.string().max(30).optional().nullable(),
+  firstName: z.string().trim().min(1).max(100).optional().nullable(),
+  lastName: z.string().trim().min(1).max(100).optional().nullable(),
+  phone: z.string().trim().max(30).optional().nullable()
+    .refine((v) => !v || UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
   dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
 })
 
@@ -32,7 +35,8 @@ export async function PUT(req: NextRequest) {
 
   const body = updateSchema.safeParse(await req.json())
   if (!body.success) {
-    return NextResponse.json({ error: body.error.flatten() }, { status: 400 })
+    const message = body.error.issues[0]?.message ?? 'Please check the form and try again.'
+    return NextResponse.json({ error: message }, { status: 400 })
   }
 
   const { dateOfBirth, ...rest } = body.data

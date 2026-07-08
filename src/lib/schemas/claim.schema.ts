@@ -1,26 +1,30 @@
 import { z } from 'zod'
 
+const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+
 export const initiateClinicClaimSchema = z.object({
   entityType: z.literal('clinic'),
   clinicSlug: z.string().min(1),
-  claimerName: z.string().min(2, 'Full name is required'),
-  claimerEmail: z.string().email('Valid email is required'),
-  clinicNameInput: z.string().min(1, 'Clinic name is required'),
-  clinicPhone: z.string().min(1, 'Phone number is required'),
-  clinicWebsite: z.string().url('Enter a valid URL').optional().or(z.literal('')),
-  googleBusinessLink: z.string().url('Enter a valid URL').optional().or(z.literal('')),
+  claimerName: z.string().trim().min(2, 'Please enter your full name.'),
+  claimerEmail: z.string().trim().min(1, 'Business Email is required.').email('Please enter a valid email address.'),
+  clinicNameInput: z.string().trim().min(1, 'Clinic Name is required.'),
+  clinicPhone: z.string().trim().min(1, 'Phone Number is required.')
+    .refine((v) => UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
+  clinicWebsite: z.string().trim().url('Enter a valid URL').optional().or(z.literal('')),
+  googleBusinessLink: z.string().trim().url('Enter a valid URL').optional().or(z.literal('')),
 })
 
 export const initiatePractitionerClaimSchema = z.object({
   entityType: z.literal('practitioner'),
   practitionerSlug: z.string().min(1),
-  claimerName: z.string().min(2, 'Full name is required'),
-  claimerEmail: z.string().email('Valid email is required'),
-  claimerPhone: z.string().optional(),
-  profession: z.string().min(1, 'Profession is required'),
-  clinicNameInput: z.string().optional(),
-  licenseNumber: z.string().optional(),
-  registryName: z.string().optional(),
+  claimerName: z.string().trim().min(2, 'Please enter your full name.'),
+  claimerEmail: z.string().trim().min(1, 'Email is required.').email('Please enter a valid email address.'),
+  claimerPhone: z.string().trim().optional()
+    .refine((v) => !v || UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
+  profession: z.string().trim().min(1, 'Profession is required.'),
+  clinicNameInput: z.string().trim().optional(),
+  licenseNumber: z.string().trim().optional(),
+  registryName: z.string().trim().optional(),
 })
 
 export const initiateClaimSchema = z.discriminatedUnion('entityType', [

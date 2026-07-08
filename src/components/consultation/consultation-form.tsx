@@ -31,6 +31,7 @@ interface ConsultationRichFormProps {
 }
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function isOver18(dob: string): boolean {
   const birth = new Date(dob)
@@ -114,6 +115,9 @@ export function ConsultationRichForm({
   const [dateOfBirth, setDateOfBirth] = useState(defaultValues?.dateOfBirth ?? '')
   const [treatment, setTreatment] = useState(defaultValues?.treatment ?? '')
 
+  const [firstNameError, setFirstNameError] = useState('')
+  const [lastNameError, setLastNameError] = useState('')
+  const [emailError, setEmailError] = useState('')
   const [phoneError, setPhoneError] = useState('')
   const [dobError, setDobError] = useState('')
 
@@ -124,18 +128,40 @@ export function ConsultationRichForm({
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setFirstNameError('')
+    setLastNameError('')
+    setEmailError('')
     setPhoneError('')
     setDobError('')
+
+    let hasError = false
+    if (!firstName.trim()) {
+      setFirstNameError('First name is required.')
+      hasError = true
+    }
+    if (!lastName.trim()) {
+      setLastNameError('Last name is required.')
+      hasError = true
+    }
+    if (!email.trim()) {
+      setEmailError('Email address is required.')
+      hasError = true
+    } else if (!EMAIL_RE.test(email.trim())) {
+      setEmailError('Please enter a valid email address.')
+      hasError = true
+    }
 
     const cleanPhone = phone.replace(/\s/g, '')
     if (!UK_PHONE_RE.test(cleanPhone)) {
       setPhoneError('Enter a valid UK number — e.g. 07700 900000 or +447700 900000')
-      return
+      hasError = true
     }
     if (!isOver18(dateOfBirth)) {
       setDobError('You must be 18 or over to use this service')
-      return
+      hasError = true
     }
+
+    if (hasError) return
 
     onSubmit({
       firstName: firstName.trim(),
@@ -148,7 +174,7 @@ export function ConsultationRichForm({
   }
 
   return (
-    <form className="flex flex-col gap-4 px-5 py-4" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-4 px-5 py-4" onSubmit={handleSubmit} noValidate>
       {description && (
         <p className="rounded-lg bg-gray-50 px-3 py-2.5 text-xs text-gray-600 leading-relaxed">
           {description}
@@ -157,35 +183,35 @@ export function ConsultationRichForm({
 
       {/* Name row */}
       <div className="grid grid-cols-2 gap-3">
-        <Field label="First name" required>
+        <Field label="First name" error={firstNameError} required>
           <IconInput
-            required
             placeholder="Jane"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            error={!!firstNameError}
+            onChange={(e) => { setFirstName(e.target.value); setFirstNameError('') }}
             autoComplete="given-name"
           />
         </Field>
-        <Field label="Last name" required>
+        <Field label="Last name" error={lastNameError} required>
           <IconInput
-            required
             placeholder="Smith"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            error={!!lastNameError}
+            onChange={(e) => { setLastName(e.target.value); setLastNameError('') }}
             autoComplete="family-name"
           />
         </Field>
       </div>
 
       {/* Email */}
-      <Field label="Email address" required>
+      <Field label="Email address" error={emailError} required>
         <IconInput
-          required
           type="email"
           icon={<Mail className="h-3.5 w-3.5" />}
           placeholder="you@example.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          error={!!emailError}
+          onChange={(e) => { setEmail(e.target.value); setEmailError('') }}
           autoComplete="email"
         />
       </Field>
@@ -193,7 +219,6 @@ export function ConsultationRichForm({
       {/* Phone */}
       <Field label="Phone number" error={phoneError} required>
         <IconInput
-          required
           type="tel"
           icon={<Phone className="h-3.5 w-3.5" />}
           placeholder="07700 900000"
@@ -239,7 +264,6 @@ export function ConsultationRichForm({
             <Calendar className="h-3.5 w-3.5" />
           </span>
           <input
-            required
             type="date"
             max={maxDobDate()}
             value={dateOfBirth}
