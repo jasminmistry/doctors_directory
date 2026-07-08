@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db'
 import { cache } from 'react'
 import type { Product } from '@/lib/types'
+import { filterRemovedBrands, filterRemovedProducts } from '@/lib/product-removals'
 
 // Map a Prisma Product record to the old Product interface shape
 export function convertDbProductToOldType(p: any): Product {
@@ -66,7 +67,7 @@ export const getAllProducts = cache(async (): Promise<Product[]> => {
     select: SELECT_FOR_LIST,
     orderBy: { productName: 'asc' },
   })
-  return rows.map(convertDbProductToOldType)
+  return filterRemovedProducts(rows.map(convertDbProductToOldType))
 })
 
 /**
@@ -86,7 +87,7 @@ export const getProductsByCategory = cache(async (categorySlug: string): Promise
     select: SELECT_FOR_LIST,
     orderBy: { productName: 'asc' },
   })
-  return rows.map(convertDbProductToOldType)
+  return filterRemovedProducts(rows.map(convertDbProductToOldType))
 })
 
 /**
@@ -98,7 +99,7 @@ export const getProductsByBrand = cache(async (brand: string): Promise<Product[]
     select: SELECT_FOR_LIST,
     orderBy: { productName: 'asc' },
   })
-  return rows.map(convertDbProductToOldType)
+  return filterRemovedProducts(rows.map(convertDbProductToOldType))
 })
 
 /**
@@ -111,7 +112,7 @@ export const getAllBrands = cache(async (): Promise<string[]> => {
     where: { brand: { not: null } },
     orderBy: { brand: 'asc' },
   })
-  return rows.map((r: any) => r.brand as string).filter(Boolean)
+  return filterRemovedBrands(rows.map((r: any) => r.brand as string).filter(Boolean))
 })
 
 /**

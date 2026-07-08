@@ -4,6 +4,7 @@ import { readJsonFileSync } from '@/lib/json-cache'
 import { toUrlSlug } from '@/lib/utils'
 import { toDirectoryCanonical } from '@/lib/seo'
 import { modalities } from '@/lib/data'
+import { isRemovedBrandHub } from '@/lib/product-removals'
 import {
   HUB_ENTRIES_BY_SEGMENT,
   HUB_SEGMENTS,
@@ -123,7 +124,8 @@ export default function HtmlSitemapPage() {
   const practLetters = [...practCitiesByLetter.keys()].sort()
 
   const categories = [...new Set(products.map(p => p.category).filter(Boolean))].sort() as string[]
-  const brands = [...new Set(products.map(p => p.brand).filter(Boolean))].sort() as string[]
+  const brands = ([...new Set(products.map(p => p.brand).filter(Boolean))].sort() as string[])
+    .filter((brand) => !isRemovedBrandHub(brand))
 
   const brandsByLetter = new Map<string, string[]>()
   for (const brand of brands) {
