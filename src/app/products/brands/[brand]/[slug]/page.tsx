@@ -6,6 +6,7 @@ import { ProfileHeader } from "@/components/Product/profile-header";
 import ClinicDetailsMarkdown from "@/components/Product/ProductDetailsMD";
 import { Product } from "@/lib/types";
 import { getProductBySlug, getProductsByBrand } from "@/lib/data-access/products";
+import { isRemovedProductSlug } from "@/lib/product-removals";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -32,6 +33,10 @@ interface ProfilePageProps {
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const { slug } = params;
+
+  if (isRemovedProductSlug(slug)) {
+    notFound();
+  }
 
   const clinic = await getProductBySlug(slug);
   if (!clinic) {
@@ -162,7 +167,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const productSlug = decodeURIComponent(params.slug).toLowerCase();
   const canonicalUrl = toDirectoryCanonical(`/products/brands/${brandSlug}/${productSlug}`);
 
-  if (!clinic) {
+  if (isRemovedProductSlug(params.slug) || !clinic) {
     return {
       title: "Product Not Found",
       alternates: {

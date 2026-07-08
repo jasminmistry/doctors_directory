@@ -15,8 +15,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { getProductsByBrand, getAllBrands } from "@/lib/data-access/products";
+import { isRemovedBrandHub } from "@/lib/product-removals";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { toUrlSlug } from "@/lib/utils";
+import { notFound } from "next/navigation";
 
 interface ProfilePageProps {
   params: {
@@ -27,6 +29,15 @@ interface ProfilePageProps {
 export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
   const brandSlug = decodeURIComponent(params.brand).toLowerCase();
   const brandName = decodeURIComponent(params.brand).replaceAll("-", " ");
+
+  if (isRemovedBrandHub(brandSlug)) {
+    return {
+      title: "Brand Not Found",
+      alternates: {
+        canonical: toDirectoryCanonical(`/products/brands/${brandSlug}`),
+      },
+    };
+  }
 
   return {
     title: `Top ${brandName} Aesthetic Products - Compare Prices & Reviews`,
@@ -39,6 +50,10 @@ export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const rawBrand = decodeURIComponent(params.brand).replaceAll('%20', " ");
+
+  if (isRemovedBrandHub(rawBrand)) {
+    notFound();
+  }
 
   // Resolve to the canonical brand name stored in the DB (handles slug-casing differences
   // e.g. URL "allergan" → DB "Allergan", URL "abbvie" → DB "AbbVie")
