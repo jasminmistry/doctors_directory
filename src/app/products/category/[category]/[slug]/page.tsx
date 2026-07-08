@@ -1,5 +1,5 @@
 
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import PractitionerTabs from "@/components/Product/ProductTabs";
 import { toUrlSlug } from "@/lib/utils";
 import { Suspense } from "react";
 import { getProductBySlug } from "@/lib/data-access/products";
+import { isRedirectedCategorySlug, isRemovedProductSlug } from "@/lib/product-removals";
 import { toDirectoryCanonical } from "@/lib/seo";
 const SimilarProducts = (await import("./SimilarProducts")).default;
 const UniqueTreatments = (await import("./UniqueTreatments")).default;
@@ -33,9 +34,18 @@ interface ProfilePageProps {
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const { slug, category } = params;
+
+  if (isRemovedProductSlug(slug)) {
+    notFound();
+  }
+
   const clinic = await getProductBySlug(slug);
   if (!clinic) {
     notFound();
+  }
+
+  if (isRedirectedCategorySlug(slug) && clinic.brand) {
+    permanentRedirect(`/products/brands/${toUrlSlug(clinic.brand)}/${slug}`);
   }
 
   // Redirect if category URL segment is not in lowercase-slug form
@@ -136,9 +146,9 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     `/products/category/${canonicalCategory}/${canonicalSlug}`
   );
 
-  if (!clinic) {
+  if (isRemovedProductSlug(params.slug) || !clinic) {
     return {
-      title: "Practitioner Not Found",
+      title: "Product Not Found",
       alternates: {
         canonical: canonicalUrl,
       },
