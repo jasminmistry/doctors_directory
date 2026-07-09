@@ -1,8 +1,8 @@
 import { prisma } from '@/lib/db'
 import { cache } from 'react'
+import { unstable_cache } from 'next/cache'
 import type { City as PrismaCity } from '@prisma/client'
 import type { City } from '@/lib/types'
-import { withQueryCache } from '@/lib/query-cache'
 
 export function convertDbCityToOldType(city: PrismaCity): City {
   return {
@@ -57,9 +57,13 @@ export function convertDbCityToOldType(city: PrismaCity): City {
  * city_data_processed.json — callers keep the same "load all, then .find()"
  * pattern the JSON version used.
  */
-export const getAllCitiesOldFormat = cache(async (): Promise<City[]> => {
-  return withQueryCache('cities:all-old-format', async () => {
-    const cities = await prisma.city.findMany({ orderBy: { name: 'asc' } })
-    return cities.map(convertDbCityToOldType)
-  })
-})
+export const getAllCitiesOldFormat = cache(
+  unstable_cache(
+    async (): Promise<City[]> => {
+      const cities = await prisma.city.findMany({ orderBy: { name: 'asc' } })
+      return cities.map(convertDbCityToOldType)
+    },
+    ['cities-all-old-format'],
+    { revalidate: 300 }
+  )
+)
