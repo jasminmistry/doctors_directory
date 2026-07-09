@@ -1,12 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useSearchLogic } from "@/hooks/use-search-logic";
 import { MobileSearchView } from "./mobile-search-view";
 import { DesktopSearchView } from "./desktop-search-view";
+import { getTreatmentSearchOptions } from "@/app/actions/search";
+import type { TreatmentSearchOption } from "@/lib/uk-treatment-search";
+
 type SearchBarProps = {
   handlePageChange?: (page: number) => void;
 };
+
 export function SearchBar({handlePageChange}: Readonly<SearchBarProps>) {
+  const [treatmentSearchOptions, setTreatmentSearchOptions] = useState<TreatmentSearchOption[]>([]);
+
+  useEffect(() => {
+    void getTreatmentSearchOptions().then(setTreatmentSearchOptions);
+  }, []);
+
   const {
     isSearchPage,
     filters,
@@ -22,7 +33,7 @@ export function SearchBar({handlePageChange}: Readonly<SearchBarProps>) {
     options,
     getDynamicPlaceholderText,
     handleSearch,
-  } = useSearchLogic();
+  } = useSearchLogic(treatmentSearchOptions);
 
   return (
     <div className='relative flex flex-col'>
@@ -41,6 +52,7 @@ export function SearchBar({handlePageChange}: Readonly<SearchBarProps>) {
           handleSearch={handleSearch}
           isLoading={isLoading}
           handlePageChange={handlePageChange}
+          treatmentSearchOptions={treatmentSearchOptions}
         />
 
         <DesktopSearchView
@@ -53,6 +65,7 @@ export function SearchBar({handlePageChange}: Readonly<SearchBarProps>) {
           handleSearch={handleSearch}
           isLoading={isLoading}
           handlePageChange={handlePageChange}
+          treatmentSearchOptions={treatmentSearchOptions}
         />
       </div>
     </div>
