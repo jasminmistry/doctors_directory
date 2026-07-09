@@ -19,6 +19,9 @@ import Link from "next/link";
 import ItemsGrid from "@/components/collectionGrid";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
+import { NationalTreatmentListingsLoader } from "@/components/treatment/national-treatment-listings-loader";
+import { NationalTreatmentListingsSkeleton } from "@/components/treatment/national-treatment-listings-section";
+import { Suspense } from "react";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
 
 interface ProfilePageProps {
@@ -336,7 +339,7 @@ const getPractitionerCount = (practitioners: Clinic['Practitioners']) => {
   return 0;
 };
 
-export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const allClinics = getClinics();
   const practitionerProfiles: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const { slug } = params;
@@ -541,6 +544,12 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
             </div>
           </div>
         </div>
+        <Suspense fallback={<NationalTreatmentListingsSkeleton />}>
+          <NationalTreatmentListingsLoader
+            treatmentSlug={slug}
+            treatmentName={treatment.name}
+          />
+        </Suspense>
       </main>
     </>
   );
