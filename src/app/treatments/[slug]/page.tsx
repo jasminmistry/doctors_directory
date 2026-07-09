@@ -21,6 +21,9 @@ import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
 import { NationalTreatmentListingsLoader } from "@/components/treatment/national-treatment-listings-loader";
 import { NationalTreatmentListingsSkeleton } from "@/components/treatment/national-treatment-listings-section";
+import { TreatmentCityPickerSection } from "@/components/treatment/treatment-city-picker-section";
+import { getTreatmentCityHubCitiesForTreatment } from "@/lib/treatment-city-hub";
+import { resolveTreatmentHubSlug } from "@/lib/treatment-hub-registry";
 import { Suspense } from "react";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
 
@@ -432,6 +435,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const downtime = getDowntime(treatment.name, treatmentData);
   const satisfaction = getSatisfaction(reviews);
   const rankedTreatmentClinics = buildClinicRankedEntries(filteredClinics, 5);
+  const canonicalTreatmentSlug = resolveTreatmentHubSlug(slug);
+  const treatmentCityOptions = getTreatmentCityHubCitiesForTreatment(slug);
 
   treatment.satisfaction = satisfaction;
   treatment.averageCost = averageCost;
@@ -543,6 +548,11 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
               <ItemsGrid items={filteredClinics.slice(0, 6)} />
             </div>
           </div>
+          <TreatmentCityPickerSection
+            treatmentName={treatment.name}
+            treatmentSlug={canonicalTreatmentSlug}
+            cities={treatmentCityOptions}
+          />
         </div>
         <Suspense fallback={<NationalTreatmentListingsSkeleton />}>
           <NationalTreatmentListingsLoader
