@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/db'
+import { Prisma } from '@prisma/client'
 import { cache } from 'react'
 import type { Product } from '@/lib/types'
-import { filterRemovedBrands, filterRemovedProducts } from '@/lib/product-removals'
+import { filterRemovedBrands, filterRemovedProducts, REMOVED_PRODUCT_SLUGS } from '@/lib/product-removals'
 
 // Map a Prisma Product record to the old Product interface shape
 export function convertDbProductToOldType(p: any): Product {
@@ -77,6 +78,74 @@ export const getProductBySlug = cache(async (slug: string): Promise<Product | nu
   const p = await prisma.product.findUnique({ where: { slug } })
   return p ? convertDbProductToOldType(p) : null
 })
+
+/**
+ * Filtered + paginated products for the /search page's Product tab. Mirrors the word-tokenized
+ * AND/OR filter semantics that used to run in JS over the full dataset in
+ * src/app/actions/search.ts, but pushed down to a real indexed WHERE + LIMIT/OFFSET query.
+ *
+ * Preserves the current search.ts quirks rather than "fixing" them: the `category` filter
+ * actually matches against `brand`, `location` is an exact match against `distributorCleaned`
+ * (not a substring match), and sort is always by product name — the old code's rating/reviews
+ * sort options were already no-ops for products since mapped product rows have no rating field.
+ */
+export async function searchProductsForListing(params: {
+  query?: string
+  category?: string
+  location?: string
+  services?: string[]
+  skip: number
+  take: number
+}): Promise<{ products: Product[]; totalCount: number }> {
+  const and: Prisma.ProductWhereInput[] = [
+    { slug: { notIn: [...REMOVED_PRODUCT_SLUGS] } },
+  ]
+
+  if (params.query) {
+    const words = params.query.toLowerCase().split(/\s+/).filter((word) => word.length > 0)
+    for (const word of words) {
+      and.push({
+        OR: [
+          { productName: { contains: word } },
+          { category: { contains: word } },
+          { brand: { contains: word } },
+          { manufacturer: { contains: word } },
+        ],
+      })
+    }
+  }
+
+  if (params.category && params.category !== 'All Categories') {
+    and.push({ brand: params.category })
+  }
+
+  if (params.location) {
+    and.push({ distributorCleaned: params.location })
+  }
+
+  if (params.services && params.services.length > 0) {
+    and.push({
+      OR: params.services.map((service) => ({
+        category: { contains: service },
+      })),
+    })
+  }
+
+  const where: Prisma.ProductWhereInput = { AND: and }
+
+  const [rows, totalCount] = await Promise.all([
+    prisma.product.findMany({
+      where,
+      select: SELECT_FOR_LIST,
+      orderBy: { productName: 'asc' },
+      skip: params.skip,
+      take: params.take,
+    }),
+    prisma.product.count({ where }),
+  ])
+
+  return { products: rows.map(convertDbProductToOldType), totalCount }
+}
 
 /**
  * Products filtered by category slug (cached)

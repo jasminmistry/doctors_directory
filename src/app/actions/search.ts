@@ -1,11 +1,12 @@
 'use server'
 import { cache } from "react";
 import { Clinic, Practitioner, Product, SearchFilters } from "@/lib/types"
-import { getAllClinicsForSearch, type SearchClinic } from "@/lib/data-access/clinics"
+import { getAllClinicsForSearch, searchClinicsForListing, type SearchClinic } from "@/lib/data-access/clinics"
 import { getAllTreatmentNames } from "@/lib/data-access/treatments"
-import { getAllProducts as getAllProductsFromDb } from "@/lib/data-access/products"
+import { getAllProducts as getAllProductsFromDb, searchProductsForListing } from "@/lib/data-access/products"
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import { modalities } from "@/lib/data"
+import { getCachedSearchData, setCachedSearchData } from "@/lib/search-cache"
 
 const modalitiesSet = new Set(modalities.map((m) => m.toLowerCase()))
 
@@ -66,11 +67,23 @@ function convertDbClinicToOldFormat(clinic: SearchClinic): SearchClinicResult {
   }
 }
 
-export const loadData = cache(async () => {
-  const clinicsDataFromDb = await getAllClinicsForSearch()
-  const practitionersFromDb = await getAllPractitionersForSearch()
-  const productsData = await getAllProductsFromDb()
-  const allTreatments = await getAllTreatmentNames();
+type LoadDataResult = {
+  clinics: SearchClinicResult[]
+  practitioners: SearchPractitioner[]
+  products: Pick<Product, "category" | "product_name" | "brand" | "manufacturer" | "distributor_cleaned" | "image_url" | "slug">[]
+  treatments: string[]
+}
+
+export const loadData = cache(async (): Promise<LoadDataResult> => {
+  const cached = await getCachedSearchData<LoadDataResult>()
+  if (cached) return cached
+
+  const [clinicsDataFromDb, practitionersFromDb, productsData, allTreatments] = await Promise.all([
+    getAllClinicsForSearch(),
+    getAllPractitionersForSearch(),
+    getAllProductsFromDb(),
+    getAllTreatmentNames(),
+  ])
   const treatments = allTreatments.filter((t) => modalitiesSet.has(t.toLowerCase()));
 
   const clinics = clinicsDataFromDb.map(convertDbClinicToOldFormat);
@@ -112,7 +125,9 @@ export const loadData = cache(async () => {
     }),
   );
 
-  return { clinics, practitioners, products, treatments };
+  const result: LoadDataResult = { clinics, practitioners, products, treatments };
+  await setCachedSearchData(result);
+  return result;
 });
 
 
@@ -122,87 +137,56 @@ export const loadData = cache(async () => {
 
 const ITEMS_PER_PAGE = 9
 
+function paginatedResult<T>(data: T[], totalCount: number, page: number) {
+  return {
+    data,
+    totalCount,
+    totalPages: Math.ceil(totalCount / ITEMS_PER_PAGE),
+    currentPage: page,
+  }
+}
+
 export async function searchPractitioners(
   filters: SearchFilters,
   page: number = 1,
   sortBy: string = "default"
 ) {
-  const { clinics, practitioners, products, treatments } = await loadData();
+  const skip = (page - 1) * ITEMS_PER_PAGE
 
-  const start = performance.now();
-  
-  let filtered: any[] = []
-  
+  // Clinic and Product are filtered/paginated directly in MySQL (indexed WHERE + LIMIT) instead
+  // of fetching the entire table and filtering in JS — see searchClinicsForListing /
+  // searchProductsForListing for the DB-side equivalent of the filter logic below.
   if (filters.type === "Clinic") {
-    filtered = ( clinics).filter((clinic) => {
-
-      if (filters.query) {
-        const queryWords = filters.query.toLowerCase().split(/\s+/).filter(word => word.length > 0)
-        const searchableText = [
-          clinic.slug,
-          clinic.category,
-          clinic.gmapsAddress,
-          ...(clinic.Treatments || []),
-        ].join(" ").toLowerCase()
-        const hasAllWords = queryWords.every(word => searchableText.includes(word))
-        if (!hasAllWords) return false
-      }
-
-      if (filters.category && filters.category !== "All Categories") {
-        if (clinic.category !== filters.category) return false
-      }
-
-      if (filters.location) {
-        const location = filters.location.toLowerCase()
-        if (!clinic.gmapsAddress.toLowerCase().includes(location)) return false
-      }
-
-      if (filters.services.length > 0) {
-        const practitionerServices = clinic.Treatments || []
-        const hasMatchingService = filters.services.some((service) =>
-          practitionerServices.some((ps) => ps.includes(service.toLowerCase())),
-        )
-        if (!hasMatchingService) return false
-      }
-
-      if (filters.rating > 0) {
-        if (clinic.rating < filters.rating) return false
-      }
-
-      return true
+    const { clinics: rows, totalCount } = await searchClinicsForListing({
+      query: filters.query,
+      category: filters.category,
+      location: filters.location,
+      rating: filters.rating,
+      services: filters.services,
+      sortBy,
+      skip,
+      take: ITEMS_PER_PAGE,
     })
-  } else if (filters.type === "Product") {
-    filtered = ( products).filter((product) => {
-      if (filters.query) {
-        const queryWords = filters.query.toLowerCase().split(/\s+/).filter(word => word.length > 0)
-        const searchableText = [
-          product.product_name,
-          product.category,
-          product.brand,
-          product.manufacturer,
-        ].join(" ").toLowerCase()
-        const hasAllWords = queryWords.every(word => searchableText.includes(word))
-        if (!hasAllWords) return false
-      }
+    return paginatedResult(rows.map(convertDbClinicToOldFormat), totalCount, page)
+  }
 
-      if (filters.category && filters.category !== "All Categories") {
-        if (product.brand !== filters.category) return false
-      }
-
-      if (filters.location) {
-        if (product.distributor_cleaned !== filters.location) return false
-      }
-
-      if (filters.services.length > 0) {
-        const hasMatchingService = filters.services.some((service) =>
-          product.category.toLowerCase().includes(service.toLowerCase())
-        )
-        if (!hasMatchingService) return false
-      }
-
-      return true
+  if (filters.type === "Product") {
+    const { products: rows, totalCount } = await searchProductsForListing({
+      query: filters.query,
+      category: filters.category,
+      location: filters.location,
+      services: filters.services,
+      skip,
+      take: ITEMS_PER_PAGE,
     })
-  } else if (filters.type === "Treatments") {
+    return paginatedResult(rows, totalCount, page)
+  }
+
+  const { practitioners, treatments } = await loadData();
+
+  let filtered: any[] = []
+
+  if (filters.type === "Treatments") {
     filtered = ( treatments).filter((treatment: string) => {
       if (filters.query) {
         const queryWords = filters.query.toLowerCase().split(/\s+/).filter(word => word.length > 0)
@@ -314,18 +298,9 @@ export async function searchPractitioners(
         return 0
     }
   })
-  const end = performance.now();
-  const totalCount = filtered.length
-  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
-  const startIndex = (page - 1) * ITEMS_PER_PAGE
-  const paginatedData = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  const paginatedData = filtered.slice(skip, skip + ITEMS_PER_PAGE)
 
-  return {
-    data: paginatedData,
-    totalCount,
-    totalPages,
-    currentPage: page
-  }
+  return paginatedResult(paginatedData, filtered.length, page)
 }
 
 export async function getSearchDiscoveryData(filters: SearchFilters) {

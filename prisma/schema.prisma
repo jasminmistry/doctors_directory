@@ -275,6 +275,7 @@ model Clinic {
   @@index([cityId])
   @@index([rating])
   @@index([category])
+  @@index([reviewCount])
   @@map("clinics")
 }
 
@@ -539,6 +540,7 @@ model Product {
 
   @@index([brand])
   @@index([productCategory])
+  @@index([distributorCleaned])
   @@map("products")
 }
 
