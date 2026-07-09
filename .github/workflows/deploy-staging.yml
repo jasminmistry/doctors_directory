@@ -42,8 +42,8 @@ jobs:
         with:
           context: .
           push: true
-          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-staging
-          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-staging,mode=min,compression=zstd
+          cache-from: type=gha,scope=staging
+          cache-to: type=gha,mode=max,scope=staging
           build-args: |
             NEXT_PUBLIC_DIRECTORY_BASE_URL=${{ vars.STAGING_NEXT_PUBLIC_DIRECTORY_BASE_URL }}
             NEXT_PUBLIC_BASE_URL=${{ vars.STAGING_NEXT_PUBLIC_BASE_URL }}
