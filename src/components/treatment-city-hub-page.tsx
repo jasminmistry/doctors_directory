@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -37,6 +38,8 @@ import {
   type TreatmentCityHubEntry,
 } from '@/lib/treatment-city-hub'
 import { toUrlSlug } from '@/lib/utils'
+import { CityHubListingsLoader } from '@/components/treatment/city-hub-listings-loader'
+import { CityHubListingsSkeleton } from '@/components/treatment/city-hub-listings-section'
 
 type Props = {
   entry: TreatmentCityHubEntry
@@ -199,6 +202,13 @@ export function TreatmentCityHubPage({ entry }: Props) {
               ) : null}
             </div>
           </div>
+
+          <Suspense fallback={<CityHubListingsSkeleton />}>
+            <CityHubListingsLoader
+              citySlug={entry.locationSlug}
+              cityName={entry.locationLabel}
+            />
+          </Suspense>
 
           <DirectoryPageClosingSections />
         </div>

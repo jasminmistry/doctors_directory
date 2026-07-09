@@ -39,7 +39,9 @@ const clinicSelect = {
   },
 } as const
 
-function toListingClinic(clinic: {
+export { clinicSelect }
+
+export function toListingClinic(clinic: {
   slug: string
   name: string | null
   image: string | null
