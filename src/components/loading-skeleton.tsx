@@ -371,6 +371,42 @@ export function TreatmentContentSkeleton() {
   )
 }
 
+export function FeaturedClinicCardSkeleton() {
+  return (
+    <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+      <div className="flex flex-col items-center text-center">
+        <Skeleton className="w-32 h-32 md:w-36 md:h-36 rounded-full" />
+        <Skeleton className="mt-4 h-6 w-3/4" />
+        <Skeleton className="mt-2 h-4 w-1/2" />
+        <Skeleton className="mt-4 h-4 w-32" />
+        <Skeleton className="mt-4 h-4 w-full" />
+        <Skeleton className="mt-4 h-9 w-full rounded-lg" />
+        <div className="flex flex-wrap gap-2 mt-5 justify-center">
+          <Skeleton className="h-6 w-20 rounded-full" />
+          <Skeleton className="h-6 w-16 rounded-full" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function FeaturedClinicsSectionSkeleton() {
+  return (
+    <section className="py-15 md:py-20">
+      <div className="max-w-7xl mx-auto px-6">
+        <h2 className="text-xl md:text-2xl font-medium text-center mb-10">
+          Featured Clinics
+        </h2>
+        <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }, (_, i) => (
+            <FeaturedClinicCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export function ProductGridSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

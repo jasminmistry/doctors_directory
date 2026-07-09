@@ -1,31 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { HeroSection } from "@/components/hero-section";
 import LogoLoop from "./LogoLoop";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  Handshake,
-  ChartBarDecreasing,
-  CircleCheck,
-  MapPin,
-} from "lucide-react";
+import { Handshake, ChartBarDecreasing, CircleCheck } from "lucide-react";
 import { Card } from "./ui/card";
-import { cleanRouteSlug } from "@/lib/utils";
-import { FallbackImage, DEFAULT_PERSON } from "@/components/ui/fallback-image";
-
-export interface FeaturedClinic {
-  slug: string;
-  name: string;
-  image: string;
-  rating: number;
-  reviewCount: number;
-  category: string;
-  gmapsAddress: string;
-  City: string;
-  Treatments: string[];
-}
 
 const cityList = [
   "Aberaeron",
@@ -915,9 +896,9 @@ const faqData = [
 const ITEMS_PER_PAGE = 9;
 
 export default function HomePage({
-  featuredClinics = [],
+  featuredSection,
 }: {
-  featuredClinics?: FeaturedClinic[];
+  featuredSection?: ReactNode;
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -1150,99 +1131,7 @@ export default function HomePage({
       </section>
 
       {/* Featured cards */}
-      {featuredClinics.length > 0 && (
-        <section className="py-15 md:py-20">
-          <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-xl md:text-2xl font-medium text-center mb-10">
-              Featured Clinics
-            </h2>
-            <div className="md:bg--(--primary-bg-color) grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {featuredClinics.map((clinic) => {
-                const citySlug = cleanRouteSlug(clinic.City);
-                const href = `/clinics/${citySlug}/clinic/${clinic.slug}`;
-                const filledStars = Math.round(clinic.rating);
-                const visibleTreatments = clinic.Treatments.slice(0, 2);
-                const extraCount =
-                  clinic.Treatments.length - visibleTreatments.length;
-                return (
-                  <article
-                    key={clinic.slug}
-                    className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md"
-                  >
-                    <div className="flex flex-col items-center text-center">
-                      <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-gray-200">
-                        <FallbackImage
-                          src={clinic.image}
-                          alt={clinic.name}
-                          fallback={DEFAULT_PERSON}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-
-                      <h2 className="mt-4 text-xl font-semibold text-black">
-                        {clinic.name}
-                      </h2>
-
-                      {clinic.category && (
-                        <p className="text-black text-md font-medium">
-                          {clinic.category}
-                        </p>
-                      )}
-
-                      <div className="flex items-center gap-2 mt-4 text-sm">
-                        <div className="flex text-black">
-                          {"★".repeat(filledStars)}
-                          {"☆".repeat(5 - filledStars)}
-                        </div>
-                        <span className="border-l border-black pl-2 underline">
-                          ({clinic.reviewCount} reviews)
-                        </span>
-                      </div>
-
-                      {clinic.gmapsAddress && (
-                        <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm w-full">
-                          <MapPin
-                            className="h-4 w-4 mt-0.5 shrink-0"
-                            aria-hidden="true"
-                          />
-                          <span className="min-w-0 text-left line-clamp-2">
-                            {clinic.gmapsAddress}
-                          </span>
-                        </div>
-                      )}
-
-                      <Link
-                        href={href}
-                        className="w-full mt-4 h-auto sm:w-full inline-flex items-center justify-center gap-2 rounded-lg px-2 py-2 bg-[#f4f4f4]  text-sm font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
-                      >
-                        View clinic
-                      </Link>
-
-                      {visibleTreatments.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-5 justify-center">
-                          {visibleTreatments.map((t) => (
-                            <span
-                              key={t}
-                              className="px-3 py-1 border border-[#e0e0e0] rounded-full text-xs"
-                            >
-                              {t}
-                            </span>
-                          ))}
-                          {extraCount > 0 && (
-                            <span className="px-3 py-1 border border-[#e0e0e0] rounded-full text-xs">
-                              +{extraCount} more
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
+      {featuredSection}
 
       {/* Trust Section */}
       <section className="py-15 md:py-20">
