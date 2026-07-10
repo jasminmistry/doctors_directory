@@ -328,7 +328,7 @@ function mapSignUpRow(row: {
     row.entityType === "practitioner"
       ? row.practitioner?.displayName?.trim() ||
         (row.practitionerSlug
-          ? getClinicDisplayName({ slug: row.practitionerSlug })
+          ? getClinicDisplayName({ slug: row.practitionerSlug, url: undefined })
           : "Unknown practitioner")
       : row.clinic?.name?.trim() ||
         row.clinicNameInput?.trim() ||
