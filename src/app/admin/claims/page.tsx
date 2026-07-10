@@ -304,10 +304,8 @@ export default function AdminClaimsPage() {
           data={claims}
           loading={loading}
           onEdit={(row) => {
-            if (row.status === 'pending_approval') {
-              setReviewClaim(row)
-              setAdminNotes(row.adminNotes ?? '')
-            }
+            setReviewClaim(row)
+            setAdminNotes(row.adminNotes ?? '')
           }}
         />
       </div>
@@ -318,7 +316,7 @@ export default function AdminClaimsPage() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Review Claim</DialogTitle>
+            <DialogTitle>{reviewClaim?.status === 'pending_approval' ? 'Review Claim' : 'Claim Details'}</DialogTitle>
           </DialogHeader>
 
           {reviewClaim && (
@@ -465,25 +463,34 @@ export default function AdminClaimsPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="admin-notes">Notes (optional)</Label>
+                <Label htmlFor="admin-notes">Notes {reviewClaim.status === 'pending_approval' ? '(optional)' : ''}</Label>
                 <Textarea
                   id="admin-notes"
                   value={adminNotes}
                   onChange={(e) => setAdminNotes(e.target.value)}
                   placeholder="Reason for approval or rejection…"
                   rows={3}
+                  readOnly={reviewClaim.status !== 'pending_approval'}
                 />
               </div>
             </div>
           )}
 
           <DialogFooter className="flex gap-2">
-            <Button variant="destructive" onClick={() => handleReview('reject')} disabled={submitting}>
-              Reject
-            </Button>
-            <Button onClick={() => handleReview('approve')} disabled={submitting}>
-              Approve
-            </Button>
+            {reviewClaim?.status === 'pending_approval' ? (
+              <>
+                <Button variant="destructive" onClick={() => handleReview('reject')} disabled={submitting}>
+                  Reject
+                </Button>
+                <Button onClick={() => handleReview('approve')} disabled={submitting}>
+                  Approve
+                </Button>
+              </>
+            ) : (
+              <Button variant="outline" onClick={() => { setReviewClaim(null); setAdminNotes('') }}>
+                Close
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
