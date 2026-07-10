@@ -35,6 +35,10 @@ export interface TrackingOverview {
   to: string | null
   totalClicks: number
   totalLeads: number
+  consultationLeads: number
+  pricingLeads: number
+  clinicSignUps: number
+  practitionerSignUps: number
   conversionRate: number
   pricingClicks: number
   consultationClicks: number
@@ -98,6 +102,10 @@ function blankOverview(windowDays: number | null, from: string | null, to: strin
     to,
     totalClicks: 0,
     totalLeads: 0,
+    consultationLeads: 0,
+    pricingLeads: 0,
+    clinicSignUps: 0,
+    practitionerSignUps: 0,
     conversionRate: 0,
     pricingClicks: 0,
     consultationClicks: 0,
@@ -227,6 +235,37 @@ function parseSearchParams(ctaTargetUrl: string | null): {
   }
 }
 
+function mapConsultationLeadRow(row: {
+  id: number
+  createdAt: Date
+  patientName: string
+  patientPhone: string
+  patientEmail: string | null
+  treatment: string | null
+  location: string | null
+  clinic: {
+    slug: string
+    city: { slug: string } | null
+  }
+}) {
+  const citySlug = row.clinic.city?.slug ?? "unknown"
+  return {
+    id: `consultation-${row.id}`,
+    timestamp: row.createdAt.toISOString(),
+    page_url: `https://consentz.com/directory/clinics/${citySlug}/clinic/${row.clinic.slug}`,
+    page_type: "clinic_page",
+    referrer: "consultation_form",
+    country: "GB",
+    device_type: "unknown",
+    name: row.patientName,
+    contact: row.patientEmail || row.patientPhone,
+    treatment: row.treatment,
+    location: row.location,
+    budget: null,
+    lead_type: "consultation",
+  }
+}
+
 function mapLeadRow(row: {
   id: bigint
   timestamp: Date
@@ -254,6 +293,7 @@ function mapLeadRow(row: {
     treatment: row.treatment,
     location: row.location,
     budget: row.budget,
+    lead_type: "pricing",
   }
 }
 
@@ -320,17 +360,57 @@ export async function listTrackingRows(
     ]
   }
 
-  const [items, total] = await prisma.$transaction([
-    prisma.directoryLead.findMany({
-      where,
-      orderBy: { timestamp: "desc" },
-      skip,
-      take,
-    }),
-    prisma.directoryLead.count({ where }),
-  ])
+  const consultationWhere: Prisma.ConsultationLeadWhereInput = {}
+  if (timestamp) consultationWhere.createdAt = timestamp
+  if (q) {
+    consultationWhere.OR = [
+      { patientName: { contains: q } },
+      { patientEmail: { contains: q } },
+      { patientPhone: { contains: q } },
+      { treatment: { contains: q } },
+      { location: { contains: q } },
+      { clinic: { slug: { contains: q } } },
+      { clinic: { name: { contains: q } } },
+    ]
+  }
 
-  return { rows: items.map(mapLeadRow), total }
+  const [consultationItems, consultationTotal, pricingItems, pricingTotal] =
+    await prisma.$transaction([
+      prisma.consultationLead.findMany({
+        where: consultationWhere,
+        include: {
+          clinic: {
+            select: {
+              slug: true,
+              city: { select: { slug: true } },
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take,
+      }),
+      prisma.consultationLead.count({ where: consultationWhere }),
+      prisma.directoryLead.findMany({
+        where,
+        orderBy: { timestamp: "desc" },
+        skip,
+        take,
+      }),
+      prisma.directoryLead.count({ where }),
+    ])
+
+  const mergedRows = [
+    ...consultationItems.map(mapConsultationLeadRow),
+    ...pricingItems.map(mapLeadRow),
+  ]
+    .sort((left, right) => String(right.timestamp).localeCompare(String(left.timestamp)))
+    .slice(0, take)
+
+  return {
+    rows: mergedRows,
+    total: consultationTotal + pricingTotal,
+  }
 }
 
 export async function getTrackingOverview(params: TrackingOverviewParams): Promise<TrackingOverview> {
@@ -354,10 +434,25 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
   const whereLeadWithTimestamp: Prisma.DirectoryLeadWhereInput = Object.keys(whereWindow).length
     ? { timestamp: whereWindow }
     : {}
+  const whereConsultationLead: Prisma.ConsultationLeadWhereInput = Object.keys(whereWindow).length
+    ? { createdAt: whereWindow }
+    : {}
+  const whereApprovedClaim: Prisma.ClaimRequestWhereInput = {
+    status: "approved",
+  }
+  if (Object.keys(whereWindow).length) {
+    whereApprovedClaim.OR = [
+      { approvedAt: whereWindow },
+      { approvedAt: null, createdAt: whereWindow },
+    ]
+  }
 
   const [
     totalClicks,
-    totalLeads,
+    pricingLeads,
+    consultationLeads,
+    clinicSignUps,
+    practitionerSignUps,
     pricingClicks,
     consultationClicks,
     topPagesClicksRaw,
@@ -366,13 +461,21 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
     pageTypeRaw,
     referrerRaw,
     eventTrendRows,
-    leadTrendRows,
+    consultationLeadTrendRows,
+    pricingLeadTrendRows,
     eventPagesForCities,
     leadPagesForCities,
     searchEventRows,
   ] = await prisma.$transaction([
     prisma.directoryEvent.count({ where: whereWithTimestamp }),
     prisma.directoryLead.count({ where: whereLeadWithTimestamp }),
+    prisma.consultationLead.count({ where: whereConsultationLead }),
+    prisma.claimRequest.count({
+      where: { ...whereApprovedClaim, entityType: "clinic" },
+    }),
+    prisma.claimRequest.count({
+      where: { ...whereApprovedClaim, entityType: "practitioner" },
+    }),
     prisma.directoryEvent.count({
       where: {
         ...whereWithTimestamp,
@@ -382,7 +485,10 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
     prisma.directoryEvent.count({
       where: {
         ...whereWithTimestamp,
-        ctaLabel: { contains: "consultation" },
+        OR: [
+          { ctaLabel: { contains: "consultation" } },
+          { ctaLabel: { contains: "Consultation" } },
+        ],
       },
     }),
     prisma.directoryEvent.groupBy({
@@ -392,11 +498,11 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
       orderBy: { _count: { pageUrl: "desc" } },
       take: 5,
     }),
-    prisma.directoryLead.groupBy({
-      by: ["pageUrl"],
-      where: whereLeadWithTimestamp,
-      _count: { pageUrl: true },
-      orderBy: { _count: { pageUrl: "desc" } },
+    prisma.consultationLead.groupBy({
+      by: ["clinicId"],
+      where: whereConsultationLead,
+      _count: { clinicId: true },
+      orderBy: { _count: { clinicId: "desc" } },
       take: 5,
     }),
     prisma.directoryEvent.groupBy({
@@ -423,6 +529,11 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
       select: { timestamp: true },
       orderBy: { timestamp: "asc" },
     }),
+    prisma.consultationLead.findMany({
+      where: whereConsultationLead,
+      select: { createdAt: true },
+      orderBy: { createdAt: "asc" },
+    }),
     prisma.directoryLead.findMany({
       where: whereLeadWithTimestamp,
       select: { timestamp: true },
@@ -433,9 +544,16 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
       select: { pageUrl: true },
       take: 3000,
     }),
-    prisma.directoryLead.findMany({
-      where: whereLeadWithTimestamp,
-      select: { pageUrl: true },
+    prisma.consultationLead.findMany({
+      where: whereConsultationLead,
+      select: {
+        clinic: {
+          select: {
+            slug: true,
+            city: { select: { slug: true } },
+          },
+        },
+      },
       take: 2000,
     }),
     prisma.directoryEvent.findMany({
@@ -447,6 +565,8 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
       take: 3000,
     }),
   ])
+
+  const totalLeads = consultationLeads + pricingLeads
 
   const minTrendDate = effectiveFrom ?? (() => {
     const d = new Date()
@@ -475,7 +595,12 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
     const item = trendMap.get(key)
     if (item) item.clicks += 1
   }
-  for (const row of leadTrendRows) {
+  for (const row of consultationLeadTrendRows) {
+    const key = toLocalDateKey(row.createdAt)
+    const item = trendMap.get(key)
+    if (item) item.leads += 1
+  }
+  for (const row of pricingLeadTrendRows) {
     const key = toLocalDateKey(row.timestamp)
     const item = trendMap.get(key)
     if (item) item.leads += 1
@@ -494,8 +619,13 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
 
   const cityCount = new Map<string, number>()
   for (const row of leadPagesForCities) {
-    const city = extractCity(row.pageUrl)
-    if (!city) continue
+    const citySlug = row.clinic.city?.slug
+    if (!citySlug) continue
+    const city = citySlug
+      .split("-")
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ")
     cityCount.set(city, (cityCount.get(city) || 0) + 1)
   }
   const topCitiesByLeads = [...cityCount.entries()]
@@ -516,12 +646,29 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
 
   const conversionRate = totalClicks > 0 ? (totalLeads / totalClicks) * 100 : 0
 
+  const clinicSlugById = new Map(
+    (
+      await prisma.clinic.findMany({
+        where: {
+          id: {
+            in: topPagesLeadsRaw.map((row) => row.clinicId),
+          },
+        },
+        select: { id: true, slug: true },
+      })
+    ).map((clinic) => [clinic.id, clinic.slug])
+  )
+
   return {
     windowDays: safeWindowDays,
     from: effectiveFrom ? toLocalDateKey(effectiveFrom) : null,
     to: effectiveTo ? toLocalDateKey(effectiveTo) : null,
     totalClicks,
     totalLeads,
+    consultationLeads,
+    pricingLeads,
+    clinicSignUps,
+    practitionerSignUps,
     conversionRate,
     pricingClicks,
     consultationClicks,
@@ -529,7 +676,10 @@ export async function getTrackingOverview(params: TrackingOverviewParams): Promi
       topPagesClicksRaw.map((row) => ({ key: row.pageUrl, value: (row as any)._count?.pageUrl ?? 0 }))
     ),
     topPagesByLeads: toOverviewItems(
-      topPagesLeadsRaw.map((row) => ({ key: row.pageUrl, value: (row as any)._count?.pageUrl ?? 0 }))
+      topPagesLeadsRaw.map((row) => ({
+        key: clinicSlugById.get(row.clinicId) ?? `clinic-${row.clinicId}`,
+        value: (row as any)._count?.clinicId ?? 0,
+      }))
     ),
     topCitiesByClicks: toOverviewItems(topCitiesByClicks),
     topCitiesByLeads: toOverviewItems(topCitiesByLeads),

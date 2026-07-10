@@ -34,6 +34,10 @@ interface OverviewResponse {
   to: string | null
   totalClicks: number
   totalLeads: number
+  consultationLeads: number
+  pricingLeads: number
+  clinicSignUps: number
+  practitionerSignUps: number
   conversionRate: number
   pricingClicks: number
   consultationClicks: number
@@ -327,28 +331,44 @@ export function TrackingDashboard() {
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Total CTA clicks</div>
+            <div className="text-xs uppercase text-gray-500">CTA clicks</div>
             <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.totalClicks ?? 0}</div>
+            <div className="mt-1 text-xs text-gray-500">
+              Pricing {overviewLoading ? "…" : overview?.pricingClicks ?? 0} · Consultation{" "}
+              {overviewLoading ? "…" : overview?.consultationClicks ?? 0}
+            </div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Total leads</div>
+            <div className="text-xs uppercase text-gray-500">Total patient leads</div>
             <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.totalLeads ?? 0}</div>
+            <div className="mt-1 text-xs text-gray-500">
+              Consultation {overviewLoading ? "…" : overview?.consultationLeads ?? 0} · Pricing{" "}
+              {overviewLoading ? "…" : overview?.pricingLeads ?? 0}
+            </div>
           </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="text-xs uppercase text-gray-500">Sign-ups</div>
+            <div className="mt-2 text-2xl font-semibold">
+              {overviewLoading
+                ? "…"
+                : (overview?.clinicSignUps ?? 0) + (overview?.practitionerSignUps ?? 0)}
+            </div>
+            <div className="mt-1 text-xs text-gray-500">
+              Clinics {overviewLoading ? "…" : overview?.clinicSignUps ?? 0} · Practitioners{" "}
+              {overviewLoading ? "…" : overview?.practitionerSignUps ?? 0}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-xs uppercase text-gray-500">Conversion rate</div>
             <div className="mt-2 text-2xl font-semibold">
               {overviewLoading ? "…" : `${(overview?.conversionRate ?? 0).toFixed(1)}%`}
             </div>
-          </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Pricing vs consultation</div>
-            <div className="mt-2 text-2xl font-semibold">
-              {overviewLoading
-                ? "…"
-                : `${overview?.pricingClicks ?? 0} / ${overview?.consultationClicks ?? 0}`}
-            </div>
+            <div className="mt-1 text-xs text-gray-500">Patient leads divided by CTA clicks</div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-xs uppercase text-gray-500">Most searched term</div>
@@ -453,7 +473,7 @@ export function TrackingDashboard() {
               pushUrl(sp)
             }}
           >
-            Leads
+            Patient leads
           </Button>
           <Link href="/admin" className="ml-auto self-center text-sm underline">
             Admin home
