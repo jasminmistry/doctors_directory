@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/db'
 import { Clinic as PrismaClinic, Prisma } from '@prisma/client'
 import { cache } from 'react'
-import { unstable_cache } from 'next/cache'
 
 // Full clinic type with all relations
 type ClinicWithRelations = Prisma.ClinicGetPayload<{
@@ -114,20 +113,14 @@ function mapSearchClinicRow(clinic: SearchClinicRow): SearchClinic {
 /**
  * Get all clinics with basic info for search (cached)
  */
-export const getAllClinicsForSearch = cache(
-  unstable_cache(
-    async (): Promise<SearchClinic[]> => {
-      const clinics = await prisma.clinic.findMany({
-        where: { isHidden: false },
-        select: SEARCH_CLINIC_SELECT,
-      })
+export const getAllClinicsForSearch = cache(async (): Promise<SearchClinic[]> => {
+  const clinics = await prisma.clinic.findMany({
+    where: { isHidden: false },
+    select: SEARCH_CLINIC_SELECT,
+  })
 
-      return clinics.map(mapSearchClinicRow)
-    },
-    ['clinics-for-search'],
-    { revalidate: 300 }
-  )
-)
+  return clinics.map(mapSearchClinicRow)
+})
 
 /**
  * Filtered + paginated clinics for the /search page's Clinic tab. Mirrors the word-tokenized

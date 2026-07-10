@@ -12,10 +12,12 @@ RUN --mount=type=cache,target=/root/.npm \
 
 # ── prod-deps: production-only dependencies for the runtime image ──────────────
 # Excludes @playwright/test (browsers), jest, typescript, @types/*, etc.
+# Prunes off the already-installed `deps` tree instead of a second full `npm ci`.
 FROM base AS prod-deps
 COPY package.json package-lock.json* ./
+COPY --from=deps /app/node_modules ./node_modules
 RUN --mount=type=cache,target=/root/.npm \
-	npm ci --omit=dev
+	npm prune --omit=dev
 
 # ── builder: compile the app ──────────────────────────────────────────────────
 FROM base AS builder
@@ -28,7 +30,8 @@ ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=$NEXT_PUBLIC_GA_MEASUREMENT_ID
 ENV NODE_OPTIONS=--max-old-space-size=4096
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npx prisma generate && npm run build
+RUN --mount=type=cache,target=/app/.next/cache \
+	npx prisma generate && npm run build
 
 # ── runner: production image ──────────────────────────────────────────────────
 FROM node:lts-alpine3.23 AS runner
