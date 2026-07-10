@@ -26,7 +26,6 @@ interface SubscriptionInfo {
 
 export default function PortalPractitionerPage() {
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
-  const [profileUrl, setProfileUrl] = useState<string | null>(null)
   const [upgrading, setUpgrading] = useState<string | null>(null)
   const [idVerified, setIdVerified] = useState<boolean | null>(null)
   const [entitySlug, setEntitySlug] = useState<string | null>(null)
@@ -41,9 +40,6 @@ export default function PortalPractitionerPage() {
         setSubscription(data.subscription ?? null)
         setIdVerified(data.idVerified ?? false)
         setEntitySlug(data.slug ?? null)
-        if (data.citySlug && data.slug) {
-          setProfileUrl(`/${data.citySlug}/practitioner/${data.slug}/`)
-        }
       })
       .catch(() => {})
       .finally(() => setVerificationChecked(true))
@@ -162,7 +158,6 @@ export default function PortalPractitionerPage() {
           mode="portal"
           disabled={idVerified !== true}
           onSaved={fetchPractitionerData}
-          previewHref={profileUrl ?? undefined}
         />
       )}
     </div>

@@ -28,6 +28,14 @@ const PRACTITIONER_EDIT_SELECT = {
   roles: true,
   media: true,
   experience: true,
+  clinicAssociations: {
+    take: 1,
+    include: {
+      clinic: {
+        select: { city: { select: { slug: true } } },
+      },
+    },
+  },
 }
 
 export async function GET(
@@ -42,7 +50,9 @@ export async function GET(
     if (!practitioner) {
       return NextResponse.json({ error: 'Practitioner not found' }, { status: 404 })
     }
-    return NextResponse.json(practitioner)
+    const citySlug = practitioner.clinicAssociations[0]?.clinic?.city?.slug ?? null
+    const { clinicAssociations: _ca, ...rest } = practitioner
+    return NextResponse.json({ ...rest, citySlug })
   } catch (error) {
     console.error('Failed to read practitioner:', error)
     return NextResponse.json({ error: 'Failed to read practitioner' }, { status: 500 })
@@ -66,7 +76,9 @@ export async function PUT(
       select: PRACTITIONER_EDIT_SELECT,
     })
     await invalidateSearchCache()
-    return NextResponse.json(practitioner)
+    const citySlug = practitioner.clinicAssociations[0]?.clinic?.city?.slug ?? null
+    const { clinicAssociations: _ca, ...practitionerRest } = practitioner
+    return NextResponse.json({ ...practitionerRest, citySlug })
   } catch (error) {
     console.error('Failed to update practitioner:', error)
     if ((error as any).code === 'P2025') {

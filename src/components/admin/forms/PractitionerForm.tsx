@@ -22,11 +22,12 @@ type PractitionerData = {
   roles: string[]
   media: string[]
   experience: string[]
+  citySlug: string | null
 }
 
 const EMPTY: PractitionerData = {
   slug: '', displayName: null, title: null, specialty: null, imageUrl: null,
-  qualifications: [], awards: [], roles: [], media: [], experience: [],
+  qualifications: [], awards: [], roles: [], media: [], experience: [], citySlug: null,
 }
 
 function toStringArray(value: unknown): string[] {
@@ -149,6 +150,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
             roles: toStringArray(d.roles),
             media: toStringArray(d.media),
             experience: toStringArray(d.experience),
+            citySlug: d.citySlug ?? null,
           })
           setLoading(false)
         })
@@ -174,6 +176,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
           roles: toStringArray(d.roles),
           media: toStringArray(d.media),
           experience: toStringArray(d.experience),
+          citySlug: d.citySlug ?? null,
         })
         setLoading(false)
       })
@@ -238,7 +241,12 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
         <div className="flex items-center gap-2 shrink-0">
           {!isNew && data.slug && (
             <a
-              href={previewHref ?? `/directory/search?type=Practitioner&q=${encodeURIComponent(data.displayName || data.slug)}`}
+              href={
+                previewHref ??
+                (data.citySlug
+                  ? `/directory/practitioners/${data.citySlug}/profile/${data.slug}`
+                  : `/directory/search?type=Practitioner&q=${encodeURIComponent(data.displayName || data.slug)}`)
+              }
               target="_blank"
               rel="noopener noreferrer"
             >
