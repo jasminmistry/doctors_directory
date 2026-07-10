@@ -34,6 +34,10 @@ interface OverviewResponse {
   to: string | null
   totalClicks: number
   totalLeads: number
+  consultationLeads: number
+  pricingLeads: number
+  clinicSignUps: number
+  practitionerSignUps: number
   conversionRate: number
   pricingClicks: number
   consultationClicks: number
@@ -56,7 +60,9 @@ function apiBase(): string {
 }
 
 function parseTab(value: string | null): TrackingTab {
-  return value === "leads" ? "leads" : "events"
+  if (value === "leads") return "leads"
+  if (value === "signups") return "signups"
+  return "events"
 }
 
 function parseOverviewWindow(value: string | null): OverviewWindow {
@@ -327,28 +333,44 @@ export function TrackingDashboard() {
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Total CTA clicks</div>
+            <div className="text-xs uppercase text-gray-500">CTA clicks</div>
             <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.totalClicks ?? 0}</div>
+            <div className="mt-1 text-xs text-gray-500">
+              Pricing {overviewLoading ? "…" : overview?.pricingClicks ?? 0} · Consultation{" "}
+              {overviewLoading ? "…" : overview?.consultationClicks ?? 0}
+            </div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Total leads</div>
+            <div className="text-xs uppercase text-gray-500">Total patient leads</div>
             <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.totalLeads ?? 0}</div>
+            <div className="mt-1 text-xs text-gray-500">
+              Consultation {overviewLoading ? "…" : overview?.consultationLeads ?? 0} · Pricing{" "}
+              {overviewLoading ? "…" : overview?.pricingLeads ?? 0}
+            </div>
           </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="text-xs uppercase text-gray-500">Sign-ups</div>
+            <div className="mt-2 text-2xl font-semibold">
+              {overviewLoading
+                ? "…"
+                : (overview?.clinicSignUps ?? 0) + (overview?.practitionerSignUps ?? 0)}
+            </div>
+            <div className="mt-1 text-xs text-gray-500">
+              Clinics {overviewLoading ? "…" : overview?.clinicSignUps ?? 0} · Practitioners{" "}
+              {overviewLoading ? "…" : overview?.practitionerSignUps ?? 0}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-xs uppercase text-gray-500">Conversion rate</div>
             <div className="mt-2 text-2xl font-semibold">
               {overviewLoading ? "…" : `${(overview?.conversionRate ?? 0).toFixed(1)}%`}
             </div>
-          </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Pricing vs consultation</div>
-            <div className="mt-2 text-2xl font-semibold">
-              {overviewLoading
-                ? "…"
-                : `${overview?.pricingClicks ?? 0} / ${overview?.consultationClicks ?? 0}`}
-            </div>
+            <div className="mt-1 text-xs text-gray-500">Patient leads divided by CTA clicks</div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <div className="text-xs uppercase text-gray-500">Most searched term</div>
@@ -453,7 +475,19 @@ export function TrackingDashboard() {
               pushUrl(sp)
             }}
           >
-            Leads
+            Patient leads
+          </Button>
+          <Button
+            type="button"
+            variant={tab === "signups" ? "default" : "outline"}
+            onClick={() => {
+              const sp = new URLSearchParams(searchParams.toString())
+              sp.set("tab", "signups")
+              sp.set("page", "1")
+              pushUrl(sp)
+            }}
+          >
+            Sign-ups
           </Button>
           <Link href="/admin" className="ml-auto self-center text-sm underline">
             Admin home
@@ -465,33 +499,41 @@ export function TrackingDashboard() {
 
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
           <Input
-            placeholder="Search (URL, CTA label, referrer, target...)"
+            placeholder={
+              tab === "signups"
+                ? "Search (clinic, practitioner, claimer, email...)"
+                : "Search (URL, CTA label, referrer, target...)"
+            }
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
-          <Select value={pageType || "all"} onValueChange={(value) => setPageType(value === "all" ? "" : value)}>
-            <SelectTrigger className="h-9 w-full text-sm">
-              <SelectValue placeholder="All page types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All page types</SelectItem>
-              <SelectItem value="practitioner_page">practitioner_page</SelectItem>
-              <SelectItem value="clinic_page">clinic_page</SelectItem>
-              <SelectItem value="collection_page">collection_page</SelectItem>
-              <SelectItem value="other">other</SelectItem>
-            </SelectContent>
-          </Select>
-          <Input placeholder="Country code (e.g. GB)" value={country} onChange={(e) => setCountry(e.target.value)} />
-          <Select value={deviceType || "all"} onValueChange={(value) => setDeviceType(value === "all" ? "" : value)}>
-            <SelectTrigger className="h-9 w-full text-sm">
-              <SelectValue placeholder="All devices" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All devices</SelectItem>
-              <SelectItem value="desktop">desktop</SelectItem>
-              <SelectItem value="mobile">mobile</SelectItem>
-            </SelectContent>
-          </Select>
+          {tab !== "signups" && (
+            <>
+              <Select value={pageType || "all"} onValueChange={(value) => setPageType(value === "all" ? "" : value)}>
+                <SelectTrigger className="h-9 w-full text-sm">
+                  <SelectValue placeholder="All page types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All page types</SelectItem>
+                  <SelectItem value="practitioner_page">practitioner_page</SelectItem>
+                  <SelectItem value="clinic_page">clinic_page</SelectItem>
+                  <SelectItem value="collection_page">collection_page</SelectItem>
+                  <SelectItem value="other">other</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input placeholder="Country code (e.g. GB)" value={country} onChange={(e) => setCountry(e.target.value)} />
+              <Select value={deviceType || "all"} onValueChange={(value) => setDeviceType(value === "all" ? "" : value)}>
+                <SelectTrigger className="h-9 w-full text-sm">
+                  <SelectValue placeholder="All devices" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All devices</SelectItem>
+                  <SelectItem value="desktop">desktop</SelectItem>
+                  <SelectItem value="mobile">mobile</SelectItem>
+                </SelectContent>
+              </Select>
+            </>
+          )}
           <Input type="datetime-local" value={from} onChange={(e) => setFrom(e.target.value)} />
           <Input type="datetime-local" value={to} onChange={(e) => setTo(e.target.value)} />
           <div className="flex flex-wrap gap-2 md:col-span-2 lg:col-span-3">
@@ -527,6 +569,16 @@ export function TrackingDashboard() {
                     <th className="px-3 py-2">CTA</th>
                     <th className="px-3 py-2">Search terms</th>
                     <th className="px-3 py-2">Target</th>
+                  </>
+                ) : tab === "signups" ? (
+                  <>
+                    <th className="px-3 py-2">Approved</th>
+                    <th className="px-3 py-2">Type</th>
+                    <th className="px-3 py-2">Clinic / Practitioner</th>
+                    <th className="px-3 py-2">Slug</th>
+                    <th className="px-3 py-2">Claimer</th>
+                    <th className="px-3 py-2">Email</th>
+                    <th className="px-3 py-2">Plan</th>
                   </>
                 ) : (
                   <>
@@ -577,6 +629,20 @@ export function TrackingDashboard() {
                         {row.cta_target_url ? String(row.cta_target_url) : "—"}
                       </td>
                     </>
+                  ) : tab === "signups" ? (
+                    <>
+                      <td className="px-3 py-2 whitespace-nowrap">{String(row.timestamp)}</td>
+                      <td className="px-3 py-2 capitalize">{String(row.entity_type)}</td>
+                      <td className="px-3 py-2 max-w-[220px] truncate" title={String(row.entity_name)}>
+                        {String(row.entity_name)}
+                      </td>
+                      <td className="px-3 py-2 max-w-[180px] truncate" title={String(row.entity_slug)}>
+                        {String(row.entity_slug)}
+                      </td>
+                      <td className="px-3 py-2">{String(row.claimer_name)}</td>
+                      <td className="px-3 py-2">{String(row.claimer_email)}</td>
+                      <td className="px-3 py-2">{String(row.plan_label)}</td>
+                    </>
                   ) : (
                     <>
                       <td className="px-3 py-2 whitespace-nowrap">{String(row.timestamp)}</td>
@@ -600,7 +666,10 @@ export function TrackingDashboard() {
               ))}
               {!loading && rows.length === 0 && (
                 <tr>
-                  <td className="px-3 py-6 text-center text-gray-500" colSpan={tab === "events" ? 9 : 11}>
+                  <td
+                    className="px-3 py-6 text-center text-gray-500"
+                    colSpan={tab === "events" ? 9 : tab === "signups" ? 7 : 11}
+                  >
                     No rows match these filters.
                   </td>
                 </tr>
