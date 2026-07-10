@@ -122,7 +122,7 @@ export function HeroSection() {
                           </Link>
 
                           <Link
-                            href="/directory/search"
+                            href="/search"
                             className="hidden md:inline-flex text-sm text-gray-600 hover:text-black transition-colors"
                           >
                             Explore Aesthetics Directory →

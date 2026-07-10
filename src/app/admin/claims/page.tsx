@@ -50,6 +50,15 @@ const columns = [
       </Badge>
     ),
   },
+  {
+    key: 'isNewRegistration',
+    label: 'Source',
+    render: (value: boolean) => (
+      <Badge variant={value ? 'default' : 'outline'} className="text-xs">
+        {value ? 'New listing' : 'Claim'}
+      </Badge>
+    ),
+  },
   { key: 'entityName', label: 'Profile' },
   { key: 'claimerName', label: 'Claimer' },
   { key: 'claimerEmail', label: 'Email' },
@@ -83,10 +92,22 @@ const columns = [
   },
 ]
 
+interface NewListingData {
+  clinicNameInput?: string
+  fullName?: string
+  address?: string
+  city?: string
+  category?: string
+  profession?: string
+  about?: string
+}
+
 interface Claim {
   id: number
   entityType: 'clinic' | 'practitioner'
   entityName: string
+  isNewRegistration: boolean
+  newListingData: string | null
   clinicSlug: string | null
   practitionerSlug: string | null
   claimerName: string
@@ -128,13 +149,25 @@ export default function AdminClaimsPage() {
       .then((r) => r.json())
       .then((data: Claim[]) => {
         if (!Array.isArray(data)) { setClaims([]); setLoading(false); return }
-        const rows = data.map((c) => ({
-          ...c,
-          entityName:
-            c.entityType === 'practitioner'
-              ? (c.practitioner?.displayName ?? c.practitionerSlug ?? '—')
-              : (c.clinic?.name ?? c.clinicSlug ?? '—'),
-        }))
+        const rows = data.map((c) => {
+          if (c.isNewRegistration) {
+            const listing: NewListingData = c.newListingData ? JSON.parse(c.newListingData) : {}
+            return {
+              ...c,
+              entityName:
+                c.entityType === 'practitioner'
+                  ? (c.practitioner?.displayName ?? listing.fullName ?? c.claimerName ?? '—')
+                  : (c.clinic?.name ?? listing.clinicNameInput ?? c.clinicNameInput ?? '—'),
+            }
+          }
+          return {
+            ...c,
+            entityName:
+              c.entityType === 'practitioner'
+                ? (c.practitioner?.displayName ?? c.practitionerSlug ?? '—')
+                : (c.clinic?.name ?? c.clinicSlug ?? '—'),
+          }
+        })
         setClaims(rows)
         setLoading(false)
       })
@@ -342,6 +375,31 @@ export default function AdminClaimsPage() {
                         </a>
                       </div>
                     )}
+                    {reviewClaim.isNewRegistration && (() => {
+                      const listing: NewListingData = reviewClaim.newListingData ? JSON.parse(reviewClaim.newListingData) : {}
+                      return (
+                        <>
+                          {listing.address && (
+                            <div className="col-span-2">
+                              <span className="text-muted-foreground">Address</span>
+                              <p className="font-medium">{listing.address}{listing.city ? `, ${listing.city}` : ''}</p>
+                            </div>
+                          )}
+                          {listing.category && (
+                            <div>
+                              <span className="text-muted-foreground">Category</span>
+                              <p className="font-medium">{listing.category}</p>
+                            </div>
+                          )}
+                          {listing.about && (
+                            <div className="col-span-2">
+                              <span className="text-muted-foreground">About</span>
+                              <p className="font-medium whitespace-pre-wrap">{listing.about}</p>
+                            </div>
+                          )}
+                        </>
+                      )
+                    })()}
                   </>
                 )}
 
@@ -371,6 +429,25 @@ export default function AdminClaimsPage() {
                         <p className="text-xs text-amber-700 mt-0.5">Verify manually on the registry website before approving.</p>
                       </div>
                     )}
+                    {reviewClaim.isNewRegistration && (() => {
+                      const listing: NewListingData = reviewClaim.newListingData ? JSON.parse(reviewClaim.newListingData) : {}
+                      return (
+                        <>
+                          {listing.city && (
+                            <div>
+                              <span className="text-muted-foreground">City</span>
+                              <p className="font-medium">{listing.city}</p>
+                            </div>
+                          )}
+                          {listing.about && (
+                            <div className="col-span-2">
+                              <span className="text-muted-foreground">About</span>
+                              <p className="font-medium whitespace-pre-wrap">{listing.about}</p>
+                            </div>
+                          )}
+                        </>
+                      )
+                    })()}
                   </>
                 )}
               </div>

@@ -48,6 +48,35 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
 
+    if (data.entityType === 'clinic' && data.isNewRegistration) {
+      const { claimerName, claimerEmail, clinicNameInput, clinicPhone, clinicWebsite, googleBusinessLink, address, city, category, about } = data
+
+      const requiresManualReview = isGenericEmailDomain(claimerEmail)
+      const otp = generateOtp()
+      const claim = await prisma.claimRequest.create({
+        data: {
+          entityType: 'clinic',
+          isNewRegistration: true,
+          newListingData: JSON.stringify({ clinicNameInput, address, city, category, about }),
+          claimerName,
+          claimerEmail,
+          claimerPhone: clinicPhone,
+          clinicNameInput,
+          clinicPhone,
+          clinicWebsite: clinicWebsite || null,
+          googleBusinessLink: googleBusinessLink || null,
+          requiresManualReview,
+          otpCode: otp,
+          otpExpiresAt: otpExpiresAt(),
+          status: 'pending_otp',
+        },
+      })
+
+      await sendClaimOtp({ to: claimerEmail, entityName: clinicNameInput, otp })
+
+      return NextResponse.json({ claimId: claim.id, entityName: clinicNameInput, message: 'Verification code sent' })
+    }
+
     if (data.entityType === 'clinic') {
       const { clinicSlug, claimerName, claimerEmail, clinicNameInput, clinicPhone, clinicWebsite, googleBusinessLink } = data
 
@@ -140,6 +169,33 @@ export async function POST(req: NextRequest) {
     }
 
     // Practitioner
+    if (data.isNewRegistration) {
+      const { claimerName, claimerEmail, claimerPhone, profession, clinicNameInput, city, about } = data
+
+      const requiresManualReview = isGenericEmailDomain(claimerEmail)
+      const otp = generateOtp()
+      const claim = await prisma.claimRequest.create({
+        data: {
+          entityType: 'practitioner',
+          isNewRegistration: true,
+          newListingData: JSON.stringify({ fullName: claimerName, profession, clinicNameInput, city, about }),
+          claimerName,
+          claimerEmail,
+          claimerPhone: claimerPhone ?? null,
+          profession,
+          clinicNameInput: clinicNameInput ?? null,
+          requiresManualReview,
+          otpCode: otp,
+          otpExpiresAt: otpExpiresAt(),
+          status: 'pending_otp',
+        },
+      })
+
+      await sendClaimOtp({ to: claimerEmail, entityName: claimerName, otp })
+
+      return NextResponse.json({ claimId: claim.id, entityName: claimerName, message: 'Verification code sent' })
+    }
+
     const { practitionerSlug, claimerName, claimerEmail, claimerPhone, profession, clinicNameInput, licenseNumber, registryName } = data
 
     const practitioner = await prisma.practitioner.findUnique({

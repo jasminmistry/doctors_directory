@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, User, CheckCircle2 } from 'lucide-react'
-import { RegisterForm } from '@/components/register/RegisterForm'
+import { ClaimWizard } from '@/components/claim/claim-wizard'
+import { getConsentzAuthUrl } from '@/lib/auth'
 import { toDirectoryCanonical } from '@/lib/seo'
 
 export const metadata: Metadata = {
@@ -17,7 +19,19 @@ const BENEFITS = [
   'Build trust with a verified profile badge',
 ]
 
-export default function RegisterPractitionerPage() {
+function getConsentzLoginUrl(): string {
+  try {
+    return new URL(getConsentzAuthUrl()).origin + '/admin/login'
+  } catch {
+    return ''
+  }
+}
+
+interface Props {
+  searchParams: { step?: string; claimId?: string }
+}
+
+export default function RegisterPractitionerPage({ searchParams }: Readonly<Props>) {
   return (
     <main className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto px-4 py-10">
@@ -36,7 +50,7 @@ export default function RegisterPractitionerPage() {
           </div>
           <h1 className="text-2xl font-medium mb-3">Register as a practitioner</h1>
           <p className="text-sm text-muted-foreground">
-            Submit your details below. Our team will review your application and create your listing within 1–2 business days.
+            Verify your email, choose a plan, and our team will review your listing within 24 hours.
           </p>
 
           <ul className="mt-4 space-y-2">
@@ -64,7 +78,16 @@ export default function RegisterPractitionerPage() {
         </div>
 
         <div className="rounded-lg border border-border p-6">
-          <RegisterForm entityType="practitioner" />
+          <Suspense fallback={null}>
+            <ClaimWizard
+              entityType="practitioner"
+              mode="register"
+              entityName=""
+              initialStep={searchParams.step}
+              initialClaimId={searchParams.claimId ? parseInt(searchParams.claimId, 10) : null}
+              consentzLoginUrl={getConsentzLoginUrl()}
+            />
+          </Suspense>
         </div>
       </div>
     </main>

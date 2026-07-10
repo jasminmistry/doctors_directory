@@ -27,12 +27,6 @@ enum AdviceItemType {
   priority_90d
 }
 
-enum PendingStatus {
-  pending
-  approved
-  rejected
-}
-
 enum ClaimEntityType {
   clinic
   practitioner
@@ -611,34 +605,6 @@ model AccreditationBody {
   @@map("accreditation_bodies")
 }
 
-// ============================================================
-// ADMIN — PENDING SUBMISSIONS
-// ============================================================
-
-model PendingClinic {
-  id            Int           @id @default(autoincrement())
-  submittedData String        @db.LongText // raw JSON string until reviewed
-  status        PendingStatus @default(pending)
-  submittedAt   DateTime      @default(now())
-  reviewedAt    DateTime?
-  reviewerNotes String?       @db.Text
-
-  @@index([status])
-  @@map("pending_clinics")
-}
-
-model PendingPractitioner {
-  id            Int           @id @default(autoincrement())
-  submittedData String        @db.LongText // raw JSON string until reviewed
-  status        PendingStatus @default(pending)
-  submittedAt   DateTime      @default(now())
-  reviewedAt    DateTime?
-  reviewerNotes String?       @db.Text
-
-  @@index([status])
-  @@map("pending_practitioners")
-}
-
 model DirectoryEvent {
   id           BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
   timestamp    DateTime @db.DateTime(3)
@@ -715,6 +681,10 @@ model ClaimRequest {
 
   // Anti-fraud
   requiresManualReview Boolean @default(false)
+
+  // New business registration (no existing Clinic/Practitioner row yet)
+  isNewRegistration Boolean @default(false)
+  newListingData    String? @db.LongText // raw JSON string of submitted business details
 
   // Plan & Stripe
   selectedPlan         ClaimPlan?
