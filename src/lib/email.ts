@@ -18,6 +18,10 @@ const FROM = process.env.EMAIL_FROM ?? 'Consentz Directory <noreply@consentz.com
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
 export const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'dax@consent.com'
 
+const EMAIL_HEADER_IMAGE_URL =
+  'https://assets.unlayer.com/projects/0/1777556490007-Frame%205%20(1).png'
+const EMAIL_HEADER = `<img src="${EMAIL_HEADER_IMAGE_URL}" alt="Consentz" style="width:100%;max-width:560px;height:auto;display:block;margin:0 0 24px;border-radius:8px;" />`
+
 export async function sendClaimOtp({
   to,
   entityName,
@@ -51,6 +55,7 @@ If you didn't request this, you can safely ignore this email.
 <html>
 <head><meta charset="utf-8" /></head>
 <body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
   <h2 style="margin-bottom:8px;">Your verification code</h2>
   <p>Enter this code to verify your claim for <strong>${entityName}</strong> on Consentz Directory.</p>
   <div style="margin:24px 0;padding:20px;background:#f5f5f5;border-radius:8px;text-align:center;">
@@ -78,6 +83,7 @@ export async function sendPasswordResetOtp({ to, otp }: { to: string; otp: strin
 <html>
 <head><meta charset="utf-8" /></head>
 <body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
   <h2 style="margin-bottom:8px;">Reset your password</h2>
   <p>Enter this code to set a new password for your Consentz Directory account.</p>
   <div style="margin:24px 0;padding:20px;background:#f5f5f5;border-radius:8px;text-align:center;">
@@ -131,6 +137,7 @@ If you have any questions, contact us at support@consentz.com.
 <html>
 <head><meta charset="utf-8" /></head>
 <body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
   <h2 style="margin-bottom:8px;">Welcome to Consentz Directory</h2>
   <p>Your claim for <strong>${entityName}</strong> has been approved. Here are your login details:</p>
   <table style="margin:24px 0;background:#f5f5f5;border-radius:8px;width:100%;border-collapse:collapse;">
@@ -187,6 +194,7 @@ ${BASE_URL}/directory/portal/login
 <html>
 <head><meta charset="utf-8" /></head>
 <body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
   <h2 style="margin-bottom:8px;">Claim approved!</h2>
   <p>Your claim for <strong>${clinicName}</strong> on Consentz Directory has been approved.</p>
   <p>You're now on the <strong>${plan}</strong> plan.</p>
@@ -238,6 +246,7 @@ ${portalUrl}
 <html>
 <head><meta charset="utf-8" /></head>
 <body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
   <h2 style="margin-bottom:8px;">New consultation request</h2>
   <p>A patient has requested a consultation at <strong>${clinicName}</strong> via Consentz Directory.</p>
   <table style="margin:20px 0;background:#f5f5f5;border-radius:8px;width:100%;border-collapse:collapse;">
@@ -306,6 +315,7 @@ ${portalUrl}
 <html>
 <head><meta charset="utf-8" /></head>
 <body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
   <h2 style="margin-bottom:8px;">New consultation request</h2>
   <p>A patient has requested a consultation at <strong>${clinicName}</strong> via Consentz Directory.</p>
   <table style="margin:20px 0;background:#f5f5f5;border-radius:8px;width:100%;border-collapse:collapse;">
@@ -345,6 +355,7 @@ export async function sendMagicLinkEmail({ to, magicLink }: { to: string; magicL
 <html>
 <head><meta charset="utf-8" /></head>
 <body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
   <h2 style="margin-bottom:8px;">Sign in to Consentz Directory</h2>
   <p>Click the button below to sign in to your account. No password needed.</p>
   <a href="${magicLink}"
@@ -391,6 +402,7 @@ If you believe this is an error or would like to provide additional information,
 <html>
 <head><meta charset="utf-8" /></head>
 <body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
   <h2 style="margin-bottom:8px;">Claim not approved</h2>
   <p>Thank you for submitting your claim for <strong>${entityName}</strong> on Consentz Directory.</p>
   <p>Unfortunately, we were unable to approve your claim at this time.</p>
@@ -439,6 +451,7 @@ ${reviewUrl}
 <html>
 <head><meta charset="utf-8" /></head>
 <body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
   <h2 style="margin-bottom:8px;">Core unlink request</h2>
   <p><strong>${clinicName}</strong> has requested to disconnect their Consentz Core account from the directory.</p>
   <table style="margin:20px 0;background:#f5f5f5;border-radius:8px;width:100%;border-collapse:collapse;">
@@ -526,17 +539,20 @@ export async function sendGhostLeadHook({
   const transport = createTransport()
   const otherLeads = pendingCount - 1
   const otherText = otherLeads > 0 ? ` and ${otherLeads} other pending lead${otherLeads === 1 ? '' : 's'}` : ''
+  const locationText = location ? ` in ${location}` : ''
 
   await transport.sendMail({
     from: FROM,
     to,
-    subject: `${patientFirstName} just requested a consultation at ${clinicName} via Consentz`,
+    subject: `${patientFirstName} has requested a consultation at ${clinicName} via Consentz`,
     text: `
 Hi,
 
-${patientFirstName} just requested a consultation at your clinic via Consentz. You are trending in ${location}!
+${patientFirstName} has requested a consultation at your clinic${locationText} through Consentz.
 
-Claim your profile to see their details${otherText}.
+Claim your ${clinicName} profile to access the patient's details and manage your enquiries${otherText}.
+
+The Consentz Directory connects clinics with their clients — helping patients find the best practitioners in their city, and helping clinics like yours claim their profile and respond to consultation requests.
 
 ${claimUrl}
 
@@ -547,18 +563,22 @@ ${claimUrl}
 <html>
 <head><meta charset="utf-8" /></head>
 <body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
   <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:16px 20px;margin-bottom:24px;">
     <p style="margin:0;font-size:15px;">
-      <strong>${patientFirstName}</strong> just requested a consultation at your clinic via Consentz.
-      You are trending in <strong>${location}</strong>!
+      <strong>${patientFirstName}</strong> has requested a consultation at your clinic${location ? ` in <strong>${location}</strong>` : ''} through Consentz.
     </p>
     ${otherLeads > 0 ? `<p style="margin:8px 0 0;font-size:13px;color:#666;">Plus ${otherLeads} other pending lead${otherLeads === 1 ? '' : 's'} waiting for you.</p>` : ''}
   </div>
-  <p>Claim your <strong>${clinicName}</strong> profile to see their details and start managing your leads.</p>
+  <p>Claim your <strong>${clinicName}</strong> profile to access the patient's details and manage your enquiries.</p>
   <a href="${claimUrl}"
      style="display:inline-block;margin:16px 0 24px;padding:12px 28px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;font-size:15px;">
     Claim your profile
   </a>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="font-size:14px;color:#444;line-height:1.5;">
+    The Consentz Directory connects clinics with their clients — helping patients find the best practitioners in their city, and helping clinics like yours claim their profile and respond to consultation requests.
+  </p>
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
   <p style="color:#999;font-size:12px;">You received this because a patient requested a consultation at ${clinicName} on Consentz Directory.</p>
 </body>
