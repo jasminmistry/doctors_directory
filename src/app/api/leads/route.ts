@@ -6,11 +6,13 @@ import { domainHasMailServer } from '@/lib/email-domain-check'
 import { sendGhostLeadHook, sendLeadNotificationEmail, sendPplLeadTeaserEmail } from '@/lib/email'
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+const NAME_RE = /^[A-Za-z]+(?:[-' ][A-Za-z]+)*$/
+const NAME_ERROR = 'Enter a valid name (letters only, no numbers or symbols).'
 
 const schema = z.object({
   clinicSlug: z.string().trim().min(1),
-  firstName: z.string().trim().min(1, 'First name is required.').max(100),
-  lastName: z.string().trim().min(1, 'Last name is required.').max(100),
+  firstName: z.string().trim().min(1, 'First name is required.').max(50, NAME_ERROR).regex(NAME_RE, NAME_ERROR),
+  lastName: z.string().trim().min(1, 'Last name is required.').max(50, NAME_ERROR).regex(NAME_RE, NAME_ERROR),
   email: z.string().trim().min(1, 'Email address is required.').email('Please enter a valid email address.').max(255),
   phone: z.string().trim().max(20).optional(),
   treatment: z.string().trim().max(255).optional(),

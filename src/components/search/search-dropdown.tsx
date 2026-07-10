@@ -46,14 +46,15 @@ export function SearchDropdown({
     ? "w-full"
     : `grid grid-cols-3 w-full ${clsgrd}`;
 
-  const filteredCategories = (search_categories.filter((category: string) =>
-    category.toLowerCase().includes(localFilters.query.toLowerCase())
-  ).length > 0
-    ? search_categories.filter((category: string) =>
-        category.toLowerCase().includes(localFilters.query.toLowerCase())
-      )
-    : search_categories
-  ).slice().sort((a: string, b: string) => a.localeCompare(b));
+  const categoryQuery = (localFilters.query || "").trim().toLowerCase();
+  const categoryMatches = categoryQuery.length === 0
+    ? search_categories
+    : search_categories.filter((category: string) =>
+        category.toLowerCase().includes(categoryQuery)
+      );
+  const filteredCategories = (categoryMatches.length > 0 ? categoryMatches : search_categories)
+    .slice()
+    .sort((a: string, b: string) => a.localeCompare(b));
 
   const locationQuery = (localFilters.location || "").trim().toLowerCase();
   const filteredLocations = locations.filter(

@@ -31,7 +31,9 @@ interface ConsultationRichFormProps {
 }
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const EMAIL_RE = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/
+const NAME_RE = /^[A-Za-z]+(?:[-' ][A-Za-z]+)*$/
+const NAME_MAX_LENGTH = 50
 
 function isOver18(dob: string): boolean {
   const birth = new Date(dob)
@@ -138,9 +140,15 @@ export function ConsultationRichForm({
     if (!firstName.trim()) {
       setFirstNameError('First name is required.')
       hasError = true
+    } else if (!NAME_RE.test(firstName.trim())) {
+      setFirstNameError('Enter a valid first name (letters only, no numbers or symbols).')
+      hasError = true
     }
     if (!lastName.trim()) {
       setLastNameError('Last name is required.')
+      hasError = true
+    } else if (!NAME_RE.test(lastName.trim())) {
+      setLastNameError('Enter a valid last name (letters only, no numbers or symbols).')
       hasError = true
     }
     if (!email.trim()) {
@@ -190,6 +198,7 @@ export function ConsultationRichForm({
             error={!!firstNameError}
             onChange={(e) => { setFirstName(e.target.value); setFirstNameError('') }}
             autoComplete="given-name"
+            maxLength={NAME_MAX_LENGTH}
           />
         </Field>
         <Field label="Last name" error={lastNameError} required>
@@ -199,6 +208,7 @@ export function ConsultationRichForm({
             error={!!lastNameError}
             onChange={(e) => { setLastName(e.target.value); setLastNameError('') }}
             autoComplete="family-name"
+            maxLength={NAME_MAX_LENGTH}
           />
         </Field>
       </div>
@@ -213,6 +223,7 @@ export function ConsultationRichForm({
           error={!!emailError}
           onChange={(e) => { setEmail(e.target.value); setEmailError('') }}
           autoComplete="email"
+          maxLength={255}
         />
       </Field>
 
@@ -226,6 +237,7 @@ export function ConsultationRichForm({
           error={!!phoneError}
           onChange={(e) => { setPhone(e.target.value); setPhoneError('') }}
           autoComplete="tel"
+          maxLength={20}
         />
       </Field>
 
