@@ -59,8 +59,17 @@ const FEATURES_MARKETING_LINKS = [
 const CONSENTZ_HUB_LINKS = [
   ["Buyer Hub", "/business/"],
   ["Aesthetic Clinic Software", "/business/software/"],
+  ["Consent", "/business/consent/"],
+  ["Automation", "/business/automation/"],
+  ["CQC", "/business/cqc/"],
   ["Templates", "/business/templates/"],
+  ["Compare", "/business/compare/"],
+  ["Migrate", "/business/migrate/"],
+  ["Alternatives", "/business/alternatives/"],
+  ["Pricing", "/business/pricing/"],
+  ["Practitioners", "/business/practitioners/"],
   ["By City", "/business/uk/"],
+  ["By Treatment", "/business/treatments/"],
 ] as const;
 
 const ACCREDITATIONS = [
@@ -308,6 +317,15 @@ export function Footer() {
                 <li>
                   <Link
                     prefetch={false}
+                    href="/clinics/treatment-by-city/"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
+                    Treatments by City
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    prefetch={false}
                     href="/practitioners"
                     className={FOOTER_DIRECTORY_LINK}
                   >
@@ -366,6 +384,11 @@ export function Footer() {
                     className={FOOTER_DIRECTORY_LINK}
                   >
                     Aesthetic Product Categories
+                  </Link>
+                </li>
+                <li>
+                  <Link prefetch={false} href="/sitemap" className={FOOTER_DIRECTORY_LINK}>
+                    HTML Sitemap
                   </Link>
                 </li>
               </ul>

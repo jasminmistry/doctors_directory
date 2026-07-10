@@ -1,11 +1,15 @@
 "use client";
 
-import { useState, useEffect, startTransition } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSearchStore } from "@/app/stores/datastore";
 import { trackSearchUsage } from "@/lib/tracking/client";
+import {
+  resolveUkTreatmentSearchHref,
+  type TreatmentSearchOption,
+} from "@/lib/uk-treatment-search";
 
-export function useSearchLogic() {
+export function useSearchLogic(treatmentSearchOptions: TreatmentSearchOption[] = []) {
   const pathname = usePathname();
   const isSearchPage = pathname.includes("/search");
   const { filters, setFilters } = useSearchStore();
@@ -17,22 +21,17 @@ export function useSearchLogic() {
   const [activeDropdown, setActiveDropdown] = useState<'type' | 'category' | 'location' | null>(null);
 
   const [localFilters, setLocalFilters] = useState(() => {
-    if (pathname.includes("/treatments")) {
+    if (pathname.includes("/treatments") && filters.type !== "Treatments") {
       return { ...filters, type: "Treatments" };
     }
     return filters;
   });
 
   useEffect(() => {
-    if (pathname.includes("/treatments")) {
-      setLocalFilters({ ...filters, type: "Treatments" });
-      return;
-    }
-
     setLocalFilters(filters);
-  }, [filters, pathname]);
+  }, [pathname, filters]);
 
-  const options = pathname.includes("/treatments") ? ["Treatments"] : ["Practitioner", "Clinic", "Product", "Treatments"];
+  const options = ["Practitioner", "Clinic", "Product", "Treatments"];
 
   const getDynamicPlaceholderText = () => {
     let parts = [];
@@ -64,21 +63,40 @@ export function useSearchLogic() {
       category: localFilters.category,
       location: localFilters.location,
     });
-    setFilters(localFilters);
     setShowResults(false);
     setIsExpanded(false);
-    startTransition(() => {
-      if (pathname.includes("/treatments")) {
-        router.push("/treatments?" + new URLSearchParams({
-          query: localFilters.query || "",
-          type: localFilters.type || "",
-          category: localFilters.category || "",
-          location: localFilters.location || "",
-        }).toString());
-      } else {
-        router.push("/search");
+
+    if (localFilters.type === "Treatments") {
+      const treatmentHref = resolveUkTreatmentSearchHref(
+        localFilters.query || "",
+        localFilters.location || "",
+        treatmentSearchOptions
+      );
+      if (treatmentHref) {
+        router.push(treatmentHref);
+        setIsLoading(false);
+        return;
       }
-    });
+    }
+
+    setFilters(localFilters);
+
+    if (pathname.includes("/treatments") && localFilters.type !== "Treatments") {
+      router.push("/search");
+      setIsLoading(false);
+      return;
+    }
+
+    if (pathname.includes("/treatments")) {
+      router.push("/treatments?" + new URLSearchParams({
+        query: localFilters.query || "",
+        type: localFilters.type || "",
+        category: localFilters.category || "",
+        location: localFilters.location || "",
+      }).toString());
+    } else {
+      router.push("/search");
+    }
     setIsLoading(false);
   };
 

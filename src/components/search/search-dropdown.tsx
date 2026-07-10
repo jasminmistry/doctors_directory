@@ -2,6 +2,7 @@
 
 import { useMemo, useRef } from "react";
 import { search_categories, locations } from "@/lib/data";
+import type { TreatmentSearchOption } from "@/lib/uk-treatment-search";
 
 function toTitleCase(str: string) {
   return str.replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -18,6 +19,7 @@ interface SearchDropdownProps {
   };
   options: string[];
   isSearchPage: boolean;
+  treatmentSearchOptions?: TreatmentSearchOption[];
   setLocalFilters: (updater: (prev: any) => any) => void;
   setActiveDropdown: (dropdown: 'type' | 'category' | 'location' | null) => void;
   setShowResults: (show: boolean) => void;
@@ -30,6 +32,7 @@ export function SearchDropdown({
   localFilters,
   options,
   isSearchPage,
+  treatmentSearchOptions = [],
   setLocalFilters,
   setActiveDropdown,
   setShowResults
@@ -54,6 +57,20 @@ export function SearchDropdown({
       )
     : search_categories
   ).slice().sort((a: string, b: string) => a.localeCompare(b));
+
+  const isTreatmentSearch = localFilters.type === "Treatments";
+  const treatmentQuery = localFilters.query.trim().toLowerCase();
+  const filteredTreatments = treatmentSearchOptions.filter((treatment) => {
+    if (!treatmentQuery) return true;
+    return (
+      treatment.name.toLowerCase().includes(treatmentQuery) ||
+      treatment.slug.includes(treatmentQuery.replace(/\s+/g, "-"))
+    );
+  });
+  const middleColumnLabel = isTreatmentSearch ? "Treatments" : "Service Categories";
+  const middleColumnItems = isTreatmentSearch
+    ? filteredTreatments.map((treatment) => treatment.name)
+    : filteredCategories;
 
   const locationQuery = (localFilters.location || "").trim().toLowerCase();
   const filteredLocations = locations.filter(
@@ -142,9 +159,9 @@ export function SearchDropdown({
 
         {(activeDropdown === 'category' || (!isMobile && showResults)) && (
           <div className="flex flex-col min-w-0 h-96">
-            <h3 className="font-semibold text-left text-gray-900 mb-4">Service Categories</h3>
+            <h3 className="font-semibold text-left text-gray-900 mb-4">{middleColumnLabel}</h3>
             <div className="flex-1 space-y-2 overflow-y-auto">
-              {filteredCategories.map((specialty: string) => (
+              {middleColumnItems.map((specialty: string) => (
                 <button
                   key={specialty}
                   onClick={() => handleCategoryClick(specialty)}
