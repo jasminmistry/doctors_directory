@@ -47,6 +47,7 @@ export default function Header() {
   }, [menuOpen]);
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com';
+  const marketingBaseUrl = process.env.NEXT_PUBLIC_MARKETING_BASE_URL || 'https://www.consentz.com';
   const bookDemoHref = b2bBookDemoHref();
 
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
@@ -102,29 +103,29 @@ export default function Header() {
               </button>
               <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <a
-                  href={`${baseUrl}/features/`}
+                  href={`${marketingBaseUrl}/features/`}
                   className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg"
                 >
                   All Features
                 </a>
                 <a
-                  href={`${baseUrl}/clinic-management-software/`}
+                  href={`${marketingBaseUrl}/clinic-management-software/`}
                   className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100"
                 >
                   Clinic Management Software
                 </a>
                 <a
-                  href={`${baseUrl}/hipaa-compliant-medical-spa-software/`}
+                  href={`${marketingBaseUrl}/hipaa-compliant-medical-spa-software/`}
                   className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100 rounded-b-lg"
                 >
                   HIPAA Compliant Medical Spa Software
                 </a>
               </div>
             </div>
-            <a href={`${baseUrl}/blog`} className="font-medium hover:text-black">
+            <a href={`${marketingBaseUrl}/blog`} className="font-medium hover:text-black">
               Blog
             </a>
-            <a href={`${baseUrl}/faqs`} className="font-medium hover:text-black">
+            <a href={`${marketingBaseUrl}/faqs`} className="font-medium hover:text-black">
               Faq's
             </a>
             <div className="relative group">
@@ -252,22 +253,22 @@ export default function Header() {
             </button>
             <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Features</p>
-              <a href={`${baseUrl}/features/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+              <a href={`${marketingBaseUrl}/features/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
                 All Features
               </a>
-              <a href={`${baseUrl}/clinic-management-software/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+              <a href={`${marketingBaseUrl}/clinic-management-software/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
                 Clinic Management Software
               </a>
-              <a href={`${baseUrl}/hipaa-compliant-medical-spa-software/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+              <a href={`${marketingBaseUrl}/hipaa-compliant-medical-spa-software/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
                 HIPAA Compliant Medical Spa Software
               </a>
             </div>
-            <button type="button" className="text-left font-medium hover:text-black">
+            <a href={`${marketingBaseUrl}/blog`} className="text-left font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
               BLOG
-            </button>
-            <button type="button" className="text-left font-medium hover:text-black">
+            </a>
+            <a href={`${marketingBaseUrl}/faqs`} className="text-left font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
               FAQS
-            </button>
+            </a>
             <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">List Your Practice</p>
               <Link href="/register/clinic" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
