@@ -16,6 +16,7 @@ import { PLAN_LABELS } from '@/lib/claim-utils'
 import { invalidateSearchCache } from '@/lib/search-cache'
 import { createClinic } from '@/lib/data-access/clinics'
 import { createPractitioner } from '@/lib/data-access/practitioners'
+import { findOrCreateCityByName } from '@/lib/data-access/cities'
 import { cleanRouteSlug } from '@/lib/utils'
 
 interface NewClinicListingData {
@@ -237,6 +238,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
           listing.clinicNameInput || claim.clinicNameInput || 'clinic',
           (s) => prisma.clinic.findUnique({ where: { slug: s }, select: { id: true } }).then(Boolean),
         )
+        const cityId = listing.city ? await findOrCreateCityByName(listing.city) : null
         const newClinic = await createClinic({
           slug,
           name: listing.clinicNameInput || claim.clinicNameInput || undefined,
@@ -246,6 +248,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
           website: claim.clinicWebsite || undefined,
           email: claim.claimerEmail,
           aboutSection: listing.about || undefined,
+          ...(cityId ? { city: { connect: { id: cityId } } } : {}),
         })
         claim.clinicId = newClinic.id
         claim.clinicSlug = newClinic.slug
