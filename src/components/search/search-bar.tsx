@@ -37,7 +37,7 @@ export function SearchBar({handlePageChange}: Readonly<SearchBarProps>) {
 
   return (
     <div className='relative flex flex-col'>
-      <div className="w-full max-w-6xl mx-auto space-y-6 sm:block">
+      <div className="w-full max-w-7xl px-4 mx-auto space-y-6 sm:block pt-4">
         <MobileSearchView
           isExpanded={isExpanded}
           setIsExpanded={setIsExpanded}

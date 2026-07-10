@@ -4,6 +4,10 @@ import { useMemo, useRef } from "react";
 import { search_categories, locations } from "@/lib/data";
 import type { TreatmentSearchOption } from "@/lib/uk-treatment-search";
 
+function toTitleCase(str: string) {
+  return str.replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+}
+
 interface SearchDropdownProps {
   isMobile: boolean;
   activeDropdown: 'type' | 'category' | 'location' | null;
@@ -37,21 +41,22 @@ export function SearchDropdown({
   if (!isMobile && !showResults && !activeDropdown) return null;
 
   const dropdownClasses = isMobile
-    ? "absolute top-full left-0 w-full bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 mt-1"
-    : "flex w-full bg-white rounded-lg shadow-lg border border-gray-200 p-6";
+    ? "absolute top-full left-0 w-full bg-white rounded-lg border border-gray-200 p-4 z-50 mt-1"
+    : "flex w-full bg-white rounded-lg border border-gray-200 p-6";
 
   const clsgrd = "gap-4";
   const gridClasses = isMobile
     ? "w-full"
     : `grid grid-cols-3 w-full ${clsgrd}`;
 
-  const filteredCategories = search_categories.filter((category: string) =>
+  const filteredCategories = (search_categories.filter((category: string) =>
     category.toLowerCase().includes(localFilters.query.toLowerCase())
   ).length > 0
     ? search_categories.filter((category: string) =>
         category.toLowerCase().includes(localFilters.query.toLowerCase())
       )
-    : search_categories;
+    : search_categories
+  ).slice().sort((a: string, b: string) => a.localeCompare(b));
 
   const isTreatmentSearch = localFilters.type === "Treatments";
   const treatmentQuery = localFilters.query.trim().toLowerCase();
@@ -99,7 +104,7 @@ export function SearchDropdown({
   };
 
   const handleCategoryClick = (specialty: string) => {
-    setLocalFilters((prev) => ({ ...prev, query: specialty }));
+    setLocalFilters((prev) => ({ ...prev, query: toTitleCase(specialty) }));
     setActiveDropdown(null);
     setShowResults(false);
   };
@@ -162,7 +167,7 @@ export function SearchDropdown({
                   onClick={() => handleCategoryClick(specialty)}
                   className="hover:bg-gray-50 hover:text-black active:bg-gray-100 text-left text-sm font-medium w-full flex items-center gap-3 p-2 rounded"
                 >
-                  {specialty}
+                  {toTitleCase(specialty)}
                 </button>
               ))}
             </div>

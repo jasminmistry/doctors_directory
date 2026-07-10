@@ -166,8 +166,8 @@ export function HubComparisonTable({
     ? "px-3 py-3 text-sm font-semibold sm:px-4 sm:py-3"
     : "px-3 py-3 text-sm font-semibold sm:px-4 sm:py-4"
   const tdBase = large
-    ? "px-3 py-3 border-b border-[#E5E7EB] text-sm sm:px-4"
-    : "px-3 py-3 border-b border-[#E5E7EB] text-sm sm:px-4 sm:py-4"
+    ? "px-3 py-3 border-b border-[#e0e0e0] text-sm sm:px-4"
+    : "px-3 py-3 border-b border-[#e0e0e0] text-sm sm:px-4 sm:py-4"
   const featureTd = large
     ? `${tdBase} font-medium text-[#1A1A1A]`
     : `${tdBase} font-semibold text-neutral-900`
@@ -176,7 +176,7 @@ export function HubComparisonTable({
 
   return (
     <section className="mb-12 w-full min-w-0">
-      <div className="w-full min-w-0 overflow-x-auto rounded-xl border border-[#E5E7EB] bg-white">
+      <div className="w-full min-w-0 overflow-x-auto rounded-lg border border-[#e0e0e0] bg-white">
         <table
           className={`w-full border-collapse text-left text-sm ${large ? "table-fixed" : ""} ${tableMinW}`}
         >

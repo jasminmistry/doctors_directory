@@ -49,7 +49,7 @@ export default function AdminVerificationPage() {
   function fetchRequests(status?: string) {
     setLoading(true)
     const qs = status && status !== 'all' ? `?status=${status}` : ''
-    fetch(`/directory/api/admin/verification${qs}`)
+    fetch(`/directory/api/admin/verification${qs}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => { setRequests(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -68,9 +68,9 @@ export default function AdminVerificationPage() {
       })
       if (!res.ok) throw new Error()
       toast.success(action === 'approve' ? 'ID verified — profile updated' : 'Request rejected')
+      setRequests((prev) => prev.filter((r) => r.id !== selected.id))
       setSelected(null)
       setAdminNotes('')
-      fetchRequests(filter)
     } catch {
       toast.error('Failed to update verification request')
     } finally {
@@ -88,7 +88,7 @@ export default function AdminVerificationPage() {
   return (
     <AdminLayout title="ID Verification">
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">ID Verification Requests</h1>
+        <h1 className="text-2xl font-medium">ID Verification Requests</h1>
 
         <div className="flex gap-2">
           {filterTabs.map((tab) => (
@@ -96,7 +96,7 @@ export default function AdminVerificationPage() {
               key={tab.value}
               onClick={() => setFilter(tab.value)}
               className={[
-                'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+                'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                 filter === tab.value
                   ? 'bg-foreground text-background'
                   : 'bg-muted text-muted-foreground hover:text-foreground',
@@ -201,7 +201,7 @@ export default function AdminVerificationPage() {
                         <img
                           src={fileUrl}
                           alt={doc.label}
-                          className="max-h-64 max-w-full rounded-md border object-contain bg-white"
+                          className="max-h-64 max-w-full rounded-lg border object-contain bg-white"
                         />
                       )}
                       {!isImage && (

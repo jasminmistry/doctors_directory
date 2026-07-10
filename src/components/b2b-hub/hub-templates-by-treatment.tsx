@@ -9,9 +9,9 @@ export function HubTemplatesByTreatment() {
   if (featured.length === 0) return null
 
   return (
-    <section className="border-t border-[#E5E7EB] bg-[#FAFAFA] px-4 py-10 sm:px-6">
+    <section className="bg-[#fbfbfb] px-4 py-10 sm:px-6">
       <div className="mx-auto max-w-[960px]">
-        <h2 className="mb-2 text-center text-xl font-bold text-[#111111] md:text-2xl">
+        <h2 className="mb-2 text-center text-xl font-medium text-[#111111] md:text-2xl">
           Browse Templates By Treatment
         </h2>
         <p className="mx-auto mb-8 max-w-[640px] text-center text-sm text-[#6B6B6B] md:text-base">
@@ -22,7 +22,7 @@ export function HubTemplatesByTreatment() {
             <li key={g.slug} className="min-w-0">
               <Link
                 href={templateTreatmentIndexHref(g.slug)}
-                className="flex w-full items-center justify-center rounded-lg border border-[#E2DDD7] bg-white px-3 py-2.5 text-center text-sm font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-neutral-50"
+                className="flex w-full items-center justify-center rounded-lg border border-[#e0e0e0] bg-white px-3 py-2.5 text-center text-sm font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-neutral-50"
               >
                 {g.label}
               </Link>

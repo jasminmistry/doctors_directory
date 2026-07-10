@@ -1,5 +1,5 @@
 "use client"
-import { useRef, useState } from "react"
+import { useState } from "react"
 import {
   Star,
   MapPin,
@@ -8,7 +8,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Practitioner } from "@/lib/types";
 import SocialMediaIcons from "../Clinic/clinicSocialMedia";
@@ -18,7 +17,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
 import { Link as LinkIcon} from "lucide-react"
-import { RequestConsultationDialog, type RequestConsultationDialogHandle } from "@/components/tracking/request-consultation-dialog";
+import { OnlineDot } from "@/components/Clinic/online-dot";
+import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 interface ProfileHeaderProps {
   clinic: Practitioner;
   k_value: any;
@@ -26,7 +26,6 @@ interface ProfileHeaderProps {
 }
 
 export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileHeaderProps>) {
-  const consultationDialogRef = useRef<RequestConsultationDialogHandle>(null)
   const [selectedClinic, setSelectedClinic] = useState(clinic_list[0])
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -60,9 +59,9 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
   })
 
   return (
-    <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-xl px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t-[1px] md:border md:border-[var(--alto)] bg-white md:bg-[var(--primary-bg-color)]">
+    <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-lg px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t-[1px] md:border md:border-[var(--alto)] bg-white md:bg-[var(--primary-bg-color)]">
       {!clinic.claimed && (
-        <Link prefetch={false} href={`/claim/practitioner/${clinic.practitioner_name}`} onClick={(e) => e.preventDefault()}>
+        <Link prefetch={false} href={`/claim/practitioner/${clinic.practitioner_name}`}>
           <Badge
             variant="outline"
             className="absolute top-2 right-2 z-50 mb-2 font-semibold text-balance leading-tight bg-white md:bg-[var(--primary-bg-color)]"
@@ -89,6 +88,9 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
                   <h1 className="inline text-left mb-0 md:m-0 font-semibold text-md md:text-2xl transition-colors md:text-left">
                     {practitionerName}
                   </h1>
+                  {k_value?.claimed && k_value?.slug && (
+                    <OnlineDot slug={k_value.slug} />
+                  )}
                   {clinic.idVerified && (
                     <Badge className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border-emerald-200 text-xs font-medium shrink-0">
                       <ShieldCheck className="h-3 w-3" />
@@ -96,7 +98,7 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
                     </Badge>
                   )}
                   {!clinic.idVerified && clinic.manualVerified && (
-                    <Badge className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 border-blue-200 text-xs font-medium shrink-0">
+                    <Badge className="inline-flex items-center gap-1 bg-blue-100 text-black border-blue-200 text-xs font-medium shrink-0">
                       <ShieldCheck className="h-3 w-3" />
                       Manually Verified
                     </Badge>
@@ -163,22 +165,32 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
 
         <div className="flex flex-col gap-3 justify-center">
           <RequestConsultationDialog
-            ref={consultationDialogRef}
             pageType="practitioner_page"
-            treatment={Array.isArray(k_value?.Treatments) ? k_value.Treatments[0] : clinic.Treatments?.[0]}
+            clinicSlug={k_value?.slug}
+            entityName={practitionerName}
+            entityImage={imgSrc}
+            treatments={Array.isArray(k_value?.Treatments) ? k_value.Treatments : (clinic.Treatments ?? [])}
             location={k_value?.City || clinic.City}
             consultationHref={consultationHref}
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
           />
-          <Button
-            type="button"
-            variant="outline"
-            className="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
-            data-track-cta="true"
-            onClick={() => consultationDialogRef.current?.open()}
-          >
-            Request Pricing
-          </Button>
+          <RequestConsultationDialog
+            pageType="practitioner_page"
+            clinicSlug={k_value?.slug}
+            entityName={practitionerName}
+            entityImage={imgSrc}
+            treatments={Array.isArray(k_value?.Treatments) ? k_value.Treatments : (clinic.Treatments ?? [])}
+            location={k_value?.City || clinic.City}
+            consultationHref={consultationHref}
+            buttonVariant="outline"
+            triggerLabel="Request Pricing"
+            dialogTitle="Request pricing"
+            submitLabel="Send pricing request"
+            treatmentFallback="Pricing Enquiry"
+            openParam="pricing"
+            leadSource="pricing"
+            buttonClassName="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
+          />
           <SocialMediaIcons clinic={k_value} />
         </div>
       </div>

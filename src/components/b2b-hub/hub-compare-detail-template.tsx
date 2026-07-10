@@ -111,10 +111,10 @@ function CompareHeroPreviewCard({ competitorLabel }: { competitorLabel: string }
       </div>
       <div className="flex items-center gap-0 bg-[#f2eee6] px-3 py-2 text-[10px] font-semibold text-[#928b82] sm:px-6 sm:py-2.5 sm:text-[11px]">
         <span className="min-w-0 flex-1 truncate">Feature</span>
-        <span className="flex h-7 w-[72px] sm:w-[88px] shrink-0 items-center justify-center rounded-md bg-[#e0f1ed] text-[11px] font-semibold text-[#1a877a]">
+        <span className="flex h-7 w-[72px] sm:w-[88px] shrink-0 items-center justify-center rounded-lg bg-[#e0f1ed] text-[11px] font-semibold text-[#1a877a]">
           Consentz
         </span>
-        <span className="flex h-7 w-[72px] sm:w-[88px] shrink-0 items-center justify-center rounded-md bg-[#e6e0d8] text-[11px] font-semibold text-[#928b82]">
+        <span className="flex h-7 w-[72px] sm:w-[88px] shrink-0 items-center justify-center rounded-lg bg-[#e6e0d8] text-[11px] font-semibold text-[#928b82]">
           {competitorLabel}
         </span>
       </div>
@@ -161,7 +161,7 @@ function PlatformCard() {
             ))}
           </div>
         ))}
-        <div className="flex justify-center rounded-md bg-[#e0f1ed] px-3.5 py-2">
+        <div className="flex justify-center rounded-lg bg-[#e0f1ed] px-3.5 py-2">
           <span className="text-xs font-semibold text-[#1a877a]">
             All connected in one platform
           </span>
@@ -190,7 +190,7 @@ function TemplateLibraryCard() {
         {items.map(({ label, highlight }) => (
           <div
             key={label}
-            className={`flex items-center gap-2 rounded-md px-3 py-2.5 ${
+            className={`flex items-center gap-2 rounded-lg px-3 py-2.5 ${
               highlight ? "bg-[#e0f1ed]" : ""
             }`}
           >
@@ -202,7 +202,7 @@ function TemplateLibraryCard() {
             </span>
           </div>
         ))}
-        <div className="rounded-md border border-[#e6e0d8] bg-[#faf8f5] px-3.5 py-2 text-center text-xs text-[#928b82]">
+        <div className="rounded-lg border border-[#e6e0d8] bg-[#faf8f5] px-3.5 py-2 text-center text-xs text-[#928b82]">
           48 clinic-ready templates
         </div>
       </div>
@@ -228,7 +228,7 @@ function CqcEvidenceCard() {
         {rows.map((label, i) => (
           <div
             key={label}
-            className={`flex items-center justify-between gap-2 rounded-md px-3.5 py-3 ${
+            className={`flex items-center justify-between gap-2 rounded-lg px-3.5 py-3 ${
               i % 2 === 0 ? "bg-[#faf8f5]" : "bg-white"
             }`}
           >
@@ -266,7 +266,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
     <>
       <section
         className={cn(
-          "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          "w-full border-b border-[#e0e0e0] bg-[var(--primary-bg-color)]",
           HUB_DETAIL_HERO_VIEWPORT_CLASS
         )}
       >
@@ -333,7 +333,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex min-h-[80px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-4 py-4 text-center text-base font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white sm:min-h-[93px] sm:px-5 sm:py-[18px] sm:text-lg md:text-xl"
+                className="flex min-h-[80px] items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-4 py-4 text-center text-base font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white sm:min-h-[93px] sm:px-5 sm:py-[18px] sm:text-lg md:text-xl"
               >
                 <span className="line-clamp-3">{item.label}</span>
               </Link>
@@ -352,16 +352,16 @@ export function HubCompareDetailTemplate({ entry }: Props) {
         <HubCompareFeatureTable id="feature-comparison" competitorLabel={competitorLabel} />
 
         <section className="mb-20">
-          <h2 className="mb-10 text-center text-3xl font-bold tracking-tight text-[#111111] md:text-4xl">
+          <h2 className="mb-10 text-center text-3xl font-medium tracking-tight text-[#111111] md:text-4xl">
             Ready To Switch To Consentz?
           </h2>
           <ol className="mx-auto grid w-full min-w-0 max-w-[900px] list-none gap-6">
             {readyToSwitchSteps.map((step, idx) => (
               <li
                 key={step.title}
-                className="flex w-full min-w-0 gap-5 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 md:p-8"
+                className="flex w-full min-w-0 gap-5 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 md:p-8"
               >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-lg font-bold text-white">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-lg font-medium text-white">
                   {idx + 1}
                 </span>
                 <div className="min-w-0">
@@ -439,8 +439,8 @@ export function HubCompareDetailTemplate({ entry }: Props) {
         />
 
         <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
-          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">Our Latest Blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-gray-600">
             Explore insights and tips to help you manage and grow your aesthetics clinic efficiently.
             Stay informed with our latest articles.
           </p>
@@ -451,7 +451,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image

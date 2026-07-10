@@ -13,7 +13,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -42,14 +42,27 @@ jobs:
         with:
           context: .
           push: true
-          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-staging
-          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-staging,mode=min,compression=zstd
+          cache-from: type=gha,scope=staging
+          cache-to: type=gha,mode=max,scope=staging
           build-args: |
+            NEXT_PUBLIC_DIRECTORY_BASE_URL=${{ vars.STAGING_NEXT_PUBLIC_DIRECTORY_BASE_URL }}
             NEXT_PUBLIC_BASE_URL=${{ vars.STAGING_NEXT_PUBLIC_BASE_URL }}
             NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ vars.STAGING_NEXT_PUBLIC_GA_MEASUREMENT_ID }}
           tags: |
             ${{ env.IMAGE_NAME }}:staging
             ${{ env.IMAGE_NAME }}:staging-${{ github.sha }}
+
+  deploy-and-cleanup:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image name
+        shell: bash
+        run: echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
 
       - name: Copy compose file to server
         uses: appleboy/scp-action@v0.1.7
@@ -61,7 +74,7 @@ jobs:
           source: docker-compose.yml
           target: ${{ env.DEPLOY_DIR }}
 
-      - name: Deploy on server over SSH
+      - name: Deploy and cleanup on server
         uses: appleboy/ssh-action@v1.2.0
         env:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}:staging
@@ -71,6 +84,7 @@ jobs:
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
           DB_ROOT_PASSWORD: ${{ secrets.STAGING_DB_ROOT_PASSWORD }}
+          NEXT_PUBLIC_DIRECTORY_BASE_URL: ${{ vars.STAGING_NEXT_PUBLIC_DIRECTORY_BASE_URL }}
           NEXT_PUBLIC_BASE_URL: ${{ vars.STAGING_NEXT_PUBLIC_BASE_URL }}
           NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.STAGING_NEXT_PUBLIC_GA_MEASUREMENT_ID }}
           CONSENTZ_AUTH_API_URL: ${{ secrets.STAGING_CONSENTZ_AUTH_API_URL }}
@@ -83,12 +97,21 @@ jobs:
           SMTP_PASS: ${{ secrets.STAGING_SMTP_PASS }}
           EMAIL_FROM: ${{ vars.STAGING_EMAIL_FROM }}
           TRACKING_DASHBOARD_TOKEN: ${{ secrets.STAGING_TRACKING_DASHBOARD_TOKEN }}
+          PATIENT_SESSION_SECRET: ${{ secrets.STAGING_PATIENT_SESSION_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.STAGING_GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.STAGING_GOOGLE_CLIENT_SECRET }}
+          GSC_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.STAGING_GSC_SERVICE_ACCOUNT_CREDENTIALS }}
+          GSC_SITE_URL: ${{ vars.STAGING_GSC_SITE_URL }}
+          APPLE_CLIENT_ID: ${{ secrets.STAGING_APPLE_CLIENT_ID }}
+          APPLE_TEAM_ID: ${{ secrets.STAGING_APPLE_TEAM_ID }}
+          APPLE_KEY_ID: ${{ secrets.STAGING_APPLE_KEY_ID }}
+          APPLE_PRIVATE_KEY: ${{ secrets.STAGING_APPLE_PRIVATE_KEY }}
         with:
           host: ${{ secrets.STAGING_SSH_HOST }}
           username: ${{ secrets.STAGING_SSH_USER }}
           key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
           port: ${{ secrets.STAGING_SSH_PORT || '22' }}
-          envs: IMAGE_NAME,DEPLOY_DIR,COMPOSE_PROJECT_NAME,APP_PORT,GHCR_USERNAME,GHCR_TOKEN,DB_ROOT_PASSWORD,NEXT_PUBLIC_BASE_URL,NEXT_PUBLIC_GA_MEASUREMENT_ID,CONSENTZ_AUTH_API_URL,CONSENTZ_APPLICATION_ID,STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,EMAIL_FROM,TRACKING_DASHBOARD_TOKEN
+          envs: IMAGE_NAME,DEPLOY_DIR,COMPOSE_PROJECT_NAME,APP_PORT,GHCR_USERNAME,GHCR_TOKEN,DB_ROOT_PASSWORD,NEXT_PUBLIC_DIRECTORY_BASE_URL,NEXT_PUBLIC_BASE_URL,NEXT_PUBLIC_GA_MEASUREMENT_ID,CONSENTZ_AUTH_API_URL,CONSENTZ_APPLICATION_ID,STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,EMAIL_FROM,TRACKING_DASHBOARD_TOKEN,PATIENT_SESSION_SECRET,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GSC_SERVICE_ACCOUNT_CREDENTIALS,GSC_SITE_URL,APPLE_CLIENT_ID,APPLE_TEAM_ID,APPLE_KEY_ID,APPLE_PRIVATE_KEY
           script: |
             set -euo pipefail
 
@@ -100,17 +123,5 @@ jobs:
 
             echo "Deployment completed successfully"
 
-      - name: Cleanup Docker resources
-        uses: appleboy/ssh-action@v1.2.0
-        if: always()
-        with:
-          host: ${{ secrets.STAGING_SSH_HOST }}
-          username: ${{ secrets.STAGING_SSH_USER }}
-          key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
-          port: ${{ secrets.STAGING_SSH_PORT || '22' }}
-          script_stop: true
-          script: |
-            set -euo pipefail
-            docker image prune -af --filter "until=24h"
-            docker container prune -f
+            docker system prune -af
             echo "Docker cleanup completed"

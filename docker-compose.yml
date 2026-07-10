@@ -34,6 +34,7 @@ services:
     environment:
       DATABASE_URL: mysql://root:${DB_ROOT_PASSWORD}@db:3306/doctor_directory
       REDIS_URL: redis://redis:6379
+      NEXT_PUBLIC_DIRECTORY_BASE_URL: ${NEXT_PUBLIC_DIRECTORY_BASE_URL}
       NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
       NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID}
       CONSENTZ_AUTH_API_URL: ${CONSENTZ_AUTH_API_URL}
@@ -46,6 +47,17 @@ services:
       SMTP_PASS: ${SMTP_PASS}
       EMAIL_FROM: ${EMAIL_FROM}
       TRACKING_DASHBOARD_TOKEN: ${TRACKING_DASHBOARD_TOKEN}
+      PATIENT_SESSION_SECRET: ${PATIENT_SESSION_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GSC_SERVICE_ACCOUNT_CREDENTIALS: ${GSC_SERVICE_ACCOUNT_CREDENTIALS}
+      GSC_SITE_URL: ${GSC_SITE_URL}
+      APPLE_CLIENT_ID: ${APPLE_CLIENT_ID}
+      APPLE_TEAM_ID: ${APPLE_TEAM_ID}
+      APPLE_KEY_ID: ${APPLE_KEY_ID}
+      APPLE_PRIVATE_KEY: ${APPLE_PRIVATE_KEY}
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -55,3 +67,4 @@ services:
 volumes:
   mariadb_data:
   redis_data:
+  uploads_data:

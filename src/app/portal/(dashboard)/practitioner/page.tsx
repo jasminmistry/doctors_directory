@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { PractitionerForm } from '@/components/admin/forms/PractitionerForm'
 
 export const dynamic = 'force-dynamic'
@@ -32,7 +32,8 @@ export default function PortalPractitionerPage() {
   const [entitySlug, setEntitySlug] = useState<string | null>(null)
   const [verificationChecked, setVerificationChecked] = useState(false)
 
-  useEffect(() => {
+  const fetchPractitionerData = useCallback(() => {
+    setVerificationChecked(false)
     fetch('/directory/api/portal/practitioner')
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
@@ -47,6 +48,8 @@ export default function PortalPractitionerPage() {
       .catch(() => {})
       .finally(() => setVerificationChecked(true))
   }, [])
+
+  useEffect(() => { fetchPractitionerData() }, [fetchPractitionerData])
 
   async function handleUpgrade(plan: string) {
     setUpgrading(plan)
@@ -72,17 +75,17 @@ export default function PortalPractitionerPage() {
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
       {/* Subscription card */}
       {subscription && (
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Subscription</h2>
+        <div className="rounded-lg border border-gray-200 bg-white p-5">
+          <h2 className="text-sm font-semibold text-black uppercase tracking-wide mb-4">Subscription</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div>
-              <p className="text-xs text-gray-400 mb-0.5">Plan</p>
+              <p className="text-xs text-gray-600 mb-0.5">Plan</p>
               <p className="font-semibold text-gray-900">
                 {PLAN_LABELS[subscription.plan ?? ''] ?? subscription.plan ?? '—'}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-400 mb-0.5">Status</p>
+              <p className="text-xs text-gray-600 mb-0.5">Status</p>
               <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
                 Active
@@ -90,7 +93,7 @@ export default function PortalPractitionerPage() {
             </div>
             {subscription.approvedAt && (
               <div>
-                <p className="text-xs text-gray-400 mb-0.5">Member since</p>
+                <p className="text-xs text-gray-600 mb-0.5">Member since</p>
                 <p className="text-sm text-gray-700">
                   {new Date(subscription.approvedAt).toLocaleDateString('en-GB', {
                     day: '2-digit', month: 'short', year: 'numeric',
@@ -100,7 +103,7 @@ export default function PortalPractitionerPage() {
             )}
             {subscription.stripeSubscriptionId && (
               <div className="col-span-2 sm:col-span-3">
-                <p className="text-xs text-gray-400 mb-0.5">Subscription ID</p>
+                <p className="text-xs text-gray-600 mb-0.5">Subscription ID</p>
                 <p className="text-xs text-gray-500 font-mono">{subscription.stripeSubscriptionId}</p>
               </div>
             )}
@@ -125,7 +128,7 @@ export default function PortalPractitionerPage() {
                       <p className="text-sm font-semibold text-gray-900">
                         {upgrading === opt.key ? 'Redirecting…' : opt.label}
                       </p>
-                      <p className="text-xs text-gray-400 mt-0.5">{opt.description}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{opt.description}</p>
                     </button>
                   ))}
                 </div>
@@ -137,8 +140,8 @@ export default function PortalPractitionerPage() {
 
       {/* ID Verification */}
       {idVerified === false && entitySlug && (
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Identity Verification</h2>
+        <div className="rounded-2xl border border-[#e4dccf] bg-[#f2eee5] p-6">
+          <h2 className="text-xs font-medium text-[#000000] uppercase tracking-[0.2em] mb-3">Identity Verification</h2>
           <p className="text-sm text-gray-600 mb-4">
             Verify your identity to display an &ldquo;ID Verified&rdquo; badge on your profile, building trust with potential patients.
           </p>
@@ -158,7 +161,7 @@ export default function PortalPractitionerPage() {
           saveUrl="/directory/api/portal/practitioner"
           mode="portal"
           disabled={idVerified !== true}
-          onSaved={() => {}}
+          onSaved={fetchPractitionerData}
           previewHref={profileUrl ?? undefined}
         />
       )}

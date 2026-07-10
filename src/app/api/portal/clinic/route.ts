@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
@@ -11,6 +12,10 @@ const CLINIC_PORTAL_SELECT = {
   city: { select: { slug: true } },
   idVerified: true,
   claimedPlan: true,
+  stripeSubscriptionStatus: true,
+  subscriptionCancelAt: true,
+  coreClinicId: true,
+  coreUnlinkRequestedAt: true,
   image: true,
   gmapsUrl: true,
   gmapsAddress: true,
@@ -54,6 +59,8 @@ export async function GET() {
         plan: clinic.claimedPlan ?? null,
         stripeSubscriptionId: claim?.stripeSubscriptionId ?? null,
         approvedAt: claim?.approvedAt ?? null,
+        stripeStatus: clinic.stripeSubscriptionStatus ?? null,
+        cancelAt: clinic.subscriptionCancelAt ?? null,
       },
     })
   } catch (error) {
@@ -92,6 +99,7 @@ export async function PUT(request: Request) {
       data: validation.data as any,
       select: CLINIC_PORTAL_SELECT,
     })
+    revalidatePath('/portal/clinic')
     const { city, ...rest } = clinic
     return NextResponse.json({ ...rest, citySlug: city?.slug ?? null })
   } catch (error) {

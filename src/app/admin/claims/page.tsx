@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { AdminLayout } from '@/components/admin/AdminLayout'
+import { AdminLayout, useAdminCounts } from '@/components/admin/AdminLayout'
 import { DataTable } from '@/components/admin/DataTable'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -50,6 +50,15 @@ const columns = [
       </Badge>
     ),
   },
+  {
+    key: 'isNewRegistration',
+    label: 'Source',
+    render: (value: boolean) => (
+      <Badge variant={value ? 'default' : 'outline'} className="text-xs">
+        {value ? 'New listing' : 'Claim'}
+      </Badge>
+    ),
+  },
   { key: 'entityName', label: 'Profile' },
   { key: 'claimerName', label: 'Claimer' },
   { key: 'claimerEmail', label: 'Email' },
@@ -83,10 +92,22 @@ const columns = [
   },
 ]
 
+interface NewListingData {
+  clinicNameInput?: string
+  fullName?: string
+  address?: string
+  city?: string
+  category?: string
+  profession?: string
+  about?: string
+}
+
 interface Claim {
   id: number
   entityType: 'clinic' | 'practitioner'
   entityName: string
+  isNewRegistration: boolean
+  newListingData: string | null
   clinicSlug: string | null
   practitionerSlug: string | null
   claimerName: string
@@ -111,6 +132,7 @@ interface Claim {
 }
 
 export default function AdminClaimsPage() {
+  const { refreshCounts } = useAdminCounts()
   const [claims, setClaims] = useState<Claim[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('pending_approval')
@@ -123,17 +145,29 @@ export default function AdminClaimsPage() {
   function fetchClaims(status?: string) {
     setLoading(true)
     const qs = status && status !== 'all' ? `?status=${status}` : ''
-    fetch(`/directory/api/admin/claims${qs}`)
+    fetch(`/directory/api/admin/claims${qs}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data: Claim[]) => {
         if (!Array.isArray(data)) { setClaims([]); setLoading(false); return }
-        const rows = data.map((c) => ({
-          ...c,
-          entityName:
-            c.entityType === 'practitioner'
-              ? (c.practitioner?.displayName ?? c.practitionerSlug ?? '—')
-              : (c.clinic?.name ?? c.clinicSlug ?? '—'),
-        }))
+        const rows = data.map((c) => {
+          if (c.isNewRegistration) {
+            const listing: NewListingData = c.newListingData ? JSON.parse(c.newListingData) : {}
+            return {
+              ...c,
+              entityName:
+                c.entityType === 'practitioner'
+                  ? (c.practitioner?.displayName ?? listing.fullName ?? c.claimerName ?? '—')
+                  : (c.clinic?.name ?? listing.clinicNameInput ?? c.clinicNameInput ?? '—'),
+            }
+          }
+          return {
+            ...c,
+            entityName:
+              c.entityType === 'practitioner'
+                ? (c.practitioner?.displayName ?? c.practitionerSlug ?? '—')
+                : (c.clinic?.name ?? c.clinicSlug ?? '—'),
+          }
+        })
         setClaims(rows)
         setLoading(false)
       })
@@ -194,9 +228,10 @@ export default function AdminClaimsPage() {
       } else {
         toast.success(action === 'approve' ? 'Claim approved' : 'Claim rejected')
       }
+      setClaims((prev) => prev.filter((c) => c.id !== reviewClaim.id))
+      refreshCounts()
       setReviewClaim(null)
       setAdminNotes('')
-      fetchClaims(filter)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to update claim')
     } finally {
@@ -214,7 +249,7 @@ export default function AdminClaimsPage() {
   return (
     <AdminLayout title="Claim Requests">
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">Claim Requests</h1>
+        <h1 className="text-2xl font-medium">Claim Requests</h1>
 
         <div className="flex gap-2">
           {filterTabs.map((tab) => (
@@ -222,7 +257,7 @@ export default function AdminClaimsPage() {
               key={tab.value}
               onClick={() => setFilter(tab.value)}
               className={[
-                'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+                'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                 filter === tab.value
                   ? 'bg-foreground text-background'
                   : 'bg-muted text-muted-foreground hover:text-foreground',
@@ -245,7 +280,7 @@ export default function AdminClaimsPage() {
                     <button
                       onClick={(e) => { e.stopPropagation(); handleMarkPaid(row) }}
                       disabled={markingPaid === row.id}
-                      className="px-2 py-1 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-700 font-medium disabled:opacity-50"
+                      className="px-2 py-1 text-xs rounded-lg bg-gray-900 text-white hover:bg-gray-700 font-medium disabled:opacity-50"
                     >
                       {markingPaid === row.id ? 'Updating…' : 'Mark as Paid'}
                     </button>
@@ -256,7 +291,7 @@ export default function AdminClaimsPage() {
                     <button
                       onClick={(e) => { e.stopPropagation(); handleReprovision(row) }}
                       disabled={reprovisioning === row.id}
-                      className="px-2 py-1 text-xs rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium disabled:opacity-50"
+                      className="px-2 py-1 text-xs rounded-lg border border-[#e0e0e0]  text-gray-700 hover:bg-gray-50 font-medium disabled:opacity-50"
                     >
                       {reprovisioning === row.id ? 'Provisioning…' : 'Reprovision'}
                     </button>
@@ -327,7 +362,7 @@ export default function AdminClaimsPage() {
                     {reviewClaim.clinicWebsite && (
                       <div>
                         <span className="text-muted-foreground">Website</span>
-                        <a href={reviewClaim.clinicWebsite} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 hover:underline truncate block">
+                        <a href={reviewClaim.clinicWebsite} target="_blank" rel="noopener noreferrer" className="font-medium text-black hover:underline truncate block">
                           {reviewClaim.clinicWebsite}
                         </a>
                       </div>
@@ -335,11 +370,36 @@ export default function AdminClaimsPage() {
                     {reviewClaim.googleBusinessLink && (
                       <div className="col-span-2">
                         <span className="text-muted-foreground">Google Business</span>
-                        <a href={reviewClaim.googleBusinessLink} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 hover:underline truncate block">
+                        <a href={reviewClaim.googleBusinessLink} target="_blank" rel="noopener noreferrer" className="font-medium text-black hover:underline truncate block">
                           {reviewClaim.googleBusinessLink}
                         </a>
                       </div>
                     )}
+                    {reviewClaim.isNewRegistration && (() => {
+                      const listing: NewListingData = reviewClaim.newListingData ? JSON.parse(reviewClaim.newListingData) : {}
+                      return (
+                        <>
+                          {listing.address && (
+                            <div className="col-span-2">
+                              <span className="text-muted-foreground">Address</span>
+                              <p className="font-medium">{listing.address}{listing.city ? `, ${listing.city}` : ''}</p>
+                            </div>
+                          )}
+                          {listing.category && (
+                            <div>
+                              <span className="text-muted-foreground">Category</span>
+                              <p className="font-medium">{listing.category}</p>
+                            </div>
+                          )}
+                          {listing.about && (
+                            <div className="col-span-2">
+                              <span className="text-muted-foreground">About</span>
+                              <p className="font-medium whitespace-pre-wrap">{listing.about}</p>
+                            </div>
+                          )}
+                        </>
+                      )
+                    })()}
                   </>
                 )}
 
@@ -369,6 +429,25 @@ export default function AdminClaimsPage() {
                         <p className="text-xs text-amber-700 mt-0.5">Verify manually on the registry website before approving.</p>
                       </div>
                     )}
+                    {reviewClaim.isNewRegistration && (() => {
+                      const listing: NewListingData = reviewClaim.newListingData ? JSON.parse(reviewClaim.newListingData) : {}
+                      return (
+                        <>
+                          {listing.city && (
+                            <div>
+                              <span className="text-muted-foreground">City</span>
+                              <p className="font-medium">{listing.city}</p>
+                            </div>
+                          )}
+                          {listing.about && (
+                            <div className="col-span-2">
+                              <span className="text-muted-foreground">About</span>
+                              <p className="font-medium whitespace-pre-wrap">{listing.about}</p>
+                            </div>
+                          )}
+                        </>
+                      )
+                    })()}
                   </>
                 )}
               </div>

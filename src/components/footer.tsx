@@ -8,11 +8,11 @@ import { cn } from "@/lib/utils";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 
 const FOOTER_COLUMN_HEADING =
-  "font-bold text-[22px] leading-7 text-[#F3F4F6] font-inter mb-5";
+  "font-medium text-base leading-7 text-white font-inter mb-2";
 const FOOTER_WP_LINK =
-  "text-left w-full hover:text-white transition text-base font-semibold leading-6";
+  "block text-sm leading-6 text-gray-300 hover:opacity-70 transition";
 const FOOTER_DIRECTORY_LINK =
-  "block text-base font-semibold leading-6 text-white hover:text-white transition";
+  "block text-sm leading-6 text-gray-300 hover:opacity-70 transition";
 
 const CONSENTZ_SOCIAL = {
   linkedin: "https://www.linkedin.com/company/consentz",
@@ -97,7 +97,7 @@ function FooterLinkList({
   baseUrl: string;
 }) {
   return (
-    <ul className="space-y-3 text-sm">
+    <ul className="space-y-1 text-sm">
       {items.map(([label, path]) => (
         <li key={`${label}-${path}`}>
           {path.startsWith("mailto:") ? (
@@ -109,7 +109,10 @@ function FooterLinkList({
               {label}
             </Link>
           ) : path.startsWith("/directory") ? (
-            <Link href={path.replace(/^\/directory/, "") || "/"} className={FOOTER_DIRECTORY_LINK}>
+            <Link
+              href={path.replace(/^\/directory/, "") || "/"}
+              className={FOOTER_DIRECTORY_LINK}
+            >
               {label}
             </Link>
           ) : (
@@ -144,7 +147,7 @@ function FooterSocialIcon({
         target="_blank"
         rel="noopener noreferrer"
         aria-label={label}
-        className="inline-flex text-white transition-opacity hover:opacity-80"
+        className="inline-flex text-black transition-opacity hover:opacity-80"
       >
         {children}
       </a>
@@ -164,16 +167,16 @@ export function Footer() {
     <>
       <footer
         className={cn(
-          "overflow-visible bg-[var(--dune)] text-white",
+          "overflow-visible text-white bg-[var(--dune)]",
           isBusinessHub
-            ? "pb-8 pt-[clamp(7.5rem,28vw,10.5rem)] md:pb-16 md:pt-16"
-            : "py-8 md:py-16",
+            ? "pb-8 pt-10 md:pb-16 md:pt-16"
+            : "py-4 md:py-4",
         )}
       >
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex flex-col items-center justify-between md:flex-row">
+        <div className="">
+          <div className="border-b border-white/10 mb-10 pb-10 mx-auto max-w-7xl px-6 flex flex-col items-center justify-between md:flex-row">
             <div className="w-full md:w-auto">
-              <section className="mb-2 text-lg font-bold md:text-4xl">
+              <section className="mb-2 text-lg font-medium md:text-3xl">
                 Are you a Practitioner?
               </section>
               <p>Join over 200+ clinics already growing with Consentz.</p>
@@ -186,35 +189,53 @@ export function Footer() {
                 className={
                   isBusinessHub
                     ? HUB_CTA_FOOTER_LIGHT_CLASS
-                    : "inline-flex h-auto items-center justify-center rounded-lg bg-white px-4 py-2 text-base font-semibold text-black transition-colors hover:bg-gray-200 md:px-5 md:py-2 md:text-lg"
+                    : "w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
                 }
               >
-                BOOK DEMO
+                Book Demo
               </a>
             </div>
           </div>
+        </div>
 
-          <div className="my-6 border-t border-white md:my-12" />
-
-          <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
+        <div className="mx-auto max-w-7xl px-6">
+         
+          <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
             <div>
+              <div>
+                <img
+                  src="/directory/images/Consentz Logo light.svg"
+                  alt="Consentz"
+                  width={140}
+                  className="mb-6"
+                />
+                <p className="text-sm font-normal leading-6 text-gray-200 mb-8">
+                  Find qualified healthcare and aesthetic practitioners in your
+                  area. Verified profiles, authentic reviews, and regulatory
+                  compliance.
+                </p>
+              </div>
+
               <h3 className={FOOTER_COLUMN_HEADING}>Contacts</h3>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-1 text-sm">
                 <p className="flex items-center gap-2">
-                  <Phone className="h-5 w-5 shrink-0 text-white" aria-hidden />
+                  <Phone className="h-5 w-5 shrink-0 text-gray-300" aria-hidden />
                   <a href="tel:+442080503372" className={FOOTER_WP_LINK}>
                     (UK) +44 (0) 208 050 3372
                   </a>
                 </p>
                 <p className="flex items-center gap-2">
-                  <Phone className="h-5 w-5 shrink-0 text-white" aria-hidden />
+                  <Phone className="h-5 w-5 shrink-0 text-gray-300" aria-hidden />
                   <a href="tel:+16467861949" className={FOOTER_WP_LINK}>
                     (US) +1 646 786 1949
                   </a>
                 </p>
                 <p className="flex items-center gap-2">
-                  <Mail className="h-5 w-5 shrink-0 text-white" aria-hidden />
-                  <a href="mailto:contact@consentz.com" className={FOOTER_WP_LINK}>
+                  <Mail className="h-5 w-5 shrink-0 text-gray-300" aria-hidden />
+                  <a
+                    href="mailto:contact@consentz.com"
+                    className={FOOTER_WP_LINK}
+                  >
                     contact@consentz.com
                   </a>
                 </p>
@@ -228,57 +249,40 @@ export function Footer() {
 
             <div>
               <h3 className={FOOTER_COLUMN_HEADING}>Features</h3>
-              <FooterLinkList items={FEATURES_PRODUCT_LINKS} baseUrl={baseUrl} />
+              <FooterLinkList
+                items={FEATURES_PRODUCT_LINKS}
+                baseUrl={baseUrl}
+              />
             </div>
 
             <div>
               <h3 className={FOOTER_COLUMN_HEADING}>Features</h3>
-              <FooterLinkList items={FEATURES_MARKETING_LINKS} baseUrl={baseUrl} />
-            </div>
-
-            <div>
-              <h3 className={FOOTER_COLUMN_HEADING}>Get the app</h3>
-              <a
-                href="https://apps.apple.com/us/app/consentz/id1292663553"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src="/directory/images/Consentz Iphone App.webp"
-                  alt="Download Consentz on the App Store"
-                  width={139}
-                />
-              </a>
+              <FooterLinkList
+                items={FEATURES_MARKETING_LINKS}
+                baseUrl={baseUrl}
+              />
             </div>
           </div>
 
-          <div className="my-6 border-t border-white md:my-8" />
+          <div className="my-6 border-t border-white/10 md:my-8" />
 
-          <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
-            <div>
-              <img
-                src="/directory/images/Consentz Logo light.svg"
-                alt="Consentz"
-                width={180}
-                className="mb-6"
-              />
-              <p className="text-base font-semibold leading-6 text-white">
-                Find qualified healthcare and aesthetic practitioners in your
-                area. Verified profiles, authentic reviews, and regulatory
-                compliance.
-              </p>
-            </div>
-
+          <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
             <div>
               <h3 className={FOOTER_COLUMN_HEADING}>For Practitioners</h3>
               <ul className="space-y-3">
                 <li>
-                  <Link href="/register/clinic" className={FOOTER_DIRECTORY_LINK}>
+                  <Link
+                    href="/register/clinic"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
                     Join Directory
                   </Link>
                 </li>
                 <li>
-                  <Link href="/register/practitioner" className={FOOTER_DIRECTORY_LINK}>
+                  <Link
+                    href="/register/practitioner"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
                     Update Profile
                   </Link>
                 </li>
@@ -288,7 +292,10 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <a href="mailto:care@consentz.com" className={FOOTER_DIRECTORY_LINK}>
+                  <a
+                    href="mailto:care@consentz.com"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
                     Support
                   </a>
                 </li>
@@ -299,7 +306,11 @@ export function Footer() {
               <h3 className={FOOTER_COLUMN_HEADING}>Directory</h3>
               <ul className="space-y-3">
                 <li>
-                  <Link prefetch={false} href="/treatments" className={FOOTER_DIRECTORY_LINK}>
+                  <Link
+                    prefetch={false}
+                    href="/treatments"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
                     Aesthetic Treatments
                   </Link>
                 </li>
@@ -313,17 +324,29 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link prefetch={false} href="/practitioners" className={FOOTER_DIRECTORY_LINK}>
+                  <Link
+                    prefetch={false}
+                    href="/practitioners"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
                     Top Aesthetic Practitioners
                   </Link>
                 </li>
                 <li>
-                  <Link prefetch={false} href="/clinics" className={FOOTER_DIRECTORY_LINK}>
+                  <Link
+                    prefetch={false}
+                    href="/clinics"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
                     Top Aesthetic Clinics
                   </Link>
                 </li>
                 <li>
-                  <Link prefetch={false} href="/accredited" className={FOOTER_DIRECTORY_LINK}>
+                  <Link
+                    prefetch={false}
+                    href="/accredited"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
                     Accredited Clinics
                   </Link>
                 </li>
@@ -346,12 +369,20 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link prefetch={false} href="/products/brands" className={FOOTER_DIRECTORY_LINK}>
+                  <Link
+                    prefetch={false}
+                    href="/products/brands"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
                     Aesthetic Product Brands
                   </Link>
                 </li>
                 <li>
-                  <Link prefetch={false} href="/products/category" className={FOOTER_DIRECTORY_LINK}>
+                  <Link
+                    prefetch={false}
+                    href="/products/category"
+                    className={FOOTER_DIRECTORY_LINK}
+                  >
                     Aesthetic Product Categories
                   </Link>
                 </li>
@@ -364,7 +395,9 @@ export function Footer() {
             </div>
 
             <div>
-              <h3 className={FOOTER_COLUMN_HEADING}>Clinics by Accreditation</h3>
+              <h3 className={FOOTER_COLUMN_HEADING}>
+                Clinics by Accreditation
+              </h3>
               <ul className="space-y-3">
                 {ACCREDITATIONS.map(([slug, label]) => (
                   <li key={`clinic-${slug}`}>
@@ -381,7 +414,9 @@ export function Footer() {
             </div>
 
             <div>
-              <h3 className={FOOTER_COLUMN_HEADING}>Practitioners by Accreditation</h3>
+              <h3 className={FOOTER_COLUMN_HEADING}>
+                Practitioners by Accreditation
+              </h3>
               <ul className="space-y-3">
                 {ACCREDITATIONS.map(([slug, label]) => (
                   <li key={`practitioner-${slug}`}>
@@ -400,22 +435,39 @@ export function Footer() {
         </div>
       </footer>
 
-      <div className="border-t border-white bg-[var(--dune)] px-6 py-8">
-        <div className="mx-auto max-w-7xl">
-          <h3 className={`${FOOTER_COLUMN_HEADING} mb-4`}>Consentz Hub</h3>
-          <ul className="flex flex-wrap gap-x-6 gap-y-3">
-            {CONSENTZ_HUB_LINKS.map(([label, path]) => (
-              <li key={path}>
-                <Link href={path} className={FOOTER_DIRECTORY_LINK}>
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+      <div className="border-t border-white/10 bg-[var(--dune)]">
+        <div className="mx-auto max-w-7xl grid grid-cols-1 gap-6 px-6 py-4 lg:grid-cols-2 flex items-center">
+          <div>
+            <h3 className={`${FOOTER_COLUMN_HEADING} mb-4`}>Consentz Hub</h3>
+            <ul className="flex flex-wrap gap-x-6 gap-y-3">
+              {CONSENTZ_HUB_LINKS.map(([label, path]) => (
+                <li key={path}>
+                  <Link href={path} className={FOOTER_DIRECTORY_LINK}>
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="lg:justify-end flex">
+            {/* <h3 className={FOOTER_COLUMN_HEADING}>Get the app</h3> */}
+            <a
+              href="https://apps.apple.com/us/app/consentz/id1292663553"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/directory/images/Download_on_the_App.svg"
+                alt="Download Consentz on the App Store"
+                width={139}
+              />
+            </a>
+          </div>
         </div>
       </div>
 
-      <div className="b-footer bg-[#191918] py-10">
+      <div className="b-footer border-t border-white/10 bg-[var(--dune)] py-4">
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid grid-cols-1 items-center gap-4 text-sm text-white md:grid-cols-2">
             <div className="text-center md:text-left">
@@ -445,7 +497,7 @@ export function Footer() {
                     </g>
                     <defs>
                       <clipPath id="footer-linkedin-clip">
-                        <rect width="24" height="24" fill="white" />
+                        <rect width="24" height="24" fill="black" />
                       </clipPath>
                     </defs>
                   </svg>
@@ -470,7 +522,7 @@ export function Footer() {
                     </g>
                     <defs>
                       <clipPath id="footer-facebook-clip">
-                        <rect width="24" height="24" fill="white" />
+                        <rect width="24" height="24" fill="black" />
                       </clipPath>
                     </defs>
                   </svg>
@@ -495,7 +547,7 @@ export function Footer() {
                     </g>
                     <defs>
                       <clipPath id="footer-instagram-clip">
-                        <rect width="24" height="24" fill="white" />
+                        <rect width="24" height="24" fill="black" />
                       </clipPath>
                     </defs>
                   </svg>

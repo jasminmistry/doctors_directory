@@ -231,7 +231,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
             </Button>
           )}
           <div className="min-w-0">
-            {!isPortal && <p className="text-xs text-gray-400 font-medium">Practitioners</p>}
+            {!isPortal && <p className="text-xs text-gray-500 font-medium">Practitioners</p>}
             <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
           </div>
         </div>
@@ -281,8 +281,8 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
             </Field>
           ) : (
             <div className="flex flex-col justify-end">
-              <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
-              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
+              <span className="text-xs text-gray-500 mb-1.5 font-medium">Slug</span>
+              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{data.slug}</code>
             </div>
           ))}
           <Field label="Title">
@@ -291,9 +291,11 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
           <Field label="Specialty">
             <Input value={data.specialty ?? ''} onChange={(e) => set('specialty', e.target.value || null)} placeholder="e.g. Aesthetic Medicine" />
           </Field>
-          <Field label="Image" fullWidth>
-            <ImageUpload value={data.imageUrl ?? null} onChange={(url) => set('imageUrl', url)} shape="circle" />
-          </Field>
+          {!isPortal && (
+            <Field label="Image" fullWidth>
+              <ImageUpload value={data.imageUrl ?? null} onChange={(url) => set('imageUrl', url)} shape="circle" />
+            </Field>
+          )}
         </div>
       </FormSection>
 
@@ -365,7 +367,7 @@ function LoadingSkeleton() {
         </div>
       </div>
       {[1, 2].map((i) => (
-        <div key={i} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div key={i} className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
           <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
           <div className="grid grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((j) => (

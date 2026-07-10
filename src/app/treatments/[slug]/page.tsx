@@ -489,20 +489,14 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           __html: JSON.stringify(structuredData),
         }}
       />
-      <main className="bg-(--primary-bg-color)">
+      <main className="bg-white">
         {/* Treatment Detail Section */}
         <div className="bg-white">
           <div className="bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-            <div className="container mx-auto max-w-7xl px-4 py-4">
-              <Link className="mb-2 inline-block" href="/" prefetch={false}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Directory
-                </Button>
+            <div className="mx-auto max-w-7xl px-6 py-4">
+              <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
+               <ArrowLeft className="h-4 w-4" />
+                Back to Directory
               </Link>
               <Breadcrumb>
                 <BreadcrumbList>
@@ -511,13 +505,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/directory/treatments">
+                    <BreadcrumbLink href="/treatments">
                       Treatments
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href={`/directory/treatments/category/${treatmentCategorySlug}`}>
+                    <BreadcrumbLink href={`/treatments/category/${treatmentCategorySlug}`}>
                       {treatmentCategory}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
@@ -533,14 +527,14 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
             treatment={treatment}
             treatmentData={treatmentData}
           />
-          <div className="container mx-auto max-w-7xl px-4 pt-2 pb-2">
+          <div className="mx-auto max-w-7xl px-6 pt-2 pb-2">
             <BestRankedBlock
               title={`Best ${treatment.name} Clinics`}
               entries={rankedTreatmentClinics}
             />
           </div>
           {/* Similar Clinics Section */}
-          <div className="container mx-auto max-w-7xl px-4 py-4">
+          <div className="mx-auto max-w-7xl px-6 py-4">
             <div className="px-4 md:px-0 space-y-6 mt-8">
               <h3 className="text-lg font-semibold text-foreground mb-2">
                 Top Clinics for {treatment.name}

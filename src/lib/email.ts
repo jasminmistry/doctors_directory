@@ -16,6 +16,7 @@ function createTransport() {
 
 const FROM = process.env.EMAIL_FROM ?? 'Consentz Directory <noreply@consentz.com>'
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+export const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'dax@consent.com'
 
 export async function sendClaimOtp({
   to,
@@ -64,6 +65,33 @@ If you didn't request this, you can safely ignore this email.
   })
 }
 
+export async function sendPasswordResetOtp({ to, otp }: { to: string; otp: string }) {
+  const transport = createTransport()
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject: 'Reset your Consentz Directory password',
+    text: `Your password reset code is: ${otp}\n\nThis code expires in 10 minutes. If you didn't request this, you can safely ignore this email.`,
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  <h2 style="margin-bottom:8px;">Reset your password</h2>
+  <p>Enter this code to set a new password for your Consentz Directory account.</p>
+  <div style="margin:24px 0;padding:20px;background:#f5f5f5;border-radius:8px;text-align:center;">
+    <span style="font-size:36px;font-weight:700;letter-spacing:8px;color:#111;">${otp}</span>
+  </div>
+  <p style="color:#666;font-size:13px;">This code expires in <strong>10 minutes</strong>. Do not share it with anyone.</p>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">If you didn't request this, you can safely ignore this email.</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
 export async function sendWelcomeEmail({
   to,
   entityName,
@@ -76,7 +104,7 @@ export async function sendWelcomeEmail({
   tempPassword: string
 }) {
   const transport = createTransport()
-  const loginUrl = `${BASE_URL}/directory/admin/login`
+  const loginUrl = `${BASE_URL}/directory/portal/login`
 
   await transport.sendMail({
     from: FROM,
@@ -150,7 +178,7 @@ Great news — your claim for ${clinicName} on Consentz Directory has been appro
 
 You're now on the ${plan} plan. Log in to your dashboard to start managing your profile.
 
-${BASE_URL}/directory/admin
+${BASE_URL}/directory/portal/login
 
 — The Consentz Team
     `.trim(),
@@ -162,7 +190,7 @@ ${BASE_URL}/directory/admin
   <h2 style="margin-bottom:8px;">Claim approved!</h2>
   <p>Your claim for <strong>${clinicName}</strong> on Consentz Directory has been approved.</p>
   <p>You're now on the <strong>${plan}</strong> plan.</p>
-  <a href="${BASE_URL}/directory/admin"
+  <a href="${BASE_URL}/directory/portal/login"
      style="display:inline-block;margin:24px 0;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
     Go to Dashboard
   </a>
@@ -300,6 +328,182 @@ ${portalUrl}
   <p style="color:#999;font-size:12px;">— The Consentz Team</p>
 </body>
 </html>
+    `.trim(),
+  })
+}
+
+export async function sendMagicLinkEmail({ to, magicLink }: { to: string; magicLink: string }) {
+  const transport = createTransport()
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject: 'Sign in to Consentz Directory',
+    text: `Hi,\n\nClick the link below to sign in to your Consentz Directory account:\n\n${magicLink}\n\nThis link expires in 15 minutes and can only be used once.\n\nIf you didn't request this, you can safely ignore this email.\n\n— The Consentz Team`,
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  <h2 style="margin-bottom:8px;">Sign in to Consentz Directory</h2>
+  <p>Click the button below to sign in to your account. No password needed.</p>
+  <a href="${magicLink}"
+     style="display:inline-block;margin:24px 0;padding:14px 28px;background:#111;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">
+    Sign in to your account
+  </a>
+  <p style="color:#666;font-size:13px;">This link expires in <strong>15 minutes</strong> and can only be used once.</p>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">If you didn't request this, you can safely ignore this email.</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
+export async function sendClaimRejectedEmail({
+  to,
+  entityName,
+  adminNotes,
+}: {
+  to: string
+  entityName: string
+  adminNotes?: string | null
+}) {
+  const transport = createTransport()
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject: `Your claim for ${entityName} was not approved`,
+    text: `
+Hi,
+
+Thank you for submitting your claim for ${entityName} on Consentz Directory.
+
+Unfortunately, we were unable to approve your claim at this time.${adminNotes ? `\n\nReason: ${adminNotes}` : ''}
+
+If you believe this is an error or would like to provide additional information, please contact us at support@consentz.com.
+
+— The Consentz Team
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  <h2 style="margin-bottom:8px;">Claim not approved</h2>
+  <p>Thank you for submitting your claim for <strong>${entityName}</strong> on Consentz Directory.</p>
+  <p>Unfortunately, we were unable to approve your claim at this time.</p>
+  ${adminNotes ? `<div style="margin:20px 0;padding:16px;background:#fff3f3;border-left:4px solid #e53e3e;border-radius:4px;"><p style="margin:0;font-size:14px;color:#333;"><strong>Reason:</strong> ${adminNotes}</p></div>` : ''}
+  <p style="color:#666;font-size:14px;">If you believe this is an error or would like to provide additional information, please contact us at <a href="mailto:support@consentz.com" style="color:#111;">support@consentz.com</a>.</p>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">— The Consentz Team</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
+export async function sendUnlinkRequestNotification({
+  clinicName,
+  clinicSlug,
+  coreClinicId,
+  requestedAt,
+}: {
+  clinicName: string
+  clinicSlug: string
+  coreClinicId: number
+  requestedAt: Date
+}) {
+  const transport = createTransport()
+  const reviewUrl = `${BASE_URL}/directory/admin/unlink-requests`
+  const dateStr = requestedAt.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })
+
+  await transport.sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    subject: `Core unlink request — ${clinicName}`,
+    text: `
+${clinicName} has requested to disconnect their Consentz Core account from the directory.
+
+Core Clinic ID: ${coreClinicId}
+Requested at: ${dateStr}
+
+Review and action this request:
+${reviewUrl}
+
+— Consentz Directory
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  <h2 style="margin-bottom:8px;">Core unlink request</h2>
+  <p><strong>${clinicName}</strong> has requested to disconnect their Consentz Core account from the directory.</p>
+  <table style="margin:20px 0;background:#f5f5f5;border-radius:8px;width:100%;border-collapse:collapse;">
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;width:40%;border-bottom:1px solid #e5e5e5;">Clinic</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${clinicName}</td>
+    </tr>
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;border-bottom:1px solid #e5e5e5;">Core Clinic ID</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${coreClinicId}</td>
+    </tr>
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;">Requested at</td>
+      <td style="padding:10px 16px;">${dateStr}</td>
+    </tr>
+  </table>
+  <a href="${reviewUrl}"
+     style="display:inline-block;margin:0 0 24px;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
+    Review unlink requests
+  </a>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">— Consentz Directory</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
+export async function sendTemplateDownloadRequestEmail({
+  clinicName,
+  contactName,
+  email,
+  phone,
+  address,
+  city,
+  website,
+  category,
+  templateTitle,
+}: {
+  clinicName: string
+  contactName: string
+  email: string
+  phone: string
+  address: string
+  city: string
+  website?: string
+  category?: string
+  templateTitle?: string
+}) {
+  const transport = createTransport()
+
+  await transport.sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    subject: `Template download request — ${clinicName}`,
+    text: `
+${contactName} (${clinicName}) requested a template download${templateTitle ? `: ${templateTitle}` : ''}.
+
+Email: ${email}
+Phone: ${phone}
+Address: ${address}, ${city}
+Website: ${website ?? '—'}
+Category: ${category ?? '—'}
+
+— Consentz Directory
     `.trim(),
   })
 }

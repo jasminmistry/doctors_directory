@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
 import { prisma } from '@/lib/db'
 import { invalidateSearchCache } from '@/lib/search-cache'
 
@@ -8,8 +9,8 @@ export async function GET() {
   try {
     const clinics = await prisma.clinic.findMany({
       select: {
-        slug: true, name: true, image: true, category: true, rating: true, reviewCount: true,
-        gmapsAddress: true,
+        slug: true, name: true, image: true, rating: true, reviewCount: true,
+        gmapsAddress: true, gmapsPhone: true, email: true, claimed: true, idVerified: true, claimedPlan: true,
       },
       orderBy: { name: 'asc' },
     })
@@ -29,9 +30,24 @@ export async function POST(request: Request) {
     const name = body.name?.trim()
     if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 })
 
-    const { slug: _s, ...rest } = body
+    const { slug: _s, name: _n, ...rest } = body
+    const validation = clinicEditSchema.safeParse(rest)
+    if (!validation.success) {
+      return NextResponse.json({ error: 'Invalid data', details: validation.error.errors }, { status: 400 })
+    }
+
+    const { isJccp, isCqc, isHiw, isHis, isRqia, ...restData } = validation.data
     const clinic = await prisma.clinic.create({
-      data: { slug, name, ...rest } as any,
+      data: {
+        slug,
+        name,
+        ...restData,
+        isJccp: isJccp ?? false,
+        isCqc: isCqc ?? false,
+        isHiw: isHiw ?? false,
+        isHis: isHis ?? false,
+        isRqia: isRqia ?? false,
+      } as any,
     })
     await invalidateSearchCache()
     return NextResponse.json({ ...clinic, rating: clinic.rating ? Number(clinic.rating) : null }, { status: 201 })

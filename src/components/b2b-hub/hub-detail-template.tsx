@@ -52,7 +52,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
         {seg === "cqc" ? <HubCqcReadinessScore /> : null}
 
         <section className="grid md:grid-cols-2 gap-6 mb-12">
-          <Card className="border-[#E5E7EB] bg-[#FAFAFA] shadow-sm">
+          <Card className="border-[#e0e0e0] bg-[#fbfbfb] shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg">Operational Reality</CardTitle>
               <CardDescription className="text-base leading-relaxed">
@@ -62,7 +62,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card className="border-[#E5E7EB] bg-[#FAFAFA] shadow-sm">
+          <Card className="border-[#e0e0e0] bg-[#fbfbfb] shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg">What Changes With Consentz</CardTitle>
               <CardDescription className="text-base leading-relaxed">
@@ -89,7 +89,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
               <Link
                 key={`${r.segment}-${r.slug}`}
                 href={`/business/${r.segment}/${r.slug}/`}
-                className="inline-flex rounded-[12px] border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-2.5 text-sm font-medium text-neutral-900 hover:border-neutral-400 hover:bg-white transition-all"
+                className="inline-flex rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] px-4 py-2.5 text-sm font-medium text-neutral-900 hover:border-neutral-400 hover:bg-white transition-all"
               >
                 <span className="truncate max-w-[280px] sm:max-w-[320px]">
                   {toDisplayTitle(r.title)}
@@ -131,7 +131,7 @@ export function HubDetailTemplate({ entry, related }: HubDetailTemplateProps) {
           </a>
           <Link
             href="/business/"
-            className="inline-flex items-center justify-center rounded-[12px] border-2 border-neutral-900 bg-white px-8 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors"
+            className="inline-flex h-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
           >
             Back To Buyer Hub
           </Link>
