@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { CityCombobox } from '@/components/claim/city-combobox'
 import { isGenericEmailDomain } from '@/lib/email-domains'
 import { cn } from '@/lib/utils'
 
@@ -327,14 +328,11 @@ export function StepDetails(props: Readonly<Props>) {
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="clinic-city">City</Label>
-                <Input
+                <CityCombobox
                   id="clinic-city"
-                  type="text"
-                  placeholder="London"
                   value={city}
-                  onChange={(e) => { setCity(e.target.value); clearFieldError('city') }}
-                  aria-invalid={!!fieldErrors.city}
-                  className={cn(fieldErrors.city && 'border-destructive')}
+                  onChange={(v) => { setCity(v); clearFieldError('city') }}
+                  invalid={!!fieldErrors.city}
                 />
                 {fieldErrors.city && <p className="text-xs text-destructive">{fieldErrors.city}</p>}
               </div>
@@ -401,14 +399,11 @@ export function StepDetails(props: Readonly<Props>) {
           {isRegister ? (
             <div className="flex flex-col gap-2">
               <Label htmlFor="practitioner-city">City</Label>
-              <Input
+              <CityCombobox
                 id="practitioner-city"
-                type="text"
-                placeholder="London"
                 value={city}
-                onChange={(e) => { setCity(e.target.value); clearFieldError('city') }}
-                aria-invalid={!!fieldErrors.city}
-                className={cn(fieldErrors.city && 'border-destructive')}
+                onChange={(v) => { setCity(v); clearFieldError('city') }}
+                invalid={!!fieldErrors.city}
               />
               {fieldErrors.city && <p className="text-xs text-destructive">{fieldErrors.city}</p>}
             </div>

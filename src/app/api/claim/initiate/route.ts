@@ -17,6 +17,11 @@ function linkTokenExpiresAt(): Date {
   return new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
 }
 
+async function cityExists(name: string): Promise<boolean> {
+  const city = await prisma.city.findFirst({ where: { name: { equals: name.trim() } }, select: { id: true } })
+  return !!city
+}
+
 async function isExistingConsentzUser(email: string): Promise<boolean> {
   try {
     const base = new URL(getConsentzV1Url()).origin
@@ -50,6 +55,10 @@ export async function POST(req: NextRequest) {
 
     if (data.entityType === 'clinic' && data.isNewRegistration) {
       const { claimerName, claimerEmail, clinicNameInput, clinicPhone, clinicWebsite, googleBusinessLink, address, city, category, about } = data
+
+      if (!(await cityExists(city))) {
+        return NextResponse.json({ error: 'Please select a valid city from the list.' }, { status: 400 })
+      }
 
       const requiresManualReview = isGenericEmailDomain(claimerEmail)
       const otp = generateOtp()
@@ -171,6 +180,10 @@ export async function POST(req: NextRequest) {
     // Practitioner
     if (data.isNewRegistration) {
       const { claimerName, claimerEmail, claimerPhone, profession, clinicNameInput, city, about } = data
+
+      if (!(await cityExists(city))) {
+        return NextResponse.json({ error: 'Please select a valid city from the list.' }, { status: 400 })
+      }
 
       const requiresManualReview = isGenericEmailDomain(claimerEmail)
       const otp = generateOtp()
