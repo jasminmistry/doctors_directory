@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSearchStore } from "@/app/stores/datastore";
 import { trackSearchUsage } from "@/lib/tracking/client";
@@ -57,19 +57,24 @@ export function useSearchLogic(treatmentSearchOptions: TreatmentSearchOption[] =
 
   const handleSearch = async () => {
     setIsLoading(true);
+    const trimmedFilters = {
+      ...localFilters,
+      query: localFilters.query?.trim() ?? localFilters.query,
+      location: localFilters.location?.trim() ?? localFilters.location,
+    };
     void trackSearchUsage({
-      query: localFilters.query,
-      type: localFilters.type,
-      category: localFilters.category,
-      location: localFilters.location,
+      query: trimmedFilters.query,
+      type: trimmedFilters.type,
+      category: trimmedFilters.category,
+      location: trimmedFilters.location,
     });
     setShowResults(false);
     setIsExpanded(false);
 
-    if (localFilters.type === "Treatments") {
+    if (trimmedFilters.type === "Treatments") {
       const treatmentHref = resolveUkTreatmentSearchHref(
-        localFilters.query || "",
-        localFilters.location || "",
+        trimmedFilters.query || "",
+        trimmedFilters.location || "",
         treatmentSearchOptions
       );
       if (treatmentHref) {
@@ -79,24 +84,27 @@ export function useSearchLogic(treatmentSearchOptions: TreatmentSearchOption[] =
       }
     }
 
-    setFilters(localFilters);
+    setFilters(trimmedFilters);
+    setLocalFilters(trimmedFilters);
 
-    if (pathname.includes("/treatments") && localFilters.type !== "Treatments") {
+    if (pathname.includes("/treatments") && trimmedFilters.type !== "Treatments") {
       router.push("/search");
       setIsLoading(false);
       return;
     }
 
-    if (pathname.includes("/treatments")) {
-      router.push("/treatments?" + new URLSearchParams({
-        query: localFilters.query || "",
-        type: localFilters.type || "",
-        category: localFilters.category || "",
-        location: localFilters.location || "",
-      }).toString());
-    } else {
-      router.push("/search");
-    }
+    startTransition(() => {
+      if (pathname.includes("/treatments")) {
+        router.push("/treatments?" + new URLSearchParams({
+          query: trimmedFilters.query || "",
+          type: trimmedFilters.type || "",
+          category: trimmedFilters.category || "",
+          location: trimmedFilters.location || "",
+        }).toString());
+      } else {
+        router.push("/search");
+      }
+    });
     setIsLoading(false);
   };
 

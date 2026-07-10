@@ -158,8 +158,9 @@ export async function searchClinicsForListing(params: {
     and.push({ category: params.category })
   }
 
-  if (params.location) {
-    and.push({ gmapsAddress: { contains: params.location } })
+  const trimmedLocation = params.location?.trim()
+  if (trimmedLocation) {
+    and.push({ gmapsAddress: { contains: trimmedLocation } })
   }
 
   if (params.services && params.services.length > 0) {
@@ -353,11 +354,12 @@ export async function searchClinics(params: {
   const where: Prisma.ClinicWhereInput = { isHidden: false }
 
   // Text search across name and address
-  if (params.query) {
+  const trimmedQuery = params.query?.trim()
+  if (trimmedQuery) {
     where.OR = [
-      { name: { contains: params.query } },
-      { gmapsAddress: { contains: params.query } },
-      { slug: { contains: params.query } },
+      { name: { contains: trimmedQuery } },
+      { gmapsAddress: { contains: trimmedQuery } },
+      { slug: { contains: trimmedQuery } },
     ]
   }
 
@@ -367,9 +369,10 @@ export async function searchClinics(params: {
   }
 
   // Location filter
-  if (params.location) {
+  const trimmedLocation = params.location?.trim()
+  if (trimmedLocation) {
     where.gmapsAddress = {
-      contains: params.location,
+      contains: trimmedLocation,
     }
   }
 
