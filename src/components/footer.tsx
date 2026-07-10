@@ -82,10 +82,10 @@ function isBusinessHubPath(pathname: string) {
 
 function FooterLinkList({
   items,
-  baseUrl,
+  marketingBaseUrl,
 }: {
   items: readonly (readonly [string, string])[];
-  baseUrl: string;
+  marketingBaseUrl: string;
 }) {
   return (
     <ul className="space-y-1 text-sm">
@@ -108,7 +108,7 @@ function FooterLinkList({
             </Link>
           ) : (
             <a
-              href={`${baseUrl}${path}`}
+              href={`${marketingBaseUrl}${path}`}
               target="_blank"
               rel="noopener noreferrer"
               className={FOOTER_WP_LINK}
@@ -149,8 +149,8 @@ function FooterSocialIcon({
 export function Footer() {
   const pathname = usePathname() ?? "";
   const isBusinessHub = isBusinessHubPath(pathname);
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
+  const marketingBaseUrl =
+    process.env.NEXT_PUBLIC_MARKETING_BASE_URL || "https://www.consentz.com";
   const bookDemoHref = b2bBookDemoHref();
   const copyrightYear = new Date().getFullYear();
 
@@ -235,14 +235,14 @@ export function Footer() {
 
             <div>
               <h3 className={FOOTER_COLUMN_HEADING}>Consentz vs</h3>
-              <FooterLinkList items={CONSENTZ_VS_LINKS} baseUrl={baseUrl} />
+              <FooterLinkList items={CONSENTZ_VS_LINKS} marketingBaseUrl={marketingBaseUrl} />
             </div>
 
             <div>
               <h3 className={FOOTER_COLUMN_HEADING}>Features</h3>
               <FooterLinkList
                 items={FEATURES_PRODUCT_LINKS}
-                baseUrl={baseUrl}
+                marketingBaseUrl={marketingBaseUrl}
               />
             </div>
 
@@ -250,7 +250,7 @@ export function Footer() {
               <h3 className={FOOTER_COLUMN_HEADING}>Features</h3>
               <FooterLinkList
                 items={FEATURES_MARKETING_LINKS}
-                baseUrl={baseUrl}
+                marketingBaseUrl={marketingBaseUrl}
               />
             </div>
           </div>
@@ -279,7 +279,7 @@ export function Footer() {
                 </li>
                 <li>
                   <a
-                    href={`${baseUrl}/clinic-management-software/`}
+                    href={`${marketingBaseUrl}/clinic-management-software/`}
                     className={FOOTER_DIRECTORY_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
