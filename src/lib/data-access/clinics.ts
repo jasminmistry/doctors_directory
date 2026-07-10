@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/db'
 import { Clinic as PrismaClinic, Prisma } from '@prisma/client'
 import { cache } from 'react'
-import { unstable_cache } from 'next/cache'
 
 // Full clinic type with all relations
 type ClinicWithRelations = Prisma.ClinicGetPayload<{
@@ -47,79 +46,160 @@ export type SearchClinic = Pick<
   Treatments?: string[]
 }
 
+const SEARCH_CLINIC_SELECT = {
+  id: true,
+  slug: true,
+  name: true,
+  image: true,
+  rating: true,
+  reviewCount: true,
+  category: true,
+  gmapsAddress: true,
+  isSaveFace: true,
+  isDoctor: true,
+  isJccp: true,
+  isCqc: true,
+  isHiw: true,
+  isHis: true,
+  isRqia: true,
+  claimed: true,
+  verified: true,
+  idVerified: true,
+  manualVerified: true,
+  city: {
+    select: {
+      name: true,
+    },
+  },
+  treatments: {
+    include: {
+      treatment: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  },
+} satisfies Prisma.ClinicSelect
+
+type SearchClinicRow = Prisma.ClinicGetPayload<{ select: typeof SEARCH_CLINIC_SELECT }>
+
+function mapSearchClinicRow(clinic: SearchClinicRow): SearchClinic {
+  return {
+    id: clinic.id,
+    slug: clinic.slug,
+    name: clinic.name,
+    image: clinic.image,
+    rating: clinic.rating,
+    reviewCount: clinic.reviewCount,
+    category: clinic.category,
+    gmapsAddress: clinic.gmapsAddress,
+    isSaveFace: clinic.isSaveFace,
+    isDoctor: clinic.isDoctor,
+    isJccp: clinic.isJccp,
+    isCqc: clinic.isCqc,
+    isHiw: clinic.isHiw,
+    isHis: clinic.isHis,
+    isRqia: clinic.isRqia,
+    claimed: clinic.claimed,
+    verified: clinic.verified,
+    idVerified: clinic.idVerified,
+    manualVerified: clinic.manualVerified,
+    City: clinic.city?.name,
+    Treatments: clinic.treatments.map((ct) => ct.treatment.name),
+  }
+}
+
 /**
  * Get all clinics with basic info for search (cached)
  */
-export const getAllClinicsForSearch = cache(
-  unstable_cache(
-    async (): Promise<SearchClinic[]> => {
-      const clinics = await prisma.clinic.findMany({
-        where: { isHidden: false },
-        select: {
-          id: true,
-          slug: true,
-          name: true,
-          image: true,
-          rating: true,
-          reviewCount: true,
-          category: true,
-          gmapsAddress: true,
-          isSaveFace: true,
-          isDoctor: true,
-          isJccp: true,
-          isCqc: true,
-          isHiw: true,
-          isHis: true,
-          isRqia: true,
-          claimed: true,
-          verified: true,
-          idVerified: true,
-          manualVerified: true,
-          city: {
-            select: {
-              name: true,
-            },
-          },
-          treatments: {
-            include: {
-              treatment: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-        },
-      })
+export const getAllClinicsForSearch = cache(async (): Promise<SearchClinic[]> => {
+  const clinics = await prisma.clinic.findMany({
+    where: { isHidden: false },
+    select: SEARCH_CLINIC_SELECT,
+  })
 
-      return clinics.map((clinic) => ({
-        id: clinic.id,
-        slug: clinic.slug,
-        name: clinic.name,
-        image: clinic.image,
-        rating: clinic.rating,
-        reviewCount: clinic.reviewCount,
-        category: clinic.category,
-        gmapsAddress: clinic.gmapsAddress,
-        isSaveFace: clinic.isSaveFace,
-        isDoctor: clinic.isDoctor,
-        isJccp: clinic.isJccp,
-        isCqc: clinic.isCqc,
-        isHiw: clinic.isHiw,
-        isHis: clinic.isHis,
-        isRqia: clinic.isRqia,
-        claimed: clinic.claimed,
-        verified: clinic.verified,
-        idVerified: clinic.idVerified,
-        manualVerified: clinic.manualVerified,
-        City: clinic.city?.name,
-        Treatments: clinic.treatments.map((ct) => ct.treatment.name),
-      }))
-    },
-    ['clinics-for-search'],
-    { revalidate: 300 }
-  )
-)
+  return clinics.map(mapSearchClinicRow)
+})
+
+/**
+ * Filtered + paginated clinics for the /search page's Clinic tab. Mirrors the word-tokenized
+ * AND/OR filter semantics that used to run in JS over the full dataset in
+ * src/app/actions/search.ts, but pushed down to a real indexed WHERE + LIMIT/OFFSET query so
+ * only the matching page is fetched.
+ */
+export async function searchClinicsForListing(params: {
+  query?: string
+  category?: string
+  location?: string
+  rating?: number
+  services?: string[]
+  sortBy?: string
+  skip: number
+  take: number
+}): Promise<{ clinics: SearchClinic[]; totalCount: number }> {
+  const and: Prisma.ClinicWhereInput[] = []
+
+  if (params.query) {
+    const words = params.query.toLowerCase().split(/\s+/).filter((word) => word.length > 0)
+    for (const word of words) {
+      and.push({
+        OR: [
+          { slug: { contains: word } },
+          { category: { contains: word } },
+          { gmapsAddress: { contains: word } },
+          { treatments: { some: { treatment: { name: { contains: word } } } } },
+        ],
+      })
+    }
+  }
+
+  if (params.category && params.category !== 'All Categories') {
+    and.push({ category: params.category })
+  }
+
+  if (params.location) {
+    and.push({ gmapsAddress: { contains: params.location } })
+  }
+
+  if (params.services && params.services.length > 0) {
+    // The old JS version compared treatment names case-sensitively against a lowercased
+    // service, which never matched real (Title Case) treatment names and made this filter
+    // always return zero results. MySQL's utf8mb4_unicode_ci collation makes `contains`
+    // case-insensitive here, which fixes that — intentional, confirmed with the team.
+    and.push({
+      OR: params.services.map((service) => ({
+        treatments: { some: { treatment: { name: { contains: service } } } },
+      })),
+    })
+  }
+
+  if (params.rating && params.rating > 0) {
+    and.push({ rating: { gte: params.rating } })
+  }
+
+  const where: Prisma.ClinicWhereInput = and.length > 0 ? { AND: and } : {}
+
+  const orderBy: Prisma.ClinicOrderByWithRelationInput =
+    params.sortBy === 'rating'
+      ? { rating: 'desc' }
+      : params.sortBy === 'reviews'
+        ? { reviewCount: 'desc' }
+        : { id: 'asc' }
+
+  const [rows, totalCount] = await Promise.all([
+    prisma.clinic.findMany({
+      where,
+      orderBy,
+      skip: params.skip,
+      take: params.take,
+      select: SEARCH_CLINIC_SELECT,
+    }),
+    prisma.clinic.count({ where }),
+  ])
+
+  return { clinics: rows.map(mapSearchClinicRow), totalCount }
+}
 
 /**
  * Get a single clinic by slug with all relations (cached)

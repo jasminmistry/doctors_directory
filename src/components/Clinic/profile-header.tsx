@@ -187,10 +187,12 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
           />
           <Button
+            type="button"
             variant="outline"
             onClick={handleRequestPricing}
             disabled={pricingLoading || pricingDone}
             className="w-full shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
+            data-track-cta="true"
           >
             {pricingLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />

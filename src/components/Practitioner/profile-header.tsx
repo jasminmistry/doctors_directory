@@ -18,11 +18,11 @@ import SocialMediaIcons from "../Clinic/clinicSocialMedia";
 import ClinicLabels from "./clinicLabels";
 import ClinicTabsHeader from "./clinicTabsHeader";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import  Link  from "next/link"
+import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
 import { Link as LinkIcon} from "lucide-react"
-import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 import { OnlineDot } from "@/components/Clinic/online-dot";
+import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 interface ProfileHeaderProps {
   clinic: Practitioner;
   k_value: any;
@@ -114,7 +114,6 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
           </Badge>
         </Link>
       )}
-
       <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-center">
         <div className="flex flex-col md:flex-col md:mb-4 md:px-4 md:px-0 lg:mb-0 items-start gap-4 border-b border-[#C4C4C4] md:border-0">
           <div className="flex flex-row flex-wrap items-start md:items-center">
@@ -218,10 +217,12 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
           />
           <Button
+            type="button"
             variant="outline"
             onClick={handleRequestPricing}
             disabled={pricingLoading || pricingDone}
             className="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
+            data-track-cta="true"
           >
             {pricingLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />

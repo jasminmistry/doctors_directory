@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { z } from 'zod'
+import { invalidateSearchCache } from '@/lib/search-cache'
 
 const reviewSchema = z.object({
   action: z.enum(['approve', 'reject']),
@@ -51,6 +52,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
           data: { idVerified: true, manualVerified: true },
         })
       }
+      await invalidateSearchCache()
     }
 
     return NextResponse.json({ success: true })
