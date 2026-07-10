@@ -13,6 +13,7 @@ import {
   splitName,
 } from '@/lib/auth'
 import { PLAN_LABELS } from '@/lib/claim-utils'
+import { invalidateSearchCache } from '@/lib/search-cache'
 
 async function provisionConsentzAccount(
   claim: {
@@ -228,6 +229,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
             },
           }),
         ])
+        await invalidateSearchCache()
       } else if (claim.entityType === 'practitioner' && claim.practitionerId) {
         const licensed = !!claim.licenseNumber
         const verified = claim.affiliated || licensed
@@ -249,6 +251,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
             },
           }),
         ])
+        await invalidateSearchCache()
       }
 
       const tokens = await provisionConsentzAccount(claim, entityName, authToken, storedRefreshToken)

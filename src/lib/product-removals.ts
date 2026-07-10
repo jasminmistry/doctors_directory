@@ -1,6 +1,6 @@
 import { toUrlSlug } from "@/lib/utils"
 
-const REMOVED_PRODUCT_SLUGS = new Set<string>([
+export const REMOVED_PRODUCT_SLUGS = new Set<string>([
   "5-amino-1mq-50mg-60-capsules",
   "aciclovir-400mg-56-tablets",
   "aciclovir-5-cream-2g",

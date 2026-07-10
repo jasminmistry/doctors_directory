@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { invalidateSearchCache } from '@/lib/search-cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
     const clinic = await prisma.clinic.create({
       data: { slug, name, ...rest } as any,
     })
+    await invalidateSearchCache()
     return NextResponse.json({ ...clinic, rating: clinic.rating ? Number(clinic.rating) : null }, { status: 201 })
   } catch (error) {
     console.error('Failed to create clinic:', error)

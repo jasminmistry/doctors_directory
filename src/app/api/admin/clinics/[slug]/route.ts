@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
 import { prisma } from '@/lib/db'
 import { deleteClinic } from '@/lib/data-access/clinics'
+import { invalidateSearchCache } from '@/lib/search-cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -83,6 +84,7 @@ export async function PUT(
       data: validation.data as any,
       select: CLINIC_EDIT_SELECT,
     })
+    await invalidateSearchCache()
     return NextResponse.json({ ...clinic, rating: clinic.rating ? Number(clinic.rating) : null })
   } catch (error) {
     console.error('Failed to update clinic:', error)
@@ -99,6 +101,7 @@ export async function DELETE(
 ) {
   try {
     await deleteClinic(params.slug)
+    await invalidateSearchCache()
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Failed to delete clinic:', error)

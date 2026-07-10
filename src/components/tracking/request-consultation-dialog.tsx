@@ -1,6 +1,6 @@
 "use client"
 
-import { FormEvent, useMemo, useState } from "react"
+import { FormEvent, forwardRef, useImperativeHandle, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,14 +17,18 @@ interface RequestConsultationDialogProps {
   buttonClassName?: string
 }
 
-export function RequestConsultationDialog({
+export interface RequestConsultationDialogHandle {
+  open: () => void
+}
+
+export const RequestConsultationDialog = forwardRef<RequestConsultationDialogHandle, RequestConsultationDialogProps>(function RequestConsultationDialog({
   pageType,
   clinicSlug,
   treatment,
   location,
   consultationHref,
   buttonClassName,
-}: Readonly<RequestConsultationDialogProps>) {
+}, ref) {
   const [open, setOpen] = useState(false)
   const [name, setName] = useState("")
   const [contact, setContact] = useState("")
@@ -47,6 +51,8 @@ export function RequestConsultationDialog({
       })
     }
   }
+
+  useImperativeHandle(ref, () => ({ open: () => handleOpen(true) }))
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -137,4 +143,4 @@ export function RequestConsultationDialog({
       </DialogContent>
     </Dialog>
   )
-}
+})
