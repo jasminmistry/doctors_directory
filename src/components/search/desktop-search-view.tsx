@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { SearchDropdown } from "./search-dropdown";
 import { SearchButton } from "./search-button";
 import { useSearchStore } from "@/app/stores/datastore";
+import type { TreatmentSearchOption } from "@/lib/uk-treatment-search";
 
 interface DesktopSearchViewProps {
   localFilters: any;
@@ -17,6 +18,7 @@ interface DesktopSearchViewProps {
   handleSearch: () => void;
   isLoading: boolean;
   handlePageChange?: (page: number) => void;
+  treatmentSearchOptions: TreatmentSearchOption[];
 }
 
 export function DesktopSearchView({
@@ -28,7 +30,8 @@ export function DesktopSearchView({
   isSearchPage,
   handleSearch,
   isLoading,
-  handlePageChange
+  handlePageChange,
+  treatmentSearchOptions,
 }: DesktopSearchViewProps) {
   const { filters } = useSearchStore();
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -139,6 +142,7 @@ export function DesktopSearchView({
           setLocalFilters={setLocalFilters}
           setActiveDropdown={() => {}}
           setShowResults={setShowResults}
+          treatmentSearchOptions={treatmentSearchOptions}
         />
       )}
     </div>

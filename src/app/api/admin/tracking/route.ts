@@ -5,7 +5,7 @@ import { trackingDashboardTokenOk } from "@/lib/tracking/access"
 export const dynamic = 'force-dynamic'
 
 function parseTab(value: string | null): TrackingTab {
-  return value === "leads" ? "leads" : "events"
+  return value === "leads" ? "leads" : value === "signups" ? "signups" : "events"
 }
 
 function parseIntParam(value: string | null, fallback: number, max: number): number {

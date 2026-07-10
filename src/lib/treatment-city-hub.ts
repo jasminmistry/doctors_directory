@@ -269,6 +269,23 @@ export const getTreatmentCityHubEntries = (): TreatmentCityHubEntry[] => {
   return cachedHubEntries
 }
 
+export const getTreatmentCityHubCitiesForTreatment = (
+  treatmentSlug: string
+): TreatmentCityHubEntry[] => {
+  const canonicalSlug = resolveTreatmentHubSlug(treatmentSlug)
+  return getTreatmentCityHubEntries()
+    .filter((entry) => entry.treatmentSlug === canonicalSlug)
+    .sort((left, right) => {
+      const countDiff = right.listingCount - left.listingCount
+      if (countDiff !== 0) {
+        return countDiff
+      }
+      return left.locationLabel.localeCompare(right.locationLabel, undefined, {
+        sensitivity: 'base',
+      })
+    })
+}
+
 export const getTreatmentCityHubClinics = (
   treatmentSlug: string,
   locationSlug: string
