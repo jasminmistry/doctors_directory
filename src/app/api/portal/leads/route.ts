@@ -37,6 +37,7 @@ export async function GET() {
       patientName: true,
       patientPhone: true,
       patientEmail: true,
+      source: true,
     },
   })
 
@@ -58,6 +59,7 @@ export async function GET() {
       patientName: revealed ? lead.patientName : null,
       patientPhone: revealed ? lead.patientPhone : null,
       patientEmail: revealed ? lead.patientEmail : null,
+      source: lead.source,
     }
   })
 
