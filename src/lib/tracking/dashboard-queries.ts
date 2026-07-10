@@ -1,10 +1,11 @@
 import { Prisma } from "@prisma/client"
+import { getClinicDisplayName } from "@/lib/clinic-display"
 import { hasTrackingDatabaseConfig, prisma } from "@/lib/prisma"
 
 const PAGE_TYPES = ["practitioner_page", "clinic_page", "collection_page", "other"] as const
 const DEVICE_TYPES = ["mobile", "desktop"] as const
 
-export type TrackingTab = "events" | "leads"
+export type TrackingTab = "events" | "leads" | "signups"
 
 export interface TrackingListParams {
   tab: TrackingTab
@@ -297,6 +298,58 @@ function mapLeadRow(row: {
   }
 }
 
+function planDisplayLabel(plan: string | null): string {
+  if (plan === "subscription") return "Subscription (£99/mo)"
+  if (plan === "pay_per_lead") return "Pay per lead (£15/lead)"
+  if (plan === "free") return "Free (£0)"
+  return "Not selected"
+}
+
+function mapSignUpRow(row: {
+  id: number
+  entityType: string
+  claimerName: string
+  claimerEmail: string
+  clinicSlug: string | null
+  practitionerSlug: string | null
+  clinicNameInput: string | null
+  selectedPlan: string | null
+  approvedAt: Date | null
+  createdAt: Date
+  clinic: { name: string | null; slug: string; gmapsUrl: string | null } | null
+  practitioner: { displayName: string | null; slug: string } | null
+}) {
+  const entitySlug =
+    row.entityType === "practitioner"
+      ? row.practitioner?.slug || row.practitionerSlug || "—"
+      : row.clinic?.slug || row.clinicSlug || "—"
+
+  const entityName =
+    row.entityType === "practitioner"
+      ? row.practitioner?.displayName?.trim() ||
+        (row.practitionerSlug
+          ? getClinicDisplayName({ slug: row.practitionerSlug })
+          : "Unknown practitioner")
+      : row.clinic?.name?.trim() ||
+        row.clinicNameInput?.trim() ||
+        getClinicDisplayName({
+          slug: row.clinic?.slug || row.clinicSlug || undefined,
+          url: row.clinic?.gmapsUrl || undefined,
+        })
+
+  return {
+    id: `signup-${row.id}`,
+    timestamp: (row.approvedAt ?? row.createdAt).toISOString(),
+    entity_type: row.entityType,
+    entity_name: entityName,
+    entity_slug: entitySlug,
+    claimer_name: row.claimerName,
+    claimer_email: row.claimerEmail,
+    plan: row.selectedPlan,
+    plan_label: planDisplayLabel(row.selectedPlan),
+  }
+}
+
 export async function listTrackingRows(
   params: TrackingListParams
 ): Promise<{ rows: Record<string, unknown>[]; total: number }> {
@@ -341,6 +394,50 @@ export async function listTrackingRows(
     ])
 
     return { rows: items.map(mapEventRow), total }
+  }
+
+  if (params.tab === "signups") {
+    const where: Prisma.ClaimRequestWhereInput = {
+      status: "approved",
+    }
+    if (timestamp) {
+      where.OR = [
+        { approvedAt: timestamp },
+        { approvedAt: null, createdAt: timestamp },
+      ]
+    }
+    if (q) {
+      where.AND = [
+        {
+          OR: [
+            { claimerName: { contains: q } },
+            { claimerEmail: { contains: q } },
+            { clinicSlug: { contains: q } },
+            { practitionerSlug: { contains: q } },
+            { clinic: { name: { contains: q } } },
+            { clinic: { slug: { contains: q } } },
+            { practitioner: { displayName: { contains: q } } },
+            { practitioner: { slug: { contains: q } } },
+          ],
+        },
+      ]
+    }
+
+    const [items, total] = await prisma.$transaction([
+      prisma.claimRequest.findMany({
+        where,
+        include: {
+          clinic: { select: { name: true, slug: true, gmapsUrl: true } },
+          practitioner: { select: { displayName: true, slug: true } },
+        },
+        orderBy: [{ approvedAt: "desc" }, { createdAt: "desc" }],
+        skip,
+        take,
+      }),
+      prisma.claimRequest.count({ where }),
+    ])
+
+    return { rows: items.map(mapSignUpRow), total }
   }
 
   const where: Prisma.DirectoryLeadWhereInput = {}
