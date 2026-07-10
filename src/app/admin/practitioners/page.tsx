@@ -36,6 +36,13 @@ const columns = [
   { key: 'displayName', label: 'Name' },
   { key: 'specialty', label: 'Specialty' },
   {
+    key: 'cityName',
+    label: 'City',
+    render: (value: string | null) => value
+      ? <span className="text-sm text-gray-700">{value}</span>
+      : <span className="text-xs text-rose-500">Not set</span>,
+  },
+  {
     key: 'claimed',
     label: 'Claimed',
     render: (value: boolean) => value
