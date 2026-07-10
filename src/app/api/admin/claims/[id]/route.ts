@@ -14,6 +14,36 @@ import {
 } from '@/lib/auth'
 import { PLAN_LABELS } from '@/lib/claim-utils'
 import { invalidateSearchCache } from '@/lib/search-cache'
+import { createClinic } from '@/lib/data-access/clinics'
+import { createPractitioner } from '@/lib/data-access/practitioners'
+import { findOrCreateCityByName } from '@/lib/data-access/cities'
+import { cleanRouteSlug } from '@/lib/utils'
+
+interface NewClinicListingData {
+  clinicNameInput?: string
+  address?: string
+  city?: string
+  category?: string
+  about?: string
+}
+
+interface NewPractitionerListingData {
+  fullName?: string
+  profession?: string
+  clinicNameInput?: string
+  city?: string
+  about?: string
+}
+
+async function makeUniqueSlug(base: string, exists: (slug: string) => Promise<boolean>): Promise<string> {
+  const cleaned = cleanRouteSlug(base || '') || 'listing'
+  let slug = cleaned
+  let i = 2
+  while (await exists(slug)) {
+    slug = `${cleaned}-${i++}`
+  }
+  return slug
+}
 
 async function provisionConsentzAccount(
   claim: {
@@ -197,6 +227,50 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       )
     }
 
+    // New registrations have no existing Clinic/Practitioner row — create one now,
+    // before the shared approve/reject logic below (which operates on claim.clinicId /
+    // claim.practitionerId) runs. Leave `claimed` false here; the transaction further
+    // down sets claimed/claimedAt/claimedPlan the same way it does for ordinary claims.
+    if (action === 'approve' && claim.isNewRegistration) {
+      if (claim.entityType === 'clinic' && !claim.clinicId) {
+        const listing: NewClinicListingData = claim.newListingData ? JSON.parse(claim.newListingData) : {}
+        const slug = await makeUniqueSlug(
+          listing.clinicNameInput || claim.clinicNameInput || 'clinic',
+          (s) => prisma.clinic.findUnique({ where: { slug: s }, select: { id: true } }).then(Boolean),
+        )
+        const cityId = listing.city ? await findOrCreateCityByName(listing.city) : null
+        const newClinic = await createClinic({
+          slug,
+          name: listing.clinicNameInput || claim.clinicNameInput || undefined,
+          category: listing.category || undefined,
+          gmapsAddress: [listing.address, listing.city].filter(Boolean).join(', ') || undefined,
+          gmapsPhone: claim.clinicPhone || undefined,
+          website: claim.clinicWebsite || undefined,
+          email: claim.claimerEmail,
+          aboutSection: listing.about || undefined,
+          ...(cityId ? { city: { connect: { id: cityId } } } : {}),
+        })
+        claim.clinicId = newClinic.id
+        claim.clinicSlug = newClinic.slug
+        // No independent source (e.g. Google Maps) to verify against for a brand-new listing.
+        claim.clinic = { name: null, email: newClinic.email, gmapsPhone: null }
+      } else if (claim.entityType === 'practitioner' && !claim.practitionerId) {
+        const listing: NewPractitionerListingData = claim.newListingData ? JSON.parse(claim.newListingData) : {}
+        const slug = await makeUniqueSlug(
+          listing.fullName || claim.claimerName || 'practitioner',
+          (s) => prisma.practitioner.findUnique({ where: { slug: s }, select: { id: true } }).then(Boolean),
+        )
+        const newPractitioner = await createPractitioner({
+          slug,
+          displayName: listing.fullName || claim.claimerName,
+          specialty: listing.profession || claim.profession || undefined,
+        })
+        claim.practitionerId = newPractitioner.id
+        claim.practitionerSlug = newPractitioner.slug
+        claim.practitioner = { displayName: newPractitioner.displayName }
+      }
+    }
+
     const entityName =
       claim.entityType === 'practitioner'
         ? (claim.practitioner?.displayName ?? claim.practitionerSlug ?? '')
@@ -207,7 +281,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         await prisma.$transaction([
           prisma.claimRequest.update({
             where: { id },
-            data: { status: 'approved', adminNotes: adminNotes ?? null, approvedAt: new Date() },
+            data: {
+              status: 'approved',
+              adminNotes: adminNotes ?? null,
+              approvedAt: new Date(),
+              ...(claim.isNewRegistration ? { clinicId: claim.clinicId, clinicSlug: claim.clinicSlug } : {}),
+            },
           }),
           prisma.clinic.update({
             where: { id: claim.clinicId },
@@ -237,7 +316,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         await prisma.$transaction([
           prisma.claimRequest.update({
             where: { id },
-            data: { status: 'approved', adminNotes: adminNotes ?? null, approvedAt: new Date() },
+            data: {
+              status: 'approved',
+              adminNotes: adminNotes ?? null,
+              approvedAt: new Date(),
+              ...(claim.isNewRegistration ? { practitionerId: claim.practitionerId, practitionerSlug: claim.practitionerSlug } : {}),
+            },
           }),
           prisma.practitioner.update({
             where: { id: claim.practitionerId },

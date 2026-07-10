@@ -19,8 +19,7 @@ interface Stats {
   practitioners: number
   products: number
   treatments: number
-  pendingClinics: number
-  pendingPractitioners: number
+  pendingClaims: number
   pendingUnlinkRequests: number
 }
 
@@ -161,7 +160,7 @@ export default function AdminDashboard() {
     fetch('/directory/api/admin/patient-stats').then((r) => r.ok ? r.json() : null).then(setPatientStats).catch(() => {})
   }, [])
 
-  const pending = stats ? stats.pendingClinics + stats.pendingPractitioners : 0
+  const pending = stats ? stats.pendingClaims : 0
 
   return (
     <AdminLayout title="Dashboard">
@@ -199,23 +198,12 @@ export default function AdminDashboard() {
                 {pending} pending approval{pending !== 1 ? 's' : ''}
               </p>
               <p className="text-xs text-amber-700 mt-0.5">
-                {stats.pendingClinics > 0 && `${stats.pendingClinics} clinic${stats.pendingClinics !== 1 ? 's' : ''}`}
-                {stats.pendingClinics > 0 && stats.pendingPractitioners > 0 && ' · '}
-                {stats.pendingPractitioners > 0 && `${stats.pendingPractitioners} practitioner${stats.pendingPractitioners !== 1 ? 's' : ''}`}
+                Claims and new listing registrations awaiting review
               </p>
             </div>
-            <div className="flex gap-2">
-              {stats.pendingClinics > 0 && (
-                <Link href="/admin/pending/clinics" className="text-xs font-medium text-amber-700 hover:text-amber-900 underline underline-offset-2">
-                  Review clinics
-                </Link>
-              )}
-              {stats.pendingPractitioners > 0 && (
-                <Link href="/admin/pending/practitioners" className="text-xs font-medium text-amber-700 hover:text-amber-900 underline underline-offset-2">
-                  Review practitioners
-                </Link>
-              )}
-            </div>
+            <Link href="/admin/claims" className="text-xs font-medium text-amber-700 hover:text-amber-900 underline underline-offset-2">
+              Review claims
+            </Link>
           </div>
         )}
 

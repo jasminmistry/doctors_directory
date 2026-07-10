@@ -4,21 +4,25 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { CityCombobox } from '@/components/claim/city-combobox'
 import { isGenericEmailDomain } from '@/lib/email-domains'
 import { cn } from '@/lib/utils'
 
 interface ClinicProps {
   entityType: 'clinic'
+  mode?: 'claim' | 'register'
   entityName: string
-  clinicSlug: string
-  onSent: (claimId: number, email: string, consentzExists?: boolean, linkToken?: string) => void
+  clinicSlug?: string
+  onSent: (claimId: number, email: string, entityName?: string, consentzExists?: boolean, linkToken?: string) => void
 }
 
 interface PractitionerProps {
   entityType: 'practitioner'
+  mode?: 'claim' | 'register'
   entityName: string
-  practitionerSlug: string
-  onSent: (claimId: number, email: string, consentzExists?: boolean, linkToken?: string) => void
+  practitionerSlug?: string
+  onSent: (claimId: number, email: string, entityName?: string, consentzExists?: boolean, linkToken?: string) => void
 }
 
 type Props = ClinicProps | PractitionerProps
@@ -38,13 +42,15 @@ function isValidEmail(value: string): boolean {
 
 export function StepDetails(props: Readonly<Props>) {
   const { entityType, entityName, onSent } = props
+  const mode = props.mode ?? 'claim'
+  const isRegister = mode === 'register'
 
-  const [name, setName] = useState(entityType === 'practitioner' ? entityName : '')
+  const [name, setName] = useState(entityType === 'practitioner' && !isRegister ? entityName : '')
   const [email, setEmail] = useState('')
   const [isGenericEmail, setIsGenericEmail] = useState(false)
 
   // Clinic-specific
-  const [clinicNameInput, setClinicNameInput] = useState(entityType === 'clinic' ? entityName : '')
+  const [clinicNameInput, setClinicNameInput] = useState(entityType === 'clinic' && !isRegister ? entityName : '')
   const [clinicPhone, setClinicPhone] = useState('')
   const [clinicWebsite, setClinicWebsite] = useState('')
   const [googleBusinessLink, setGoogleBusinessLink] = useState('')
@@ -55,6 +61,12 @@ export function StepDetails(props: Readonly<Props>) {
   const [practitionerClinicName, setPractitionerClinicName] = useState('')
   const [licenseNumber, setLicenseNumber] = useState('')
   const [registryName, setRegistryName] = useState('')
+
+  // Register-only (new business, no existing profile yet)
+  const [address, setAddress] = useState('')
+  const [city, setCity] = useState('')
+  const [category, setCategory] = useState('')
+  const [about, setAbout] = useState('')
 
   const [loading, setLoading] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
@@ -82,12 +94,17 @@ export function StepDetails(props: Readonly<Props>) {
       else if (!isValidEmail(email)) errors.email = 'Please enter a valid email address.'
       if (!clinicPhone.trim()) errors.clinicPhone = 'Phone Number is required.'
       else if (!isValidUkPhone(clinicPhone)) errors.clinicPhone = 'Please enter a valid UK phone number.'
+      if (isRegister) {
+        if (!address.trim()) errors.address = 'Address is required.'
+        if (!city.trim()) errors.city = 'City is required.'
+      }
     } else {
       if (name.trim().length < 2) errors.name = 'Please enter your full name.'
       if (!profession.trim()) errors.profession = 'Profession is required.'
       if (!email.trim()) errors.email = 'Email is required.'
       else if (!isValidEmail(email)) errors.email = 'Please enter a valid email address.'
       if (practitionerPhone.trim() && !isValidUkPhone(practitionerPhone)) errors.practitionerPhone = 'Please enter a valid UK phone number.'
+      if (isRegister && !city.trim()) errors.city = 'City is required.'
     }
     return errors
   }
@@ -99,6 +116,8 @@ export function StepDetails(props: Readonly<Props>) {
     if (lower.includes('email')) return { email: message }
     if (lower.includes('phone')) return entityType === 'clinic' ? { clinicPhone: message } : { practitionerPhone: message }
     if (lower.includes('profession')) return { profession: message }
+    if (lower.includes('address')) return { address: message }
+    if (lower.includes('city')) return { city: message }
     return null
   }
 
@@ -120,24 +139,30 @@ export function StepDetails(props: Readonly<Props>) {
         entityType === 'clinic'
           ? {
               entityType: 'clinic' as const,
-              clinicSlug: (props as ClinicProps).clinicSlug,
+              isNewRegistration: isRegister ? (true as const) : undefined,
+              clinicSlug: isRegister ? undefined : (props as ClinicProps).clinicSlug,
               claimerName: name.trim(),
               claimerEmail: email.trim(),
               clinicNameInput: clinicNameInput.trim(),
               clinicPhone: clinicPhone.trim(),
               clinicWebsite: clinicWebsite.trim() || undefined,
               googleBusinessLink: googleBusinessLink.trim() || undefined,
+              ...(isRegister
+                ? { address: address.trim(), city: city.trim(), category: category.trim() || undefined, about: about.trim() || undefined }
+                : {}),
             }
           : {
               entityType: 'practitioner' as const,
-              practitionerSlug: (props as PractitionerProps).practitionerSlug,
+              isNewRegistration: isRegister ? (true as const) : undefined,
+              practitionerSlug: isRegister ? undefined : (props as PractitionerProps).practitionerSlug,
               claimerName: name.trim(),
               claimerEmail: email.trim(),
               claimerPhone: practitionerPhone.trim() || undefined,
               profession: profession.trim(),
               clinicNameInput: practitionerClinicName.trim() || undefined,
-              licenseNumber: licenseNumber.trim() || undefined,
-              registryName: registryName.trim() || undefined,
+              licenseNumber: isRegister ? undefined : licenseNumber.trim() || undefined,
+              registryName: isRegister ? undefined : registryName.trim() || undefined,
+              ...(isRegister ? { city: city.trim(), about: about.trim() || undefined } : {}),
             }
 
       const res = await fetch('/directory/api/claim/initiate', {
@@ -156,7 +181,7 @@ export function StepDetails(props: Readonly<Props>) {
         }
         return
       }
-      onSent(data.claimId, email, data.consentzUserExists === true, data.linkToken)
+      onSent(data.claimId, email, data.entityName, data.consentzUserExists === true, data.linkToken)
     } catch {
       setFormError('Network error. Please check your connection and try again.')
     } finally {
@@ -168,10 +193,14 @@ export function StepDetails(props: Readonly<Props>) {
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       <div>
         <h2 className="text-xl font-semibold mb-1">
-          {entityType === 'clinic' ? 'Claim your clinic' : 'Claim your profile'}
+          {isRegister
+            ? (entityType === 'clinic' ? 'Register your clinic' : 'Register your profile')
+            : (entityType === 'clinic' ? 'Claim your clinic' : 'Claim your profile')}
         </h2>
         <p className="text-sm text-muted-foreground">
-          Verify you represent <strong>{entityName}</strong>. We&apos;ll send a 6-digit code to your email.
+          {isRegister
+            ? "Tell us about your business. We'll send a 6-digit code to your email to verify it's you."
+            : <>Verify you represent <strong>{entityName}</strong>. We&apos;ll send a 6-digit code to your email.</>}
         </p>
       </div>
 
@@ -281,6 +310,48 @@ export function StepDetails(props: Readonly<Props>) {
             {fieldErrors.clinicPhone && <p className="text-xs text-destructive">{fieldErrors.clinicPhone}</p>}
           </div>
 
+          {isRegister && (
+            <>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="clinic-address">Address</Label>
+                <Input
+                  id="clinic-address"
+                  type="text"
+                  placeholder="123 Harley Street, London"
+                  value={address}
+                  onChange={(e) => { setAddress(e.target.value); clearFieldError('address') }}
+                  aria-invalid={!!fieldErrors.address}
+                  className={cn(fieldErrors.address && 'border-destructive')}
+                />
+                {fieldErrors.address && <p className="text-xs text-destructive">{fieldErrors.address}</p>}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="clinic-city">City</Label>
+                <CityCombobox
+                  id="clinic-city"
+                  value={city}
+                  onChange={(v) => { setCity(v); clearFieldError('city') }}
+                  invalid={!!fieldErrors.city}
+                />
+                {fieldErrors.city && <p className="text-xs text-destructive">{fieldErrors.city}</p>}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="clinic-category">
+                  Specialty / category <span className="text-muted-foreground font-normal">(optional)</span>
+                </Label>
+                <Input
+                  id="clinic-category"
+                  type="text"
+                  placeholder="e.g. Aesthetics, Dermatology"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+              </div>
+            </>
+          )}
+
           <div className="flex flex-col gap-2">
             <Label htmlFor="clinic-website">
               Website <span className="text-muted-foreground font-normal">(optional)</span>
@@ -325,32 +396,62 @@ export function StepDetails(props: Readonly<Props>) {
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="license-number">
-              Licence / registration number <span className="text-muted-foreground font-normal">(optional)</span>
-            </Label>
-            <Input
-              id="license-number"
-              type="text"
-              placeholder="e.g. GMC 1234567"
-              value={licenseNumber}
-              onChange={(e) => setLicenseNumber(e.target.value)}
-            />
-          </div>
-
-          {licenseNumber && (
+          {isRegister ? (
             <div className="flex flex-col gap-2">
-              <Label htmlFor="registry-name">Registry name</Label>
-              <Input
-                id="registry-name"
-                type="text"
-                placeholder="e.g. GMC, NMC, GDC, JCCP"
-                value={registryName}
-                onChange={(e) => setRegistryName(e.target.value)}
+              <Label htmlFor="practitioner-city">City</Label>
+              <CityCombobox
+                id="practitioner-city"
+                value={city}
+                onChange={(v) => { setCity(v); clearFieldError('city') }}
+                invalid={!!fieldErrors.city}
               />
+              {fieldErrors.city && <p className="text-xs text-destructive">{fieldErrors.city}</p>}
             </div>
+          ) : (
+            <>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="license-number">
+                  Licence / registration number <span className="text-muted-foreground font-normal">(optional)</span>
+                </Label>
+                <Input
+                  id="license-number"
+                  type="text"
+                  placeholder="e.g. GMC 1234567"
+                  value={licenseNumber}
+                  onChange={(e) => setLicenseNumber(e.target.value)}
+                />
+              </div>
+
+              {licenseNumber && (
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="registry-name">Registry name</Label>
+                  <Input
+                    id="registry-name"
+                    type="text"
+                    placeholder="e.g. GMC, NMC, GDC, JCCP"
+                    value={registryName}
+                    onChange={(e) => setRegistryName(e.target.value)}
+                  />
+                </div>
+              )}
+            </>
           )}
         </>
+      )}
+
+      {isRegister && (
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="about">
+            About <span className="text-muted-foreground font-normal">(optional)</span>
+          </Label>
+          <Textarea
+            id="about"
+            value={about}
+            onChange={(e) => setAbout(e.target.value)}
+            placeholder={entityType === 'clinic' ? 'Tell us about your clinic and the services you offer…' : 'Tell us about your background and experience…'}
+            rows={4}
+          />
+        </div>
       )}
 
       {formError && <p className="text-sm text-destructive">{formError}</p>}

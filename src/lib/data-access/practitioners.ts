@@ -190,3 +190,7 @@ export const getPractitionerBySlug = cache(async (slug: string): Promise<Practit
 export async function updatePractitioner(slug: string, data: Prisma.PractitionerUpdateInput) {
   return await prisma.practitioner.update({ where: { slug }, data })
 }
+
+export async function createPractitioner(data: Prisma.PractitionerCreateInput) {
+  return await prisma.practitioner.create({ data })
+}

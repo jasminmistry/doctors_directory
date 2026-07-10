@@ -8,11 +8,13 @@ import { StepPending } from './step-pending'
 import { StepConsentzExists } from './step-consentz-exists'
 
 type Step = 'details' | 'verify-otp' | 'plan' | 'pending' | 'consentz-exists'
+type Mode = 'claim' | 'register'
 
 interface ClinicProps {
   entityType: 'clinic'
+  mode?: Mode
   entityName: string
-  clinicSlug: string
+  clinicSlug?: string
   initialStep?: string | null
   initialClaimId?: number | null
   consentzLoginUrl: string
@@ -20,8 +22,9 @@ interface ClinicProps {
 
 interface PractitionerProps {
   entityType: 'practitioner'
+  mode?: Mode
   entityName: string
-  practitionerSlug: string
+  practitionerSlug?: string
   initialStep?: string | null
   initialClaimId?: number | null
   consentzLoginUrl: string
@@ -42,7 +45,8 @@ function toStep(value?: string | null): Step {
 const STEP_NUM: Record<Step, number> = { details: 1, 'verify-otp': 2, plan: 3, pending: 4, 'consentz-exists': 0 }
 
 export function ClaimWizard(props: Readonly<Props>) {
-  const { entityType, entityName, initialStep, initialClaimId, consentzLoginUrl } = props
+  const { entityType, initialStep, initialClaimId, consentzLoginUrl } = props
+  const mode = props.mode ?? 'claim'
 
   const [step, setStep] = useState<Step>(toStep(initialStep))
   const [claimId, setClaimId] = useState<number | null>(initialClaimId ?? null)
@@ -50,10 +54,12 @@ export function ClaimWizard(props: Readonly<Props>) {
   const [linkToken, setLinkToken] = useState('')
   const [domainVerified, setDomainVerified] = useState(false)
   const [affiliated, setAffiliated] = useState(false)
+  const [entityName, setEntityName] = useState(props.entityName)
 
-  function handleSent(id: number, email: string, consentzExists?: boolean, token?: string) {
+  function handleSent(id: number, email: string, name?: string, consentzExists?: boolean, token?: string) {
     setClaimId(id)
     setClaimerEmail(email)
+    if (name) setEntityName(name)
     if (consentzExists && token) {
       setLinkToken(token)
       setStep('consentz-exists')
@@ -109,6 +115,7 @@ export function ClaimWizard(props: Readonly<Props>) {
         entityType === 'clinic' ? (
           <StepDetails
             entityType="clinic"
+            mode={mode}
             entityName={entityName}
             clinicSlug={(props as ClinicProps).clinicSlug}
             onSent={handleSent}
@@ -116,6 +123,7 @@ export function ClaimWizard(props: Readonly<Props>) {
         ) : (
           <StepDetails
             entityType="practitioner"
+            mode={mode}
             entityName={entityName}
             practitionerSlug={(props as PractitionerProps).practitionerSlug}
             onSent={handleSent}
@@ -144,7 +152,7 @@ export function ClaimWizard(props: Readonly<Props>) {
           />
           <StepChoosePlan
             claimId={claimId}
-            entitySlug={entityType === 'practitioner' ? `practitioner/${entitySlug}` : entitySlug}
+            entitySlug={entityType === 'practitioner' ? `practitioner/${entitySlug ?? ''}` : entitySlug ?? ''}
             onPending={() => setStep('pending')}
           />
         </div>
@@ -153,7 +161,7 @@ export function ClaimWizard(props: Readonly<Props>) {
       {step === 'consentz-exists' && claimId !== null && (
         <StepConsentzExists
           entityName={entityName}
-          entitySlug={entitySlug}
+          entitySlug={entitySlug ?? ''}
           entityType={entityType}
           linkToken={linkToken}
           consentzLoginUrl={consentzLoginUrl}
@@ -162,7 +170,7 @@ export function ClaimWizard(props: Readonly<Props>) {
       )}
 
       {step === 'pending' && (
-        <StepPending entityName={entityName} entityType={entityType} />
+        <StepPending entityName={entityName} entityType={entityType} mode={mode} />
       )}
     </div>
   )

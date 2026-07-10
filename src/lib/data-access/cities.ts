@@ -3,6 +3,7 @@ import { cache } from 'react'
 import { unstable_cache } from 'next/cache'
 import type { City as PrismaCity } from '@prisma/client'
 import type { City } from '@/lib/types'
+import { toUrlSlug } from '@/lib/utils'
 
 export function convertDbCityToOldType(city: PrismaCity): City {
   return {
@@ -67,3 +68,25 @@ export const getAllCitiesOldFormat = cache(
     { revalidate: 300 }
   )
 )
+
+/**
+ * Resolve a free-text city name (e.g. from a registration form) to a City row,
+ * matching an existing city by name first so clinic URLs line up with the
+ * city pages that already exist, and only creating a new row if none matches.
+ */
+export async function findOrCreateCityByName(name: string): Promise<number> {
+  const trimmed = name.trim()
+  const existing = await prisma.city.findFirst({
+    where: { name: { equals: trimmed } },
+    select: { id: true },
+  })
+  if (existing) return existing.id
+
+  const slug = toUrlSlug(trimmed) || 'unknown'
+  const city = await prisma.city.upsert({
+    where: { slug },
+    update: {},
+    create: { slug, name: trimmed },
+  })
+  return city.id
+}

@@ -17,6 +17,11 @@ function linkTokenExpiresAt(): Date {
   return new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
 }
 
+async function cityExists(name: string): Promise<boolean> {
+  const city = await prisma.city.findFirst({ where: { name: { equals: name.trim() } }, select: { id: true } })
+  return !!city
+}
+
 async function isExistingConsentzUser(email: string): Promise<boolean> {
   try {
     const base = new URL(getConsentzV1Url()).origin
@@ -46,6 +51,39 @@ export async function POST(req: NextRequest) {
 
     if (!(await domainHasMailServer(data.claimerEmail))) {
       return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
+    }
+
+    if (data.entityType === 'clinic' && data.isNewRegistration) {
+      const { claimerName, claimerEmail, clinicNameInput, clinicPhone, clinicWebsite, googleBusinessLink, address, city, category, about } = data
+
+      if (!(await cityExists(city))) {
+        return NextResponse.json({ error: 'Please select a valid city from the list.' }, { status: 400 })
+      }
+
+      const requiresManualReview = isGenericEmailDomain(claimerEmail)
+      const otp = generateOtp()
+      const claim = await prisma.claimRequest.create({
+        data: {
+          entityType: 'clinic',
+          isNewRegistration: true,
+          newListingData: JSON.stringify({ clinicNameInput, address, city, category, about }),
+          claimerName,
+          claimerEmail,
+          claimerPhone: clinicPhone,
+          clinicNameInput,
+          clinicPhone,
+          clinicWebsite: clinicWebsite || null,
+          googleBusinessLink: googleBusinessLink || null,
+          requiresManualReview,
+          otpCode: otp,
+          otpExpiresAt: otpExpiresAt(),
+          status: 'pending_otp',
+        },
+      })
+
+      await sendClaimOtp({ to: claimerEmail, entityName: clinicNameInput, otp })
+
+      return NextResponse.json({ claimId: claim.id, entityName: clinicNameInput, message: 'Verification code sent' })
     }
 
     if (data.entityType === 'clinic') {
@@ -140,6 +178,37 @@ export async function POST(req: NextRequest) {
     }
 
     // Practitioner
+    if (data.isNewRegistration) {
+      const { claimerName, claimerEmail, claimerPhone, profession, clinicNameInput, city, about } = data
+
+      if (!(await cityExists(city))) {
+        return NextResponse.json({ error: 'Please select a valid city from the list.' }, { status: 400 })
+      }
+
+      const requiresManualReview = isGenericEmailDomain(claimerEmail)
+      const otp = generateOtp()
+      const claim = await prisma.claimRequest.create({
+        data: {
+          entityType: 'practitioner',
+          isNewRegistration: true,
+          newListingData: JSON.stringify({ fullName: claimerName, profession, clinicNameInput, city, about }),
+          claimerName,
+          claimerEmail,
+          claimerPhone: claimerPhone ?? null,
+          profession,
+          clinicNameInput: clinicNameInput ?? null,
+          requiresManualReview,
+          otpCode: otp,
+          otpExpiresAt: otpExpiresAt(),
+          status: 'pending_otp',
+        },
+      })
+
+      await sendClaimOtp({ to: claimerEmail, entityName: claimerName, otp })
+
+      return NextResponse.json({ claimId: claim.id, entityName: claimerName, message: 'Verification code sent' })
+    }
+
     const { practitionerSlug, claimerName, claimerEmail, claimerPhone, profession, clinicNameInput, licenseNumber, registryName } = data
 
     const practitioner = await prisma.practitioner.findUnique({

@@ -467,6 +467,47 @@ ${reviewUrl}
   })
 }
 
+export async function sendTemplateDownloadRequestEmail({
+  clinicName,
+  contactName,
+  email,
+  phone,
+  address,
+  city,
+  website,
+  category,
+  templateTitle,
+}: {
+  clinicName: string
+  contactName: string
+  email: string
+  phone: string
+  address: string
+  city: string
+  website?: string
+  category?: string
+  templateTitle?: string
+}) {
+  const transport = createTransport()
+
+  await transport.sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    subject: `Template download request — ${clinicName}`,
+    text: `
+${contactName} (${clinicName}) requested a template download${templateTitle ? `: ${templateTitle}` : ''}.
+
+Email: ${email}
+Phone: ${phone}
+Address: ${address}, ${city}
+Website: ${website ?? '—'}
+Category: ${category ?? '—'}
+
+— Consentz Directory
+    `.trim(),
+  })
+}
+
 export async function sendGhostLeadHook({
   to,
   clinicName,

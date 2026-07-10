@@ -4,6 +4,7 @@ const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 
 export const initiateClinicClaimSchema = z.object({
   entityType: z.literal('clinic'),
+  isNewRegistration: z.literal(false).optional(),
   clinicSlug: z.string().min(1),
   claimerName: z.string().trim().min(2, 'Please enter your full name.'),
   claimerEmail: z.string().trim().min(1, 'Business Email is required.').email('Please enter a valid email address.'),
@@ -16,6 +17,7 @@ export const initiateClinicClaimSchema = z.object({
 
 export const initiatePractitionerClaimSchema = z.object({
   entityType: z.literal('practitioner'),
+  isNewRegistration: z.literal(false).optional(),
   practitionerSlug: z.string().min(1),
   claimerName: z.string().trim().min(2, 'Please enter your full name.'),
   claimerEmail: z.string().trim().min(1, 'Email is required.').email('Please enter a valid email address.'),
@@ -27,9 +29,41 @@ export const initiatePractitionerClaimSchema = z.object({
   registryName: z.string().trim().optional(),
 })
 
-export const initiateClaimSchema = z.discriminatedUnion('entityType', [
+// Register a brand-new business — no existing Clinic/Practitioner row to claim yet.
+export const initiateClinicRegistrationSchema = z.object({
+  entityType: z.literal('clinic'),
+  isNewRegistration: z.literal(true),
+  claimerName: z.string().trim().min(2, 'Please enter your full name.'),
+  claimerEmail: z.string().trim().min(1, 'Business Email is required.').email('Please enter a valid email address.'),
+  clinicNameInput: z.string().trim().min(1, 'Clinic Name is required.'),
+  clinicPhone: z.string().trim().min(1, 'Phone Number is required.')
+    .refine((v) => UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
+  clinicWebsite: z.string().trim().url('Enter a valid URL').optional().or(z.literal('')),
+  googleBusinessLink: z.string().trim().url('Enter a valid URL').optional().or(z.literal('')),
+  address: z.string().trim().min(1, 'Address is required.'),
+  city: z.string().trim().min(1, 'City is required.'),
+  category: z.string().trim().optional(),
+  about: z.string().trim().optional(),
+})
+
+export const initiatePractitionerRegistrationSchema = z.object({
+  entityType: z.literal('practitioner'),
+  isNewRegistration: z.literal(true),
+  claimerName: z.string().trim().min(2, 'Please enter your full name.'),
+  claimerEmail: z.string().trim().min(1, 'Email is required.').email('Please enter a valid email address.'),
+  claimerPhone: z.string().trim().optional()
+    .refine((v) => !v || UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
+  profession: z.string().trim().min(1, 'Profession is required.'),
+  clinicNameInput: z.string().trim().optional(),
+  city: z.string().trim().min(1, 'City is required.'),
+  about: z.string().trim().optional(),
+})
+
+export const initiateClaimSchema = z.union([
   initiateClinicClaimSchema,
   initiatePractitionerClaimSchema,
+  initiateClinicRegistrationSchema,
+  initiatePractitionerRegistrationSchema,
 ])
 
 export const verifyOtpSchema = z.object({

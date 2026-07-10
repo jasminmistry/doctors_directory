@@ -15,7 +15,6 @@ import {
   Users,
   Package,
   Stethoscope,
-  Clock,
   FlaskConical,
   LogOut,
   Globe,
@@ -44,8 +43,6 @@ interface AdminLayoutProps {
 }
 
 interface PendingCounts {
-  pendingClinics: number;
-  pendingPractitioners: number;
   pendingClaims: number;
   pendingVerifications: number;
   pendingUnlinkRequests: number;
@@ -71,14 +68,6 @@ const NAV = [
   { href: "/admin/practitioners", label: "Practitioners", icon: Users },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/treatments", label: "Treatments", icon: Stethoscope },
-  {
-    label: "Pending",
-    icon: Clock,
-    children: [
-      { href: "/admin/pending/clinics", label: "Clinics" },
-      { href: "/admin/pending/practitioners", label: "Practitioners" },
-    ],
-  },
   { href: "/admin/unlink-requests", label: "Unlink Requests", icon: Link2Off },
   { href: "/admin/claims", label: "Claims", icon: ShieldCheck },
   { href: "/admin/verification", label: "ID Verification", icon: ShieldCheck },
@@ -97,8 +86,6 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
   const router = useRouter();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [counts, setCounts] = useState<PendingCounts>({
-    pendingClinics: 0,
-    pendingPractitioners: 0,
     pendingClaims: 0,
     pendingVerifications: 0,
     pendingUnlinkRequests: 0,
@@ -172,54 +159,6 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
             {/* Nav */}
             <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
               {NAV.map((item) => {
-                if ("children" in item) {
-                  const isGroupActive = item.children.some((c) =>
-                    pathname.startsWith(c.href),
-                  );
-                  const Icon = item.icon;
-
-                  return (
-                    <div key={item.label}>
-                      <div
-                        className={cn(
-                          "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider text-gray-500",
-                        )}
-                      >
-                        <Icon className="h-3.5 w-3.5 shrink-0" />
-                        {item.label}
-                      </div>
-
-                      <div className="ml-6 space-y-0.5">
-                        {item.children.map((child) => {
-                          const childCount =
-                            child.href === "/admin/pending/clinics"
-                              ? counts.pendingClinics
-                              : child.href === "/admin/pending/practitioners"
-                                ? counts.pendingPractitioners
-                                : 0;
-
-                          return (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              onClick={() => setIsMobileNavOpen(false)}
-                              className={cn(
-                                "flex items-center px-3 py-1.5 rounded-lg text-sm transition-colors",
-                                pathname.startsWith(child.href)
-                                  ? "bg-gray-100 text-gray-900 font-medium"
-                                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                              )}
-                            >
-                              {child.label}
-                              <NavBadge count={childCount} />
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                }
-
                 const Icon = item.icon;
                 const active =
                   "exact" in item && item.exact
