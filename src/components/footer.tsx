@@ -278,9 +278,14 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/claim/" className={FOOTER_DIRECTORY_LINK}>
+                  <a
+                    href={`${baseUrl}/clinic-management-software/`}
+                    className={FOOTER_DIRECTORY_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Verification Process
-                  </Link>
+                  </a>
                 </li>
                 <li>
                   <a
