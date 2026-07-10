@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { Send, X, CalendarDays, Loader2, Video, RotateCcw } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -35,6 +35,10 @@ interface ConsultationChatDialogProps {
   buttonClassName?: string
 }
 
+export interface ConsultationChatDialogHandle {
+  open: () => void
+}
+
 type Phase = 'intro' | 'chat' | 'offline'
 
 const POLL_INTERVAL_MS = 3_000
@@ -64,14 +68,14 @@ function clearStoredSession(slug: string) {
   localStorage.removeItem(sessionKey(slug))
 }
 
-export function ConsultationChatDialog({
+export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, ConsultationChatDialogProps>(function ConsultationChatDialog({
   clinicSlug,
   clinicName,
   hasCoreCalendar,
   treatment,
   pageType,
   buttonClassName,
-}: ConsultationChatDialogProps) {
+}, ref) {
   const [open, setOpen] = useState(false)
   const [bookingOpen, setBookingOpen] = useState(false)
   const [callOpen, setCallOpen] = useState(false)
@@ -185,6 +189,8 @@ export function ConsultationChatDialog({
 
     await checkOnlineStatus()
   }
+
+  useImperativeHandle(ref, () => ({ open: handleOpen }))
 
   async function handleStartChat() {
     if (!name.trim() || !contact.trim()) return
@@ -519,7 +525,7 @@ export function ConsultationChatDialog({
       )}
     </>
   )
-}
+})
 
 // ---------------------------------------------------------------------------
 // Offline fallback — mirrors the existing RequestConsultationDialog form
