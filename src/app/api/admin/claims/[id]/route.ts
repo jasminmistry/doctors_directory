@@ -256,6 +256,26 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         claim.clinic = { name: null, email: newClinic.email, gmapsPhone: null }
       } else if (claim.entityType === 'practitioner' && !claim.practitionerId) {
         const listing: NewPractitionerListingData = claim.newListingData ? JSON.parse(claim.newListingData) : {}
+
+        // A practitioner has no city of its own — city is only ever derived via its
+        // clinic association (see PractitionerClinicAssociation). Self-registered
+        // practitioners have no existing clinic to attach to, so create a lightweight
+        // one from their registration answers, mirroring the clinic registration branch
+        // above so the practitioner ends up with a real city/profile URL.
+        const cityId = listing.city ? await findOrCreateCityByName(listing.city) : null
+        const clinicName = listing.clinicNameInput || `${listing.fullName || claim.claimerName}'s Practice`
+        const clinicSlug = await makeUniqueSlug(
+          clinicName,
+          (s) => prisma.clinic.findUnique({ where: { slug: s }, select: { id: true } }).then(Boolean),
+        )
+        const newClinic = await createClinic({
+          slug: clinicSlug,
+          name: clinicName,
+          email: claim.claimerEmail,
+          aboutSection: listing.about || undefined,
+          ...(cityId ? { city: { connect: { id: cityId } } } : {}),
+        })
+
         const slug = await makeUniqueSlug(
           listing.fullName || claim.claimerName || 'practitioner',
           (s) => prisma.practitioner.findUnique({ where: { slug: s }, select: { id: true } }).then(Boolean),
@@ -264,6 +284,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
           slug,
           displayName: listing.fullName || claim.claimerName,
           specialty: listing.profession || claim.profession || undefined,
+          clinicAssociations: { create: { clinicId: newClinic.id } },
         })
         claim.practitionerId = newPractitioner.id
         claim.practitionerSlug = newPractitioner.slug
