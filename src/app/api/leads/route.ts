@@ -16,6 +16,7 @@ const schema = z.object({
   treatment: z.string().trim().max(255).optional(),
   dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   location: z.string().trim().max(255).optional(),
+  source: z.enum(['consultation', 'pricing']).optional(),
 })
 
 function isOver18(dob: string): boolean {
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: message }, { status: 400 })
     }
 
-    const { clinicSlug, firstName, lastName, email, phone, treatment, dateOfBirth, location } = parsed.data
+    const { clinicSlug, firstName, lastName, email, phone, treatment, dateOfBirth, location, source } = parsed.data
 
     const cleanPhone = phone ? phone.replace(/\s/g, '') : ''
     if (phone && !UK_PHONE_RE.test(cleanPhone)) {
@@ -91,6 +92,7 @@ export async function POST(req: NextRequest) {
         treatment,
         location,
         isGhostLead,
+        ...(source ? { source } : {}),
         ...(patientId ? { patientId } : {}),
       },
     })

@@ -41,6 +41,7 @@ interface PatientMe {
 interface ConsultationChatDialogProps {
   clinicSlug: string
   clinicName: string
+  clinicImage?: string
   hasCoreCalendar: boolean
   treatments?: string[]
   location?: string
@@ -80,6 +81,7 @@ function clearStoredSession(slug: string) {
 export function ConsultationChatDialog({
   clinicSlug,
   clinicName,
+  clinicImage,
   hasCoreCalendar,
   treatments,
   pageType,
@@ -421,34 +423,43 @@ export function ConsultationChatDialog({
       >
         {/* Header */}
         <div className="shrink-0 flex flex-row items-center justify-between px-4 py-3 border-b bg-white">
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-gray-900 truncate">{clinicName}</p>
-            <div className="flex items-center gap-2 mt-0.5">
-              {phase === 'chat' && !isRestored && (
-                <span className="flex items-center gap-1.5 text-xs text-green-600 font-medium">
-                  <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                  Online now
-                </span>
-              )}
-              {phase === 'chat' && isRestored && (
-                <span className="text-xs text-gray-500">Previous conversation</span>
-              )}
-              {phase === 'offline' && (
-                <span className="flex items-center gap-1.5 text-xs text-gray-500">
-                  <span className="h-2 w-2 rounded-full bg-gray-400" />
-                  Currently offline
-                </span>
-              )}
-              {phase === 'chat' && (
-                <button
-                  onClick={handleNewSession}
-                  className="flex items-center gap-1 text-[11px] text-gray-500 hover:text-gray-700 transition-colors"
-                  title="Start a new conversation"
-                >
-                  <RotateCcw className="h-2.5 w-2.5" />
-                  New chat
-                </button>
-              )}
+          <div className="min-w-0 flex-1 flex items-center gap-2.5">
+            {clinicImage && (
+              <img
+                src={clinicImage}
+                alt={clinicName}
+                className="h-8 w-8 shrink-0 rounded-full object-cover"
+              />
+            )}
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-gray-900 truncate">{clinicName}</p>
+              <div className="flex items-center gap-2 mt-0.5">
+                {phase === 'chat' && !isRestored && (
+                  <span className="flex items-center gap-1.5 text-xs text-green-600 font-medium">
+                    <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                    Online now
+                  </span>
+                )}
+                {phase === 'chat' && isRestored && (
+                  <span className="text-xs text-gray-500">Previous conversation</span>
+                )}
+                {phase === 'offline' && (
+                  <span className="flex items-center gap-1.5 text-xs text-gray-500">
+                    <span className="h-2 w-2 rounded-full bg-gray-400" />
+                    Currently offline
+                  </span>
+                )}
+                {phase === 'chat' && (
+                  <button
+                    onClick={handleNewSession}
+                    className="flex items-center gap-1 text-[11px] text-gray-500 hover:text-gray-700 transition-colors"
+                    title="Start a new conversation"
+                  >
+                    <RotateCcw className="h-2.5 w-2.5" />
+                    New chat
+                  </button>
+                )}
+              </div>
             </div>
           </div>
           <button

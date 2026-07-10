@@ -34,7 +34,7 @@ export async function GET() {
       prisma.consultationLead.count({ where: { createdAt: { gte: lastMonthStart, lt: thisMonthStart } } }),
       prisma.consultationLead.count({ where: { isUnlocked: true } }),
       prisma.consultationLead.count({ where: { isGhostLead: true } }),
-      prisma.consultationLead.count({ where: { treatment: 'Pricing Enquiry' } }),
+      prisma.consultationLead.count({ where: { source: 'pricing' } }),
       prisma.patient.count({ where: { bookings: { some: {} } } }),
       prisma.patient.count({ where: { chatSessions: { some: {} } } }),
     ])

@@ -11,6 +11,8 @@ import { formatDistanceToNow } from 'date-fns'
 
 export type PipelineStatus = 'new' | 'contacted' | 'booked' | 'lost' | 'spam' | 'archived' | 'closed'
 
+export type LeadSource = 'consultation' | 'pricing'
+
 export interface Lead {
   id: number
   treatment: string | null
@@ -27,6 +29,7 @@ export interface Lead {
   patientName: string | null
   patientPhone: string | null
   patientEmail: string | null
+  source: LeadSource
 }
 
 interface LeadCardProps {
@@ -295,6 +298,9 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
           <div>
             <p className="text-sm font-semibold text-gray-900 flex items-center gap-2">
               {lead.treatment ?? 'Consultation Request'}
+              {lead.source === 'pricing' && (
+                <span className="rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700">Pricing</span>
+              )}
               {lead.isNew && (
                 <span className="rounded-full bg-blue-100 px-1.5 py-0.5 text-[10px] font-semibold text-blue-700">New</span>
               )}

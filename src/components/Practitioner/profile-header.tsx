@@ -6,12 +6,8 @@ import {
   Phone,
   Mail,
   ShieldCheck,
-  Loader2,
 } from "lucide-react";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Practitioner } from "@/lib/types";
 import SocialMediaIcons from "../Clinic/clinicSocialMedia";
@@ -32,49 +28,9 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileHeaderProps>) {
   const [selectedClinic, setSelectedClinic] = useState(clinic_list[0])
   const pathname = usePathname()
-  const router = useRouter()
   const searchParams = useSearchParams()
   const queryString = searchParams.toString()
   const returnTo = queryString ? `${pathname}?${queryString}` : pathname
-  const [pricingLoading, setPricingLoading] = useState(false)
-  const [pricingDone, setPricingDone] = useState(false)
-
-  async function handleRequestPricing() {
-    if (pricingDone || pricingLoading) return
-    setPricingLoading(true)
-    try {
-      const res = await fetch('/directory/api/patient/me')
-      if (!res.ok) {
-        router.push(`/directory/account/login?next=${encodeURIComponent(pathname)}`)
-        return
-      }
-      const patient = await res.json() as { firstName?: string; lastName?: string; email: string }
-      const clinicSlug = k_value?.slug ?? ''
-
-      const leadRes = await fetch('/directory/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          clinicSlug,
-          firstName: patient.firstName ?? patient.email,
-          lastName: patient.lastName ?? '',
-          email: patient.email,
-          treatment: 'Pricing Enquiry',
-        }),
-      })
-      if (!leadRes.ok) {
-        toast.error('Something went wrong. Please try again.')
-        return
-      }
-      setPricingDone(true)
-      toast.success('Your pricing request has been sent to the clinic.')
-      document.getElementById('fees')?.scrollIntoView({ behavior: 'smooth' })
-    } catch {
-      toast.error('Something went wrong. Please try again.')
-    } finally {
-      setPricingLoading(false)
-    }
-  }
   const normalizeExternalUrl = (value?: string) => {
     if (!value) return null
     const cleaned = value.trim().replace(/^\.+|\.+$/g, "")
@@ -211,27 +167,30 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
           <RequestConsultationDialog
             pageType="practitioner_page"
             clinicSlug={k_value?.slug}
+            entityName={practitionerName}
+            entityImage={imgSrc}
             treatments={Array.isArray(k_value?.Treatments) ? k_value.Treatments : (clinic.Treatments ?? [])}
             location={k_value?.City || clinic.City}
             consultationHref={consultationHref}
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
           />
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleRequestPricing}
-            disabled={pricingLoading || pricingDone}
-            className="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
-            data-track-cta="true"
-          >
-            {pricingLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : pricingDone ? (
-              'Request sent'
-            ) : (
-              'Request Pricing'
-            )}
-          </Button>
+          <RequestConsultationDialog
+            pageType="practitioner_page"
+            clinicSlug={k_value?.slug}
+            entityName={practitionerName}
+            entityImage={imgSrc}
+            treatments={Array.isArray(k_value?.Treatments) ? k_value.Treatments : (clinic.Treatments ?? [])}
+            location={k_value?.City || clinic.City}
+            consultationHref={consultationHref}
+            buttonVariant="outline"
+            triggerLabel="Request Pricing"
+            dialogTitle="Request pricing"
+            submitLabel="Send pricing request"
+            treatmentFallback="Pricing Enquiry"
+            openParam="pricing"
+            leadSource="pricing"
+            buttonClassName="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
+          />
           <SocialMediaIcons clinic={k_value} />
         </div>
       </div>

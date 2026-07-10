@@ -63,6 +63,11 @@ enum LeadStatus {
   closed
 }
 
+enum LeadSource {
+  consultation
+  pricing
+}
+
 enum BookingStatus {
   pending
   confirmed
@@ -767,6 +772,7 @@ model ConsultationLead {
   treatment    String?    @db.VarChar(255)
   preferredTime String?   @db.VarChar(100) // "morning", "afternoon", "evening"
   location     String?    @db.VarChar(255) // city/area for context
+  source       LeadSource @default(consultation)
 
   status       LeadStatus @default(new)
 

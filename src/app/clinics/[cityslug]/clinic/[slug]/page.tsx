@@ -280,7 +280,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
         <ProfileHeader
           clinic={clinic}
-          clinicName={dbClinic.name ?? slug}
+          clinicName={dbClinic.name ?? undefined}
           hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
         />
 
