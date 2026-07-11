@@ -1,5 +1,5 @@
 "use client"
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   MapPin,
   Phone,
@@ -13,7 +13,6 @@ import ClinicLabels from "./clinicLabels";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ConsultationChatDialog, type ConsultationChatDialogHandle } from "@/components/chat/consultation-chat-dialog";
 import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 interface ProfileHeaderProps {
   clinic: Clinic;
@@ -22,11 +21,19 @@ interface ProfileHeaderProps {
 }
 
 export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: Readonly<ProfileHeaderProps>) {
-  const consultationDialogRef = useRef<ConsultationChatDialogHandle>(null);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
   const returnTo = queryString ? `${pathname}?${queryString}` : pathname;
+  const normalizeExternalUrl = (value?: string) => {
+    if (!value) return null;
+    const cleaned = value.trim().replace(/^\.+|\.+$/g, "");
+    if (!cleaned) return null;
+    if (/^https?:\/\//i.test(cleaned)) return cleaned;
+    return `https://${cleaned}`;
+  };
+  const consultationHref =
+    normalizeExternalUrl(clinic.website) ?? normalizeExternalUrl(clinic.url);
   const practitionerName = clinic.slug!
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -131,24 +138,38 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
           {clinic.claimed && (
             <ClinicOnlineStatus clinicSlug={clinic.slug ?? ''} />
           )}
-          <ConsultationChatDialog
-            ref={consultationDialogRef}
-            pageType="clinic_page"
-            clinicSlug={clinic.slug ?? ''}
-            clinicName={clinicName ?? clinic.slug ?? ''}
-            hasCoreCalendar={hasCoreCalendar}
-            treatment={clinic.Treatments?.[0]}
-            location={clinic.City}
-            buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
-          />
+          {consultationHref ? (
+            <Button
+              asChild
+              variant="default"
+              className="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
+            >
+              <a href={consultationHref} target="_blank" rel="noopener noreferrer">
+                Request Consultation
+              </a>
+            </Button>
+          ) : (
+            <Button
+              variant="default"
+              disabled
+              className="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white"
+            >
+              Request Consultation
+            </Button>
+          )}
           <Button
-            type="button"
+            asChild
             variant="outline"
-            className="w-full shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
-            data-track-cta="true"
-            onClick={() => consultationDialogRef.current?.open()}
+            className="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
           >
-            Request Pricing
+            <a
+              href={consultationHref ?? "#fees"}
+              target={consultationHref ? "_blank" : undefined}
+              rel={consultationHref ? "noopener noreferrer" : undefined}
+              data-track-cta="true"
+            >
+              Request Pricing
+            </a>
           </Button>
           <SocialMediaIcons clinic={clinic} />
         </div>
