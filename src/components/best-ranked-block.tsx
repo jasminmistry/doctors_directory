@@ -171,7 +171,7 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
             <div className="flex flex-col items-center px-3 pt-4 pb-2 text-center">
               <div className="relative mx-auto mb-3 h-20 w-20 shrink-0 overflow-hidden rounded-full bg-gray-200">
                 <FallbackImage
-                  src={entry.image}
+                  src={null}
                   alt={entry.name}
                   className="h-full w-full object-cover"
                   width={80}

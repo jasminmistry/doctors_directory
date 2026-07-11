@@ -173,33 +173,8 @@ export default function PractitionerDetailsSections({
 
       
 
-      {/* FEES */}
-      {clinic.Fees && (
-      <Section title={`Estimated Fees in ${clinic.City}`} id="fees">
-        {clinic.Fees && typeof clinic.Fees === "object" ? (
-          <div className="overflow-x-auto shadow-none">
-            <table className="w-full text-sm bg-white" data-testid='fees'>
-              <tbody>
-                {Object.entries(clinic.Fees).map(
-                  ([k, v]) =>
-                    
-                  
-                      <tr key={k}>
-                        <td className="align-top border-0 px-1 py-1 font-medium">{(v as any)?.['treatment']}</td>
-                        <td className="align-top border-0 px-1 py-1">
-                          {(v as any)?.['price'].split("(")[0]}</td>
-                      </tr>
-                    )
-                }
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          clinic.Fees || "Not listed"
-        )}
-      </Section>
-      )
-    }
+      {/* FEES — price list is temporarily disabled site-wide, section stays but blank */}
+      <Section title={`Estimated Fees in ${clinic.City}`} id="fees" />
     </div>
   );
 }

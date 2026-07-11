@@ -48,10 +48,8 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
   const DEFAULT_IMG = "/directory/images/default-dr-profile-1.webp";
-  const proxyUrl = clinic.practitioner_image_link
-    ? `/directory/api/img?url=${encodeURIComponent(clinic.practitioner_image_link)}`
-    : DEFAULT_IMG;
-  const [imgSrc, setImgSrc] = useState(proxyUrl);
+  // Profile photos are temporarily disabled site-wide — always show the default placeholder.
+  const [imgSrc, setImgSrc] = useState(DEFAULT_IMG);
   let sections: {id: string,label: string}[] = []
   clinic_list.forEach((clinic: string) => {
     sections.push({ id: clinic, label: clinic })

@@ -93,30 +93,10 @@ function getPractitionerOrClinicHref(
   return "#";
 }
 
-const SEARCH_ENGINE_HOSTS = ["google.com", "yahoo.com", "bing.com"];
-
-function isDirectImageUrl(url: string): boolean {
-  try {
-    const { hostname } = new URL(url);
-    if (SEARCH_ENGINE_HOSTS.some((h) => hostname.includes(h))) return false;
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 function getProfileImageSrc(
-  practitioner: Practitioner | Clinic | Product | string,
+  _practitioner: Practitioner | Clinic | Product | string,
 ): string {
-  if (isPractitioner(practitioner) && practitioner.practitioner_image_link) {
-    const link = practitioner.practitioner_image_link;
-    if (isDirectImageUrl(link)) return link;
-  }
-
-  if ((isPractitioner(practitioner) || isClinic(practitioner)) && practitioner.image) {
-    return practitioner.image.replace("&w=256&q=75", "");
-  }
-
+  // Profile photos are temporarily disabled site-wide — always show the default placeholder.
   return "/directory/images/default-dr-profile-1.webp";
 }
 
