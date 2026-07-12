@@ -162,7 +162,10 @@ export function DataTable<T extends Record<string, any>>({
                 </tr>
               ) : (
                 pageData.map((item, i) => (
-                  <tr key={i} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60 transition-colors">
+                  <tr
+                    key={String(item.slug ?? item.id ?? item.key ?? i)}
+                    className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60 transition-colors"
+                  >
                     {columns.map(col => (
                       <td key={String(col.key)} className="px-4 py-3 text-gray-700">
                         {col.render
