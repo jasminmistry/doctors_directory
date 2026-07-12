@@ -47,7 +47,7 @@ export default function BusinessSoftwareByCityPage() {
               <li key={citySlug}>
                 <Link
                   href={`/business/uk/${citySlug}/${SOFTWARE_PAGE_SLUG}/`}
-                  className="flex min-h-[72px] flex-col justify-center rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-3 hover:border-neutral-400 hover:shadow-sm"
+                  className="flex min-h-[72px] flex-col justify-center rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] px-4 py-3 hover:border-neutral-400 "
                 >
                   <span className="font-semibold text-neutral-900">{city}</span>
                   <span className="mt-1 text-sm text-neutral-600">Aesthetic clinic software</span>

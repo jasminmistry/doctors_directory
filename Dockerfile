@@ -12,21 +12,28 @@ RUN --mount=type=cache,target=/root/.npm \
 
 # ── prod-deps: production-only dependencies for the runtime image ──────────────
 # Excludes @playwright/test (browsers), jest, typescript, @types/*, etc.
+# Prunes off the already-installed `deps` tree instead of a second full `npm ci`.
 FROM base AS prod-deps
 COPY package.json package-lock.json* ./
+COPY --from=deps /app/node_modules ./node_modules
 RUN --mount=type=cache,target=/root/.npm \
-	npm ci --omit=dev
+	npm prune --omit=dev
 
 # ── builder: compile the app ──────────────────────────────────────────────────
 FROM base AS builder
+ARG NEXT_PUBLIC_DIRECTORY_BASE_URL
+ENV NEXT_PUBLIC_DIRECTORY_BASE_URL=$NEXT_PUBLIC_DIRECTORY_BASE_URL
 ARG NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+ARG NEXT_PUBLIC_MARKETING_BASE_URL
+ENV NEXT_PUBLIC_MARKETING_BASE_URL=$NEXT_PUBLIC_MARKETING_BASE_URL
 ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
 ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=$NEXT_PUBLIC_GA_MEASUREMENT_ID
 ENV NODE_OPTIONS=--max-old-space-size=4096
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npx prisma generate && npm run build
+RUN --mount=type=cache,target=/app/.next/cache \
+	npx prisma generate && npm run build
 
 # ── runner: production image ──────────────────────────────────────────────────
 FROM node:lts-alpine3.23 AS runner
@@ -55,7 +62,11 @@ COPY ecosystem.config.js ./ecosystem.config.js
 COPY server.js ./server.js
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x docker-entrypoint.sh && \
-    chown -R appuser:appgroup /app/node_modules/.prisma
+	mkdir -p /app/.next/cache/images && \
+	chown -R appuser:appgroup /app/.next && \
+    chown -R appuser:appgroup /app/node_modules/.prisma && \
+    mkdir -p /app/uploads/verification && \
+    chown -R appuser:appgroup /app/uploads
 
 USER appuser
 EXPOSE 3000

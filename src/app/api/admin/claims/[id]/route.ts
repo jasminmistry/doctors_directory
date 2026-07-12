@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { adminReviewClaimSchema } from '@/lib/schemas/claim.schema'
-import { sendClaimApprovedEmail, sendWelcomeEmail } from '@/lib/email'
+import { sendClaimApprovedEmail, sendClaimRejectedEmail, sendWelcomeEmail } from '@/lib/email'
 import {
   COOKIE_TOKEN,
   COOKIE_REFRESH,
@@ -14,6 +14,36 @@ import {
 } from '@/lib/auth'
 import { PLAN_LABELS } from '@/lib/claim-utils'
 import { invalidateSearchCache } from '@/lib/search-cache'
+import { createClinic } from '@/lib/data-access/clinics'
+import { createPractitioner } from '@/lib/data-access/practitioners'
+import { findOrCreateCityByName } from '@/lib/data-access/cities'
+import { cleanRouteSlug } from '@/lib/utils'
+
+interface NewClinicListingData {
+  clinicNameInput?: string
+  address?: string
+  city?: string
+  category?: string
+  about?: string
+}
+
+interface NewPractitionerListingData {
+  fullName?: string
+  profession?: string
+  clinicNameInput?: string
+  city?: string
+  about?: string
+}
+
+async function makeUniqueSlug(base: string, exists: (slug: string) => Promise<boolean>): Promise<string> {
+  const cleaned = cleanRouteSlug(base || '') || 'listing'
+  let slug = cleaned
+  let i = 2
+  while (await exists(slug)) {
+    slug = `${cleaned}-${i++}`
+  }
+  return slug
+}
 
 async function provisionConsentzAccount(
   claim: {
@@ -197,6 +227,71 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       )
     }
 
+    // New registrations have no existing Clinic/Practitioner row — create one now,
+    // before the shared approve/reject logic below (which operates on claim.clinicId /
+    // claim.practitionerId) runs. Leave `claimed` false here; the transaction further
+    // down sets claimed/claimedAt/claimedPlan the same way it does for ordinary claims.
+    if (action === 'approve' && claim.isNewRegistration) {
+      if (claim.entityType === 'clinic' && !claim.clinicId) {
+        const listing: NewClinicListingData = claim.newListingData ? JSON.parse(claim.newListingData) : {}
+        const slug = await makeUniqueSlug(
+          listing.clinicNameInput || claim.clinicNameInput || 'clinic',
+          (s) => prisma.clinic.findUnique({ where: { slug: s }, select: { id: true } }).then(Boolean),
+        )
+        const cityId = listing.city ? await findOrCreateCityByName(listing.city) : null
+        const newClinic = await createClinic({
+          slug,
+          name: listing.clinicNameInput || claim.clinicNameInput || undefined,
+          category: listing.category || undefined,
+          gmapsAddress: [listing.address, listing.city].filter(Boolean).join(', ') || undefined,
+          gmapsPhone: claim.clinicPhone || undefined,
+          website: claim.clinicWebsite || undefined,
+          email: claim.claimerEmail,
+          aboutSection: listing.about || undefined,
+          ...(cityId ? { city: { connect: { id: cityId } } } : {}),
+        })
+        claim.clinicId = newClinic.id
+        claim.clinicSlug = newClinic.slug
+        // No independent source (e.g. Google Maps) to verify against for a brand-new listing.
+        claim.clinic = { name: null, email: newClinic.email, gmapsPhone: null }
+      } else if (claim.entityType === 'practitioner' && !claim.practitionerId) {
+        const listing: NewPractitionerListingData = claim.newListingData ? JSON.parse(claim.newListingData) : {}
+
+        // A practitioner has no city of its own — city is only ever derived via its
+        // clinic association (see PractitionerClinicAssociation). Self-registered
+        // practitioners have no existing clinic to attach to, so create a lightweight
+        // one from their registration answers, mirroring the clinic registration branch
+        // above so the practitioner ends up with a real city/profile URL.
+        const cityId = listing.city ? await findOrCreateCityByName(listing.city) : null
+        const clinicName = listing.clinicNameInput || `${listing.fullName || claim.claimerName}'s Practice`
+        const clinicSlug = await makeUniqueSlug(
+          clinicName,
+          (s) => prisma.clinic.findUnique({ where: { slug: s }, select: { id: true } }).then(Boolean),
+        )
+        const newClinic = await createClinic({
+          slug: clinicSlug,
+          name: clinicName,
+          email: claim.claimerEmail,
+          aboutSection: listing.about || undefined,
+          ...(cityId ? { city: { connect: { id: cityId } } } : {}),
+        })
+
+        const slug = await makeUniqueSlug(
+          listing.fullName || claim.claimerName || 'practitioner',
+          (s) => prisma.practitioner.findUnique({ where: { slug: s }, select: { id: true } }).then(Boolean),
+        )
+        const newPractitioner = await createPractitioner({
+          slug,
+          displayName: listing.fullName || claim.claimerName,
+          specialty: listing.profession || claim.profession || undefined,
+          clinicAssociations: { create: { clinicId: newClinic.id } },
+        })
+        claim.practitionerId = newPractitioner.id
+        claim.practitionerSlug = newPractitioner.slug
+        claim.practitioner = { displayName: newPractitioner.displayName }
+      }
+    }
+
     const entityName =
       claim.entityType === 'practitioner'
         ? (claim.practitioner?.displayName ?? claim.practitionerSlug ?? '')
@@ -207,7 +302,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         await prisma.$transaction([
           prisma.claimRequest.update({
             where: { id },
-            data: { status: 'approved', adminNotes: adminNotes ?? null, approvedAt: new Date() },
+            data: {
+              status: 'approved',
+              adminNotes: adminNotes ?? null,
+              approvedAt: new Date(),
+              ...(claim.isNewRegistration ? { clinicId: claim.clinicId, clinicSlug: claim.clinicSlug } : {}),
+            },
           }),
           prisma.clinic.update({
             where: { id: claim.clinicId },
@@ -237,7 +337,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         await prisma.$transaction([
           prisma.claimRequest.update({
             where: { id },
-            data: { status: 'approved', adminNotes: adminNotes ?? null, approvedAt: new Date() },
+            data: {
+              status: 'approved',
+              adminNotes: adminNotes ?? null,
+              approvedAt: new Date(),
+              ...(claim.isNewRegistration ? { practitionerId: claim.practitionerId, practitionerSlug: claim.practitionerSlug } : {}),
+            },
           }),
           prisma.practitioner.update({
             where: { id: claim.practitionerId },
@@ -254,6 +359,16 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         await invalidateSearchCache()
       }
 
+      // Consentz-linked claims already have an account — skip provisioning but still notify
+      if (claim.consentzUserId) {
+        await sendClaimApprovedEmail({
+          to: claim.claimerEmail,
+          clinicName: entityName,
+          plan: PLAN_LABELS[claim.selectedPlan ?? 'free'] ?? 'Free',
+        }).catch(err => console.error('[claim] sendClaimApprovedEmail (consentz-linked) failed:', err))
+        return NextResponse.json({ success: true })
+      }
+
       const tokens = await provisionConsentzAccount(claim, entityName, authToken, storedRefreshToken)
       const res = NextResponse.json({ success: true })
       applyFreshTokens(res, tokens)
@@ -263,6 +378,26 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         where: { id },
         data: { status: 'rejected', adminNotes: adminNotes ?? null, rejectedAt: new Date() },
       })
+
+      // Consentz-linked claims set clinic.claimed=true at link time (before admin approval),
+      // so rejection must undo that to allow the clinic to be claimed again.
+      if (claim.consentzClinicId && claim.clinicId) {
+        await prisma.clinic.update({
+          where: { id: claim.clinicId },
+          data: {
+            claimed:     false,
+            claimedAt:   null,
+            claimedPlan: null,
+            coreClinicId: null,
+          },
+        }).catch(err => console.error('[claim] Failed to reset clinic on Consentz-link rejection:', err))
+      }
+
+      await sendClaimRejectedEmail({
+        to: claim.claimerEmail,
+        entityName,
+        adminNotes,
+      }).catch(err => console.error('[claim] sendClaimRejectedEmail failed:', err))
     }
 
     return NextResponse.json({ success: true })

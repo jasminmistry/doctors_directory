@@ -24,6 +24,19 @@ interface NewBookingModalProps {
   initialData?: Partial<NewBookingData> & { id?: number }
 }
 
+type FieldErrors = Record<string, string>
+
+const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function isValidUkPhone(value: string): boolean {
+  return UK_PHONE_RE.test(value.trim().replace(/\s/g, ''))
+}
+
+function isValidEmail(value: string): boolean {
+  return EMAIL_RE.test(value.trim())
+}
+
 export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: NewBookingModalProps) {
   const isEdit = !!initialData?.id
   const today = defaultDate ?? new Date()
@@ -54,19 +67,31 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
 
   function set(field: string, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }))
+    setFieldErrors((prev) => {
+      if (!(field in prev)) return prev
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
 
-    if (!form.patientName.trim()) {
-      setError('Patient name is required')
+    const errors: FieldErrors = {}
+    if (!form.patientName.trim()) errors.patientName = 'Patient name is required.'
+    if (form.patientEmail.trim() && !isValidEmail(form.patientEmail)) errors.patientEmail = 'Please enter a valid email address.'
+    if (form.patientPhone.trim() && !isValidUkPhone(form.patientPhone)) errors.patientPhone = 'Please enter a valid UK phone number.'
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
       return
     }
+    setFieldErrors({})
 
     const slotStart = `${form.date}T${form.startTime}:00`
     const slotEnd = `${form.date}T${form.endTime}:00`
@@ -101,42 +126,41 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
       <div className="w-full max-w-md rounded-2xl bg-white shadow-xl">
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
           <h2 className="text-sm font-semibold text-gray-900">{isEdit ? 'Edit Appointment' : 'New Appointment'}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-600 transition-colors">
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} noValidate className="p-5 space-y-4">
           {/* Patient details */}
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Patient</p>
-            <Field label="Name *">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Patient</p>
+            <Field label="Name *" error={fieldErrors.patientName}>
               <input
                 type="text"
                 value={form.patientName}
                 onChange={(e) => set('patientName', e.target.value)}
                 placeholder="Jane Smith"
-                className={inputCls}
-                required
+                className={cn(inputCls, fieldErrors.patientName && 'border-red-400')}
               />
             </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Phone">
+              <Field label="Phone" error={fieldErrors.patientPhone}>
                 <input
                   type="tel"
                   value={form.patientPhone}
                   onChange={(e) => set('patientPhone', e.target.value)}
                   placeholder="+44 7700 000000"
-                  className={inputCls}
+                  className={cn(inputCls, fieldErrors.patientPhone && 'border-red-400')}
                 />
               </Field>
-              <Field label="Email">
+              <Field label="Email" error={fieldErrors.patientEmail}>
                 <input
                   type="email"
                   value={form.patientEmail}
                   onChange={(e) => set('patientEmail', e.target.value)}
                   placeholder="jane@example.com"
-                  className={inputCls}
+                  className={cn(inputCls, fieldErrors.patientEmail && 'border-red-400')}
                 />
               </Field>
             </div>
@@ -144,7 +168,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
 
           {/* Appointment details */}
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Appointment</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Appointment</p>
             <Field label="Treatment / Service">
               <input
                 type="text"
@@ -160,7 +184,6 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
                 value={form.date}
                 onChange={(e) => set('date', e.target.value)}
                 className={inputCls}
-                required
               />
             </Field>
             <div className="grid grid-cols-2 gap-3">
@@ -170,7 +193,6 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
                   value={form.startTime}
                   onChange={(e) => set('startTime', e.target.value)}
                   className={inputCls}
-                  required
                 />
               </Field>
               <Field label="End time">
@@ -179,7 +201,6 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
                   value={form.endTime}
                   onChange={(e) => set('endTime', e.target.value)}
                   className={inputCls}
-                  required
                 />
               </Field>
             </div>
@@ -218,7 +239,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
             <Button
               type="submit"
               disabled={saving}
-              className="flex-1 h-9 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold"
+              className='flex-1'
             >
               {saving ? <><Loader2 className="h-4 w-4 animate-spin mr-1.5" />Saving…</> : isEdit ? 'Update Appointment' : 'Save Appointment'}
             </Button>
@@ -229,13 +250,14 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
   )
 }
 
-const inputCls = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+const inputCls = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div>
       <label className="mb-1 block text-xs font-medium text-gray-600">{label}</label>
       {children}
+      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
   )
 }

@@ -46,3 +46,5 @@ next-env.d.ts
 uploads/
 !public/images/uploads/
 !public/images/uploads/.gitkeep
+*.sql
+!prisma/migrations/**/*.sql

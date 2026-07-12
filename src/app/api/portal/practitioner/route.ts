@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
@@ -103,6 +104,7 @@ export async function PUT(request: Request) {
       data: validation.data,
       select: PRACTITIONER_PORTAL_SELECT,
     })
+    revalidatePath('/portal/practitioner')
     return NextResponse.json(practitioner)
   } catch (error) {
     console.error('[portal] Failed to update practitioner:', error)

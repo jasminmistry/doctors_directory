@@ -116,7 +116,7 @@ export function Stats({ data }: Readonly<VisxDonutChartProps>) {
           </div>
 
           {openLabel === row.label && (
-            <div className="absolute bottom-full left-0 z-50 mb-2 w-full max-w-[320px] rounded-xl border border-gray-200 bg-white px-4 py-3 text-xs leading-relaxed text-gray-700 shadow-xl">
+            <div className="absolute bottom-full left-0 z-50 mb-2 w-full max-w-[320px] rounded-lg border border-gray-200 bg-white px-4 py-3 text-xs leading-relaxed text-gray-700 shadow-xl">
               {row.scoreExplanation}
             </div>
           )}

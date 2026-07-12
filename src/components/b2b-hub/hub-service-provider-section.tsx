@@ -12,15 +12,15 @@ export function HubServiceProviderSection() {
     <section
       className={cn(
         HUB_BLEED_FROM_CONTAINER,
-        "mb-16 bg-[var(--primary-bg-color)] lg:h-[302px] lg:overflow-hidden"
+        "mb-16 bg-white lg:overflow-hidden"
       )}
     >
-      <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-4 py-10 sm:gap-8 sm:px-6 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">
+      <div className="mx-auto bg-white border border-[#e0e0e0] overflow-hidden rounded-lg flex max-w-7xl flex-col gap-6 px-4 py-10 sm:gap-8 sm:px-6 sm:py-12 lg:h-full lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-0 lg:pl-20 lg:pr-6">
         <div className="flex min-w-0 max-w-[629px] flex-col items-center gap-3 text-center lg:max-h-[302px] lg:items-start lg:gap-3 lg:py-1 lg:text-left">
           <h2 className="text-[26px] font-semibold leading-[1.1] text-[#1A1A1A] sm:text-[30px] lg:text-[36px] lg:leading-[1.08]">
             Are You A Service Provider?
           </h2>
-          <p className="text-base font-medium leading-snug text-[#1A1A1A] sm:text-lg lg:text-[20px] lg:leading-normal">
+          <p className="text-base font-normal leading-snug text-[#1A1A1A] md:text-md">
             Join Consentz to streamline your clinic operations, enhance patient
             experience, and grow your business.
           </p>

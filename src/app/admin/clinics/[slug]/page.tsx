@@ -4,6 +4,9 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { ClinicForm } from '@/components/admin/forms/ClinicForm'
+import { AdminScheduleCard } from '@/components/admin/AdminScheduleCard'
+import { EntityMetricsPanel } from '@/components/admin/entity-metrics-panel'
+import { CoreUnlinkCard } from '@/components/admin/CoreUnlinkCard'
 import { CalendarDays } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -26,6 +29,19 @@ export default function ClinicEditor() {
         </div>
       )}
       <ClinicForm />
+      {slug && slug !== 'new' && (
+        <div className="mt-8">
+          <EntityMetricsPanel entityType="clinic" slug={slug} />
+        </div>
+      )}
+      {slug && slug !== 'new' && (
+        <div className="mt-8">
+          <AdminScheduleCard entityType="clinic" slug={slug} />
+        </div>
+      )}
+      {slug && slug !== 'new' && (
+        <CoreUnlinkCard slug={slug} />
+      )}
     </AdminLayout>
   )
 }
