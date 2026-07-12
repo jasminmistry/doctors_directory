@@ -1,14 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import dynamic from "next/dynamic";
 import { HeroSection } from "@/components/hero-section";
 import LogoLoop from "./LogoLoop";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  Handshake,
-  ChartBarDecreasing,
-  CircleCheck,
-} from "lucide-react";
+import { Handshake, ChartBarDecreasing, CircleCheck } from "lucide-react";
+import { Card } from "./ui/card";
 
 const cityList = [
   "Aberaeron",
@@ -755,7 +753,7 @@ const cityItems: {
   node: (
     <Link
       href={`/clinics/${city.toLowerCase()}`}
-      className="flex items-center justify-center bg-[var(--alabaster)] border border-gray-300 rounded-full w-44 h-44 text-lg text-center font-medium hover:border-black transition-shadow"
+      className="flex items-center justify-center bg-[#fbfbfb] border border-[#e0e0e0] rounded-full w-44 h-44 text-lg text-center font-medium hover:border-black transition-shadow"
       title={`Find Top-Rated Aesthetic clinics in ${city}`}
       aria-label={`Find Top-Rated Aesthetic clinics in ${city}`}
     >
@@ -807,14 +805,44 @@ const specialists = [
     image: "directory/images/Wellness Specialist.webp",
     url: "/treatments/massage",
   },
+  {
+    name: "Aqualyx",
+    image: "directory/images/Aqualyx.png",
+    url: "/treatments/aqualyx",
+  },
 ];
 
 const treatments = [
-  { name: "Facial", image: "directory/images/Facial Treatment.webp", url: "/treatments/facial-treatments" },
-  { name: "Massage", image: "directory/treatments/massage.webp", url: "/treatments/massage" },
-  { name: "Lips", image: "directory/treatments/lips.webp", url: "/treatments/lips" },
-  { name: "Skin", image: "directory/images/Skin Treatment.webp", url: "/treatments/skin-booster" },
-  { name: "Hairline", image: "directory/images/Hairline Treatment.webp", url: "/treatments/hair-treatments" },
+  {
+    name: "Facial",
+    image: "directory/images/Facial Treatment.webp",
+    url: "/treatments/facial-treatments",
+  },
+  {
+    name: "Dermapen Treatment",
+    image: "directory/treatments/dermapen.webp",
+    url: "/treatments/dermapen-treatment",
+  },
+  {
+    name: "Botox",
+    image: "directory/treatments/botox.webp",
+    url: "/treatments/botox",
+  },
+  {
+    name: "Skin",
+    image: "directory/images/Skin Treatment.webp",
+    url: "/treatments/skin-booster",
+  },
+  {
+    name: "Hairline",
+    image: "directory/images/Hairline Treatment.webp",
+    url: "/treatments/hair-treatments",
+  },
+  {
+    name: "Acne",
+    image: "directory/images/acne.webp",
+    url: "/treatments/acne",
+  },
 ];
 
 const blogs = [
@@ -837,6 +865,10 @@ const blogs = [
     link: "https://www.consentz.com/aesthetic-clinic-marketing",
   },
 ];
+
+const MeshBackground = dynamic(() => import("./MeshBackground"), {
+  ssr: false,
+});
 
 const faqData = [
   {
@@ -863,7 +895,11 @@ const faqData = [
 
 const ITEMS_PER_PAGE = 9;
 
-export default function HomePage() {
+export default function HomePage({
+  featuredSection,
+}: {
+  featuredSection?: ReactNode;
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleFAQ = (index: number | null) => {
@@ -872,14 +908,26 @@ export default function HomePage() {
 
   return (
     <main>
-      <HeroSection />
-      <section className="bg-white-50 py-15 md:py-20" aria-labelledby="specialists-heading">
-        <h2 id="specialists-heading" className="sr-only">Contact a Specialist</h2>
+      <div className="bg-[var(--primary-bg-color)] relative inset-0 overflow-hidden">
+        
+        <div className="relative z-3">
+          <HeroSection/>
+        </div> 
+
+      </div>
+      
+      <section
+        className="bg-white-50 py-15 md:py-20"
+        aria-labelledby="specialists-heading"
+      >
+        <h2 id="specialists-heading" className="sr-only">
+          Contact a Specialist
+        </h2>
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-xl md:text-4xl font-bold text-center mb-16">
+          <h2 className="text-xl md:text-2xl font-medium text-center mb-16">
             Contact a Specialist
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 align-items-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 align-items-center">
             {specialists.map((specialist, index) => (
               <article key={index} className="flex flex-col items-center gap-4">
                 <Link
@@ -904,9 +952,102 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <section
+        className="bg-white-10 mb-8"
+        aria-labelledby="specialists-heading"
+      >
+        <section className="bg-white py-6 md:py-10">
+          <div className="max-w-3xl mx-auto px-3 sm:px-4 lg:px-6">
+            <div className="space-y-3">
+              {/* Step 1 */}
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
+                    1.
+                  </div>
+
+                  <div>
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
+                      Tell Us What You’re Looking For
+                    </h2>
+
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
+                      Answer a few questions so we can understand your goals.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/clipboard.png"
+                    alt="Clipboard Icon"
+                    className="w-14 md:w-20 h-auto object-contain"
+                  />
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
+                    2.
+                  </div>
+
+                  <div>
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
+                      Get Expert Guidance
+                    </h2>
+
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
+                      Receive personalized recommendations from our aesthetics
+                      and wellness experts.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/video-chat.png"
+                    alt="Video Chat Icon"
+                    className="w-14 md:w-20 h-auto object-contain"
+                  />
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
+                    3.
+                  </div>
+
+                  <div>
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
+                      Match & Book With a Practitioner
+                    </h2>
+
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
+                      We match you with a trusted practitioner and help you book
+                      with ease.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/check.png"
+                    alt="Check Icon"
+                    className="w-14 md:w-20 h-auto object-contain"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
       <section className="bg-white-50 py-5 md:py-5">
-        <h2 className="text-xl md:text-3xl font-bold text-center mb-16">
-        Find Top-Rated Aesthetic Clinics Near You
+        <h2 className="text-xl md:text-2xl font-medium text-center mb-16">
+          Find Top-Rated Aesthetic Clinics Near You
         </h2>
         <div className="w-full">
           <LogoLoop
@@ -921,30 +1062,37 @@ export default function HomePage() {
         </div>
       </section>
       {/* Most Popular Treatments */}
-      <section className="py-15 md:py-20 relative" aria-labelledby="treatments-heading">
-        <h2 id="treatments-heading" className="sr-only">Most Popular Treatments</h2>
+      <section
+        className="py-15 md:py-20 relative"
+        aria-labelledby="treatments-heading"
+      >
+        <h2 id="treatments-heading" className="sr-only">
+          Most Popular Treatments
+        </h2>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center flex-col justify-between mb-12">
-            <h2 className="text-xl md:text-4xl font-bold text-center mb-10">
+            <h2 className="text-xl md:text-2xl font-medium text-center mb-10">
               Most Popular Treatments
             </h2>
-
           </div>
           <div className="relative flex flex-col items-center justify-center">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 justify-items-center items-center gap-4 pb-4 w-full">
+            <div className="mb-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 justify-items-center items-center gap-4 pb-4 w-full">
               {treatments.map((treatment, index) => (
                 <article key={index} className="flex-shrink-0">
                   <div
-    className="mx-auto
+                    className="mx-auto
                w-32 aspect-square
                rounded-full overflow-hidden"
-  >               <Link href={treatment.url}>
-                  <img
-                   
-                    src={`/${treatment.image || "/placeholder.svg"}`}
-                    alt={treatment.name}
-                    className="w-32 h-32 md:w-38 md:h-38 lg:w-45 lg:h-45 ml-auto mr-auto object-cover object-center rounded-lg"
-                  /></Link></div>
+                  >
+                    {" "}
+                    <Link href={treatment.url}>
+                      <img
+                        src={`/${treatment.image || "/placeholder.svg"}`}
+                        alt={treatment.name}
+                        className="w-32 h-32 md:w-38 md:h-38 lg:w-45 lg:h-45 ml-auto mr-auto object-cover object-center rounded-lg"
+                      />
+                    </Link>
+                  </div>
                   <p className="mt-4 text-base font-medium text-center">
                     {treatment.name}
                   </p>
@@ -952,23 +1100,21 @@ export default function HomePage() {
               ))}
             </div>
             <Button
-  asChild
-  className="bg-[var(--text-color)] hover:bg-black
-                         h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
->
-  <Link href="/treatments">
-    See all Treatments
-  </Link>
-</Button>
-
+              asChild
+              className=" w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
+            >
+              <Link href="/treatments">See all Treatments</Link>
+            </Button>
           </div>
-
-
-
-         </div>
-       </section>
-      <section className="py-10 md:py-15 relative" aria-labelledby="regulatory-heading">
-        <h2 id="regulatory-heading" className="sr-only">Trusted Regulatory Partners</h2>
+        </div>
+      </section>
+      <section
+        className="py-5 md:py-10 relative"
+        aria-labelledby="regulatory-heading"
+      >
+        <h2 id="regulatory-heading" className="sr-only">
+          Trusted Regulatory Partners
+        </h2>
         <LogoLoop
           logos={imageLogos}
           speed={100}
@@ -983,10 +1129,14 @@ export default function HomePage() {
           className="py-10 md:py-15 relative"
         />
       </section>
+
+      {/* Featured cards */}
+      {featuredSection}
+
       {/* Trust Section */}
       <section className="py-15 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-xl md:text-4xl font-bold text-center mb-10 md:mb-16">
+          <h2 className="text-xl md:text-2xl font-medium text-center mb-10 md:mb-16">
             Building trust and clarity in healthcare
           </h2>
           <div className="grid md:grid-cols-3 gap-6 md:gap-12">
@@ -1009,10 +1159,10 @@ export default function HomePage() {
             ].map((item, index) => (
               <div
                 key={index}
-                className="info-card bg-[var(--alabaster)] border-1 border-[var(--alto)] rounded-xl py-8 px-6 md:py-12 md:px-8 flex items-center flex-col"
+                className="info-card bg-[#fbfbfb] border-1 border-[var(--alto)] rounded-lg py-8 px-6 md:py-12 md:px-8 flex items-center flex-col"
               >
                 <item.icon className="w-12 h-12 mb-8 hidden md:flex" />
-                <h3 className="font-bold text-lg mb-4">{item.title}</h3>
+                <h3 className="font-medium text-lg mb-4">{item.title}</h3>
                 <p className="text-base font-normal text-center text-sm leading-relaxed">
                   {item.desc}
                 </p>
@@ -1021,12 +1171,13 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
       {/* For Service Providers Section */}
       <section className="py-10 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-2 items-center">
             <div>
-              <h2 className="text-lg md:text-3xl text-center md:text-left md:text-4xl font-bold mb-7">
+              <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-7">
                 For Service Providers
               </h2>
               <ul className="space-y-4 mb-8">
@@ -1064,7 +1215,7 @@ export default function HomePage() {
               <div className="text-center md:text-left mb-10 md:mb-0">
                 <Button
                   asChild
-                  className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white"
+                  className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
                 >
                   <a
                     href="https://www.consentz.com/features/"
@@ -1091,7 +1242,7 @@ export default function HomePage() {
       <section className="bg-[var(--dune)] py-20 text-white hidden">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-2">
+            <h2 className="text-3xl md:text-4xl font-medium mb-2">
               Ready to Get Started?
             </h2>
             <p className="text-gray-300">
@@ -1104,12 +1255,92 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="w-full py-10 px-4 lg:px-0 lg:py-20 overflow-hidden">
+        <div className="mx-auto bg-white border border-[#e0e0e0] overflow-hidden rounded-lg flex max-w-7xl flex-col items-start gap-10 lg:flex-row lg:justify-between">
+          
+          <div className="flex justify-center items-start lg:justify-start lg:w-1/2 lg:self-start">
+            <img
+              src="/directory/images/img-00020.png"
+              alt="Practitioner Banner"
+              className="lg:ml-0"
+            />
+          </div>
+
+         <div className="max-w-xl lg:w-1/2 p-10">
+            <h2 className="text-xl font-medium leading-tight text-black sm:text-2xl">
+              Are You A Practitioner?
+            </h2>
+
+            <div className="mt-6 space-y-5">
+              {[
+                "Manage your clients, appointments, and follow-ups all in one place — your full practice, organized",
+                "Connect with clients who are actively looking for exactly what you offer",
+                "Fill your schedule with high-intent, pre-qualified bookings — no chasing leads",
+              ].map((item, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="flex h-7 w-7 min-w-[28px] items-center justify-center rounded-full border border-black">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2.5}
+                      stroke="currentColor"
+                      className="h-4 w-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4.5 12.75l6 6 9-13.5"
+                      />
+                    </svg>
+                  </div>
+
+                  <p className="text-sm leading-relaxed text-black sm:text-base">
+                    {item}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Button
+                asChild
+                className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium text-white hover:bg-neutral-800 transition-colors"
+              >
+                <Link href="/register/clinic">List your practice</Link>
+              </Button>
+
+              <Button
+                asChild
+                variant="outline"
+                className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4] text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
+              >
+                <Link href="/claim">Claim your profile</Link>
+              </Button>
+
+              <Link
+                href="/register/practitioner"
+                className="text-md text-black hover:opacity-70 transition-colors"
+              >
+                Register as practitioner →
+              </Link>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       {/* Latest blogs */}
-      <section className="max-w-7xl mx-auto px-4 md:px-6 py-12" aria-labelledby="blog-heading">
+      <section
+        className="max-w-7xl mx-auto px-4 md:px-6 py-12"
+        aria-labelledby="blog-heading"
+      >
         {/* Header */}
-        <h2 id="blog-heading" className="sr-only">Our Latest Blogs</h2>
+        <h2 id="blog-heading" className="sr-only">
+          Our Latest Blogs
+        </h2>
         <div className="max-w-3xl mb-10">
-          <h2 className="text-lg md:text-3xl text-center md:text-left md:text-4xl font-bold mb-6">
+          <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-6">
             Our Latest Blogs
           </h2>
           <p className="text-gray-700 text-base leading-relaxed">
@@ -1124,7 +1355,7 @@ export default function HomePage() {
           {blogs.map(({ id, title, img, link }) => (
             <article
               key={id}
-              className="bg-gray-100 border border-gray-400 rounded-xl p-6 relative overflow-hidden"
+              className="bg-white border border-[#e0e0e0] rounded-lg p-6 relative overflow-hidden"
             >
               <a href={link} className="block">
                 <img
@@ -1155,16 +1386,24 @@ export default function HomePage() {
         </div>
         <div className="flex align-items-center justify-center pt-6 mt-6 mb-4">
           <Button
-            onClick={() => globalThis.location.href='https://www.consentz.com/blog'}
-            className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
+            onClick={() =>
+              (globalThis.location.href = "https://www.consentz.com/blog")
+            }
+            className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#f4f4f4] px-6 py-3 text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
           >
             View All Blogs
           </Button>
         </div>
       </section>
       {/* FAQ */}
-      <section className="max-w-4xl mx-auto pt-4 pb-20 px-6" aria-labelledby="faq-heading">
-        <h2 id="faq-heading" className="text-lg md:text-3xl text-center md:text-4xl font-bold mb-6">
+      <section
+        className="max-w-4xl mx-auto pt-4 pb-20 px-6"
+        aria-labelledby="faq-heading"
+      >
+        <h2
+          id="faq-heading"
+          className="text-xl md:text-2xl text-center font-medium mb-6"
+        >
           Frequently Asked Questions
         </h2>
         <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
@@ -1180,7 +1419,7 @@ export default function HomePage() {
                 key={index}
                 open={isOpen}
                 onToggle={() => toggleFAQ(index)}
-                className="border border-gray-300 rounded-3xl p-4 transition-all duration-300"
+                className="border border-[#e0e0e0]  rounded-lg p-4 transition-all duration-300"
               >
                 <summary className="w-full flex items-center gap-4 text-left text-lg font-semibold cursor-pointer flex flex-row flex-wrap pl-10 relative list-none">
                   <span className="text-2xl font-normal text-center w-7 h-7 rounded-full leading-6 text-black transition-all select-none bg-black text-white absolute left-0">
@@ -1198,8 +1437,10 @@ export default function HomePage() {
         </div>
         <div className="flex align-items-center justify-center pt-6 mt-6 mb-4">
           <Button
-            onClick={() => globalThis.location.href='https://www.consentz.com/faqs/'}
-            className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
+            onClick={() =>
+              (globalThis.location.href = "https://www.consentz.com/faqs/")
+            }
+            className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#f4f4f4] px-6 py-3 text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
           >
             Read All FAQ'S
           </Button>

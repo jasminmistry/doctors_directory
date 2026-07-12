@@ -31,7 +31,7 @@ export function CityPricingContext({
   }
 
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-4 md:p-6">
+    <section className="rounded-lg border border-gray-200 bg-white p-4 md:p-6">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-foreground">Cosmetic treatment costs in {cityName}</h2>
         <p className="mt-1 text-sm text-muted-foreground">

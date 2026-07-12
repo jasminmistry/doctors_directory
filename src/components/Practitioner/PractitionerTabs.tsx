@@ -30,7 +30,7 @@ export default function PractitionerTabs() {
                 block: "start",
               });
             }}
-            className="capitalize data-[state=active]:font-bold data-[state=active]:shadow-none"
+            className="capitalize data-[state=active]:font-medium data-[state=active]:shadow-none"
           >
             {s.label}
           </TabsTrigger>

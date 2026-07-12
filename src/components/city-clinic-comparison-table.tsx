@@ -22,7 +22,7 @@ export function CityClinicComparisonTable({
   }
 
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-4 md:p-6">
+    <section className="rounded-lg border border-gray-200 bg-white p-4 md:p-6">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-foreground">
           Compare clinics in {city}

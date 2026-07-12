@@ -7,18 +7,12 @@ import Link from "next/link";
 
 export default function Loading() {
   return (
-    <main className="min-h-screen bg-[var(--primary-bg-color)]">
+    <main className="min-h-screen bg-white">
       <div className="bg-[var(--primary-bg-color)] backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
-          <Link href="/" prefetch={false}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-            >
+          <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
               <ArrowLeft className="h-4 w-4" />
               Back to Directory
-            </Button>
           </Link>
         </div>
       </div>

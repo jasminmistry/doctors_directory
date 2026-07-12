@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { PageViewTracker } from "@/components/tracking/page-view-tracker";
+import { Star, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/components/Clinic/profile-header";
 import { GoogleMapsEmbed } from "@/components/gmaps-embed";
@@ -29,7 +30,7 @@ import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
 import { CityPricingContext } from "@/components/city-pricing-context";
 import { buildCityTreatmentPriceInsights } from "@/lib/city-pricing";
-import { BookingWidget } from "@/components/Clinic/booking-widget";
+import { EventBookingSection } from "@/components/Clinic/event-booking-section";
 import { CoverPhoto } from "@/components/Clinic/cover-photo";
 import { TransparencyBox } from "@/components/Clinic/transparency-box";
 import { AccreditationBadges } from "@/components/Clinic/accreditation-badges";
@@ -168,7 +169,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       orderBy: { createdAt: 'desc' },
     }),
   ]);
-  if (!dbClinic) {
+  if (!dbClinic || dbClinic.isHidden) {
     notFound();
   }
 
@@ -236,6 +237,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
   return (
     <>
+      <PageViewTracker />
       {medicalClinicSchema ? <DirectoryJsonLd schemas={[medicalClinicSchema]} /> : null}
     <main className="min-h-screen bg-background">
       <CoverPhoto src={dbClinic.coverImage} alt={`${dbClinic.name ?? slug} cover photo`} />
@@ -253,8 +255,6 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
               Back to Directory
             </Button>
           </Link>
-        </div>
-        <div className="container mx-auto max-w-6xl px-4 py-2">
           <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -280,7 +280,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
         <ProfileHeader
           clinic={clinic}
-          clinicName={dbClinic.name ?? slug}
+          clinicName={dbClinic.name ?? undefined}
           hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
         />
 
@@ -296,11 +296,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
             <div className="order-1 lg:order-2 col-span-1 lg:col-span-4">
               <div className="mb-4 space-y-4">
-                <BookingWidget
-                  slug={slug}
-                  clinicName={dbClinic.name ?? slug}
-                  hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
-                />
+                <EventBookingSection clinicSlug={slug} />
                 <AccreditationBadges
                   isSaveFace={clinic.isSaveFace}
                   isDoctor={clinic.isDoctor}
@@ -321,7 +317,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   avgReplyTime={dbClinic.avgReplyTime}
                 />
               </div>
-              <div className="border border-gray-300 rounded-xl p-6">
+              <div className="border border-gray-300 rounded-lg p-6">
                 <DirectoryStarRating
                   reviewCount={clinic.reviewCount ?? 0}
                   reviewsLabel={
@@ -339,7 +335,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   <ScoreInfoTooltip entityLabel="clinic" />
                 </div>
                 <Stats data={boxplotData} />
-                <p className="mt-3 text-xs font-bold text-black">
+                <p className="mt-3 text-xs font-medium text-black">
                   {rankingSubtitle}
                 </p>
               </div>

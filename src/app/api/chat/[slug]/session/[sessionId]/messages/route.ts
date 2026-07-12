@@ -97,7 +97,9 @@ export async function POST(
         await prisma.chatMessage.update({
           where: { id: message.id },
           data: { coreMessageId: String(coreMessageId) },
-        }).catch(() => {})
+        }).catch((err) => console.error('[chat/messages POST] failed to store coreMessageId:', err))
+      } else {
+        console.warn(`[chat/messages POST] Core sendMessage returned null for session=${session.id}`)
       }
 
       return NextResponse.json({ message }, { status: 201 })

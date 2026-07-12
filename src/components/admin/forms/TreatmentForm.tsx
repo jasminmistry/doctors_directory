@@ -147,7 +147,7 @@ export function TreatmentForm() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="min-w-0">
-            <p className="text-xs text-gray-400 font-medium">Treatments</p>
+            <p className="text-xs text-gray-500 font-medium">Treatments</p>
             <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
           </div>
         </div>
@@ -184,8 +184,8 @@ export function TreatmentForm() {
             </Field>
           ) : (
             <div className="flex flex-col justify-end">
-              <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
-              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
+              <span className="text-xs text-gray-500 mb-1.5 font-medium">Slug</span>
+              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{data.slug}</code>
             </div>
           )}
 
@@ -211,7 +211,7 @@ export function TreatmentForm() {
             <div key={key} className="py-5 first:pt-0 last:pb-0">
               <div className="mb-2">
                 <p className="text-sm font-medium text-gray-700">{label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{hint}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{hint}</p>
               </div>
               <JsonFieldEditor
                 value={data[key]}
@@ -242,7 +242,7 @@ function LoadingSkeleton() {
           <div className="h-4 w-40 bg-gray-100 rounded animate-pulse" />
         </div>
       </div>
-      <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+      <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
         <div className="h-4 w-20 bg-gray-100 rounded animate-pulse" />
         <div className="grid grid-cols-2 gap-4">
           <div className="h-9 bg-gray-100 rounded animate-pulse" />
@@ -250,7 +250,7 @@ function LoadingSkeleton() {
           <div className="col-span-2 h-20 bg-gray-100 rounded animate-pulse" />
         </div>
       </div>
-      <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+      <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
         <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="space-y-2 py-4 border-t border-gray-100 first:border-0 first:pt-0">

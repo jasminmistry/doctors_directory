@@ -30,7 +30,7 @@ export function HubDetailHeroShell({
   return (
     <section
       className={cn(
-        "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+        "w-full border-b border-[#e0e0e0] bg-[var(--primary-bg-color)]",
         HUB_DETAIL_HERO_VIEWPORT_CLASS
       )}
     >

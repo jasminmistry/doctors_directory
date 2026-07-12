@@ -47,29 +47,31 @@ export function HubBuyerFaq({
 }: Props) {
   return (
     <section className={`mb-16 px-4 sm:px-0 ${className}`.trim()}>
-      <h2 className={titleClassName}>{title}</h2>
+      <h3 className={titleClassName}>{title}</h3>
       {intro ? (
         <p className={introClassName}>{intro}</p>
       ) : null}
-      <div className="mx-auto mt-8 max-w-[1056px] overflow-hidden rounded-xl border border-[#E2DDD7] bg-white">
-        {items.map((item, index) => (
-          <details
-            key={item.question}
-            open={item.defaultOpen ?? index === 0}
-            className={`group border-[#E2DDD7] bg-white ${index < items.length - 1 ? "border-b" : ""}`}
-          >
-            <summary className="flex cursor-pointer list-none items-start gap-[9px] px-6 py-5 [&::-webkit-details-marker]:hidden">
-              <span className="mt-0.5 shrink-0 text-[#151C26]" aria-hidden>
-                <PlusCircle className="size-[22px] group-open:hidden" strokeWidth={1.75} />
-                <MinusCircle className="hidden size-[22px] group-open:block" strokeWidth={1.75} />
-              </span>
-              <span className={HUB_FAQ_QUESTION_CLASS}>{item.question}</span>
-            </summary>
-            <div className="px-6 pb-5 pl-[52px] pr-6">
-              <p className={HUB_FAQ_ANSWER_CLASS}>{item.answer}</p>
-            </div>
-          </details>
-        ))}
+      <div className="mx-auto mt-8 max-w-[1056px] overflow-hidden rounded-lg border border-[#e0e0e0] bg-white">
+        <div className="w-full">
+          {items.map((item, index) => (
+            <details
+              key={item.question}
+              open={item.defaultOpen ?? index === 0}
+              className={`group border-[#e0e0e0] bg-white ${index < items.length - 1 ? "border-b" : ""}`}
+            >
+              <summary className="flex cursor-pointer list-none items-start gap-[9px] px-6 py-5 [&::-webkit-details-marker]:hidden">
+                <span className="mt-0.5 shrink-0 text-[#151C26]" aria-hidden>
+                  <PlusCircle className="size-[22px] group-open:hidden" strokeWidth={1.75} />
+                  <MinusCircle className="hidden size-[22px] group-open:block" strokeWidth={1.75} />
+                </span>
+                <span className={HUB_FAQ_QUESTION_CLASS}>{item.question}</span>
+              </summary>
+              <div className="px-6 pb-5 pl-[52px] pr-6">
+                <p className={HUB_FAQ_ANSWER_CLASS}>{item.answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
       </div>
     </section>
   )

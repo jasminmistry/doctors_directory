@@ -20,7 +20,7 @@ type PageProps = {
   }
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 function resolvePage(params: PageProps['params']) {
   const serviceEntry = getServiceCityEntry(params.slug, params.city)

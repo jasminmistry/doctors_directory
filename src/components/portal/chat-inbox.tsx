@@ -135,7 +135,7 @@ export function ChatInbox() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] rounded-xl border border-gray-200 bg-white overflow-hidden">
+    <div className="flex h-[calc(100vh-8rem)] rounded-lg border border-gray-200 bg-white overflow-hidden">
       {/* Session list */}
       <div className="w-72 shrink-0 flex flex-col border-r border-gray-200">
         <div className="px-4 py-3 border-b border-gray-200">
@@ -145,14 +145,14 @@ export function ChatInbox() {
         <div className="flex-1 overflow-y-auto">
           {loading && (
             <div className="flex justify-center pt-8">
-              <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+              <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
             </div>
           )}
 
           {!loading && sessions.length === 0 && (
             <div className="flex flex-col items-center gap-2 pt-10 text-center px-4">
               <MessageSquare className="h-8 w-8 text-gray-300" />
-              <p className="text-sm text-gray-400">No conversations yet</p>
+              <p className="text-sm text-gray-500">No conversations yet</p>
             </div>
           )}
 
@@ -173,11 +173,11 @@ export function ChatInbox() {
                   <span className={cn('text-sm truncate', unread ? 'font-semibold text-gray-900' : 'text-gray-700')}>
                     {s.patientName ?? 'Patient'}
                   </span>
-                  <span className="shrink-0 text-[10px] text-gray-400">
+                  <span className="shrink-0 text-[10px] text-gray-500">
                     {lastMsg ? formatTime(lastMsg.createdAt) : ''}
                   </span>
                 </div>
-                <p className={cn('text-xs truncate mt-0.5', unread ? 'text-gray-800' : 'text-gray-400')}>
+                <p className={cn('text-xs truncate mt-0.5', unread ? 'text-gray-800' : 'text-gray-500')}>
                   {lastMsg?.content ?? 'No messages yet'}
                 </p>
                 {unread && (
@@ -194,7 +194,7 @@ export function ChatInbox() {
         {!activeId && (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center px-8">
             <MessageSquare className="h-10 w-10 text-gray-200" />
-            <p className="text-sm text-gray-400">Select a conversation to reply</p>
+            <p className="text-sm text-gray-500">Select a conversation to reply</p>
           </div>
         )}
 
@@ -203,7 +203,7 @@ export function ChatInbox() {
             {/* Header */}
             <div className="shrink-0 px-5 py-3 border-b border-gray-200">
               <p className="text-sm font-semibold text-gray-900">{active?.patientName ?? 'Patient'}</p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-500">
                 {active?.patientEmail ?? active?.patientPhone ?? ''}
               </p>
             </div>
@@ -211,26 +211,26 @@ export function ChatInbox() {
             {/* Messages */}
             <div ref={messagesContainerRef} className="flex-1 overflow-y-auto flex flex-col gap-2 px-5 py-4">
               {messages.length === 0 && (
-                <p className="text-xs text-gray-400 text-center py-4">No messages yet</p>
+                <p className="text-xs text-gray-500 text-center py-4">No messages yet</p>
               )}
               {messages.map((msg) => (
                 <div
                   key={msg.id}
                   className={cn('flex w-full flex-col gap-0.5', msg.sender === 'clinic' ? 'items-end' : 'items-start')}
                 >
-                  <span className="text-[10px] text-gray-400 px-1">
+                  <span className="text-[10px] text-gray-500 px-1">
                     {msg.sender === 'clinic' ? 'You' : (active?.patientName ?? 'Patient')}
                   </span>
                   <div
                     className={cn(
                       'max-w-[75%] rounded-2xl px-3.5 py-2 text-sm',
                       msg.sender === 'clinic'
-                        ? 'bg-gray-900 text-white rounded-br-sm'
+                        ? 'bg-gray-100 text-gray-900 rounded-br-sm'
                         : 'bg-gray-100 text-gray-900 rounded-bl-sm',
                     )}
                   >
                     {msg.content}
-                    <p className="text-[10px] mt-1 text-gray-400">
+                    <p className="text-[10px] mt-1 text-gray-500">
                       {format(new Date(msg.createdAt), 'HH:mm')}
                     </p>
                   </div>
@@ -241,9 +241,9 @@ export function ChatInbox() {
 
             {/* Input */}
             {active?.status === 'active' && (
-              <div className="shrink-0 flex items-center gap-2 px-4 py-3 border-t border-gray-200">
+              <div className="shrink-0 flex items-center px-4 gap-2 border-t border-gray-200">
                 <Input
-                  className="flex-1 h-9 text-sm"
+                  className="flex-1 h-15 rounded-none border-none text-sm focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
                   placeholder="Reply…"
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
@@ -271,7 +271,7 @@ export function ChatInbox() {
               </div>
             )}
             {active?.status === 'closed' && (
-              <p className="shrink-0 px-4 py-3 border-t text-xs text-gray-400 text-center">
+              <p className="shrink-0 px-4 py-3 border-t text-xs text-gray-500 text-center">
                 Conversation closed
               </p>
             )}
