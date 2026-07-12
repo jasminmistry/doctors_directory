@@ -105,8 +105,6 @@ export function TrackingDashboard() {
   const [overview, setOverview] = useState<OverviewResponse | null>(null)
   const [overviewLoading, setOverviewLoading] = useState(true)
 
-  const token = searchParams.get("token")
-
   const searchKey = useMemo(() => searchParams.toString(), [searchParams])
 
   const pushUrl = useCallback(
@@ -175,7 +173,6 @@ export function TrackingDashboard() {
       setOverviewLoading(true)
       try {
         const sp = new URLSearchParams()
-        if (token) sp.set("token", token)
         sp.set("view", "overview")
         sp.set("window_days", overviewWindow)
         if (overviewFrom) sp.set("overview_from", overviewFrom)
@@ -197,11 +194,10 @@ export function TrackingDashboard() {
     return () => {
       cancelled = true
     }
-  }, [token, overviewWindow, overviewFrom, overviewTo])
+  }, [overviewWindow, overviewFrom, overviewTo])
 
   const applyFilters = () => {
     const sp = new URLSearchParams()
-    if (token) sp.set("token", token)
     sp.set("window_days", overviewWindow)
     if (overviewFrom) sp.set("overview_from", overviewFrom)
     if (overviewTo) sp.set("overview_to", overviewTo)
@@ -248,9 +244,8 @@ export function TrackingDashboard() {
     <AdminLayout title="Directory tracking">
       <div className="space-y-6">
         <p className="text-sm text-gray-600">
-          Filters are reflected in the URL so you can bookmark or share a view. If the server has{" "}
-          <code className="text-xs">TRACKING_DASHBOARD_TOKEN</code> set, add the same value as{" "}
-          <code className="text-xs">?token=…</code> in the URL (including when you use Copy link).
+          Filters are reflected in the URL so you can bookmark or share a view. Access is gated by
+          admin login.
         </p>
 
         <div className="flex flex-wrap items-center gap-2">
