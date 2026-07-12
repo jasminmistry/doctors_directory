@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile } from 'fs/promises'
+import { mkdir, writeFile } from 'fs/promises'
 import path from 'path'
 import { randomUUID } from 'crypto'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
-const MAX_BYTES = 5 * 1024 * 1024 // 5 MB
+const MAX_BYTES = 5 * 1024 * 1024
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,11 +27,13 @@ export async function POST(req: NextRequest) {
 
     const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
     const filename = `${randomUUID()}.${ext}`
-    const dest = path.join(process.cwd(), 'public', 'images', 'uploads', filename)
+    const uploadDir = path.join(process.cwd(), 'public', 'images', 'uploads')
+    const dest = path.join(uploadDir, filename)
 
+    await mkdir(uploadDir, { recursive: true })
     await writeFile(dest, buffer)
 
-    return NextResponse.json({ url: `/images/uploads/${filename}` })
+    return NextResponse.json({ url: `/directory/images/uploads/${filename}` })
   } catch (err) {
     console.error('[admin/upload] error:', err)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
