@@ -2,7 +2,7 @@
 import { cache } from "react";
 import { Clinic, Practitioner, Product, SearchFilters } from "@/lib/types"
 import { getAllClinicsForSearch, searchClinicsForListing, type SearchClinic } from "@/lib/data-access/clinics"
-import { getAllTreatmentNames } from "@/lib/data-access/treatments"
+import { getAllTreatmentNames, getAllTreatments } from "@/lib/data-access/treatments"
 import { getAllProducts as getAllProductsFromDb, searchProductsForListing } from "@/lib/data-access/products"
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import { modalities } from "@/lib/data"
@@ -130,6 +130,14 @@ export const loadData = cache(async (): Promise<LoadDataResult> => {
   return result;
 });
 
+export const getTreatmentSearchOptions = cache(async () => {
+  const treatments = await getAllTreatments()
+  return treatments.map((treatment) => ({
+    name: treatment.name,
+    slug: treatment.slug,
+  }))
+})
+
 
 
 
@@ -227,7 +235,7 @@ export async function searchPractitioners(
         if (!hasMatchingType) return false
       }
 
-      if (filters.location) {
+      if (filters.location?.trim()) {
         const treatmentAreaMapping = {
           "face": ["Anti Wrinkle Treatment", "Botox", "Fillers", "Chemical Peel", "Cheek Enhancement", "Chin Enhancement", "Lips", "Marionettes", "Tear Trough Treatment"],
           "body": ["CoolSculpting", "Liposuction", "Breast Augmentation", "Aqualyx", "Lymphatic Drainage"],
@@ -236,7 +244,7 @@ export async function searchPractitioners(
           "lips": ["Lips", "Fillers"],
         }
 
-        const area = filters.location.toLowerCase()
+        const area = filters.location.trim().toLowerCase()
         const mappedTreatments = treatmentAreaMapping[area as keyof typeof treatmentAreaMapping] || []
         const hasMatchingArea = mappedTreatments.some((mappedTreatment) =>
           treatment.toLowerCase().includes(mappedTreatment.toLowerCase()) ||
@@ -269,8 +277,8 @@ export async function searchPractitioners(
         if (!practitioner?.practitioner_qualifications?.toLowerCase().includes(filters.category.toLowerCase())) return false  
       }
 
-      if (filters.location) {
-        const location = filters.location.toLowerCase()
+      if (filters.location?.trim()) {
+        const location = filters.location.trim().toLowerCase()
         if (!practitioner?.gmapsAddress.toLowerCase().includes(location)) return false
       }
 

@@ -3,18 +3,19 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 
 const schema = z.object({
-  clinicSlug: z.string().min(1),
-  patientName: z.string().min(1).max(200),
+  clinicSlug: z.string().trim().min(1),
+  patientName: z.string().trim().min(1, 'Your name is required.').max(200),
   rating: z.number().int().min(1).max(5),
-  reviewText: z.string().min(10).max(2000),
-  treatment: z.string().max(255).optional(),
+  reviewText: z.string().trim().min(10, 'Please write at least 10 characters.').max(2000),
+  treatment: z.string().trim().max(255).optional(),
 })
 
 export async function POST(req: NextRequest) {
   try {
     const parsed = schema.safeParse(await req.json())
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+      const message = parsed.error.issues[0]?.message ?? 'Please check the form and try again.'
+      return NextResponse.json({ error: message }, { status: 400 })
     }
 
     const { clinicSlug, patientName, rating, reviewText, treatment } = parsed.data

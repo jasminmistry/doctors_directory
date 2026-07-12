@@ -24,6 +24,8 @@ import { getPractitionerBySlug, getAllPractitionersForSearch } from "@/lib/data-
 import { getAllTreatmentNames } from "@/lib/data-access/treatments";
 import { isRemovedPractitionerSlug } from "@/lib/directory-removals";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
+import { PageViewTracker } from "@/components/tracking/page-view-tracker";
+import { EventBookingSection } from "@/components/Clinic/event-booking-section";
 
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
@@ -88,11 +90,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const associatedClinics: string[] = JSON.parse(clinic.Associated_Clinics ?? '[]')
 
   return (
+    <>
+    <PageViewTracker />
     <main className="min-h-screen bg-background">
       {/* Navigation */}
       <div className="sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
-          <Link className="mb-2 inline-block" href="/" prefetch={false}>
+          <Link className="mb-3 inline-block" href="/" prefetch={false}>
             <Button variant="ghost" size="sm" className="gap-2 hover:cursor-pointer">
               <ArrowLeft className="h-4 w-4" />
               Back to Directory
@@ -132,7 +136,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                      <ClinicDetailsMarkdown clinic={practitioner} />
                    </div>
                    <div className="order-1 lg:order-2 col-span-1 lg:col-span-4">
-                     <div className="border border-gray-300 rounded-xl p-6">
+                     <div className="border border-gray-300 rounded-lg p-6">
                        <DirectoryStarRating
                          reviewCount={practitioner.reviewCount ?? 0}
                          reviewsLabel={
@@ -150,7 +154,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                          <ScoreInfoTooltip entityLabel="practitioner" />
                        </div>
                        <Stats data={boxplotData} />
-                       <p className="mt-3 text-xs font-bold text-black">
+                       <p className="mt-3 text-xs font-medium text-black">
                          {rankingSubtitle}
                        </p>
                      </div>
@@ -208,6 +212,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   String(practitioner.Payments) || "Not listed"
                 )}
               </Section>)}
+              <EventBookingSection practitionerSlug={slug} />
+
               <div className='flex flex-col sm:flex-row gap-2'>
 
 
@@ -240,6 +246,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
               </div>
 
     </main>
+    </>
   );
 }
 

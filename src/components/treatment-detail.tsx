@@ -1,8 +1,16 @@
-"use client"
+"use client";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, DollarSign, Star, Clock, Users, Database, Camera } from "lucide-react";
+import {
+  ThumbsUp,
+  DollarSign,
+  Star,
+  Clock,
+  Users,
+  Database,
+  Camera,
+} from "lucide-react";
 import { DEFAULT_PERSON, FallbackImage } from "@/components/ui/fallback-image";
 
 interface TreatmentDetailProps {
@@ -18,46 +26,49 @@ interface TreatmentDetailProps {
   treatmentData?: any;
 }
 
-export function TreatmentDetail({ treatment, treatmentData }: Readonly<TreatmentDetailProps>) {
+export function TreatmentDetail({
+  treatment,
+  treatmentData,
+}: Readonly<TreatmentDetailProps>) {
   const findProperty = (baseProperty: string) => {
     if (!treatmentData) return null;
-    
+
     const treatmentName = treatment.name;
-    const treatmentNameUnderscore = treatmentName.replaceAll(/\s+/g, '_');
-    
+    const treatmentNameUnderscore = treatmentName.replaceAll(/\s+/g, "_");
+
     const possibleKeys = [];
-    
+
     switch (baseProperty) {
-      case 'whatIs':
+      case "whatIs":
         possibleKeys.push(
           `What_is_${treatmentNameUnderscore}_How_does_it_work`,
           `What is ${treatmentName}? How does it work?`,
           `What is ${treatmentName} and How Does It Work?`,
           `What_is_${treatmentName}_How_does_it_work`,
-          `What_is_${treatmentNameUnderscore}_How_does_it_work`
+          `What_is_${treatmentNameUnderscore}_How_does_it_work`,
         );
         break;
-      case 'goals':
+      case "goals":
         possibleKeys.push(
           `Goals_of_${treatmentNameUnderscore}_treatment`,
           `What are the goals of ${treatmentName}?`,
           `Goals_of_${treatmentName}_treatment`,
           `Goals of ${treatmentName}`,
           `Goals of ${treatmentName} Treatment`,
-          `Goals_of_${treatmentNameUnderscore}`
+          `Goals_of_${treatmentNameUnderscore}`,
         );
         break;
-      case 'prosAndCons':
+      case "prosAndCons":
         possibleKeys.push(
           `Pros_and_Cons_of_${treatmentNameUnderscore}_Treatments`,
           `What are the pros and cons of ${treatmentName}?`,
           `Pros_and_Cons_of_${treatmentName}_Treatments`,
           `Pros and Cons of ${treatmentName}`,
           `Pros and Cons of ${treatmentName} Treatment`,
-          `Pros_and_Cons_of_${treatmentNameUnderscore}`
+          `Pros_and_Cons_of_${treatmentNameUnderscore}`,
         );
         break;
-      case 'cost':
+      case "cost":
         possibleKeys.push(
           `Cost_of_${treatmentNameUnderscore}_in_UK_and_Variations`,
           `What is the cost of ${treatmentName} in the UK, and why does the price vary between clinics?`,
@@ -65,10 +76,10 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
           `What_is_the_cost_of_${treatmentNameUnderscore}_in_UK_and_Variations`,
           `Cost in the UK and Why It Varies`,
           `Cost in the UK and Why the price varies between clinics`,
-          `Cost_of_${treatmentNameUnderscore}_in_the_UK_and_Why_it_Varies`
+          `Cost_of_${treatmentNameUnderscore}_in_the_UK_and_Why_it_Varies`,
         );
         break;
-      case 'choosing':
+      case "choosing":
         possibleKeys.push(
           `What_to_Look_for_Choosing_Doctor_or_Clinic`,
           `What should you look for when choosing a doctor or clinic for ${treatmentName}?`,
@@ -76,20 +87,20 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
           `What_should_you_look_for_when_choosing_a_doctor_or_clinic_for_${treatmentNameUnderscore}?`,
           `What to Look for When Choosing a Doctor or Clinic`,
           `Choosing a Doctor or Clinic`,
-          `What_to_Look_for_When_Choosing_a_Doctor_or_Clinic`
+          `What_to_Look_for_When_Choosing_a_Doctor_or_Clinic`,
         );
         break;
-      case 'comparison':
+      case "comparison":
         possibleKeys.push(
           `How_${treatmentNameUnderscore}_Compairs_with_Non_surgical_or_Alternative_Options`,
           `How does ${treatmentName} compare with non-surgical or alternative options?`,
           `How_${treatmentName}_Compairs_with_Non_surgical_or_Alternative_Options`,
           `How ${treatmentName} Compares with Non-Surgical or Alternative Options`,
           `How ${treatmentName} Treatment Compares with Non-Surgical or Alternative Options`,
-          `How_${treatmentNameUnderscore}_Compares_with_Non_surgical_or_Alternative_Options`
+          `How_${treatmentNameUnderscore}_Compares_with_Non_surgical_or_Alternative_Options`,
         );
         break;
-      case 'candidate':
+      case "candidate":
         possibleKeys.push(
           `Who_is_a_Good_Candidate_for_${treatmentNameUnderscore}_Treatment`,
           `Who is a good candidate for ${treatmentName}?`,
@@ -98,10 +109,10 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
           `Who_is_a_good_candidate_for_${treatmentNameUnderscore}_treatment?`,
           `Who is a Good Candidate for ${treatmentName}`,
           `Who is a Good Candidate for ${treatmentName} Treatment`,
-          `Who_is_a_Good_Candidate_for_${treatmentNameUnderscore}`
+          `Who_is_a_Good_Candidate_for_${treatmentNameUnderscore}`,
         );
         break;
-      case 'prepare':
+      case "prepare":
         possibleKeys.push(
           `How_to_Prepare_for_${treatmentNameUnderscore}_Appointment`,
           `How should you prepare for ${treatmentName}?`,
@@ -109,10 +120,10 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
           `How_should_you_prepare_for_${treatmentNameUnderscore}_treatment?`,
           `How to Prepare for ${treatmentName}`,
           `How to Prepare for ${treatmentName} Treatment`,
-          `How_Should_You_Prepare_for_${treatmentNameUnderscore}`
+          `How_Should_You_Prepare_for_${treatmentNameUnderscore}`,
         );
         break;
-      case 'safety':
+      case "safety":
         possibleKeys.push(
           `Safety_Considerations_and_Pain`,
           `What are the safety considerations for ${treatmentName}? Is it painful?`,
@@ -121,10 +132,10 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
           `Safety Considerations and Pain`,
           `Safety and Pain`,
           `Safety_Considerations_Is_it_Painful`,
-          `Safety_Considerations_Is_it_Painful`
+          `Safety_Considerations_Is_it_Painful`,
         );
         break;
-      case 'duration':
+      case "duration":
         possibleKeys.push(
           `What_Happens_During_Appointment_and_Duration`,
           `What happens during a ${treatmentName} appointment, and how long does it take?`,
@@ -137,40 +148,40 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
           `What_Happens_During_an_${treatmentNameUnderscore}_Appointment_and_How_Long_it_Takes`,
           `During a ${treatmentName} Treatment Appointment`,
           `During_a_${treatmentNameUnderscore}_Treatment_Appointment`,
-          `What_Happens_During_an_${treatmentNameUnderscore}_Appointment_and_How_Long_it_Takes`
+          `What_Happens_During_an_${treatmentNameUnderscore}_Appointment_and_How_Long_it_Takes`,
         );
         break;
-      case 'recovery':
+      case "recovery":
         possibleKeys.push(
           `Recovery_Process_Downtime_Possible_Side_Effects`,
           `What is the recovery process, downtime, and possible side effects of ${treatmentName}?`,
           `What_is_the_recovery_process,_downtime,_and_possible_side_effects_of_${treatmentNameUnderscore}_treatment?`,
           `Recovery, Downtime, and Possible Side Effects`,
           `Recovery, Downtime, Side Effects`,
-          `Recovery_Downtime_and_Possible_Side_Effects`
+          `Recovery_Downtime_and_Possible_Side_Effects`,
         );
         break;
-      case 'resultsLast':
+      case "resultsLast":
         possibleKeys.push(
           `How_Long_Results_Last`,
           `How long do the results of ${treatmentName} last?`,
           `How_long_do_the_results_of_${treatmentNameUnderscore}_treatment_last?`,
           `Duration of Results`,
           `How long do results last?`,
-          `How_Long_Do_the_Results_Last`
+          `How_Long_Do_the_Results_Last`,
         );
         break;
-      case 'mildVsSevere':
+      case "mildVsSevere":
         possibleKeys.push(
           `Mild_vs_Severe_${treatmentNameUnderscore}_and_Limits`,
           `How does ${treatmentName} differ for mild versus severe cases, and what does it not treat?`,
           `Mild_vs_Severe_${treatmentName}_and_Limits`,
           `How_does_${treatmentNameUnderscore}_differ_for_mild_versus_severe_cases_and_what_does_it_not_treat?`,
           `How ${treatmentName} Differs for Mild Versus Severe Cases`,
-          `Mild vs Severe Cases and What It Does Not Treat`
+          `Mild vs Severe Cases and What It Does Not Treat`,
         );
         break;
-      case 'maintenance':
+      case "maintenance":
         possibleKeys.push(
           `Does_${treatmentNameUnderscore}_Require_Maintenance_and_How_Often`,
           `Does ${treatmentName} require maintenance sessions? How often should it be repeated?`,
@@ -179,10 +190,10 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
           `Maintenance Sessions`,
           `Maintenance and Repeat Sessions`,
           `Does_${treatmentNameUnderscore}_Require_Maintenance_Sessions`,
-          `Does_${treatmentNameUnderscore}_Require_Maintenance_and_How_Often`
+          `Does_${treatmentNameUnderscore}_Require_Maintenance_and_How_Often`,
         );
         break;
-      case 'qualifications':
+      case "qualifications":
         possibleKeys.push(
           `Qualifications_Practitioner_Should_Have`,
           `What qualifications should a practitioner offering ${treatmentName} have?`,
@@ -191,10 +202,10 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
           `What_qualifications_should_a_practitioner_offering_${treatmentNameUnderscore}_treatment_have?`,
           `Practitioner Qualifications`,
           `Qualifications a practitioner offering ${treatmentName} should have`,
-          `What_Qualifications_Should_a_Practitioner_Offering_${treatmentNameUnderscore}_Have`
+          `What_Qualifications_Should_a_Practitioner_Offering_${treatmentNameUnderscore}_Have`,
         );
         break;
-      case 'regulation':
+      case "regulation":
         possibleKeys.push(
           `Is_${treatmentNameUnderscore}_Regulated_in_UK_and_What_To_Do_If_Something_Goes_Wrong`,
           `Is ${treatmentName} regulated in the UK, and what should you do if something goes wrong?`,
@@ -203,10 +214,10 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
           `Is_${treatmentNameUnderscore}_regulated_in_the_UK,_and_what_should_you_do_if_something_goes_wrong?`,
           `Is ${treatmentName} Regulated in the UK and What to Do if Something Goes Wrong?`,
           `Regulation in the UK`,
-          `Is_${treatmentNameUnderscore}_Regulated_in_the_UK_and_What_if_Something_Goes_Wrong`
+          `Is_${treatmentNameUnderscore}_Regulated_in_the_UK_and_What_if_Something_Goes_Wrong`,
         );
         break;
-      case 'guidelines':
+      case "guidelines":
         possibleKeys.push(
           `Are_There_NICE_FDA_MHRA_Guidelines`,
           `Are_There_NICE_FDA_or_MHRA_Guidelines_for_${treatmentNameUnderscore}`,
@@ -215,66 +226,88 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
           `Are_there_NICE,_FDA,_or_MHRA_guidelines_for_${treatmentNameUnderscore}?`,
           `Guidelines (NICE, FDA, or MHRA)`,
           `Guidelines (NICE / MHRA / FDA)`,
-          `Are_There_NICE_FDA_or_MHRA_Guidelines_for_${treatmentNameUnderscore}`
+          `Are_There_NICE_FDA_or_MHRA_Guidelines_for_${treatmentNameUnderscore}`,
         );
         break;
     }
-    
+
     for (const key of possibleKeys) {
       if (treatmentData.hasOwnProperty(key)) {
         const value = treatmentData[key];
-        
-        if (typeof value === 'object' && value !== null) {
-          if (baseProperty === 'whatIs') {
-            return value.description || value.answer || value.technical || (typeof value === 'string' ? value : null);
-          }
-          else if (baseProperty === 'goals') {
-            return value.goals || value.answer || value.typical || value.advice || (Array.isArray(value) ? value : null);
-          }
-          else if (baseProperty === 'prosAndCons') {
+
+        if (typeof value === "object" && value !== null) {
+          if (baseProperty === "whatIs") {
+            return (
+              value.description ||
+              value.answer ||
+              value.technical ||
+              (typeof value === "string" ? value : null)
+            );
+          } else if (baseProperty === "goals") {
+            return (
+              value.goals ||
+              value.answer ||
+              value.typical ||
+              value.advice ||
+              (Array.isArray(value) ? value : null)
+            );
+          } else if (baseProperty === "prosAndCons") {
             return value;
-          }
-          else if (baseProperty === 'cost') {
+          } else if (baseProperty === "cost") {
             // Return the entire cost object for access to Typical_prices and Why_price_varies
             return value;
-          }
-          else if (baseProperty === 'candidate') {
-            return value.typical || value.advice || value.answer || (Array.isArray(value) ? value : null);
-          }
-          else if (baseProperty === 'duration') {
+          } else if (baseProperty === "candidate") {
+            return (
+              value.typical ||
+              value.advice ||
+              value.answer ||
+              (Array.isArray(value) ? value : null)
+            );
+          } else if (baseProperty === "duration") {
             if (Array.isArray(value)) return value;
-            if (typeof value === 'string') return value;
-            return value.duration || value.answer || value.process || value.description || null;
-          }
-          else if (baseProperty === 'comparison') {
-            return value.comparison || value.answer || value.advice || (Array.isArray(value) ? value : null);
-          }
-          else if (baseProperty === 'resultsLast') {
-            if (typeof value === 'string') return value;
+            if (typeof value === "string") return value;
+            return (
+              value.duration ||
+              value.answer ||
+              value.process ||
+              value.description ||
+              null
+            );
+          } else if (baseProperty === "comparison") {
+            return (
+              value.comparison ||
+              value.answer ||
+              value.advice ||
+              (Array.isArray(value) ? value : null)
+            );
+          } else if (baseProperty === "resultsLast") {
+            if (typeof value === "string") return value;
             return value.duration || value.answer || value.typical || null;
-          }
-          else if (baseProperty === 'recovery') {
+          } else if (baseProperty === "recovery") {
             if (Array.isArray(value)) return value;
-            if (typeof value === 'string') return value;
+            if (typeof value === "string") return value;
             return value.recovery || value.answer || value.process || null;
-          }
-          else if (baseProperty === 'maintenance') {
-            if (typeof value === 'string') return value;
+          } else if (baseProperty === "maintenance") {
+            if (typeof value === "string") return value;
             if (Array.isArray(value)) return value;
             return value.maintenance || value.answer || value.typical || null;
-          }
-          else if (baseProperty === 'safety') {
+          } else if (baseProperty === "safety") {
+            return value;
+          } else if (baseProperty === "guidelines") {
+            return value;
+          } else if (baseProperty === "regulation") {
             return value;
           }
-          else if (baseProperty === 'guidelines') {
-            return value;
-          }
-          else if (baseProperty === 'regulation') {
-            return value;
-          }
-          return value.answer || value.description || value.typical || value.advice || value.notes || (typeof value === 'string' ? value : null);
+          return (
+            value.answer ||
+            value.description ||
+            value.typical ||
+            value.advice ||
+            value.notes ||
+            (typeof value === "string" ? value : null)
+          );
         }
-        
+
         return value;
       }
     }
@@ -282,20 +315,36 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
   };
 
   const getCostData = () => {
-    const costData = findProperty('cost');
+    const costData = findProperty("cost");
     if (!costData) return null;
-    
-    if (typeof costData === 'string') {
+
+    if (typeof costData === "string") {
       return { typicalPrices: costData, whyVary: null };
     }
-    
+
     if (Array.isArray(costData)) {
       return { typicalPrices: costData, whyVary: null };
     }
-    
+
     return {
-      typicalPrices: costData.Typical_prices || costData['Typical UK costs'] || costData.typicalCosts || costData.typical_costs || costData['Typical_Costs'] || costData.typicalRange || costData['Typical_Range'] || costData.Typical_Range,
-      whyVary: costData.Why_price_varies || costData['Why prices vary'] || costData.whyItVaries || costData.why_prices_vary || costData['Why_prices_vary'] || costData.whyVary || costData['Why_Varies'] || costData.Why_Varies
+      typicalPrices:
+        costData.Typical_prices ||
+        costData["Typical UK costs"] ||
+        costData.typicalCosts ||
+        costData.typical_costs ||
+        costData["Typical_Costs"] ||
+        costData.typicalRange ||
+        costData["Typical_Range"] ||
+        costData.Typical_Range,
+      whyVary:
+        costData.Why_price_varies ||
+        costData["Why prices vary"] ||
+        costData.whyItVaries ||
+        costData.why_prices_vary ||
+        costData["Why_prices_vary"] ||
+        costData.whyVary ||
+        costData["Why_Varies"] ||
+        costData.Why_Varies,
     };
   };
 
@@ -314,9 +363,9 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
       });
     }
   };
@@ -342,7 +391,7 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
 
           {/* Treatment Info */}
           <div className="flex-1 space-y-4">
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-xl font-medium text-gray-900">
               {treatment.name}
             </h1>
 
@@ -384,7 +433,7 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
         {/* Book Consultation Button */}
         <div className="mt-6">
           <Button
-            className="w-full bg-black text-white hover:bg-gray-800 rounded-xl py-3 text-lg font-medium"
+            className="w-full bg-black text-white hover:bg-neutral-800 rounded-lg py-3 text-lg font-medium"
             data-track-cta="true"
           >
             Book Consultation
@@ -409,108 +458,145 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
         {/* Treatment Info */}
         <div className="grow">
           <header>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl font-medium text-gray-900">
               {treatment.name} Treatment
             </h1>
           </header>
 
           {/* Treatment Statistics */}
-          <section 
-            className="mt-6" 
-            itemScope 
+          <section
+            className="mt-6"
+            itemScope
             itemType="https://schema.org/MedicalProcedure"
             aria-labelledby="treatment-stats-heading"
           >
             <h2 id="treatment-stats-heading" className="sr-only">
               {treatment.name} Treatment Statistics and Key Information
             </h2>
-            
-            <dl className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-              <div className="text-center p-4 border-0 md:border-0 bg-transparent">
+
+            <dl className="grid grid-cols-1 md:grid-cols-3 gap-1">
+              <div className="flex items-center gap-3 p-4 border-0 bg-transparent">
                 <dt className="sr-only">Patient Satisfaction Rate</dt>
-                <div 
-                  itemProp="satisfactionRating" 
-                  itemScope 
+                <div
+                  itemProp="satisfactionRating"
+                  itemScope
                   itemType="https://schema.org/Rating"
-                  role="img" 
+                  role="img"
                   aria-label={`${treatment.satisfaction} percent patient satisfaction rate`}
+                  className="flex items-center gap-3"
                 >
-                  <ThumbsUp className="h-6 w-6 mx-auto mb-2 text-black" aria-hidden="true" />
-                  <dd className="text-2xl font-bold" itemProp="ratingValue">
-                    {treatment.satisfaction}%
-                  </dd>
-                  <div className="text-sm text-gray-600">
-                    Patient Satisfaction
+                  <ThumbsUp
+                    className="h-6 w-6 text-black flex-shrink-0"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <dd className="text-xl font-medium" itemProp="ratingValue">
+                      {treatment.satisfaction}%
+                    </dd>
+                    <div className="text-sm text-gray-600">
+                      Patient Satisfaction
+                    </div>
                   </div>
                   <meta itemProp="bestRating" content="100" />
                   <meta itemProp="worstRating" content="0" />
                 </div>
               </div>
 
-              <div className="text-center p-4 border-0 md:border-0 bg-transparent">
+              <div className="flex items-center gap-3 p-4 border-0 bg-transparent">
                 <dt className="sr-only">Average Treatment Cost</dt>
-                <div 
-                  itemProp="cost" 
-                  itemScope 
+                <div
+                  itemProp="cost"
+                  itemScope
                   itemType="https://schema.org/MonetaryAmount"
-                  role="img" 
+                  role="img"
                   aria-label={`Average cost ${treatment.averageCost}`}
+                  className="flex items-center gap-3"
                 >
-                  <Database className="h-6 w-6 mx-auto mb-2 text-black" aria-hidden="true" />
-                  <dd className="text-lg font-bold truncate max-w-[140px] mx-auto" itemProp="value" title={treatment.averageCost}>
-                    {treatment.averageCost.length > 20 ? 'See provider pricing' : treatment.averageCost}
-                  </dd>
-                  <div className="text-sm text-gray-600">Average Cost</div>
+                  <Database
+                    className="h-6 w-6 text-black flex-shrink-0"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <dd
+                      className="text-lg font-medium truncate max-w-[140px]"
+                      itemProp="value"
+                      title={treatment.averageCost}
+                    >
+                      {treatment.averageCost.length > 20
+                        ? "See provider pricing"
+                        : treatment.averageCost}
+                    </dd>
+                    <div className="text-sm text-gray-600">Average Cost</div>
+                  </div>
                   <meta itemProp="currency" content="GBP" />
                 </div>
               </div>
 
-              <div className="text-center p-4 border-0 md:border-0 bg-transparent">
+              <div className="flex items-center gap-3 p-4 border-0 bg-transparent">
                 <dt className="sr-only">Number of Reviews</dt>
-                <div 
-                  itemProp="aggregateRating" 
-                  itemScope 
+                <div
+                  itemProp="aggregateRating"
+                  itemScope
                   itemType="https://schema.org/AggregateRating"
-                  role="img" 
+                  role="img"
                   aria-label={`${treatment.reviews} reviews`}
+                  className="flex items-center gap-3"
                 >
-                  <Camera className="h-6 w-6 mx-auto mb-2 text-black" aria-hidden="true" />
-                  <dd className="text-2xl font-bold" itemProp="reviewCount">
-                    {treatment.reviews}
-                  </dd>
-                  <div className="text-sm text-gray-600">Reviews</div>
+                  <Camera
+                    className="h-6 w-6 text-black flex-shrink-0"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <dd className="text-xl font-medium" itemProp="reviewCount">
+                      {treatment.reviews}
+                    </dd>
+                    <div className="text-sm text-gray-600">Reviews</div>
+                  </div>
                 </div>
               </div>
 
-              <div className="text-center p-4 border-0 md:border-0 bg-transparent">
-                <dt className="sr-only">Treatment Downtime Duration</dt>
-                <div 
-                  itemProp="procedureType"
-                  role="img" 
-                  aria-label={`${treatment.downtime} downtime required`}
-                >
-                  <Clock className="h-6 w-6 mx-auto mb-2 text-black" aria-hidden="true" />
-                  <dd className="text-lg font-bold">
-                    {treatment.downtime}
-                  </dd>
-                  <div className="text-sm text-gray-600">Downtime</div>
-                </div>
-              </div>
-
-              <div className="text-center p-4 border-0 md:border-0 bg-transparent">
+              <div className="flex items-center gap-3 p-4 border-0 bg-transparent">
                 <dt className="sr-only">Number of Available Practitioners</dt>
-                <div 
-                  itemProp="provider" 
-                  itemScope 
+                <div
+                  itemProp="provider"
+                  itemScope
                   itemType="https://schema.org/Organization"
-                  role="img" 
+                  role="img"
                   aria-label={`${treatment.practitioners} practitioners available`}
+                  className="flex items-center gap-3"
                 >
-                  <Users className="h-6 w-6 mx-auto mb-2 text-black" aria-hidden="true" />
-                  <dd className="text-2xl font-bold" itemProp="numberOfEmployees">
-                    {treatment.practitioners}
-                  </dd>
-                  <div className="text-sm text-gray-600">Practitioners</div>
+                  <Users
+                    className="h-6 w-6 text-black flex-shrink-0"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <dd
+                      className="text-xl font-medium"
+                      itemProp="numberOfEmployees"
+                    >
+                      {treatment.practitioners}
+                    </dd>
+                    <div className="text-sm text-gray-600">Practitioners</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-4 border-0 bg-transparent">
+                <dt className="sr-only">Treatment Downtime Duration</dt>
+                <div
+                  itemProp="procedureType"
+                  role="img"
+                  aria-label={`${treatment.downtime} downtime required`}
+                  className="flex items-center gap-3"
+                >
+                  <Clock
+                    className="h-6 w-6 text-black flex-shrink-0"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <dd className="text-lg font-medium">{treatment.downtime}</dd>
+                    <div className="text-sm text-gray-600">Downtime</div>
+                  </div>
                 </div>
               </div>
             </dl>
@@ -704,7 +790,7 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
                     {findProperty("duration").map(
                       (step: string, index: number) => (
                         <li key={index}>{step}</li>
-                      )
+                      ),
                     )}
                   </ul>
                 ) : (
@@ -734,7 +820,7 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
                         {findProperty("safety").Safety.map(
                           (safety: string, index: number) => (
                             <li key={index}>{safety}</li>
-                          )
+                          ),
                         )}
                       </ul>
                     ) : (
@@ -1021,18 +1107,22 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
                 </h3>
                 {Array.isArray(regulationData) ? (
                   <ul className="space-y-2 text-gray-700 text-sm list-disc ml-6">
-                    {regulationData.map(
-                      (step: string, index: number) => (
-                        <li key={index}>{step}</li>
-                      ),
-                    )}
+                    {regulationData.map((step: string, index: number) => (
+                      <li key={index}>{step}</li>
+                    ))}
                   </ul>
-                ) : typeof regulationData === "object" && regulationData !== null ? (
+                ) : typeof regulationData === "object" &&
+                  regulationData !== null ? (
                   <div className="space-y-4">
                     {(() => {
-                      const regulationRecord = regulationData as Record<string, unknown>;
+                      const regulationRecord = regulationData as Record<
+                        string,
+                        unknown
+                      >;
                       const regulationText = String(
-                        regulationRecord.Regulation ?? regulationRecord.regulation ?? "",
+                        regulationRecord.Regulation ??
+                          regulationRecord.regulation ??
+                          "",
                       ).trim();
                       const complaintsText = String(
                         regulationRecord.Complaints ??
@@ -1045,13 +1135,17 @@ export function TreatmentDetail({ treatment, treatmentData }: Readonly<Treatment
                           {Boolean(regulationText) && (
                             <div>
                               <h3 className="font-medium mb-1">Regulation</h3>
-                              <p className="text-gray-700 text-sm">{regulationText}</p>
+                              <p className="text-gray-700 text-sm">
+                                {regulationText}
+                              </p>
                             </div>
                           )}
                           {Boolean(complaintsText) && (
                             <div>
                               <h3 className="font-medium mb-1">Complaints</h3>
-                              <p className="text-gray-700 text-sm">{complaintsText}</p>
+                              <p className="text-gray-700 text-sm">
+                                {complaintsText}
+                              </p>
                             </div>
                           )}
                         </>

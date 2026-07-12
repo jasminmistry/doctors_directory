@@ -115,6 +115,7 @@ function mapSearchClinicRow(clinic: SearchClinicRow): SearchClinic {
  */
 export const getAllClinicsForSearch = cache(async (): Promise<SearchClinic[]> => {
   const clinics = await prisma.clinic.findMany({
+    where: { isHidden: false },
     select: SEARCH_CLINIC_SELECT,
   })
 
@@ -137,7 +138,7 @@ export async function searchClinicsForListing(params: {
   skip: number
   take: number
 }): Promise<{ clinics: SearchClinic[]; totalCount: number }> {
-  const and: Prisma.ClinicWhereInput[] = []
+  const and: Prisma.ClinicWhereInput[] = [{ isHidden: false }]
 
   if (params.query) {
     const words = params.query.toLowerCase().split(/\s+/).filter((word) => word.length > 0)
@@ -157,8 +158,9 @@ export async function searchClinicsForListing(params: {
     and.push({ category: params.category })
   }
 
-  if (params.location) {
-    and.push({ gmapsAddress: { contains: params.location } })
+  const trimmedLocation = params.location?.trim()
+  if (trimmedLocation) {
+    and.push({ gmapsAddress: { contains: trimmedLocation } })
   }
 
   if (params.services && params.services.length > 0) {
@@ -231,6 +233,7 @@ export const getClinicsByCity = cache(
   async (cityName: string): Promise<SearchClinic[]> => {
     const clinics = await prisma.clinic.findMany({
       where: {
+        isHidden: false,
         city: {
           name: {
             equals: cityName,
@@ -348,14 +351,15 @@ export async function searchClinics(params: {
   rating?: number
   treatments?: string[]
 }): Promise<SearchClinic[]> {
-  const where: Prisma.ClinicWhereInput = {}
+  const where: Prisma.ClinicWhereInput = { isHidden: false }
 
   // Text search across name and address
-  if (params.query) {
+  const trimmedQuery = params.query?.trim()
+  if (trimmedQuery) {
     where.OR = [
-      { name: { contains: params.query } },
-      { gmapsAddress: { contains: params.query } },
-      { slug: { contains: params.query } },
+      { name: { contains: trimmedQuery } },
+      { gmapsAddress: { contains: trimmedQuery } },
+      { slug: { contains: trimmedQuery } },
     ]
   }
 
@@ -365,9 +369,10 @@ export async function searchClinics(params: {
   }
 
   // Location filter
-  if (params.location) {
+  const trimmedLocation = params.location?.trim()
+  if (trimmedLocation) {
     where.gmapsAddress = {
-      contains: params.location,
+      contains: trimmedLocation,
     }
   }
 

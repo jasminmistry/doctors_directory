@@ -58,8 +58,8 @@ const EMPTY: ClinicData = {
   category: null, rating: null, reviewCount: null, aboutSection: null, accreditations: null,
   awards: null, affiliations: null, website: null, email: null, facebook: null, twitter: null,
   xTwitter: null, instagram: null, youtube: null, linkedin: null,
-  isSaveFace: false, isDoctor: false, isJccp: null, jccpUrl: null, isCqc: null, cqcUrl: null,
-  isHiw: null, hiwUrl: null, isHis: null, hisUrl: null, isRqia: null, rqiaUrl: null,
+  isSaveFace: false, isDoctor: false, isJccp: false, jccpUrl: null, isCqc: false, cqcUrl: null,
+  isHiw: false, hiwUrl: null, isHis: false, hisUrl: null, isRqia: false, rqiaUrl: null,
   coverImage: null, cqcStatus: null, avgReplyTime: null, coreClinicId: null,
 }
 
@@ -148,6 +148,10 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
   async function handleSave() {
     if (!data.name?.trim()) { toast.error('Name is required'); return }
     if (isNew && !data.slug.trim()) { toast.error('Slug is required'); return }
+    if (data.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
+      toast.error('Please enter a valid email address')
+      return
+    }
 
     setSaving(true)
     const { slug: _s, ...rest } = data
@@ -174,7 +178,12 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
         }
       } else {
         const err = await res.json().catch(() => ({}))
-        toast.error(err.error || 'Failed to save')
+        if (Array.isArray(err.details) && err.details.length > 0) {
+          const messages = err.details.map((d: { path: (string | number)[]; message: string }) => `${d.path.join('.')}: ${d.message}`)
+          toast.error(messages.join('\n'))
+        } else {
+          toast.error(err.error || 'Failed to save')
+        }
       }
     } catch {
       toast.error('Failed to save')
@@ -198,7 +207,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
             </Button>
           )}
           <div className="min-w-0">
-            {!isPortal && <p className="text-xs text-gray-400 font-medium">Clinics</p>}
+            {!isPortal && <p className="text-xs text-gray-500 font-medium">Clinics</p>}
             <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
           </div>
         </div>
@@ -267,16 +276,18 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
             </Field>
           ) : (
             <div className="flex flex-col justify-end">
-              <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
-              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
+              <span className="text-xs text-gray-500 mb-1.5 font-medium">Slug</span>
+              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{data.slug}</code>
             </div>
           ))}
           <Field label="Category">
             <Input value={data.category ?? ''} onChange={(e) => set('category', e.target.value || null)} placeholder="e.g. Aesthetics" />
           </Field>
-          <Field label="Image" fullWidth>
-            <ImageUpload value={data.image ?? null} onChange={(url) => set('image', url)} />
-          </Field>
+          {!isPortal && (
+            <Field label="Image" fullWidth>
+              <ImageUpload value={data.image ?? null} onChange={(url) => set('image', url)} />
+            </Field>
+          )}
         </div>
       </FormSection>
 
@@ -323,15 +334,17 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       {/* Profile Enhancements */}
       <FormSection title="Profile" icon={Sparkles}>
         <div className="grid grid-cols-1 gap-5">
-          <Field label="Cover Photo URL" fullWidth>
-            <Input value={data.coverImage ?? ''} onChange={(e) => set('coverImage', e.target.value || null)} placeholder="https://…" />
-          </Field>
+          {!isPortal && (
+            <Field label="Cover Photo" fullWidth>
+              <ImageUpload value={data.coverImage ?? null} onChange={(url) => set('coverImage', url)} />
+            </Field>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Field label="CQC Status">
               <select
                 value={data.cqcStatus ?? ''}
                 onChange={(e) => set('cqcStatus', (e.target.value || null) as ClinicData['cqcStatus'])}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value="">Not set</option>
                 <option value="not_applicable">N/A</option>
@@ -344,7 +357,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
               <select
                 value={data.avgReplyTime ?? ''}
                 onChange={(e) => set('avgReplyTime', (e.target.value || null) as ClinicData['avgReplyTime'])}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value="">Not set</option>
                 <option value="within_24hrs">Within 24 hours</option>
@@ -455,7 +468,7 @@ function LoadingSkeleton() {
         </div>
       </div>
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div key={i} className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
           <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
           <div className="grid grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((j) => (

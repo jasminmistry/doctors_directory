@@ -14,7 +14,7 @@ import {
 
 type Props = { params: { city: string; slug: string } };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 function citySlugExists(citySlug: string) {
   const cities = getUniqueDirectoryCityNames();

@@ -50,10 +50,10 @@ interface BookingCalendarProps {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  confirmed: 'bg-blue-100 border-blue-300 text-blue-800',
+  confirmed: 'bg-blue-100 border-blue-300 text-black',
   pending: 'bg-amber-100 border-amber-300 text-amber-800',
   completed: 'bg-emerald-100 border-emerald-300 text-emerald-800',
-  cancelled: 'bg-gray-100 border-gray-300 text-gray-500 line-through',
+  cancelled: 'bg-gray-100 border-[#e0e0e0]  text-gray-500 line-through',
   no_show: 'bg-red-100 border-red-300 text-red-700',
 }
 
@@ -94,13 +94,13 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
       : `${format(weekStart, 'd MMM')} – ${format(weekEnd, 'd MMM yyyy')}`
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+    <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-4 py-3">
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate(-1)}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
             aria-label="Previous"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -108,7 +108,7 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
           <span className="min-w-[180px] text-center text-sm font-semibold text-gray-800">{title}</span>
           <button
             onClick={() => navigate(1)}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
             aria-label="Next"
           >
             <ChevronRight className="h-4 w-4" />
@@ -128,7 +128,6 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
             <Button
               size="sm"
               onClick={onNewBooking}
-              className="h-7 bg-gray-900 hover:bg-gray-700 text-white text-xs font-semibold px-3"
             >
               <Plus className="h-3.5 w-3.5 mr-1" />
               New Appointment
@@ -138,7 +137,7 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
             <button
               onClick={onRefresh}
               disabled={refreshing}
-              className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors disabled:opacity-40"
+              className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors disabled:opacity-40"
               aria-label="Sync from Core"
               title="Sync from Consentz Core"
             >
@@ -167,7 +166,7 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
         <div>
           <div className="grid grid-cols-7 border-b border-gray-100">
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
-              <div key={d} className="py-2 text-center text-xs font-semibold text-gray-400">{d}</div>
+              <div key={d} className="py-2 text-center text-xs font-semibold text-gray-500">{d}</div>
             ))}
           </div>
           <div className="grid grid-cols-7">
@@ -203,7 +202,7 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
                       </button>
                     ))}
                     {dayBookings.length > 2 && (
-                      <p className="pl-1 text-[10px] text-gray-400">+{dayBookings.length - 2} more</p>
+                      <p className="pl-1 text-[10px] text-gray-500">+{dayBookings.length - 2} more</p>
                     )}
                   </div>
                 </div>
@@ -262,7 +261,7 @@ function WeekView({
           <div className="h-8 border-b border-gray-100" /> {/* header spacer */}
           {HOURS.map((h) => (
             <div key={h} className="flex items-start justify-end pr-2" style={{ height: GRID_HEIGHT }}>
-              <span className="text-[10px] text-gray-400 -translate-y-2">{String(h).padStart(2, '0')}:00</span>
+              <span className="text-[10px] text-gray-500 -translate-y-2">{String(h).padStart(2, '0')}:00</span>
             </div>
           ))}
         </div>
@@ -277,10 +276,10 @@ function WeekView({
                 'h-8 flex flex-col items-center justify-center border-b border-gray-100 text-xs',
                 isToday(day) && 'bg-blue-50',
               )}>
-                <span className="text-gray-400">{format(day, 'EEE')}</span>
+                <span className="text-gray-500">{format(day, 'EEE')}</span>
                 <span className={cn(
                   'font-semibold',
-                  isToday(day) ? 'text-blue-600' : 'text-gray-700',
+                  isToday(day) ? 'text-black' : 'text-gray-700',
                 )}>{format(day, 'd')}</span>
               </div>
 
@@ -349,7 +348,7 @@ function ListViewWeek({
     return (
       <div className="flex flex-col items-center gap-2 py-16 text-center">
         <CalendarDays className="h-8 w-8 text-gray-200" />
-        <p className="text-sm text-gray-400">No bookings this week</p>
+        <p className="text-sm text-gray-500">No bookings this week</p>
       </div>
     )
   }
@@ -375,7 +374,7 @@ function ListViewWeek({
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{b.patientName}</p>
-                {b.treatment && <p className="text-xs text-gray-400 truncate">{b.treatment}</p>}
+                {b.treatment && <p className="text-xs text-gray-500 truncate">{b.treatment}</p>}
               </div>
               <span className={cn(
                 'shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium capitalize',
@@ -429,7 +428,7 @@ function BookingDetail({
             )}>
               {booking.status.replace('_', ' ')}
             </span>
-            <button onClick={onClose} className="ml-1 text-gray-400 hover:text-gray-600 transition-colors">
+            <button onClick={onClose} className="ml-1 text-gray-500 hover:text-gray-600 transition-colors">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -438,28 +437,28 @@ function BookingDetail({
         {/* Details */}
         <dl className="grid grid-cols-2 gap-x-4 gap-y-3 px-5 py-4 text-xs">
           <div>
-            <dt className="text-gray-400 mb-0.5">Start</dt>
+            <dt className="text-gray-500 mb-0.5">Start</dt>
             <dd className="font-medium text-gray-800">{format(parseISO(booking.slotStart), 'EEE d MMM, HH:mm')}</dd>
           </div>
           <div>
-            <dt className="text-gray-400 mb-0.5">End</dt>
+            <dt className="text-gray-500 mb-0.5">End</dt>
             <dd className="font-medium text-gray-800">{format(parseISO(booking.slotEnd), 'HH:mm')}</dd>
           </div>
           {booking.patientPhone && (
             <div>
-              <dt className="text-gray-400 mb-0.5">Phone</dt>
-              <dd><a href={`tel:${booking.patientPhone}`} className="text-blue-600 hover:underline">{booking.patientPhone}</a></dd>
+              <dt className="text-gray-500 mb-0.5">Phone</dt>
+              <dd><a href={`tel:${booking.patientPhone}`} className="text-black hover:underline">{booking.patientPhone}</a></dd>
             </div>
           )}
           {booking.patientEmail && (
             <div className={booking.patientPhone ? '' : 'col-span-2'}>
-              <dt className="text-gray-400 mb-0.5">Email</dt>
-              <dd><a href={`mailto:${booking.patientEmail}`} className="text-blue-600 hover:underline truncate block">{booking.patientEmail}</a></dd>
+              <dt className="text-gray-500 mb-0.5">Email</dt>
+              <dd><a href={`mailto:${booking.patientEmail}`} className="text-black hover:underline truncate block">{booking.patientEmail}</a></dd>
             </div>
           )}
           {booking.notes && (
             <div className="col-span-2">
-              <dt className="text-gray-400 mb-0.5">Notes</dt>
+              <dt className="text-gray-500 mb-0.5">Notes</dt>
               <dd className="text-gray-700">{booking.notes}</dd>
             </div>
           )}
@@ -471,7 +470,7 @@ function BookingDetail({
             {onEdit && (
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1.5 rounded-lg border border-[#e0e0e0]  bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <Pencil className="h-3.5 w-3.5" />
                 Edit

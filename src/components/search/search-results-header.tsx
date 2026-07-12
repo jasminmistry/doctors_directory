@@ -108,7 +108,7 @@ export function SearchResultsHeader({
         </Select> */}
 
       {/* View Mode */}
-      {/* <div className="flex border border-border rounded-md">
+      {/* <div className="flex border border-border rounded-lg">
           <Button
             variant={viewMode === "grid" ? "default" : "ghost"}
             size="sm"

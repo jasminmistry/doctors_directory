@@ -86,11 +86,9 @@ export function ServiceCityDirectoryPage({ entry }: Props) {
       <DirectoryJsonLd schemas={jsonLdSchemas} />
       <main className="bg-(--primary-bg-color)">
         <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-          <Link href="/" prefetch={false} className="mb-2 inline-block">
-            <Button variant="ghost" size="sm" className="gap-2 hover:bg-white hover:text-black">
+          <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
               <ArrowLeft className="h-4 w-4" />
               Back to Directory
-            </Button>
           </Link>
           <Breadcrumb>
             <BreadcrumbList>

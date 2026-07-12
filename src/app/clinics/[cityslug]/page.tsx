@@ -40,7 +40,7 @@ interface ProfilePageProps {
   };
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
 const clinicIndex = new Map(
@@ -155,15 +155,9 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
         <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
           <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
             <div className="sticky top-0 z-10">
-              <Link className="mb-3 inline-block" href="/" prefetch={false}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Directory
-                </Button>
+              <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
+                <ArrowLeft className="h-4 w-4" />
+                Back to Directory
               </Link>
               <Breadcrumb>
                 <BreadcrumbList>

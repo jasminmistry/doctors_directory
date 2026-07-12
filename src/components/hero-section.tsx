@@ -1,17 +1,26 @@
+"use client";
+import { useState } from "react";
+import Link from "next/link";
 import { SearchBar } from "@/components/search/search-bar";
 import LogoLoop from "./LogoLoop";
-
+import { cn } from "@/lib/utils";
 
 export function HeroSection() {
+  const [mode, setMode] = useState<"patient" | "clinic">("patient");
+
   const imageLogos = [
     {
       src: "/directory/images/Aesthetic-Medicine.webp",
       alt: "",
       href: "",
-
     },
     {
       src: "/directory/images/Galderma.webp",
+      alt: "",
+      href: "",
+    },
+    {
+      src: "/directory/images/Prime.webp",
       alt: "",
       href: "",
     },
@@ -25,71 +34,192 @@ export function HeroSection() {
       alt: "",
       href: "",
     },
-    {
-      src: "/directory/images/Prime.webp",
-      alt: "",
-      href: "",
-    },
+    
   ];
 
   return (
-    <div className="bg-[var(--primary-bg-color)]">
-      <main role="banner">
+    <div>
+      <main role="banner" className="relative">
         <section
           className="
-          bg-[var(--primary-bg-color)]
-          max-w-7xl
-          text-center
+          
           md:text-left
           mx-auto
           px-6
-          pt-4
-          pb-6
-          md:pt-6
-          md:pb-4
-          items-center"
+          relative
+          flex 
+          flex-col
+          items-center
+          min-h-[calc(100vh-76px)]"
           aria-labelledby="hero-heading"
         >
-          <div
-            className="flex grid lg:grid-cols-2 items-center gap-12 mb-6 pt-10 pb-10">
-            <div className="md:pt-5">
-              <h1
-                id="hero-heading"
-                className="text-3xl md:text-5xl mb-6 text-[var(--mineshaft)] font-[var(--font-noto)]"
-                style={{ fontFamily: "var(--font-noto)" }}
-              >
-                The Premier Aesthetic Directory for Beauty & Wellbeing
-              </h1>
-              <p className="text-sm md:text-lg mb-8">
-              Browse certified aethetic professionals, compare real patient reviews, and book your next treatment with total confidence.
-              </p>
-              <SearchBar />
-              <div className="flex pt-4 md:pt-6 justify-center">
-                <a href="/directory/search" className="font-medium hover:text-black">
-                  Explore Aesthetics Directory →
-                </a>
+          {/* Clinic / Patient switcher */}
+          <div className="flex-1 flex items-center flex-col justify-center w-full ">
+            <span className="block font-semibold text-xs pt-4 mb-[-10px]">I AM A</span>
+            <div className="flex justify-center pt-4 pb-3">
+              <div className="inline-flex items-center bg-white border rounded-full p-1 gap-0.5">
+                <button
+                  type="button"
+                  onClick={() => setMode("patient")}
+                  className={cn(
+                    "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200",
+                    mode === "patient"
+                      ? "bg-black text-white shadow-sm"
+                      : "text-gray-500 hover:text-black",
+                  )}
+                >
+                  Patient
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("clinic")}
+                  className={cn(
+                    "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200",
+                    mode === "clinic"
+                      ? "bg-black text-white shadow-sm"
+                      : "text-gray-500 hover:text-black",
+                  )}
+                >
+                  Provider
+                </button>
               </div>
             </div>
-            <figure className="flex justify-center">
-              <img
-                src="/directory/images/Consentz Aesthetic Clinic Directory.webp"
-                alt="Mobile app interface showing search functionality"
-                className="max-w-xs"
-              />
-              <figcaption className="sr-only">App interface showing search functionality</figcaption>
-            </figure>
+            <div className="md:pt-5 w-full ">
+              {mode === "patient" ? (
+                <>
+                  <div className="max-w-7xl w-full mx-auto text-center md:text-left md:px-6 grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4 md:gap-8 items-center">
+                    <div>
+                        <h1
+                          id="hero-heading"
+                          className="text-3xl md:text-5xl mb-4 md:mb-6 text-[var(--mineshaft)] font-[var(--font-noto)]"
+                          style={{ fontFamily: "var(--font-noto)" }}
+                        >
+                          Find top-rated Aesthetics & Wellness Practitioners near
+                          you
+                        </h1>
+                        <p className="text-sm hidden md:block md:text-lg mb-6 md:mb-8">
+                          Browse certified aesthetic professionals, compare real
+                          patient reviews, and book your next treatment with total
+                          confidence.
+                        </p>
+                        <div className="bg-white/80 md:pb-2 rounded-lg">
+                          <SearchBar />
+                        </div>
+
+                        <div className="mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
+                          <Link
+                            href="/account/login"
+                            className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                          >
+                            Join as a patient — it&apos;s free
+                          </Link>
+
+                          <Link
+                            href="/register/clinic"
+                            className="hidden md:inline-flex items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors"
+                          >
+                            List your practice
+                          </Link>
+
+                          <Link
+                            href="/search"
+                            className="hidden md:inline-flex text-sm text-gray-600 hover:text-black transition-colors"
+                          >
+                            Explore Aesthetics Directory →
+                          </Link>
+                        </div>
+                    </div>
+                    <div>
+
+                      <figure className="flex justify-center">
+                        <img
+                          src="/directory/images/Consentz Aesthetic Clinic Directory.webp"
+                          alt="Mobile app interface showing search functionality"
+                          className="max-w-[160px] md:max-w-xs"
+                        />
+                        <figcaption className="sr-only">
+                          App interface showing search functionality
+                        </figcaption>
+                      </figure>
+                    </div>
+                  </div>
+
+                </>
+              ) : (
+                <>
+                  <div className="max-w-7xl w-full mx-auto text-center md:text-left md:px-6 grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4 md:gap-8 items-center">
+
+                    <div>
+                      <div className="max-w-2xl m-auto">
+                        <h1
+                          id="hero-heading"
+                          className="text-3xl md:text-5xl mb-6 text-[var(--mineshaft)] font-[var(--font-noto)]"
+                          style={{ fontFamily: "var(--font-noto)" }}
+                        >
+                          Grow your aesthetic practice with the UK&apos;s premier
+                          directory
+                        </h1>
+                        <p className="text-sm md:text-lg mb-8">
+                          Reach thousands of patients actively looking for
+                          treatments. Showcase your expertise, collect verified
+                          reviews, and fill your calendar.
+                        </p>
+                      </div>
+
+                      <div className="max-w-4xl m-auto md:px-5 mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
+                        <Link
+                          href="/register/clinic"
+                          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                        >
+                          List your practice
+                        </Link>
+                        <Link
+                          href="/claim"
+                          className="hidden md:inline-flex items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors"
+                        >
+                          Claim your profile
+                        </Link>
+                        <Link
+                          href="/register/practitioner"
+                          className="hidden md:block  text-sm text-gray-600 hover:text-black transition-colors"
+                        >
+                          Register as practitioner →
+                        </Link>
+                      </div>
+                    </div>
+                    <div>
+
+                      <figure className="flex justify-center">
+                        <img
+                          src="/directory/images/Consentz Aesthetic Clinic Directory.webp"
+                          alt="Mobile app interface showing search functionality"
+                          className="max-w-[160px] md:max-w-xs"
+                        />
+                        <figcaption className="sr-only">
+                          App interface showing search functionality
+                        </figcaption>
+                      </figure>
+                    </div>
+
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-          <aside aria-label="Partner and certification logos" className="flex w-full">
+          <aside
+            aria-label="Partner and certification logos"
+            className="w-full py-5 md:py-10 lg:py-15 mt-auto flex justify-center"
+          >
             <LogoLoop
               logos={imageLogos}
               speed={60}
               direction="left"
-              logoHeight={48}
+              logoHeight={40}
               gap={110}
               hoverSpeed={0}
               scaleOnHover
               ariaLabel="Brands"
-              className="py-10 md:py-15 relative"
+              className="relative"
             />
           </aside>
         </section>

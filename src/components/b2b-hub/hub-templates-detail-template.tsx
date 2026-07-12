@@ -58,7 +58,7 @@ type Props = {
 function NavCard({ href, label }: { href: string; label: string }) {
   const external = href.startsWith("http");
   const className =
-    "flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors";
+    "flex min-h-[93px] items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors";
   if (external) {
     return (
       <a href={href} target="_blank" rel="noreferrer" className={className}>
@@ -79,8 +79,8 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
 
   return (
     <>
-      <section className="w-full border-b border-[#E5E7EB] bg-[#F2EEE6]">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-0">
+      <section className="w-full border-b border-[#e0e0e0] bg-[#F2EEE6]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-0">
           <div className="relative box-border overflow-hidden pt-8 pb-12 lg:grid lg:min-h-[520px] lg:max-h-[640px] lg:grid-cols-[minmax(0,700px)_minmax(0,1fr)] lg:items-center lg:gap-x-8 lg:px-0 lg:py-0">
             <div className="relative z-10 flex min-w-0 flex-col items-start justify-center lg:min-h-0 lg:pr-2">
               <Breadcrumb className="mb-6 flex justify-start">
@@ -145,7 +145,7 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
       <article className="mx-auto w-full min-w-0 max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">Operational Reality</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Teams outgrow generic tools when consent, payments, and clinical evidence sit in different
@@ -153,7 +153,7 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
                 communication.
               </p>
             </div>
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">What Changes With Consentz</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Consentz is built as an operating layer for clinics: structured consent, workflow automation,
@@ -185,11 +185,11 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
         <HubServiceProviderSection />
 
         <section className="mb-16 px-0 sm:px-4">
-          <h2 className="mb-3 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111]">
+          <h2 className="mb-3 text-center text-[30px] font-medium tracking-[-0.02em] text-[#111111]">
             Pricing And Subscription Questions
           </h2>
           <div className="h-3" />
-          <div className="mx-auto max-w-[1056px] overflow-hidden rounded-xl border border-[#E2DDD7] bg-white">
+          <div className="mx-auto max-w-[1056px] overflow-hidden rounded-lg border border-[#e0e0e0] bg-white">
             {templatesPricingFaqs.map((item) => (
               <details
                 key={item.q}
@@ -211,8 +211,8 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
         </section>
 
         <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
-          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">Our Latest Blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-gray-600">
             Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay
             informed with our latest articles.
           </p>
@@ -223,7 +223,7 @@ export function HubTemplatesDetailTemplate({ entry }: Props) {
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image

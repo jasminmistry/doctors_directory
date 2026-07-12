@@ -4,6 +4,15 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { prisma } from '@/lib/db'
 import { ClaimWizard } from '@/components/claim/claim-wizard'
+import { getConsentzAuthUrl } from '@/lib/auth'
+
+function getConsentzLoginUrl(): string {
+  try {
+    return new URL(getConsentzAuthUrl()).origin + '/admin/login'
+  } catch {
+    return ''
+  }
+}
 
 interface Props {
   params: { slug: string }
@@ -52,18 +61,18 @@ export default async function ClaimPage({ params, searchParams }: Readonly<Props
           Back to profile
         </Link>
 
-        <div className="mb-6">
+        <div className="mb-6 text-center">
           <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
             {clinic.category}
           </p>
-          <h1 className="text-2xl font-bold">{clinicName}</h1>
+          <h1 className="text-2xl font-medium">{clinicName}</h1>
           {clinic.gmapsAddress && (
             <p className="text-sm text-muted-foreground mt-1">{clinic.gmapsAddress}</p>
           )}
         </div>
 
         {clinic.claimed ? (
-          <div className="rounded-xl border border-border p-6 text-center">
+          <div className="rounded-lg border border-border p-6 text-center">
             <p className="font-medium">This profile has already been claimed.</p>
             <p className="text-sm text-muted-foreground mt-1">
               If you believe this is an error, contact{' '}
@@ -74,7 +83,7 @@ export default async function ClaimPage({ params, searchParams }: Readonly<Props
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-border p-6">
+          <div className="rounded-lg border border-border p-6">
             <Suspense fallback={null}>
               <ClaimWizard
                 entityType="clinic"
@@ -82,6 +91,7 @@ export default async function ClaimPage({ params, searchParams }: Readonly<Props
                 clinicSlug={clinic.slug}
                 initialStep={searchParams.step}
                 initialClaimId={searchParams.claimId ? parseInt(searchParams.claimId, 10) : null}
+                consentzLoginUrl={getConsentzLoginUrl()}
               />
             </Suspense>
           </div>

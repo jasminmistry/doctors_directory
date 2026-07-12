@@ -46,13 +46,13 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
     );
   
 
-    return rule?.className ?? "bg-gray-100 text-gray-800 border-gray-300";
+    return rule?.className ?? "bg-gray-100 text-gray-800 border-[#e0e0e0] ";
 
 
   }
 
   return (
-    <Card className="md:mt-2 flex flex-col gap-6 md:rounded-xl px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t-[1px] md:border md:border-[var(--alto)] bg-white md:bg-[var(--primary-bg-color)]">
+    <Card className="md:mt-2 flex flex-col gap-6 md:rounded-lg px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t-[1px] md:border md:border-[var(--alto)] bg-white md:bg-[var(--primary-bg-color)]">
       <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-center">
         <div className="flex flex-row flex-wrap pb-4 md:pb-0 md:mb-4 px-0 lg:mb-0 items-start border-b border-[#C4C4C4] md:border-0">
           {/* Profile Image Section */}
@@ -81,7 +81,7 @@ export function ProfileHeader({ clinic }: Readonly<ProfileHeaderProps>) {
             </div>
 
             <div className="flex flex-row gap-2 mb-0 items-center">
-              <p className="text-pretty md:font-bold text-sm md:text-md">
+              <p className="text-pretty md:font-medium text-sm md:text-md">
                 {roleTitle}
               </p>
               <span className="relative pl-3 text-sm before:absolute before:left-0 before:top-1/2 before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full before:bg-black">

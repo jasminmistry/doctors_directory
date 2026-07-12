@@ -44,3 +44,5 @@ next-env.d.ts
 
 .vscode/settings.json
 uploads/
+*.sql
+!prisma/migrations/**/*.sql

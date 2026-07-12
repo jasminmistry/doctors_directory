@@ -13,6 +13,7 @@ const columns = [
     key: 'image',
     label: 'Image',
     sortable: false,
+    searchable: false,
     render: (value: string, item: any) => {
       const src = String(item.imageUrl ?? item.image ?? value ?? '').replaceAll('"', '').trim()
       return src
