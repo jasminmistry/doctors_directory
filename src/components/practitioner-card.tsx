@@ -228,16 +228,18 @@ export function PractitionerCard({
           </h2>
           <div className="flex h-full flex-col">
             <div className="flex flex-col items-center px-3 pt-4 text-center">
-              <div className="relative mb-3 h-20 w-20 shrink-0 overflow-hidden rounded-full bg-gray-200 md:h-[120px] md:w-[120px]">
-                <FallbackImage
-                  src={profileImageSrc}
-                  alt={practitionerName}
-                  className="h-full w-full object-cover"
-                  width={120}
-                  height={120}
-                />
-                <div className="absolute right-0 top-0">
-                  <ClinicLabels clinic={practitioner as Clinic} />
+              <div className="relative mb-3 h-20 w-20 shrink-0 md:h-[120px] md:w-[120px]">
+                <div className="h-full w-full overflow-hidden rounded-full bg-gray-200">
+                  <FallbackImage
+                    src={profileImageSrc}
+                    alt={practitionerName}
+                    className="h-full w-full object-cover"
+                    width={120}
+                    height={120}
+                  />
+                </div>
+                <div className="pointer-events-none absolute -right-0.5 -top-0.5 z-10 md:-right-1 md:-top-1">
+                  <ClinicLabels clinic={practitioner as Clinic} size="sm" />
                 </div>
               </div>
 
