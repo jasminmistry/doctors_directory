@@ -14,7 +14,7 @@ export async function GET() {
     'all-treatments.xml',
     'practitioners-base.xml',
     'practitioners-cities.xml',
-    'all-practitioners.xml',
+    // 'all-practitioners.xml',
     'practitioners-treatments.xml',
     'practitioners-treatments-details.xml',
     'practitioners-credentials-base.xml',
