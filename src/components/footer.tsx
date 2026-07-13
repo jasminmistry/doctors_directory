@@ -174,7 +174,7 @@ export function Footer() {
         )}
       >
         <div className="">
-          <div className="border-b border-white/10 mb-10 pb-10 mx-auto max-w-7xl px-6 flex flex-col items-center justify-between md:flex-row">
+          <div className="border-b border-white/10 mb-10 pt-5 pb-10 mx-auto max-w-7xl px-6 flex flex-col items-center justify-between md:flex-row">
             <div className="w-full md:w-auto">
               <section className="mb-2 text-lg font-medium md:text-3xl">
                 Are you a Practitioner?
