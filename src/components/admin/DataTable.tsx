@@ -115,10 +115,10 @@ export function DataTable<T extends Record<string, any>>({
           <div className="flex items-center gap-1.5 text-sm text-gray-500">
             <span>Rows</span>
             <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1) }}>
-              <SelectTrigger className="h-9 w-16 text-sm">
+              <SelectTrigger className="h-9 w-20 min-w-20 text-sm">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="min-w-20">
                 {PAGE_SIZES.map(s => (
                   <SelectItem key={s} value={String(s)}>{s}</SelectItem>
                 ))}
@@ -176,7 +176,10 @@ export function DataTable<T extends Record<string, any>>({
                 </tr>
               ) : (
                 pageData.map((item, i) => (
-                  <tr key={i} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60 transition-colors">
+                  <tr
+                    key={String(item.slug ?? item.id ?? item.key ?? i)}
+                    className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60 transition-colors"
+                  >
                     {columns.map(col => (
                       <td key={String(col.key)} className="px-4 py-3 text-gray-700">
                         {col.render

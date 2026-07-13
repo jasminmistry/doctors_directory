@@ -35,11 +35,12 @@ interface FieldProps {
   label: string
   required?: boolean
   hint?: string
+  error?: string
   fullWidth?: boolean
   children: ReactNode
 }
 
-export function Field({ label, required, hint, fullWidth, children }: FieldProps) {
+export function Field({ label, required, hint, error, fullWidth, children }: FieldProps) {
   return (
     <div className={fullWidth ? 'col-span-full' : ''}>
       <label className="text-sm font-medium text-gray-700 mb-1.5 block">
@@ -47,7 +48,11 @@ export function Field({ label, required, hint, fullWidth, children }: FieldProps
         {required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
       {children}
-      {hint && <p className="text-xs text-gray-500 mt-1">{hint}</p>}
+      {error ? (
+        <p className="text-xs text-red-600 mt-1">{error}</p>
+      ) : hint ? (
+        <p className="text-xs text-gray-400 mt-1">{hint}</p>
+      ) : null}
     </div>
   )
 }

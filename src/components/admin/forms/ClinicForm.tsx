@@ -108,6 +108,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [isNew, setIsNew] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const router = useRouter()
   const params = useParams()
   const slug = (params?.slug as string) ?? ''
@@ -143,18 +144,34 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
 
   function set<K extends keyof ClinicData>(key: K, value: ClinicData[K]) {
     setData((prev) => ({ ...prev, [key]: value }))
+    setFieldErrors((prev) => {
+      if (!prev[key as string]) return prev
+      const next = { ...prev }
+      delete next[key as string]
+      return next
+    })
   }
 
   async function handleSave() {
-    if (!data.name?.trim()) { toast.error('Name is required'); return }
-    if (isNew && !data.slug.trim()) { toast.error('Slug is required'); return }
+    const nextErrors: Record<string, string> = {}
+    if (!data.name?.trim()) nextErrors.name = 'Clinic name is required'
+    if (isNew && !data.slug.trim()) nextErrors.slug = 'Slug is required'
+    else if (isNew && !/^[a-z0-9-]+$/.test(data.slug.trim())) {
+      nextErrors.slug = 'Slug must be kebab-case'
+    }
     if (data.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
-      toast.error('Please enter a valid email address')
+      nextErrors.email = 'Please enter a valid email address'
+    }
+
+    if (Object.keys(nextErrors).length > 0) {
+      setFieldErrors(nextErrors)
+      toast.error('Please fix the highlighted fields')
       return
     }
 
+    setFieldErrors({})
     setSaving(true)
-    const { slug: _s, ...rest } = data
+    const { slug: _s, citySlug: _citySlug, ...rest } = data
     const serialised = {
       ...rest,
       accreditations: formatListForSave(rest.accreditations),
@@ -177,13 +194,12 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
           setTimeout(() => router.push('/admin/clinics'), 300)
         }
       } else {
-        const err = await res.json().catch(() => ({}))
-        if (Array.isArray(err.details) && err.details.length > 0) {
-          const messages = err.details.map((d: { path: (string | number)[]; message: string }) => `${d.path.join('.')}: ${d.message}`)
-          toast.error(messages.join('\n'))
-        } else {
-          toast.error(err.error || 'Failed to save')
+        const err = await res.json().catch(() => ({})) as {
+          error?: string
+          fieldErrors?: Record<string, string>
         }
+        if (err.fieldErrors) setFieldErrors(err.fieldErrors)
+        toast.error(err.error || 'Failed to save')
       }
     } catch {
       toast.error('Failed to save')
@@ -238,7 +254,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       {/* Basic Info */}
       <FormSection title="Basic Info" icon={Building2}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <Field label="Clinic Name" required>
+          <Field label="Clinic Name" required error={fieldErrors.name}>
             <div className="flex gap-2">
               <Input
                 value={data.name ?? ''}
@@ -249,7 +265,8 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
                   }
                 }}
                 placeholder="e.g. The Dermatology Clinic"
-                className="flex-1"
+                className={cn('flex-1', fieldErrors.name && 'border-red-500 focus-visible:ring-red-500')}
+                aria-invalid={Boolean(fieldErrors.name)}
               />
               {!data.name && data.slug && (
                 <Button
@@ -266,12 +283,13 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
             </div>
           </Field>
           {!isPortal && (isNew ? (
-            <Field label="Slug" required hint="Auto-filled from name — editable">
+            <Field label="Slug" required hint="Auto-filled from name — editable" error={fieldErrors.slug}>
               <Input
                 value={data.slug}
                 onChange={(e) => set('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                 placeholder="e.g. the-dermatology-clinic"
-                className="font-mono"
+                className={cn('font-mono', fieldErrors.slug && 'border-red-500 focus-visible:ring-red-500')}
+                aria-invalid={Boolean(fieldErrors.slug)}
               />
             </Field>
           ) : (
@@ -306,8 +324,15 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
           <Field label="Website">
             <Input value={data.website ?? ''} onChange={(e) => set('website', e.target.value || null)} placeholder="https://…" />
           </Field>
-          <Field label="Email">
-            <Input type="email" value={data.email ?? ''} onChange={(e) => set('email', e.target.value || null)} placeholder="info@clinic.com" />
+          <Field label="Email" error={fieldErrors.email}>
+            <Input
+              type="email"
+              value={data.email ?? ''}
+              onChange={(e) => set('email', e.target.value || null)}
+              placeholder="info@clinic.com"
+              className={cn(fieldErrors.email && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.email)}
+            />
           </Field>
         </div>
       </FormSection>
