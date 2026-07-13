@@ -5,6 +5,12 @@ import { invalidateSearchCache } from '@/lib/search-cache'
 
 export const dynamic = 'force-dynamic'
 
+function omitNullish(data: Record<string, unknown>) {
+  return Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== null && value !== undefined)
+  )
+}
+
 export async function GET() {
   try {
     const clinics = await prisma.clinic.findMany({
@@ -31,28 +37,37 @@ export async function POST(request: Request) {
   try {
     const body = await request.json()
 
-    const slug = body.slug?.trim()
-    if (!slug) return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
-    const name = body.name?.trim()
-    if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 })
+    const slug = typeof body.slug === 'string' ? body.slug.trim() : ''
+    const name = typeof body.name === 'string' ? body.name.trim() : ''
 
-    const { slug: _s, name: _n, ...rest } = body
+    const fieldErrors: Record<string, string> = {}
+    if (!slug) fieldErrors.slug = 'Slug is required'
+    else if (!/^[a-z0-9-]+$/.test(slug)) fieldErrors.slug = 'Slug must be kebab-case'
+    if (!name) fieldErrors.name = 'Clinic name is required'
+
+    const { slug: _s, name: _n, citySlug: _c, ...rest } = body
     const validation = clinicEditSchema.safeParse(rest)
     if (!validation.success) {
-      return NextResponse.json({ error: 'Invalid data', details: validation.error.errors }, { status: 400 })
+      for (const issue of validation.error.errors) {
+        const key = issue.path[0]
+        if (typeof key === 'string' && !fieldErrors[key]) {
+          fieldErrors[key] = issue.message
+        }
+      }
     }
 
-    const { isJccp, isCqc, isHiw, isHis, isRqia, ...restData } = validation.data
+    if (Object.keys(fieldErrors).length > 0) {
+      return NextResponse.json(
+        { error: 'Please fix the highlighted fields', fieldErrors },
+        { status: 400 }
+      )
+    }
+
     const clinic = await prisma.clinic.create({
       data: {
         slug,
         name,
-        ...restData,
-        isJccp: isJccp ?? false,
-        isCqc: isCqc ?? false,
-        isHiw: isHiw ?? false,
-        isHis: isHis ?? false,
-        isRqia: isRqia ?? false,
+        ...omitNullish((validation.success ? validation.data : {}) as Record<string, unknown>),
       } as any,
     })
     await invalidateSearchCache()
@@ -60,7 +75,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Failed to create clinic:', error)
     if ((error as any).code === 'P2002') {
-      return NextResponse.json({ error: 'A clinic with this slug already exists' }, { status: 409 })
+      return NextResponse.json({ error: 'A clinic with this slug already exists', fieldErrors: { slug: 'This slug is already taken' } }, { status: 409 })
     }
     return NextResponse.json({ error: 'Failed to create clinic' }, { status: 500 })
   }
