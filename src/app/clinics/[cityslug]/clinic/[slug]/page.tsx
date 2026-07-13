@@ -41,6 +41,8 @@ import { buildMedicalClinicJsonLd } from "@/lib/directory-json-ld";
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { isRemovedClinicSlug } from "@/lib/directory-removals";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
+import { getClaimState } from "@/lib/claim-utils";
+import { getPortalUser } from "@/lib/portal";
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
   incoming: Record<string, ItemMeta>
@@ -173,6 +175,12 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     notFound();
   }
 
+  const [claimState, portalUser] = await Promise.all([
+    getClaimState({ claimed: dbClinic.claimed, entityType: 'clinic', slug: dbClinic.slug }),
+    getPortalUser(),
+  ]);
+  const goToProfileHref = portalUser ? `/portal/${portalUser.entityType}` : '/portal/login';
+
   const dbCityClinics = await getClinicsByCity(normalizedCitySlug);
   const clinic = convertDbClinicToOldType(dbClinic);
   const cityClinics = dbCityClinics
@@ -282,6 +290,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           clinic={clinic}
           clinicName={dbClinic.name ?? undefined}
           hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
+          claimState={claimState}
+          goToProfileHref={goToProfileHref}
         />
 
 

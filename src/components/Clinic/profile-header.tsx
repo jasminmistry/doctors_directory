@@ -20,33 +20,52 @@ interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
   hasCoreCalendar?: boolean;
+  claimState?: 'unclaimed' | 'pending' | 'claimed';
+  goToProfileHref?: string;
 }
 
-export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: Readonly<ProfileHeaderProps>) {
+export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, claimState = clinic.claimed ? 'claimed' : 'unclaimed', goToProfileHref = '/portal/login' }: Readonly<ProfileHeaderProps>) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
   const returnTo = queryString ? `${pathname}?${queryString}` : pathname;
+  const normalizeExternalUrl = (value?: string) => {
+    if (!value) return null;
+    const cleaned = value.trim().replace(/^\.+|\.+$/g, "");
+    if (!cleaned) return null;
+    if (/^https?:\/\//i.test(cleaned)) return cleaned;
+    return `https://${cleaned}`;
+  };
+  const consultationHref =
+    normalizeExternalUrl(clinic.website) ?? normalizeExternalUrl(clinic.url);
   const practitionerName = clinic.slug!
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
   const roleTitle = clinic.category;
   const DEFAULT_IMG = "/directory/images/default-dr-profile-1.webp";
-  const proxyUrl = clinic.image
-    ? `/directory/api/img?url=${encodeURIComponent(clinic.image)}`
-    : DEFAULT_IMG;
-  const [imgSrc, setImgSrc] = useState(proxyUrl);
+  // Profile photos are temporarily disabled site-wide — always show the default placeholder.
+  const [imgSrc, setImgSrc] = useState(DEFAULT_IMG);
 
   return (
     <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-lg px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t md:border md:border-(--alto) bg-white md:bg-(--primary-bg-color)">
-      {!clinic.claimed && (
+      {claimState === 'unclaimed' && (
         <Link prefetch={false} href={`/claim/${clinic.slug}`}>
           <Badge
             variant="outline"
             className="absolute top-2 right-2 z-50 mb-2 font-semibold text-balance leading-tight bg-white md:bg-(--primary-bg-color)"
           >
             Claim Profile
+          </Badge>
+        </Link>
+      )}
+      {claimState === 'claimed' && (
+        <Link prefetch={false} href={goToProfileHref}>
+          <Badge
+            variant="outline"
+            className="absolute top-2 right-2 z-50 mb-2 font-semibold text-balance leading-tight bg-white md:bg-(--primary-bg-color)"
+          >
+            Go to Profile
           </Badge>
         </Link>
       )}

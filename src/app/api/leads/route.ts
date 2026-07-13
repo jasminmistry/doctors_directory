@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { getPatientClaims } from '@/lib/patient-auth'
 import { domainHasMailServer } from '@/lib/email-domain-check'
 import { sendGhostLeadHook, sendLeadNotificationEmail, sendPplLeadTeaserEmail } from '@/lib/email'
+import { getClaimState } from '@/lib/claim-utils'
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 const NAME_RE = /^[A-Za-z]+(?:[-' ][A-Za-z]+)*$/
@@ -103,17 +104,22 @@ export async function POST(req: NextRequest) {
 
     if (isGhostLead) {
       if (clinic.email) {
-        const pendingCount = await prisma.consultationLead.count({
-          where: { clinicId: clinic.id, isGhostLead: true, isUnlocked: false },
-        })
-        sendGhostLeadHook({
-          to: clinic.email,
-          clinicName: clinic.name ?? clinicSlug,
-          patientFirstName: firstName,
-          location: location ?? '',
-          pendingCount,
-          claimUrl: `${baseUrl}/directory/claim/${clinicSlug}`,
-        }).catch((err) => console.error('[leads] ghost hook email error:', err))
+        // Skip the "claim your profile" email if a claim is already in flight or
+        // approved — the clinic already knows, no need to nag them again.
+        const claimState = await getClaimState({ claimed: false, entityType: 'clinic', slug: clinicSlug })
+        if (claimState === 'unclaimed') {
+          const pendingCount = await prisma.consultationLead.count({
+            where: { clinicId: clinic.id, isGhostLead: true, isUnlocked: false },
+          })
+          sendGhostLeadHook({
+            to: clinic.email,
+            clinicName: clinic.name ?? clinicSlug,
+            patientFirstName: firstName,
+            location: location ?? '',
+            pendingCount,
+            claimUrl: `${baseUrl}/directory/claim/${clinicSlug}`,
+          }).catch((err) => console.error('[leads] ghost hook email error:', err))
+        }
       }
     } else if (clinic.email) {
       const portalUrl = `${baseUrl}/directory/portal/clinic/prospects`

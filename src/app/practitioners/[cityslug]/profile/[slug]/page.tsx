@@ -26,6 +26,8 @@ import { isRemovedPractitionerSlug } from "@/lib/directory-removals";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
 import { PageViewTracker } from "@/components/tracking/page-view-tracker";
 import { EventBookingSection } from "@/components/Clinic/event-booking-section";
+import { getClaimState } from "@/lib/claim-utils";
+import { getPortalUser } from "@/lib/portal";
 
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
@@ -61,6 +63,12 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   if (!clinic) {
     notFound();
   }
+
+  const [claimState, portalUser] = await Promise.all([
+    getClaimState({ claimed: clinic.claimed ?? false, entityType: 'practitioner', slug: clinic.practitioner_name! }),
+    getPortalUser(),
+  ]);
+  const goToProfileHref = portalUser ? `/portal/${portalUser.entityType}` : '/portal/login';
 
   const hoursObj = clinic.hours as unknown as Record<string, any>;
   const hours = hoursObj?.["Typical_hours_listed_in_directories"] ?? clinic.hours;
@@ -126,7 +134,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
        <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
                {/* Profile Header */}
-               <ProfileHeader clinic={clinic} k_value={practitioner as any} clinic_list={associatedClinics} />
+               <ProfileHeader
+                 clinic={clinic}
+                 k_value={practitioner as any}
+                 clinic_list={associatedClinics}
+                 claimState={claimState}
+                 goToProfileHref={goToProfileHref}
+               />
 
                <div className="px-4 md:px-0">
                  <PractitionerTabs />

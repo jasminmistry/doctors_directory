@@ -174,7 +174,7 @@ export function HeroSection() {
                           List your practice
                         </Link>
                         <Link
-                          href="/claim"
+                          href="/register/clinic"
                           className="hidden md:inline-flex items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors"
                         >
                           Claim your profile

@@ -11,7 +11,7 @@ export interface CoreEvent {
   slug: string
   duration: string
   description: string | null
-  location: number
+  location: 'zoom' | 'video_call'
   price: string | null
   status: boolean
   practitioner: { id: number; name: string }
@@ -20,16 +20,19 @@ export interface CoreEvent {
 const DURATIONS = ['15 min', '30 min', '45 min', '60 min', '90 min', '120 min', '150 min', '180 min', '240 min'] as const
 type Duration = (typeof DURATIONS)[number]
 
-const LOCATION_LABELS: Record<number, string> = {
-  0: 'Consentz Video Call',
-  1: 'Zoom',
+const LOCATIONS = ['video_call', 'zoom'] as const
+type Location = (typeof LOCATIONS)[number]
+
+const LOCATION_LABELS: Record<Location, string> = {
+  video_call: 'Consentz Video Call',
+  zoom: 'Zoom',
 }
 
-function LocationBadge({ location }: { location: number }) {
+function LocationBadge({ location }: { location: Location }) {
   return (
     <span className={cn(
       'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium',
-      location === 1 ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700',
+      location === 'zoom' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700',
     )}>
       <Video className="h-3 w-3" />
       {LOCATION_LABELS[location] ?? 'Video'}
@@ -41,7 +44,7 @@ interface EventFormState {
   title: string
   duration: Duration
   description: string
-  location: 0 | 1
+  location: Location
   price: string
   status: boolean
 }
@@ -50,7 +53,7 @@ const DEFAULT_FORM: EventFormState = {
   title: '',
   duration: '30 min',
   description: '',
-  location: 0,
+  location: 'video_call',
   price: '',
   status: true,
 }
@@ -69,7 +72,7 @@ function EventModal({ event, onClose, onSaved }: EventModalProps) {
           title: event.title,
           duration: (DURATIONS.includes(event.duration as Duration) ? event.duration : '30 min') as Duration,
           description: event.description ?? '',
-          location: event.location as 0 | 1,
+          location: event.location,
           price: event.price ?? '',
           status: event.status,
         }
@@ -195,7 +198,7 @@ function EventModal({ event, onClose, onSaved }: EventModalProps) {
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-2">Location</label>
             <div className="flex gap-3">
-              {([0, 1] as const).map((loc) => (
+              {LOCATIONS.map((loc) => (
                 <label key={loc} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"

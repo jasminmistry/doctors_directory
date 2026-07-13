@@ -163,7 +163,7 @@ export default function AccountLoginPage() {
             <Link href="/register/clinic" className="text-sm text-gray-700 hover:text-black hover:underline">
               → List your practice
             </Link>
-            <Link href="/claim" className="text-sm text-gray-700 hover:text-black hover:underline">
+            <Link href="/register/clinic" className="text-sm text-gray-700 hover:text-black hover:underline">
               → Claim your existing profile
             </Link>
             <Link href="/register/practitioner" className="text-sm text-gray-700 hover:text-black hover:underline">

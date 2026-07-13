@@ -23,9 +23,11 @@ interface ProfileHeaderProps {
   clinic: Practitioner;
   k_value: any;
   clinic_list: string[]
+  claimState?: 'unclaimed' | 'pending' | 'claimed';
+  goToProfileHref?: string;
 }
 
-export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileHeaderProps>) {
+export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clinic.claimed ? 'claimed' : 'unclaimed', goToProfileHref = '/portal/login' }: Readonly<ProfileHeaderProps>) {
   const [selectedClinic, setSelectedClinic] = useState(clinic_list[0])
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -49,10 +51,8 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
   const DEFAULT_IMG = "/directory/images/default-dr-profile-1.webp";
-  const proxyUrl = clinic.practitioner_image_link
-    ? `/directory/api/img?url=${encodeURIComponent(clinic.practitioner_image_link)}`
-    : DEFAULT_IMG;
-  const [imgSrc, setImgSrc] = useState(proxyUrl);
+  // Profile photos are temporarily disabled site-wide — always show the default placeholder.
+  const [imgSrc, setImgSrc] = useState(DEFAULT_IMG);
   let sections: {id: string,label: string}[] = []
   clinic_list.forEach((clinic: string) => {
     sections.push({ id: clinic, label: clinic })
@@ -60,13 +60,23 @@ export function ProfileHeader({ clinic, k_value, clinic_list}: Readonly<ProfileH
 
   return (
     <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-lg px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t-[1px] md:border md:border-[var(--alto)] bg-white md:bg-[var(--primary-bg-color)]">
-      {!clinic.claimed && (
+      {claimState === 'unclaimed' && (
         <Link prefetch={false} href={`/claim/practitioner/${clinic.practitioner_name}`}>
           <Badge
             variant="outline"
             className="absolute top-2 right-2 z-50 mb-2 font-semibold text-balance leading-tight bg-white md:bg-[var(--primary-bg-color)]"
           >
             Claim Profile
+          </Badge>
+        </Link>
+      )}
+      {claimState === 'claimed' && (
+        <Link prefetch={false} href={goToProfileHref}>
+          <Badge
+            variant="outline"
+            className="absolute top-2 right-2 z-50 mb-2 font-semibold text-balance leading-tight bg-white md:bg-[var(--primary-bg-color)]"
+          >
+            Go to Profile
           </Badge>
         </Link>
       )}

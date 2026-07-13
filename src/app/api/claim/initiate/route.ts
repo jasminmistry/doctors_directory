@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { prisma } from '@/lib/db'
 import { initiateClaimSchema } from '@/lib/schemas/claim.schema'
-import { generateOtp, otpExpiresAt, isGenericEmailDomain } from '@/lib/claim-utils'
+import { generateOtp, otpExpiresAt, isGenericEmailDomain, hasCompetingActiveClaim } from '@/lib/claim-utils'
 import { domainHasMailServer } from '@/lib/email-domain-check'
 import { sendClaimOtp } from '@/lib/email'
 import { getConsentzV1Url } from '@/lib/auth'
@@ -99,6 +99,9 @@ export async function POST(req: NextRequest) {
       }
       if (clinic.claimed) {
         return NextResponse.json({ error: 'This profile has already been claimed' }, { status: 409 })
+      }
+      if (await hasCompetingActiveClaim({ entityType: 'clinic', entityId: clinic.id, claimerEmail })) {
+        return NextResponse.json({ error: 'A claim request for this profile is already under review' }, { status: 409 })
       }
 
       // Check if the email is already registered in Consentz
@@ -221,6 +224,9 @@ export async function POST(req: NextRequest) {
     }
     if (practitioner.claimed) {
       return NextResponse.json({ error: 'This profile has already been claimed' }, { status: 409 })
+    }
+    if (await hasCompetingActiveClaim({ entityType: 'practitioner', entityId: practitioner.id, claimerEmail })) {
+      return NextResponse.json({ error: 'A claim request for this profile is already under review' }, { status: 409 })
     }
 
     // Check if the email is already registered in Consentz
