@@ -28,6 +28,7 @@ import { PageViewTracker } from "@/components/tracking/page-view-tracker";
 import { EventBookingSection } from "@/components/Clinic/event-booking-section";
 import { getClaimState } from "@/lib/claim-utils";
 import { getPortalUser } from "@/lib/portal";
+import { getPractitionerProfileRobots } from "@/lib/practitioner-profile-robots";
 
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
@@ -276,10 +277,13 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     `/practitioners/${citySlug}/profile/${canonicalSlug}`
   );
 
+  const robots = getPractitionerProfileRobots()
+
   if (!clinic) {
     return {
       title: "Practitioner Not Found",
       alternates: { canonical: canonicalUrl },
+      ...(robots ? { robots } : {}),
     };
   }
 
@@ -303,5 +307,6 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     title,
     description,
     alternates: { canonical: canonicalUrl },
+    ...(robots ? { robots } : {}),
   };
 }

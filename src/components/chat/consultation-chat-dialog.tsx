@@ -43,7 +43,6 @@ interface ConsultationChatDialogProps {
   clinicName: string
   clinicImage?: string
   hasCoreCalendar: boolean
-  treatments?: string[]
   location?: string
   pageType: Extract<DirectoryPageType, 'clinic_page' | 'practitioner_page' | 'collection_page'>
   buttonClassName?: string
@@ -83,7 +82,6 @@ export function ConsultationChatDialog({
   clinicName,
   clinicImage,
   hasCoreCalendar,
-  treatments,
   pageType,
   buttonClassName,
 }: ConsultationChatDialogProps) {
@@ -260,9 +258,7 @@ export function ConsultationChatDialog({
     setStartingChat(true)
     try {
       const patientName = `${data.firstName} ${data.lastName}`.trim()
-      const initialMessage = data.treatment
-        ? `Hi, I'm interested in ${data.treatment}.`
-        : "Hi, I'd like to enquire about a consultation."
+      const initialMessage = "Hi, I'd like to enquire about a consultation."
 
       const res = await fetch(`/directory/api/chat/${clinicSlug}/session`, {
         method: 'POST',
@@ -304,7 +300,6 @@ export function ConsultationChatDialog({
           lastName: data.lastName,
           email: data.email,
           phone: data.phone,
-          treatment: data.treatment || undefined,
           dateOfBirth: data.dateOfBirth,
         }),
       })
@@ -378,7 +373,6 @@ export function ConsultationChatDialog({
     email: patientMe.email ?? '',
     phone: patientMe.phone ?? '',
     dateOfBirth: patientMe.dateOfBirth ?? '',
-    treatment: treatments?.[0] ?? '',
   } : undefined
 
   // For CallBookingForm — use captured form data, fall back to session
@@ -496,7 +490,7 @@ export function ConsultationChatDialog({
               <ConsultationRichForm
                 key={patientMe?.email ?? 'offline'}
                 defaultValues={formDefaults}
-                treatments={treatments}
+                clinicName={clinicName}
                 description="The clinic is currently offline. Leave your details and they'll get back to you."
                 submitLabel="Send request"
                 submitting={offlineSubmitting}
@@ -510,7 +504,7 @@ export function ConsultationChatDialog({
             <ConsultationRichForm
               key={patientMe?.email ?? 'intro'}
               defaultValues={formDefaults}
-              treatments={treatments}
+              clinicName={clinicName}
               description={
                 <>
                   This clinic is <span className="font-semibold text-green-600">online</span> right

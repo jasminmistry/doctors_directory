@@ -2,12 +2,22 @@ import { redirect } from 'next/navigation'
 import { getPortalUser } from '@/lib/portal'
 import { prisma } from '@/lib/db'
 import { ChatInbox } from '@/components/portal/chat-inbox'
+import { WrongAccountNotice } from '@/components/portal/wrong-account-notice'
 
 export const metadata = { title: 'Chat — Clinic Portal' }
 
 export default async function ClinicChatPage() {
   const user = await getPortalUser()
-  if (!user?.clinicId) redirect('/portal/login?next=/portal/clinic/chat')
+  if (!user) redirect('/portal/login?next=/portal/clinic/chat')
+  if (!user.clinicId) {
+    return (
+      <WrongAccountNotice
+        requiredEntityType="clinic"
+        currentEntityType={user.entityType}
+        next="/portal/clinic/chat"
+      />
+    )
+  }
 
   const clinic = await prisma.clinic.findUnique({
     where: { id: user.clinicId },
