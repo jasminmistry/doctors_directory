@@ -1,12 +1,22 @@
 import { redirect } from 'next/navigation'
 import { getPortalUser } from '@/lib/portal'
 import { PortalScheduleView } from '@/components/portal/portal-schedule-view'
+import { WrongAccountNotice } from '@/components/portal/wrong-account-notice'
 
 export const dynamic = 'force-dynamic'
 
 export default async function PractitionerSchedulePage() {
   const user = await getPortalUser()
-  if (!user || !user.practitionerId) redirect('/portal/login')
+  if (!user) redirect('/portal/login?next=/portal/practitioner/schedule')
+  if (!user.practitionerId) {
+    return (
+      <WrongAccountNotice
+        requiredEntityType="practitioner"
+        currentEntityType={user.entityType}
+        next="/portal/practitioner/schedule"
+      />
+    )
+  }
 
   return (
     <div>
