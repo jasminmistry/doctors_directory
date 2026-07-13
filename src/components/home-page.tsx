@@ -1315,7 +1315,7 @@ export default function HomePage({
                 variant="outline"
                 className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4] text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
               >
-                <Link href="/claim">Claim your profile</Link>
+                <Link href="/register/clinic">Claim your profile</Link>
               </Button>
 
               <Link

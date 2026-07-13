@@ -13,7 +13,7 @@ const createSchema = z.object({
   title: z.string().trim().min(1, 'Event name is required.').max(255),
   duration: z.enum(DURATIONS),
   description: z.string().optional().nullable(),
-  location: z.number().int().min(0).max(1),
+  location: z.enum(['zoom', 'video_call']),
   price: z.string().nullable().optional(),
   status: z.boolean(),
 })
@@ -58,13 +58,14 @@ export async function GET() {
   try {
     const res = await fetch(eventsUrl(claim.consentzUserId), {
       headers: coreHeaders(token),
+      cache: 'no-store',
     })
     if (!res.ok) {
       console.error(`[portal/events] Core GET failed: ${res.status}`)
       return NextResponse.json({ events: [] })
     }
     const data = await res.json()
-    return NextResponse.json(data)
+    return NextResponse.json(data, { headers: { 'Cache-Control': 'no-store' } })
   } catch (err) {
     console.error('[portal/events] GET error:', err)
     return NextResponse.json({ events: [] })
@@ -95,6 +96,7 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: coreHeaders(token),
       body: JSON.stringify(parsed.data),
+      cache: 'no-store',
     })
     const data = await res.json()
     if (!res.ok) {

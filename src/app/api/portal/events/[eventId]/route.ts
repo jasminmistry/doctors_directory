@@ -13,7 +13,7 @@ const updateSchema = z.object({
   title: z.string().trim().min(1, 'Event name is required.').max(255).optional(),
   duration: z.enum(DURATIONS).optional(),
   description: z.string().nullable().optional(),
-  location: z.number().int().min(0).max(1).optional(),
+  location: z.enum(['zoom', 'video_call']).optional(),
   price: z.string().nullable().optional(),
   status: z.boolean().optional(),
 })
@@ -70,6 +70,7 @@ export async function PUT(
       method: 'PUT',
       headers: coreHeaders(token),
       body: JSON.stringify(parsed.data),
+      cache: 'no-store',
     })
     const data = await res.json()
     if (!res.ok) {
@@ -102,6 +103,7 @@ export async function DELETE(
     const res = await fetch(eventUrl(claim.consentzUserId, params.eventId), {
       method: 'DELETE',
       headers: coreHeaders(token),
+      cache: 'no-store',
     })
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))

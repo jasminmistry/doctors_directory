@@ -227,7 +227,7 @@ export function NavigationHeader() {
                       List your practice
                     </Link>
                     <Link
-                      href="/claim"
+                      href="/register/clinic"
                       onClick={() => setIsProviderOpen(false)}
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-accent/10 transition-colors"
                     >
@@ -343,7 +343,7 @@ export function NavigationHeader() {
                       List your practice
                     </Link>
                     <Link
-                      href="/claim"
+                      href="/register/clinic"
                       className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-base font-medium transition-colors hover:bg-accent/10"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
