@@ -1,36 +1,10 @@
-// New component rewriting markdown renderer into section-based layout
-// Matching the design shown in the reference image (clean sections, headings, lists, tables)
-
-import { Clinic, Practitioner } from "@/lib/types";
+import { Clinic } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Section } from "../ui/section";
 import { sanitizeDisplayText, toUrlSlug } from "@/lib/utils";
-import { readJsonFileSync } from "@/lib/json-cache";
-const practitionersData: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json')
-const practitionersIndex = new Map<string, Practitioner[]>();
-
-for (const p of practitionersData) {
-  const clinics = JSON.parse(p.Associated_Clinics as string) as string[];
-
-  for (const clinic of clinics) {
-    const bucket = practitionersIndex.get(clinic) ?? [];
-    bucket.push(p);
-    practitionersIndex.set(clinic, bucket);
-  }
-}
-
-
-
-
-
-
 
 export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
-
-  const practitioners = practitionersIndex.get(clinic.slug as string)
-
-  
   const countOccurrences = (str: string, substr: string) => {
     let count = 0;
     for (let i = 0; i < str.length; i++) {
@@ -144,67 +118,7 @@ export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
       </Section>
       )
     }
-      
-      
-     
 
-      {/* Practitioners */}
-      {practitioners && (
-      <Section title="Practitioners" id="practitioners" data-testid='practitioners'>
-        <div className="flex flex-col gap-4">
-          {Object.entries(practitioners as Practitioner[]).map(
-            ([k, v]) =>{
-
-            if (typeof v === "object" && v !== null) {
-              const slug = v["practitioner_name"] 
-              const name = v["practitioner_name"]?.replaceAll("-", ' ').split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
-              return (
-
- 
-
-              
-              k !== "Source" && (
-                <article
-                  key={k}
-                  className="group relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:shadow-md hover:border-primary/50"
-                >
-                  <Link prefetch={false} href={`/practitioners/${clinic.City.toLowerCase()}/profile/${v.practitioner_name}`}>
-                  <div className="p-5">
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                        <span className="text-sm font-medium text-primary">
-                          {name?.charAt(0)}
-                        </span>
-                        </div>
-                   
-                        <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {name }
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-0.5">
-                          {v["Title"] }
-                        </p>
-                      </div>
-                      
-                    </div>
-
-                   
-                  </div></Link>
-
-                  <div className="absolute inset-x-0 bottom-0 h-0.5 bg-linear-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </article>
-              )
-          )}}          )}
-        </div>
-      <div className="border-t border-gray-300 my-6"></div>
-      </Section>
-      )
-    }
-
-      
-
-
-     
       {/* INSURANCE */}
       {clinic.Insurace && (
       <Section title="Insurance Accepted" id="insurance" data-testid='insurance'>
@@ -241,8 +155,6 @@ export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
       
       )
     }
-
-      
 
       {/* FEES — price list is temporarily disabled site-wide, section stays but blank */}
       <Section title={`Estimated Fees in ${clinic.City}`} id="fees" />
