@@ -33,7 +33,7 @@ const XML_SITEMAPS: { file: string; label: string }[] = [
   { file: 'sitemap.xml', label: 'Sitemap Index' },
   { file: 'register.xml', label: 'Register Pages' },
   { file: 'all-clinics.xml', label: 'All Clinic Pages' },
-  { file: 'all-practitioners.xml', label: 'All Practitioner Pages' },
+  // { file: 'all-practitioners.xml', label: 'All Practitioner Pages' },
   { file: 'all-treatments.xml', label: 'All Treatment Pages' },
   { file: 'clinics-base.xml', label: 'Clinics — Base' },
   { file: 'clinics-cities.xml', label: 'Clinics — Cities' },
