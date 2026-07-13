@@ -446,7 +446,7 @@ If `DATABASE_URL` is not configured, events/leads are written locally to:
 
 - UI: `/admin/tracking` (filters are stored in the query string so views are shareable).
 - API: `GET /api/admin/tracking` (same query params as the UI).
-- Optional gate: set `TRACKING_DASHBOARD_TOKEN` in `.env.local` / server env, then pass `?token=…` on the dashboard URL and in API calls (the UI “Copy link” includes it when present).
+- Access is gated by admin login (middleware).
 
 ### Google Analytics (measurement ID)
 
