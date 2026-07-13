@@ -867,6 +867,7 @@ model Booking {
 model PlatformReview {
   id                Int          @id @default(autoincrement())
   clinicId          Int
+  patientId         Int?
   patientName       String       @db.VarChar(200)
   rating            Int          @db.TinyInt  // 1–5
   reviewText        String       @db.Text
@@ -881,8 +882,10 @@ model PlatformReview {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  clinic  Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient? @relation(fields: [patientId], references: [id])
 
+  @@unique([clinicId, patientId])
   @@index([clinicId])
   @@index([status])
   @@map("platform_reviews")
@@ -991,10 +994,11 @@ model Patient {
   consentzSessionExpiresAt DateTime?
   consentzRefreshExpiresAt DateTime?
 
-  bookings      Booking[]
-  chatSessions  ChatSession[]
-  leads         ConsultationLead[]
-  oauthAccounts PatientOAuthAccount[]
+  bookings        Booking[]
+  chatSessions    ChatSession[]
+  leads           ConsultationLead[]
+  oauthAccounts   PatientOAuthAccount[]
+  platformReviews PlatformReview[]
 
   @@map("patients")
 }

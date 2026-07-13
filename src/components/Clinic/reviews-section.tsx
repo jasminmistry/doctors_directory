@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Star, ShieldCheck, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { InlineLogin } from '@/components/consultation/inline-login'
 
 export interface ReviewItem {
   id: string
@@ -59,16 +61,37 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
   )
 }
 
+interface PatientMe {
+  id: number
+  email: string
+  firstName?: string | null
+  lastName?: string | null
+}
+
+interface ExistingReview {
+  id: number
+  rating: number
+  reviewText: string
+  treatment: string | null
+  status: 'pending' | 'approved' | 'rejected'
+}
+
+type FormPhase = 'closed' | 'checking' | 'login_required' | 'already_reviewed' | 'form'
+
 export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [filter, setFilter] = useState(0)
-  const [showForm, setShowForm] = useState(false)
-  const [name, setName] = useState('')
+  const [formPhase, setFormPhase] = useState<FormPhase>('closed')
+  const [patientMe, setPatientMe] = useState<PatientMe | null>(null)
+  const [existingReview, setExistingReview] = useState<ExistingReview | null>(null)
   const [rating, setRating] = useState(0)
   const [text, setText] = useState('')
   const [treatment, setTreatment] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [nameError, setNameError] = useState('')
   const [textError, setTextError] = useState('')
 
   const filtered = filter === 0 ? reviews : reviews.filter(r => r.rating === filter)
@@ -77,36 +100,71 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
     ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
     : 0
 
+  const patientDisplayName = patientMe
+    ? [patientMe.firstName, patientMe.lastName].filter(Boolean).join(' ') || patientMe.email
+    : ''
+
+  async function openForm() {
+    setFormPhase('checking')
+    try {
+      const meRes = await fetch('/directory/api/patient/me')
+      if (!meRes.ok) {
+        setFormPhase('login_required')
+        return
+      }
+      const me: PatientMe = await meRes.json()
+      setPatientMe(me)
+
+      const reviewRes = await fetch(`/directory/api/patient/reviews?clinicSlug=${encodeURIComponent(clinicSlug)}`)
+      const reviewData = reviewRes.ok ? await reviewRes.json() : { review: null }
+      if (reviewData.review) {
+        setExistingReview(reviewData.review)
+        setFormPhase('already_reviewed')
+      } else {
+        setFormPhase('form')
+      }
+    } catch {
+      setFormPhase('login_required')
+    }
+  }
+
+  // Auto-open when returning from magic link / OAuth with ?review=open
+  useEffect(() => {
+    if (searchParams.get('review') !== 'open') return
+    router.replace(pathname, { scroll: false })
+    void openForm()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setNameError('')
     setTextError('')
 
-    let hasError = false
-    if (!name.trim()) {
-      setNameError('Your name is required.')
-      hasError = true
-    }
     if (text.trim().length < 10) {
       setTextError('Please write at least 10 characters.')
-      hasError = true
+      return
     }
-    if (rating === 0 || hasError) return
+    if (rating === 0) return
 
     setSubmitting(true)
     try {
-      const res = await fetch('/directory/api/reviews', {
+      const res = await fetch('/directory/api/patient/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clinicSlug, patientName: name.trim(), rating, reviewText: text.trim(), treatment: treatment.trim() || undefined }),
+        body: JSON.stringify({ clinicSlug, rating, reviewText: text.trim(), treatment: treatment.trim() || undefined }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => null)
+        if (res.status === 409) {
+          toast.error("You've already reviewed this clinic.")
+          setFormPhase('closed')
+          return
+        }
         toast.error(typeof data?.error === 'string' ? data.error : 'Failed to submit review')
         return
       }
       setSubmitted(true)
-      setShowForm(false)
+      setFormPhase('closed')
       toast.success('Review submitted — it will appear after moderation.')
     } catch {
       toast.error('Failed to submit review')
@@ -130,18 +188,41 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
         {!submitted && (
           <button
             type="button"
-            onClick={() => setShowForm(f => !f)}
+            onClick={() => (formPhase === 'closed' ? openForm() : setFormPhase('closed'))}
             className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
           >
             <MessageSquare className="h-4 w-4" />
             Leave a review
-            {showForm ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            {formPhase !== 'closed' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </button>
         )}
       </div>
 
+      {formPhase === 'checking' && (
+        <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-500">
+          Checking your account…
+        </div>
+      )}
+
+      {formPhase === 'login_required' && (
+        <div className="rounded-lg border border-gray-200 bg-white">
+          <InlineLogin next={`${pathname}?review=open`} />
+        </div>
+      )}
+
+      {formPhase === 'already_reviewed' && existingReview && (
+        <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2">
+          <h4 className="text-sm font-semibold text-gray-900">You've already reviewed this clinic</h4>
+          <StarRow rating={existingReview.rating} />
+          <p className="text-sm text-gray-700 leading-relaxed">{existingReview.reviewText}</p>
+          {existingReview.status === 'pending' && (
+            <p className="text-xs text-gray-500">Your review is awaiting moderation.</p>
+          )}
+        </div>
+      )}
+
       {/* Leave review form */}
-      {showForm && (
+      {formPhase === 'form' && (
         <form onSubmit={handleSubmit} noValidate className="rounded-lg border border-gray-200 bg-white p-4 space-y-4">
           <h4 className="text-sm font-semibold text-gray-900">Write a review</h4>
           <div>
@@ -151,10 +232,7 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Your name</label>
-              <input value={name} onChange={e => { setName(e.target.value); setNameError('') }}
-                className={cn('w-full rounded-lg border bg-white px-3 py-2 text-sm focus:outline-none', nameError ? 'border-red-400' : 'border-gray-200 focus:border-gray-400')}
-                placeholder="Jane D." />
-              {nameError && <p className="mt-1 text-xs text-red-600">{nameError}</p>}
+              <p className="rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-sm text-gray-700">{patientDisplayName}</p>
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Treatment (optional)</label>
@@ -174,11 +252,11 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
             Reviews are moderated before publication. Submitting a review confirms it reflects your genuine experience.
           </p>
           <div className="flex gap-2">
-            <button type="button" onClick={() => setShowForm(false)}
+            <button type="button" onClick={() => setFormPhase('closed')}
               className="flex-1 items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors">
               Cancel
             </button>
-            <button type="submit" disabled={submitting || rating === 0 || text.trim().length < 10 || !name.trim()}
+            <button type="submit" disabled={submitting || rating === 0 || text.trim().length < 10}
               className="flex-1 items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors">
               {submitting ? 'Submitting…' : 'Submit review'}
             </button>

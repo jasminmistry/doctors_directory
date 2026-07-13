@@ -230,6 +230,20 @@ const nextConfig = {
         ],
       },
       {
+        // Clinic/practitioner detail pages carry admin-moderated content (e.g. reviews)
+        // that must show up quickly after approval — much shorter shared-cache window.
+        source: '/clinics/:cityslug/clinic/:slug*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=30, stale-while-revalidate=300' },
+        ],
+      },
+      {
+        source: '/practitioners/:cityslug/profile/:slug*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=30, stale-while-revalidate=300' },
+        ],
+      },
+      {
         // HTML pages only — exclude API routes which set their own Cache-Control
         source: '/((?!api/).*)',
         headers: [
