@@ -13,6 +13,7 @@ export default function robots(): MetadataRoute.Robots {
     "/api/",
     "/zapain/",
     "/pain-relief/",
+    "/practitioners/*/profile/",
     ...productDisallow,
   ]
 
