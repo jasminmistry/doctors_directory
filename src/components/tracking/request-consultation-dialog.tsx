@@ -18,7 +18,6 @@ interface RequestConsultationDialogProps {
   clinicSlug?: string
   entityName?: string
   entityImage?: string
-  treatments?: string[]
   location?: string
   consultationHref?: string | null
   buttonClassName?: string
@@ -50,7 +49,6 @@ export function RequestConsultationDialog({
   clinicSlug,
   entityName,
   entityImage,
-  treatments,
   location,
   consultationHref,
   buttonClassName,
@@ -128,7 +126,7 @@ export function RequestConsultationDialog({
             lastName: data.lastName,
             email: data.email,
             phone: data.phone,
-            treatment: data.treatment || treatmentFallback || undefined,
+            treatment: treatmentFallback || undefined,
             dateOfBirth: data.dateOfBirth,
             location: location ?? undefined,
             source: leadSource,
@@ -159,7 +157,6 @@ export function RequestConsultationDialog({
     email: patientMe.email ?? '',
     phone: patientMe.phone ?? '',
     dateOfBirth: patientMe.dateOfBirth ?? '',
-    treatment: treatments?.[0] ?? '',
   } : undefined
 
   return (
@@ -224,7 +221,7 @@ export function RequestConsultationDialog({
             <ConsultationRichForm
               key={patientMe?.email ?? 'form'}
               defaultValues={formDefaults}
-              treatments={treatments}
+              clinicName={entityName ?? ''}
               submitLabel={submitLabel}
               submitting={isSubmitting}
               onSubmit={handleSubmit}

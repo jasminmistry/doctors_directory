@@ -1,15 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, Mail, Phone, Calendar, Stethoscope } from 'lucide-react'
+import { Loader2, Mail, Phone, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 
 export interface ConsultationFormData {
@@ -18,17 +12,19 @@ export interface ConsultationFormData {
   email: string
   phone: string
   dateOfBirth: string
-  treatment: string
 }
 
 interface ConsultationRichFormProps {
   defaultValues?: Partial<ConsultationFormData>
-  treatments?: string[]
+  clinicName: string
   description?: React.ReactNode
   submitLabel: string
   submitting: boolean
   onSubmit: (data: ConsultationFormData) => void
 }
+
+const PRIVACY_POLICY_URL =
+  `${process.env.NEXT_PUBLIC_MARKETING_BASE_URL || 'https://www.consentz.com'}/privacy-policy/`
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 const EMAIL_RE = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/
@@ -104,7 +100,7 @@ function IconInput({ icon, error, className, ...props }: IconInputProps) {
 
 export function ConsultationRichForm({
   defaultValues,
-  treatments,
+  clinicName,
   description,
   submitLabel,
   submitting,
@@ -115,7 +111,6 @@ export function ConsultationRichForm({
   const [email, setEmail] = useState(defaultValues?.email ?? '')
   const [phone, setPhone] = useState(defaultValues?.phone ?? '')
   const [dateOfBirth, setDateOfBirth] = useState(defaultValues?.dateOfBirth ?? '')
-  const [treatment, setTreatment] = useState(defaultValues?.treatment ?? '')
 
   const [firstNameError, setFirstNameError] = useState('')
   const [lastNameError, setLastNameError] = useState('')
@@ -123,10 +118,14 @@ export function ConsultationRichForm({
   const [phoneError, setPhoneError] = useState('')
   const [dobError, setDobError] = useState('')
 
-  const hasTreatments = treatments && treatments.length > 0
+  const [consentShare, setConsentShare] = useState(false)
+  const [consentPrivacy, setConsentPrivacy] = useState(false)
+  const [consentAge, setConsentAge] = useState(false)
+  const [consentError, setConsentError] = useState('')
 
   const canSubmit =
-    firstName.trim() && lastName.trim() && email.trim() && phone.trim() && dateOfBirth && !submitting
+    firstName.trim() && lastName.trim() && email.trim() && phone.trim() && dateOfBirth &&
+    consentShare && consentPrivacy && consentAge && !submitting
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -135,6 +134,7 @@ export function ConsultationRichForm({
     setEmailError('')
     setPhoneError('')
     setDobError('')
+    setConsentError('')
 
     let hasError = false
     if (!firstName.trim()) {
@@ -169,6 +169,11 @@ export function ConsultationRichForm({
       hasError = true
     }
 
+    if (!consentShare || !consentPrivacy || !consentAge) {
+      setConsentError('Please confirm all three statements below to continue.')
+      hasError = true
+    }
+
     if (hasError) return
 
     onSubmit({
@@ -177,7 +182,6 @@ export function ConsultationRichForm({
       email: email.trim(),
       phone: cleanPhone,
       dateOfBirth,
-      treatment,
     })
   }
 
@@ -241,34 +245,6 @@ export function ConsultationRichForm({
         />
       </Field>
 
-      {/* Treatment */}
-      <Field label="Treatment">
-        {hasTreatments ? (
-          <div className="relative">
-            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10">
-              <Stethoscope className="h-3.5 w-3.5" />
-            </span>
-            <Select value={treatment} onValueChange={setTreatment}>
-              <SelectTrigger className="w-full pl-9 border-gray-200 text-sm focus:ring-gray-100 focus:border-gray-400 bg-white">
-                <SelectValue placeholder="Select a treatment (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                {treatments.map((t) => (
-                  <SelectItem key={t} value={t}>{t}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        ) : (
-          <IconInput
-            icon={<Stethoscope className="h-3.5 w-3.5" />}
-            placeholder="e.g. Botox, Dermal Fillers"
-            value={treatment}
-            onChange={(e) => setTreatment(e.target.value)}
-          />
-        )}
-      </Field>
-
       {/* Date of birth */}
       <Field label="Date of birth" error={dobError} required>
         <div className="relative">
@@ -291,6 +267,50 @@ export function ConsultationRichForm({
         </div>
         <p className="text-[11px] text-gray-400">You must be 18 or over to request a consultation</p>
       </Field>
+
+      {/* Consent checkboxes */}
+      <div className="space-y-2.5">
+        <label className="flex items-start gap-2 text-xs text-gray-600">
+          <Checkbox
+            checked={consentShare}
+            onCheckedChange={(checked) => { setConsentShare(checked === true); setConsentError('') }}
+            className="mt-0.5"
+          />
+          <span>I consent to my details being shared with {clinicName} so they can respond to my enquiry.</span>
+        </label>
+        <label className="flex items-start gap-2 text-xs text-gray-600">
+          <Checkbox
+            checked={consentPrivacy}
+            onCheckedChange={(checked) => { setConsentPrivacy(checked === true); setConsentError('') }}
+            className="mt-0.5"
+          />
+          <span>
+            I have read and agree to the{' '}
+            <a
+              href={PRIVACY_POLICY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-gray-900"
+            >
+              Privacy Policy
+            </a>.
+          </span>
+        </label>
+        <label className="flex items-start gap-2 text-xs text-gray-600">
+          <Checkbox
+            checked={consentAge}
+            onCheckedChange={(checked) => { setConsentAge(checked === true); setConsentError('') }}
+            className="mt-0.5"
+          />
+          <span>I confirm that I am 18 years of age or older.</span>
+        </label>
+        {consentError && (
+          <p className="flex items-center gap-1 text-xs text-red-500">
+            <span className="inline-block h-1 w-1 rounded-full bg-red-500 shrink-0" />
+            {consentError}
+          </p>
+        )}
+      </div>
 
       <Button
         type="submit"
