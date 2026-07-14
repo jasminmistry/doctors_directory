@@ -4,10 +4,11 @@ import Link from "next/link";
 import { SearchBar } from "@/components/search/search-bar";
 import LogoLoop from "./LogoLoop";
 import { cn } from "@/lib/utils";
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 
 export function HeroSection() {
   const [mode, setMode] = useState<"patient" | "clinic">("patient");
-
+  const bookDemoHref = b2bBookDemoHref();
   const imageLogos = [
     {
       src: "/directory/images/Aesthetic-Medicine.webp",
@@ -173,18 +174,15 @@ export function HeroSection() {
                         >
                           List your practice
                         </Link>
-                        <Link
-                          href="/register/clinic"
-                          className="hidden md:inline-flex items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors"
-                        >
-                          Claim your profile
-                        </Link>
-                        <Link
-                          href="/register/practitioner"
-                          className="hidden md:block  text-sm text-gray-600 hover:text-black transition-colors"
-                        >
-                          Register as practitioner →
-                        </Link>
+                        <a
+                            href={bookDemoHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className=
+                                "inline-flex h-auto w-full md:w-auto items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors"
+                          >
+                            Book Demo
+                          </a>
                       </div>
                     </div>
                     <div>
