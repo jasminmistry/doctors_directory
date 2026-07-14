@@ -23,6 +23,56 @@ import {
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations"
 import { prisma } from "@/lib/db"
 
+function emptyClinic(partial: Partial<Clinic> & Pick<Clinic, "slug" | "City">): Clinic {
+  return {
+    slug: partial.slug,
+    image: partial.image ?? "",
+    url: partial.url,
+    rating: partial.rating ?? 0,
+    reviewCount: partial.reviewCount ?? 0,
+    category: partial.category ?? "",
+    gmapsAddress: partial.gmapsAddress ?? "",
+    gmapsPhone: partial.gmapsPhone ?? "",
+    City: partial.City,
+    facebook: partial.facebook ?? "",
+    twitter: partial.twitter ?? "",
+    Linkedin: partial.Linkedin ?? "",
+    instagram: partial.instagram ?? "",
+    youtube: partial.youtube ?? "",
+    website: partial.website ?? "",
+    email: partial.email ?? "",
+    isSaveFace: partial.isSaveFace ?? false,
+    isDoctor: partial.isDoctor ?? false,
+    isJCCP: partial.isJCCP ?? null,
+    isCQC: partial.isCQC ?? null,
+    isHIW: partial.isHIW ?? null,
+    isHIS: partial.isHIS ?? null,
+    isRQIA: partial.isRQIA ?? null,
+    about_section: partial.about_section ?? "",
+    accreditations: partial.accreditations ?? "",
+    awards: partial.awards ?? "",
+    affiliations: partial.affiliations ?? "",
+    hours: partial.hours ?? "",
+    Practitioners: partial.Practitioners ?? "",
+    Insurace: partial.Insurace ?? "",
+    Payments: partial.Payments ?? "",
+    Fees: partial.Fees ?? "",
+    x_twitter: partial.x_twitter ?? "",
+    Treatments: partial.Treatments,
+    claimed: partial.claimed,
+    awardsBadgeLabel: partial.awardsBadgeLabel,
+    tatlerBadgeLabel: partial.tatlerBadgeLabel,
+    aestheticsAwards: partial.aestheticsAwards,
+    tatlerGuideYears: partial.tatlerGuideYears,
+    verified: partial.verified,
+    domainVerified: partial.domainVerified,
+    gbpMatch: partial.gbpMatch,
+    gbpVerified: partial.gbpVerified,
+    idVerified: partial.idVerified,
+    manualVerified: partial.manualVerified,
+  }
+}
+
 interface AccreditedClinicsPageProps {
   params: {
     accreditation: string
@@ -44,6 +94,8 @@ async function loadConsentzClaimedClinicsForCity(cityslug: string): Promise<Clin
       reviewCount: true,
       category: true,
       gmapsAddress: true,
+      gmapsPhone: true,
+      website: true,
       claimed: true,
       isSaveFace: true,
       isDoctor: true,
@@ -59,23 +111,27 @@ async function loadConsentzClaimedClinicsForCity(cityslug: string): Promise<Clin
   return rows
     .filter((row) => row.city?.name?.toLowerCase() === cityslug.toLowerCase())
     .map((row) =>
-      applyPrestigeToClinic({
-        slug: row.slug,
-        image: row.image || "",
-        rating: row.rating ? Number(row.rating) : 0,
-        reviewCount: row.reviewCount || 0,
-        category: row.category || "",
-        gmapsAddress: row.gmapsAddress || "",
-        City: row.city?.name || "",
-        claimed: true,
-        isSaveFace: row.isSaveFace,
-        isDoctor: row.isDoctor,
-        isJCCP: row.isJccp,
-        isCQC: row.isCqc,
-        isHIW: row.isHiw,
-        isHIS: row.isHis,
-        isRQIA: row.isRqia,
-      } as Clinic),
+      applyPrestigeToClinic(
+        emptyClinic({
+          slug: row.slug,
+          image: row.image || "",
+          rating: row.rating ? Number(row.rating) : 0,
+          reviewCount: row.reviewCount || 0,
+          category: row.category || "",
+          gmapsAddress: row.gmapsAddress || "",
+          gmapsPhone: row.gmapsPhone || "",
+          website: row.website || "",
+          City: row.city?.name || "",
+          claimed: true,
+          isSaveFace: row.isSaveFace,
+          isDoctor: row.isDoctor,
+          isJCCP: row.isJccp ? [true, ""] : null,
+          isCQC: row.isCqc ? [true, ""] : null,
+          isHIW: row.isHiw ? [true, ""] : null,
+          isHIS: row.isHis ? [true, ""] : null,
+          isRQIA: row.isRqia ? [true, ""] : null,
+        }),
+      ),
     )
 }
 
