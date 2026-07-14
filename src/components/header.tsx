@@ -125,9 +125,9 @@ export default function Header() {
             <a href={`${marketingBaseUrl}/blog`} className="font-medium hover:text-black">
               Blog
             </a>
-            <a href={`${marketingBaseUrl}/faqs`} className="font-medium hover:text-black">
+            {/* <a href={`${marketingBaseUrl}/faqs`} className="font-medium hover:text-black">
               Faq's
-            </a>
+            </a> */}
             <div className="relative group">
               <button type="button" className="font-medium hover:text-black flex items-center gap-1">
                 List Your Practice
@@ -238,8 +238,8 @@ export default function Header() {
       </div>
 
       {showSearch && (
-        <div className="border-t border-[#e0d9ca] px-6 py-3">
-          <div className="max-w-6xl mx-auto">
+        <div className="bg-white px-6 py-3">
+          <div className="max-w-7xl mx-auto">
             <SearchBar />
           </div>
         </div>

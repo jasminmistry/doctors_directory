@@ -383,7 +383,7 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
           className={`
           bg-transparent h-dvh md:h-auto shadow-none border border-transparent rounded-0 px-4 md:px-0 md:py-0
           md:flex md:flex-col md:relative md:block w-full md:translate-x-0
-          md:bg-white md:rounded-lg md:border md:border-[#C4C4C4] md:shadow-sm md:p-4 md:sticky md:top-4 md:self-start md:z-0
+          md:bg-white md:rounded-lg md:border md:border-[#C4C4C4] md:p-4 md:sticky md:top-4 md:self-start md:z-0
           fixed top-0 left-0 bg-white z-[99999] transition-transform duration-300 ease-in-out
           ${isFilterActive ? "translate-x-0" : "-translate-x-full"} ${isOpen ? "block" : "hidden"}
         `}

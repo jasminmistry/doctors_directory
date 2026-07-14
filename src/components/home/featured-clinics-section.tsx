@@ -126,7 +126,7 @@ export default async function FeaturedClinicsSection() {
 
                   <Link
                     href={href}
-                    className="w-full mt-4 h-auto sm:w-full inline-flex items-center justify-center gap-2 rounded-lg px-2 py-2 bg-[#f4f4f4]  text-sm font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
+                    className="w-full mt-4 h-auto sm:w-full inline-flex items-center justify-center gap-2 rounded-lg px-2 py-2 bg-black text-base font-medium text-white hover:bg-neutral-800 transition-colors capitalize hover:cursor-pointer"
                   >
                     View clinic
                   </Link>
