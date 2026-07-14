@@ -46,8 +46,8 @@ export function CityCombobox({ value, onChange, placeholder, id, invalid }: Read
 
   const matches =
     query.trim().length === 0
-      ? cities.slice(0, 20)
-      : cities.filter((c) => c.name.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 20)
+      ? cities
+      : cities.filter((c) => c.name.toLowerCase().includes(query.trim().toLowerCase()))
 
   function selectCity(name: string) {
     onChange(name)

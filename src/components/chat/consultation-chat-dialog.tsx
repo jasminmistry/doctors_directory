@@ -15,6 +15,7 @@ import type { ConsultationFormData } from '@/components/consultation/consultatio
 import { cn } from '@/lib/utils'
 import { trackCtaClick } from '@/lib/tracking/client'
 import type { DirectoryPageType } from '@/lib/tracking/types'
+import { useExclusiveFloatingPanel } from '@/lib/floating-panel-bus'
 
 interface Message {
   id: number
@@ -93,6 +94,8 @@ export function ConsultationChatDialog({
   const [bookingOpen, setBookingOpen] = useState(false)
   const [callOpen, setCallOpen] = useState(false)
   const [phase, setPhase] = useState<Phase>('intro')
+
+  useExclusiveFloatingPanel(`chat:${clinicSlug}`, open, setOpen)
   const [checking, setChecking] = useState(false)
   const [isRestored, setIsRestored] = useState(false)
 

@@ -7,6 +7,7 @@ import {
   Loader2, Trash2, Mail, Phone, Calendar, User, CheckCircle2, AlertCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getDobValidationError, maxDobDate } from '@/lib/dob'
 
 interface PatientProfile {
   id: number
@@ -19,12 +20,6 @@ interface PatientProfile {
 }
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
-
-function maxDobDate(): string {
-  const d = new Date()
-  d.setFullYear(d.getFullYear() - 18)
-  return d.toISOString().slice(0, 10)
-}
 
 interface FieldProps {
   label: string
@@ -84,7 +79,7 @@ function ProfileCompleteness({ profile, dob }: { profile: PatientProfile; dob: s
     { label: 'First name', filled: !!profile.firstName },
     { label: 'Last name', filled: !!profile.lastName },
     { label: 'Phone', filled: !!profile.phone },
-    { label: 'Date of birth', filled: !!dob },
+    { label: 'Date of birth', filled: !!dob && !getDobValidationError(dob) },
   ]
   const filled = fields.filter((f) => f.filled).length
   const total = fields.length
@@ -121,6 +116,7 @@ export default function AccountProfilePage() {
   const [phone, setPhone] = useState('')
   const [dateOfBirth, setDateOfBirth] = useState('')
   const [phoneError, setPhoneError] = useState('')
+  const [dobError, setDobError] = useState('')
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -146,11 +142,20 @@ export default function AccountProfilePage() {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
     setPhoneError('')
+    setDobError('')
 
     if (phone) {
       const clean = phone.replace(/\s/g, '')
       if (!UK_PHONE_RE.test(clean)) {
         setPhoneError('Enter a valid UK number — e.g. 07700 900000 or +447700 900000')
+        return
+      }
+    }
+
+    if (dateOfBirth) {
+      const dobMessage = getDobValidationError(dateOfBirth)
+      if (dobMessage) {
+        setDobError(dobMessage)
         return
       }
     }
@@ -172,6 +177,8 @@ export default function AccountProfilePage() {
         const message = typeof data?.error === 'string' ? data.error : 'Failed to save — please try again'
         if (message.toLowerCase().includes('phone')) {
           setPhoneError(message)
+        } else if (message.toLowerCase().includes('date of birth') || message.toLowerCase().includes('18 or over')) {
+          setDobError(message)
         } else {
           toast.error(message)
         }
@@ -276,6 +283,7 @@ export default function AccountProfilePage() {
           {/* Date of birth */}
           <Field
             label="Date of birth"
+            error={dobError}
             hint="You must be 18 or over to request consultations"
           >
             <div className="relative">
@@ -286,8 +294,13 @@ export default function AccountProfilePage() {
                 type="date"
                 max={maxDobDate()}
                 value={dateOfBirth}
-                onChange={(e) => { setDateOfBirth(e.target.value); markDirty() }}
-                className="w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 py-2.5 text-sm text-gray-900 transition-colors focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-100"
+                onChange={(e) => { setDateOfBirth(e.target.value); setDobError(''); markDirty() }}
+                className={cn(
+                  'w-full rounded-lg border bg-white pl-9 pr-3 py-2.5 text-sm text-gray-900 transition-colors focus:outline-none focus:ring-2',
+                  dobError
+                    ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
+                    : 'border-gray-200 focus:border-gray-400 focus:ring-gray-100',
+                )}
               />
             </div>
           </Field>

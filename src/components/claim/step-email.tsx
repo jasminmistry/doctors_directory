@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { CityCombobox } from '@/components/claim/city-combobox'
 import { isGenericEmailDomain } from '@/lib/email-domains'
+import { isValidEmail } from '@/lib/email-validation'
+import { isValidSingleUrl } from '@/lib/url-validation'
 import { cn } from '@/lib/utils'
 
 interface ClinicProps {
@@ -30,14 +32,15 @@ type Props = ClinicProps | PractitionerProps
 type FieldErrors = Record<string, string>
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-function isValidUkPhone(value: string): boolean {
-  return UK_PHONE_RE.test(value.trim().replace(/\s/g, ''))
+// Strips all internal whitespace (e.g. "+4 4 2 0 79 46 095 8") so the value validated
+// and submitted is always a clean, dialable string.
+function normalizePhone(value: string): string {
+  return value.trim().replace(/\s/g, '')
 }
 
-function isValidEmail(value: string): boolean {
-  return EMAIL_RE.test(value.trim())
+function isValidUkPhone(value: string): boolean {
+  return UK_PHONE_RE.test(normalizePhone(value))
 }
 
 export function StepDetails(props: Readonly<Props>) {
@@ -89,18 +92,25 @@ export function StepDetails(props: Readonly<Props>) {
     const errors: FieldErrors = {}
     if (entityType === 'clinic') {
       if (!clinicNameInput.trim()) errors.clinicNameInput = 'Clinic Name is required.'
+      else if (clinicNameInput.trim().length > 255) errors.clinicNameInput = 'Clinic Name cannot exceed 255 characters.'
       if (name.trim().length < 2) errors.name = 'Please enter your full name.'
+      else if (name.trim().length > 255) errors.name = 'Full Name cannot exceed 255 characters.'
       if (!email.trim()) errors.email = 'Business Email is required.'
       else if (!isValidEmail(email)) errors.email = 'Please enter a valid email address.'
       if (!clinicPhone.trim()) errors.clinicPhone = 'Phone Number is required.'
       else if (!isValidUkPhone(clinicPhone)) errors.clinicPhone = 'Please enter a valid UK phone number.'
+      if (clinicWebsite.trim() && !isValidSingleUrl(clinicWebsite)) errors.clinicWebsite = 'Enter a single valid URL with no spaces.'
+      if (googleBusinessLink.trim() && !isValidSingleUrl(googleBusinessLink)) errors.googleBusinessLink = 'Enter a single valid URL with no spaces.'
       if (isRegister) {
         if (!address.trim()) errors.address = 'Address is required.'
+        else if (address.trim().length > 500) errors.address = 'Address cannot exceed 500 characters.'
         if (!city.trim()) errors.city = 'City is required.'
       }
     } else {
       if (name.trim().length < 2) errors.name = 'Please enter your full name.'
+      else if (name.trim().length > 255) errors.name = 'Full Name cannot exceed 255 characters.'
       if (!profession.trim()) errors.profession = 'Profession is required.'
+      else if (profession.trim().length > 255) errors.profession = 'Profession cannot exceed 255 characters.'
       if (!email.trim()) errors.email = 'Email is required.'
       else if (!isValidEmail(email)) errors.email = 'Please enter a valid email address.'
       if (practitionerPhone.trim() && !isValidUkPhone(practitionerPhone)) errors.practitionerPhone = 'Please enter a valid UK phone number.'
@@ -115,6 +125,8 @@ export function StepDetails(props: Readonly<Props>) {
     if (lower.includes('full name')) return { name: message }
     if (lower.includes('email')) return { email: message }
     if (lower.includes('phone')) return entityType === 'clinic' ? { clinicPhone: message } : { practitionerPhone: message }
+    if (lower.includes('google business')) return { googleBusinessLink: message }
+    if (lower.includes('website')) return { clinicWebsite: message }
     if (lower.includes('profession')) return { profession: message }
     if (lower.includes('address')) return { address: message }
     if (lower.includes('city')) return { city: message }
@@ -144,7 +156,7 @@ export function StepDetails(props: Readonly<Props>) {
               claimerName: name.trim(),
               claimerEmail: email.trim(),
               clinicNameInput: clinicNameInput.trim(),
-              clinicPhone: clinicPhone.trim(),
+              clinicPhone: normalizePhone(clinicPhone),
               clinicWebsite: clinicWebsite.trim() || undefined,
               googleBusinessLink: googleBusinessLink.trim() || undefined,
               ...(isRegister
@@ -157,7 +169,7 @@ export function StepDetails(props: Readonly<Props>) {
               practitionerSlug: isRegister ? undefined : (props as PractitionerProps).practitionerSlug,
               claimerName: name.trim(),
               claimerEmail: email.trim(),
-              claimerPhone: practitionerPhone.trim() || undefined,
+              claimerPhone: practitionerPhone.trim() ? normalizePhone(practitionerPhone) : undefined,
               profession: profession.trim(),
               clinicNameInput: practitionerClinicName.trim() || undefined,
               licenseNumber: isRegister ? undefined : licenseNumber.trim() || undefined,
@@ -213,6 +225,7 @@ export function StepDetails(props: Readonly<Props>) {
             placeholder="e.g. The Skin Clinic London"
             value={clinicNameInput}
             onChange={(e) => { setClinicNameInput(e.target.value); clearFieldError('clinicNameInput') }}
+            maxLength={255}
             aria-invalid={!!fieldErrors.clinicNameInput}
             className={cn(fieldErrors.clinicNameInput && 'border-destructive')}
           />
@@ -229,6 +242,7 @@ export function StepDetails(props: Readonly<Props>) {
           value={name}
           onChange={(e) => { setName(e.target.value); clearFieldError('name') }}
           autoComplete="name"
+          maxLength={255}
           aria-invalid={!!fieldErrors.name}
           className={cn(fieldErrors.name && 'border-destructive')}
         />
@@ -245,6 +259,7 @@ export function StepDetails(props: Readonly<Props>) {
               placeholder="e.g. Aesthetic Nurse, Dermatologist"
               value={profession}
               onChange={(e) => { setProfession(e.target.value); clearFieldError('profession') }}
+              maxLength={255}
               aria-invalid={!!fieldErrors.profession}
               className={cn(fieldErrors.profession && 'border-destructive')}
             />
@@ -260,6 +275,7 @@ export function StepDetails(props: Readonly<Props>) {
               placeholder="e.g. 07700 123456"
               value={practitionerPhone}
               onChange={(e) => { setPractitionerPhone(e.target.value); clearFieldError('practitionerPhone') }}
+              onBlur={() => setPractitionerPhone((v) => normalizePhone(v))}
               autoComplete="tel"
               aria-invalid={!!fieldErrors.practitionerPhone}
               className={cn(fieldErrors.practitionerPhone && 'border-destructive')}
@@ -281,6 +297,7 @@ export function StepDetails(props: Readonly<Props>) {
           onChange={(e) => { setEmail(e.target.value); clearFieldError('email') }}
           onBlur={handleEmailBlur}
           autoComplete="email"
+          maxLength={255}
           aria-invalid={!!fieldErrors.email}
           className={cn(fieldErrors.email && 'border-destructive')}
         />
@@ -303,6 +320,7 @@ export function StepDetails(props: Readonly<Props>) {
               placeholder="e.g. 020 7123 4567"
               value={clinicPhone}
               onChange={(e) => { setClinicPhone(e.target.value); clearFieldError('clinicPhone') }}
+              onBlur={() => setClinicPhone((v) => normalizePhone(v))}
               autoComplete="tel"
               aria-invalid={!!fieldErrors.clinicPhone}
               className={cn(fieldErrors.clinicPhone && 'border-destructive')}
@@ -320,6 +338,7 @@ export function StepDetails(props: Readonly<Props>) {
                   placeholder="123 Harley Street, London"
                   value={address}
                   onChange={(e) => { setAddress(e.target.value); clearFieldError('address') }}
+                  maxLength={500}
                   aria-invalid={!!fieldErrors.address}
                   className={cn(fieldErrors.address && 'border-destructive')}
                 />
@@ -347,6 +366,7 @@ export function StepDetails(props: Readonly<Props>) {
                   placeholder="e.g. Aesthetics, Dermatology"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
+                  maxLength={255}
                 />
               </div>
             </>
@@ -361,9 +381,12 @@ export function StepDetails(props: Readonly<Props>) {
               type="url"
               placeholder="https://yourclinic.co.uk"
               value={clinicWebsite}
-              onChange={(e) => setClinicWebsite(e.target.value)}
+              onChange={(e) => { setClinicWebsite(e.target.value); clearFieldError('clinicWebsite') }}
               autoComplete="url"
+              aria-invalid={!!fieldErrors.clinicWebsite}
+              className={cn(fieldErrors.clinicWebsite && 'border-destructive')}
             />
+            {fieldErrors.clinicWebsite && <p className="text-xs text-destructive">{fieldErrors.clinicWebsite}</p>}
           </div>
 
           <div className="flex flex-col gap-2">
@@ -375,8 +398,11 @@ export function StepDetails(props: Readonly<Props>) {
               type="url"
               placeholder="https://maps.google.com/..."
               value={googleBusinessLink}
-              onChange={(e) => setGoogleBusinessLink(e.target.value)}
+              onChange={(e) => { setGoogleBusinessLink(e.target.value); clearFieldError('googleBusinessLink') }}
+              aria-invalid={!!fieldErrors.googleBusinessLink}
+              className={cn(fieldErrors.googleBusinessLink && 'border-destructive')}
             />
+            {fieldErrors.googleBusinessLink && <p className="text-xs text-destructive">{fieldErrors.googleBusinessLink}</p>}
           </div>
         </>
       )}
@@ -393,6 +419,7 @@ export function StepDetails(props: Readonly<Props>) {
               placeholder="e.g. The Skin Clinic London"
               value={practitionerClinicName}
               onChange={(e) => setPractitionerClinicName(e.target.value)}
+              maxLength={255}
             />
           </div>
 
@@ -419,6 +446,7 @@ export function StepDetails(props: Readonly<Props>) {
                   placeholder="e.g. GMC 1234567"
                   value={licenseNumber}
                   onChange={(e) => setLicenseNumber(e.target.value)}
+                  maxLength={100}
                 />
               </div>
 
@@ -431,6 +459,7 @@ export function StepDetails(props: Readonly<Props>) {
                     placeholder="e.g. GMC, NMC, GDC, JCCP"
                     value={registryName}
                     onChange={(e) => setRegistryName(e.target.value)}
+                    maxLength={255}
                   />
                 </div>
               )}
