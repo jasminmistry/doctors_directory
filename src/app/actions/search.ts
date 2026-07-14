@@ -7,6 +7,7 @@ import { getAllProducts as getAllProductsFromDb, searchProductsForListing } from
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import { modalities } from "@/lib/data"
 import { getCachedSearchData, setCachedSearchData } from "@/lib/search-cache"
+import { applyPrestigeToClinic } from "@/lib/prestige-accreditations"
 
 const modalitiesSet = new Set(modalities.map((m) => m.toLowerCase()))
 
@@ -31,6 +32,10 @@ type SearchClinicResult = Pick<
   | "verified"
   | "idVerified"
   | "manualVerified"
+  | "aestheticsAwards"
+  | "tatlerGuideYears"
+  | "awardsBadgeLabel"
+  | "tatlerBadgeLabel"
 >;
 
 type SearchPractitioner = SearchClinicResult &
@@ -44,7 +49,7 @@ type SearchPractitioner = SearchClinicResult &
 
 // Helper to convert database clinic to old format for compatibility
 function convertDbClinicToOldFormat(clinic: SearchClinic): SearchClinicResult {
-  return {
+  return applyPrestigeToClinic({
     slug: clinic.slug || undefined,
     image: clinic.image || '',
     rating: clinic.rating ? Number(clinic.rating) : 0,
@@ -64,7 +69,7 @@ function convertDbClinicToOldFormat(clinic: SearchClinic): SearchClinicResult {
     verified: clinic.verified ?? false,
     idVerified: clinic.idVerified ?? false,
     manualVerified: clinic.manualVerified ?? false,
-  }
+  }) as SearchClinicResult
 }
 
 type LoadDataResult = {

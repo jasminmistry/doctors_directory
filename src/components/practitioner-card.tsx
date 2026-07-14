@@ -13,6 +13,7 @@ import {
   isCity,
 } from "@/lib/utils";
 import ClinicLabels from "./Clinic/clinicLabels";
+import { PrestigeSearchPill } from "./Clinic/prestige-search-pill";
 import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
 import { locations, TreatmentMap } from "@/lib/data";
 import { Button } from "./ui/button";
@@ -95,10 +96,13 @@ function getPractitionerOrClinicHref(
 }
 
 function getProfileImageSrc(
-  _practitioner: Practitioner | Clinic | Product | string,
+  practitioner: Practitioner | Clinic | Product | string,
 ): string {
-  // Profile photos are temporarily disabled site-wide — always show the default placeholder.
-  return "/directory/images/default-dr-profile-1.webp";
+  const DEFAULT = "/directory/images/default-dr-profile-1.webp";
+  if (isClinic(practitioner) && practitioner.claimed && practitioner.image?.trim()) {
+    return practitioner.image;
+  }
+  return DEFAULT;
 }
 
 function getCityHref(
@@ -269,6 +273,13 @@ export function PractitionerCard({
                   </div>
                 )}
               </div>
+
+              {isClinic(practitioner) && (
+                <PrestigeSearchPill
+                  awardsBadgeLabel={practitioner.awardsBadgeLabel}
+                  tatlerBadgeLabel={practitioner.tatlerBadgeLabel}
+                />
+              )}
 
               <div className="mb-2 flex min-h-[1.25rem] w-full items-center justify-center px-1">
                 {"practitioner_name" in practitioner && practitioner.practitioner_title ? (
