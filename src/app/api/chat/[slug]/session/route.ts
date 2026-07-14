@@ -19,7 +19,7 @@ export async function POST(
   try {
     const clinic = await prisma.clinic.findUnique({
       where: { slug: params.slug },
-      select: { id: true, claimed: true, coreClinicId: true },
+      select: { id: true, claimed: true, coreClinicId: true, claimedPlan: true },
     })
 
     if (!clinic?.claimed) {
@@ -32,6 +32,7 @@ export async function POST(
     }
 
     const visitorToken = crypto.randomBytes(32).toString('hex')
+    const openingMessage = body.data.initialMessage?.trim() || ''
 
     const session = await prisma.chatSession.create({
       data: {
@@ -43,30 +44,43 @@ export async function POST(
       },
     })
 
-    // Push to Consentz Core when the clinic has a coreClinicId and an email is available
-    if (clinic.coreClinicId && body.data.patientEmail) {
+    // Always store the initial message locally so the clinic portal can see it
+    if (openingMessage) {
+      await prisma.chatMessage.create({
+        data: { sessionId: session.id, sender: 'patient', content: openingMessage },
+      }).catch((err) => console.error('[chat/session] failed to store initial message locally:', err))
+    }
+
+    // Push to Consentz Core — paid plans with coreClinicId only
+    const isFree = !clinic.claimedPlan || clinic.claimedPlan === 'free'
+    const shouldSyncToCore = !isFree && clinic.coreClinicId && body.data.patientEmail
+
+    console.log(`[chat/session] slug=${params.slug} coreClinicId=${clinic.coreClinicId ?? 'null'} plan=${clinic.claimedPlan ?? 'none'} syncToCore=${!!shouldSyncToCore}`)
+
+    if (shouldSyncToCore) {
       const { firstName, lastName } = splitName(body.data.patientName)
-      const openingMessage =
-        body.data.initialMessage?.trim() ||
-        "Hi, I'd like to enquire about a consultation."
+      const coreMessage = openingMessage || "Hi, I'd like to enquire about a consultation."
 
       startCoreConversation({
-        coreClinicId: clinic.coreClinicId,
+        coreClinicId: clinic.coreClinicId!,
         firstName,
         lastName,
-        email: body.data.patientEmail,
+        email: body.data.patientEmail!,
         phone: body.data.patientPhone,
-        message: openingMessage,
+        message: coreMessage,
       })
         .then(async (conversationId) => {
           if (conversationId) {
+            console.log(`[chat/session] Core conversation started id=${conversationId} session=${session.id}`)
             await prisma.chatSession.update({
               where: { id: session.id },
               data: { coreConversationId: String(conversationId) },
             })
+          } else {
+            console.warn(`[chat/session] Core conversation returned null for session=${session.id} — messages will be local-only`)
           }
         })
-        .catch(() => {})
+        .catch((err) => console.error('[chat/session] failed to persist coreConversationId:', err))
     }
 
     return NextResponse.json({ sessionId: session.id, visitorToken })

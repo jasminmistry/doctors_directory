@@ -119,8 +119,9 @@ export async function searchProductsForListing(params: {
     and.push({ brand: params.category })
   }
 
-  if (params.location) {
-    and.push({ distributorCleaned: params.location })
+  const trimmedLocation = params.location?.trim()
+  if (trimmedLocation) {
+    and.push({ distributorCleaned: trimmedLocation })
   }
 
   if (params.services && params.services.length > 0) {

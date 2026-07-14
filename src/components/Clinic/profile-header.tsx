@@ -6,7 +6,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import type { Clinic } from "@/lib/types";
 import SocialMediaIcons from "../Clinic/clinicSocialMedia";
 import ClinicLabels from "./clinicLabels";
@@ -14,14 +13,19 @@ import { PrestigeProfileBadge } from "./prestige-profile-badge";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { OnlineDot } from "@/components/Clinic/online-dot";
+import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dialog";
 import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
+import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
   hasCoreCalendar?: boolean;
+  claimState?: 'unclaimed' | 'pending' | 'claimed';
+  goToProfileHref?: string;
 }
 
-export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: Readonly<ProfileHeaderProps>) {
+export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, claimState = clinic.claimed ? 'claimed' : 'unclaimed', goToProfileHref = '/portal/login' }: Readonly<ProfileHeaderProps>) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
@@ -48,9 +52,9 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
   const [imgSrc, setImgSrc] = useState(initialImg);
 
   return (
-    <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-xl px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t md:border md:border-(--alto) bg-white md:bg-(--primary-bg-color)">
-      {!clinic.claimed && (
-        <Link prefetch={false} href={`/claim/${clinic.slug}`} onClick={(e) => e.preventDefault()}>
+    <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-lg px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t md:border md:border-(--alto) bg-white md:bg-(--primary-bg-color)">
+      {claimState === 'unclaimed' && (
+        <Link prefetch={false} href={`/claim/${clinic.slug}`}>
           <Badge
             variant="outline"
             className="absolute top-2 right-2 z-50 mb-2 font-semibold text-balance leading-tight bg-white md:bg-(--primary-bg-color)"
@@ -59,6 +63,17 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
           </Badge>
         </Link>
       )}
+      {claimState === 'claimed' && (
+        <Link prefetch={false} href={goToProfileHref}>
+          <Badge
+            variant="outline"
+            className="absolute top-2 right-2 z-50 mb-2 font-semibold text-balance leading-tight bg-white md:bg-(--primary-bg-color)"
+          >
+            Go to Profile
+          </Badge>
+        </Link>
+      )}
+
       <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-start">
         {/* Left: avatar + info */}
         <div className="flex flex-row flex-wrap items-start gap-4 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0">
@@ -87,6 +102,9 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
                 <h1 className="font-semibold text-lg md:text-2xl leading-tight">
                   {practitionerName}
                 </h1>
+                {clinic.claimed && clinic.slug && (
+                  <OnlineDot slug={clinic.slug} />
+                )}
                 {clinic.idVerified && (
                   <Badge className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border-emerald-200 text-xs font-medium shrink-0">
                     <ShieldCheck className="h-3 w-3" />
@@ -94,7 +112,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
                   </Badge>
                 )}
                 {!clinic.idVerified && clinic.manualVerified && (
-                  <Badge className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 border-blue-200 text-xs font-medium shrink-0">
+                  <Badge className="inline-flex items-center gap-1 bg-blue-100 text-black border-blue-200 text-xs font-medium shrink-0">
                     <ShieldCheck className="h-3 w-3" />
                     Manually Verified
                   </Badge>
@@ -147,39 +165,30 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
           {clinic.claimed && (
             <ClinicOnlineStatus clinicSlug={clinic.slug ?? ''} />
           )}
-          {consultationHref ? (
-            <Button
-              asChild
-              variant="default"
-              className="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
-            >
-              <a href={consultationHref} target="_blank" rel="noopener noreferrer">
-                Request Consultation
-              </a>
-            </Button>
-          ) : (
-            <Button
-              variant="default"
-              disabled
-              className="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white"
-            >
-              Request Consultation
-            </Button>
-          )}
-          <Button
-            asChild
-            variant="outline"
-            className="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
-          >
-            <a
-              href={consultationHref ?? "#fees"}
-              target={consultationHref ? "_blank" : undefined}
-              rel={consultationHref ? "noopener noreferrer" : undefined}
-              data-track-cta="true"
-            >
-              Request Pricing
-            </a>
-          </Button>
+          <ConsultationChatDialog
+            clinicSlug={clinic.slug ?? ''}
+            clinicName={clinicName ?? practitionerName}
+            clinicImage={imgSrc}
+            hasCoreCalendar={hasCoreCalendar}
+            location={clinic.City}
+            pageType="clinic_page"
+            buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
+          />
+          <RequestConsultationDialog
+            pageType="clinic_page"
+            clinicSlug={clinic.slug ?? ''}
+            entityName={clinicName ?? practitionerName}
+            entityImage={imgSrc}
+            location={clinic.City}
+            buttonVariant="outline"
+            triggerLabel="Request Pricing"
+            dialogTitle="Request pricing"
+            submitLabel="Send pricing request"
+            treatmentFallback="Pricing Enquiry"
+            openParam="pricing"
+            leadSource="pricing"
+            buttonClassName="w-full shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
+          />
           <SocialMediaIcons clinic={clinic} />
         </div>
       </div>

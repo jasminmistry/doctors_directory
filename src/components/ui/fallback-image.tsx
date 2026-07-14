@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const DEFAULT_PERSON = "/directory/images/default-dr-profile-1.webp"
 const DEFAULT_PRODUCT = "/directory/images/default-dr-profile-1.webp"
@@ -46,7 +46,12 @@ export function FallbackImage({
   height,
   loading = "lazy",
 }: Readonly<FallbackImageProps>) {
-  const [imgSrc, setImgSrc] = useState(() => toProxiedSrc(src, fallback))
+  const resolved = toProxiedSrc(src, fallback)
+  const [imgSrc, setImgSrc] = useState(resolved)
+
+  useEffect(() => {
+    setImgSrc(resolved)
+  }, [resolved])
 
   return (
     <img

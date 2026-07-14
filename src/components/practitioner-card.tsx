@@ -21,6 +21,7 @@ import { isClinic, isPractitioner, isProduct, toUrlSlug } from "@/lib/utils";
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { OnlineDot } from "@/components/Clinic/online-dot";
 type PractitionerOrClinic = Practitioner | Clinic | Product | string;
 interface PractitionerCardProps {
   practitioner: PractitionerOrClinic;
@@ -246,7 +247,7 @@ export function PractitionerCard({
                 </div>
               </div>
 
-              <div className="flex min-h-[2.75rem] w-full items-center justify-center px-1">
+              <div className="flex min-h-[2.75rem] w-full items-center justify-center gap-1 px-1">
                 <span className="line-clamp-2 text-center text-base font-semibold leading-snug text-primary">
                   {isClinic(practitioner)
                     ? practitionerName
@@ -259,17 +260,19 @@ export function PractitionerCard({
                         )
                         .join(" ")}
                 </span>
+                {(isClinic(practitioner) || isPractitioner(practitioner)) && (
+                  <div className="flex shrink-0 items-center gap-1">
+                    <VerifiedBadge
+                      idVerified={(practitioner as any).idVerified}
+                      manualVerified={(practitioner as any).manualVerified}
+                      verified={(practitioner as any).verified}
+                    />
+                    {practitioner.slug && (
+                      <OnlineDot slug={practitioner.slug} />
+                    )}
+                  </div>
+                )}
               </div>
-
-              {(isClinic(practitioner) || isPractitioner(practitioner)) && (
-                <div className="mb-1 flex min-h-[1.25rem] justify-center">
-                  <VerifiedBadge
-                    idVerified={(practitioner as any).idVerified}
-                    manualVerified={(practitioner as any).manualVerified}
-                    verified={(practitioner as any).verified}
-                  />
-                </div>
-              )}
 
               {isClinic(practitioner) && (
                 <PrestigeSearchPill
@@ -465,7 +468,7 @@ export function PractitionerCard({
       {typeof practitioner === "string" && !isCity(practitioner) && (
         <Card
           asChild
-          className="gap-0 h-full relative px-4 md:px-0 shadow-none md:border-0 duration-300 cursor-pointer"
+          className="gap-0 h-full relative px-4 rounded-none md:rounded-lg md:px-0 md:border duration-300 shadow-none cursor-pointer"
           aria-labelledby={`treatment-name-${practitioner}`}
           data-testid="practitioner-card"
         >
@@ -489,7 +492,7 @@ export function PractitionerCard({
                       />
                     </div>
 
-                    <div className="mb-3 md:mb-0 flex text-left md:text-center md:align-items-center md:justify-center font-semibold text-md md:text-lg transition-colors text-balance">
+                    <div className="mb-3 md:mb-0 flex text-left md:text-center md:align-items-center md:justify-center font-normal text-sm transition-colors text-balance">
                       {treatmentName}
                     </div>
                   </div>
@@ -502,11 +505,11 @@ export function PractitionerCard({
       {isCity(practitioner) === true && (
         <Card
           asChild
-          className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-sm "
+          className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer  "
         >
           <Link href={cityHref}>
             <div className="mt-2 flex flex-col items-center gap-2">
-              <span className="font-bold">{practitioner}</span>
+              <span className="font-normal text-sm">{practitioner}</span>
             </div>
           </Link>
         </Card>
@@ -525,7 +528,7 @@ export function PractitionerCard({
           href={awardHref}
           className="block"
         >
-          <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg ">
+          <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer ">
             <CardHeader className=" h-55 pb-4 px-2">
               <div className="flex justify-center mb-4">
                 <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg bg-gray-300">

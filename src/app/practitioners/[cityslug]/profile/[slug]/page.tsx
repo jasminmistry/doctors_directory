@@ -24,6 +24,10 @@ import { getPractitionerBySlug, getAllPractitionersForSearch } from "@/lib/data-
 import { getAllTreatmentNames } from "@/lib/data-access/treatments";
 import { isRemovedPractitionerSlug } from "@/lib/directory-removals";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
+import { PageViewTracker } from "@/components/tracking/page-view-tracker";
+import { EventBookingSection } from "@/components/Clinic/event-booking-section";
+import { getClaimState } from "@/lib/claim-utils";
+import { getPortalUser } from "@/lib/portal";
 import { getPractitionerProfileRobots } from "@/lib/practitioner-profile-robots";
 
 function mergeBoxplotDataFromDict(
@@ -61,6 +65,12 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     notFound();
   }
 
+  const [claimState, portalUser] = await Promise.all([
+    getClaimState({ claimed: clinic.claimed ?? false, entityType: 'practitioner', slug: clinic.practitioner_name! }),
+    getPortalUser(),
+  ]);
+  const goToProfileHref = portalUser ? `/portal/${portalUser.entityType}` : '/portal/login';
+
   const hoursObj = clinic.hours as unknown as Record<string, any>;
   const hours = hoursObj?.["Typical_hours_listed_in_directories"] ?? clinic.hours;
   const flatHours = typeof hours === 'object' ? flattenObject(hours) : hours
@@ -89,11 +99,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const associatedClinics: string[] = JSON.parse(clinic.Associated_Clinics ?? '[]')
 
   return (
+    <>
+    <PageViewTracker />
     <main className="min-h-screen bg-background">
       {/* Navigation */}
       <div className="sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
-          <Link className="mb-2 inline-block" href="/" prefetch={false}>
+          <Link className="mb-3 inline-block" href="/" prefetch={false}>
             <Button variant="ghost" size="sm" className="gap-2 hover:cursor-pointer">
               <ArrowLeft className="h-4 w-4" />
               Back to Directory
@@ -123,7 +135,13 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
        <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
                {/* Profile Header */}
-               <ProfileHeader clinic={clinic} k_value={practitioner as any} clinic_list={associatedClinics} />
+               <ProfileHeader
+                 clinic={clinic}
+                 k_value={practitioner as any}
+                 clinic_list={associatedClinics}
+                 claimState={claimState}
+                 goToProfileHref={goToProfileHref}
+               />
 
                <div className="px-4 md:px-0">
                  <PractitionerTabs />
@@ -133,7 +151,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                      <ClinicDetailsMarkdown clinic={practitioner} />
                    </div>
                    <div className="order-1 lg:order-2 col-span-1 lg:col-span-4">
-                     <div className="border border-gray-300 rounded-xl p-6">
+                     <div className="border border-gray-300 rounded-lg p-6">
                        <DirectoryStarRating
                          reviewCount={practitioner.reviewCount ?? 0}
                          reviewsLabel={
@@ -151,7 +169,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                          <ScoreInfoTooltip entityLabel="practitioner" />
                        </div>
                        <Stats data={boxplotData} />
-                       <p className="mt-3 text-xs font-bold text-black">
+                       <p className="mt-3 text-xs font-medium text-black">
                          {rankingSubtitle}
                        </p>
                      </div>
@@ -209,6 +227,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   String(practitioner.Payments) || "Not listed"
                 )}
               </Section>)}
+              <EventBookingSection practitionerSlug={slug} />
+
               <div className='flex flex-col sm:flex-row gap-2'>
 
 
@@ -241,6 +261,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
               </div>
 
     </main>
+    </>
   );
 }
 

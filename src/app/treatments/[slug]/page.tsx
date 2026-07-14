@@ -19,6 +19,12 @@ import Link from "next/link";
 import ItemsGrid from "@/components/collectionGrid";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
+import { NationalTreatmentListingsLoader } from "@/components/treatment/national-treatment-listings-loader";
+import { NationalTreatmentListingsSkeleton } from "@/components/treatment/national-treatment-listings-section";
+import { TreatmentCityPickerSection } from "@/components/treatment/treatment-city-picker-section";
+import { getTreatmentCityHubCitiesForTreatment } from "@/lib/treatment-city-hub";
+import { resolveTreatmentHubSlug } from "@/lib/treatment-hub-registry";
+import { Suspense } from "react";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
 
 interface ProfilePageProps {
@@ -336,7 +342,7 @@ const getPractitionerCount = (practitioners: Clinic['Practitioners']) => {
   return 0;
 };
 
-export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const allClinics = getClinics();
   const practitionerProfiles: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const { slug } = params;
@@ -429,6 +435,8 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const downtime = getDowntime(treatment.name, treatmentData);
   const satisfaction = getSatisfaction(reviews);
   const rankedTreatmentClinics = buildClinicRankedEntries(filteredClinics, 5);
+  const canonicalTreatmentSlug = resolveTreatmentHubSlug(slug);
+  const treatmentCityOptions = getTreatmentCityHubCitiesForTreatment(slug);
 
   treatment.satisfaction = satisfaction;
   treatment.averageCost = averageCost;
@@ -481,20 +489,14 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
           __html: JSON.stringify(structuredData),
         }}
       />
-      <main className="bg-(--primary-bg-color)">
+      <main className="bg-white">
         {/* Treatment Detail Section */}
         <div className="bg-white">
           <div className="bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-            <div className="container mx-auto max-w-7xl px-4 py-4">
-              <Link className="mb-2 inline-block" href="/" prefetch={false}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Directory
-                </Button>
+            <div className="mx-auto max-w-7xl px-6 py-4">
+              <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
+               <ArrowLeft className="h-4 w-4" />
+                Back to Directory
               </Link>
               <Breadcrumb>
                 <BreadcrumbList>
@@ -503,13 +505,13 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/directory/treatments">
+                    <BreadcrumbLink href="/treatments">
                       Treatments
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href={`/directory/treatments/category/${treatmentCategorySlug}`}>
+                    <BreadcrumbLink href={`/treatments/category/${treatmentCategorySlug}`}>
                       {treatmentCategory}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
@@ -525,14 +527,14 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
             treatment={treatment}
             treatmentData={treatmentData}
           />
-          <div className="container mx-auto max-w-7xl px-4 pt-2 pb-2">
+          <div className="mx-auto max-w-7xl px-6 pt-2 pb-2">
             <BestRankedBlock
               title={`Best ${treatment.name} Clinics`}
               entries={rankedTreatmentClinics}
             />
           </div>
           {/* Similar Clinics Section */}
-          <div className="container mx-auto max-w-7xl px-4 py-4">
+          <div className="mx-auto max-w-7xl px-6 py-4">
             <div className="px-4 md:px-0 space-y-6 mt-8">
               <h3 className="text-lg font-semibold text-foreground mb-2">
                 Top Clinics for {treatment.name}
@@ -540,7 +542,18 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
               <ItemsGrid items={filteredClinics.slice(0, 6)} />
             </div>
           </div>
+          <TreatmentCityPickerSection
+            treatmentName={treatment.name}
+            treatmentSlug={canonicalTreatmentSlug}
+            cities={treatmentCityOptions}
+          />
         </div>
+        <Suspense fallback={<NationalTreatmentListingsSkeleton />}>
+          <NationalTreatmentListingsLoader
+            treatmentSlug={slug}
+            treatmentName={treatment.name}
+          />
+        </Suspense>
       </main>
     </>
   );

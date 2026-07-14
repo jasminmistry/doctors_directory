@@ -35,7 +35,7 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
   if (badges.length === 0 && !hasPrestige) return null
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+    <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
       <h3 className="text-sm font-semibold text-gray-900">Accreditations &amp; Certifications</h3>
       {badges.length > 0 && (
         <div className="flex flex-wrap gap-2">

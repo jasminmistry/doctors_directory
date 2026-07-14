@@ -7,10 +7,22 @@ export const dynamic = 'force-dynamic'
 export async function GET() {
   try {
     const practitioners = await prisma.practitioner.findMany({
-      select: { slug: true, displayName: true, specialty: true, imageUrl: true, title: true },
+      select: {
+        slug: true, displayName: true, specialty: true, imageUrl: true, claimed: true, verified: true, claimedPlan: true,
+        clinicAssociations: {
+          orderBy: { clinicId: 'asc' },
+          take: 1,
+          select: { clinic: { select: { city: { select: { name: true } } } } },
+        },
+      },
       orderBy: { displayName: 'asc' },
     })
-    return NextResponse.json(practitioners)
+    return NextResponse.json(
+      practitioners.map(({ clinicAssociations, ...p }) => ({
+        ...p,
+        cityName: clinicAssociations[0]?.clinic?.city?.name ?? null,
+      }))
+    )
   } catch (error) {
     console.error('Failed to read practitioners:', error)
     return NextResponse.json({ error: 'Failed to read practitioners' }, { status: 500 })
@@ -21,10 +33,32 @@ export async function POST(request: Request) {
   try {
     const body = await request.json()
 
-    const slug = body.slug?.trim()
-    if (!slug) return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
-    const displayName = body.displayName?.trim()
-    if (!displayName) return NextResponse.json({ error: 'Name is required' }, { status: 400 })
+    const slug = typeof body.slug === 'string' ? body.slug.trim() : ''
+    const displayName = typeof body.displayName === 'string' ? body.displayName.trim() : ''
+    const clinicId = Number(body.clinicId)
+
+    const fieldErrors: Record<string, string> = {}
+    if (!slug) fieldErrors.slug = 'Slug is required'
+    else if (!/^[a-z0-9-]+$/.test(slug)) fieldErrors.slug = 'Slug must be kebab-case'
+    if (!displayName) fieldErrors.displayName = 'Display name is required'
+    if (!clinicId || !Number.isInteger(clinicId) || clinicId <= 0) {
+      fieldErrors.clinicId = 'City is required'
+    }
+
+    if (Object.keys(fieldErrors).length > 0) {
+      return NextResponse.json(
+        { error: 'Please fix the highlighted fields', fieldErrors },
+        { status: 400 }
+      )
+    }
+
+    const clinic = await prisma.clinic.findUnique({ where: { id: clinicId }, select: { id: true, cityId: true } })
+    if (!clinic || !clinic.cityId) {
+      return NextResponse.json(
+        { error: 'Selected clinic has no city', fieldErrors: { clinicId: 'Selected clinic has no city' } },
+        { status: 400 }
+      )
+    }
 
     const record = await prisma.practitioner.create({
       data: {
@@ -38,6 +72,7 @@ export async function POST(request: Request) {
         roles: body.roles ?? undefined,
         media: body.media ?? undefined,
         experience: body.experience ?? undefined,
+        clinicAssociations: { create: { clinicId } },
       },
     })
     await invalidateSearchCache()
@@ -45,7 +80,10 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Failed to create practitioner:', error)
     if ((error as any).code === 'P2002') {
-      return NextResponse.json({ error: 'A practitioner with this slug already exists' }, { status: 409 })
+      return NextResponse.json(
+        { error: 'A practitioner with this slug already exists', fieldErrors: { slug: 'This slug is already taken' } },
+        { status: 409 }
+      )
     }
     return NextResponse.json({ error: 'Failed to create practitioner' }, { status: 500 })
   }
