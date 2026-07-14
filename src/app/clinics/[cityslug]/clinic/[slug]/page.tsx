@@ -301,7 +301,12 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-10 mb-4">
             <div className="order-2 lg:order-1 col-span-1 lg:col-span-6 space-y-8">
               <ClinicDetailsMarkdown clinic={clinic} />
-              <ReviewsSection clinicSlug={slug} reviews={combinedReviews} />
+              <ReviewsSection
+                clinicSlug={slug}
+                reviews={combinedReviews}
+                googleReviewCount={clinic.reviewCount ?? 0}
+                googleRating={clinic.rating ?? 0}
+              />
             </div>
 
             <div className="order-1 lg:order-2 col-span-1 lg:col-span-4">

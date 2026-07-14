@@ -25,6 +25,8 @@ export interface ReviewItem {
 interface ReviewsSectionProps {
   clinicSlug: string
   reviews: ReviewItem[]
+  googleReviewCount?: number
+  googleRating?: number
 }
 
 function StarRow({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' }) {
@@ -78,7 +80,7 @@ interface ExistingReview {
 
 type FormPhase = 'closed' | 'checking' | 'login_required' | 'already_reviewed' | 'form'
 
-export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
+export function ReviewsSection({ clinicSlug, reviews, googleReviewCount = 0, googleRating = 0 }: ReviewsSectionProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -179,11 +181,15 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h3 className="text-base font-semibold text-gray-900">Reviews</h3>
-          {reviews.length > 0 && (
+          {reviews.length > 0 ? (
             <p className="text-sm text-gray-500 mt-0.5">
               {avgRating.toFixed(1)} avg · {reviews.length} review{reviews.length !== 1 ? 's' : ''}
             </p>
-          )}
+          ) : googleReviewCount > 0 ? (
+            <p className="text-sm text-gray-500 mt-0.5">
+              {googleRating.toFixed(1)} avg · {googleReviewCount} review{googleReviewCount !== 1 ? 's' : ''} on Google
+            </p>
+          ) : null}
         </div>
         {!submitted && (
           <button
@@ -292,7 +298,11 @@ export function ReviewsSection({ clinicSlug, reviews }: ReviewsSectionProps) {
       {/* Review list */}
       {filtered.length === 0 ? (
         <p className="text-sm text-gray-500">
-          {reviews.length === 0 ? 'No reviews yet. Be the first to leave one!' : 'No reviews match this filter.'}
+          {reviews.length > 0
+            ? 'No reviews match this filter.'
+            : googleReviewCount > 0
+              ? "No written reviews on Consentz Directory yet. Be the first to leave one!"
+              : 'No reviews yet. Be the first to leave one!'}
         </p>
       ) : (
         <div className="divide-y divide-gray-100 space-y-0">
