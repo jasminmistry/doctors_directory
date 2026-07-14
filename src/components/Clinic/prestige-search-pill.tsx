@@ -1,6 +1,5 @@
 'use client'
 
-import { Trophy } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type PrestigeSearchPillProps = {
@@ -14,23 +13,27 @@ export function PrestigeSearchPill({
   tatlerBadgeLabel,
   className,
 }: PrestigeSearchPillProps) {
-  const label = awardsBadgeLabel || tatlerBadgeLabel
-  if (!label) return null
+  const labels = [awardsBadgeLabel, tatlerBadgeLabel].filter(Boolean) as string[]
+  if (labels.length === 0) return null
 
   return (
     <div
       className={cn(
-        'mt-1 flex min-h-[1.25rem] w-full items-center justify-center px-1',
+        'mt-1 flex w-full flex-col items-center gap-1 px-1',
         className,
       )}
     >
-      <span
-        className="inline-flex max-w-full items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold leading-tight text-amber-900 ring-1 ring-amber-200"
-        title={[awardsBadgeLabel, tatlerBadgeLabel].filter(Boolean).join(' · ')}
-      >
-        <Trophy className="h-3 w-3 shrink-0 text-amber-600" aria-hidden />
-        <span className="truncate">{label}</span>
-      </span>
+      {labels.map((label) => (
+        <span
+          key={label}
+          className="inline-flex max-w-full items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-center text-[10px] font-semibold leading-snug text-amber-900 ring-1 ring-amber-200"
+        >
+          <span aria-hidden className="shrink-0">
+            🏆
+          </span>
+          <span className="whitespace-normal break-words text-left">{label}</span>
+        </span>
+      ))}
     </div>
   )
 }

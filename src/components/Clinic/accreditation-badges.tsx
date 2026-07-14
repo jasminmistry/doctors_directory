@@ -1,4 +1,4 @@
-import { ExternalLink, Trophy } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 
 interface Badge {
   label: string
@@ -65,7 +65,7 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
       {awards.length > 0 && (
         <div className="space-y-2 border-t border-gray-100 pt-3">
           <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-900">
-            <Trophy className="h-3.5 w-3.5 text-amber-600" aria-hidden />
+            <span aria-hidden>🏆</span>
             UK Aesthetics Awards
           </p>
           <ul className="space-y-1.5">
@@ -84,7 +84,7 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
       {tatlerYears.length > 0 && (
         <div className="space-y-2 border-t border-gray-100 pt-3">
           <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-900">
-            <Trophy className="h-3.5 w-3.5 text-amber-600" aria-hidden />
+            <span aria-hidden>🏆</span>
             Tatler Beauty &amp; Cosmetic Surgery Guide
           </p>
           <div className="flex flex-wrap gap-2">

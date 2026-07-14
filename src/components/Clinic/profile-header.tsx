@@ -63,8 +63,8 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
         {/* Left: avatar + info */}
         <div className="flex flex-row flex-wrap items-start gap-4 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0">
           {/* Avatar */}
-          <div className="relative w-20 h-20 md:w-40 md:h-40 shrink-0">
-            <div className="h-full w-full overflow-hidden rounded-full bg-gray-200">
+          <div className="flex flex-col items-center gap-2 shrink-0 md:items-start">
+            <div className="relative h-20 w-20 md:h-40 md:w-40 shrink-0 overflow-hidden rounded-full bg-gray-200">
               <img
                 src={imgSrc}
                 alt={practitionerName}
