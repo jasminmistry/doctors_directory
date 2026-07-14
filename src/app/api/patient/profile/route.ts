@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { z } from 'zod'
 import { requirePatient, clearPatientCookie } from '@/lib/patient-auth'
+import { getDobValidationError } from '@/lib/dob'
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 
@@ -12,7 +13,8 @@ const updateSchema = z.object({
   lastName: z.string().trim().min(1).max(100).optional().nullable(),
   phone: z.string().trim().max(30).optional().nullable()
     .refine((v) => !v || UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
-  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
+  dateOfBirth: z.string().optional().nullable()
+    .refine((v) => !v || !getDobValidationError(v), (v) => ({ message: getDobValidationError(v!) ?? 'Please enter a valid date of birth.' })),
 })
 
 export async function GET(req: NextRequest) {

@@ -1,61 +1,84 @@
 import { z } from 'zod'
+import { EMAIL_RE } from '@/lib/email-validation'
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+
+// Strips all internal whitespace (e.g. "+4 4 2 0 79 46 095 8") before validating and
+// storing, so the persisted number is always a clean, dialable string.
+function ukPhoneSchema(requiredError: string) {
+  return z.string().trim()
+    .transform((v) => v.replace(/\s/g, ''))
+    .pipe(z.string().min(1, requiredError).regex(UK_PHONE_RE, 'Please enter a valid UK phone number.'))
+}
+
+function optionalUkPhoneSchema() {
+  return z.string()
+    .optional()
+    .transform((v) => (v === undefined ? undefined : v.trim().replace(/\s/g, '')))
+    .refine((v) => !v || UK_PHONE_RE.test(v), 'Please enter a valid UK phone number.')
+}
+
+// A single absolute URL with no embedded whitespace — rejects "url1 url2", tab/newline-joined
+// URLs, and whitespace-only input, while still trimming and allowing a genuinely blank field.
+function singleUrlSchema(label: string) {
+  return z.string().trim()
+    .max(500, `${label} cannot exceed 500 characters.`)
+    .regex(/^\S+$/, 'Enter a single valid URL with no spaces.')
+    .url('Enter a valid URL')
+    .optional()
+    .or(z.literal(''))
+}
 
 export const initiateClinicClaimSchema = z.object({
   entityType: z.literal('clinic'),
   isNewRegistration: z.literal(false).optional(),
   clinicSlug: z.string().min(1),
-  claimerName: z.string().trim().min(2, 'Please enter your full name.'),
-  claimerEmail: z.string().trim().min(1, 'Business Email is required.').email('Please enter a valid email address.'),
-  clinicNameInput: z.string().trim().min(1, 'Clinic Name is required.'),
-  clinicPhone: z.string().trim().min(1, 'Phone Number is required.')
-    .refine((v) => UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
-  clinicWebsite: z.string().trim().url('Enter a valid URL').optional().or(z.literal('')),
-  googleBusinessLink: z.string().trim().url('Enter a valid URL').optional().or(z.literal('')),
+  claimerName: z.string().trim().min(2, 'Please enter your full name.').max(255, 'Full Name cannot exceed 255 characters.'),
+  claimerEmail: z.string().trim().min(1, 'Business Email is required.').regex(EMAIL_RE, 'Please enter a valid email address.').max(255, 'Email cannot exceed 255 characters.'),
+  clinicNameInput: z.string().trim().min(1, 'Clinic Name is required.').max(255, 'Clinic Name cannot exceed 255 characters.'),
+  clinicPhone: ukPhoneSchema('Phone Number is required.'),
+  clinicWebsite: singleUrlSchema('Website URL'),
+  googleBusinessLink: singleUrlSchema('Google Business link'),
 })
 
 export const initiatePractitionerClaimSchema = z.object({
   entityType: z.literal('practitioner'),
   isNewRegistration: z.literal(false).optional(),
   practitionerSlug: z.string().min(1),
-  claimerName: z.string().trim().min(2, 'Please enter your full name.'),
-  claimerEmail: z.string().trim().min(1, 'Email is required.').email('Please enter a valid email address.'),
-  claimerPhone: z.string().trim().optional()
-    .refine((v) => !v || UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
-  profession: z.string().trim().min(1, 'Profession is required.'),
-  clinicNameInput: z.string().trim().optional(),
-  licenseNumber: z.string().trim().optional(),
-  registryName: z.string().trim().optional(),
+  claimerName: z.string().trim().min(2, 'Please enter your full name.').max(255, 'Full Name cannot exceed 255 characters.'),
+  claimerEmail: z.string().trim().min(1, 'Email is required.').regex(EMAIL_RE, 'Please enter a valid email address.').max(255, 'Email cannot exceed 255 characters.'),
+  claimerPhone: optionalUkPhoneSchema(),
+  profession: z.string().trim().min(1, 'Profession is required.').max(255, 'Profession cannot exceed 255 characters.'),
+  clinicNameInput: z.string().trim().max(255, 'Clinic Name cannot exceed 255 characters.').optional(),
+  licenseNumber: z.string().trim().max(100, 'Licence number cannot exceed 100 characters.').optional(),
+  registryName: z.string().trim().max(255, 'Registry name cannot exceed 255 characters.').optional(),
 })
 
 // Register a brand-new business — no existing Clinic/Practitioner row to claim yet.
 export const initiateClinicRegistrationSchema = z.object({
   entityType: z.literal('clinic'),
   isNewRegistration: z.literal(true),
-  claimerName: z.string().trim().min(2, 'Please enter your full name.'),
-  claimerEmail: z.string().trim().min(1, 'Business Email is required.').email('Please enter a valid email address.'),
-  clinicNameInput: z.string().trim().min(1, 'Clinic Name is required.'),
-  clinicPhone: z.string().trim().min(1, 'Phone Number is required.')
-    .refine((v) => UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
-  clinicWebsite: z.string().trim().url('Enter a valid URL').optional().or(z.literal('')),
-  googleBusinessLink: z.string().trim().url('Enter a valid URL').optional().or(z.literal('')),
-  address: z.string().trim().min(1, 'Address is required.'),
-  city: z.string().trim().min(1, 'City is required.'),
-  category: z.string().trim().optional(),
+  claimerName: z.string().trim().min(2, 'Please enter your full name.').max(255, 'Full Name cannot exceed 255 characters.'),
+  claimerEmail: z.string().trim().min(1, 'Business Email is required.').regex(EMAIL_RE, 'Please enter a valid email address.').max(255, 'Email cannot exceed 255 characters.'),
+  clinicNameInput: z.string().trim().min(1, 'Clinic Name is required.').max(255, 'Clinic Name cannot exceed 255 characters.'),
+  clinicPhone: ukPhoneSchema('Phone Number is required.'),
+  clinicWebsite: singleUrlSchema('Website URL'),
+  googleBusinessLink: singleUrlSchema('Google Business link'),
+  address: z.string().trim().min(1, 'Address is required.').max(500, 'Address cannot exceed 500 characters.'),
+  city: z.string().trim().min(1, 'City is required.').max(255, 'City cannot exceed 255 characters.'),
+  category: z.string().trim().max(255, 'Category cannot exceed 255 characters.').optional(),
   about: z.string().trim().optional(),
 })
 
 export const initiatePractitionerRegistrationSchema = z.object({
   entityType: z.literal('practitioner'),
   isNewRegistration: z.literal(true),
-  claimerName: z.string().trim().min(2, 'Please enter your full name.'),
-  claimerEmail: z.string().trim().min(1, 'Email is required.').email('Please enter a valid email address.'),
-  claimerPhone: z.string().trim().optional()
-    .refine((v) => !v || UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
-  profession: z.string().trim().min(1, 'Profession is required.'),
-  clinicNameInput: z.string().trim().optional(),
-  city: z.string().trim().min(1, 'City is required.'),
+  claimerName: z.string().trim().min(2, 'Please enter your full name.').max(255, 'Full Name cannot exceed 255 characters.'),
+  claimerEmail: z.string().trim().min(1, 'Email is required.').regex(EMAIL_RE, 'Please enter a valid email address.').max(255, 'Email cannot exceed 255 characters.'),
+  claimerPhone: optionalUkPhoneSchema(),
+  profession: z.string().trim().min(1, 'Profession is required.').max(255, 'Profession cannot exceed 255 characters.'),
+  clinicNameInput: z.string().trim().max(255, 'Clinic Name cannot exceed 255 characters.').optional(),
+  city: z.string().trim().min(1, 'City is required.').max(255, 'City cannot exceed 255 characters.'),
   about: z.string().trim().optional(),
 })
 
@@ -74,6 +97,10 @@ export const verifyOtpSchema = z.object({
 export const selectPlanSchema = z.object({
   claimId: z.number().int().positive(),
   plan: z.enum(['free', 'pay_per_lead', 'subscription']),
+})
+
+export const resendOtpSchema = z.object({
+  claimId: z.number().int().positive(),
 })
 
 export const adminReviewClaimSchema = z.object({

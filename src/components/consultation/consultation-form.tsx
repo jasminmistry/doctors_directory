@@ -31,6 +31,12 @@ const EMAIL_RE = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0
 const NAME_RE = /^[A-Za-z]+(?:[-' ][A-Za-z]+)*$/
 const NAME_MAX_LENGTH = 50
 
+// Collapses internal double/triple spaces (e.g. "William  Arthur") so stray extra
+// whitespace doesn't trip the letters-only NAME_RE check below.
+function normalizeName(value: string): string {
+  return value.trim().replace(/\s+/g, ' ')
+}
+
 function isOver18(dob: string): boolean {
   const birth = new Date(dob)
   const cutoff = new Date()
@@ -136,18 +142,23 @@ export function ConsultationRichForm({
     setDobError('')
     setConsentError('')
 
+    const normalizedFirstName = normalizeName(firstName)
+    const normalizedLastName = normalizeName(lastName)
+    if (normalizedFirstName !== firstName) setFirstName(normalizedFirstName)
+    if (normalizedLastName !== lastName) setLastName(normalizedLastName)
+
     let hasError = false
-    if (!firstName.trim()) {
+    if (!normalizedFirstName) {
       setFirstNameError('First name is required.')
       hasError = true
-    } else if (!NAME_RE.test(firstName.trim())) {
+    } else if (!NAME_RE.test(normalizedFirstName)) {
       setFirstNameError('Enter a valid first name (letters only, no numbers or symbols).')
       hasError = true
     }
-    if (!lastName.trim()) {
+    if (!normalizedLastName) {
       setLastNameError('Last name is required.')
       hasError = true
-    } else if (!NAME_RE.test(lastName.trim())) {
+    } else if (!NAME_RE.test(normalizedLastName)) {
       setLastNameError('Enter a valid last name (letters only, no numbers or symbols).')
       hasError = true
     }
@@ -177,8 +188,8 @@ export function ConsultationRichForm({
     if (hasError) return
 
     onSubmit({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
+      firstName: normalizedFirstName,
+      lastName: normalizedLastName,
       email: email.trim(),
       phone: cleanPhone,
       dateOfBirth,
@@ -201,6 +212,7 @@ export function ConsultationRichForm({
             value={firstName}
             error={!!firstNameError}
             onChange={(e) => { setFirstName(e.target.value); setFirstNameError('') }}
+            onBlur={() => setFirstName((v) => normalizeName(v))}
             autoComplete="given-name"
             maxLength={NAME_MAX_LENGTH}
           />
@@ -211,6 +223,7 @@ export function ConsultationRichForm({
             value={lastName}
             error={!!lastNameError}
             onChange={(e) => { setLastName(e.target.value); setLastNameError('') }}
+            onBlur={() => setLastName((v) => normalizeName(v))}
             autoComplete="family-name"
             maxLength={NAME_MAX_LENGTH}
           />

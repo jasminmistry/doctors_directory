@@ -30,6 +30,13 @@ export async function POST(req: NextRequest) {
     const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex')
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
 
+    // Invalidate any previously issued, still-outstanding links for this email —
+    // only the most recently generated link should be usable.
+    await prisma.patientMagicLink.updateMany({
+      where: { email: normalised, usedAt: null },
+      data: { usedAt: new Date() },
+    })
+
     await prisma.patientMagicLink.create({
       data: { tokenHash, email: normalised, expiresAt, next: next ?? null },
     })

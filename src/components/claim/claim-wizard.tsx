@@ -138,7 +138,6 @@ export function ClaimWizard(props: Readonly<Props>) {
             claimId={claimId}
             entityType={entityType}
             onVerified={handleVerified}
-            onResend={() => setStep('details')}
           />
         </div>
       )}

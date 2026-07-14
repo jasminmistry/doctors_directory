@@ -12,6 +12,7 @@ import type { ConsultationFormData } from "@/components/consultation/consultatio
 import { cn } from "@/lib/utils"
 import { trackCtaClick } from "@/lib/tracking/client"
 import type { DirectoryPageType } from "@/lib/tracking/types"
+import { useExclusiveFloatingPanel } from "@/lib/floating-panel-bus"
 
 interface RequestConsultationDialogProps {
   pageType: Extract<DirectoryPageType, "practitioner_page" | "clinic_page" | "collection_page">
@@ -68,6 +69,8 @@ export function RequestConsultationDialog({
   const [phase, setPhase] = useState<Phase>('login')
   const [patientMe, setPatientMe] = useState<PatientMe | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useExclusiveFloatingPanel(`${openParam}:${clinicSlug ?? ''}`, open, setOpen)
 
   const consultationNext = `${pathname}?${openParam}=open`
 

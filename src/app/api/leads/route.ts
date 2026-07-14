@@ -10,10 +10,18 @@ const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 const NAME_RE = /^[A-Za-z]+(?:[-' ][A-Za-z]+)*$/
 const NAME_ERROR = 'Enter a valid name (letters only, no numbers or symbols).'
 
+// Collapses internal double/triple spaces (e.g. "William  Arthur") before validating,
+// so stray extra whitespace doesn't trip the letters-only regex below.
+function nameField(requiredError: string) {
+  return z.string()
+    .transform((v) => v.trim().replace(/\s+/g, ' '))
+    .pipe(z.string().min(1, requiredError).max(50, NAME_ERROR).regex(NAME_RE, NAME_ERROR))
+}
+
 const schema = z.object({
   clinicSlug: z.string().trim().min(1),
-  firstName: z.string().trim().min(1, 'First name is required.').max(50, NAME_ERROR).regex(NAME_RE, NAME_ERROR),
-  lastName: z.string().trim().min(1, 'Last name is required.').max(50, NAME_ERROR).regex(NAME_RE, NAME_ERROR),
+  firstName: nameField('First name is required.'),
+  lastName: nameField('Last name is required.'),
   email: z.string().trim().min(1, 'Email address is required.').email('Please enter a valid email address.').max(255),
   phone: z.string().trim().max(20).optional(),
   treatment: z.string().trim().max(255).optional(),
