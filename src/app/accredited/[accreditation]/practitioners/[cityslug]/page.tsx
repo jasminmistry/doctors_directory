@@ -20,6 +20,8 @@ import {
   normalizeAccreditationSlug,
 } from "@/lib/accreditation-directory"
 
+export const dynamic = "force-dynamic"
+
 interface AccreditedPractitionersPageProps {
   params: {
     accreditation: string

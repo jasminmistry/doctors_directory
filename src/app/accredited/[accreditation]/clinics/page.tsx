@@ -25,6 +25,8 @@ import {
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations"
 import { prisma } from "@/lib/db"
 
+export const dynamic = "force-dynamic"
+
 function emptyClinic(partial: Partial<Clinic> & Pick<Clinic, "slug" | "City">): Clinic {
   return {
     slug: partial.slug,
@@ -82,6 +84,8 @@ interface AccreditedClinicsPageProps {
 }
 
 async function loadConsentzClaimedClinics(): Promise<Clinic[]> {
+  if (!process.env.DATABASE_URL) return []
+
   const rows = await prisma.clinic.findMany({
     where: { claimed: true, isHidden: false },
     select: {

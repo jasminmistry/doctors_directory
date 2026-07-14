@@ -24,6 +24,8 @@ import { applyPrestigeToClinic } from "@/lib/prestige-accreditations"
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import { prisma } from "@/lib/db"
 
+export const dynamic = "force-dynamic"
+
 const ACCREDITATION_SLUGS = [
   ...REGULATORY_ACCREDITATION_SLUGS,
   ...PRESTIGE_ACCREDITATION_SLUGS,
@@ -46,9 +48,11 @@ export default async function AccreditedPage() {
     .filter((c) => c.slug !== undefined)
     .map((c) => applyPrestigeToClinic(c))
 
-  const claimedCount = await prisma.clinic.count({
-    where: { claimed: true, isHidden: false },
-  })
+  const claimedCount = process.env.DATABASE_URL
+    ? await prisma.clinic.count({
+        where: { claimed: true, isHidden: false },
+      })
+    : 0
 
   const practitioners = await getAllPractitionersForSearch()
 
