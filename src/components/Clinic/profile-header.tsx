@@ -74,11 +74,11 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
         </Link>
       )}
 
-      <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-start">
+      <div className="px-4 md:px-0 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
         {/* Left: avatar + info */}
-        <div className="flex flex-col gap-3 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0">
+        <div className="flex flex-col gap-3 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0 min-w-0 flex-1 lg:max-w-3xl">
           <div className="flex flex-row items-start gap-4">
-            <div className="flex flex-col items-center gap-2 shrink-0 w-20 md:w-40 md:items-start">
+            <div className="flex flex-col items-center gap-2 shrink-0 md:items-start">
               <div className="relative h-20 w-20 md:h-40 md:w-40 shrink-0 overflow-hidden rounded-full bg-gray-200">
                 <img
                   src={imgSrc}
@@ -87,7 +87,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                   onError={() => setImgSrc(DEFAULT_IMG)}
                 />
               </div>
-              <div className="hidden md:block w-full">
+              <div className="hidden md:block max-w-[10.5rem]">
                 <PrestigeProfileBadge
                   awardsBadgeLabel={clinic.awardsBadgeLabel}
                   tatlerBadgeLabel={clinic.tatlerBadgeLabel}
@@ -168,7 +168,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
           </span>
         </div>
 
-        <div className="flex flex-col gap-3 justify-center">
+        <div className="flex flex-col gap-3 justify-center w-full lg:w-64 lg:shrink-0">
           {clinic.claimed && (
             <ClinicOnlineStatus clinicSlug={clinic.slug ?? ''} />
           )}
