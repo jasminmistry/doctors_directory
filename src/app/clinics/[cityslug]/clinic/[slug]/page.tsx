@@ -479,17 +479,15 @@ export async function generateMetadata({ params }: ProfilePageProps) {
 
   const dbClinic = await getClinicBySlug(params.slug);
 
-  if (!dbClinic) {
-    return {
-      title: "Clinic Not Found",
-      alternates: {
-        canonical: canonicalUrl,
-      },
-    };
+  if (!dbClinic || dbClinic.isHidden) {
+    notFound();
   }
 
   const clinic = convertDbClinicToOldType(dbClinic);
-  const clinicDisplayName = capitalize(clinic.slug!);
+  const clinicDisplayName =
+    dbClinic.name?.trim() ||
+    getClinicDisplayName({ slug: clinic.slug, url: clinic.url }) ||
+    capitalize(clinic.slug!);
   const city = capitalize(params.cityslug);
   const topTreatments = Array.isArray(clinic.Treatments) ? clinic.Treatments.slice(0, 3).map((t: string) => capitalize(t)) : [];
   const treatmentSuffix = topTreatments.length >= 3

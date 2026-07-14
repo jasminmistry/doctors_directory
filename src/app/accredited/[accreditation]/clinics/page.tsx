@@ -8,41 +8,22 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { SearchBar } from "@/components/search/search-bar"
-import { Clinic } from "@/lib/types"
+import type { Clinic } from "@/lib/types"
 import { readJsonFileSync } from "@/lib/json-cache"
-import { PractitionerCard } from "@/components/practitioner-card";
-import { filterCqcAccreditedCities } from '@/lib/accredited-city-filter'
-import { toUrlSlug } from '@/lib/utils'
-import { toDirectoryCanonical } from "@/lib/seo";
-function mapAccreditationToField(accreditation: string): keyof Clinic {
-  const mapping: Record<string, keyof Clinic> = {
-    cqc: 'isCQC',
-    jccp: 'isJCCP',
-    hiw: 'isHIW',
-    his: 'isHIS',
-    rqia: 'isRQIA',
-    saveface: 'isSaveFace',
-  }
-  const field = mapping[accreditation.toLowerCase()]
-  if (!field) throw new Error(`Invalid accreditation: ${accreditation}`)
-  return field
-}
-
-function getAccreditationName(accreditation: string): string {
-  const mapping: Record<string, string> = {
-    cqc: 'Care Quality Commission (CQC)',
-    jccp: 'Joint Council for Cosmetic Practitioners (JCCP)',
-    hiw: 'Health Inspectorate Wales (HIW)',
-    his: 'Healthcare Improvement Scotland (HIS)',
-    rqia: 'Regulation and Quality Improvement Authority (RQIA)',
-    saveface: 'SaveFace',
-  }
-  return mapping[accreditation.toLowerCase()] || accreditation
-}
+import { filterCqcAccreditedCities } from "@/lib/accredited-city-filter"
+import { toUrlSlug } from "@/lib/utils"
+import { toDirectoryCanonical } from "@/lib/seo"
+import {
+  filterClinicsByAccreditation,
+  getAccreditationDisplayName,
+  isKnownAccreditation,
+  normalizeAccreditationSlug,
+} from "@/lib/accreditation-directory"
+import { applyPrestigeToClinic } from "@/lib/prestige-accreditations"
+import { prisma } from "@/lib/db"
 
 interface AccreditedClinicsPageProps {
   params: {
@@ -50,31 +31,55 @@ interface AccreditedClinicsPageProps {
   }
 }
 
-export default async function AccreditedClinicsPage({ params }: Readonly<AccreditedClinicsPageProps>) {
-  const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json')
-  const { accreditation } = params
-  const accreditationField = mapAccreditationToField(accreditation)
-
-  const filteredClinics = clinics.filter(clinic => {
-    const accreditationValue = (clinic as any)[accreditationField]
-    const accreditationMatch = (accreditationValue && Array.isArray(accreditationValue) && accreditationValue[0] === true) || accreditationValue === true
-    return accreditationMatch
+async function loadConsentzClaimedClinics(): Promise<Clinic[]> {
+  const rows = await prisma.clinic.findMany({
+    where: { claimed: true, isHidden: false },
+    select: {
+      slug: true,
+      name: true,
+      image: true,
+      rating: true,
+      reviewCount: true,
+      category: true,
+      gmapsAddress: true,
+      claimed: true,
+      city: { select: { name: true } },
+    },
   })
 
-  if (!filteredClinics.length) {
+  return rows.map((row) => ({
+    slug: row.slug,
+    image: row.image || "",
+    rating: row.rating ? Number(row.rating) : 0,
+    reviewCount: row.reviewCount || 0,
+    category: row.category || "",
+    gmapsAddress: row.gmapsAddress || "",
+    City: row.city?.name || "",
+    claimed: true,
+  })) as Clinic[]
+}
+
+export default async function AccreditedClinicsPage({ params }: Readonly<AccreditedClinicsPageProps>) {
+  const accreditation = normalizeAccreditationSlug(params.accreditation)
+  if (!isKnownAccreditation(accreditation)) {
     notFound()
   }
 
+  const clinics: Clinic[] =
+    accreditation === "consentz"
+      ? await loadConsentzClaimedClinics()
+      : readJsonFileSync("clinics_processed_new_data.json").map((clinic: Clinic) =>
+          applyPrestigeToClinic(clinic),
+        )
+
+  const filteredClinics = filterClinicsByAccreditation(clinics, accreditation)
+
   const rawCities = [...new Set(filteredClinics.map((c) => c.City).filter(Boolean) as string[])].sort(
-    (a, b) => a.localeCompare(b)
+    (a, b) => a.localeCompare(b),
   )
   const cities =
-    accreditation.toLowerCase() === 'cqc'
-      ? filterCqcAccreditedCities(rawCities)
-      : rawCities
-  const accreditationName = getAccreditationName(accreditation)
-  const accreditationSlug =
-  accreditationName.split("(")[1]?.replace(")", "") ?? accreditationName;
+    accreditation === "cqc" ? filterCqcAccreditedCities(rawCities) : rawCities
+  const accreditationName = getAccreditationDisplayName(accreditation)
 
   return (
     <main className="bg-white">
@@ -83,8 +88,8 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
             <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
-                <ArrowLeft className="h-4 w-4" />
-                Back to Directory
+              <ArrowLeft className="h-4 w-4" />
+              Back to Directory
             </Link>
             <Breadcrumb>
               <BreadcrumbList>
@@ -99,10 +104,8 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink
-                    href={`/accredited/${accreditationSlug}/clinics`}
-                  >
-                    {accreditationSlug}
+                  <BreadcrumbLink href={`/accredited/${accreditation}/clinics`}>
+                    {accreditationName}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -119,55 +122,63 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4 md:px-0">
-          {cities.map((city) => (
-            <Link
-              key={city}
-              href={`/accredited/${accreditation}/clinics/${toUrlSlug(city)}`}
-              className="block"
-            >
-              <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer ">
-                <CardHeader className="pb-4">
-                  <h3 className="mb-2 flex font-semibold text-md md:text-lg transition-colors text-balance group-hover:text-black">
-                    {city}
-                  </h3>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-gray-600 mb-4">
-                    {filteredClinics.filter((c) => c.City === city).length}{" "}
-                    clinic
-                    {filteredClinics.filter((c) => c.City === city).length !== 1
-                      ? "s"
-                      : ""}{" "}
-                    found
-                  </p>
-                  <Button className="w-full bg-black text-white hover:bg-white hover:text-black">
-                    View Clinics
-                  </Button>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+        {cities.length === 0 ? (
+          <p className="px-4 md:px-0 text-sm text-gray-600">
+            Clinics for this accreditation will appear here as profiles are verified and claimed.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4 md:px-0">
+            {cities.map((city) => (
+              <Link
+                key={city}
+                href={`/accredited/${accreditation}/clinics/${toUrlSlug(city)}`}
+                className="block"
+              >
+                <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer ">
+                  <CardHeader className="pb-4">
+                    <h3 className="mb-2 flex font-semibold text-md md:text-lg transition-colors text-balance group-hover:text-black">
+                      {city}
+                    </h3>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <p className="text-sm text-gray-600 mb-4">
+                      {filteredClinics.filter((c) => c.City === city).length}{" "}
+                      clinic
+                      {filteredClinics.filter((c) => c.City === city).length !== 1
+                        ? "s"
+                        : ""}{" "}
+                      found
+                    </p>
+                    <Button className="w-full bg-black text-white hover:bg-white hover:text-black">
+                      View Clinics
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </main>
-  );
+  )
 }
 
 export async function generateMetadata({ params }: AccreditedClinicsPageProps) {
-  const { accreditation } = params
-  const accreditationName = getAccreditationName(accreditation)
-  const canonicalAccreditation = decodeURIComponent(accreditation).toLowerCase()
+  const accreditation = normalizeAccreditationSlug(params.accreditation)
+  if (!isKnownAccreditation(accreditation)) {
+    notFound()
+  }
+  const accreditationName = getAccreditationDisplayName(accreditation)
 
   return {
     title: `${accreditationName} Accredited Clinics`,
     description: `Find ${accreditationName} accredited clinics across all cities. Compare ratings, reviews, and book appointments.`,
     alternates: {
-      canonical: toDirectoryCanonical(`/accredited/${canonicalAccreditation}/clinics`),
+      canonical: toDirectoryCanonical(`/accredited/${accreditation}/clinics`),
     },
     openGraph: {
       title: `${accreditationName} Accredited Clinics`,
       description: `Find ${accreditationName} accredited clinics across all cities. Compare ratings and reviews.`,
-    }
+    },
   }
 }
