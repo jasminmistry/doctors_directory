@@ -69,7 +69,6 @@ export function MainSiteTrackingDashboard() {
   const [overviewLoading, setOverviewLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const token = searchParams.get("token")
   const page = useMemo(() => {
     const n = Number.parseInt(searchParams.get("page") || "1", 10)
     return Number.isNaN(n) || n < 1 ? 1 : n
@@ -142,7 +141,6 @@ export function MainSiteTrackingDashboard() {
       setOverviewLoading(true)
       try {
         const sp = new URLSearchParams()
-        if (token) sp.set("token", token)
         sp.set("view", "overview")
         sp.set("window_days", overviewWindow)
         if (overviewFrom) sp.set("overview_from", overviewFrom)
@@ -164,11 +162,10 @@ export function MainSiteTrackingDashboard() {
     return () => {
       cancelled = true
     }
-  }, [token, overviewWindow, overviewFrom, overviewTo])
+  }, [overviewWindow, overviewFrom, overviewTo])
 
   const applyFilters = () => {
     const sp = new URLSearchParams()
-    if (token) sp.set("token", token)
     sp.set("window_days", overviewWindow)
     if (overviewFrom) sp.set("overview_from", overviewFrom)
     if (overviewTo) sp.set("overview_to", overviewTo)

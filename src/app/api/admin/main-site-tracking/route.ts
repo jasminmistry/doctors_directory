@@ -3,7 +3,6 @@ import {
   getMainSiteOverview,
   listMainSiteRows,
 } from "@/lib/main-site-tracking/dashboard-queries"
-import { trackingDashboardTokenOk } from "@/lib/tracking/access"
 
 function parseIntParam(value: string | null, fallback: number, max: number): number {
   const n = Number.parseInt(value || "", 10)
@@ -18,11 +17,6 @@ function parseOverviewWindow(value: string | null): number | null {
 }
 
 export async function GET(request: NextRequest) {
-  const token = request.nextUrl.searchParams.get("token")
-  if (!trackingDashboardTokenOk(token)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-
   const sp = request.nextUrl.searchParams
   const view = sp.get("view")
   const windowDays = parseOverviewWindow(sp.get("window_days"))
