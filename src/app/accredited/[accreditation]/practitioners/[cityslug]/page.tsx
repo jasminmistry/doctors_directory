@@ -1,8 +1,5 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,37 +8,19 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Practitioner } from "@/lib/types"
-import { accreditations } from "@/lib/data"
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import { PractitionerCard } from "@/components/practitioner-card"
 import { toDirectoryCanonical } from "@/lib/seo"
+import { notFound } from "next/navigation"
+import {
+  getAccreditationDisplayName,
+  getPrestigeMatchingClinicSlugs,
+  isKnownAccreditation,
+  isRegulatoryAccreditation,
+  normalizeAccreditationSlug,
+} from "@/lib/accreditation-directory"
 
-function mapAccreditationToField(accreditation: string): keyof Practitioner {
-  const mapping: Record<string, keyof Practitioner> = {
-    cqc: 'isCQC',
-    jccp: 'isJCCP',
-    hiw: 'isHIW',
-    his: 'isHIS',
-    rqia: 'isRQIA',
-    saveface: 'isSaveFace',
-  }
-  const field = mapping[accreditation.toLowerCase()]
-  if (!field) throw new Error(`Invalid accreditation: ${accreditation}`)
-  return field
-}
-
-function getAccreditationName(accreditation: string): string {
-  const mapping: Record<string, string> = {
-    cqc: 'Care Quality Commission (CQC)',
-    jccp: 'Joint Council for Cosmetic Practitioners (JCCP)',
-    hiw: 'Health Inspectorate Wales (HIW)',
-    his: 'Healthcare Improvement Scotland (HIS)',
-    rqia: 'Regulation and Quality Improvement Authority (RQIA)',
-    saveface: 'Save Face',
-  }
-  return mapping[accreditation.toLowerCase()] || accreditation
-}
+export const dynamic = "force-dynamic"
 
 interface AccreditedPractitionersPageProps {
   params: {
@@ -50,27 +29,70 @@ interface AccreditedPractitionersPageProps {
   }
 }
 
-export default async function AccreditedPractitionersPage({ params }: Readonly<AccreditedPractitionersPageProps>) {
+function practitionerHasRegulatoryFlag(practitioner: Record<string, unknown>, field: string): boolean {
+  const value = practitioner[field]
+  return value === true || (Array.isArray(value) && value[0] === true)
+}
+
+function associatedClinicSlugs(practitioner: { Associated_Clinics?: string | null }): string[] {
+  if (!practitioner.Associated_Clinics) return []
+  try {
+    const parsed = JSON.parse(practitioner.Associated_Clinics)
+    if (Array.isArray(parsed)) return parsed.filter((s): s is string => typeof s === "string")
+  } catch {
+    return []
+  }
+  return []
+}
+
+export default async function AccreditedPractitionersPage({
+  params,
+}: Readonly<AccreditedPractitionersPageProps>) {
+  const accreditation = normalizeAccreditationSlug(params.accreditation)
+  const cityslug = decodeURIComponent(params.cityslug)
+  if (!isKnownAccreditation(accreditation)) {
+    notFound()
+  }
+
   const enrichedPractitioners = await getAllPractitionersForSearch()
+  const prestigeClinicSlugs =
+    accreditation === "aesthetics-awards" || accreditation === "tatler"
+      ? getPrestigeMatchingClinicSlugs(accreditation)
+      : null
 
-  const { accreditation, cityslug } = params
-  const accreditationField = mapAccreditationToField(accreditation)
+  const matchesAccreditation = (practitioner: NonNullable<(typeof enrichedPractitioners)[number]>) => {
+    if (isRegulatoryAccreditation(accreditation)) {
+      const fieldMap: Record<string, string> = {
+        cqc: "isCQC",
+        jccp: "isJCCP",
+        hiw: "isHIW",
+        his: "isHIS",
+        rqia: "isRQIA",
+        saveface: "isSaveFace",
+      }
+      return practitionerHasRegulatoryFlag(practitioner as any, fieldMap[accreditation])
+    }
+    if (prestigeClinicSlugs) {
+      return associatedClinicSlugs(practitioner as any).some((slug) => prestigeClinicSlugs.has(slug))
+    }
+    if (accreditation === "consentz") {
+      return Boolean((practitioner as any).claimed)
+    }
+    return false
+  }
 
-  const filteredPractitioners = enrichedPractitioners.filter(practitioner => {
+  const filteredPractitioners = enrichedPractitioners.filter((practitioner) => {
     if (!practitioner) return false
     const cityMatch = practitioner.City?.toLowerCase() === cityslug.toLowerCase()
-    const accreditationValue = practitioner[accreditationField]
-    const accreditationMatch = accreditationValue === true || (Array.isArray(accreditationValue) && accreditationValue[0] === true)
-    return cityMatch && accreditationMatch
+    return cityMatch && matchesAccreditation(practitioner)
   })
 
-  const cityPractitioners = enrichedPractitioners.filter(p => p?.City?.toLowerCase() === cityslug.toLowerCase())
+  const cityPractitioners = enrichedPractitioners.filter(
+    (p) => p?.City?.toLowerCase() === cityslug.toLowerCase(),
+  )
   const displayPractitioners = filteredPractitioners.length ? filteredPractitioners : cityPractitioners
   const isFallback = filteredPractitioners.length === 0
-
-  const accreditationName = getAccreditationName(accreditation)
-  const accreditationSlug =
-  accreditationName.split("(")[1]?.replace(")", "") ?? accreditationName;
+  const accreditationName = getAccreditationDisplayName(accreditation)
 
   return (
     <main className="bg-white">
@@ -78,8 +100,8 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
             <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
-                <ArrowLeft className="h-4 w-4" />
-                Back to Directory
+              <ArrowLeft className="h-4 w-4" />
+              Back to Directory
             </Link>
             <Breadcrumb>
               <BreadcrumbList>
@@ -93,21 +115,15 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
-
                 <BreadcrumbItem>
-                  <BreadcrumbLink
-                    href={`/accredited/${accreditationSlug}/practitioners`}
-                  >
-                    {accreditationSlug}
+                  <BreadcrumbLink href={`/accredited/${accreditation}/practitioners`}>
+                    {accreditationName}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>
-                    {cityslug.charAt(0).toUpperCase() + cityslug.slice(1)}
-                  </BreadcrumbPage>
+                  <BreadcrumbPage>{cityslug}</BreadcrumbPage>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator />
               </BreadcrumbList>
             </Breadcrumb>
           </div>
@@ -115,54 +131,44 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
 
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">
-            {isFallback
-              ? `Top Practitioners in ${cityslug.charAt(0).toUpperCase() + cityslug.slice(1)}`
-              : `Accredited ${accreditationName} Practitioners in ${cityslug.charAt(0).toUpperCase() + cityslug.slice(1)}`}
+            {accreditationName} Practitioners in {cityslug}
           </h1>
           {isFallback && (
-            <p className="text-sm text-muted-foreground mb-4">
-              No {accreditationName} accredited practitioners found in {cityslug.charAt(0).toUpperCase() + cityslug.slice(1)}.{" "}
-              Showing all practitioners in this area instead.{" "}
-              <Link href={`/accredited/${accreditation}/practitioners`} className="underline">
-                Browse all {accreditationName} accredited cities
-              </Link>
+            <p className="text-sm text-amber-700 mb-4">
+              No exact {accreditationName} matches in this city yet. Showing other practitioners in {cityslug}.
             </p>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 animate-fade-in">
-          {displayPractitioners
-            .map((practitioner) => {
-              if (!practitioner) return null;
-              return (
-                <PractitionerCard
-                  key={practitioner.practitioner_name! + practitioner.practitioner_title}
-                  practitioner={practitioner}
-                />
-              );
-            })
-            .filter(Boolean)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 md:px-0">
+          {displayPractitioners.map((practitioner) => (
+            <PractitionerCard key={practitioner!.slug} practitioner={practitioner!} />
+          ))}
         </div>
       </div>
     </main>
-  );
+  )
 }
 
 export async function generateMetadata({ params }: AccreditedPractitionersPageProps) {
-  const { accreditation, cityslug } = params
-  const accreditationName = getAccreditationName(accreditation)
-  const canonicalAccreditation = decodeURIComponent(accreditation).toLowerCase()
-  const canonicalCity = decodeURIComponent(cityslug).toLowerCase()
+  const accreditation = normalizeAccreditationSlug(params.accreditation)
+  const cityslug = decodeURIComponent(params.cityslug)
+  if (!isKnownAccreditation(accreditation)) {
+    notFound()
+  }
+  const accreditationName = getAccreditationDisplayName(accreditation)
 
   return {
     title: `Accredited ${accreditationName} Practitioners in ${cityslug}`,
-    description: `Find ${accreditationName} accredited practitioners in ${cityslug}. Compare ratings, reviews, and book appointments with verified healthcare providers.`,
+    description: `Find ${accreditationName} accredited practitioners in ${cityslug}. Compare ratings, reviews, and book appointments.`,
     alternates: {
-      canonical: toDirectoryCanonical(`/accredited/${canonicalAccreditation}/practitioners/${canonicalCity}`),
+      canonical: toDirectoryCanonical(
+        `/accredited/${accreditation}/practitioners/${cityslug.toLowerCase()}`,
+      ),
     },
     openGraph: {
       title: `Accredited ${accreditationName} Practitioners in ${cityslug}`,
       description: `Find ${accreditationName} accredited practitioners in ${cityslug}. Compare ratings and reviews.`,
-    }
+    },
   }
 }
