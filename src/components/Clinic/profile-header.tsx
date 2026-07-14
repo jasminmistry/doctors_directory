@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import type { Clinic } from "@/lib/types";
 import SocialMediaIcons from "../Clinic/clinicSocialMedia";
 import ClinicLabels from "./clinicLabels";
+import { PrestigeProfileBadge } from "./prestige-profile-badge";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -40,8 +41,11 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
     .join(" ");
   const roleTitle = clinic.category;
   const DEFAULT_IMG = "/directory/images/default-dr-profile-1.webp";
-  // Profile photos are temporarily disabled site-wide — always show the default placeholder.
-  const [imgSrc, setImgSrc] = useState(DEFAULT_IMG);
+  const initialImg =
+    clinic.claimed && clinic.image && clinic.image.trim()
+      ? clinic.image
+      : DEFAULT_IMG;
+  const [imgSrc, setImgSrc] = useState(initialImg);
 
   return (
     <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-xl px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t md:border md:border-(--alto) bg-white md:bg-(--primary-bg-color)">
@@ -59,12 +63,19 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
         {/* Left: avatar + info */}
         <div className="flex flex-row flex-wrap items-start gap-4 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0">
           {/* Avatar */}
-          <div className="relative w-20 h-20 md:w-40 md:h-40 shrink-0 overflow-hidden rounded-full bg-gray-200">
-            <img
-              src={imgSrc}
-              alt={practitionerName}
-              className="object-cover w-full h-full rounded-full"
-              onError={() => setImgSrc(DEFAULT_IMG)}
+          <div className="relative w-20 h-20 md:w-40 md:h-40 shrink-0">
+            <div className="h-full w-full overflow-hidden rounded-full bg-gray-200">
+              <img
+                src={imgSrc}
+                alt={practitionerName}
+                className="object-cover w-full h-full rounded-full"
+                onError={() => setImgSrc(DEFAULT_IMG)}
+              />
+            </div>
+            <PrestigeProfileBadge
+              awardsBadgeLabel={clinic.awardsBadgeLabel}
+              tatlerBadgeLabel={clinic.tatlerBadgeLabel}
+              size="md"
             />
           </div>
 

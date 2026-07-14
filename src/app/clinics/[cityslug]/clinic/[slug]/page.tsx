@@ -40,6 +40,7 @@ import { buildMedicalClinicJsonLd } from "@/lib/directory-json-ld";
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { isRemovedClinicSlug } from "@/lib/directory-removals";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
+import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
   incoming: Record<string, ItemMeta>
@@ -60,7 +61,7 @@ interface ProfilePageProps {
 
 // Lightweight converter for SearchClinic (city sidebar / related clinics)
 function convertSearchClinicToOldType(clinic: any): Clinic {
-  return {
+  return applyPrestigeToClinic({
     slug: clinic.slug || undefined,
     image: clinic.image || '',
     url: undefined,
@@ -82,12 +83,12 @@ function convertSearchClinicToOldType(clinic: any): Clinic {
     website: '', email: '', about_section: '', accreditations: '',
     awards: '', affiliations: '', hours: '', Practitioners: '',
     Insurace: '' as any, Payments: '' as any, Fees: [] as any, x_twitter: '',
-  } as Clinic;
+    claimed: clinic.claimed ?? false,
+  } as Clinic);
 }
 
-// Helper to convert DB clinic to old Clinic type format
 function convertDbClinicToOldType(dbClinic: any): Clinic {
-  return {
+  return applyPrestigeToClinic({
     slug: dbClinic.slug || undefined,
     image: dbClinic.image || '',
     url: dbClinic.gmapsUrl || undefined,
@@ -150,7 +151,7 @@ function convertDbClinicToOldType(dbClinic: any): Clinic {
     gbpVerified: (dbClinic as any).gbpVerified ?? false,
     idVerified: (dbClinic as any).idVerified ?? false,
     manualVerified: (dbClinic as any).manualVerified ?? false,
-  } as Clinic;
+  } as Clinic);
 }
 
 export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
@@ -314,6 +315,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   hisUrl={clinic.isHIS ? clinic.isHIS[1] : null}
                   isRqia={clinic.isRQIA ? clinic.isRQIA[0] : null}
                   rqiaUrl={clinic.isRQIA ? clinic.isRQIA[1] : null}
+                  aestheticsAwards={clinic.aestheticsAwards}
+                  tatlerGuideYears={clinic.tatlerGuideYears}
                 />
                 <TransparencyBox
                   claimedAt={dbClinic.claimedAt}
