@@ -65,7 +65,9 @@ RUN chmod +x docker-entrypoint.sh && \
 	mkdir -p /app/.next/cache/images && \
 	chown -R appuser:appgroup /app/.next && \
     chown -R appuser:appgroup /app/node_modules/.prisma && \
-    mkdir -p /app/uploads/verification /app/uploads/images && \
+    mkdir -p /app/uploads/verification /app/uploads/images /app/public/images && \
+    rm -rf /app/public/images/uploads && \
+    ln -sfn /app/uploads/images /app/public/images/uploads && \
     chown -R appuser:appgroup /app/uploads
 
 USER appuser
