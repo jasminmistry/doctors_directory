@@ -13,12 +13,16 @@ import { ArrowLeft } from "lucide-react"
 import {cityMap} from "@/lib/data"
 import ItemsGrid from "@/components/collectionGrid"
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
+
+const robots = getPractitionerDirectoryRobots();
 
 export const metadata = {
   alternates: {
     canonical: toDirectoryCanonical("/practitioners/treatment-by-city"),
   },
+  ...(robots ? { robots } : {}),
 };
 
 export default function TreatmentByCityPage() {

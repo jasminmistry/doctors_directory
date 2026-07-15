@@ -23,6 +23,7 @@ import {
   buildClinicRankedEntries,
   buildPractitionerRankedEntries,
 } from "@/lib/best-ranked";
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
 import {
   getClinics,
@@ -335,6 +336,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const treatmentSlug = decodeURIComponent(params.treatmentslug).toLowerCase();
   const displayCityName = capitalize(citySlug);
   const displayTreatmentName = capitalize(treatmentSlug);
+  const robots = getPractitionerDirectoryRobots();
 
   return {
     title: `Best ${displayTreatmentName} Practitioners in ${displayCityName} - Reviews, Prices & Booking`,
@@ -344,5 +346,6 @@ export async function generateMetadata({ params }: ProfilePageProps) {
         `/practitioners/${citySlug}/treatments/${treatmentSlug}`
       ),
     },
+    ...(robots ? { robots } : {}),
   };
 }

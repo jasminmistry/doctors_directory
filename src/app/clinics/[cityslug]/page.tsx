@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import type { Clinic, City, Practitioner } from "@/lib/types";
 import {
   Breadcrumb,
@@ -92,6 +93,9 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const citySlug = params.cityslug;
   const displayCityName = capitalize(citySlug);
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
+  if (normalizedCitySlug === "4qr") {
+    notFound();
+  }
   const cityClinics: Clinic[] = clinics.filter(
     (p) => p.City?.toLowerCase() === normalizedCitySlug && !isRemovedClinicSlug(p.slug)
   );

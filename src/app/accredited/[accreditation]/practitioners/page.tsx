@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Clinic, Practitioner } from "@/lib/types"
 import { SearchBar } from "@/components/search/search-bar";
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 
@@ -175,6 +176,7 @@ export async function generateMetadata({ params }: AccreditedPractitionersPagePr
   const { accreditation } = params
   const accreditationName = getAccreditationName(accreditation)
   const canonicalAccreditation = decodeURIComponent(accreditation).toLowerCase()
+  const robots = getPractitionerDirectoryRobots()
 
   return {
     title: `${accreditationName} Accredited Practitioners`,
@@ -185,6 +187,7 @@ export async function generateMetadata({ params }: AccreditedPractitionersPagePr
     openGraph: {
       title: `${accreditationName} Accredited Practitioners`,
       description: `Find ${accreditationName} accredited practitioners across all cities. Compare ratings and reviews.`,
-    }
+    },
+    ...(robots ? { robots } : {}),
   }
 }

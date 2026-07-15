@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import type { Clinic, Practitioner, City } from "@/lib/types";
 import { readJsonFileSync } from "@/lib/json-cache";
 import { CityPageData } from "@/components/cityPageData";
@@ -20,6 +21,7 @@ import { EmptyCityState } from "@/components/empty-city-state";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { capitalize } from "@/lib/utils";
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { getClinics, getEnrichedPractitioners } from "@/lib/sitemap-data";
 import { isRemovedPractitionerSlug } from "@/lib/directory-removals";
@@ -61,6 +63,9 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const citySlug = params.cityslug;
   const displayCityName = capitalize(citySlug);
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
+  if (normalizedCitySlug === "4qr") {
+    notFound();
+  }
   const cityData = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );
@@ -234,6 +239,8 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const title = `Best Verified Aesthetic Practitioners in ${displayCityName} - Reviews & Booking`
   const description = `Find the best verified aesthetic practitioners in ${displayCityName}. Compare qualifications, real patient reviews and book your consultation.`
 
+  const robots = getPractitionerDirectoryRobots();
+
   return {
     title,
     description,
@@ -251,5 +258,6 @@ export async function generateMetadata({ params }: ProfilePageProps) {
       title,
       description,
     },
+    ...(robots ? { robots } : {}),
   };
 }

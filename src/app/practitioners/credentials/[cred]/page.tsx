@@ -22,6 +22,7 @@ import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper
 import { MoreItems } from "@/components/MoreItems";
 import { locations } from "@/lib/data";
 import { CredentialPageData } from "@/components/credentialPageData";
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 const credentialsData: Accreditation[] = readJsonFileSync('accreditations_processed_new.json')
@@ -178,6 +179,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 export async function generateMetadata({ params }: ProfilePageProps) {
   const credSlug = decodeURIComponent(params.cred).toLowerCase();
   const displayCredential = decodeURIComponent(params.cred).replaceAll("-", " ");
+  const robots = getPractitionerDirectoryRobots();
 
   return {
     title: `${displayCredential} Practitioners - Healthcare Directory`,
@@ -185,5 +187,6 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     alternates: {
       canonical: toDirectoryCanonical(`/practitioners/credentials/${credSlug}`),
     },
+    ...(robots ? { robots } : {}),
   };
 }

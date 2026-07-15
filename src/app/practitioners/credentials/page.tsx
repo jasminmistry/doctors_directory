@@ -6,6 +6,7 @@ import type { Practitioner } from "@/lib/types";
 import { getAccreditationImages } from "@/lib/utils";
 import { FallbackImage } from "@/components/ui/fallback-image";
 import { readJsonFileSync } from "@/lib/json-cache";
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
 import {
   Breadcrumb,
@@ -128,6 +129,7 @@ export default async function ProfilePage() {
 }
 
 export async function generateMetadata() {
+  const robots = getPractitionerDirectoryRobots();
   return {
     title: 'Credentialed Practitioners - Healthcare Directory',
     description: 'Find healthcare practitioners by professional credentials and qualifications. Browse medical degrees, certifications, and specializations. Compare ratings, reviews, and book appointments.',
@@ -137,6 +139,7 @@ export async function generateMetadata() {
     openGraph: {
       title: 'Credentialed Practitioners - Healthcare Directory',
       description: 'Find healthcare practitioners by professional credentials and qualifications.',
-    }
+    },
+    ...(robots ? { robots } : {}),
   }
 }
