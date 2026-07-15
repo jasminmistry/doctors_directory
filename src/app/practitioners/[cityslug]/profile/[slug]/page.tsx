@@ -24,7 +24,7 @@ import { getPractitionerBySlug, getAllPractitionersForSearch } from "@/lib/data-
 import { getAllTreatmentNames } from "@/lib/data-access/treatments";
 import { isRemovedPractitionerSlug } from "@/lib/directory-removals";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
-import { getPractitionerProfileRobots } from "@/lib/practitioner-profile-robots";
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
@@ -256,7 +256,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     `/practitioners/${citySlug}/profile/${canonicalSlug}`
   );
 
-  const robots = getPractitionerProfileRobots()
+  const robots = getPractitionerDirectoryRobots()
 
   if (!clinic) {
     return {
