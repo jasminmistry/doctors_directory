@@ -15,6 +15,7 @@ import { Practitioner } from "@/lib/types"
 import { accreditations } from "@/lib/data"
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import { PractitionerCard } from "@/components/practitioner-card"
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots"
 import { toDirectoryCanonical } from "@/lib/seo"
 
 function mapAccreditationToField(accreditation: string): keyof Practitioner {
@@ -153,6 +154,7 @@ export async function generateMetadata({ params }: AccreditedPractitionersPagePr
   const accreditationName = getAccreditationName(accreditation)
   const canonicalAccreditation = decodeURIComponent(accreditation).toLowerCase()
   const canonicalCity = decodeURIComponent(cityslug).toLowerCase()
+  const robots = getPractitionerDirectoryRobots()
 
   return {
     title: `Accredited ${accreditationName} Practitioners in ${cityslug}`,
@@ -163,6 +165,7 @@ export async function generateMetadata({ params }: AccreditedPractitionersPagePr
     openGraph: {
       title: `Accredited ${accreditationName} Practitioners in ${cityslug}`,
       description: `Find ${accreditationName} accredited practitioners in ${cityslug}. Compare ratings and reviews.`,
-    }
+    },
+    ...(robots ? { robots } : {}),
   }
 }

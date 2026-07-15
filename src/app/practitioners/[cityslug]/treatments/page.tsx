@@ -20,6 +20,7 @@ import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper
 import { readJsonFileSync } from "@/lib/json-cache"
 import { locations } from "@/lib/data";
 import { capitalize } from "@/lib/utils";
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 import { getAllProducts as getAllProductsFromDb } from "@/lib/data-access/products";
@@ -33,6 +34,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps) {
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const displayCityName = capitalize(citySlug);
+  const robots = getPractitionerDirectoryRobots();
 
   return {
     title: `Top Aesthetic Treatments in ${displayCityName} - Compare Practitioners & Book`,
@@ -40,6 +42,7 @@ export async function generateMetadata({ params }: PageProps) {
     alternates: {
       canonical: toDirectoryCanonical(`/practitioners/${citySlug}/treatments`),
     },
+    ...(robots ? { robots } : {}),
   };
 }
 

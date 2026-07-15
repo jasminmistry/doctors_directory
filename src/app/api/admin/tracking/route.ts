@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getTrackingOverview, listTrackingRows, type TrackingTab } from "@/lib/tracking/dashboard-queries"
-import { trackingDashboardTokenOk } from "@/lib/tracking/access"
 
 export const dynamic = 'force-dynamic'
 
@@ -21,11 +20,6 @@ function parseOverviewWindow(value: string | null): number | null {
 }
 
 export async function GET(request: NextRequest) {
-  const token = request.nextUrl.searchParams.get("token")
-  if (!trackingDashboardTokenOk(token)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-
   const sp = request.nextUrl.searchParams
   const view = sp.get("view")
   const windowDays = parseOverviewWindow(sp.get("window_days"))
