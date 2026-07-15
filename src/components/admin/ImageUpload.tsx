@@ -57,13 +57,13 @@ export function ImageUpload({ value, onChange, shape = 'square', className }: Re
         {value ? (
           <div className="relative shrink-0">
             <img
+              key={value}
               src={value}
               alt=""
               className={cn(
-                'object-cover border border-gray-200',
+                'object-cover border border-gray-200 bg-gray-100',
                 shape === 'circle' ? 'w-12 h-12 rounded-full' : 'w-12 h-12 rounded-lg'
               )}
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
             />
             <button
               type="button"
