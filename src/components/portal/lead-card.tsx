@@ -29,13 +29,14 @@ export interface Lead {
   patientName: string | null
   patientPhone: string | null
   patientEmail: string | null
+  patientAge: number | null
   source: LeadSource
 }
 
 interface LeadCardProps {
   lead: Lead
   plan: 'free' | 'pay_per_lead' | 'subscription'
-  onUnlocked: (id: number, data: { patientName: string; patientPhone: string; patientEmail: string | null }) => void
+  onUnlocked: (id: number, data: { patientName: string; patientPhone: string; patientEmail: string | null; patientAge: number | null }) => void
   onSeen: (id: number) => void
   onUpdated: (id: number, patch: Partial<Pick<Lead, 'pipelineStatus' | 'notes' | 'ownerName'>>) => void
 }
@@ -266,6 +267,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
         patientName: data.patientName,
         patientPhone: data.patientPhone,
         patientEmail: data.patientEmail,
+        patientAge: data.patientAge,
       })
     } catch {
       setUnlockError('Network error. Please try again.')
@@ -356,6 +358,22 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
             <span className="h-4 w-28 rounded bg-gray-200 blur-[3px] select-none" aria-hidden="true" />
           ) : (
             <span className="text-gray-800">{lead.patientPhone}</span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="w-10 shrink-0 text-xs text-gray-500">Email</span>
+          {locked ? (
+            <span className="h-4 w-40 rounded bg-gray-200 blur-[3px] select-none" aria-hidden="true" />
+          ) : (
+            <span className="text-gray-800">{lead.patientEmail ?? '—'}</span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="w-10 shrink-0 text-xs text-gray-500">Age</span>
+          {locked ? (
+            <span className="h-4 w-8 rounded bg-gray-200 blur-[3px] select-none" aria-hidden="true" />
+          ) : (
+            <span className="text-gray-800">{lead.patientAge ?? '—'}</span>
           )}
         </div>
         {lead.preferredTime && (

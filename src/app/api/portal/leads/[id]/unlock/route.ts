@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
+import { calculateAge } from '@/lib/utils'
 
 function resolveDirectoryBaseUrl(): string {
   const candidates = [
@@ -125,6 +126,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         stripePaymentIntentId: intent.id,
         seenAt: new Date(),
       },
+      include: { patient: { select: { dateOfBirth: true } } },
     })
 
     return NextResponse.json({
@@ -132,6 +134,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       patientName: updated.patientName,
       patientPhone: updated.patientPhone,
       patientEmail: updated.patientEmail,
+      patientAge: updated.patient?.dateOfBirth ? calculateAge(updated.patient.dateOfBirth) : null,
     })
   } catch (err: unknown) {
     // Stripe throws StripeCardError for declined cards

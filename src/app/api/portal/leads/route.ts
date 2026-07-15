@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
+import { calculateAge } from '@/lib/utils'
 
 export async function GET() {
   const user = await getPortalUser()
@@ -38,11 +39,13 @@ export async function GET() {
       patientPhone: true,
       patientEmail: true,
       source: true,
+      patient: { select: { dateOfBirth: true } },
     },
   })
 
   const response = leads.map((lead: typeof leads[number]) => {
     const revealed = isSubscription || lead.isUnlocked
+    const age = lead.patient?.dateOfBirth ? calculateAge(lead.patient.dateOfBirth) : null
     return {
       id: lead.id,
       treatment: lead.treatment,
@@ -59,6 +62,7 @@ export async function GET() {
       patientName: revealed ? lead.patientName : null,
       patientPhone: revealed ? lead.patientPhone : null,
       patientEmail: revealed ? lead.patientEmail : null,
+      patientAge: revealed ? age : null,
       source: lead.source,
     }
   })

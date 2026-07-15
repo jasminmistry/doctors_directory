@@ -73,12 +73,12 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
 
   function handleUnlocked(
     id: number,
-    data: { patientName: string; patientPhone: string; patientEmail: string | null },
+    data: { patientName: string; patientPhone: string; patientEmail: string | null; patientAge: number | null },
   ) {
     setLeads((prev) =>
       prev.map((l) =>
         l.id === id
-          ? { ...l, isUnlocked: true, patientName: data.patientName, patientPhone: data.patientPhone, patientEmail: data.patientEmail }
+          ? { ...l, isUnlocked: true, patientName: data.patientName, patientPhone: data.patientPhone, patientEmail: data.patientEmail, patientAge: data.patientAge }
           : l,
       ),
     )
