@@ -32,7 +32,9 @@ WHERE `slug` IN (
   'stefan-ake-arne-aaaaaaasaaaaberg',
   'tina-oaaaaaaaaaaaaaaa34aadoherty',
   'yobany-andraaaaasaas-de-jesaaaaasaaos-valencia-toro'
-);
+)
+OR `slug` REGEXP '(.)\\1\\1'
+OR `displayName` REGEXP '(.)\\1\\1';
 
 INSERT INTO `cities` (`slug`, `name`, `createdAt`, `updatedAt`)
 SELECT 'silsoe', 'Silsoe', NOW(3), NOW(3)
