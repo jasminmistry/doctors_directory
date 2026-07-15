@@ -204,7 +204,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
             </div>
           )}
 
-        <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7 flex flex-col sm:flex-row justify-center w-full md:gap-10 px-4 md:px-0">
+        <div className="mx-auto max-w-7xl pb-4 pt-4 md:pb-7 flex flex-col sm:flex-row justify-center w-full md:gap-10 px-0">
                       <div className="hidden sm:block">
             <CollectionsFilter pageType="Clinic" />
           </div>
