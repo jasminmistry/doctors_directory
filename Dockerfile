@@ -55,7 +55,11 @@ COPY ecosystem.config.js ./ecosystem.config.js
 COPY server.js ./server.js
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x docker-entrypoint.sh && \
-    chown -R appuser:appgroup /app/node_modules/.prisma
+	mkdir -p /app/.next/cache/images && \
+	chown -R appuser:appgroup /app/.next && \
+    chown -R appuser:appgroup /app/node_modules/.prisma && \
+    mkdir -p /app/uploads/verification /app/uploads/images && \
+    chown -R appuser:appgroup /app/uploads
 
 USER appuser
 EXPOSE 3000

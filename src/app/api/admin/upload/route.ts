@@ -27,13 +27,13 @@ export async function POST(req: NextRequest) {
 
     const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
     const filename = `${randomUUID()}.${ext}`
-    const uploadDir = path.join(process.cwd(), 'public', 'images', 'uploads')
+    const uploadDir = path.join(process.cwd(), 'uploads', 'images')
     const dest = path.join(uploadDir, filename)
 
     await mkdir(uploadDir, { recursive: true })
     await writeFile(dest, buffer)
 
-    return NextResponse.json({ url: `/directory/images/uploads/${filename}` })
+    return NextResponse.json({ url: `/directory/api/uploads/images/${filename}` })
   } catch (err) {
     console.error('[admin/upload] error:', err)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
