@@ -21,3 +21,5 @@ export function normalizeImageExt(filename: string): string {
   if (['jpg', 'png', 'webp', 'gif', 'svg'].includes(raw)) return raw
   return 'jpg'
 }
+
+export const UPLOAD_URL_PREFIX = '/directory/images/uploads/'
