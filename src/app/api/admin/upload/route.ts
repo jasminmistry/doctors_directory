@@ -33,7 +33,9 @@ export async function POST(req: NextRequest) {
     await mkdir(uploadDir, { recursive: true })
     await writeFile(dest, buffer)
 
-    return NextResponse.json({ url: `/directory/api/uploads/images/${filename}` })
+    return NextResponse.json({
+      url: `/directory/api/uploads/image/?name=${encodeURIComponent(filename)}`,
+    })
   } catch (err) {
     console.error('[admin/upload] error:', err)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
