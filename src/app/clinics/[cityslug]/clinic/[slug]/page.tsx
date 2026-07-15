@@ -506,18 +506,18 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     alternates: {
       canonical: canonicalUrl,
     },
+    // No openGraph/twitter images — Slack/social link previews should not
+    // show clinic photos as rich "thumbnail" unfurls (Toby feedback).
     openGraph: {
       title,
       description,
       url: canonicalUrl,
-      images: [
-        {
-          url: clinic.image,
-          width: 1200,
-          height: 630,
-          alt: `${clinicDisplayName} profile picture`,
-        },
-      ],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
     },
   };
 }

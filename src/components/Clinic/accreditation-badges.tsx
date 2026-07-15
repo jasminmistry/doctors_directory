@@ -17,6 +17,9 @@ interface AccreditationBadgesProps {
   tatlerGuideYears?: number[]
 }
 
+const pillClass =
+  'inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700'
+
 export function AccreditationBadges(props: AccreditationBadgesProps) {
   const badges: Badge[] = [
     props.isSaveFace && { label: 'Save Face' },
@@ -46,16 +49,13 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                className={`${pillClass} gap-1.5 hover:bg-gray-100 transition-colors`}
               >
                 {label}
                 <ExternalLink className="h-3 w-3 text-gray-400" />
               </a>
             ) : (
-              <span
-                key={label}
-                className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700"
-              >
+              <span key={label} className={pillClass}>
                 {label}
               </span>
             )
@@ -64,7 +64,7 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
       )}
       {awards.length > 0 && (
         <div className="space-y-2 border-t border-gray-100 pt-3">
-          <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-900">
+          <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-900">
             <span aria-hidden>🏆</span>
             UK Aesthetics Awards
           </p>
@@ -72,10 +72,10 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
             {awards.slice(0, 8).map((a) => (
               <li
                 key={`${a.year}-${a.result}-${a.category}`}
-                className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-950 ring-1 ring-amber-100"
+                className={`${pillClass} w-full justify-start`}
               >
                 <span className="font-semibold">{a.result} {a.year}</span>
-                <span className="text-amber-800/80"> — {a.category}</span>
+                <span className="text-gray-500"> — {a.category}</span>
               </li>
             ))}
           </ul>
@@ -83,16 +83,13 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
       )}
       {tatlerYears.length > 0 && (
         <div className="space-y-2 border-t border-gray-100 pt-3">
-          <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-900">
+          <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-900">
             <span aria-hidden>🏆</span>
             Tatler Beauty &amp; Cosmetic Surgery Guide
           </p>
           <div className="flex flex-wrap gap-2">
             {tatlerYears.map((year) => (
-              <span
-                key={year}
-                className="inline-flex items-center rounded-full bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-950 ring-1 ring-amber-100"
-              >
+              <span key={year} className={pillClass}>
                 Featured {year}
               </span>
             ))}
