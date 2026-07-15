@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import type { Clinic, Practitioner, City } from "@/lib/types";
 import { readJsonFileSync } from "@/lib/json-cache";
 import { CityPageData } from "@/components/cityPageData";
@@ -61,6 +62,9 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const citySlug = params.cityslug;
   const displayCityName = capitalize(citySlug);
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
+  if (normalizedCitySlug === "4qr") {
+    notFound();
+  }
   const cityData = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );
