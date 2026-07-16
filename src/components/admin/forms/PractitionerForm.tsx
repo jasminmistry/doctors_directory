@@ -22,11 +22,20 @@ type PractitionerData = {
   roles: string[]
   media: string[]
   experience: string[]
+  citySlug: string | null
+  clinicId: number | null
+}
+
+type ClinicOption = {
+  id: number
+  name: string | null
+  slug: string
+  cityName: string | null
 }
 
 const EMPTY: PractitionerData = {
   slug: '', displayName: null, title: null, specialty: null, imageUrl: null,
-  qualifications: [], awards: [], roles: [], media: [], experience: [],
+  qualifications: [], awards: [], roles: [], media: [], experience: [], citySlug: null, clinicId: null,
 }
 
 function toStringArray(value: unknown): string[] {
@@ -129,10 +138,27 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
   const [saving, setSaving] = useState(false)
   const [isNew, setIsNew] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [clinics, setClinics] = useState<ClinicOption[]>([])
   const router = useRouter()
   const params = useParams()
   const slug = (params?.slug as string) ?? ''
   const isPortal = mode === 'portal'
+
+  useEffect(() => {
+    if (isPortal) return
+    fetch('/directory/api/admin/clinics')
+      .then((r) => { if (!r.ok) throw new Error(); return r.json() })
+      .then((list) => {
+        setClinics(
+          Array.isArray(list)
+            ? list
+                .filter((c: any) => c.citySlug)
+                .map((c: any) => ({ id: c.id, name: c.name, slug: c.slug, cityName: c.cityName }))
+            : []
+        )
+      })
+      .catch(() => setClinics([]))
+  }, [isPortal])
 
   useEffect(() => {
     if (fetchUrl) {
@@ -150,6 +176,8 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
             roles: toStringArray(d.roles),
             media: toStringArray(d.media),
             experience: toStringArray(d.experience),
+            citySlug: d.citySlug ?? null,
+            clinicId: d.clinicId ?? null,
           })
           setLoading(false)
         })
@@ -175,6 +203,8 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
           roles: toStringArray(d.roles),
           media: toStringArray(d.media),
           experience: toStringArray(d.experience),
+          citySlug: d.citySlug ?? null,
+          clinicId: d.clinicId ?? null,
         })
         setLoading(false)
       })
@@ -198,6 +228,8 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
     else if (isNew && !/^[a-z0-9-]+$/.test(data.slug.trim())) {
       nextErrors.slug = 'Slug must be kebab-case'
     }
+    if (!isPortal && !data.clinicId) nextErrors.clinicId = 'City is required'
+
 
     if (Object.keys(nextErrors).length > 0) {
       setFieldErrors(nextErrors)
@@ -253,14 +285,14 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
             </Button>
           )}
           <div className="min-w-0">
-            {!isPortal && <p className="text-xs text-gray-400 font-medium">Practitioners</p>}
+            {!isPortal && <p className="text-xs text-gray-500 font-medium">Practitioners</p>}
             <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          {!isNew && data.slug && (
+          {!isNew && data.slug && (previewHref || data.citySlug ? (
             <a
-              href={previewHref ?? `/directory/search?type=Practitioner&q=${encodeURIComponent(data.displayName || data.slug)}`}
+              href={previewHref ?? `/directory/practitioners/${data.citySlug}/profile/${data.slug}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -269,7 +301,12 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
                 Preview
               </Button>
             </a>
-          )}
+          ) : (
+            <Button variant="outline" size="sm" disabled title="Set a city before previewing">
+              <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+              Preview
+            </Button>
+          ))}
           <Button size="sm" onClick={handleSave} disabled={saving}>
             <Save className="h-3.5 w-3.5 mr-1.5" />
             {saving ? 'Saving…' : 'Save'}
@@ -306,19 +343,41 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
             </Field>
           ) : (
             <div className="flex flex-col justify-end">
-              <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
-              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
+              <span className="text-xs text-gray-500 mb-1.5 font-medium">Slug</span>
+              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{data.slug}</code>
             </div>
           ))}
+          {!isPortal && (
+            <Field label="City" required hint="Determines the practitioner's public profile URL" error={fieldErrors.clinicId}>
+              <select
+                value={data.clinicId ?? ''}
+                onChange={(e) => set('clinicId', e.target.value ? Number(e.target.value) : null)}
+                className={cn(
+                  'w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring',
+                  fieldErrors.clinicId && 'border-red-500 focus:ring-red-500',
+                )}
+                aria-invalid={Boolean(fieldErrors.clinicId)}
+              >
+                <option value="">Select a city / clinic…</option>
+                {clinics.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.cityName} — {c.name || c.slug}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          )}
           <Field label="Title">
             <Input value={data.title ?? ''} onChange={(e) => set('title', e.target.value || null)} placeholder="e.g. Consultant Dermatologist" />
           </Field>
           <Field label="Specialty">
             <Input value={data.specialty ?? ''} onChange={(e) => set('specialty', e.target.value || null)} placeholder="e.g. Aesthetic Medicine" />
           </Field>
-          <Field label="Image" fullWidth>
-            <ImageUpload value={data.imageUrl ?? null} onChange={(url) => set('imageUrl', url)} shape="circle" />
-          </Field>
+          {!isPortal && (
+            <Field label="Image" fullWidth>
+              <ImageUpload value={data.imageUrl ?? null} onChange={(url) => set('imageUrl', url)} shape="circle" />
+            </Field>
+          )}
         </div>
       </FormSection>
 
@@ -390,7 +449,7 @@ function LoadingSkeleton() {
         </div>
       </div>
       {[1, 2].map((i) => (
-        <div key={i} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div key={i} className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
           <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
           <div className="grid grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((j) => (

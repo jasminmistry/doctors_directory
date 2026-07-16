@@ -58,4 +58,9 @@ export const UK_POPULAR_TREATMENTS = [
     image: "/directory/images/Hairline Treatment.webp",
     href: "/treatments/hair-treatments/",
   },
+  {
+    name: "Botox",
+    image: "/directory/treatments/botox.webp",
+    href: "/treatments/botox/",
+  },
 ] as const

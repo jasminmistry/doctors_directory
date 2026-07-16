@@ -33,7 +33,7 @@ export default function PractitionerDetailsSections({
           "Not publicly listed"
         )}
       </Section>
-      <div className="border-t border-gray-300 my-6"></div>
+      <div className="border-t border-[#e0e0e0]  my-6"></div>
       {/* Treatments */}
       <Section title="Treatments" id="treatmetnts">
         <div className="flex flex-wrap gap-1">
@@ -54,7 +54,7 @@ export default function PractitionerDetailsSections({
             )}
         </div>
       </Section>
-      <div className="border-t border-gray-300 my-6"></div>
+      <div className="border-t border-[#e0e0e0]  my-6"></div>
       {/* Qualifications */}
       <Section title="Qualifications" id="qualifications" data-testid='qualifications'>
         {parseList(fixPythonArrayString(clinic.practitioner_qualifications))
@@ -70,7 +70,7 @@ export default function PractitionerDetailsSections({
           "Not publicly listed"
         )}
       </Section>
-      <div className="border-t border-gray-300 my-6"></div>
+      <div className="border-t border-[#e0e0e0]  my-6"></div>
       {/* Experience */}
       <Section title="Experience" id="experience" data-testid='experience'>
         {parseList(fixPythonArrayString(clinic.practitioner_experience))
@@ -86,7 +86,7 @@ export default function PractitionerDetailsSections({
           "Not publicly listed"
         )}
       </Section>
-      <div className="border-t border-gray-300 my-6"></div>
+      <div className="border-t border-[#e0e0e0]  my-6"></div>
       {/* News */}
       <Section title="News" id="news">
         {parseList(fixPythonArrayString(clinic.practitioner_media)).length ? (
@@ -101,7 +101,7 @@ export default function PractitionerDetailsSections({
           "Not publicly listed"
         )}
       </Section>
-      <div className="border-t border-gray-300 my-6"></div>
+      <div className="border-t border-[#e0e0e0]  my-6"></div>
       {/* AWARDS */}
       <Section title="Awards" id="awards">
         {parseList(fixPythonArrayString(clinic.practitioner_awards)).length ? (
@@ -116,7 +116,7 @@ export default function PractitionerDetailsSections({
           "Not publicly listed"
         )}
       </Section>
-      <div className="border-t border-gray-300 my-6"></div>
+      <div className="border-t border-[#e0e0e0]  my-6"></div>
       {/* HOURS */}
       {/* {clinic.hours && typeof clinic.hours === "object" && (
         <Section title="Hours" id='hours'>
@@ -165,7 +165,7 @@ export default function PractitionerDetailsSections({
         ) : (
           clinic.Insurace || "Not listed"
         )}
-        <div className="border-t border-gray-300 my-6"></div>
+        <div className="border-t border-[#e0e0e0]  my-6"></div>
       </Section>
       
       )

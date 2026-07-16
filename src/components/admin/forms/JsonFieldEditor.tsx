@@ -227,7 +227,7 @@ export function JsonFieldEditor({ value, onChange }: JsonFieldEditorProps) {
         'flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors',
         showRaw
           ? 'bg-gray-900 text-white'
-          : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100',
+          : 'text-gray-500 hover:text-gray-600 hover:bg-gray-100',
       )}
     >
       <Code className="h-3 w-3" />
@@ -249,7 +249,7 @@ export function JsonFieldEditor({ value, onChange }: JsonFieldEditorProps) {
   if (type === 'empty') {
     return (
       <div className="rounded-lg border border-dashed border-gray-200 p-4">
-        <p className="text-xs text-gray-400 mb-3 text-center">No value — choose a type to start</p>
+        <p className="text-xs text-gray-500 mb-3 text-center">No value — choose a type to start</p>
         <div className="flex flex-wrap gap-2 justify-center">
           <Button
             type="button" variant="outline" size="sm"
@@ -284,7 +284,7 @@ export function JsonFieldEditor({ value, onChange }: JsonFieldEditorProps) {
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
           <button
-            className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1"
+            className="text-xs text-gray-500 hover:text-gray-600 flex items-center gap-1"
             onClick={() => onChange([])}
             title="Switch to list"
           >
@@ -304,7 +304,7 @@ export function JsonFieldEditor({ value, onChange }: JsonFieldEditorProps) {
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
           <button
-            className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1"
+            className="text-xs text-gray-500 hover:text-gray-600 flex items-center gap-1"
             onClick={() => onChange(null)}
             title="Clear"
           >
@@ -327,7 +327,7 @@ export function JsonFieldEditor({ value, onChange }: JsonFieldEditorProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs text-gray-400">{entries.length} field{entries.length !== 1 ? 's' : ''}</span>
+        <span className="text-xs text-gray-500">{entries.length} field{entries.length !== 1 ? 's' : ''}</span>
         {modeToggle}
       </div>
       <div className="bg-gray-50/60 rounded-lg p-4 border border-gray-100 space-y-4">

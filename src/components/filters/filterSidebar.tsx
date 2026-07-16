@@ -296,18 +296,18 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
       updatedFilters.location =
         treatmentFilters.treatmentArea !== "all" ? treatmentFilters.treatmentArea : "";
     } else if (filters.type === "Clinic") {
-      updatedFilters.query = clinicFilters.query || "";
+      updatedFilters.query = (clinicFilters.query || "").trim();
       updatedFilters.services = clinicFilters.servicesOffered !== "all" ? [clinicFilters.servicesOffered] : [];
       updatedFilters.location = clinicFilters.location !== "all" ? clinicFilters.location : "";
       updatedFilters.rating = clinicFilters.rating !== "all" ? Number(clinicFilters.rating) : 0;
     } else if (filters.type === "Practitioner") {
-      updatedFilters.query = practitionerFilters.query || "";
+      updatedFilters.query = (practitionerFilters.query || "").trim();
       updatedFilters.services = practitionerFilters.practitioner_specialty !== "all" ? [practitionerFilters.practitioner_specialty] : [];
       updatedFilters.location = practitionerFilters.City !== "all" ? practitionerFilters.City : "";
       updatedFilters.rating = practitionerFilters.rating !== "all" ? Number(practitionerFilters.rating) : 0;
       updatedFilters.category = practitionerFilters.practitioner_qualifications !== "all" ? practitionerFilters.practitioner_qualifications : "";
     } else if (filters.type === "Product") {
-      updatedFilters.query = productFilters.query || "";
+      updatedFilters.query = (productFilters.query || "").trim();
       updatedFilters.services = productFilters.product_category !== "all" ? [productFilters.product_category] : [];
       updatedFilters.category = productFilters.brand !== "all" ? productFilters.brand : "";
       updatedFilters.location = productFilters.distributor_cleaned !== "all" ? productFilters.distributor_cleaned : "";
@@ -383,7 +383,7 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
           className={`
           bg-transparent h-dvh md:h-auto shadow-none border border-transparent rounded-0 px-4 md:px-0 md:py-0
           md:flex md:flex-col md:relative md:block w-full md:translate-x-0
-          md:bg-white md:rounded-lg md:border md:border-[#C4C4C4] md:shadow-sm md:p-4 md:sticky md:top-4 md:self-start md:z-0
+          md:bg-white md:rounded-lg md:border md:border-[#C4C4C4] md:p-4 md:sticky md:top-4 md:self-start md:z-0
           fixed top-0 left-0 bg-white z-[99999] transition-transform duration-300 ease-in-out
           ${isFilterActive ? "translate-x-0" : "-translate-x-full"} ${isOpen ? "block" : "hidden"}
         `}

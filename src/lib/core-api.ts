@@ -1,22 +1,35 @@
-import { getConsentzAuthUrl } from '@/lib/auth'
+import { getConsentzAuthUrl, getApplicationId } from '@/lib/auth'
 
 function getCoreLiteBase(): string {
   return `${new URL(getConsentzAuthUrl()).origin}/api/core-lite`
 }
 
-function coreLiteApi(
+async function coreLiteApi(
   path: string,
   options: { method?: string; body?: unknown; sessionToken?: string } = {},
 ): Promise<Response> {
   const { method = 'GET', body, sessionToken } = options
-  return fetch(`${getCoreLiteBase()}${path}`, {
+  const url = `${getCoreLiteBase()}${path}`
+  const appId = getApplicationId()
+  console.log(`[core-lite] ${method} ${url}  appId=${appId} hasToken=${!!sessionToken}`)
+  const res = await fetch(url, {
     method,
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
+      'X-APPLICATION-ID': appId,
       ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),
     },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   })
+  if (!res.ok) {
+    const clone = res.clone()
+    const errBody = await clone.text().catch(() => '')
+    console.error(`[core-lite] ${method} ${url} → HTTP ${res.status}  body=${errBody}`)
+  } else {
+    console.log(`[core-lite] ${method} ${url} → HTTP ${res.status}`)
+  }
+  return res
 }
 
 export interface CoreSlot {
@@ -44,6 +57,7 @@ export interface CoreBookingPayload {
   patient_last_name: string
   patient_email: string
   patient_phone: string
+  video_call?: boolean
 }
 
 export interface CoreBookingResponse {
@@ -55,6 +69,7 @@ export interface CoreBookingResponse {
     practitioner: { id: number; name: string }
     treatment: { id: number; name: string } | null
     patient: { id: number; name: string; email: string }
+    video_call: { type: 'zoom' | 'jitsi'; join_url: string; start_url: string } | null
   }
 }
 
@@ -63,13 +78,16 @@ export async function getCoreAvailability(
   date: string,
   sessionToken?: string,
 ): Promise<CoreAvailabilityResponse> {
-  const res = await coreLiteApi(
-    `/clinics/${coreClinicId}/availability?date=${date}`,
-    { sessionToken },
-  )
+  const path = `/clinics/${coreClinicId}/availability?date=${date}`
+  console.log(`[core-api/availability] GET ${getCoreLiteBase()}${path}`)
+  const res = await coreLiteApi(path, { sessionToken })
+  console.log(`[core-api/availability] HTTP ${res.status}`)
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    throw Object.assign(new Error((err as { message?: string }).message ?? 'Core availability error'), { status: res.status })
+    const body = await res.text().catch(() => '')
+    console.error(`[core-api/availability] error body: ${body}`)
+    let err: { message?: string } = {}
+    try { err = JSON.parse(body) } catch { /* raw */ }
+    throw Object.assign(new Error(err.message ?? 'Core availability error'), { status: res.status })
   }
   return res.json()
 }

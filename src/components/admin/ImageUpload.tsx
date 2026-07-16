@@ -77,7 +77,7 @@ export function ImageUpload({ value, onChange, shape = 'square', className }: Re
         ) : (
           <div
             className={cn(
-              'shrink-0 w-12 h-12 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400',
+              'shrink-0 w-12 h-12 border-2 border-dashed border-[#e0e0e0]  flex items-center justify-center text-gray-500',
               shape === 'circle' ? 'rounded-full' : 'rounded-lg'
             )}
             onDragOver={(e) => e.preventDefault()}

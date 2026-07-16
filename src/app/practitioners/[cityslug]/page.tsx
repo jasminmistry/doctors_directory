@@ -53,7 +53,7 @@ interface ProfilePageProps {
   };
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 const practitioners = getEnrichedPractitioners()
 const clinics = getClinics()
@@ -114,53 +114,45 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   ]
 
   return (
-    <>
-      <DirectoryJsonLd schemas={jsonLdSchemas} />
-      <main className="bg-white">
-        <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
-          <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
-            <div className="sticky top-0 z-10">
-              <Link className="mb-3 inline-block" href="/" prefetch={false}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Directory
-                </Button>
-              </Link>
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href="/practitioners">
-                      Practitioners
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href={`/practitioners/${normalizedCitySlug}`}>{displayCityName}</BreadcrumbLink>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-            </div></div>
-
-
+    <main className="bg-white">
+      <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
+        <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
+          <div className="sticky top-0 z-10">
+            <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
+                <ArrowLeft className="h-4 w-4" />
+                Back to Directory
+            </Link>
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/practitioners">
+                    Practitioners
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink href={`/practitioners/${normalizedCitySlug}`}>{displayCityName}</BreadcrumbLink>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div></div>
+          
+         
           <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
             <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">Top Aesthetic Practitioners in {displayCityName}</h1></div>
 
-          {hasCityPractitioners && (
-            <div className="px-4 md:px-0 pb-4">
-              <BestRankedBlock
-                title={`Best Practitioners in ${displayCityName}`}
-                entries={rankedCityPractitioners}
-              />
-            </div>
-          )}
+        {hasCityPractitioners && (
+          <div className="px-4 md:px-0 pb-4">
+            <BestRankedBlock
+              title={`Best Practitioners in ${displayCityName}`}
+              entries={rankedCityPractitioners}
+            />
+          </div>
+        )}
 
           <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7 flex flex-col sm:flex-row justify-center w-full md:gap-10 px-4 md:px-0">
             <div className="hidden sm:block">
@@ -203,7 +195,6 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
           />}
         </div>
       </main>
-    </>
   );
 }
 

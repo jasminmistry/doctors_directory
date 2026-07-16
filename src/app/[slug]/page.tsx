@@ -44,7 +44,7 @@ type PageProps = {
 
 const MIN_TREATMENT_CLINICS = 3
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 export function generateMetadata({ params }: PageProps): Metadata {
   if (isDeindexedStandaloneSlug(params.slug)) {
@@ -163,11 +163,9 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
         <DirectoryJsonLd schemas={jsonLdSchemas} />
         <main className="bg-(--primary-bg-color)">
           <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-            <Link href="/" prefetch={false} className="mb-2 inline-block">
-              <Button variant="ghost" size="sm" className="gap-2 hover:bg-white hover:text-black">
-                <ArrowLeft className="h-4 w-4" />
-                Back to Directory
-              </Button>
+            <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Directory
             </Link>
             <Breadcrumb>
               <BreadcrumbList>
@@ -231,11 +229,9 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
         <DirectoryJsonLd schemas={jsonLdSchemas} />
         <main className="bg-(--primary-bg-color)">
           <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-            <Link href="/" prefetch={false} className="mb-2 inline-block">
-              <Button variant="ghost" size="sm" className="gap-2 hover:bg-white hover:text-black">
-                <ArrowLeft className="h-4 w-4" />
-                Back to Directory
-              </Button>
+            <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Directory
             </Link>
             <Breadcrumb>
               <BreadcrumbList>
@@ -311,11 +307,9 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
       <DirectoryJsonLd schemas={jsonLdSchemas} />
       <main className="bg-(--primary-bg-color)">
         <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-          <Link href="/" prefetch={false} className="mb-2 inline-block">
-            <Button variant="ghost" size="sm" className="gap-2 hover:bg-white hover:text-black">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Directory
-            </Button>
+          <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Directory
           </Link>
           <Breadcrumb>
             <BreadcrumbList>

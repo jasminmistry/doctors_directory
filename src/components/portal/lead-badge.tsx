@@ -35,14 +35,14 @@ export function LeadBadge({ mobile = false }: LeadBadgeProps) {
 
   if (mobile) {
     return (
-      <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
+      <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-medium text-white">
         {count > 9 ? '9+' : count}
       </span>
     )
   }
 
   return (
-    <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
+    <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-medium text-white">
       {count > 99 ? '99+' : count}
     </span>
   )

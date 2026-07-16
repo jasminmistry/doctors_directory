@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db'
 import { Prisma } from '@prisma/client'
 import { cache } from 'react'
+import { unstable_cache } from 'next/cache'
 import type { Practitioner, RankingMeta, ItemMeta } from '@/lib/types'
 import { isRemovedPractitionerSlug, hasTripleLetterSequence } from '@/lib/directory-removals'
 
@@ -123,35 +124,42 @@ const CLINIC_SELECT = {
 /**
  * All practitioners with primary clinic merged — for search, city pages, sitemaps (cached)
  */
-export const getAllPractitionersForSearch = cache(async (): Promise<Practitioner[]> => {
-  const rows = await prisma.practitioner.findMany({
-    include: {
-      ranking: true,
-      treatments: {
-        select: {
-          treatment: { select: { name: true } },
-        },
-      },
-      clinicAssociations: {
-        orderBy: { clinicId: 'asc' },
-        take: 1,
+export const getAllPractitionersForSearch = cache(
+  unstable_cache(
+    async (): Promise<Practitioner[]> => {
+      const rows = await prisma.practitioner.findMany({
+        where: { isHidden: false },
         include: {
-          clinic: { select: CLINIC_SELECT },
+          ranking: true,
+          treatments: {
+            select: {
+              treatment: { select: { name: true } },
+            },
+          },
+          clinicAssociations: {
+            orderBy: { clinicId: 'asc' },
+            take: 1,
+            include: {
+              clinic: { select: CLINIC_SELECT },
+            },
+          },
         },
-      },
-    },
-    orderBy: { displayName: 'asc' },
-  })
+        orderBy: { displayName: 'asc' },
+      })
 
-  return rows
-    .filter((p) => p.clinicAssociations.length > 0)
-    .filter(
-      (p) =>
-        !isRemovedPractitionerSlug(p.slug) &&
-        !hasTripleLetterSequence(p.displayName),
-    )
-    .map(convertDbPractitionerToOldType)
-})
+      return rows
+        .filter((p) => p.clinicAssociations.length > 0)
+        .filter(
+          (p) =>
+            !isRemovedPractitionerSlug(p.slug) &&
+            !hasTripleLetterSequence(p.displayName),
+        )
+        .map(convertDbPractitionerToOldType)
+    },
+    ['practitioners-for-search'],
+    { revalidate: 300 }
+  )
+)
 
 /**
  * Single practitioner by slug with full clinic data including hours (cached)
@@ -159,8 +167,8 @@ export const getAllPractitionersForSearch = cache(async (): Promise<Practitioner
 export const getPractitionerBySlug = cache(async (slug: string): Promise<Practitioner | null> => {
   if (isRemovedPractitionerSlug(slug)) return null
 
-  const p = await prisma.practitioner.findUnique({
-    where: { slug },
+  const p = await prisma.practitioner.findFirst({
+    where: { slug, isHidden: false },
     include: {
       ranking: true,
       treatments: {
@@ -190,4 +198,8 @@ export const getPractitionerBySlug = cache(async (slug: string): Promise<Practit
 
 export async function updatePractitioner(slug: string, data: Prisma.PractitionerUpdateInput) {
   return await prisma.practitioner.update({ where: { slug }, data })
+}
+
+export async function createPractitioner(data: Prisma.PractitionerCreateInput) {
+  return await prisma.practitioner.create({ data })
 }

@@ -4,6 +4,32 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
+import { calculateAge } from '@/lib/utils'
+
+function resolveDirectoryBaseUrl(): string {
+  const candidates = [
+    process.env.NEXT_PUBLIC_DIRECTORY_BASE_URL,
+    process.env.DIRECTORY_BASE_URL,
+    process.env.NEXT_PUBLIC_BASE_URL,
+  ]
+
+  for (const candidate of candidates) {
+    const trimmed = candidate?.trim()
+    if (!trimmed) continue
+
+    const normalized = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+
+    try {
+      return new URL(normalized).origin
+    } catch {
+      continue
+    }
+  }
+
+  return 'http://localhost:3000'
+}
+
+const DIRECTORY_BASE_URL = resolveDirectoryBaseUrl()
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const user = await getPortalUser()
@@ -58,8 +84,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         clinicId: String(user.clinicId),
         returnToLeadId: String(leadId),
       },
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/directory/portal/clinic/prospects?setup=done&lead=${leadId}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/directory/portal/clinic/prospects`,
+      success_url: `${DIRECTORY_BASE_URL}/directory/portal/clinic/prospects?setup=done&lead=${leadId}`,
+      cancel_url: `${DIRECTORY_BASE_URL}/directory/portal/clinic/prospects`,
     })
     return NextResponse.json({ setupRequired: true, url: setupSession.url }, { status: 402 })
   }
@@ -100,6 +126,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         stripePaymentIntentId: intent.id,
         seenAt: new Date(),
       },
+      include: { patient: { select: { dateOfBirth: true } } },
     })
 
     return NextResponse.json({
@@ -107,6 +134,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       patientName: updated.patientName,
       patientPhone: updated.patientPhone,
       patientEmail: updated.patientEmail,
+      patientAge: updated.patient?.dateOfBirth ? calculateAge(updated.patient.dateOfBirth) : null,
     })
   } catch (err: unknown) {
     // Stripe throws StripeCardError for declined cards

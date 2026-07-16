@@ -2,13 +2,23 @@ import { redirect } from 'next/navigation'
 import { getPortalUser } from '@/lib/portal'
 import { prisma } from '@/lib/db'
 import { PortalCalendarView } from '@/components/portal/portal-calendar-view'
+import { WrongAccountNotice } from '@/components/portal/wrong-account-notice'
 import { CalendarDays } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
 export default async function CalendarPage() {
   const user = await getPortalUser()
-  if (!user || !user.clinicId) redirect('/portal/login')
+  if (!user) redirect('/portal/login?next=/portal/clinic/calendar')
+  if (!user.clinicId) {
+    return (
+      <WrongAccountNotice
+        requiredEntityType="clinic"
+        currentEntityType={user.entityType}
+        next="/portal/clinic/calendar"
+      />
+    )
+  }
 
   const clinic = await prisma.clinic.findUnique({
     where: { id: user.clinicId },
