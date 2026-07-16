@@ -52,7 +52,7 @@ export function ServiceCityDirectoryPage({ entry }: Props) {
 
   const pagePath = `/${entry.serviceSlug}/${entry.locationSlug}`
   const listItems = clinicItemListFromClinics(clinics, (clinic) =>
-    getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
+    getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name })
   )
   const jsonLdSchemas = [
     buildBreadcrumbListJsonLd([

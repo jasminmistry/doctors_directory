@@ -244,7 +244,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   );
   const rankingSubtitle =
     clinic?.ranking?.subtitle_text ?? `${overallScore}/100 in ${clinic?.City ?? displayCityName}`;
-  const clinicDisplayName = getClinicDisplayName({ slug: clinic.slug, url: clinic.url });
+  const clinicDisplayName = getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name });
   const medicalClinicSchema = buildMedicalClinicJsonLd(clinic, clinicDisplayName);
 
   return (
@@ -490,7 +490,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const clinic = convertDbClinicToOldType(dbClinic);
   const clinicDisplayName =
     dbClinic.name?.trim() ||
-    getClinicDisplayName({ slug: clinic.slug, url: clinic.url }) ||
+    getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name }) ||
     capitalize(clinic.slug!);
   const city = capitalize(params.cityslug);
   const topTreatments = Array.isArray(clinic.Treatments) ? clinic.Treatments.slice(0, 3).map((t: string) => capitalize(t)) : [];
