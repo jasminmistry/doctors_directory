@@ -46,8 +46,8 @@ export const buildItemListJsonLd = (
 })
 
 export const clinicItemListFromClinics = (
-  clinics: ReadonlyArray<{ slug?: string; City?: string; url?: string }>,
-  getName: (clinic: { slug?: string | undefined; url?: string | undefined }) => string,
+  clinics: ReadonlyArray<{ slug?: string; City?: string; url?: string; name?: string }>,
+  getName: (clinic: { slug?: string | undefined; url?: string | undefined; name?: string | undefined }) => string,
   limit = 12
 ): DirectoryJsonLdListItem[] =>
   clinics.slice(0, limit).flatMap((clinic) => {

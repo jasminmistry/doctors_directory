@@ -155,11 +155,11 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     buildItemListJsonLd(
       `Clinics in ${displayCityName}`,
       clinicItemListFromClinics(cityClinics, (clinic) =>
-        getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
+        getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name })
       )
     ),
     ...buildMedicalClinicListJsonLd(cityClinics, (clinic) =>
-      getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
+      getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name })
     ),
   ]
 

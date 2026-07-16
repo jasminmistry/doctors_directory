@@ -17,6 +17,7 @@ import { OnlineDot } from "@/components/Clinic/online-dot";
 import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dialog";
 import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
+import { getClinicDisplayName } from "@/lib/clinic-display";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
@@ -39,10 +40,9 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
   };
   const consultationHref =
     normalizeExternalUrl(clinic.website) ?? normalizeExternalUrl(clinic.url);
-  const practitionerName = clinic.slug!
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+  const practitionerName =
+    clinicName?.trim() ||
+    getClinicDisplayName(clinic);
   const roleTitle = clinic.category;
   const DEFAULT_IMG = "/directory/images/default-dr-profile-1.webp";
   const initialImg =

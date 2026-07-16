@@ -244,7 +244,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   );
   const rankingSubtitle =
     clinic?.ranking?.subtitle_text ?? `${overallScore}/100 in ${clinic?.City ?? displayCityName}`;
-  const clinicDisplayName = getClinicDisplayName({ slug: clinic.slug, url: clinic.url });
+  const clinicDisplayName = getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name });
   const medicalClinicSchema = buildMedicalClinicJsonLd(clinic, clinicDisplayName);
 
   return (
@@ -282,7 +282,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{capitalize(clinic.slug!)}</BreadcrumbPage>
+              <BreadcrumbPage>{clinicDisplayName}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           </Breadcrumb>
@@ -292,7 +292,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
         <ProfileHeader
           clinic={clinic}
-          clinicName={dbClinic.name ?? undefined}
+          clinicName={clinicDisplayName}
           hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
           claimState={claimState}
           goToProfileHref={goToProfileHref}
@@ -490,7 +490,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const clinic = convertDbClinicToOldType(dbClinic);
   const clinicDisplayName =
     dbClinic.name?.trim() ||
-    getClinicDisplayName({ slug: clinic.slug, url: clinic.url }) ||
+    getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name }) ||
     capitalize(clinic.slug!);
   const city = capitalize(params.cityslug);
   const topTreatments = Array.isArray(clinic.Treatments) ? clinic.Treatments.slice(0, 3).map((t: string) => capitalize(t)) : [];
