@@ -230,6 +230,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
     }
     if (!isPortal && !data.clinicId) nextErrors.clinicId = 'City is required'
 
+
     if (Object.keys(nextErrors).length > 0) {
       setFieldErrors(nextErrors)
       toast.error('Please fix the highlighted fields')

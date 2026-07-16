@@ -1,5 +1,8 @@
 import SearchPage from "@/components/search/searchClient";
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
+
+const robots = getPractitionerDirectoryRobots();
 
 export const metadata = {
   title: "Best Verified Aesthetic Practitioners UK - Reviews & Booking",
@@ -7,6 +10,7 @@ export const metadata = {
   alternates: {
     canonical: toDirectoryCanonical("/practitioners"),
   },
+  ...(robots ? { robots } : {}),
 };
 
 export default function HomePage() {

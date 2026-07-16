@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client'
 import { cache } from 'react'
 import { unstable_cache } from 'next/cache'
 import type { Practitioner, RankingMeta, ItemMeta } from '@/lib/types'
+import { isRemovedPractitionerSlug, hasTripleLetterSequence } from '@/lib/directory-removals'
 
 const DAY_LABELS: Record<string, string> = {
   MONDAY: 'Monday',
@@ -148,6 +149,11 @@ export const getAllPractitionersForSearch = cache(
 
       return rows
         .filter((p) => p.clinicAssociations.length > 0)
+        .filter(
+          (p) =>
+            !isRemovedPractitionerSlug(p.slug) &&
+            !hasTripleLetterSequence(p.displayName),
+        )
         .map(convertDbPractitionerToOldType)
     },
     ['practitioners-for-search'],
@@ -159,6 +165,8 @@ export const getAllPractitionersForSearch = cache(
  * Single practitioner by slug with full clinic data including hours (cached)
  */
 export const getPractitionerBySlug = cache(async (slug: string): Promise<Practitioner | null> => {
+  if (isRemovedPractitionerSlug(slug)) return null
+
   const p = await prisma.practitioner.findFirst({
     where: { slug, isHidden: false },
     include: {
@@ -184,7 +192,8 @@ export const getPractitionerBySlug = cache(async (slug: string): Promise<Practit
     },
   })
 
-  return p ? convertDbPractitionerToOldType(p) : null
+  if (!p || hasTripleLetterSequence(p.displayName)) return null
+  return convertDbPractitionerToOldType(p)
 })
 
 export async function updatePractitioner(slug: string, data: Prisma.PractitionerUpdateInput) {

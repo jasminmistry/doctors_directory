@@ -19,6 +19,7 @@ import {
   isRegulatoryAccreditation,
   normalizeAccreditationSlug,
 } from "@/lib/accreditation-directory"
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots"
 
 export const dynamic = "force-dynamic"
 
@@ -157,6 +158,7 @@ export async function generateMetadata({ params }: AccreditedPractitionersPagePr
     notFound()
   }
   const accreditationName = getAccreditationDisplayName(accreditation)
+  const robots = getPractitionerDirectoryRobots()
 
   return {
     title: `Accredited ${accreditationName} Practitioners in ${cityslug}`,
@@ -170,5 +172,6 @@ export async function generateMetadata({ params }: AccreditedPractitionersPagePr
       title: `Accredited ${accreditationName} Practitioners in ${cityslug}`,
       description: `Find ${accreditationName} accredited practitioners in ${cityslug}. Compare ratings and reviews.`,
     },
+    ...(robots ? { robots } : {}),
   }
 }

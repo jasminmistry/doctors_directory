@@ -75,11 +75,10 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
       )}
 
       <div className="px-4 md:px-0 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-        {/* Left: avatar + info */}
         <div className="flex flex-col gap-3 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0 min-w-0 flex-1 lg:max-w-3xl">
           <div className="flex flex-row items-start gap-4">
             <div className="flex flex-col items-center gap-2 shrink-0 md:items-start">
-              <div className="relative h-20 w-20 md:h-40 md:w-40 shrink-0 overflow-hidden rounded-full bg-gray-200">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-gray-200 md:h-40 md:w-40">
                 <img
                   src={imgSrc}
                   alt={practitionerName}
@@ -156,7 +155,6 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
           </div>
         </div>
 
-        {/* Address + phone — mobile only */}
         <div className="flex flex-col gap-1.5 md:hidden pt-1">
           <address className="not-italic text-sm leading-snug flex items-start gap-2">
             <MapPin className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />

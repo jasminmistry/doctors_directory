@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import type { Clinic, City, Practitioner } from "@/lib/types";
 import {
   Breadcrumb,
@@ -33,6 +34,7 @@ import {
   clinicItemListFromClinics,
 } from "@/lib/directory-json-ld";
 import { getClinicDisplayName } from "@/lib/clinic-display";
+import { isConsentzClinicSlug } from "@/lib/consentz-customers";
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
 interface ProfilePageProps {
   params: {
@@ -93,11 +95,24 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const citySlug = params.cityslug;
   const displayCityName = capitalize(citySlug);
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
+  if (normalizedCitySlug === "4qr") {
+    notFound();
+  }
   const cityClinics: Clinic[] = clinics
     .filter(
       (p) => p.City?.toLowerCase() === normalizedCitySlug && !isRemovedClinicSlug(p.slug)
     )
-    .map((clinic) => applyPrestigeToClinic(clinic));
+    .map((clinic) => applyPrestigeToClinic({
+      ...clinic,
+      isConsentz: isConsentzClinicSlug(clinic.slug) || Boolean(clinic.isConsentz),
+    }))
+    .sort((left, right) => {
+      const leftConsentz = isConsentzClinicSlug(left.slug) || Boolean(left.isConsentz);
+      const rightConsentz = isConsentzClinicSlug(right.slug) || Boolean(right.isConsentz);
+      if (leftConsentz !== rightConsentz) return leftConsentz ? -1 : 1;
+      if ((right.reviewCount ?? 0) !== (left.reviewCount ?? 0)) return (right.reviewCount ?? 0) - (left.reviewCount ?? 0);
+      return (right.rating ?? 0) - (left.rating ?? 0);
+    });
   const cityData = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );
