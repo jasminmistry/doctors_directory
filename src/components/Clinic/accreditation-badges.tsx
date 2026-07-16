@@ -6,6 +6,7 @@ interface Badge {
 }
 
 interface AccreditationBadgesProps {
+  isConsentz?: boolean
   isSaveFace?: boolean
   isDoctor?: boolean
   isJccp?: boolean | null; jccpUrl?: string | null
@@ -17,6 +18,7 @@ interface AccreditationBadgesProps {
 
 export function AccreditationBadges(props: AccreditationBadgesProps) {
   const badges: Badge[] = [
+    props.isConsentz && { label: 'Consentz Customer' },
     props.isSaveFace && { label: 'Save Face' },
     props.isDoctor   && { label: 'Registered Doctor' },
     props.isJccp     && { label: 'JCCP',  url: props.jccpUrl },

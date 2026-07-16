@@ -78,6 +78,7 @@ export interface Clinic {
   x_twitter: string
   Treatments?: string[]
   claimed?: boolean
+  isConsentz?: boolean
   verified?: boolean
   domainVerified?: boolean
   gbpMatch?: boolean

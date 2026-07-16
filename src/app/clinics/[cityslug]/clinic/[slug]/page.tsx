@@ -40,6 +40,7 @@ import { buildMedicalClinicJsonLd } from "@/lib/directory-json-ld";
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { isRemovedClinicSlug } from "@/lib/directory-removals";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
+import { isConsentzClinicSlug } from "@/lib/consentz-customers";
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
   incoming: Record<string, ItemMeta>
@@ -82,6 +83,7 @@ function convertSearchClinicToOldType(clinic: any): Clinic {
     website: '', email: '', about_section: '', accreditations: '',
     awards: '', affiliations: '', hours: '', Practitioners: '',
     Insurace: '' as any, Payments: '' as any, Fees: [] as any, x_twitter: '',
+    isConsentz: isConsentzClinicSlug(clinic.slug),
   } as Clinic;
 }
 
@@ -144,6 +146,7 @@ function convertDbClinicToOldType(dbClinic: any): Clinic {
     x_twitter: dbClinic.xTwitter || '',
     Treatments: dbClinic.treatments?.map((t: any) => t.treatment.name) || [],
     claimed: dbClinic.claimed ?? false,
+    isConsentz: isConsentzClinicSlug(dbClinic.slug),
     verified: (dbClinic as any).verified ?? false,
     domainVerified: (dbClinic as any).domainVerified ?? false,
     gbpMatch: (dbClinic as any).gbpMatch ?? false,
@@ -302,6 +305,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
                 />
                 <AccreditationBadges
+                  isConsentz={clinic.isConsentz}
                   isSaveFace={clinic.isSaveFace}
                   isDoctor={clinic.isDoctor}
                   isJccp={clinic.isJCCP ? clinic.isJCCP[0] : null}

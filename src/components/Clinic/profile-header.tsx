@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
+import { isConsentzClinic } from "@/lib/consentz-customers";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
@@ -34,6 +35,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
   };
   const consultationHref =
     normalizeExternalUrl(clinic.website) ?? normalizeExternalUrl(clinic.url);
+  const isConsentz = isConsentzClinic(clinic);
   const practitionerName = clinic.slug!
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -66,6 +68,13 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false }: R
               className="object-cover w-full h-full rounded-full"
               onError={() => setImgSrc(DEFAULT_IMG)}
             />
+            {isConsentz && (
+              <img
+                src="/directory/consentz-customer-badge.jpg"
+                alt="Consentz Customer"
+                className="absolute -right-1 -top-1 h-7 w-7 rounded-full border border-white object-cover md:h-10 md:w-10"
+              />
+            )}
           </div>
 
           {/* Text info — uniform gap between every row */}

@@ -7,6 +7,7 @@ import { getAllProducts as getAllProductsFromDb, searchProductsForListing } from
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import { modalities } from "@/lib/data"
 import { getCachedSearchData, setCachedSearchData } from "@/lib/search-cache"
+import { isConsentzClinicSlug } from "@/lib/consentz-customers"
 
 const modalitiesSet = new Set(modalities.map((m) => m.toLowerCase()))
 
@@ -28,6 +29,7 @@ type SearchClinicResult = Pick<
   | "isRQIA"
   | "Treatments"
   | "claimed"
+  | "isConsentz"
   | "verified"
   | "idVerified"
   | "manualVerified"
@@ -61,6 +63,7 @@ function convertDbClinicToOldFormat(clinic: SearchClinic): SearchClinicResult {
     isRQIA: clinic.isRqia ? [clinic.isRqia, ''] : null,
     Treatments: clinic.Treatments || [],
     claimed: clinic.claimed ?? false,
+    isConsentz: isConsentzClinicSlug(clinic.slug),
     verified: clinic.verified ?? false,
     idVerified: clinic.idVerified ?? false,
     manualVerified: clinic.manualVerified ?? false,
