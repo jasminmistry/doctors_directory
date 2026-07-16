@@ -44,3 +44,7 @@ next-env.d.ts
 
 .vscode/settings.json
 uploads/
+!uploads/images/
+!uploads/images/.gitkeep
+!public/images/uploads/
+!public/images/uploads/.gitkeep

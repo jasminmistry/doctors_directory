@@ -21,10 +21,20 @@ export async function POST(request: Request) {
   try {
     const body = await request.json()
 
-    const slug = body.slug?.trim()
-    if (!slug) return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
-    const displayName = body.displayName?.trim()
-    if (!displayName) return NextResponse.json({ error: 'Name is required' }, { status: 400 })
+    const slug = typeof body.slug === 'string' ? body.slug.trim() : ''
+    const displayName = typeof body.displayName === 'string' ? body.displayName.trim() : ''
+
+    const fieldErrors: Record<string, string> = {}
+    if (!slug) fieldErrors.slug = 'Slug is required'
+    else if (!/^[a-z0-9-]+$/.test(slug)) fieldErrors.slug = 'Slug must be kebab-case'
+    if (!displayName) fieldErrors.displayName = 'Display name is required'
+
+    if (Object.keys(fieldErrors).length > 0) {
+      return NextResponse.json(
+        { error: 'Please fix the highlighted fields', fieldErrors },
+        { status: 400 }
+      )
+    }
 
     const record = await prisma.practitioner.create({
       data: {
@@ -45,7 +55,10 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Failed to create practitioner:', error)
     if ((error as any).code === 'P2002') {
-      return NextResponse.json({ error: 'A practitioner with this slug already exists' }, { status: 409 })
+      return NextResponse.json(
+        { error: 'A practitioner with this slug already exists', fieldErrors: { slug: 'This slug is already taken' } },
+        { status: 409 }
+      )
     }
     return NextResponse.json({ error: 'Failed to create practitioner' }, { status: 500 })
   }
