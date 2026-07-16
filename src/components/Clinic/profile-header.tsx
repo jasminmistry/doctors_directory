@@ -16,7 +16,6 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { OnlineDot } from "@/components/Clinic/online-dot";
 import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dialog";
 import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
-import { isConsentzClinic } from "@/lib/consentz-customers";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 interface ProfileHeaderProps {
   clinic: Clinic;
@@ -40,7 +39,6 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
   };
   const consultationHref =
     normalizeExternalUrl(clinic.website) ?? normalizeExternalUrl(clinic.url);
-  const isConsentz = isConsentzClinic(clinic);
   const practitionerName = clinic.slug!
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -80,20 +78,13 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
         <div className="flex flex-col gap-3 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0 min-w-0 flex-1 lg:max-w-3xl">
           <div className="flex flex-row items-start gap-4">
             <div className="flex flex-col items-center gap-2 shrink-0 md:items-start">
-              <div className="relative h-20 w-20 md:h-40 md:w-40 shrink-0 overflow-hidden rounded-full bg-gray-200">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-gray-200 md:h-40 md:w-40">
                 <img
                   src={imgSrc}
                   alt={practitionerName}
                   className="object-cover w-full h-full rounded-full"
                   onError={() => setImgSrc(DEFAULT_IMG)}
                 />
-                {isConsentz && (
-                  <img
-                    src="/directory/consentz-customer-badge.jpg"
-                    alt="Consentz Customer"
-                    className="absolute -right-1 -top-1 h-7 w-7 rounded-full border border-white object-cover md:h-10 md:w-10"
-                  />
-                )}
               </div>
               <div className="hidden md:block max-w-[10.5rem]">
                 <PrestigeProfileBadge
