@@ -3,6 +3,10 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
+// Public, read-only, no cookies/credentials involved — safe to allow any origin.
+// Consentz Core calls this cross-origin from the admin directory-link page.
+const CORS_HEADERS = { 'Access-Control-Allow-Origin': '*' }
+
 /**
  * GET /api/claim/listing-preview?slug=...&type=clinic|practitioner
  *
@@ -16,7 +20,7 @@ export async function GET(req: NextRequest) {
   const type = searchParams.get('type')?.trim()
 
   if (!slug) {
-    return NextResponse.json({ error: 'slug is required' }, { status: 400 })
+    return NextResponse.json({ error: 'slug is required' }, { status: 400, headers: CORS_HEADERS })
   }
 
   try {
@@ -31,7 +35,7 @@ export async function GET(req: NextRequest) {
         },
       })
 
-      if (!p) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+      if (!p) return NextResponse.json({ error: 'Not found' }, { status: 404, headers: CORS_HEADERS })
 
       return NextResponse.json({
         name:     p.displayName ?? slug,
@@ -39,7 +43,7 @@ export async function GET(req: NextRequest) {
         category: p.specialty ?? '',
         claimed:  p.claimed,
         type:     'practitioner',
-      })
+      }, { headers: CORS_HEADERS })
     }
 
     const c = await prisma.clinic.findUnique({
@@ -53,7 +57,7 @@ export async function GET(req: NextRequest) {
       },
     })
 
-    if (!c) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    if (!c) return NextResponse.json({ error: 'Not found' }, { status: 404, headers: CORS_HEADERS })
 
     return NextResponse.json({
       name:     c.name ?? slug,
@@ -61,9 +65,9 @@ export async function GET(req: NextRequest) {
       category: c.category ?? '',
       claimed:  c.claimed,
       type:     'clinic',
-    })
+    }, { headers: CORS_HEADERS })
   } catch (error) {
     console.error('Listing preview error:', error)
-    return NextResponse.json({ error: 'Failed to fetch listing' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to fetch listing' }, { status: 500, headers: CORS_HEADERS })
   }
 }
