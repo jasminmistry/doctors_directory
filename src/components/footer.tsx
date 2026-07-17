@@ -6,6 +6,7 @@ import { Mail, Phone } from "lucide-react";
 import { HUB_CTA_FOOTER_LIGHT_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
 import { cn } from "@/lib/utils";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
+import { openCookieConsentPreferences } from "@/lib/cookie-consent";
 
 const FOOTER_COLUMN_HEADING =
   "font-medium text-base leading-7 text-white font-inter mb-2";
@@ -482,6 +483,13 @@ export function Footer() {
               <p className="m-0">
                 © {copyrightYear} Consentz. All rights reserved.
               </p>
+              <button
+                type="button"
+                onClick={openCookieConsentPreferences}
+                className="mt-1 text-sm text-gray-300 underline hover:opacity-70 cursor-pointer"
+              >
+                Cookie Settings
+              </button>
             </div>
             <div className="flex justify-center md:justify-end">
               <ul className="flex items-center gap-8">

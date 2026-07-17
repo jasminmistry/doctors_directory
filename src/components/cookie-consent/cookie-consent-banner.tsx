@@ -4,7 +4,11 @@ import { useEffect, useState } from "react"
 import { Cookie, X } from "lucide-react"
 
 import { Switch } from "@/components/ui/switch"
-import { readCookieConsent, writeCookieConsent } from "@/lib/cookie-consent"
+import {
+  COOKIE_CONSENT_OPEN_EVENT,
+  readCookieConsent,
+  writeCookieConsent,
+} from "@/lib/cookie-consent"
 
 const MARKETING_BASE_URL =
   process.env.NEXT_PUBLIC_MARKETING_BASE_URL || "https://www.consentz.com"
@@ -19,17 +23,46 @@ const outlineButton = `${buttonBase} border border-[var(--alto)] bg-transparent 
 export function CookieConsentBanner() {
   const [open, setOpen] = useState(false)
   const [view, setView] = useState<View>("banner")
-  const [analyticsEnabled, setAnalyticsEnabled] = useState(true)
+  // GDPR requires opt-in, not opt-out: non-essential categories default to
+  // off unless the visitor previously chose otherwise.
+  const [statisticsEnabled, setStatisticsEnabled] = useState(false)
+  const [marketingEnabled, setMarketingEnabled] = useState(false)
 
   useEffect(() => {
-    if (!readCookieConsent()) {
+    const existing = readCookieConsent()
+    if (existing) {
+      setStatisticsEnabled(existing.statistics)
+      setMarketingEnabled(existing.marketing)
+    } else {
       setOpen(true)
     }
+
+    function onOpenRequest() {
+      const current = readCookieConsent()
+      setStatisticsEnabled(current?.statistics ?? false)
+      setMarketingEnabled(current?.marketing ?? false)
+      setView("preferences")
+      setOpen(true)
+    }
+
+    window.addEventListener(COOKIE_CONSENT_OPEN_EVENT, onOpenRequest)
+    return () => window.removeEventListener(COOKIE_CONSENT_OPEN_EVENT, onOpenRequest)
   }, [])
 
-  function persist(analytics: boolean) {
-    writeCookieConsent(analytics)
+  function persist(preferences: { statistics: boolean; marketing: boolean }) {
+    const previous = readCookieConsent()
+    writeCookieConsent(preferences)
     setOpen(false)
+
+    // Statistics/marketing scripts that were already granted (e.g. Microsoft
+    // Clarity) can't be un-injected mid-session, so force a reload to fully
+    // stop them when the visitor withdraws consent.
+    const downgraded =
+      (previous?.statistics && !preferences.statistics) ||
+      (previous?.marketing && !preferences.marketing)
+    if (downgraded) {
+      window.location.reload()
+    }
   }
 
   if (!open) return null
@@ -88,10 +121,18 @@ export function CookieConsentBanner() {
           </p>
 
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-            <button type="button" onClick={() => persist(true)} className={primaryButton}>
+            <button
+              type="button"
+              onClick={() => persist({ statistics: true, marketing: true })}
+              className={primaryButton}
+            >
               Accept
             </button>
-            <button type="button" onClick={() => persist(false)} className={outlineButton}>
+            <button
+              type="button"
+              onClick={() => persist({ statistics: false, marketing: false })}
+              className={outlineButton}
+            >
               Deny
             </button>
             <button
@@ -109,27 +150,44 @@ export function CookieConsentBanner() {
             Cookie Preferences
           </h2>
 
-          <div className="flex flex-col divide-y divide-[var(--alto)]">
+          <div className="flex max-h-80 flex-col divide-y divide-[var(--alto)] overflow-y-auto">
             <div className="flex items-start justify-between gap-4 py-3">
               <div>
                 <p className="text-sm font-medium text-[var(--dune)]">Necessary</p>
                 <p className="text-sm text-[var(--grey)]">
-                  Required for the site to function. Always active.
+                  Strictly necessary for the site to function, such as remembering
+                  your consent choices. Always active.
                 </p>
               </div>
               <Switch checked disabled className="mt-1" />
             </div>
             <div className="flex items-start justify-between gap-4 py-3">
               <div>
-                <p className="text-sm font-medium text-[var(--dune)]">Analytics</p>
+                <p className="text-sm font-medium text-[var(--dune)]">Statistics</p>
                 <p className="text-sm text-[var(--grey)]">
-                  Helps us understand how visitors use the site so we can improve
-                  it.
+                  Used exclusively for anonymous, aggregated statistical purposes
+                  to help us understand how visitors use the site and improve it.
                 </p>
               </div>
               <Switch
-                checked={analyticsEnabled}
-                onCheckedChange={setAnalyticsEnabled}
+                checked={statisticsEnabled}
+                onCheckedChange={setStatisticsEnabled}
+                aria-label="Statistics cookies"
+                className="mt-1"
+              />
+            </div>
+            <div className="flex items-start justify-between gap-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-[var(--dune)]">Marketing</p>
+                <p className="text-sm text-[var(--grey)]">
+                  Used to track visitors across sites to display adverts that are
+                  relevant and engaging, and to measure their performance.
+                </p>
+              </div>
+              <Switch
+                checked={marketingEnabled}
+                onCheckedChange={setMarketingEnabled}
+                aria-label="Marketing cookies"
                 className="mt-1"
               />
             </div>
@@ -141,7 +199,9 @@ export function CookieConsentBanner() {
             </button>
             <button
               type="button"
-              onClick={() => persist(analyticsEnabled)}
+              onClick={() =>
+                persist({ statistics: statisticsEnabled, marketing: marketingEnabled })
+              }
               className={primaryButton}
             >
               Save preferences
