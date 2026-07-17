@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
 import { prisma } from '@/lib/db'
 import { invalidateSearchCache } from '@/lib/search-cache'
-import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
 
 export const dynamic = 'force-dynamic'
 
