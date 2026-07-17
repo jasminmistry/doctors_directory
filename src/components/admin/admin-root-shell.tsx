@@ -8,6 +8,7 @@ import Header from '@/components/header'
 import { Footer } from '@/components/footer'
 import { ScrollToTop } from '@/components/scroll-to-top'
 import { CtaClickTracker } from '@/components/tracking/cta-click-tracker'
+import { CookieConsentBanner } from '@/components/cookie-consent/cookie-consent-banner'
 
 function stripDirectoryBasePath(pathname: string) {
   if (pathname === '/directory' || pathname.startsWith('/directory/')) {
@@ -48,6 +49,7 @@ export function AdminRootShell({
       <Toaster position="top-right" richColors className="site-toaster" />
       <ScrollToTop />
       <CtaClickTracker />
+      <CookieConsentBanner />
       <Analytics />
     </div>
   )
