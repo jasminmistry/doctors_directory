@@ -1,13 +1,18 @@
 "use client";
-import { useState } from "react";
 import Link from "next/link";
 import { SearchBar } from "@/components/search/search-bar";
 import LogoLoop from "./LogoLoop";
 import { cn } from "@/lib/utils";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 
-export function HeroSection() {
-  const [mode, setMode] = useState<"patient" | "clinic">("patient");
+export type HomeAudienceMode = "patient" | "clinic";
+
+interface HeroSectionProps {
+  mode: HomeAudienceMode;
+  onModeChange: (mode: HomeAudienceMode) => void;
+}
+
+export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
   const bookDemoHref = b2bBookDemoHref();
   const imageLogos = [
     {
@@ -35,7 +40,6 @@ export function HeroSection() {
       alt: "",
       href: "",
     },
-    
   ];
 
   return (
@@ -54,14 +58,13 @@ export function HeroSection() {
           min-h-[calc(100vh-76px)]"
           aria-labelledby="hero-heading"
         >
-          {/* Clinic / Patient switcher */}
           <div className="flex-1 flex items-center flex-col justify-center w-full ">
             <span className="block font-semibold text-xs pt-4 mb-[-10px]">I AM A</span>
             <div className="flex justify-center pt-4 pb-3">
               <div className="inline-flex items-center bg-white border rounded-full p-1 gap-0.5">
                 <button
                   type="button"
-                  onClick={() => setMode("patient")}
+                  onClick={() => onModeChange("patient")}
                   className={cn(
                     "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200",
                     mode === "patient"
@@ -73,7 +76,7 @@ export function HeroSection() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMode("clinic")}
+                  onClick={() => onModeChange("clinic")}
                   className={cn(
                     "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200",
                     mode === "clinic"

@@ -1,12 +1,13 @@
 "use client";
 import { useState, type ReactNode } from "react";
 import dynamic from "next/dynamic";
-import { HeroSection } from "@/components/hero-section";
+import { HeroSection, type HomeAudienceMode } from "@/components/hero-section";
 import LogoLoop from "./LogoLoop";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Handshake, ChartBarDecreasing, CircleCheck } from "lucide-react";
 import { Card } from "./ui/card";
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 
 const cityList = [
   "Aberaeron",
@@ -893,6 +894,29 @@ const faqData = [
   },
 ];
 
+const providerFaqData = [
+  {
+    q: "How do I list my practice on Consentz?",
+    a: "Create a clinic listing from the registration flow, complete your profile with treatments and credentials, then publish. Patients searching the directory can discover and contact you.",
+  },
+  {
+    q: "Can I claim an existing clinic or practitioner profile?",
+    a: "Yes. If your practice is already listed, use Claim your profile to verify ownership. Once approved, you can manage your listing, leads, and portal tools from one place.",
+  },
+  {
+    q: "What do providers get from being listed?",
+    a: "A verified public profile, patient discovery, review collection, and optional Consentz tools for bookings, chat, and practice growth — depending on the plan you choose.",
+  },
+  {
+    q: "Is there a free way to get started?",
+    a: "Yes. You can list or claim your profile and start with free portal access. Paid plans unlock calendar sync, lead unlocks, and deeper Consentz Core integration.",
+  },
+  {
+    q: "How do patients find my clinic?",
+    a: "Patients search by city, treatment, and specialty across the Consentz Aesthetic Directory. A complete, verified profile with reviews helps you rank and convert more enquiries.",
+  },
+];
+
 const ITEMS_PER_PAGE = 9;
 
 export default function HomePage({
@@ -900,7 +924,18 @@ export default function HomePage({
 }: {
   featuredSection?: ReactNode;
 }) {
+  const [mode, setMode] = useState<HomeAudienceMode>("patient");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const bookDemoHref = b2bBookDemoHref();
+  const activeFaq = mode === "patient" ? faqData : providerFaqData;
+
+  function handleModeChange(next: HomeAudienceMode) {
+    setMode(next);
+    setOpenIndex(null);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
 
   const toggleFAQ = (index: number | null) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -911,11 +946,13 @@ export default function HomePage({
       <div className="bg-[var(--primary-bg-color)] relative inset-0 overflow-hidden">
         
         <div className="relative z-3">
-          <HeroSection/>
+          <HeroSection mode={mode} onModeChange={handleModeChange} />
         </div> 
 
       </div>
-      
+
+      {mode === "patient" ? (
+      <>
       <section
         className="bg-white-50 py-15 md:py-20"
         aria-labelledby="specialists-heading"
@@ -959,7 +996,6 @@ export default function HomePage({
         <section className="bg-white py-6 md:py-10">
           <div className="max-w-3xl mx-auto px-3 sm:px-4 lg:px-6">
             <div className="space-y-3">
-              {/* Step 1 */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
                 <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
                   <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
@@ -986,7 +1022,6 @@ export default function HomePage({
                 </div>
               </div>
 
-              {/* Step 2 */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
                 <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
                   <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
@@ -1014,7 +1049,6 @@ export default function HomePage({
                 </div>
               </div>
 
-              {/* Step 3 */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
                 <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
                   <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
@@ -1061,7 +1095,6 @@ export default function HomePage({
           />
         </div>
       </section>
-      {/* Most Popular Treatments */}
       <section
         className="py-15 md:py-20 relative"
         aria-labelledby="treatments-heading"
@@ -1130,10 +1163,8 @@ export default function HomePage({
         />
       </section>
 
-      {/* Featured cards */}
       {featuredSection}
 
-      {/* Trust Section */}
       <section className="py-15 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-xl md:text-2xl font-medium text-center mb-10 md:mb-16">
@@ -1171,8 +1202,90 @@ export default function HomePage({
           </div>
         </div>
       </section>
+      </>
+      ) : (
+      <>
+      <section className="bg-white-10 mb-8" aria-labelledby="provider-steps-heading">
+        <section className="bg-white py-6 md:py-10">
+          <div className="max-w-3xl mx-auto px-3 sm:px-4 lg:px-6">
+            <h2
+              id="provider-steps-heading"
+              className="text-xl md:text-2xl font-medium text-center mb-10"
+            >
+              How providers grow with Consentz
+            </h2>
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
+                    1.
+                  </div>
+                  <div>
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
+                      List or claim your practice
+                    </h2>
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
+                      Create a new listing or claim an existing profile so patients can find the real you.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/clipboard.png"
+                    alt="Clipboard Icon"
+                    className="w-14 md:w-20 h-auto object-contain"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
+                    2.
+                  </div>
+                  <div>
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
+                      Complete your verified profile
+                    </h2>
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
+                      Add treatments, credentials, photos, and availability so high-intent patients trust your practice.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/video-chat.png"
+                    alt="Video Chat Icon"
+                    className="w-14 md:w-20 h-auto object-contain"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
+                    3.
+                  </div>
+                  <div>
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
+                      Get discovered and fill your calendar
+                    </h2>
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
+                      Appear in patient search, collect verified reviews, and convert enquiries into bookings.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/check.png"
+                    alt="Check Icon"
+                    className="w-14 md:w-20 h-auto object-contain"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
 
-      {/* For Service Providers Section */}
       <section className="py-10 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-2 items-center">
@@ -1238,21 +1351,26 @@ export default function HomePage({
         </div>
       </section>
 
-      {/* Ready to Get Started CTA Section */}
-      <section className="bg-[var(--dune)] py-20 text-white hidden">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-medium mb-2">
-              Ready to Get Started?
-            </h2>
-            <p className="text-gray-300">
-              Join over 250+ clinics already growing with Consentz
-            </p>
-          </div>
-          <Button className="bg-white text-black hover:bg-gray-200">
-            BOOK DEMO
-          </Button>
-        </div>
+      <section
+        className="py-5 md:py-10 relative"
+        aria-labelledby="provider-regulatory-heading"
+      >
+        <h2 id="provider-regulatory-heading" className="sr-only">
+          Trusted Regulatory Partners
+        </h2>
+        <LogoLoop
+          logos={imageLogos}
+          speed={100}
+          direction="left"
+          logoHeight={48}
+          gap={40}
+          hoverSpeed={0}
+          scaleOnHover
+          fadeOut
+          fadeOutColor="#ffffff"
+          ariaLabel="Regulatory Compliance"
+          className="py-10 md:py-15 relative"
+        />
       </section>
 
       <section className="w-full py-10 px-4 lg:px-0 lg:py-20 overflow-hidden">
@@ -1330,12 +1448,33 @@ export default function HomePage({
         </div>
       </section>
 
-      {/* Latest blogs */}
+      <section className="bg-[var(--dune)] py-20 text-white">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-medium mb-2">
+              Ready to Get Started?
+            </h2>
+            <p className="text-gray-300">
+              Join over 250+ clinics already growing with Consentz
+            </p>
+          </div>
+          <a
+            href={bookDemoHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-gray-200 transition-colors"
+          >
+            BOOK DEMO
+          </a>
+        </div>
+      </section>
+      </>
+      )}
+
       <section
         className="max-w-7xl mx-auto px-4 md:px-6 py-12"
         aria-labelledby="blog-heading"
       >
-        {/* Header */}
         <h2 id="blog-heading" className="sr-only">
           Our Latest Blogs
         </h2>
@@ -1350,7 +1489,6 @@ export default function HomePage({
           </p>
         </div>
 
-        {/* Blog cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogs.map(({ id, title, img, link }) => (
             <article
@@ -1395,7 +1533,6 @@ export default function HomePage({
           </Button>
         </div>
       </section>
-      {/* FAQ */}
       <section
         className="max-w-4xl mx-auto pt-4 pb-20 px-6"
         aria-labelledby="faq-heading"
@@ -1407,16 +1544,17 @@ export default function HomePage({
           Frequently Asked Questions
         </h2>
         <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-          Find quick answers to common questions about the Consentz Aesthetic
-          Directory.
+          {mode === "patient"
+            ? "Find quick answers to common questions about the Consentz Aesthetic Directory."
+            : "Find quick answers for clinics and practitioners listing or claiming on Consentz."}
         </p>
 
         <div className="space-y-4">
-          {faqData.map((item, index) => {
+          {activeFaq.map((item, index) => {
             const isOpen = openIndex === index;
             return (
               <details
-                key={index}
+                key={`${mode}-${index}`}
                 open={isOpen}
                 onToggle={() => toggleFAQ(index)}
                 className="border border-[#e0e0e0]  rounded-lg p-4 transition-all duration-300"
@@ -1442,7 +1580,7 @@ export default function HomePage({
             }
             className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#f4f4f4] px-6 py-3 text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
           >
-            Read All FAQ'S
+            Read All FAQ&apos;S
           </Button>
         </div>
       </section>
