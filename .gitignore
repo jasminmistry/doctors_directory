@@ -48,5 +48,3 @@ uploads/
 !uploads/images/.gitkeep
 !public/images/uploads/
 !public/images/uploads/.gitkeep
-*.sql
-!prisma/migrations/**/*.sql

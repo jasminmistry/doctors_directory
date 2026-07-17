@@ -296,6 +296,7 @@ Admin:
 | `STRIPE_SECRET_KEY` | Stripe server-side operations |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signature validation |
 | `RESEND_API_KEY` | Transactional email |
+| `UNSUBSCRIBE_SECRET` | HMAC signing for campaign unsubscribe/unlist links (`src/lib/campaign-unsubscribe.ts`) |
 
 ---
 

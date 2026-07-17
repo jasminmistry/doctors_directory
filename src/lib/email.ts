@@ -586,3 +586,107 @@ ${claimUrl}
     `.trim(),
   })
 }
+
+export async function sendClaimInviteEmail({
+  to,
+  clinicName,
+  claimUrl,
+  manageUrl,
+}: {
+  to: string
+  clinicName: string
+  claimUrl: string
+  /** Used for both the "Unsubscribe" and "Unlist My Clinic" links — same endpoint, same effect. */
+  manageUrl: string
+}) {
+  const transport = createTransport()
+  const supportEmail = 'care@consentz.com'
+  const privacyUrl = 'https://consentz.com/privacy'
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject: 'Claim your free Consentz Directory listing',
+    text: `
+Hi ${clinicName}
+
+The Consentz Directory is the UK's leading Aesthetics and Wellness marketplace, helping prospective patients discover and compare trusted aesthetic and private healthcare clinics — while giving clinics an opportunity to showcase their treatments, expertise and services for free.
+
+We noticed that your clinic is listed in the Consentz Directory, but your profile hasn't yet been claimed.
+
+Claiming your listing is free and only takes a minute. Once verified, you'll be able to:
+
+- Receive leads from prospective patients who have requested further information and/or are ready to book a consultation.
+- Increase your visibility to people actively searching for clinics like yours.
+- Update your clinic information and contact details.
+- Add descriptions and images.
+- Showcase your treatments and specialisms.
+- Keep your profile accurate and up to date for prospective patients.
+
+Claim your clinic: ${claimUrl}
+
+If you have any questions, simply email us at ${supportEmail} — we'd be happy to help.
+
+---
+
+Why have you received this email?
+
+We believe the Consentz Directory is relevant to your business and are contacting you under our legitimate interests (Article 6(1)(f) UK GDPR) to invite you to manage your clinic's listing.
+
+As we did not obtain your contact details directly from you, this email also serves as the information notice required under Article 14 of the UK GDPR. Information about how we collect, use and protect your personal data, your rights, and how to contact us can be found in our Privacy Notice: ${privacyUrl}
+
+If your clinic has already been claimed, or you believe you've received this email in error, please let us know.
+
+Unsubscribe: If you no longer wish to receive emails from us, visit ${manageUrl} or reply with "Unsubscribe" and we'll remove you from future communications.
+
+Remove your listing: If you do not wish your clinic to appear in the Consentz Directory, visit ${manageUrl} or contact us and we'll process your request promptly, subject to any legal obligations to retain certain records.
+
+Thank you,
+The Consentz Team
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
+  <p>Hi ${clinicName}</p>
+  <p>The <strong>Consentz Directory</strong> is the UK's leading Aesthetics and Wellness marketplace, helping prospective patients discover and compare trusted aesthetic and private healthcare clinics, while giving clinics an opportunity to showcase their treatments, expertise and services for <strong>free</strong>.</p>
+  <p>We noticed that your clinic is listed in the Consentz Directory, but your profile hasn't yet been claimed.</p>
+  <p>Claiming your listing is <strong>free</strong> and only takes a minute. Once verified, you'll be able to:</p>
+  <ul style="font-size:15px;line-height:1.6;color:#333;padding-left:20px;">
+    <li>Receive leads from prospective patients who have requested further information and/or are ready to book a consultation.</li>
+    <li>Increase your visibility to people actively searching for clinics like yours.</li>
+    <li>Update your clinic information and contact details.</li>
+    <li>Add descriptions and images.</li>
+    <li>Showcase your treatments and specialisms.</li>
+    <li>Keep your profile accurate and up to date for prospective patients.</li>
+  </ul>
+  <a href="${claimUrl}"
+     style="display:inline-block;margin:16px 0 24px;padding:12px 28px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;font-size:15px;">
+    Claim Listing
+  </a>
+  <p>If you have any questions, simply email us at <a href="mailto:${supportEmail}">${supportEmail}</a> — we'd be happy to help.</p>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="font-size:13px;color:#666;font-weight:600;">Why have you received this email?</p>
+  <p style="font-size:12px;color:#999;line-height:1.6;">
+    We believe the Consentz Directory is relevant to your business and are contacting you under our legitimate interests (Article 6(1)(f) UK GDPR) to invite you to manage your clinic's listing.
+  </p>
+  <p style="font-size:12px;color:#999;line-height:1.6;">
+    As we did not obtain your contact details directly from you, this email also serves as the information notice required under <strong>Article 14 of the UK GDPR</strong>. Information about how we collect, use and protect your personal data, your rights, and how to contact us can be found in our <a href="${privacyUrl}" style="color:#999;">Privacy Notice</a>.
+  </p>
+  <p style="font-size:12px;color:#999;line-height:1.6;">
+    If your clinic has already been claimed, or you believe you've received this email in error, please let us know.
+  </p>
+  <p style="font-size:12px;color:#999;line-height:1.6;">
+    <strong>Unsubscribe:</strong> If you no longer wish to receive emails from us, <a href="${manageUrl}" style="color:#999;">click here</a> or reply with "Unsubscribe" and we'll remove you from future communications.
+  </p>
+  <p style="font-size:12px;color:#999;line-height:1.6;">
+    <strong>Remove your listing:</strong> If you do not wish your clinic to appear in the Consentz Directory, <a href="${manageUrl}" style="color:#999;">click here</a> or contact us and we'll process your request promptly, subject to any legal obligations to retain certain records.
+  </p>
+  <p style="font-size:12px;color:#999;">Thank you,<br />The Consentz Team</p>
+</body>
+</html>
+    `.trim(),
+  })
+}

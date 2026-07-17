@@ -137,8 +137,8 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [isNew, setIsNew] = useState(false)
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [clinics, setClinics] = useState<ClinicOption[]>([])
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const router = useRouter()
   const params = useParams()
   const slug = (params?.slug as string) ?? ''
@@ -222,6 +222,9 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
   }
 
   async function handleSave() {
+    if (!data.displayName?.trim()) { toast.error('Name is required'); return }
+    if (isNew && !data.slug.trim()) { toast.error('Slug is required'); return }
+    if (!isPortal && !data.clinicId) { toast.error('City is required'); return }
     const nextErrors: Record<string, string> = {}
     if (!data.displayName?.trim()) nextErrors.displayName = 'Display name is required'
     if (isNew && !data.slug.trim()) nextErrors.slug = 'Slug is required'

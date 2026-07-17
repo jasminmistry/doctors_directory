@@ -28,6 +28,7 @@ import { PageViewTracker } from "@/components/tracking/page-view-tracker";
 import { EventBookingSection } from "@/components/Clinic/event-booking-section";
 import { getClaimState } from "@/lib/claim-utils";
 import { getPortalUser } from "@/lib/portal";
+import { getPractitionerProfileRobots } from "@/lib/practitioner-profile-robots";
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 
 function mergeBoxplotDataFromDict(
