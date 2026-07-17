@@ -27,6 +27,7 @@ import {
   ExternalLink,
   Sparkles,
   Link2Off,
+  Mail,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -60,6 +61,7 @@ function NavBadge({ count }: { count: number }) {
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/clinics", label: "Clinics", icon: Building2 },
+  { href: "/admin/clinics/claim-invites", label: "Claim Invites", icon: Mail },
   {
     href: "/admin/featured-profiles",
     label: "Featured Profiles",
@@ -108,6 +110,12 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
     await fetch("/directory/api/auth/logout", { method: "POST" });
     router.push("/admin/login");
   }
+
+  // When multiple non-exact hrefs prefix-match (e.g. /admin/clinics and
+  // /admin/clinics/claim-invites), only the longest (most specific) one lights up.
+  const bestPrefixMatch = NAV
+    .filter((item) => !("exact" in item && item.exact) && pathname.startsWith(item.href))
+    .sort((a, b) => b.href.length - a.href.length)[0]?.href;
 
   return (
     <AdminCountsContext.Provider value={{ refreshCounts }}>
@@ -163,7 +171,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                 const active =
                   "exact" in item && item.exact
                     ? pathname === item.href
-                    : pathname.startsWith(item.href);
+                    : item.href === bestPrefixMatch;
 
                 const topCount =
                   item.href === "/admin/unlink-requests"

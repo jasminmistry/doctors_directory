@@ -238,6 +238,10 @@ model Clinic {
   manualVerified Boolean    @default(false)
   isHidden       Boolean    @default(false)
 
+  // Cold-outreach campaign — claim-invite emails to unclaimed clinics
+  campaignOptedOut  Boolean   @default(false)
+  campaignEmailedAt DateTime?
+
   // Profile enhancements
   coverImage   String?       @db.Text
   cqcStatus    CqcStatus?
@@ -275,6 +279,7 @@ model Clinic {
   @@index([rating])
   @@index([category])
   @@index([reviewCount])
+  @@index([claimed, campaignOptedOut, campaignEmailedAt])
   @@map("clinics")
 }
 
