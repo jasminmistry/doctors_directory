@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile } from 'fs/promises'
+import { mkdir, realpath, writeFile } from 'fs/promises'
 import path from 'path'
 import { randomUUID } from 'crypto'
+import {
+  getPublicUploadsDir,
+  getUploadImagesDir,
+  normalizeImageExt,
+  toPublicUploadUrl,
+} from '@/lib/admin/upload-paths'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
-const MAX_BYTES = 5 * 1024 * 1024 // 5 MB
+const MAX_BYTES = 5 * 1024 * 1024
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,13 +31,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'File exceeds 5 MB limit' }, { status: 400 })
     }
 
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
+    const ext = normalizeImageExt(file.name)
     const filename = `${randomUUID()}.${ext}`
-    const dest = path.join(process.cwd(), 'public', 'images', 'uploads', filename)
+    const uploadDir = getUploadImagesDir()
+    const dest = path.join(uploadDir, filename)
 
+    await mkdir(uploadDir, { recursive: true })
     await writeFile(dest, buffer)
 
-    return NextResponse.json({ url: `/images/uploads/${filename}` })
+    const publicDir = getPublicUploadsDir()
+    try {
+      const uploadReal = await realpath(uploadDir).catch(() => uploadDir)
+      const publicReal = await realpath(publicDir).catch(() => publicDir)
+      if (uploadReal !== publicReal) {
+        await mkdir(publicDir, { recursive: true })
+        await writeFile(path.join(publicDir, filename), buffer)
+      }
+    } catch (mirrorErr) {
+      console.error('[admin/upload] public mirror failed:', mirrorErr)
+    }
+
+    return NextResponse.json({ url: toPublicUploadUrl(filename) })
   } catch (err) {
     console.error('[admin/upload] error:', err)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })

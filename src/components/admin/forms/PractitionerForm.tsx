@@ -138,6 +138,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
   const [saving, setSaving] = useState(false)
   const [isNew, setIsNew] = useState(false)
   const [clinics, setClinics] = useState<ClinicOption[]>([])
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const router = useRouter()
   const params = useParams()
   const slug = (params?.slug as string) ?? ''
@@ -212,13 +213,32 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
 
   function set<K extends keyof PractitionerData>(key: K, value: PractitionerData[K]) {
     setData((prev) => ({ ...prev, [key]: value }))
+    setFieldErrors((prev) => {
+      if (!prev[key as string]) return prev
+      const next = { ...prev }
+      delete next[key as string]
+      return next
+    })
   }
 
   async function handleSave() {
     if (!data.displayName?.trim()) { toast.error('Name is required'); return }
     if (isNew && !data.slug.trim()) { toast.error('Slug is required'); return }
     if (!isPortal && !data.clinicId) { toast.error('City is required'); return }
+    const nextErrors: Record<string, string> = {}
+    if (!data.displayName?.trim()) nextErrors.displayName = 'Display name is required'
+    if (isNew && !data.slug.trim()) nextErrors.slug = 'Slug is required'
+    else if (isNew && !/^[a-z0-9-]+$/.test(data.slug.trim())) {
+      nextErrors.slug = 'Slug must be kebab-case'
+    }
 
+    if (Object.keys(nextErrors).length > 0) {
+      setFieldErrors(nextErrors)
+      toast.error('Please fix the highlighted fields')
+      return
+    }
+
+    setFieldErrors({})
     setSaving(true)
     const { slug: _s, ...rest } = data
     const body = isNew ? { slug: data.slug.trim(), ...rest } : rest
@@ -237,7 +257,11 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
           setTimeout(() => router.push('/admin/practitioners'), 300)
         }
       } else {
-        const err = await res.json().catch(() => ({}))
+        const err = await res.json().catch(() => ({})) as {
+          error?: string
+          fieldErrors?: Record<string, string>
+        }
+        if (err.fieldErrors) setFieldErrors(err.fieldErrors)
         toast.error(err.error || 'Failed to save')
       }
     } catch {
@@ -294,7 +318,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
       {/* Profile */}
       <FormSection title="Profile" icon={User}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <Field label="Display Name" required>
+          <Field label="Display Name" required error={fieldErrors.displayName}>
             <Input
               value={data.displayName ?? ''}
               onChange={(e) => {
@@ -304,15 +328,18 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
                 }
               }}
               placeholder="Dr. Jane Smith"
+              className={cn(fieldErrors.displayName && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.displayName)}
             />
           </Field>
           {!isPortal && (isNew ? (
-            <Field label="Slug" required hint="Auto-filled from name — editable">
+            <Field label="Slug" required hint="Auto-filled from name — editable" error={fieldErrors.slug}>
               <Input
                 value={data.slug}
                 onChange={(e) => set('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                 placeholder="e.g. dr-jane-smith"
-                className="font-mono"
+                className={cn('font-mono', fieldErrors.slug && 'border-red-500 focus-visible:ring-red-500')}
+                aria-invalid={Boolean(fieldErrors.slug)}
               />
             </Field>
           ) : (

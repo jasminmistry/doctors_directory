@@ -126,15 +126,75 @@ async function prewarmJsonCache() {
 const app = next({ dev: false, dir: __dirname });
 const handle = app.getRequestHandler();
 
+// Admin clinic/practitioner uploads live on the Docker volume at /app/uploads/images.
+// Serve them directly here so preview URLs work without relying on Next.js public/
+// symlinks (which can refuse files outside the public root).
+const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(__dirname, 'uploads', 'images');
+const UPLOAD_URL_PREFIX = '/directory/images/uploads/';
+const UPLOAD_NAME_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpe?g|png|webp|gif|svg)$/i;
+const UPLOAD_CONTENT_TYPES = {
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+  webp: 'image/webp',
+  gif: 'image/gif',
+  svg: 'image/svg+xml',
+};
+
+function tryServeUploadedImage(req, res, pathname) {
+  if (!pathname.startsWith(UPLOAD_URL_PREFIX)) return false;
+
+  const filename = decodeURIComponent(pathname.slice(UPLOAD_URL_PREFIX.length)).replace(/\/$/, '');
+  if (!UPLOAD_NAME_RE.test(filename)) {
+    res.statusCode = 400;
+    res.end('Invalid filename');
+    return true;
+  }
+
+  const filePath = path.resolve(UPLOADS_DIR, filename);
+  if (!filePath.startsWith(path.resolve(UPLOADS_DIR) + path.sep)) {
+    res.statusCode = 403;
+    res.end('Forbidden');
+    return true;
+  }
+
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      console.error('[uploads] failed to read', filePath, err.message);
+      res.statusCode = 404;
+      res.end('Not found');
+      return;
+    }
+    const ext = filename.split('.').pop().toLowerCase();
+    res.statusCode = 200;
+    res.setHeader('Content-Type', UPLOAD_CONTENT_TYPES[ext] || 'application/octet-stream');
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    res.end(data);
+  });
+  return true;
+}
+
 setTimeout(() => {
   app.prepare().then(async () => {
     // All workers prewarm their own NodeCache.
     // Primary reads from disk (and writes to Redis); workers read from Redis.
     prewarmJsonCache().catch(console.error);
 
+    try {
+      fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+    } catch (err) {
+      console.error('[uploads] failed to ensure upload dir:', UPLOADS_DIR, err.message);
+    }
+
     createServer((req, res) => {
-      handle(req, res, parse(req.url, true));
+      const parsedUrl = parse(req.url, true);
+      if (tryServeUploadedImage(req, res, parsedUrl.pathname || '')) {
+        return;
+      }
+      handle(req, res, parsedUrl);
     }).listen(port, '0.0.0.0', () => {
+      console.log(`[uploads] serving ${UPLOAD_URL_PREFIX}* from ${UPLOADS_DIR}`);
       if (process.send) process.send('ready');
     });
   });
