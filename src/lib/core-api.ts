@@ -112,6 +112,37 @@ export async function createCoreBooking(
   return res.json()
 }
 
+export interface CoreClinicProfile {
+  id: number
+  name: string | null
+  timezone: string | null
+}
+
+export async function getCoreClinicProfile(
+  coreClinicId: number,
+  sessionToken?: string,
+): Promise<CoreClinicProfile> {
+  const res = await coreLiteApi(`/clinics/${coreClinicId}`, { sessionToken })
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    throw Object.assign(new Error('Core clinic profile error'), { status: res.status, body })
+  }
+  return res.json()
+}
+
+const DEFAULT_CLINIC_TIMEZONE = 'Europe/London'
+
+/** Resolves a clinic's IANA timezone from Core, falling back to Europe/London if unset/unreachable. */
+export async function resolveClinicTimezone(coreClinicId: number | null): Promise<string> {
+  if (!coreClinicId) return DEFAULT_CLINIC_TIMEZONE
+  try {
+    const profile = await getCoreClinicProfile(coreClinicId)
+    return profile.timezone || DEFAULT_CLINIC_TIMEZONE
+  } catch {
+    return DEFAULT_CLINIC_TIMEZONE
+  }
+}
+
 export function isCoreConfigured(): boolean {
   try {
     getConsentzAuthUrl()

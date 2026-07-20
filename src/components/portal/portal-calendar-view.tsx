@@ -5,7 +5,11 @@ import { Loader2 } from 'lucide-react'
 import { BookingCalendar, type CalendarBooking } from '@/components/calendar/booking-calendar'
 import { NewBookingModal, type NewBookingData } from '@/components/calendar/new-booking-modal'
 
-export function PortalCalendarView() {
+interface PortalCalendarViewProps {
+  clinicTimezone: string
+}
+
+export function PortalCalendarView({ clinicTimezone }: PortalCalendarViewProps) {
   const [bookings, setBookings] = useState<CalendarBooking[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -86,6 +90,7 @@ export function PortalCalendarView() {
     <>
       <BookingCalendar
         bookings={bookings}
+        clinicTimezone={clinicTimezone}
         onRefresh={() => fetchBookings(true)}
         refreshing={refreshing}
         showSyncBadge
@@ -99,12 +104,14 @@ export function PortalCalendarView() {
           onClose={() => setShowNewModal(false)}
           onSave={handleCreateBooking}
           defaultDate={newBookingDate}
+          clinicTimezone={clinicTimezone}
         />
       )}
       {editingBooking && (
         <NewBookingModal
           onClose={() => setEditingBooking(null)}
           onSave={handleEditBooking}
+          clinicTimezone={clinicTimezone}
           initialData={{
             id: editingBooking.id,
             patientName: editingBooking.patientName,
