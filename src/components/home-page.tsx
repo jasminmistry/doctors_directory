@@ -5,7 +5,7 @@ import { HeroSection, type HomeAudienceMode } from "@/components/hero-section";
 import LogoLoop from "./LogoLoop";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Handshake, ChartBarDecreasing, CircleCheck } from "lucide-react";
+import { Handshake, ChartBarDecreasing, CircleCheck, ClipboardPlus, Megaphone, Hospital, CircleEllipsis, Clock, ShieldCheck, ChartNoAxesCombined } from "lucide-react";
 import { Card } from "./ui/card";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 
@@ -961,7 +961,7 @@ export default function HomePage({
           Contact a Specialist
         </h2>
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-xl md:text-2xl font-medium text-center mb-16">
+          <h2 className="text-xl md:text-3xl font-medium text-center mb-16">
             Contact a Specialist
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 align-items-center">
@@ -1080,7 +1080,7 @@ export default function HomePage({
         </section>
       </section>
       <section className="bg-white-50 py-5 md:py-5">
-        <h2 className="text-xl md:text-2xl font-medium text-center mb-16">
+        <h2 className="text-xl md:text-3xl font-medium text-center mb-16">
           Find Top-Rated Aesthetic Clinics Near You
         </h2>
         <div className="w-full">
@@ -1104,7 +1104,7 @@ export default function HomePage({
         </h2>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center flex-col justify-between mb-12">
-            <h2 className="text-xl md:text-2xl font-medium text-center mb-10">
+            <h2 className="text-xl md:text-3xl font-medium text-center mb-6">
               Most Popular Treatments
             </h2>
           </div>
@@ -1167,7 +1167,7 @@ export default function HomePage({
 
       <section className="py-15 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-xl md:text-2xl font-medium text-center mb-10 md:mb-16">
+          <h2 className="text-xl md:text-3xl font-medium text-center mb-6 md:mb-16">
             Building trust and clarity in healthcare
           </h2>
           <div className="grid md:grid-cols-3 gap-6 md:gap-12">
@@ -1205,145 +1205,141 @@ export default function HomePage({
       </>
       ) : (
       <>
-      <section className="bg-white-10 mb-8" aria-labelledby="provider-steps-heading">
-        <section className="bg-white py-6 md:py-10">
+      <section className="bg-white-10 py-6 md:py-10">
           <div className="max-w-3xl mx-auto px-3 sm:px-4 lg:px-6">
             <h2
               id="provider-steps-heading"
-              className="text-xl md:text-2xl font-medium text-center mb-10"
+              className="text-xl md:text-3xl font-medium text-center mb-6"
             >
-              How providers grow with Consentz
+              Accreditations
             </h2>
-            <div className="space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
-                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
-                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
-                    1.
-                  </div>
-                  <div>
-                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
-                      List or claim your practice
-                    </h2>
-                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
-                      Create a new listing or claim an existing profile so patients can find the real you.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex justify-center md:justify-end">
-                  <img
-                    src="/directory/images/clipboard.png"
-                    alt="Clipboard Icon"
-                    className="w-14 md:w-20 h-auto object-contain"
-                  />
-                </div>
+            <p className="text-center mb-8">Consentz is recognized by leading industry authorities, ensuring our software meets the highest standards for clinic management, patient safety, and data security. Trust in our commitment to quality and excellence.</p>
+
+            <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
+
+              <div className="mb-2 bg-white w-full max-w-md text-center">
+                <img
+                  src="/directory/images/iso.png"
+                  alt="Practitioner Banner"
+                  className="w-[130px] inline-block"
+                />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
-                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
-                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
-                    2.
-                  </div>
-                  <div>
-                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
-                      Complete your verified profile
-                    </h2>
-                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
-                      Add treatments, credentials, photos, and availability so high-intent patients trust your practice.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex justify-center md:justify-end">
-                  <img
-                    src="/directory/images/video-chat.png"
-                    alt="Video Chat Icon"
-                    className="w-14 md:w-20 h-auto object-contain"
-                  />
-                </div>
+              <div className="mb-2 bg-white w-full max-w-md text-center">
+                <img
+                  src="/directory/images/qui.png"
+                  alt="Practitioner Banner"
+                  className="w-[130px] inline-block"
+                />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
-                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
-                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
-                    3.
-                  </div>
-                  <div>
-                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
-                      Get discovered and fill your calendar
-                    </h2>
-                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
-                      Appear in patient search, collect verified reviews, and convert enquiries into bookings.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex justify-center md:justify-end">
-                  <img
-                    src="/directory/images/check.png"
-                    alt="Check Icon"
-                    className="w-14 md:w-20 h-auto object-contain"
-                  />
-                </div>
+              <div className="mb-2 bg-white w-full max-w-md text-center">
+                <img
+                  src="/directory/images/amazon.png"
+                  alt="Practitioner Banner"
+                  className="w-[130px] inline-block"
+                />
               </div>
+              <div className="mb-2 bg-white w-full max-w-md text-center">
+                <img
+                  src="/directory/images/hipaa.png"
+                  alt="Practitioner Banner"
+                  className="w-[130px] inline-block"
+                />
+              </div>
+              
             </div>
           </div>
-        </section>
       </section>
 
-      <section className="py-10 md:py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-2 items-center">
-            <div>
-              <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-7">
-                For Service Providers
-              </h2>
-              <ul className="space-y-4 mb-8">
-                <li className="flex gap-3 items-start">
-                  <CircleCheck className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-base">
-                    Gather verified patient reviews with our digital platform.
-                  </span>
-                </li>
-                <li className="flex gap-3 items-start">
-                  <CircleCheck className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-base">
-                    Showcase and validate your clinical expertise.
-                  </span>
-                </li>
-                <li className="flex gap-3 items-start">
-                  <CircleCheck className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-base">
-                    Connect, engage, and better understand your patients.
-                  </span>
-                </li>
-                <li className="flex gap-3 items-start">
-                  <CircleCheck className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-base">
-                    Access real-time insights to continually enhance your care.
-                  </span>
-                </li>
-                <li className="flex gap-3 items-start">
-                  <CircleCheck className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-base">
-                    Connect with like-minded healthcare professionals.
-                  </span>
-                </li>
-              </ul>
-              <div className="text-center md:text-left mb-10 md:mb-0">
-                <Button
-                  asChild
-                  className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
-                >
-                  <a
-                    href="https://www.consentz.com/features/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Learn More
-                  </a>
-                </Button>
+      <section className="bg-white-10 py-6 md:py-10">
+        <div className="max-w-7xl m-auto px-3">
+            <h2
+              id="provider-steps-heading"
+              className="text-xl md:text-3xl font-medium text-center mb-6"
+            >
+              Streamline Aesthetics Clinic Management
+            </h2>
+            <p className="text-center m-auto mb-8 max-w-3xl">Consentz is the first aesthetics clinic management software system developed with the clinician-patient relationship at the heart of everything it does.</p>
+
+            <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <Clock size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Online Booking</h3>
+                <p>Patients will never have to ring you or leave your website or IG to book appointments.</p>
               </div>
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <ChartNoAxesCombined size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Clinic Growth</h3>
+                <p>Email marketing and paid ads can be launched in minutes with the CONSENTZ marketing module.</p>
+              </div>
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <ShieldCheck size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Secure Payments</h3>
+                <p>Streamline all your payments. CONSENTZ offers online or in person point-of-sale systems.</p>
+              </div>
+
+            </div>
+          </div>
+      </section>
+
+      <section className="bg-white-10 py-6 md:py-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="head m-auto mb-14 max-w-3xl">
+            <h2
+              className="text-xl md:text-3xl font-medium text-center mb-6"
+            >
+              All The Tools You Need
+            </h2>
+            <p className="text-center">
+              A comprehensive suite of easy-to-use aesthetics clinic management software tools, Consentz builds patient relationships with powerful patient engagement and education tools, while significantly reducing the time burden in note taking and administration, all captured using state-of-the-art encryption.
+            </p>
+          </div>
+
+          <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
+            <div className="max-w-lg mx-auto">
+              <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-7">
+                SEO Optimized Website For Your Aesthetics Business
+              </h2>
+              <p>Achieve Patient growth with a custom branded website that incorporates best in practice SEO and patient booking tools</p>
+              
             </div>
             <div className="flex justify-center">
               <img
-                src="/directory/images/Aesthetic Software Interface.webp"
+                src="/directory/images/seo.png"
                 alt="Healthcare dashboard on laptop"
+                className="max-w-full"
+              />
+            </div>
+          </div>
+          <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
+            <div className="flex justify-center">
+              <img
+                src="/directory/images/cpm.png"
+                alt=""
+                className="max-w-full"
+              />
+            </div>
+            <div className="max-w-lg mx-auto">
+              <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-7">
+                 Create Powerful Marketing Pipelines and Campaigns
+              </h2>
+              <p>Bring new patients through the door with our unique Facebook and Google ads module and our automated email campaign builder customized for Aesthetics practices.</p>             
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4 items-center">
+            <div className="max-w-lg mx-auto">
+              <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-7">
+                Schedule patients with online booking and waitlist tools
+              </h2>
+              <p>Customize your schedules and practitioners calendars and place your booking link on your website.</p>
+              
+            </div>
+            <div className="flex justify-center">
+              <img
+                src="/directory/images/eps.png"
+                alt=""
                 className="max-w-full"
               />
             </div>
@@ -1351,103 +1347,74 @@ export default function HomePage({
         </div>
       </section>
 
-      <section
-        className="py-5 md:py-10 relative"
-        aria-labelledby="provider-regulatory-heading"
-      >
-        <h2 id="provider-regulatory-heading" className="sr-only">
-          Trusted Regulatory Partners
-        </h2>
-        <LogoLoop
-          logos={imageLogos}
-          speed={100}
-          direction="left"
-          logoHeight={48}
-          gap={40}
-          hoverSpeed={0}
-          scaleOnHover
-          fadeOut
-          fadeOutColor="#ffffff"
-          ariaLabel="Regulatory Compliance"
-          className="py-10 md:py-15 relative"
-        />
-      </section>
-
-      <section className="w-full py-10 px-4 lg:px-0 lg:py-20 overflow-hidden">
-        <div className="mx-auto bg-white border border-[#e0e0e0] overflow-hidden rounded-lg flex max-w-7xl flex-col items-start gap-10 lg:flex-row lg:justify-between">
-          
-          <div className="flex justify-center items-start lg:justify-start lg:w-1/2 lg:self-start">
-            <img
-              src="/directory/images/img-00020.png"
-              alt="Practitioner Banner"
-              className="lg:ml-0"
-            />
-          </div>
-
-         <div className="max-w-xl lg:w-1/2 p-10">
-            <h2 className="text-xl font-medium leading-tight text-black sm:text-2xl">
-              Are You A Practitioner?
+      <section className="bg-white-10 py-6 md:py-10">
+        <div className="max-w-7xl mx-auto flex items-center px-6 h-[400px] rounded-lg" 
+            style={{
+              backgroundImage: 'url("/directory/images/elite.png")',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+          <div className="head m-auto max-w-3xl text-white">
+            <h2
+              className="text-xl md:text-4xl font-bold text-center mb-6"
+            >
+              Powering Elite Aesthetics Practices Since 2012
             </h2>
-
-            <div className="mt-6 space-y-5">
-              {[
-                "Manage your clients, appointments, and follow-ups all in one place — your full practice, organized",
-                "Connect with clients who are actively looking for exactly what you offer",
-                "Fill your schedule with high-intent, pre-qualified bookings — no chasing leads",
-              ].map((item, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <div className="flex h-7 w-7 min-w-[28px] items-center justify-center rounded-full border border-black">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2.5}
-                      stroke="currentColor"
-                      className="h-4 w-4"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4.5 12.75l6 6 9-13.5"
-                      />
-                    </svg>
-                  </div>
-
-                  <p className="text-sm leading-relaxed text-black sm:text-base">
-                    {item}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Button
-                asChild
-                className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium text-white hover:bg-neutral-800 transition-colors"
-              >
-                <Link href="/register/clinic">List your practice</Link>
-              </Button>
-
-              <Button
-                asChild
-                variant="outline"
-                className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4] text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
-              >
-                <Link href="/register/clinic">Claim your profile</Link>
-              </Button>
-
-              <Link
-                href="/register/practitioner"
-                className="text-md text-black hover:opacity-70 transition-colors"
-              >
-                Register as practitioner →
-              </Link>
-            </div>
+            <p className="text-center">
+              Consentz clinic management software brings together all the tools you need to build patient relationships, grow your business, and save you time.
+            </p>
           </div>
-
         </div>
       </section>
 
+      <section className="bg-white-10 py-6 md:py-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="head m-auto mb-14 max-w-3xl">
+            <h2
+              className="text-xl md:text-3xl font-medium text-center mb-6"
+            >
+              All The Tools You Need In One
+            </h2>
+            <p className="text-center">
+              A comprehensive suite of easy-to-use medical management software tools for your practice.
+            </p>
+          </div>
+
+          <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <ClipboardPlus size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Medical Record Creation</h3>
+                <p>Mark Up Photos, dictate notes, mange records</p>
+              </div>
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <Megaphone size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Marketing Tools</h3>
+                <p>Find out all the features Consentz has to offer</p>
+              </div>
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <Hospital size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Run Your Clinic</h3>
+                <p>Everything your need to manage your business</p>
+              </div>
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <CircleEllipsis size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">And Much More</h3>
+                <p>Mark Up Photos, dictate notes, mange records</p>
+              </div>
+
+            </div>
+
+          
+        </div>
+      </section>
+
+   
       <section className="bg-[var(--dune)] py-20 text-white">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
@@ -1479,7 +1446,7 @@ export default function HomePage({
           Our Latest Blogs
         </h2>
         <div className="max-w-3xl mb-10">
-          <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-6">
+          <h2 className="text-xl md:text-3xl text-center md:text-left font-medium mb-6">
             Our Latest Blogs
           </h2>
           <p className="text-gray-700 text-base leading-relaxed">
@@ -1539,7 +1506,7 @@ export default function HomePage({
       >
         <h2
           id="faq-heading"
-          className="text-xl md:text-2xl text-center font-medium mb-6"
+          className="text-xl md:text-3xl text-center font-medium mb-6"
         >
           Frequently Asked Questions
         </h2>

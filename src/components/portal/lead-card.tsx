@@ -132,7 +132,7 @@ function NotesSection({ leadId, initialNotes, onSaved }: { leadId: number; initi
         onClick={() => setEditing(true)}
         className="flex w-full items-start gap-1.5 text-left group"
       >
-        <FileText className="h-3.5 w-3.5 mt-0.5 text-gray-300 group-hover:text-gray-500 shrink-0" />
+        <FileText className="h-3.5 w-3.5 mt-0.5 text-gray-500 group-hover:text-gray-600 shrink-0" />
         <span className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
           {initialNotes ? initialNotes : 'Add note…'}
         </span>
@@ -198,7 +198,7 @@ function OwnerField({ leadId, initialOwner, onSaved }: { leadId: number; initial
         onClick={() => setEditing(true)}
         className="flex items-center gap-1 group"
       >
-        <User className="h-3.5 w-3.5 text-gray-300 group-hover:text-gray-500" />
+        <User className="h-3.5 w-3.5 text-gray-500 group-hover:text-gray-600" />
         <span className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
           {initialOwner ?? 'Assign…'}
         </span>
@@ -407,7 +407,8 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
           <Button
             onClick={handleUnlock}
             disabled={unlocking}
-            className="w-full h-9 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold"
+            variant="outline" 
+            className="border-[#e0e0e0]"
           >
             {unlocking ? (
               <><Loader2 className="h-4 w-4 animate-spin mr-2" />Processing…</>
@@ -427,14 +428,14 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
 
       {!locked && (
         <div className="flex gap-2">
-          <Button asChild size="sm" className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-white hover:bg-gray-50 transition-colors">
+          <Button asChild size="sm" className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-white hover:bg-primary/90 hover:cursor-pointer transition-colors">
             <a href={`tel:${lead.patientPhone}`}>
               <Phone className="h-3.5 w-3.5 mr-1.5" />
               Call
             </a>
           </Button>
           {lead.patientEmail && (
-            <Button asChild size="sm" variant="outline" className="flex-1 border-[#e0e0e0] ">
+            <Button asChild size="sm" variant="outline" className="border-[#e0e0e0] ">
               <a href={`mailto:${lead.patientEmail}`}>
                 <Mail className="h-3.5 w-3.5 mr-1.5" />
                 Email
