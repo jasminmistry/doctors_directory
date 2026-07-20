@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import { getConsentzAuthUrl, getApplicationId } from '@/lib/auth'
 
 function getCoreLiteBase(): string {
@@ -141,6 +142,51 @@ export async function resolveClinicTimezone(coreClinicId: number | null): Promis
   } catch {
     return DEFAULT_CLINIC_TIMEZONE
   }
+}
+
+export interface CoreScheduleDay {
+  day: string
+  startTime: string | null
+  endTime: string | null
+  enabled: boolean
+}
+
+/**
+ * Weekly schedule reads/writes go through /api/core-lite/directory/schedule, not the
+ * v1 practitioner endpoint — that one requires X-SESSION-TOKEN, which an SSO-linked
+ * portal session may not have (device-less ConsentzLive web logins mint no session
+ * token; see admin_directory_sso). The core-lite route is scoped by consentzUserId
+ * instead, with writes proven server-to-server via DIRECTORY_LINK_SECRET HMAC.
+ */
+export async function getCoreSchedule(consentzUserId: number): Promise<CoreScheduleDay[]> {
+  const res = await coreLiteApi(`/directory/schedule?consentzUserId=${consentzUserId}`)
+  if (!res.ok) return []
+  const data = await res.json()
+  return Array.isArray(data.schedule) ? data.schedule : []
+}
+
+export async function setCoreSchedule(
+  consentzUserId: number,
+  schedule: CoreScheduleDay[],
+): Promise<CoreScheduleDay[]> {
+  const secret = process.env.DIRECTORY_LINK_SECRET
+  if (!secret) throw new Error('DIRECTORY_LINK_SECRET is not configured')
+
+  const sig = crypto
+    .createHmac('sha256', secret)
+    .update(`${consentzUserId}:${JSON.stringify(schedule)}`)
+    .digest('hex')
+
+  const res = await coreLiteApi('/directory/schedule', {
+    method: 'POST',
+    body: { consentzUserId, schedule, sig },
+  })
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    throw Object.assign(new Error('Failed to save schedule to Core'), { status: res.status, body })
+  }
+  const data = await res.json()
+  return Array.isArray(data.schedule) ? data.schedule : []
 }
 
 export function isCoreConfigured(): boolean {
