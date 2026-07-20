@@ -72,6 +72,20 @@ export function PortalLayoutClient({
     return () => clearInterval(id);
   }, [entityType]);
 
+  // Force a fresh server auth check when this page is restored from the
+  // browser's back-forward cache (e.g. hitting Back after logging out) —
+  // bfcache restores the last-rendered DOM without re-running the layout's
+  // server-side redirect() check.
+  useEffect(() => {
+    function handlePageShow(event: PageTransitionEvent) {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    }
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
+
   const baseNav =
     entityType === "clinic"
       ? [{ href: "/portal/clinic", label: "My Clinic", icon: Building2 }]

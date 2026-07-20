@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getPortalUser } from '@/lib/portal'
 import { prisma } from '@/lib/db'
+import { resolveClinicTimezone } from '@/lib/core-api'
 import { PortalCalendarView } from '@/components/portal/portal-calendar-view'
 import { WrongAccountNotice } from '@/components/portal/wrong-account-notice'
 import { CalendarDays } from 'lucide-react'
@@ -22,7 +23,7 @@ export default async function CalendarPage() {
 
   const clinic = await prisma.clinic.findUnique({
     where: { id: user.clinicId },
-    select: { claimedPlan: true, name: true },
+    select: { claimedPlan: true, name: true, coreClinicId: true },
   })
 
   if (!clinic?.claimedPlan || clinic.claimedPlan === 'free') {
@@ -46,6 +47,8 @@ export default async function CalendarPage() {
     )
   }
 
+  const clinicTimezone = await resolveClinicTimezone(clinic.coreClinicId)
+
   return (
     <div>
       <div className="mb-6 flex items-start justify-between gap-4">
@@ -54,10 +57,11 @@ export default async function CalendarPage() {
           <p className="mt-1 text-sm text-gray-500">
             Manage your appointments. Click <strong>New Appointment</strong> to manually book a patient.
             {clinic.claimedPlan === 'subscription' && ' Bookings from Consentz Core sync here automatically.'}
+            {' '}Times are shown in the clinic&apos;s timezone ({clinicTimezone}).
           </p>
         </div>
       </div>
-      <PortalCalendarView />
+      <PortalCalendarView clinicTimezone={clinicTimezone} />
     </div>
   )
 }

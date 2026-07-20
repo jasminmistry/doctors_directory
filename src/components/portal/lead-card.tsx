@@ -2,9 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react'
 import {
-  Lock, Unlock, Phone, Mail, Clock, Loader2, MapPin,
+  Lock, Unlock, Phone, Mail, Clock, Loader2, MapPin, CalendarDays,
   ChevronDown, RefreshCw, FileText, User, CheckCircle2,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
@@ -130,7 +131,7 @@ function NotesSection({ leadId, initialNotes, onSaved }: { leadId: number; initi
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="flex w-full items-start gap-1.5 text-left group"
+        className="flex w-full items-start gap-1.5 rounded-md px-1.5 py-1 -mx-1.5 text-left transition-colors hover:bg-gray-50 group"
       >
         <FileText className="h-3.5 w-3.5 mt-0.5 text-gray-500 group-hover:text-gray-600 shrink-0" />
         <span className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
@@ -196,7 +197,7 @@ function OwnerField({ leadId, initialOwner, onSaved }: { leadId: number; initial
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="flex items-center gap-1 group"
+        className="flex items-center gap-1 rounded-md px-1.5 py-1 -mx-1.5 transition-colors hover:bg-gray-50 group"
       >
         <User className="h-3.5 w-3.5 text-gray-500 group-hover:text-gray-600" />
         <span className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
@@ -224,6 +225,34 @@ function OwnerField({ leadId, initialOwner, onSaved }: { leadId: number; initial
       >
         {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : 'OK'}
       </button>
+    </div>
+  )
+}
+
+function DetailRow({
+  icon: Icon,
+  label,
+  value,
+  locked,
+  placeholderWidth,
+  emphasis,
+}: {
+  icon: LucideIcon
+  label: string
+  value: string | null
+  locked: boolean
+  placeholderWidth: string
+  emphasis?: boolean
+}) {
+  return (
+    <div className="flex items-center gap-2 text-sm">
+      <Icon className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+      <span className="w-10 shrink-0 text-xs text-gray-500">{label}</span>
+      {locked ? (
+        <span className={cn('h-4 rounded bg-gray-200 blur-[3px] select-none', placeholderWidth)} aria-hidden="true" />
+      ) : (
+        <span className={emphasis ? 'font-medium text-gray-900' : 'text-gray-800'}>{value ?? '—'}</span>
+      )}
     </div>
   )
 }
@@ -317,7 +346,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
         </div>
 
         {/* Status pill + lock badge */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex flex-wrap items-center justify-end gap-1.5">
           {lead.coreSynced && (
             <span
               title="Synced to Consentz Core"
@@ -343,39 +372,11 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
       </div>
 
       {/* Patient details */}
-      <div className="space-y-1.5 mb-3">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="w-10 shrink-0 text-xs text-gray-500">Name</span>
-          {locked ? (
-            <span className="h-4 w-32 rounded bg-gray-200 blur-[3px] select-none" aria-hidden="true" />
-          ) : (
-            <span className="font-medium text-gray-900">{lead.patientName}</span>
-          )}
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="w-10 shrink-0 text-xs text-gray-500">Phone</span>
-          {locked ? (
-            <span className="h-4 w-28 rounded bg-gray-200 blur-[3px] select-none" aria-hidden="true" />
-          ) : (
-            <span className="text-gray-800">{lead.patientPhone}</span>
-          )}
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="w-10 shrink-0 text-xs text-gray-500">Email</span>
-          {locked ? (
-            <span className="h-4 w-40 rounded bg-gray-200 blur-[3px] select-none" aria-hidden="true" />
-          ) : (
-            <span className="text-gray-800">{lead.patientEmail ?? '—'}</span>
-          )}
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="w-10 shrink-0 text-xs text-gray-500">Age</span>
-          {locked ? (
-            <span className="h-4 w-8 rounded bg-gray-200 blur-[3px] select-none" aria-hidden="true" />
-          ) : (
-            <span className="text-gray-800">{lead.patientAge ?? '—'}</span>
-          )}
-        </div>
+      <div className="space-y-1.5 mb-3 rounded-lg bg-gray-50/60 px-2.5 py-2">
+        <DetailRow icon={User} label="Name" value={lead.patientName} locked={locked} placeholderWidth="w-32" emphasis />
+        <DetailRow icon={Phone} label="Phone" value={lead.patientPhone} locked={locked} placeholderWidth="w-28" />
+        <DetailRow icon={Mail} label="Email" value={lead.patientEmail} locked={locked} placeholderWidth="w-40" />
+        <DetailRow icon={CalendarDays} label="Age" value={lead.patientAge != null ? String(lead.patientAge) : null} locked={locked} placeholderWidth="w-8" />
         {lead.preferredTime && (
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <Clock className="h-3 w-3" />
@@ -421,7 +422,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
       )}
 
       {locked && isFree && (
-        <Button asChild variant="outline" className="w-full h-9 text-sm border-[#e0e0e0] ">
+        <Button asChild variant="outline" className="w-full h-9 text-sm">
           <a href="/directory/portal/upgrade">Upgrade to unlock</a>
         </Button>
       )}

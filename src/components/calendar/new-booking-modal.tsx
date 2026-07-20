@@ -2,9 +2,25 @@
 
 import { useState } from 'react'
 import { format, addMinutes } from 'date-fns'
+import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { X, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+
+/**
+ * `defaultDate` (from clicking an empty grid slot) is already a "zoned" Date —
+ * its local getters represent clinic wall-clock time, see booking-calendar.tsx.
+ * `initialData.slotStart/slotEnd` (editing an existing booking) are real UTC ISO
+ * strings from the DB and need `toZonedTime` before their fields mean anything
+ * in clinic-local terms. Both end up represented the same way so the rest of
+ * this component can just read date/time fields off a Date without caring which
+ * path it came from.
+ */
+function fieldsToDate(dateStr: string, timeStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number)
+  const [hour, minute] = timeStr.split(':').map(Number)
+  return new Date(year, month - 1, day, hour, minute, 0)
+}
 
 export interface NewBookingData {
   patientName: string
@@ -22,6 +38,7 @@ interface NewBookingModalProps {
   onSave: (data: NewBookingData) => Promise<void>
   defaultDate?: Date
   initialData?: Partial<NewBookingData> & { id?: number }
+  clinicTimezone: string
 }
 
 type FieldErrors = Record<string, string>
@@ -37,19 +54,19 @@ function isValidEmail(value: string): boolean {
   return EMAIL_RE.test(value.trim())
 }
 
-export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: NewBookingModalProps) {
+export function NewBookingModal({ onClose, onSave, defaultDate, initialData, clinicTimezone }: NewBookingModalProps) {
   const isEdit = !!initialData?.id
-  const today = defaultDate ?? new Date()
-  const defaultDate2 = initialData?.slotStart
-    ? format(new Date(initialData.slotStart), 'yyyy-MM-dd')
-    : format(today, 'yyyy-MM-dd')
-  const defaultStart = initialData?.slotStart
-    ? format(new Date(initialData.slotStart), 'HH:mm')
+  const zonedStart = initialData?.slotStart ? toZonedTime(initialData.slotStart, clinicTimezone) : undefined
+  const zonedEnd = initialData?.slotEnd ? toZonedTime(initialData.slotEnd, clinicTimezone) : undefined
+  const today = zonedStart ?? defaultDate ?? new Date()
+  const defaultDate2 = format(today, 'yyyy-MM-dd')
+  const defaultStart = zonedStart
+    ? format(zonedStart, 'HH:mm')
     : defaultDate
     ? format(defaultDate, 'HH:mm')
     : '09:00'
-  const defaultEnd = initialData?.slotEnd
-    ? format(new Date(initialData.slotEnd), 'HH:mm')
+  const defaultEnd = zonedEnd
+    ? format(zonedEnd, 'HH:mm')
     : defaultDate
     ? format(addMinutes(defaultDate, 30), 'HH:mm')
     : '09:30'
@@ -93,13 +110,16 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData }: N
     }
     setFieldErrors({})
 
-    const slotStart = `${form.date}T${form.startTime}:00`
-    const slotEnd = `${form.date}T${form.endTime}:00`
-
-    if (slotEnd <= slotStart) {
+    if (`${form.date}T${form.endTime}` <= `${form.date}T${form.startTime}`) {
       setError('End time must be after start time')
       return
     }
+
+    // The date/time fields are clinic wall-clock, not the staff member's own
+    // browser time — convert using the clinic's actual timezone so appointments
+    // stay correct regardless of where the staff member happens to be.
+    const slotStart = fromZonedTime(fieldsToDate(form.date, form.startTime), clinicTimezone).toISOString()
+    const slotEnd = fromZonedTime(fieldsToDate(form.date, form.endTime), clinicTimezone).toISOString()
 
     setSaving(true)
     try {

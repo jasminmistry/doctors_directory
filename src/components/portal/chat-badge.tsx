@@ -24,7 +24,7 @@ export function ChatBadge({ mobile = false }: ChatBadgeProps) {
     }
 
     fetchCount()
-    const id = setInterval(fetchCount, 30_000)
+    const id = setInterval(fetchCount, 10_000)
     return () => {
       cancelled = true
       clearInterval(id)

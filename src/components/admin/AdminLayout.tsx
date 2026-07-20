@@ -28,6 +28,7 @@ import {
   Sparkles,
   Link2Off,
   Mail,
+  Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +48,7 @@ interface PendingCounts {
   pendingClaims: number;
   pendingVerifications: number;
   pendingUnlinkRequests: number;
+  pendingDirectoryRemovalRequests: number;
 }
 
 function NavBadge({ count }: { count: number }) {
@@ -71,6 +73,7 @@ const NAV = [
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/treatments", label: "Treatments", icon: Stethoscope },
   { href: "/admin/unlink-requests", label: "Unlink Requests", icon: Link2Off },
+  { href: "/admin/directory-removal-requests", label: "Removal Requests", icon: Trash2 },
   { href: "/admin/claims", label: "Claims", icon: ShieldCheck },
   { href: "/admin/verification", label: "ID Verification", icon: ShieldCheck },
   { href: "/admin/reviews", label: "Reviews", icon: Star },
@@ -91,6 +94,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
     pendingClaims: 0,
     pendingVerifications: 0,
     pendingUnlinkRequests: 0,
+    pendingDirectoryRemovalRequests: 0,
   });
 
   function refreshCounts() {
@@ -176,11 +180,13 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                 const topCount =
                   item.href === "/admin/unlink-requests"
                     ? counts.pendingUnlinkRequests
-                    : item.href === "/admin/claims"
-                      ? counts.pendingClaims
-                      : item.href === "/admin/verification"
-                        ? counts.pendingVerifications
-                        : 0;
+                    : item.href === "/admin/directory-removal-requests"
+                      ? counts.pendingDirectoryRemovalRequests
+                      : item.href === "/admin/claims"
+                        ? counts.pendingClaims
+                        : item.href === "/admin/verification"
+                          ? counts.pendingVerifications
+                          : 0;
 
                 return (
                   <Link

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { verifyUnsubscribeToken } from '@/lib/campaign-unsubscribe'
+import { sendDirectoryRemovalRequestNotification } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,17 +38,52 @@ export async function GET(req: NextRequest) {
     )
   }
 
-  try {
-    const clinic = await prisma.clinic.update({
-      where: { id: claims.clinicId },
-      data: { campaignOptedOut: true },
-      select: { name: true },
-    })
-    return htmlPage(
-      'You have been unsubscribed',
-      `${clinic.name ?? 'Your clinic'} will no longer receive outreach emails from the Consentz Directory. If this was a mistake, contact care@consentz.com.`,
-    )
-  } catch {
+  if (claims.action === 'unsubscribe') {
+    try {
+      const clinic = await prisma.clinic.update({
+        where: { id: claims.clinicId },
+        data: { campaignOptedOut: true },
+        select: { name: true },
+      })
+      return htmlPage(
+        'You have been unsubscribed',
+        `${clinic.name ?? 'Your clinic'} will no longer receive outreach emails from the Consentz Directory. If this was a mistake, contact care@consentz.com.`,
+      )
+    } catch {
+      return htmlPage('Clinic not found', 'We could not find this listing. Please contact care@consentz.com.', 404)
+    }
+  }
+
+  // action === 'remove'
+  const clinic = await prisma.clinic.findUnique({
+    where: { id: claims.clinicId },
+    select: { name: true, slug: true, directoryRemovalRequestedAt: true, isHidden: true },
+  })
+  if (!clinic) {
     return htmlPage('Clinic not found', 'We could not find this listing. Please contact care@consentz.com.', 404)
   }
+
+  const isNewRequest = !clinic.directoryRemovalRequestedAt && !clinic.isHidden
+  const requestedAt = new Date()
+
+  await prisma.clinic.update({
+    where: { id: claims.clinicId },
+    data: {
+      campaignOptedOut: true,
+      ...(isNewRequest ? { directoryRemovalRequestedAt: requestedAt } : {}),
+    },
+  })
+
+  if (isNewRequest) {
+    sendDirectoryRemovalRequestNotification({
+      clinicName: clinic.name ?? clinic.slug,
+      clinicSlug: clinic.slug,
+      requestedAt,
+    }).catch((err) => console.error('Failed to send directory removal notification email:', err))
+  }
+
+  return htmlPage(
+    'Removal request received',
+    `${clinic.name ?? 'Your clinic'} has been unsubscribed from outreach emails, and we've received your request to remove this listing from the Consentz Directory. Our team will review and action it shortly. If this was a mistake, contact care@consentz.com.`,
+  )
 }

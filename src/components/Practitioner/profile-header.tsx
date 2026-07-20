@@ -25,9 +25,10 @@ interface ProfileHeaderProps {
   clinic_list: string[]
   claimState?: 'unclaimed' | 'pending' | 'claimed';
   goToProfileHref?: string;
+  isOwner?: boolean;
 }
 
-export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clinic.claimed ? 'claimed' : 'unclaimed', goToProfileHref = '/portal/login' }: Readonly<ProfileHeaderProps>) {
+export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clinic.claimed ? 'claimed' : 'unclaimed', goToProfileHref = '/portal/login', isOwner = false }: Readonly<ProfileHeaderProps>) {
   const [selectedClinic, setSelectedClinic] = useState(clinic_list[0])
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -70,7 +71,7 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
           </Badge>
         </Link>
       )}
-      {claimState === 'claimed' && (
+      {claimState === 'claimed' && isOwner && (
         <Link prefetch={false} href={goToProfileHref}>
           <Badge
             variant="outline"

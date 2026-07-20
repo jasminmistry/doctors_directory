@@ -18,9 +18,9 @@ function stripDirectoryBasePath(pathname: string) {
   return pathname || '/'
 }
 
-function isUnderAdminConsole(pathname: string) {
+function isBareShellRoute(pathname: string) {
   const p = stripDirectoryBasePath(pathname)
-  return /^\/admin(?:\/|$)/.test(p)
+  return /^\/(admin|portal)(?:\/|$)/.test(p)
 }
 
 export function AdminRootShell({
@@ -29,7 +29,7 @@ export function AdminRootShell({
   children: ReactNode
 }>) {
   const pathname = usePathname() ?? ''
-  const plainAdmin = isUnderAdminConsole(pathname)
+  const plainAdmin = isBareShellRoute(pathname)
 
   if (plainAdmin) {
     return (

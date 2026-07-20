@@ -22,6 +22,7 @@ export async function GET() {
         status: true,
         createdAt: true,
         updatedAt: true,
+        clinicLastReadAt: true,
         messages: {
           orderBy: { createdAt: 'desc' },
           take: 1,
@@ -30,12 +31,21 @@ export async function GET() {
       },
     })
 
-    // Count unread (clinic messages not yet responded to, i.e. last message is from patient)
-    const unread = sessions.filter(
-      (s) => s.messages[0]?.sender === 'patient' && s.status === 'active',
-    ).length
+    // Unread — last message is from the patient AND the clinic hasn't viewed
+    // this conversation since that message arrived (viewing a conversation
+    // sets clinicLastReadAt; a plain reply also flips the last-sender check)
+    const sessionsWithUnread = sessions.map(({ clinicLastReadAt, ...s }) => {
+      const lastMsg = s.messages[0]
+      const unread =
+        s.status === 'active' &&
+        lastMsg?.sender === 'patient' &&
+        (!clinicLastReadAt || lastMsg.createdAt > clinicLastReadAt)
+      return { ...s, unread }
+    })
 
-    return NextResponse.json({ sessions, unread })
+    const unread = sessionsWithUnread.filter((s) => s.unread).length
+
+    return NextResponse.json({ sessions: sessionsWithUnread, unread })
   } catch (err) {
     console.error('[portal/chat/sessions]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

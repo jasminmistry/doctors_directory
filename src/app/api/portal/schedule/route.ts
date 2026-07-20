@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
-import { getConsentzV1Url, getApplicationId, COOKIE_TOKEN } from '@/lib/auth'
+import { getCoreSchedule, setCoreSchedule } from '@/lib/core-api'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,20 +32,6 @@ async function getClaimIds(user: Awaited<ReturnType<typeof getPortalUser>>) {
   })
 }
 
-// Self-service endpoint — portal users call /api/v1/practitioner/{id}/schedule.
-// Admin routes call /register/practitioner|clinic/{id}/schedule (admin token only).
-function scheduleUrl(consentzUserId: number) {
-  return `${getConsentzV1Url()}/practitioner/${consentzUserId}/schedule`
-}
-
-function coreHeaders(token: string | undefined) {
-  return {
-    'Content-Type': 'application/json',
-    'X-APPLICATION-ID': getApplicationId(),
-    ...(token ? { 'X-SESSION-TOKEN': token } : {}),
-  }
-}
-
 export async function GET() {
   const user = await getPortalUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -57,25 +42,12 @@ export async function GET() {
 
   if (!consentzUserId) return NextResponse.json({ schedule: [] })
 
-  const cookieStore = await cookies()
-  const token = cookieStore.get(COOKIE_TOKEN)?.value
-  const url = scheduleUrl(consentzUserId)
-  console.log(`[portal/schedule] GET ${url}  appId=${getApplicationId()} hasToken=${!!token}`)
-
   try {
-    const res = await fetch(url, { headers: coreHeaders(token) })
-    console.log(`[portal/schedule] GET → HTTP ${res.status}`)
-    if (!res.ok) {
-      const body = await res.text().catch(() => '')
-      console.error(`[portal/schedule] GET error body: ${body}`)
-      return NextResponse.json({ schedule: [] })
-    }
-    const data = await res.json()
-    const fetchedSchedule = data.schedule ?? data ?? []
-    console.log(`[portal/schedule] GET returned ${Array.isArray(fetchedSchedule) ? fetchedSchedule.length : 0} days`)
+    const fetchedSchedule = await getCoreSchedule(consentzUserId)
+    console.log(`[portal/schedule] GET returned ${fetchedSchedule.length} days`)
 
-    // Cache locally so availability can be computed without Core auth
-    if (Array.isArray(fetchedSchedule) && fetchedSchedule.length > 0 && claim) {
+    // Cache locally so availability can be computed without a round-trip to Core
+    if (fetchedSchedule.length > 0 && claim) {
       await prisma.claimRequest.update({
         where: { id: claim.id },
         data: { scheduleJson: JSON.stringify(fetchedSchedule) },
@@ -111,25 +83,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, schedule: [] })
   }
 
-  const cookieStore = await cookies()
-  const token = cookieStore.get(COOKIE_TOKEN)?.value
-  const url = scheduleUrl(consentzUserId)
-  console.log(`[portal/schedule] POST ${url}  appId=${getApplicationId()} hasToken=${!!token}`)
   console.log(`[portal/schedule] POST payload: ${JSON.stringify(schedule)}`)
 
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: coreHeaders(token),
-      body: JSON.stringify(schedule),
-    })
-    console.log(`[portal/schedule] POST → HTTP ${res.status}`)
-    if (!res.ok) {
-      const errText = await res.text().catch(() => '')
-      console.error(`[portal/schedule] POST Core error body: ${errText}`)
-      return NextResponse.json({ error: 'Failed to save schedule to Core' }, { status: 502 })
-    }
-    const result = await res.json()
+    const result = await setCoreSchedule(consentzUserId, schedule)
     console.log(`[portal/schedule] POST Core success, saving scheduleJson locally`)
 
     await prisma.claimRequest.update({
@@ -141,7 +98,7 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    return NextResponse.json({ success: true, schedule: result.schedule ?? result })
+    return NextResponse.json({ success: true, schedule: result })
   } catch (err) {
     console.error('[portal/schedule] POST unexpected error:', err)
     return NextResponse.json({ error: 'Failed to save schedule' }, { status: 500 })

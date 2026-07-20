@@ -5,6 +5,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { consentzLinkSchema } from '@/lib/schemas/claim.schema'
 import { getConsentzV1Url } from '@/lib/auth'
+import { sendClaimApprovedEmail } from '@/lib/email'
+import { invalidateSearchCache } from '@/lib/search-cache'
+import { PLAN_LABELS } from '@/lib/claim-utils'
 
 function verifySig(token: string, consentzClinicId: number, consentzUserId: number, sig: string): boolean {
   const secret = process.env.DIRECTORY_LINK_SECRET
@@ -155,11 +158,16 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      // Auto-approve: unlike the cold OTP claim flow, the claimer already proved they're
+      // an authenticated Consentz clinic admin (verifyConsentzSession above), so there's
+      // no ownership question for a human reviewer to check. `verified` (domain/GBP match)
+      // is a separate signal and stays false here — it's only set by the OTP flow's checks.
       await tx.claimRequest.update({
         where: { id: claim.id },
         data: {
           linkTokenUsed:    true,
-          status:           'pending_approval',
+          status:           'approved',
+          approvedAt:       new Date(),
           selectedPlan:     'free',
           consentzClinicId,
           consentzUserId,
@@ -175,6 +183,7 @@ export async function POST(req: NextRequest) {
             claimedAt:    new Date(),
             claimedPlan:  'free',
             coreClinicId: consentzClinicId,
+            verified:     false,
           },
         })
       } else if (claim.entityType === 'practitioner' && claim.practitionerId) {
@@ -185,10 +194,24 @@ export async function POST(req: NextRequest) {
             claimedAt:    new Date(),
             claimedPlan:  'free',
             coreClinicId: consentzClinicId,
+            verified:     false,
           },
         })
       }
     })
+
+    if (claim.entityType === 'clinic') {
+      await invalidateSearchCache()
+    }
+
+    const entityName = claim.entityType === 'clinic'
+      ? (claim.clinicSlug ?? consentzUsername)
+      : (claim.practitionerSlug ?? consentzUsername)
+    await sendClaimApprovedEmail({
+      to: claim.claimerEmail,
+      clinicName: entityName,
+      plan: PLAN_LABELS['free'],
+    }).catch(err => console.error('[consentz-link] sendClaimApprovedEmail failed:', err))
 
     // 6. Return success — the Consentz page redirects through /admin/directory-sso
     // which generates an HMAC SSO token and sets auth cookies in the browser.

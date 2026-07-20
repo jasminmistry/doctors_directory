@@ -5,6 +5,7 @@ import { isRemovedClinicSlug, isRemovedPractitionerSlug } from '@/lib/directory-
 const COOKIE_TOKEN = 'consentz_token'
 const COOKIE_REFRESH = 'consentz_refresh_token'
 const COOKIE_ROLE = 'consentz_role'
+const COOKIE_USERNAME = 'consentz_username'
 const COOKIE_PATH = '/directory'
 
 function clearAuthAndRedirect(request: NextRequest, pathname: string, loginPath: string) {
@@ -16,7 +17,7 @@ function clearAuthAndRedirect(request: NextRequest, pathname: string, loginPath:
   res.cookies.set(COOKIE_TOKEN, '', { path: COOKIE_PATH, maxAge: 0 })
   res.cookies.set(COOKIE_REFRESH, '', { path: COOKIE_PATH, maxAge: 0 })
   res.cookies.set(COOKIE_ROLE, '', { path: COOKIE_PATH, maxAge: 0 })
-  res.cookies.set('consentz_username', '', { path: COOKIE_PATH, maxAge: 0 })
+  res.cookies.set(COOKIE_USERNAME, '', { path: COOKIE_PATH, maxAge: 0 })
   return res
 }
 
@@ -63,16 +64,22 @@ export async function middleware(request: NextRequest) {
   }
 
   const token = request.cookies.get(COOKIE_TOKEN)?.value
+  const username = request.cookies.get(COOKIE_USERNAME)?.value
 
-  if (!token) {
-    if (isAdminRoute) {
-      if (pathname.startsWith('/api/')) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-      return clearAuthAndRedirect(request, pathname, '/admin/login')
-    }
-    if (isPortalRoute) {
-      if (pathname.startsWith('/api/')) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-      return clearAuthAndRedirect(request, pathname, '/portal/login')
-    }
+  // Admin routes proxy every action to Core with a bearer token, so consentz_token is
+  // required. Portal auth (see getPortalUser()) is keyed on consentz_username + an approved
+  // ClaimRequest — consentz_token is only needed by the Core-sync routes (calendar/bookings),
+  // not by portal auth itself. A Consentz-link SSO login from a device-less web session
+  // legitimately has no consentz_token but is still a valid portal session.
+  if (isAdminRoute && !token) {
+    if (pathname.startsWith('/api/')) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return clearAuthAndRedirect(request, pathname, '/admin/login')
+  }
+  if (isPortalRoute && !username) {
+    if (pathname.startsWith('/api/')) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return clearAuthAndRedirect(request, pathname, '/portal/login')
+  }
+  if (!isAdminRoute && !isPortalRoute) {
     return NextResponse.next()
   }
 

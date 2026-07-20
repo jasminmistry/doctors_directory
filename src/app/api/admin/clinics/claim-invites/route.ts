@@ -52,10 +52,11 @@ export async function POST(req: Request) {
 
   for (const clinic of clinics) {
     const claimUrl = `${BASE_URL}/directory/claim/${clinic.slug}`
-    const manageUrl = `${BASE_URL}/directory/api/unsubscribe?token=${signUnsubscribeToken(clinic.id)}`
+    const unsubscribeUrl = `${BASE_URL}/directory/api/unsubscribe?token=${signUnsubscribeToken(clinic.id, 'unsubscribe')}`
+    const removeUrl = `${BASE_URL}/directory/api/unsubscribe?token=${signUnsubscribeToken(clinic.id, 'remove')}`
 
     try {
-      await sendClaimInviteEmail({ to: clinic.email!, clinicName: clinic.name!, claimUrl, manageUrl })
+      await sendClaimInviteEmail({ to: clinic.email!, clinicName: clinic.name!, claimUrl, unsubscribeUrl, removeUrl })
       await prisma.clinic.update({ where: { id: clinic.id }, data: { campaignEmailedAt: new Date() } })
       sent++
     } catch (err) {

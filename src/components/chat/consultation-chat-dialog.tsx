@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 import { trackCtaClick } from '@/lib/tracking/client'
 import type { DirectoryPageType } from '@/lib/tracking/types'
 import { useExclusiveFloatingPanel } from '@/lib/floating-panel-bus'
+import { CHAT_MESSAGE_MAX_LENGTH } from '@/lib/consentz-chat'
 
 interface Message {
   id: number
@@ -119,9 +120,10 @@ export function ConsultationChatDialog({
   const [sending, setSending] = useState(false)
   const [loadingHistory, setLoadingHistory] = useState(false)
 
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const lastCreatedAt = useRef<string | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const prevMsgCountRef = useRef(0)
 
   // Restore session from localStorage on mount
   useEffect(() => {
@@ -141,9 +143,32 @@ export function ConsultationChatDialog({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Scroll to bottom whenever messages change
+  // Reset scroll tracking when switching sessions (new chat / restored chat)
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    prevMsgCountRef.current = 0
+  }, [sessionId])
+
+  // Auto-scroll only when new messages arrive AND the visitor is near the
+  // bottom already — otherwise sending/receiving a message would yank
+  // someone reviewing earlier history back down to the latest message
+  useEffect(() => {
+    const newCount = messages.length
+    const prevCount = prevMsgCountRef.current
+    prevMsgCountRef.current = newCount
+
+    if (newCount === 0) return
+
+    const el = messagesContainerRef.current
+    if (!el) return
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 150
+
+    // Scroll the panel's own body only — never scrollIntoView(), which walks
+    // up every scrollable ancestor and can misalign the target within them
+    if (prevCount === 0) {
+      el.scrollTop = el.scrollHeight
+    } else if (newCount > prevCount && isNearBottom) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    }
   }, [messages])
 
   // Poll for new messages — only while the panel is open
@@ -325,7 +350,10 @@ export function ConsultationChatDialog({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content, visitorToken: token }),
     })
-    if (!res.ok) throw new Error()
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new Error((err as { error?: string }).error ?? 'Failed to send message.')
+    }
     const data: { message: Message } = await res.json()
     setMessages((prev) => [...prev, data.message])
     lastCreatedAt.current = data.message.createdAt
@@ -338,8 +366,8 @@ export function ConsultationChatDialog({
     setSending(true)
     try {
       await sendMessage(sessionId, visitorToken, content)
-    } catch {
-      toast.error('Failed to send message.')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to send message.')
       setDraft(content)
     } finally {
       setSending(false)
@@ -469,7 +497,7 @@ export function ConsultationChatDialog({
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto min-h-0">
+        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto min-h-0">
           {(checking || loadingHistory) && (
             <div className="flex h-full items-center justify-center">
               <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
@@ -548,7 +576,6 @@ export function ConsultationChatDialog({
                   </div>
                 </div>
               ))}
-              <div ref={bottomRef} />
             </div>
           )}
         </div>
@@ -557,19 +584,32 @@ export function ConsultationChatDialog({
         {phase === 'chat' && !loadingHistory && (
           <div className="shrink-0 border-t bg-white">
             <div className="flex items-center gap-2 px-3 py-2">
-              <Input
-                className="flex-1 h-9 text-sm"
-                placeholder="Type a message…"
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    handleSend()
-                  }
-                }}
-                autoFocus={open && phase === 'chat'}
-              />
+              <div className="relative flex-1">
+                <Input
+                  className="h-9 text-sm"
+                  placeholder="Type a message…"
+                  value={draft}
+                  maxLength={CHAT_MESSAGE_MAX_LENGTH}
+                  onChange={(e) => setDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      handleSend()
+                    }
+                  }}
+                  autoFocus={open && phase === 'chat'}
+                />
+                {draft.length > CHAT_MESSAGE_MAX_LENGTH - 200 && (
+                  <span
+                    className={cn(
+                      'pointer-events-none absolute right-1 bottom-1 text-[10px]',
+                      draft.length >= CHAT_MESSAGE_MAX_LENGTH ? 'text-red-500' : 'text-gray-400',
+                    )}
+                  >
+                    {draft.length}/{CHAT_MESSAGE_MAX_LENGTH}
+                  </span>
+                )}
+              </div>
               <Button
                 size="icon"
                 className="h-9 w-9 shrink-0"

@@ -180,6 +180,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     getPortalUser(),
   ]);
   const goToProfileHref = portalUser ? `/portal/${portalUser.entityType}` : '/portal/login';
+  const isOwner = portalUser?.entityType === 'clinic' && portalUser.entitySlug === dbClinic.slug;
 
   const dbCityClinics = await getClinicsByCity(normalizedCitySlug);
   const clinic = convertDbClinicToOldType(dbClinic);
@@ -292,6 +293,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
           claimState={claimState}
           goToProfileHref={goToProfileHref}
+          isOwner={isOwner}
         />
 
 
