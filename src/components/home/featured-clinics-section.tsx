@@ -110,7 +110,7 @@ export default async function FeaturedClinicsSection() {
                       {"★".repeat(filledStars)}
                       {"☆".repeat(5 - filledStars)}
                     </div>
-                    <span className="border-l border-black pl-2 underline">
+                    <span className="border-l border-black pl-2">
                       ({clinic.reviewCount} reviews)
                     </span>
                   </div>

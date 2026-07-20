@@ -4,6 +4,11 @@
  * Auth: none — all endpoints are public.
  */
 
+// Shared between patient + clinic chat send routes (Zod schemas) and the
+// message inputs on both sides, so the client-enforced limit never drifts
+// from what the server actually accepts.
+export const CHAT_MESSAGE_MAX_LENGTH = 2000
+
 export interface NormalizedMessage {
   id: number
   sender: 'patient' | 'clinic'

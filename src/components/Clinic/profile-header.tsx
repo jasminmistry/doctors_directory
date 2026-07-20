@@ -22,9 +22,10 @@ interface ProfileHeaderProps {
   hasCoreCalendar?: boolean;
   claimState?: 'unclaimed' | 'pending' | 'claimed';
   goToProfileHref?: string;
+  isOwner?: boolean;
 }
 
-export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, claimState = clinic.claimed ? 'claimed' : 'unclaimed', goToProfileHref = '/portal/login' }: Readonly<ProfileHeaderProps>) {
+export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, claimState = clinic.claimed ? 'claimed' : 'unclaimed', goToProfileHref = '/portal/login', isOwner = false }: Readonly<ProfileHeaderProps>) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
@@ -59,7 +60,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
           </Badge>
         </Link>
       )}
-      {claimState === 'claimed' && (
+      {claimState === 'claimed' && isOwner && (
         <Link prefetch={false} href={goToProfileHref}>
           <Badge
             variant="outline"
