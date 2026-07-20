@@ -1,10 +1,12 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Send, Loader2, MessageSquare } from 'lucide-react'
+import { Send, Loader2, MessageSquare, ChevronLeft } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { CHAT_MESSAGE_MAX_LENGTH } from '@/lib/consentz-chat'
 import { format, isToday } from 'date-fns'
 
 interface ChatMessage {
@@ -21,6 +23,7 @@ interface ChatSession {
   patientPhone: string | null
   status: 'active' | 'closed'
   updatedAt: string
+  unread: boolean
   messages: { content: string; sender: string; createdAt: string }[]
 }
 
@@ -34,7 +37,6 @@ export function ChatInbox() {
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
 
-  const bottomRef = useRef<HTMLDivElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const prevMsgCountRef = useRef(0)
@@ -54,14 +56,18 @@ export function ChatInbox() {
     if (newCount === 0) return
 
     const el = messagesContainerRef.current
-    const isNearBottom = !el || el.scrollHeight - el.scrollTop - el.clientHeight < 150
+    if (!el) return
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 150
 
+    // Scroll the messages pane itself only — never scrollIntoView(), which
+    // walks up every scrollable ancestor (including the page) and can land
+    // the reply box in view while shoving the message thread off-screen.
     if (prevCount === 0) {
       // Initial load — jump instantly without animation
-      bottomRef.current?.scrollIntoView({ behavior: 'instant' })
+      el.scrollTop = el.scrollHeight
     } else if (newCount > prevCount && isNearBottom) {
       // New message arrived and user is near the bottom
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
     }
   }, [messages])
 
@@ -97,7 +103,10 @@ export function ChatInbox() {
 
   useEffect(() => {
     if (!activeId) return
-    fetchMessages(activeId)
+    // Opening a conversation marks it read server-side (see messages GET
+    // route) — refresh the session list right away so the unread dot/badge
+    // clears immediately instead of waiting for the next 5s poll.
+    fetchMessages(activeId).then(fetchSessions)
     pollRef.current = setInterval(() => fetchMessages(activeId), POLL_INTERVAL_MS)
     return () => {
       if (pollRef.current) clearInterval(pollRef.current)
@@ -115,12 +124,16 @@ export function ChatInbox() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),
       })
-      if (!res.ok) throw new Error()
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error((err as { error?: string }).error ?? 'Failed to send message.')
+      }
       const data: { message: ChatMessage } = await res.json()
       setMessages((prev) => [...prev, data.message])
       // Refresh session list so last-message preview updates
       fetchSessions()
-    } catch {
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to send message.')
       setDraft(content)
     } finally {
       setSending(false)
@@ -135,9 +148,15 @@ export function ChatInbox() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] rounded-lg border border-gray-200 bg-white overflow-hidden">
-      {/* Session list */}
-      <div className="w-72 shrink-0 flex flex-col border-r border-gray-200">
+    <div className="flex h-[calc(100dvh-8rem)] rounded-lg border border-gray-200 bg-white overflow-hidden">
+      {/* Session list — full width on mobile until a conversation is opened, fixed-width sidebar from md up */}
+      <div
+        className={cn(
+          'w-full md:w-72 shrink-0 flex-col border-r border-gray-200',
+          activeId ? 'hidden md:flex' : 'flex',
+        )}
+      >
+
         <div className="px-4 py-3 border-b border-gray-200">
           <h2 className="text-sm font-semibold text-gray-900">Conversations</h2>
         </div>
@@ -158,7 +177,7 @@ export function ChatInbox() {
 
           {sessions.map((s) => {
             const lastMsg = s.messages[0]
-            const unread = lastMsg?.sender === 'patient' && s.status === 'active'
+            const unread = s.unread
             return (
               <button
                 key={s.id}
@@ -189,8 +208,8 @@ export function ChatInbox() {
         </div>
       </div>
 
-      {/* Message pane */}
-      <div className="flex flex-1 flex-col min-w-0">
+      {/* Message pane — hidden on mobile until a conversation is opened, always visible from md up */}
+      <div className={cn('flex-1 flex-col min-w-0', activeId ? 'flex' : 'hidden md:flex')}>
         {!activeId && (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center px-8">
             <MessageSquare className="h-10 w-10 text-gray-200" />
@@ -201,11 +220,21 @@ export function ChatInbox() {
         {activeId && (
           <>
             {/* Header */}
-            <div className="shrink-0 px-5 py-3 border-b border-gray-200">
-              <p className="text-sm font-semibold text-gray-900">{active?.patientName ?? 'Patient'}</p>
-              <p className="text-xs text-gray-500">
-                {active?.patientEmail ?? active?.patientPhone ?? ''}
-              </p>
+            <div className="shrink-0 flex items-center gap-2 px-5 py-3 border-b border-gray-200">
+              <button
+                type="button"
+                onClick={() => setActiveId(null)}
+                className="md:hidden -ml-1 shrink-0 rounded-lg p-1 text-gray-500 hover:text-gray-700"
+                aria-label="Back to conversations"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-gray-900">{active?.patientName ?? 'Patient'}</p>
+                <p className="text-xs text-gray-500">
+                  {active?.patientEmail ?? active?.patientPhone ?? ''}
+                </p>
+              </div>
             </div>
 
             {/* Messages */}
@@ -236,25 +265,36 @@ export function ChatInbox() {
                   </div>
                 </div>
               ))}
-              <div ref={bottomRef} />
             </div>
 
             {/* Input */}
             {active?.status === 'active' && (
               <div className="shrink-0 flex items-center px-4 gap-2 border-t border-gray-200">
-                <Input
-                  className="flex-1 h-15 rounded-none border-none text-sm focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
-                  placeholder="Reply…"
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault()
-                      handleSend()
-                    }
-                  }}
-                  autoFocus
-                />
+                <div className="relative flex-1">
+                  <Input
+                    className="h-15 rounded-none border-none text-sm focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
+                    placeholder="Reply…"
+                    value={draft}
+                    maxLength={CHAT_MESSAGE_MAX_LENGTH}
+                    onChange={(e) => setDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        handleSend()
+                      }
+                    }}
+                  />
+                  {draft.length > CHAT_MESSAGE_MAX_LENGTH - 200 && (
+                    <span
+                      className={cn(
+                        'pointer-events-none absolute right-1 bottom-1 text-[10px]',
+                        draft.length >= CHAT_MESSAGE_MAX_LENGTH ? 'text-red-500' : 'text-gray-400',
+                      )}
+                    >
+                      {draft.length}/{CHAT_MESSAGE_MAX_LENGTH}
+                    </span>
+                  )}
+                </div>
                 <Button
                   size="icon"
                   className="h-9 w-9 shrink-0"

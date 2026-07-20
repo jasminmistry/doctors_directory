@@ -71,6 +71,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     getPortalUser(),
   ]);
   const goToProfileHref = portalUser ? `/portal/${portalUser.entityType}` : '/portal/login';
+  const isOwner = portalUser?.entityType === 'practitioner' && portalUser.entitySlug === clinic.practitioner_name;
 
   const hoursObj = clinic.hours as unknown as Record<string, any>;
   const hours = hoursObj?.["Typical_hours_listed_in_directories"] ?? clinic.hours;
@@ -142,6 +143,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                  clinic_list={associatedClinics}
                  claimState={claimState}
                  goToProfileHref={goToProfileHref}
+                 isOwner={isOwner}
                />
 
                <div className="px-4 md:px-0">

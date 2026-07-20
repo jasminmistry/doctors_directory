@@ -11,19 +11,25 @@ export async function GET() {
       return NextResponse.json({ unread: 0 })
     }
 
-    // Sessions where the most recent message is from a patient (needs clinic reply)
+    // Sessions where the most recent message is from a patient and the
+    // clinic hasn't viewed the conversation since that message arrived
     const sessions = await prisma.chatSession.findMany({
       where: { clinicId: user.clinicId, status: 'active' },
       select: {
+        clinicLastReadAt: true,
         messages: {
           orderBy: { createdAt: 'desc' },
           take: 1,
-          select: { sender: true },
+          select: { sender: true, createdAt: true },
         },
       },
     })
 
-    const unread = sessions.filter((s) => s.messages[0]?.sender === 'patient').length
+    const unread = sessions.filter((s) => {
+      const lastMsg = s.messages[0]
+      return lastMsg?.sender === 'patient' && (!s.clinicLastReadAt || lastMsg.createdAt > s.clinicLastReadAt)
+    }).length
+
     return NextResponse.json({ unread })
   } catch {
     return NextResponse.json({ unread: 0 })

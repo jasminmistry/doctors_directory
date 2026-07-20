@@ -3,12 +3,12 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { getPortalUser } from '@/lib/portal'
 import { prisma } from '@/lib/db'
-import { sendCoreMessage, startCoreConversation } from '@/lib/consentz-chat'
+import { sendCoreMessage, startCoreConversation, CHAT_MESSAGE_MAX_LENGTH } from '@/lib/consentz-chat'
 import { splitName } from '@/lib/auth'
 import { z } from 'zod'
 
 const bodySchema = z.object({
-  content: z.string().min(1).max(2000),
+  content: z.string().min(1).max(CHAT_MESSAGE_MAX_LENGTH),
 })
 
 async function resolveSession(sessionId: string, clinicId: number) {
@@ -23,6 +23,7 @@ async function resolveSession(sessionId: string, clinicId: number) {
       patientName: true,
       patientEmail: true,
       patientPhone: true,
+      clinicLastReadAt: true,
       clinic: { select: { coreClinicId: true } },
     },
   })
@@ -49,6 +50,17 @@ export async function GET(
       select: { id: true, sender: true, content: true, createdAt: true },
     })
 
+    // Mark everything up to the newest message as read by the clinic — clears
+    // the unread badge/dot for this conversation. Fire-and-forget so it
+    // doesn't slow down the response; only write when there's something new
+    // to avoid hammering the DB on every 3s poll of an already-read chat.
+    const latest = messages[messages.length - 1]
+    if (latest && (!session.clinicLastReadAt || latest.createdAt > session.clinicLastReadAt)) {
+      prisma.chatSession
+        .update({ where: { id: session.id }, data: { clinicLastReadAt: latest.createdAt } })
+        .catch((err) => console.error('[portal/chat/messages GET] failed to mark read:', err))
+    }
+
     return NextResponse.json({ messages })
   } catch (err) {
     console.error('[portal/chat/messages GET]', err)
@@ -68,7 +80,14 @@ export async function POST(
 
     const body = bodySchema.safeParse(await req.json())
     if (!body.success) {
-      return NextResponse.json({ error: 'Invalid request', issues: body.error.issues }, { status: 400 })
+      const contentIssue = body.error.issues.find((i) => i.path[0] === 'content')
+      const error =
+        contentIssue?.code === 'too_big'
+          ? `Message is too long (max ${CHAT_MESSAGE_MAX_LENGTH} characters).`
+          : contentIssue?.code === 'too_small'
+            ? 'Message cannot be empty.'
+            : 'Invalid request'
+      return NextResponse.json({ error, issues: body.error.issues }, { status: 400 })
     }
 
     const session = await resolveSession(params.sessionId, user.clinicId)

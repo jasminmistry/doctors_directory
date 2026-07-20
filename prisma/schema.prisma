@@ -910,6 +910,8 @@ model ChatSession {
   status       ChatSessionStatus @default(active)
   // Consentz Core reference — populated when conversation is pushed (stub, implement later)
   coreConversationId String?     @db.VarChar(255)
+  // Timestamp of the newest message the clinic has viewed — drives unread badges
+  clinicLastReadAt DateTime?
   closedAt     DateTime?
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
