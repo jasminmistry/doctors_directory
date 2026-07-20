@@ -194,8 +194,11 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
 
     setSubmitting(true)
     try {
-      // Core returns datetime in UTC; append Z to produce a valid UTC ISO-8601 string
-      const slotStart = selectedSlot.datetime.replace(' ', 'T') + 'Z'
+      // Core returns `datetime` as a naive wall-clock string in the timezone we
+      // requested (the `tz` query param, i.e. this browser's local timezone) —
+      // it is NOT UTC. Parse it as local time, then convert to a real UTC
+      // ISO-8601 string so the server never has to guess the offset.
+      const slotStart = new Date(selectedSlot.datetime.replace(' ', 'T')).toISOString()
       const slotEnd = new Date(new Date(slotStart).getTime() + slotDuration * 60 * 1000).toISOString()
 
       const commonPayload = {
