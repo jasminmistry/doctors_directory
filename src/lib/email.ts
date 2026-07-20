@@ -480,6 +480,68 @@ ${reviewUrl}
   })
 }
 
+export async function sendDirectoryRemovalRequestNotification({
+  clinicName,
+  clinicSlug,
+  requestedAt,
+}: {
+  clinicName: string
+  clinicSlug: string
+  requestedAt: Date
+}) {
+  const transport = createTransport()
+  const reviewUrl = `${BASE_URL}/directory/admin/directory-removal-requests`
+  const dateStr = requestedAt.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })
+
+  await transport.sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    subject: `Directory removal request — ${clinicName}`,
+    text: `
+${clinicName} has requested to have their listing removed from the Consentz Directory.
+
+Clinic slug: ${clinicSlug}
+Requested at: ${dateStr}
+
+Review and action this request:
+${reviewUrl}
+
+— Consentz Directory
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
+  <h2 style="margin-bottom:8px;">Directory removal request</h2>
+  <p><strong>${clinicName}</strong> has requested to have their listing removed from the Consentz Directory.</p>
+  <table style="margin:20px 0;background:#f5f5f5;border-radius:8px;width:100%;border-collapse:collapse;">
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;width:40%;border-bottom:1px solid #e5e5e5;">Clinic</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${clinicName}</td>
+    </tr>
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;border-bottom:1px solid #e5e5e5;">Slug</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${clinicSlug}</td>
+    </tr>
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;">Requested at</td>
+      <td style="padding:10px 16px;">${dateStr}</td>
+    </tr>
+  </table>
+  <a href="${reviewUrl}"
+     style="display:inline-block;margin:0 0 24px;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
+    Review removal requests
+  </a>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">— Consentz Directory</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
 export async function sendTemplateDownloadRequestEmail({
   clinicName,
   contactName,
@@ -591,13 +653,16 @@ export async function sendClaimInviteEmail({
   to,
   clinicName,
   claimUrl,
-  manageUrl,
+  unsubscribeUrl,
+  removeUrl,
 }: {
   to: string
   clinicName: string
   claimUrl: string
-  /** Used for both the "Unsubscribe" and "Unlist My Clinic" links — same endpoint, same effect. */
-  manageUrl: string
+  /** Stops future campaign emails only. */
+  unsubscribeUrl: string
+  /** Stops future campaign emails AND raises a directory listing removal request for admin review. */
+  removeUrl: string
 }) {
   const transport = createTransport()
   const supportEmail = 'care@consentz.com'
@@ -637,9 +702,9 @@ As we did not obtain your contact details directly from you, this email also ser
 
 If your clinic has already been claimed, or you believe you've received this email in error, please let us know.
 
-Unsubscribe: If you no longer wish to receive emails from us, visit ${manageUrl} or reply with "Unsubscribe" and we'll remove you from future communications.
+Unsubscribe: If you no longer wish to receive emails from us, visit ${unsubscribeUrl} or reply with "Unsubscribe" and we'll remove you from future communications.
 
-Remove your listing: If you do not wish your clinic to appear in the Consentz Directory, visit ${manageUrl} or contact us and we'll process your request promptly, subject to any legal obligations to retain certain records.
+Remove your listing: If you do not wish your clinic to appear in the Consentz Directory, visit ${removeUrl} or contact us and we'll process your request promptly, subject to any legal obligations to retain certain records.
 
 Thank you,
 The Consentz Team
@@ -679,10 +744,10 @@ The Consentz Team
     If your clinic has already been claimed, or you believe you've received this email in error, please let us know.
   </p>
   <p style="font-size:12px;color:#999;line-height:1.6;">
-    <strong>Unsubscribe:</strong> If you no longer wish to receive emails from us, <a href="${manageUrl}" style="color:#999;">click here</a> or reply with "Unsubscribe" and we'll remove you from future communications.
+    <strong>Unsubscribe:</strong> If you no longer wish to receive emails from us, <a href="${unsubscribeUrl}" style="color:#999;">click here</a> or reply with "Unsubscribe" and we'll remove you from future communications.
   </p>
   <p style="font-size:12px;color:#999;line-height:1.6;">
-    <strong>Remove your listing:</strong> If you do not wish your clinic to appear in the Consentz Directory, <a href="${manageUrl}" style="color:#999;">click here</a> or contact us and we'll process your request promptly, subject to any legal obligations to retain certain records.
+    <strong>Remove your listing:</strong> If you do not wish your clinic to appear in the Consentz Directory, <a href="${removeUrl}" style="color:#999;">click here</a> or contact us and we'll process your request promptly, subject to any legal obligations to retain certain records.
   </p>
   <p style="font-size:12px;color:#999;">Thank you,<br />The Consentz Team</p>
 </body>
