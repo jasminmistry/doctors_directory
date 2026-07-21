@@ -57,6 +57,7 @@ services:
       APPLE_TEAM_ID: ${APPLE_TEAM_ID}
       APPLE_KEY_ID: ${APPLE_KEY_ID}
       APPLE_PRIVATE_KEY: ${APPLE_PRIVATE_KEY}
+      DIRECTORY_LINK_SECRET: ${DIRECTORY_LINK_SECRET}
       UPLOADS_DIR: /app/uploads/images
     volumes:
       - uploads_data:/app/uploads
