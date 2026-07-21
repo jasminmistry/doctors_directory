@@ -6,37 +6,49 @@ import { usePathname } from "next/navigation";
 import { SearchBar } from "@/components/search/search-bar";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 
-type PatientInfo = { firstName: string; lastName: string; email: string }
-type PortalInfo = { entityType: 'clinic' | 'practitioner'; entityName: string; claimerEmail: string }
+type PatientInfo = { firstName: string; lastName: string; email: string };
+type PortalInfo = {
+  entityType: "clinic" | "practitioner";
+  entityName: string;
+  claimerEmail: string;
+};
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [patient, setPatient] = useState<PatientInfo | null | undefined>(undefined);
-  const [portalUser, setPortalUser] = useState<PortalInfo | null | undefined>(undefined);
+  const [patient, setPatient] = useState<PatientInfo | null | undefined>(
+    undefined,
+  );
+  const [portalUser, setPortalUser] = useState<PortalInfo | null | undefined>(
+    undefined,
+  );
   const pathname = usePathname();
 
   async function signOut() {
-    setPatient(null)
-    await fetch('/directory/api/patient/auth/logout', { method: 'POST' }).catch(() => {})
-    window.location.replace('/directory')
+    setPatient(null);
+    await fetch("/directory/api/patient/auth/logout", { method: "POST" }).catch(
+      () => {},
+    );
+    window.location.replace("/directory");
   }
 
   async function portalSignOut() {
-    setPortalUser(null)
-    await fetch('/directory/api/auth/logout', { method: 'POST' }).catch(() => {})
-    window.location.replace('/directory')
+    setPortalUser(null);
+    await fetch("/directory/api/auth/logout", { method: "POST" }).catch(
+      () => {},
+    );
+    window.location.replace("/directory");
   }
 
   useEffect(() => {
-    fetch('/directory/api/patient/me', { cache: 'no-store' })
-      .then((r) => r.ok ? r.json() : null)
+    fetch("/directory/api/patient/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
       .then((data) => setPatient(data))
-      .catch(() => setPatient(null))
-    fetch('/directory/api/portal/me', { cache: 'no-store' })
-      .then((r) => r.ok ? r.json() : null)
+      .catch(() => setPatient(null));
+    fetch("/directory/api/portal/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
       .then((data) => setPortalUser(data))
-      .catch(() => setPortalUser(null))
-  }, [pathname])
+      .catch(() => setPortalUser(null));
+  }, [pathname]);
 
   useEffect(() => {
     if (menuOpen) {
@@ -46,8 +58,10 @@ export default function Header() {
     }
   }, [menuOpen]);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com';
-  const marketingBaseUrl = process.env.NEXT_PUBLIC_MARKETING_BASE_URL || 'https://www.consentz.com';
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://staging.consentz.com";
+  const marketingBaseUrl =
+    process.env.NEXT_PUBLIC_MARKETING_BASE_URL || "https://www.consentz.com";
   const bookDemoHref = b2bBookDemoHref();
 
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
@@ -57,37 +71,50 @@ export default function Header() {
   const isBusinessHub =
     pathWithoutDirectoryBase === "/business" ||
     pathWithoutDirectoryBase.startsWith("/business/");
+  
+  const hideSearchPages = [
+    "/features/personalise",
+    "/features/photos-records",
+    "/features/clinic-management-software",
+  ];
+
   const showSearch =
-    normalizedPath !== "/" &&
-    !normalizedPath.startsWith("/admin") &&
-    !normalizedPath.startsWith("/portal") &&
-    !normalizedPath.startsWith("/account") &&
-    !normalizedPath.includes("/search") &&
-    normalizedPath !== "/clinics" &&
-    normalizedPath !== "/practitioners" &&
-    normalizedPath !== "/products" &&
-    normalizedPath !== "/treatments" &&
-    !normalizedPath.startsWith("/accredited") &&
-    !isBusinessHub;
+  normalizedPath !== "/" &&
+  !hideSearchPages.includes(normalizedPath) &&
+  !normalizedPath.startsWith("/admin") &&
+  !normalizedPath.startsWith("/portal") &&
+  !normalizedPath.startsWith("/account") &&
+  !normalizedPath.includes("/search") &&
+  normalizedPath !== "/clinics" &&
+  normalizedPath !== "/practitioners" &&
+  normalizedPath !== "/products" &&
+  normalizedPath !== "/treatments" &&
+  !normalizedPath.startsWith("/accredited") &&
+  !isBusinessHub;
 
   return (
-    <header
-      className="bg-[var(--primary-bg-color)] sticky top-0 z-40 border border-b-[#e0d9ca]">
+    <header className="bg-[var(--primary-bg-color)] sticky top-0 z-40 border border-b-[#e0e0e0]">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-start md:justify-between">
-        
         <div className="font-medium text-xl">
-          <Link href="/" className="inline-block cursor-pointer" aria-label="Go to directory home">
+          <Link
+            href="/"
+            className="inline-block cursor-pointer"
+            aria-label="Go to directory home"
+          >
             <img
-                src="/directory/images/Consentz Logo.webp"
-                alt="Logo"
-                className="w-[120px] md:w-[180px] h-auto cursor-pointer"
-              />
+              src="/directory/images/Consentz Logo.webp"
+              alt="Logo"
+              className="w-[120px] md:w-[180px] h-auto cursor-pointer"
+            />
           </Link>
         </div>
 
         <div className="nav-drop hidden md:flex gap-8 items-center w-full justify-between">
           <nav className="flex gap-8 items-center mx-auto">
-            <a href={`${baseUrl}/directory`} className="font-medium hover:text-black">
+            <a
+              href={`${baseUrl}/directory`}
+              className="font-medium hover:text-black"
+            >
               Home
             </a>
             <div className="relative group">
@@ -97,23 +124,42 @@ export default function Header() {
                 aria-haspopup="true"
               >
                 Features
-                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="h-3 w-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
               <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <a
-                  href={`${marketingBaseUrl}/features/`}
-                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg"
-                >
-                  All Features
-                </a>
-                <a
-                  href={`${marketingBaseUrl}/clinic-management-software/`}
-                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100"
+                <Link
+                  href="/features/clinic-management-software"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100 rounded-t-lg"
+                  onClick={() => setMenuOpen(false)}
                 >
                   Clinic Management Software
-                </a>
+                </Link>
+                <Link
+                  href="/features/photos-records"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Photos Records
+                </Link>
+                <Link
+                  href="/features/personalise"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Personalise
+                </Link>
                 <a
                   href={`${marketingBaseUrl}/hipaa-compliant-medical-spa-software/`}
                   className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100 rounded-b-lg"
@@ -122,22 +168,46 @@ export default function Header() {
                 </a>
               </div>
             </div>
-            <a href={`${marketingBaseUrl}/blog`} className="font-medium hover:text-black">
+            <a
+              href={`${marketingBaseUrl}/blog`}
+              className="font-medium hover:text-black"
+            >
               Blog
             </a>
             {/* <a href={`${marketingBaseUrl}/faqs`} className="font-medium hover:text-black">
               Faq's
             </a> */}
             <div className="relative group">
-              <button type="button" className="font-medium hover:text-black flex items-center gap-1">
+              <button
+                type="button"
+                className="font-medium hover:text-black flex items-center gap-1"
+              >
                 List Your Practice
-                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                <svg
+                  className="h-3 w-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
               </button>
               <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <Link href="/register/clinic" className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg">
+                <Link
+                  href="/register/clinic"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg"
+                >
                   Register a Clinic
                 </Link>
-                <Link href="/register/practitioner" className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-b-lg border-t border-gray-100">
+                <Link
+                  href="/register/practitioner"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-b-lg border-t border-gray-100"
+                >
                   Register as a Practitioner
                 </Link>
               </div>
@@ -145,50 +215,127 @@ export default function Header() {
           </nav>
           {patient ? (
             <div className="relative group">
-              <button type="button" className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1">
+              <button
+                type="button"
+                className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1"
+              >
                 {patient.firstName || patient.email}
-                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="h-3 w-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
               <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <Link href="/account" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg">My Account</Link>
-                <Link href="/account/bookings" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100">Bookings</Link>
-                <Link href="/account/chats" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100">Chats</Link>
-                <button type="button" onClick={signOut} className="block w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600">Sign out</button>
+                <Link
+                  href="/account"
+                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg"
+                >
+                  My Account
+                </Link>
+                <Link
+                  href="/account/bookings"
+                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100"
+                >
+                  Bookings
+                </Link>
+                <Link
+                  href="/account/chats"
+                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100"
+                >
+                  Chats
+                </Link>
+                <button
+                  type="button"
+                  onClick={signOut}
+                  className="block w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600"
+                >
+                  Sign out
+                </button>
               </div>
             </div>
           ) : portalUser ? (
             <div className="relative group">
-              <button type="button" className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1">
+              <button
+                type="button"
+                className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1"
+              >
                 {portalUser.entityName}
-                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="h-3 w-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
               <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <div className="px-4 py-2.5 border-b border-gray-100">
-                  <p className="text-xs text-gray-500 capitalize">{portalUser.entityType} portal</p>
+                  <p className="text-xs text-gray-500 capitalize">
+                    {portalUser.entityType} portal
+                  </p>
                 </div>
-                <Link href="/portal/clinic" className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg">
+                <Link
+                  href="/portal/clinic"
+                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg"
+                >
                   My Portal
                 </Link>
-                <button type="button" onClick={portalSignOut} className="block w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600">Sign out</button>
+                <button
+                  type="button"
+                  onClick={portalSignOut}
+                  className="block w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600"
+                >
+                  Sign out
+                </button>
               </div>
             </div>
           ) : (
             <div className="relative group">
-              <button type="button" className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black caplized hover:text-white flex items-center gap-1">
+              <button
+                type="button"
+                className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black caplized hover:text-white flex items-center gap-1"
+              >
                 Log In
-                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="h-3 w-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
               <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <Link href="/account/login" className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg">
+                <Link
+                  href="/account/login"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg"
+                >
                   Patient
                 </Link>
-                <Link href="/portal/login" className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100 rounded-b-lg">
+                <Link
+                  href="/portal/login"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100 rounded-b-lg"
+                >
                   Clinic / Practitioner
                 </Link>
               </div>
@@ -248,59 +395,145 @@ export default function Header() {
       {menuOpen && (
         <div className="md:hidden px-6 py-4">
           <nav className="flex flex-col gap-4">
-            <button type="button" className="text-left font-medium hover:text-black">
+            <button
+              type="button"
+              className="text-left font-medium hover:text-black"
+            >
               HOME
             </button>
             <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Features</p>
-              <a href={`${marketingBaseUrl}/features/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
-                All Features
-              </a>
-              <a href={`${marketingBaseUrl}/clinic-management-software/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
-                Clinic Management Software
-              </a>
-              <a href={`${marketingBaseUrl}/hipaa-compliant-medical-spa-software/`} className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Features
+              </p>
+              <Link
+                href="/features/clinic-management-software"
+                className="text-sm font-medium"
+                onClick={() => setMenuOpen(false)}
+              >
+                clinic-management-software
+              </Link>
+              <a
+                href={`${marketingBaseUrl}/hipaa-compliant-medical-spa-software/`}
+                className="text-sm font-medium hover:text-black"
+                onClick={() => setMenuOpen(false)}
+              >
                 HIPAA Compliant Medical Spa Software
               </a>
             </div>
-            <a href={`${marketingBaseUrl}/blog`} className="text-left font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+            <a
+              href={`${marketingBaseUrl}/blog`}
+              className="text-left font-medium hover:text-black"
+              onClick={() => setMenuOpen(false)}
+            >
               BLOG
             </a>
-            <a href={`${marketingBaseUrl}/faqs`} className="text-left font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+            <a
+              href={`${marketingBaseUrl}/faqs`}
+              className="text-left font-medium hover:text-black"
+              onClick={() => setMenuOpen(false)}
+            >
               FAQS
             </a>
             <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">List Your Practice</p>
-              <Link href="/register/clinic" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                List Your Practice
+              </p>
+              <Link
+                href="/register/clinic"
+                className="text-sm font-medium hover:text-black"
+                onClick={() => setMenuOpen(false)}
+              >
                 Register a Clinic
               </Link>
-              <Link href="/register/practitioner" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+              <Link
+                href="/register/practitioner"
+                className="text-sm font-medium hover:text-black"
+                onClick={() => setMenuOpen(false)}
+              >
                 Register as a Practitioner
               </Link>
             </div>
           </nav>
           {patient ? (
             <div className="mt-4 flex flex-col gap-2">
-              <span className="text-sm font-semibold text-gray-600">{patient.firstName || patient.email}</span>
-              <Link href="/account" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>My Account</Link>
-              <Link href="/account/bookings" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>Bookings</Link>
-              <Link href="/account/chats" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>Chats</Link>
-              <button type="button" onClick={() => { setMenuOpen(false); signOut() }} className="text-sm font-medium text-red-600 hover:text-red-800 text-left">Sign out</button>
+              <span className="text-sm font-semibold text-gray-600">
+                {patient.firstName || patient.email}
+              </span>
+              <Link
+                href="/account"
+                className="text-sm font-medium hover:text-black"
+                onClick={() => setMenuOpen(false)}
+              >
+                My Account
+              </Link>
+              <Link
+                href="/account/bookings"
+                className="text-sm font-medium hover:text-black"
+                onClick={() => setMenuOpen(false)}
+              >
+                Bookings
+              </Link>
+              <Link
+                href="/account/chats"
+                className="text-sm font-medium hover:text-black"
+                onClick={() => setMenuOpen(false)}
+              >
+                Chats
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  signOut();
+                }}
+                className="text-sm font-medium text-red-600 hover:text-red-800 text-left"
+              >
+                Sign out
+              </button>
             </div>
           ) : portalUser ? (
             <div className="mt-4 flex flex-col gap-2">
-              <span className="text-sm font-semibold text-gray-600">{portalUser.entityName}</span>
-              <span className="text-xs text-gray-500 capitalize">{portalUser.entityType} portal</span>
-              <Link href="/portal/clinic" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>My Portal</Link>
-              <button type="button" onClick={() => { setMenuOpen(false); portalSignOut() }} className="text-sm font-medium text-red-600 hover:text-red-800 text-left">Sign out</button>
+              <span className="text-sm font-semibold text-gray-600">
+                {portalUser.entityName}
+              </span>
+              <span className="text-xs text-gray-500 capitalize">
+                {portalUser.entityType} portal
+              </span>
+              <Link
+                href="/portal/clinic"
+                className="text-sm font-medium hover:text-black"
+                onClick={() => setMenuOpen(false)}
+              >
+                My Portal
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  portalSignOut();
+                }}
+                className="text-sm font-medium text-red-600 hover:text-red-800 text-left"
+              >
+                Sign out
+              </button>
             </div>
           ) : (
             <div className="mt-4 border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Log In</p>
-              <Link href="/account/login" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Log In
+              </p>
+              <Link
+                href="/account/login"
+                className="text-sm font-medium hover:text-black"
+                onClick={() => setMenuOpen(false)}
+              >
                 Patient
               </Link>
-              <Link href="/portal/login" className="text-sm font-medium hover:text-black" onClick={() => setMenuOpen(false)}>
+              <Link
+                href="/portal/login"
+                className="text-sm font-medium hover:text-black"
+                onClick={() => setMenuOpen(false)}
+              >
                 Clinic / Practitioner
               </Link>
             </div>

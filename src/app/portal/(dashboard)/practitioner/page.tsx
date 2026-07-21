@@ -68,7 +68,7 @@ export default function PortalPractitionerPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+    <div className="px-4 py-8 space-y-6">
       {/* Subscription card */}
       {subscription && (
         <div className="rounded-lg border border-gray-200 bg-white p-5">
