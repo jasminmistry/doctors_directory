@@ -5,6 +5,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { COOKIE_TOKEN, COOKIE_USERNAME, COOKIE_ROLE, COOKIE_REFRESH, COOKIE_OPTS } from '@/lib/auth'
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+
 interface SsoPayload {
   consentzClinicId:      number
   consentzUserId:        number
@@ -51,18 +53,18 @@ export async function GET(req: NextRequest) {
   const loginUrl = '/directory/portal/login'
 
   if (!rawToken) {
-    return NextResponse.redirect(new URL(loginUrl, req.url))
+    return NextResponse.redirect(new URL(loginUrl, BASE_URL))
   }
 
   let payload: SsoPayload | null
   try {
     payload = validateToken(rawToken)
   } catch {
-    return NextResponse.redirect(new URL(loginUrl, req.url))
+    return NextResponse.redirect(new URL(loginUrl, BASE_URL))
   }
 
   if (!payload) {
-    return NextResponse.redirect(new URL(`${loginUrl}?error=invalid_sso`, req.url))
+    return NextResponse.redirect(new URL(`${loginUrl}?error=invalid_sso`, BASE_URL))
   }
 
   // Find a ClaimRequest linked to this Consentz clinic
@@ -75,20 +77,20 @@ export async function GET(req: NextRequest) {
   })
 
   if (!claim) {
-    return NextResponse.redirect(new URL(`${loginUrl}?error=not_linked`, req.url))
+    return NextResponse.redirect(new URL(`${loginUrl}?error=not_linked`, BASE_URL))
   }
 
   if (claim.status === 'pending_approval') {
-    return NextResponse.redirect(new URL(`${loginUrl}?error=pending_approval`, req.url))
+    return NextResponse.redirect(new URL(`${loginUrl}?error=pending_approval`, BASE_URL))
   }
 
   // Verify the SSO token's username matches the one stored on the claim to prevent a different
   // Consentz user at the same clinic from hijacking the portal session.
   if (claim.consentzUsername && claim.consentzUsername !== payload.consentzUsername) {
-    return NextResponse.redirect(new URL(`${loginUrl}?error=username_mismatch`, req.url))
+    return NextResponse.redirect(new URL(`${loginUrl}?error=username_mismatch`, BASE_URL))
   }
 
-  const response = NextResponse.redirect(new URL('/directory/portal/clinic', req.url))
+  const response = NextResponse.redirect(new URL('/directory/portal/clinic', BASE_URL))
 
   response.cookies.set(COOKIE_USERNAME, payload.consentzUsername, COOKIE_OPTS)
   response.cookies.set(COOKIE_ROLE, 'portal', COOKIE_OPTS)
