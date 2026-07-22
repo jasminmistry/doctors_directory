@@ -189,6 +189,64 @@ export async function setCoreSchedule(
   return Array.isArray(data.schedule) ? data.schedule : []
 }
 
+export interface CorePullLeadContact {
+  firstName: string
+  lastName: string
+  email: string | null
+  phone: string | null
+  countryCode: string | null
+  notes: string | null
+}
+
+export interface CorePullLeadResponse {
+  leadCaptureId: number
+  coreUrl: string
+}
+
+/**
+ * Creates a LeadCapture prospect in Core from a directory ConsultationLead, called when a
+ * clinic admin clicks "Pull into Consentz Core" on a lead. Signed the same way as
+ * setCoreSchedule() above — Core verifies via DIRECTORY_LINK_SECRET HMAC.
+ * Key order in `contact` must match Core's DirectoryController::prospectPull() exactly,
+ * since the signature is computed over its JSON-encoded form.
+ */
+export async function pullLeadToCore(
+  consentzClinicId: number,
+  directoryLeadId: number,
+  contact: CorePullLeadContact,
+): Promise<CorePullLeadResponse> {
+  const secret = process.env.DIRECTORY_LINK_SECRET
+  if (!secret) throw new Error('DIRECTORY_LINK_SECRET is not configured')
+
+  const orderedContact = {
+    firstName: contact.firstName,
+    lastName: contact.lastName,
+    email: contact.email,
+    phone: contact.phone,
+    countryCode: contact.countryCode,
+    notes: contact.notes,
+  }
+
+  const sig = crypto
+    .createHmac('sha256', secret)
+    .update(`${consentzClinicId}:${directoryLeadId}:${JSON.stringify(orderedContact)}`)
+    .digest('hex')
+
+  const res = await coreLiteApi('/directory/prospect-pull', {
+    method: 'POST',
+    body: { consentzClinicId, directoryLeadId, ...orderedContact, sig },
+  })
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    let errMsg = 'Failed to pull lead into Core'
+    try { errMsg = (JSON.parse(body) as { message?: string }).message ?? errMsg } catch { /* raw */ }
+    throw Object.assign(new Error(errMsg), { status: res.status, body })
+  }
+
+  return res.json()
+}
+
 export function isCoreConfigured(): boolean {
   try {
     getConsentzAuthUrl()
