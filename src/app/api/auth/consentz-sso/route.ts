@@ -13,7 +13,18 @@ interface SsoPayload {
   consentzUsername:      string
   consentzSessionToken:  string | null
   consentzRefreshToken:  string | null | undefined
+  consentzReturnTo?:     string | null
   exp:                   number
+}
+
+/**
+ * Only allow same-origin, path-only redirects (must start with a single "/", never "//" —
+ * that's protocol-relative and would send the session cookies to an attacker-controlled host).
+ */
+function sanitizeReturnTo(returnTo: string | null | undefined): string | null {
+  if (!returnTo) return null
+  if (!returnTo.startsWith('/') || returnTo.startsWith('//')) return null
+  return returnTo
 }
 
 function getSecret(): string {
@@ -90,7 +101,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL(`${loginUrl}?error=username_mismatch`, BASE_URL))
   }
 
-  const response = NextResponse.redirect(new URL('/directory/portal/clinic', BASE_URL))
+  const landingPath = sanitizeReturnTo(payload.consentzReturnTo) ?? '/directory/portal/clinic'
+  const response = NextResponse.redirect(new URL(landingPath, BASE_URL))
 
   response.cookies.set(COOKIE_USERNAME, payload.consentzUsername, COOKIE_OPTS)
   response.cookies.set(COOKIE_ROLE, 'portal', COOKIE_OPTS)

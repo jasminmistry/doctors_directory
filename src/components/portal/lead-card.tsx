@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import {
   Lock, Unlock, Phone, Mail, Clock, Loader2, MapPin, CalendarDays,
-  ChevronDown, RefreshCw, FileText, User, CheckCircle2,
+  ChevronDown, RefreshCw, FileText, User, CheckCircle2, ExternalLink,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -40,6 +40,8 @@ interface LeadCardProps {
   onUnlocked: (id: number, data: { patientName: string; patientPhone: string; patientEmail: string | null; patientAge: number | null }) => void
   onSeen: (id: number) => void
   onUpdated: (id: number, patch: Partial<Pick<Lead, 'pipelineStatus' | 'notes' | 'ownerName'>>) => void
+  onPulledToCore: (id: number, data: { coreUrl: string }) => void
+  highlighted?: boolean
 }
 
 const PIPELINE_STATUSES: { value: PipelineStatus; label: string; color: string }[] = [
@@ -257,11 +259,14 @@ function DetailRow({
   )
 }
 
-export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCardProps) {
+export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledToCore, highlighted }: LeadCardProps) {
   const [unlocking, setUnlocking] = useState(false)
   const [unlockError, setUnlockError] = useState<string | null>(null)
   const [localNotes, setLocalNotes] = useState(lead.notes)
   const [localOwner, setLocalOwner] = useState(lead.ownerName)
+  const [pulling, setPulling] = useState(false)
+  const [pullError, setPullError] = useState<string | null>(null)
+  const [coreUrl, setCoreUrl] = useState<string | null>(null)
 
   const initials = lead.isUnlocked && lead.patientName
     ? lead.patientName.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
@@ -312,11 +317,32 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
     }
   }
 
+  async function handlePullToCore() {
+    setPullError(null)
+    setPulling(true)
+    try {
+      const res = await fetch(`/directory/api/portal/leads/${lead.id}/pull-to-core`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) {
+        setPullError(data.error ?? 'Failed to pull lead into Core')
+        return
+      }
+      setCoreUrl(data.coreUrl ?? null)
+      onPulledToCore(lead.id, { coreUrl: data.coreUrl })
+    } catch {
+      setPullError('Network error. Please try again.')
+    } finally {
+      setPulling(false)
+    }
+  }
+
   return (
     <div
+      id={`lead-${lead.id}`}
       className={cn(
         'rounded-lg border bg-white p-4 transition-shadow ',
-        lead.isNew ? 'border-blue-200 shadow-[0_0_0_1px_rgba(59,130,246,0.15)]' : 'border-gray-200',
+        highlighted ? 'border-violet-300 shadow-[0_0_0_2px_rgba(139,92,246,0.25)]'
+          : lead.isNew ? 'border-blue-200 shadow-[0_0_0_1px_rgba(59,130,246,0.15)]' : 'border-gray-200',
       )}
       onMouseEnter={handleSeen}
     >
@@ -428,21 +454,47 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated }: LeadCard
       )}
 
       {!locked && (
-        <div className="flex gap-2">
-          <Button asChild size="sm" className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-white hover:bg-primary/90 hover:cursor-pointer transition-colors">
-            <a href={`tel:${lead.patientPhone}`}>
-              <Phone className="h-3.5 w-3.5 mr-1.5" />
-              Call
-            </a>
-          </Button>
-          {lead.patientEmail && (
-            <Button asChild size="sm" variant="outline" className="border-[#e0e0e0] ">
-              <a href={`mailto:${lead.patientEmail}`}>
-                <Mail className="h-3.5 w-3.5 mr-1.5" />
-                Email
+        <div className="space-y-1.5">
+          <div className="flex flex-wrap gap-2">
+            <Button asChild size="sm" className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-white hover:bg-primary/90 hover:cursor-pointer transition-colors">
+              <a href={`tel:${lead.patientPhone}`}>
+                <Phone className="h-3.5 w-3.5 mr-1.5" />
+                Call
               </a>
             </Button>
-          )}
+            {lead.patientEmail && (
+              <Button asChild size="sm" variant="outline" className="border-[#e0e0e0] ">
+                <a href={`mailto:${lead.patientEmail}`}>
+                  <Mail className="h-3.5 w-3.5 mr-1.5" />
+                  Email
+                </a>
+              </Button>
+            )}
+            {!lead.coreSynced && (
+              <Button
+                onClick={handlePullToCore}
+                disabled={pulling}
+                size="sm"
+                variant="outline"
+                className="border-violet-200 text-violet-700 hover:bg-violet-50"
+              >
+                {pulling ? (
+                  <><Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />Pulling…</>
+                ) : (
+                  <><RefreshCw className="h-3.5 w-3.5 mr-1.5" />Pull into Consentz Core</>
+                )}
+              </Button>
+            )}
+            {lead.coreSynced && coreUrl && (
+              <Button asChild size="sm" variant="outline" className="border-violet-200 text-violet-700 hover:bg-violet-50">
+                <a href={coreUrl} target="_blank" rel="noreferrer">
+                  <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                  View in Core
+                </a>
+              </Button>
+            )}
+          </div>
+          {pullError && <p className="text-xs text-red-600">{pullError}</p>}
         </div>
       )}
     </div>

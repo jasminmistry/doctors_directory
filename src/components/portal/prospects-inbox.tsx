@@ -92,6 +92,19 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
     setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, ...patch } : l)))
   }
 
+  function handlePulledToCore(id: number) {
+    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, coreSynced: true } : l)))
+  }
+
+  const highlightedLeadId = Number(searchParams.get('lead')) || null
+
+  useEffect(() => {
+    if (!highlightedLeadId || loading) return
+    const el = document.getElementById(`lead-${highlightedLeadId}`)
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [highlightedLeadId, loading])
+
   const visibleLeads = activeTab === 'all'
     ? leads
     : leads.filter((l) => l.pipelineStatus === activeTab)
@@ -190,6 +203,8 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
               onUnlocked={handleUnlocked}
               onSeen={handleSeen}
               onUpdated={handleUpdated}
+              onPulledToCore={() => handlePulledToCore(lead.id)}
+              highlighted={lead.id === highlightedLeadId}
             />
           ))}
         </div>
