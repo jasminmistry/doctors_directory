@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { Loader2, Inbox, CheckCircle, CreditCard } from 'lucide-react'
 import { LeadCard, type Lead, type PipelineStatus } from '@/components/portal/lead-card'
 import { cn } from '@/lib/utils'
+import { PPL_LEAD_PRICE } from '@/lib/pricing'
 
 interface ProspectsInboxProps {
   plan: 'free' | 'pay_per_lead' | 'subscription'
@@ -141,7 +142,7 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
       {setupStatus === 'card_saved' && (
         <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-black">
           <CreditCard className="h-4 w-4 shrink-0" />
-          Card saved successfully. Click <strong>Unlock — £15</strong> on any lead below to reveal patient details.
+          Card saved successfully. Click <strong>Unlock — £{PPL_LEAD_PRICE}</strong> on any lead below to reveal patient details.
         </div>
       )}
 

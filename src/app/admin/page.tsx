@@ -11,6 +11,7 @@ import {
   Link2Off, Trash2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { PPL_LEAD_PRICE } from '@/lib/pricing'
 
 export const dynamic = 'force-dynamic'
 
@@ -367,7 +368,7 @@ export default function AdminDashboard() {
                       </span>
                     </div>
                   </div>
-                  <p className="text-[10px] text-violet-600">£15 per lead unlock. One-time Stripe payment.</p>
+                  <p className="text-[10px] text-violet-600">£{PPL_LEAD_PRICE} per lead unlock. One-time Stripe payment.</p>
                 </div>
 
                 {/* Booking deposits */}

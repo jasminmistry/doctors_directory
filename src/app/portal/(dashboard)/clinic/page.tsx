@@ -6,7 +6,7 @@ import { CheckCircle2, Info, PoundSterling, Clock, RotateCcw, AlertCircle, XCirc
 import { ClinicForm } from "@/components/admin/forms/ClinicForm";
 import { CoreIntegrationPanel } from "@/components/portal/CoreIntegrationPanel";
 import { cn } from "@/lib/utils";
-import { commissionPct, clinicNetRate } from "@/lib/pricing";
+import { commissionPct, clinicNetRate, PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from "@/lib/pricing";
 
 export const dynamic = "force-dynamic";
 
@@ -27,19 +27,19 @@ const PLAN_META: Record<
   },
   pay_per_lead: {
     label: "Pay Per Lead",
-    price: "£15 / lead",
+    price: `£${PPL_LEAD_PRICE} / lead`,
     cadence: "Pay per unlock",
     color: "text-violet-700 bg-violet-100",
     features: [
       "Everything in Free",
-      "Unlock individual lead details for £15 each",
+      `Unlock individual lead details for £${PPL_LEAD_PRICE} each`,
       "Calendar and appointment booking",
       "Full Consentz Core chat sync",
     ],
   },
   subscription: {
     label: "Subscription",
-    price: "£99 / month",
+    price: `£${SUBSCRIPTION_MONTHLY_PRICE} / month`,
     cadence: "Monthly, auto-renews",
     color: "text-cyan-700 bg-cyan-100",
     features: [

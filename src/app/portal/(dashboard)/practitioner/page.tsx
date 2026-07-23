@@ -2,20 +2,21 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { PractitionerForm } from '@/components/admin/forms/PractitionerForm'
+import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from '@/lib/pricing'
 
 export const dynamic = 'force-dynamic'
 
 const PLAN_LABELS: Record<string, string> = {
   free: 'Free',
-  pay_per_lead: 'Pay-Per-Lead £15/mo',
-  subscription: 'Subscription £99/mo',
+  pay_per_lead: `Pay-Per-Lead £${PPL_LEAD_PRICE}/mo`,
+  subscription: `Subscription £${SUBSCRIPTION_MONTHLY_PRICE}/mo`,
 }
 
 const PLAN_ORDER: Record<string, number> = { free: 0, pay_per_lead: 1, subscription: 2 }
 
 const UPGRADEABLE_PLANS: { key: string; label: string; description: string }[] = [
-  { key: 'pay_per_lead', label: 'Pay-Per-Lead — £15/mo', description: 'Priority listing + Verified badge' },
-  { key: 'subscription', label: 'Subscription — £99/mo', description: 'Unlimited leads at £0 each' },
+  { key: 'pay_per_lead', label: `Pay-Per-Lead — £${PPL_LEAD_PRICE}/mo`, description: 'Priority listing + Verified badge' },
+  { key: 'subscription', label: `Subscription — £${SUBSCRIPTION_MONTHLY_PRICE}/mo`, description: 'Unlimited leads at £0 each' },
 ]
 
 interface SubscriptionInfo {

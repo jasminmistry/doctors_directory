@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from '@/lib/pricing'
 
 export const dynamic = 'force-dynamic'
 
@@ -36,8 +37,8 @@ const STATUS_LABELS: Record<string, string> = {
 
 const PLAN_LABELS: Record<string, string> = {
   free: 'Free',
-  pay_per_lead: 'Pay-Per-Lead £15',
-  subscription: 'Subscription £99',
+  pay_per_lead: `Pay-Per-Lead £${PPL_LEAD_PRICE}`,
+  subscription: `Subscription £${SUBSCRIPTION_MONTHLY_PRICE}`,
 }
 
 const columns = [

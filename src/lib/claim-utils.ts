@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import { prisma } from './db'
 import type { ClaimStatus } from '@prisma/client'
+import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from './pricing'
 export { isGenericEmailDomain } from './email-domains'
 
 export type ClaimState = 'unclaimed' | 'pending' | 'claimed'
@@ -123,6 +124,6 @@ export const PLAN_LABELS: Record<string, string> = {
 
 export const PLAN_PRICES: Record<string, number> = {
   free: 0,
-  pay_per_lead: 15,
-  subscription: 99,
+  pay_per_lead: PPL_LEAD_PRICE,
+  subscription: SUBSCRIPTION_MONTHLY_PRICE,
 }

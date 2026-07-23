@@ -5,6 +5,7 @@ import { resolveClinicTimezone } from '@/lib/core-api'
 import { PortalCalendarView } from '@/components/portal/portal-calendar-view'
 import { WrongAccountNotice } from '@/components/portal/wrong-account-notice'
 import { CalendarDays } from 'lucide-react'
+import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from '@/lib/pricing'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,7 +35,7 @@ export default async function CalendarPage() {
         </div>
         <h1 className="text-xl font-semibold text-gray-900">Calendar not available</h1>
         <p className="text-sm text-gray-500">
-          The Calendar is available on Pay-Per-Lead (£15/lead) and Subscription (£99/mo) plans.
+          The Calendar is available on Pay-Per-Lead (£{PPL_LEAD_PRICE}/lead) and Subscription (£{SUBSCRIPTION_MONTHLY_PRICE}/mo) plans.
           Upgrade your plan to manage appointments and accept online bookings.
         </p>
         <a

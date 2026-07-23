@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { PPL_LEAD_PRICE } from './pricing'
 
 function createTransport() {
   const host = process.env.SMTP_HOST ?? 'localhost'
@@ -234,7 +235,7 @@ Hi,
 
 A patient has requested a consultation at ${clinicName} via Consentz Directory.${treatment ? `\nTreatment interest: ${treatment}` : ''}${location ? `\nLocation: ${location}` : ''}
 
-Their contact details are hidden until you unlock this lead (£15).
+Their contact details are hidden until you unlock this lead (£${PPL_LEAD_PRICE}).
 
 View lead in your portal:
 ${portalUrl}
@@ -261,10 +262,10 @@ ${portalUrl}
     ${treatment ? `<tr><td style="padding:10px 16px;font-weight:600;border-bottom:1px solid #e5e5e5;">Treatment</td><td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${treatment}</td></tr>` : ''}
     ${location ? `<tr><td style="padding:10px 16px;font-weight:600;">Location</td><td style="padding:10px 16px;">${location}</td></tr>` : ''}
   </table>
-  <p style="color:#666;font-size:14px;">Unlock this lead for <strong>£15</strong> to see the patient's name and contact details.</p>
+  <p style="color:#666;font-size:14px;">Unlock this lead for <strong>£${PPL_LEAD_PRICE}</strong> to see the patient's name and contact details.</p>
   <a href="${portalUrl}"
      style="display:inline-block;margin:0 0 24px;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
-    Unlock lead — £15
+    Unlock lead — £${PPL_LEAD_PRICE}
   </a>
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
   <p style="color:#999;font-size:12px;">— The Consentz Team</p>
@@ -733,23 +734,23 @@ The Consentz Team
   </a>
   <p>If you have any questions, simply email us at <a href="mailto:${supportEmail}">${supportEmail}</a> — we'd be happy to help.</p>
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
-  <p style="font-size:13px;color:#666;font-weight:600;">Why have you received this email?</p>
-  <p style="font-size:12px;color:#999;line-height:1.6;">
+  <p style="font-size:13px;color:#333;font-weight:600;">Why have you received this email?</p>
+  <p style="font-size:12px;color:#333;line-height:1.6;">
     We believe the Consentz Directory is relevant to your business and are contacting you under our legitimate interests (Article 6(1)(f) UK GDPR) to invite you to manage your clinic's listing.
   </p>
-  <p style="font-size:12px;color:#999;line-height:1.6;">
-    As we did not obtain your contact details directly from you, this email also serves as the information notice required under <strong>Article 14 of the UK GDPR</strong>. Information about how we collect, use and protect your personal data, your rights, and how to contact us can be found in our <a href="${privacyUrl}" style="color:#999;">Privacy Notice</a>.
+  <p style="font-size:12px;color:#333;line-height:1.6;">
+    As we did not obtain your contact details directly from you, this email also serves as the information notice required under <strong>Article 14 of the UK GDPR</strong>. Information about how we collect, use and protect your personal data, your rights, and how to contact us can be found in our <a href="${privacyUrl}" style="color:#333;">Privacy Notice</a>.
   </p>
-  <p style="font-size:12px;color:#999;line-height:1.6;">
+  <p style="font-size:12px;color:#333;line-height:1.6;">
     If your clinic has already been claimed, or you believe you've received this email in error, please let us know.
   </p>
-  <p style="font-size:12px;color:#999;line-height:1.6;">
-    <strong>Unsubscribe:</strong> If you no longer wish to receive emails from us, <a href="${unsubscribeUrl}" style="color:#999;">click here</a> or reply with "Unsubscribe" and we'll remove you from future communications.
+  <p style="font-size:12px;color:#333;line-height:1.6;">
+    <strong>Unsubscribe:</strong> If you no longer wish to receive emails from us, <a href="${unsubscribeUrl}" style="color:#333;">click here</a> or reply with "Unsubscribe" and we'll remove you from future communications.
   </p>
-  <p style="font-size:12px;color:#999;line-height:1.6;">
-    <strong>Remove your listing:</strong> If you do not wish your clinic to appear in the Consentz Directory, <a href="${removeUrl}" style="color:#999;">click here</a> or contact us and we'll process your request promptly, subject to any legal obligations to retain certain records.
+  <p style="font-size:12px;color:#333;line-height:1.6;">
+    <strong>Remove your listing:</strong> If you do not wish your clinic to appear in the Consentz Directory, <a href="${removeUrl}" style="color:#333;">click here</a> or contact us and we'll process your request promptly, subject to any legal obligations to retain certain records.
   </p>
-  <p style="font-size:12px;color:#999;">Thank you,<br />The Consentz Team</p>
+  <p style="font-size:12px;color:#333;">Thank you,<br />The Consentz Team</p>
 </body>
 </html>
     `.trim(),

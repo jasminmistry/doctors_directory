@@ -5,6 +5,7 @@ import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
 import { calculateAge } from '@/lib/utils'
+import { PPL_LEAD_PRICE_PENCE } from '@/lib/pricing'
 
 function resolveDirectoryBaseUrl(): string {
   const candidates = [
@@ -104,7 +105,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   try {
     const intent = await stripe.paymentIntents.create({
-      amount: 1500, // £15.00
+      amount: PPL_LEAD_PRICE_PENCE,
       currency: 'gbp',
       customer: clinic.stripeCustomerId,
       payment_method: paymentMethod.id,
