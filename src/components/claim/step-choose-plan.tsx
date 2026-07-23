@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from '@/lib/pricing'
 
 type Plan = 'free' | 'pay_per_lead' | 'subscription'
 
@@ -40,7 +41,7 @@ const PLANS: {
   {
     id: 'subscription',
     name: 'Verified Subscription',
-    price: '£99',
+    price: `£${SUBSCRIPTION_MONTHLY_PRICE}`,
     priceNote: '/mo',
     description: 'Priority visibility with unlimited instant leads.',
     badge: 'Recommended',
@@ -55,7 +56,7 @@ const PLANS: {
   {
     id: 'pay_per_lead',
     name: 'Pay-Per-Lead',
-    price: '£15',
+    price: `£${PPL_LEAD_PRICE}`,
     priceNote: '/lead',
     description: 'Pay only for the leads you receive.',
     features: [

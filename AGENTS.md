@@ -66,7 +66,7 @@ Key JSON files: `clinics_processed_new_data.json`, `derms_processed_new_5403.jso
 | Value | Price | Features |
 |---|---|---|
 | `free` | GBP 0 | Portal, prospects inbox, consultation chat (local only, no Core sync) |
-| `pay_per_lead` | GBP 15/lead unlock | + Calendar, full Core chat sync, leads unlocked per payment |
+| `pay_per_lead` | GBP 55/lead unlock | + Calendar, full Core chat sync, leads unlocked per payment |
 | `subscription` | GBP 99/mo | + Calendar, Core chat sync, automatic booking sync from Core |
 
 **Gate pattern used everywhere - copy this exactly:**

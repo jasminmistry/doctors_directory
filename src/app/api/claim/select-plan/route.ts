@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ redirect: `${basePath}?claimId=${claimId}&step=pending` })
     }
 
-    // PPL — SetupIntent to capture card with no upfront charge (£15 charged per-lead unlock)
+    // PPL — SetupIntent to capture card with no upfront charge (PPL_LEAD_PRICE charged per-lead unlock)
     if (plan === 'pay_per_lead') {
       const session = await stripe.checkout.sessions.create({
         mode: 'setup',

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from "@/lib/pricing";
 
 export const dynamic = "force-dynamic";
 
@@ -32,12 +33,12 @@ const PLANS: {
   {
     id: "pay_per_lead",
     label: "Pay Per Lead",
-    price: "£15",
+    price: `£${PPL_LEAD_PRICE}`,
     cadence: "per lead unlock",
     color: "text-violet-700 bg-violet-100",
     features: [
       "Everything in Free",
-      "Unlock individual lead details for £15 each",
+      `Unlock individual lead details for £${PPL_LEAD_PRICE} each`,
       "Calendar and appointment booking",
       "Full Consentz Core chat sync",
     ],
@@ -45,7 +46,7 @@ const PLANS: {
   {
     id: "subscription",
     label: "Subscription",
-    price: "£99",
+    price: `£${SUBSCRIPTION_MONTHLY_PRICE}`,
     cadence: "per month",
     color: "text-cyan-700 bg-cyan-100",
     features: [

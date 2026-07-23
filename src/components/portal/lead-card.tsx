@@ -9,6 +9,7 @@ import type { LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
+import { PPL_LEAD_PRICE } from '@/lib/pricing'
 
 export type PipelineStatus = 'new' | 'contacted' | 'booked' | 'lost' | 'spam' | 'archived' | 'closed'
 
@@ -440,7 +441,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
             {unlocking ? (
               <><Loader2 className="h-4 w-4 animate-spin mr-2" />Processing…</>
             ) : (
-              <><Unlock className="h-4 w-4 mr-2" />Unlock — £15</>
+              <><Unlock className="h-4 w-4 mr-2" />Unlock — £{PPL_LEAD_PRICE}</>
             )}
           </Button>
           {unlockError && <p className="text-xs text-red-600 text-center">{unlockError}</p>}

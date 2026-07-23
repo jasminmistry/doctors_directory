@@ -4,8 +4,14 @@
 /** Monthly subscription price charged to clinics (£) */
 export const SUBSCRIPTION_MONTHLY_PRICE = 99
 
+/** Monthly subscription price in pence, for Stripe amount/unit_amount fields */
+export const SUBSCRIPTION_MONTHLY_PRICE_PENCE = SUBSCRIPTION_MONTHLY_PRICE * 100
+
 /** Pay-per-lead unlock price per lead (£) */
-export const PPL_LEAD_PRICE = 15
+export const PPL_LEAD_PRICE = 55
+
+/** Pay-per-lead unlock price in pence, for Stripe amount/unit_amount fields */
+export const PPL_LEAD_PRICE_PENCE = PPL_LEAD_PRICE * 100
 
 /**
  * Commission rates on teleconsult booking deposits, inclusive of Stripe processing.
