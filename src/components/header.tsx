@@ -72,7 +72,11 @@ export default function Header() {
     pathWithoutDirectoryBase === "/business" ||
     pathWithoutDirectoryBase.startsWith("/business/");
   
-  const hideSearchPages = [
+  const hideSearchPages = [ 
+    "/features/the-consentz-academy",
+    "/features/healthcare-marketing-software",
+    "/features/stock-and-billing",
+    "/features/analytics",
     "/features/personalise",
     "/features/photos-records",
     "/features/clinic-management-software",
@@ -113,14 +117,14 @@ export default function Header() {
           <nav className="flex gap-8 items-center mx-auto">
             <a
               href={`${baseUrl}/directory`}
-              className="font-medium hover:text-black"
+              className="font-medium hover:text-black uppercase"
             >
               Home
             </a>
             <div className="relative group">
               <button
                 type="button"
-                className="font-medium hover:text-black flex items-center gap-1"
+                className="font-medium hover:text-black flex items-center gap-1 uppercase"
                 aria-haspopup="true"
               >
                 Features
@@ -160,6 +164,34 @@ export default function Header() {
                 >
                   Personalise
                 </Link>
+                <Link
+                  href="/features/analytics"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Analytics
+                </Link>
+                <Link
+                  href="/features/stock-and-billing"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Stock And Billing
+                </Link> 
+                <Link
+                  href="/features/healthcare-marketing-software"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Healthcare Marketing Software
+                </Link>
+                <Link
+                  href="/features/the-consentz-academy"
+                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  The Consentz Academy
+                </Link>
                 <a
                   href={`${marketingBaseUrl}/hipaa-compliant-medical-spa-software/`}
                   className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100 rounded-b-lg"
@@ -170,7 +202,7 @@ export default function Header() {
             </div>
             <a
               href={`${marketingBaseUrl}/blog`}
-              className="font-medium hover:text-black"
+              className="font-medium hover:text-black uppercase"
             >
               Blog
             </a>
@@ -180,7 +212,7 @@ export default function Header() {
             <div className="relative group">
               <button
                 type="button"
-                className="font-medium hover:text-black flex items-center gap-1"
+                className="font-medium hover:text-black flex items-center gap-1 uppercase"
               >
                 List Your Practice
                 <svg
