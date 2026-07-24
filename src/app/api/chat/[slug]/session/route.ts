@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { startCoreConversation } from '@/lib/consentz-chat'
 import { splitName } from '@/lib/auth'
+import { getPatientClaims } from '@/lib/patient-auth'
 import crypto from 'crypto'
 import { z } from 'zod'
 
@@ -34,21 +35,32 @@ export async function POST(
     const visitorToken = crypto.randomBytes(32).toString('hex')
     const openingMessage = body.data.initialMessage?.trim() || ''
 
+    // Link to the logged-in patient (the widget requires login) so it shows up under
+    // their account's chat history — otherwise /api/patient/chats can never find it.
+    const patientId = getPatientClaims(req)?.id ?? null
+
     const session = await prisma.chatSession.create({
       data: {
         clinicId: clinic.id,
         visitorToken,
+        patientId,
         patientName: body.data.patientName,
         patientEmail: body.data.patientEmail,
         patientPhone: body.data.patientPhone,
       },
     })
 
-    // Always store the initial message locally so the clinic portal can see it
+    // Always store the initial message locally so the clinic portal can see it.
+    // The client must not also POST it to the messages endpoint — that would duplicate it.
+    let message: { id: number; sender: string; content: string; createdAt: Date } | null = null
     if (openingMessage) {
-      await prisma.chatMessage.create({
+      message = await prisma.chatMessage.create({
         data: { sessionId: session.id, sender: 'patient', content: openingMessage },
-      }).catch((err) => console.error('[chat/session] failed to store initial message locally:', err))
+        select: { id: true, sender: true, content: true, createdAt: true },
+      }).catch((err) => {
+        console.error('[chat/session] failed to store initial message locally:', err)
+        return null
+      })
     }
 
     // Push to Consentz Core — paid plans with coreClinicId only
@@ -83,7 +95,7 @@ export async function POST(
         .catch((err) => console.error('[chat/session] failed to persist coreConversationId:', err))
     }
 
-    return NextResponse.json({ sessionId: session.id, visitorToken })
+    return NextResponse.json({ sessionId: session.id, visitorToken, message })
   } catch (err) {
     console.error('[chat/session POST]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

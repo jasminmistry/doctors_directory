@@ -17,6 +17,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const existing = await prisma.booking.findFirst({ where: { id, clinicId: user.clinicId } })
   if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
+  if (existing.status === 'cancelled') {
+    return NextResponse.json({ error: 'This booking was cancelled and can no longer be edited.' }, { status: 400 })
+  }
+
   const body = await req.json().catch(() => null)
   if (!body) return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
 

@@ -299,7 +299,7 @@ export function ConsultationChatDialog({
         }),
       })
       if (!res.ok) throw new Error()
-      const result: { sessionId: number; visitorToken: string } = await res.json()
+      const result: { sessionId: number; visitorToken: string; message: Message | null } = await res.json()
 
       setSessionId(result.sessionId)
       setVisitorToken(result.visitorToken)
@@ -308,7 +308,14 @@ export function ConsultationChatDialog({
       writeStoredSession(clinicSlug, result.sessionId, result.visitorToken)
 
       setPhase('chat')
-      await sendMessage(result.sessionId, result.visitorToken, initialMessage)
+      // The session endpoint already stored this message — reflect it locally instead of
+      // re-sending it, which would create a duplicate in the clinic's inbox.
+      if (result.message) {
+        setMessages([result.message])
+        lastCreatedAt.current = result.message.createdAt
+      } else {
+        await sendMessage(result.sessionId, result.visitorToken, initialMessage)
+      }
     } catch {
       toast.error('Could not start chat. Please try again.')
     } finally {
@@ -586,7 +593,7 @@ export function ConsultationChatDialog({
             <div className="flex items-center gap-2 px-3 py-2">
               <div className="relative flex-1">
                 <Input
-                  className="h-9 text-sm"
+                  className={cn('h-9 text-sm', draft.length > CHAT_MESSAGE_MAX_LENGTH - 200 && 'pr-12')}
                   placeholder="Type a message…"
                   value={draft}
                   maxLength={CHAT_MESSAGE_MAX_LENGTH}

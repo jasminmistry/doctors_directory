@@ -243,7 +243,7 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
           clinicTimezone={clinicTimezone}
           showSyncBadge={showSyncBadge}
           onClose={() => setSelected(null)}
-          onEdit={onEditBooking ? () => { onEditBooking(selected); setSelected(null) } : undefined}
+          onEdit={onEditBooking && selected.status !== 'cancelled' ? () => { onEditBooking(selected); setSelected(null) } : undefined}
           onDelete={onDeleteBooking ? () => { onDeleteBooking(selected); setSelected(null) } : undefined}
         />
       )}
