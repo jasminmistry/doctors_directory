@@ -11,6 +11,7 @@ import { Stats } from "@/components/visx-donut";
 import ClinicDetailsMarkdown from "@/components/Clinic/clinicDetailsMD";
 import { Clinic } from "@/lib/types";
 import { getClinicBySlug, getClinicsByCity } from "@/lib/data-access/clinics";
+import { formatPortalScheduleForDisplay } from "@/lib/schedule-check";
 import ClinicTabs from "@/components/Clinic/clinicTabs";
 import {
   Breadcrumb,
@@ -200,11 +201,14 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
         .flatMap(c => c.Treatments).filter((t): t is string => typeof t === "string"),
     ])
   ];
+  // Prefer the clinic's portal-configured booking schedule over the static scraped hours.
+  const portalSchedule = formatPortalScheduleForDisplay(dbClinic.claimRequests[0]?.scheduleJson);
+
   const hoursObj = clinic?.hours as unknown as Record<string, any>;
 
   const hours =
     (hoursObj && typeof hoursObj === 'object' && hoursObj["Typical_hours_listed_in_directories"]) ?? clinic?.hours;
-  const flatHours = typeof hoursObj === 'object' && hoursObj !== null ? flattenObject(hours) : hours
+  const flatHours = portalSchedule ?? (typeof hoursObj === 'object' && hoursObj !== null ? flattenObject(hours) : hours)
 
   const boxplotData = mergeBoxplotDataFromDict(
     boxplotDatas_clinic,

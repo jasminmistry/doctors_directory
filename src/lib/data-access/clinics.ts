@@ -16,6 +16,12 @@ type ClinicWithRelations = Prisma.ClinicGetPayload<{
       }
     }
     staff: true
+    claimRequests: {
+      where: { status: 'approved'; scheduleConfigured: true }
+      select: { scheduleJson: true }
+      orderBy: { approvedAt: 'desc' }
+      take: 1
+    }
   }
 }>
 
@@ -221,6 +227,12 @@ export const getClinicBySlug = cache(
           },
         },
         staff: true,
+        claimRequests: {
+          where: { status: 'approved', scheduleConfigured: true },
+          select: { scheduleJson: true },
+          orderBy: { approvedAt: 'desc' },
+          take: 1,
+        },
       },
     })
   }
