@@ -1523,10 +1523,15 @@ export default function HomePage({
               <details
                 key={`${mode}-${index}`}
                 open={isOpen}
-                onToggle={() => toggleFAQ(index)}
                 className="border border-[#e0e0e0]  rounded-lg p-4 transition-all duration-300"
               >
-                <summary className="w-full flex items-center gap-4 text-left text-lg font-semibold cursor-pointer flex flex-row flex-wrap pl-10 relative list-none">
+                <summary
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleFAQ(index);
+                  }}
+                  className="w-full flex items-center gap-4 text-left text-lg font-semibold cursor-pointer flex flex-row flex-wrap pl-10 relative list-none"
+                >
                   <span className="text-2xl font-normal text-center w-7 h-7 rounded-full leading-6 text-black transition-all select-none bg-black text-white absolute left-0">
                     {isOpen ? "−" : "+"}
                   </span>

@@ -117,7 +117,7 @@ export function SearchEmptyState({
       <Card className="bg-white border-dashed">
         <CardHeader className="space-y-3">
           <h2 className="text-xl font-semibold">No exact {primaryLabel} matches yet</h2>
-          <p className="text-sm text-muted-foreground max-w-3xl">
+          <p className="text-sm text-muted-foreground max-w-3xl break-words">
             {hasQuery
               ? `We could not find an exact match for "${query}". Instead of leaving this page empty, here are the strongest nearby discovery paths in the directory.`
               : `We could not find results for the current filters. Instead of leaving this page empty, here are the strongest discovery paths in the directory.`}

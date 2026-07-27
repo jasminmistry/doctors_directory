@@ -99,7 +99,19 @@ export function SearchDropdown({
   }, [filteredLocations]);
 
   const handleTypeClick = (opt: string) => {
-    setLocalFilters((prev) => ({ ...prev, type: opt }));
+    setLocalFilters((prev) => ({
+      ...prev,
+      type: opt,
+      // category/location/rating/services/accreditation are overloaded per type
+      // (e.g. "location" means City for Clinic/Practitioner but distributor for
+      // Product) — stale values from the previous type would otherwise leak
+      // into the new type's filters and get miscounted as active.
+      category: "",
+      location: "",
+      rating: 0,
+      services: [],
+      accreditation: "",
+    }));
     setActiveDropdown(null);
     setShowResults(false);
   };

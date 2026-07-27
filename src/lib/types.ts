@@ -187,7 +187,8 @@ export interface SearchFilters {
   location: string
   rating: number
   services: string[]
-  
+  accreditation: string
+
 }
 export interface Product {
   // Identification

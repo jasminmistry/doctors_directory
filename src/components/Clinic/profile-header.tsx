@@ -139,10 +139,12 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                   <MapPin className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
                   <span>{clinic.gmapsAddress}</span>
                 </address>
-                <span className="inline-flex items-center text-sm">
-                  <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                  {clinic.gmapsPhone}
-                </span>
+                {clinic.gmapsPhone && (
+                  <span className="inline-flex items-center text-sm">
+                    <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                    {clinic.gmapsPhone}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -161,10 +163,12 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
             <MapPin className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
             <span>{clinic.gmapsAddress}</span>
           </address>
-          <span className="inline-flex items-center text-sm">
-            <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-            {clinic.gmapsPhone}
-          </span>
+          {clinic.gmapsPhone && (
+            <span className="inline-flex items-center text-sm">
+              <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+              {clinic.gmapsPhone}
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col gap-3 justify-center w-full lg:w-64 lg:shrink-0">

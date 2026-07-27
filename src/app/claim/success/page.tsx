@@ -1,8 +1,22 @@
 import Link from 'next/link'
 import { CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { prisma } from '@/lib/db'
 
-export default function ClaimSuccessPage() {
+interface Props {
+  searchParams: { session_id?: string }
+}
+
+export default async function ClaimSuccessPage({ searchParams }: Readonly<Props>) {
+  const sessionId = searchParams.session_id
+  const claim = sessionId
+    ? await prisma.claimRequest.findFirst({
+        where: { stripeSessionId: sessionId },
+        select: { isNewRegistration: true },
+      })
+    : null
+  const isRegister = claim?.isNewRegistration === true
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="max-w-sm w-full text-center">
@@ -13,8 +27,9 @@ export default function ClaimSuccessPage() {
         </div>
         <h1 className="text-lg font-semibold mb-2">Payment confirmed</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Your subscription is active. Your claim is now under review and will be approved
-          within 24 hours. You&apos;ll receive a confirmation email once your profile is live.
+          Your subscription is active. Your {isRegister ? 'registration' : 'claim'} is now under review
+          and will be approved within 24 hours. You&apos;ll receive a confirmation email once your profile
+          is live.
         </p>
         <Button asChild variant="outline">
           <Link href="/">Back to directory</Link>

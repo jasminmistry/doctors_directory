@@ -32,6 +32,7 @@ export function ProductFilters({ filters, onChange, onClear, setIsFilterActive }
           value={filters.query || ""}
           onChange={(e) => onChange("query", e.target.value)}
           placeholder="Search products..."
+          maxLength={255}
           className="w-full px-3 py-2 text-base border rounded-lg bg-white"
         />
       </div>

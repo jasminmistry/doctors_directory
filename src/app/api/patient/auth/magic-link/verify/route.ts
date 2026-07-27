@@ -23,8 +23,8 @@ export async function GET(req: NextRequest) {
     const link = await prisma.patientMagicLink.findUnique({ where: { tokenHash } })
 
     if (!link) return redirectError('invalid_link')
-    if (link.usedAt) return redirectError('link_used')
     if (link.expiresAt < new Date()) return redirectError('link_expired')
+    if (link.usedAt) return redirectError('link_used')
 
     await prisma.patientMagicLink.update({ where: { id: link.id }, data: { usedAt: new Date() } })
 

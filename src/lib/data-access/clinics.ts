@@ -182,7 +182,11 @@ export async function searchClinicsForListing(params: {
   }
 
   if (params.rating && params.rating > 0) {
-    and.push({ rating: { gte: params.rating } })
+    // reviewCount > 0 is required alongside the rating threshold: some clinics carry a
+    // scraped rating with no backing reviews, and the UI (DirectoryStarRating) already
+    // hides the star badge for reviewCount <= 0 — without this, those clinics would pass
+    // the filter yet visually appear to have no rating at all.
+    and.push({ rating: { gte: params.rating }, reviewCount: { gt: 0 } })
   }
 
   const where: Prisma.ClinicWhereInput = and.length > 0 ? { AND: and } : {}

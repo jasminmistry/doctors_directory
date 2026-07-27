@@ -69,6 +69,7 @@ export function RequestConsultationDialog({
   const [phase, setPhase] = useState<Phase>('login')
   const [patientMe, setPatientMe] = useState<PatientMe | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null)
 
   useExclusiveFloatingPanel(`${openParam}:${clinicSlug ?? ''}`, open, setOpen)
 
@@ -94,9 +95,33 @@ export function RequestConsultationDialog({
     }
   }
 
+  async function checkExistingRequest(): Promise<boolean> {
+    if (!clinicSlug) return false
+    try {
+      const res = await fetch(
+        `/directory/api/leads?clinicSlug=${encodeURIComponent(clinicSlug)}&source=${leadSource}`
+      )
+      if (!res.ok) return false
+      const data: { exists: boolean; email?: string | null } = await res.json()
+      if (data.exists) {
+        setSubmittedEmail(data.email ?? null)
+        return true
+      }
+      return false
+    } catch {
+      return false
+    }
+  }
+
   async function openDialog() {
     const patient = await fetchAndSetPatient()
-    setPhase(patient ? 'form' : 'login')
+    if (!patient) {
+      setPhase('login')
+      setOpen(true)
+      return
+    }
+    const alreadySubmitted = await checkExistingRequest()
+    setPhase(alreadySubmitted ? 'submitted' : 'form')
     setOpen(true)
   }
 
@@ -113,6 +138,7 @@ export function RequestConsultationDialog({
     setOpen(false)
     setPatientMe(null)
     setPhase('login')
+    setSubmittedEmail(null)
   }
 
   const handleSubmit = async (data: ConsultationFormData) => {
@@ -146,6 +172,7 @@ export function RequestConsultationDialog({
         ctaTargetUrl: consultationHref ?? undefined,
         pageType,
       })
+      setSubmittedEmail(data.email)
       setPhase('submitted')
     } catch {
       toast.error("Something went wrong, please try again.")
@@ -236,7 +263,7 @@ export function RequestConsultationDialog({
               <p className="text-2xl">✓</p>
               <p className="font-semibold">Request sent!</p>
               <p className="text-sm text-gray-500">
-                The clinic will contact you at <strong>{patientMe?.email}</strong>.
+                The clinic will contact you at <strong>{submittedEmail ?? patientMe?.email}</strong>.
               </p>
             </div>
           )}

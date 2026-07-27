@@ -73,7 +73,7 @@ export function StepVerifyOtp({ email, claimId, entityType, onVerified }: Readon
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       <div>
         <h2 className="text-xl font-semibold mb-1">Enter your verification code</h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground break-words">
           We sent a 6-digit code to <strong>{email}</strong>. It expires in 10 minutes.
         </p>
       </div>
