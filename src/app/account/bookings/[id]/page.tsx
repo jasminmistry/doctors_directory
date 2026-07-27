@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { format, isPast, isFuture, addMinutes } from 'date-fns'
 import {
@@ -18,7 +18,7 @@ import {
   X,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { capitalize, cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface Booking {
@@ -45,14 +45,14 @@ interface Booking {
 function StatusBadge({ status }: { status: string }) {
   return (
     <span className={cn(
-      'text-xs px-2.5 py-1 rounded-full shrink-0 font-medium capitalize',
+      'text-xs px-2.5 py-1 rounded-full shrink-0 font-medium',
       status === 'confirmed' && 'bg-green-100 text-green-700',
       status === 'cancelled' && 'bg-red-100 text-red-600',
       status === 'completed' && 'bg-blue-100 text-blue-700',
       status === 'pending' && 'bg-yellow-100 text-yellow-700',
       status === 'no_show' && 'bg-gray-100 text-gray-500',
     )}>
-      {status.replace('_', ' ')}
+      {capitalize(status)}
     </span>
   )
 }
@@ -245,9 +245,29 @@ function directionsUrl(booking: Booking): string | null {
 
 export default function BookingDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const router = useRouter()
   const [booking, setBooking] = useState<Booking | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [messagingClinic, setMessagingClinic] = useState(false)
+
+  async function handleMessageClinic() {
+    if (!booking || messagingClinic) return
+    setMessagingClinic(true)
+    try {
+      const res = await fetch('/directory/api/patient/chats/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clinicSlug: booking.clinic.slug }),
+      })
+      if (!res.ok) throw new Error()
+      const data: { sessionId: number } = await res.json()
+      router.push(`/account/chats/${data.sessionId}`)
+    } catch {
+      toast.error('Could not open conversation — please try again')
+      setMessagingClinic(false)
+    }
+  }
 
   useEffect(() => {
     fetch(`/directory/api/patient/bookings/${id}`)
@@ -400,13 +420,19 @@ export default function BookingDetailPage() {
 
           {/* Message clinic */}
           {booking.clinic.slug && !isCancelled && (
-            <Link
-              href={`/account/chats`}
-              className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            <button
+              type="button"
+              onClick={handleMessageClinic}
+              disabled={messagingClinic}
+              className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-60"
             >
-              <MessageCircle className="h-4 w-4 shrink-0 text-gray-500" />
+              {messagingClinic ? (
+                <Loader2 className="h-4 w-4 shrink-0 text-gray-500 animate-spin" />
+              ) : (
+                <MessageCircle className="h-4 w-4 shrink-0 text-gray-500" />
+              )}
               Message clinic
-            </Link>
+            </button>
           )}
 
           {/* Add to calendar — upcoming only */}

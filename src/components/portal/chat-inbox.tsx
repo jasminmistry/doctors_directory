@@ -272,7 +272,10 @@ export function ChatInbox() {
               <div className="shrink-0 flex items-center px-4 gap-2 border-t border-gray-200">
                 <div className="relative flex-1">
                   <Input
-                    className="h-15 rounded-none border-none text-sm focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
+                    className={cn(
+                      'h-15 rounded-none border-none text-sm focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0',
+                      draft.length > CHAT_MESSAGE_MAX_LENGTH - 200 && 'pr-12',
+                    )}
                     placeholder="Reply…"
                     value={draft}
                     maxLength={CHAT_MESSAGE_MAX_LENGTH}

@@ -8,7 +8,7 @@ import {
   Search, Video, Star, ChevronRight, HelpCircle,
 } from 'lucide-react'
 import { format, isFuture, addMinutes } from 'date-fns'
-import { cn } from '@/lib/utils'
+import { capitalize, cn } from '@/lib/utils'
 
 interface PatientMe {
   id: number
@@ -209,7 +209,7 @@ export default function AccountDashboardPage() {
                   'text-xs px-2 py-0.5 rounded-full',
                   b.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500',
                 )}>
-                  {b.status}
+                  {capitalize(b.status)}
                 </span>
               </Link>
             ))}

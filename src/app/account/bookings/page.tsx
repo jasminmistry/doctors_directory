@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { CalendarDays, Loader2, Video } from 'lucide-react'
+import { capitalize } from '@/lib/utils'
 
 interface Booking {
   id: number
@@ -75,7 +76,7 @@ export default function AccountBookingsPage() {
                   b.status === 'cancelled' ? 'bg-red-100 text-red-600' :
                   'bg-gray-100 text-gray-500'
                 }`}>
-                  {b.status}
+                  {capitalize(b.status)}
                 </span>
               </div>
             </Link>
