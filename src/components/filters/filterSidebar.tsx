@@ -41,6 +41,7 @@ const defaultPractitionerFilters = {
   practitioner_qualifications: "all",
   City: "all",
   rating: "all",
+  accreditation: "all",
   query: "",
 };
 
@@ -66,6 +67,7 @@ const createPractitionerFiltersFromSearchFilters = (filters: SearchFilters) => (
   practitioner_qualifications: filters.category || "all",
   City: filters.location || "all",
   rating: filters.rating > 0 ? String(filters.rating) : "all",
+  accreditation: filters.accreditation || "all",
   query: filters.query || "",
 });
 
@@ -84,7 +86,7 @@ const createTreatmentFiltersFromSearchFilters = (filters: SearchFilters) => ({
   treatmentArea: filters.location || "all",
 });
 
-type LocalFilterTarget = "services" | "location" | "rating" | "category";
+type LocalFilterTarget = "services" | "location" | "rating" | "category" | "accreditation";
 
 interface LocalFilterRule {
   readonly key: string;
@@ -136,6 +138,12 @@ const practitionerLocalFilterRules: readonly LocalFilterRule[] = [
   {
     key: "practitioner_qualifications",
     target: "category",
+    whenSet: (value) => value,
+    whenAll: "",
+  },
+  {
+    key: "accreditation",
+    target: "accreditation",
     whenSet: (value) => value,
     whenAll: "",
   },
@@ -201,6 +209,14 @@ const applyLocalFilterRules = (
       };
     }
 
+    if (rule.target === "accreditation") {
+      return {
+        ...prev,
+        query: nextQuery,
+        accreditation: resolvedValue as SearchFilters["accreditation"],
+      };
+    }
+
     return {
       ...prev,
       query: nextQuery,
@@ -235,6 +251,7 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
     location: "",
     rating: 0,
     services: [],
+    accreditation: "",
   });
 
   const [treatmentFilters, setTreatmentFilters] = useState(
@@ -306,6 +323,7 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
       updatedFilters.location = practitionerFilters.City !== "all" ? practitionerFilters.City : "";
       updatedFilters.rating = practitionerFilters.rating !== "all" ? Number(practitionerFilters.rating) : 0;
       updatedFilters.category = practitionerFilters.practitioner_qualifications !== "all" ? practitionerFilters.practitioner_qualifications : "";
+      updatedFilters.accreditation = practitionerFilters.accreditation !== "all" ? practitionerFilters.accreditation : "";
     } else if (filters.type === "Product") {
       updatedFilters.query = (productFilters.query || "").trim();
       updatedFilters.services = productFilters.product_category !== "all" ? [productFilters.product_category] : [];

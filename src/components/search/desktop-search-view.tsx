@@ -77,6 +77,7 @@ export function DesktopSearchView({
             onChange={(e) =>
               setLocalFilters((prev) => ({ ...prev, query: e.target.value }))
             }
+            maxLength={255}
             className="border-0 shadow-none p-0 pr-7 h-auto w-full text-base placeholder:text-gray-500 focus:outline-none focus:ring-0 focus:border-0 active:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0 active:ring-0"
             onFocus={() => { cancelClose(); setShowResults(true); }}
             onClick={() => { cancelClose(); setShowResults(true); }}

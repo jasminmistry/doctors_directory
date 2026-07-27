@@ -141,12 +141,14 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
                   </span>
                 </address>
 
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center text-sm">
-                    <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                    {k_value.gmapsPhone}
-                  </span>
-                </div>
+                {k_value.gmapsPhone && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center text-sm">
+                      <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                      {k_value.gmapsPhone}
+                    </span>
+                  </div>
+                )}
                 <ClinicTabsHeader
                   k_value={k_value}
                   clinic_list={clinic_list}
@@ -166,12 +168,14 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
             </span>
           </address>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center text-sm">
-              <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-              {k_value.gmapsPhone}
-            </span>
-          </div>
+          {k_value.gmapsPhone && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center text-sm">
+                <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                {k_value.gmapsPhone}
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-3 justify-center">

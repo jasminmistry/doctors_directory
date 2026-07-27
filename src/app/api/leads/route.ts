@@ -37,6 +37,38 @@ function isOver18(dob: string): boolean {
   return birth <= cutoff
 }
 
+export async function GET(req: NextRequest) {
+  try {
+    const claims = getPatientClaims(req)
+    if (!claims) {
+      return NextResponse.json({ exists: false })
+    }
+
+    const { searchParams } = new URL(req.url)
+    const clinicSlug = searchParams.get('clinicSlug')
+    const source = searchParams.get('source')
+    if (!clinicSlug || (source !== 'consultation' && source !== 'pricing')) {
+      return NextResponse.json({ error: 'clinicSlug and source are required' }, { status: 400 })
+    }
+
+    const clinic = await prisma.clinic.findUnique({ where: { slug: clinicSlug }, select: { id: true } })
+    if (!clinic) {
+      return NextResponse.json({ exists: false })
+    }
+
+    const lead = await prisma.consultationLead.findFirst({
+      where: { clinicId: clinic.id, patientId: claims.id, source },
+      orderBy: { createdAt: 'desc' },
+      select: { patientEmail: true },
+    })
+
+    return NextResponse.json({ exists: !!lead, email: lead?.patientEmail ?? null })
+  } catch (error) {
+    console.error('[leads] lookup error:', error)
+    return NextResponse.json({ exists: false })
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()

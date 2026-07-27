@@ -32,6 +32,7 @@ export function ClinicFilters({ filters, onChange, onClear, setIsFilterActive }:
           value={filters.query || ""}
           onChange={(e) => onChange("query", e.target.value)}
           placeholder="Search clinics..."
+          maxLength={255}
           className="w-full px-3 py-2 text-base border rounded-lg bg-white"
         />
       </div>
@@ -70,7 +71,7 @@ export function ClinicFilters({ filters, onChange, onClear, setIsFilterActive }:
           htmlFor="clinics-distance"
           className="block text-base font-medium text-black mb-2"
         >
-          Location
+          City
         </label>
         <Select
           value={filters.location}

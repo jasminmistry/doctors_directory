@@ -6,6 +6,7 @@ interface PractitionerFilters {
   practitioner_qualifications: string;
   City: string;
   rating: string;
+  accreditation: string;
   query?: string;
 }
 
@@ -33,6 +34,7 @@ export function PractitionerFilters({ filters, onChange, onClear, setIsFilterAct
           value={filters.query || ""}
           onChange={(e) => onChange("query", e.target.value)}
           placeholder="Search practitioners..."
+          maxLength={255}
           className="w-full px-3 py-2 text-base border rounded-lg bg-white"
         />
       </div>
@@ -129,8 +131,8 @@ export function PractitionerFilters({ filters, onChange, onClear, setIsFilterAct
           Accreditations:
         </label>
         <Select
-          value={filters.query}
-          onValueChange={(v) => onChange("query", v)}
+          value={filters.accreditation}
+          onValueChange={(v) => onChange("accreditation", v)}
           onOpenChange={(open) => {
             if (open) setIsFilterActive(true);
           }}

@@ -284,6 +284,17 @@ export async function searchPractitioners(
         if (practitioner!.rating < filters.rating) return false
       }
 
+      if (filters.accreditation && filters.accreditation !== "all") {
+        const accreditation = filters.accreditation.toLowerCase()
+        const searchableText = [
+          practitioner?.practitioner_name,
+          practitioner?.practitioner_qualifications?.toLowerCase(),
+          practitioner?.category,
+          practitioner?.practitioner_awards?.toLowerCase(),
+        ].join(" ").toLowerCase()
+        if (!searchableText.includes(accreditation)) return false
+      }
+
       return true
     })
   }

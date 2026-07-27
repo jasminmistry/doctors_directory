@@ -98,6 +98,7 @@ export function MobileSearchView({
                 onChange={(e) =>
                   setLocalFilters((prev) => ({ ...prev, query: e.target.value }))
                 }
+                maxLength={255}
                 className="w-full bg-white border border-[#e0e0e0]  px-4 py-3 pr-10 rounded-lg h-12"
                 onFocus={() => setActiveDropdown('category')}
                 onClick={() => setActiveDropdown('category')}
