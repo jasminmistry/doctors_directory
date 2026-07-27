@@ -14,6 +14,27 @@ interface HeroSectionProps {
 
 export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
   const bookDemoHref = b2bBookDemoHref();
+  const ratings = [
+    {
+      image: "/directory//images/softwareadvice.png",
+      link: "https://www.softwareadvice.com/patient-case-management/consentz-profile/#reviews",
+      alt: "Softwareadvice",
+      width: "w-[60px] md:w-[120px]",
+    },
+    {
+      image: "/directory//images/getapp.png",
+      link: "https://www.getapp.com/healthcare-pharmaceuticals-software/a/consentz/",
+      alt: "Getapp",
+      width: "w-[45px] md:w-[90px]",
+    },
+    {
+      image: "/directory/images/capterra.svg",
+      link: "https://www.capterra.com/p/171328/Consentz/reviews/?utm_source=vendor&amp;utm_medium=badge&amp;utm_campaign=capterra_reviews_badge",
+      alt: "Capterra",
+      width: "w-[60px] md:w-[120px]",
+    },
+  ];
+
   const imageLogos = [
     {
       src: "/directory/images/Aesthetic-Medicine.webp",
@@ -163,7 +184,7 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
                           Grow your aesthetic practice with the UK&apos;s premier
                           directory
                         </h1>
-                        <p className="text-sm md:text-lg mb-8">
+                        <p className="hidden md:block text-sm md:text-lg mb-8">
                           Reach thousands of patients actively looking for
                           treatments. Showcase your expertise, collect verified
                           reviews, and fill your calendar.
@@ -187,6 +208,23 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
                             Book Demo
                           </a>
                       </div>
+                        <div className="md:px-5 pt-6 flex flex-wrap justify-center lg:justify-start gap-6">
+                          {ratings.map((rating, index) => (
+                            <a
+                              key={index}
+                              href={rating.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex justify-center"
+                            >
+                              <img
+                                src={rating.image}
+                                alt={rating.alt}
+                                className={`${rating.width} h-auto object-contain transition-transform duration-300 hover:scale-[1.02]`}
+                              />
+                            </a>
+                          ))}
+                        </div>
                     </div>
                     <div>
 
