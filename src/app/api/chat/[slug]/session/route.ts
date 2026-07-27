@@ -50,6 +50,21 @@ export async function POST(
       },
     })
 
+    // Every consultation request must surface as a prospect, not just the ones caught
+    // while the clinic is offline — mirror the lead created by POST /api/leads so the
+    // "online" branch (chat) doesn't silently skip the Prospects tab.
+    await prisma.consultationLead.create({
+      data: {
+        clinicId: clinic.id,
+        patientName: body.data.patientName,
+        patientPhone: body.data.patientPhone ?? '',
+        patientEmail: body.data.patientEmail,
+        ...(patientId ? { patientId } : {}),
+      },
+    }).catch((err) => {
+      console.error('[chat/session] failed to create consultation lead:', err)
+    })
+
     // Always store the initial message locally so the clinic portal can see it.
     // The client must not also POST it to the messages endpoint — that would duplicate it.
     let message: { id: number; sender: string; content: string; createdAt: Date } | null = null

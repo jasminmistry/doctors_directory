@@ -13,7 +13,6 @@ export async function GET() {
 
     const sessions = await prisma.chatSession.findMany({
       where: { clinicId: user.clinicId },
-      orderBy: { updatedAt: 'desc' },
       select: {
         id: true,
         patientName: true,
@@ -41,6 +40,15 @@ export async function GET() {
         lastMsg?.sender === 'patient' &&
         (!clinicLastReadAt || lastMsg.createdAt > clinicLastReadAt)
       return { ...s, unread }
+    })
+
+    // Sort by last activity, not `updatedAt` — that column only changes when the
+    // session row itself is touched (read receipts, Core sync), not when a new
+    // ChatMessage is created, so it drifts from the timestamp shown on each row.
+    sessionsWithUnread.sort((a, b) => {
+      const aTime = a.messages[0]?.createdAt ?? a.createdAt
+      const bTime = b.messages[0]?.createdAt ?? b.createdAt
+      return bTime.getTime() - aTime.getTime()
     })
 
     const unread = sessionsWithUnread.filter((s) => s.unread).length
