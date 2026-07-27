@@ -83,11 +83,11 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
   )
 }
 
-function ReviewPanel({ booking }: { booking: Booking }) {
+function ReviewPanel({ booking, alreadyReviewed }: { booking: Booking; alreadyReviewed: boolean }) {
   const [rating, setRating] = useState(0)
   const [reviewText, setReviewText] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+  const [submitted, setSubmitted] = useState(alreadyReviewed)
 
   async function handleSubmit() {
     if (!rating || !reviewText.trim()) return
@@ -250,6 +250,7 @@ export default function BookingDetailPage() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [messagingClinic, setMessagingClinic] = useState(false)
+  const [hasReview, setHasReview] = useState<boolean | null>(null)
 
   async function handleMessageClinic() {
     if (!booking || messagingClinic) return
@@ -275,7 +276,17 @@ export default function BookingDetailPage() {
         if (r.status === 404) { setNotFound(true); return null }
         return r.ok ? r.json() : null
       })
-      .then((d) => d && setBooking(d.booking))
+      .then((d) => {
+        if (!d) return
+        const b: Booking = d.booking
+        setBooking(b)
+        if (b.status === 'completed' && b.clinic.slug) {
+          fetch(`/directory/api/patient/reviews?clinicSlug=${encodeURIComponent(b.clinic.slug)}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((rd) => setHasReview(Boolean(rd?.review)))
+            .catch(() => setHasReview(false))
+        }
+      })
       .finally(() => setLoading(false))
   }, [id])
 
@@ -480,7 +491,9 @@ export default function BookingDetailPage() {
           )}
 
           {/* Review prompt — completed bookings */}
-          {isCompleted && <ReviewPanel booking={booking} />}
+          {isCompleted && hasReview !== null && (
+            <ReviewPanel booking={booking} alreadyReviewed={hasReview} />
+          )}
         </div>
       </div>
     </div>

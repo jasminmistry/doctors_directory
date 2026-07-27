@@ -5,6 +5,7 @@ import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
 import { createCoreBooking, isCoreConfigured } from '@/lib/core-api'
 import { splitName, COOKIE_TOKEN } from '@/lib/auth'
+import { generateConsentzPassword, getConsentzToken, initConsentzPatient } from '@/lib/patient-consentz'
 import type { PortalUser } from '@/lib/portal'
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
@@ -151,19 +152,39 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'End time must be after start time' }, { status: 400 })
   }
 
+  const cleanEmail = patientEmail?.trim() || null
+
+  // Resolve/create a local Patient record by email so Core can be told about a real
+  // patient account (via patient_token/patient_password below) instead of just raw
+  // contact strings — Core only appears to email a confirmation when it can link the
+  // booking to a patient account, which is why staff-created bookings were silent.
+  const patient = cleanEmail
+    ? await prisma.patient.findUnique({ where: { email: cleanEmail } }).then((existing) => {
+        if (existing) return existing
+        const { firstName, lastName } = splitName(patientName.trim())
+        return prisma.patient.create({
+          data: { email: cleanEmail, firstName, lastName, phone: patientPhone?.trim() || null },
+        })
+      }).catch((err) => {
+        console.error('[portal/bookings] failed to resolve patient record:', err)
+        return null
+      })
+    : null
+
   // Create locally first
   const booking = await prisma.booking.create({
     data: {
       clinicId,
       patientName: patientName.trim(),
       patientPhone: patientPhone?.trim() ?? '',
-      patientEmail: patientEmail?.trim() || null,
+      patientEmail: cleanEmail,
       treatment: treatment?.trim() || null,
       notes: notes?.trim() || null,
       slotStart: new Date(slotStart),
       slotEnd: new Date(slotEnd),
       status: status ?? 'confirmed',
       syncedFromCore: false,
+      ...(patient ? { patientId: patient.id } : {}),
     },
   })
 
@@ -174,6 +195,20 @@ export async function POST(req: NextRequest) {
 
     if (core) {
       const { firstName, lastName } = splitName(patientName.trim())
+
+      // Same account-provisioning handshake as the patient-facing booking route: send an
+      // existing session token for a known Consentz patient, or a fresh password so Core
+      // can create/link the account on this booking.
+      let pendingPassword: string | null = null
+      let patientToken: string | null = null
+      if (patient) {
+        if (patient.consentzPassword) {
+          patientToken = await getConsentzToken(patient)
+        } else {
+          pendingPassword = generateConsentzPassword()
+        }
+      }
+
       try {
         const coreRes = await createCoreBooking(core.coreClinicId, {
           practitioner_id: core.consentzUserId,
@@ -181,9 +216,18 @@ export async function POST(req: NextRequest) {
           slot_end: slotEnd,
           patient_first_name: firstName,
           patient_last_name: lastName,
-          patient_email: patientEmail?.trim() || '',
+          patient_email: cleanEmail || '',
           patient_phone: patientPhone?.trim() || '',
+          ...(patientToken ? { patient_token: patientToken } : {}),
+          ...(pendingPassword ? { patient_password: pendingPassword } : {}),
         }, sessionToken)
+
+        if (patient && pendingPassword) {
+          initConsentzPatient(patient.id, cleanEmail!, pendingPassword).catch(
+            (err) => console.error('[portal/bookings] initConsentzPatient failed:', err),
+          )
+        }
+
         await prisma.booking.update({
           where: { id: booking.id },
           data: {

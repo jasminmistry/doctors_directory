@@ -244,8 +244,11 @@ const nextConfig = {
         ],
       },
       {
-        // HTML pages only — exclude API routes which set their own Cache-Control
-        source: '/((?!api/).*)',
+        // HTML pages only — exclude API routes and the shorter-cached detail pages above,
+        // since Next.js applies every matching rule rather than stopping at the first match
+        // (an unscoped catch-all here would append a second, longer-lived Cache-Control
+        // header to clinic/practitioner pages and defeat their 30s freshness window).
+        source: '/((?!api/|clinics/[^/]+/clinic/|practitioners/[^/]+/profile/).*)',
         headers: [
           { key: 'Cache-Control', value: 'public, s-maxage=300, stale-while-revalidate=86400' },
         ],
