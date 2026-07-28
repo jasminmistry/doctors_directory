@@ -180,7 +180,9 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
                   value={form.patientEmail}
                   onChange={(e) => set('patientEmail', e.target.value)}
                   placeholder="jane@example.com"
-                  className={cn(inputCls, fieldErrors.patientEmail && 'border-red-400')}
+                  disabled={isEdit}
+                  title={isEdit ? "Email can't be changed after the appointment is created" : undefined}
+                  className={cn(inputCls, fieldErrors.patientEmail && 'border-red-400', isEdit && 'cursor-not-allowed bg-gray-50 text-gray-500')}
                 />
               </Field>
             </div>
