@@ -21,6 +21,7 @@ import {
   Menu,
   X,
   ShieldCheck,
+  BadgeCheck,
   Star,
   BarChart3,
   Globe2,
@@ -31,6 +32,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { HeaderIconLink } from "@/components/portal/header-icon-link";
+import { HeaderProfileMenu } from "@/components/portal/header-profile-menu";
 
 const AdminCountsContext = createContext<{ refreshCounts: () => void }>({
   refreshCounts: () => {},
@@ -55,6 +58,15 @@ function NavBadge({ count }: { count: number }) {
   if (!count) return null;
   return (
     <span className="ml-auto flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-medium text-white leading-none">
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
+
+function HeaderCountBadge({ count }: { count: number }) {
+  if (!count) return null;
+  return (
+    <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-medium leading-none text-white">
       {count > 99 ? "99+" : count}
     </span>
   );
@@ -124,19 +136,19 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
   return (
     <AdminCountsContext.Provider value={{ refreshCounts }}>
       <div className="min-h-screen bg-white">
-        <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
-          <h1 className="text-base font-semibold text-white">{title}</h1>
+        <div className="sticky top-0 z-30 flex items-center justify-between bg-[var(--primary-bg-color)] px-4 py-3 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:hidden">
+          <h1 className="text-base font-semibold text-gray-900">{title}</h1>
           <button
             type="button"
             onClick={() => setIsMobileNavOpen((open) => !open)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#e0e0e0]  text-gray-600"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-black/20 text-black"
             aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileNavOpen}
           >
             {isMobileNavOpen ? (
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5" />
             ) : (
-              <Menu className="h-4 w-4" />
+              <Menu className="h-5 w-5" />
             )}
           </button>
         </div>
@@ -235,9 +247,34 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
           <div className="min-w-0 flex-1 flex flex-col bg-white">
             <div
               role="banner"
-              className="sticky top-0 z-10 hidden bg-[var(--primary-bg-color)] border-b border-gray-200 px-6 py-3.5 lg:block"
+              className="sticky top-0 z-10 hidden items-center justify-between bg-[var(--primary-bg-color)] px-6 py-3.5 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:flex"
             >
               <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
+              <div className="flex items-center gap-1">
+                <HeaderIconLink
+                  href="/admin/claims"
+                  label="Claims"
+                  icon={ShieldCheck}
+                  badge={<HeaderCountBadge count={counts.pendingClaims} />}
+                />
+                <HeaderIconLink
+                  href="/admin/verification"
+                  label="ID Verification"
+                  icon={BadgeCheck}
+                  badge={
+                    <HeaderCountBadge count={counts.pendingVerifications} />
+                  }
+                />
+                <HeaderIconLink
+                  href="/admin/unlink-requests"
+                  label="Unlink Requests"
+                  icon={Link2Off}
+                  badge={
+                    <HeaderCountBadge count={counts.pendingUnlinkRequests} />
+                  }
+                />
+                <HeaderProfileMenu name="Admin Console" onLogout={handleLogout} />
+              </div>
             </div>
             <main className="flex-1 p-4 sm:p-6">{children}</main>
           </div>

@@ -5,7 +5,6 @@ import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   const user = await getPortalUser()
@@ -24,12 +23,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const body = await req.json().catch(() => null)
   if (!body) return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
 
-  const { patientName, patientPhone, patientEmail, treatment, notes, slotStart, slotEnd, status } = body
+  const { patientName, patientPhone, treatment, notes, slotStart, slotEnd, status } = body
 
   if (!patientName?.trim() || !slotStart || !slotEnd)
     return NextResponse.json({ error: 'Patient name is required.' }, { status: 400 })
-  if (patientEmail?.trim() && !EMAIL_RE.test(patientEmail.trim()))
-    return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
   if (patientPhone?.trim() && !UK_PHONE_RE.test(patientPhone.trim().replace(/\s/g, '')))
     return NextResponse.json({ error: 'Please enter a valid UK phone number.' }, { status: 400 })
   if (new Date(slotEnd) <= new Date(slotStart))
@@ -40,7 +37,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     data: {
       patientName: patientName.trim(),
       patientPhone: patientPhone?.trim() ?? '',
-      patientEmail: patientEmail?.trim() || null,
+      // patientEmail is intentionally not editable here — it's tied to Booking.patientId,
+      // which an email-only update would leave stale. See new-booking-modal.tsx isEdit gate.
       treatment: treatment?.trim() || null,
       notes: notes?.trim() || null,
       slotStart: new Date(slotStart),

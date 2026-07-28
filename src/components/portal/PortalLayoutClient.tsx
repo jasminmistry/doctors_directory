@@ -12,7 +12,10 @@ import {
   X,
   Inbox,
   CalendarDays,
+  CalendarClock,
   MessageSquare,
+  MessageSquareText,
+  Presentation,
   Lock,
   ExternalLink,
   Clock,
@@ -23,6 +26,8 @@ import { cn } from "@/lib/utils";
 import { LeadBadge } from "@/components/portal/lead-badge";
 import { ChatBadge } from "@/components/portal/chat-badge";
 import { WelcomeWizard } from "@/components/portal/welcome-wizard";
+import { HeaderIconLink } from "@/components/portal/header-icon-link";
+import { HeaderProfileMenu } from "@/components/portal/header-profile-menu";
 
 const PRESENCE_INTERVAL_MS = 2 * 60 * 1000; // 2 minutes
 
@@ -101,7 +106,7 @@ export function PortalLayoutClient({
   return (
     <div className="min-h-screen bg-white">
       {/* Mobile topbar */}
-      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
+      <div className="sticky top-0 z-30 flex items-center justify-between bg-[var(--primary-bg-color)] px-4 py-3 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:hidden">
         <span className="text-sm font-semibold text-gray-900 truncate">
           {entityName || "My Portal"}
         </span>
@@ -109,14 +114,14 @@ export function PortalLayoutClient({
           {entityType === "clinic" && (
             <>
               <Link href="/portal/clinic/chat" className="relative inline-flex">
-                <MessageSquare className="h-5 w-5 text-gray-500" />
+                <MessageSquareText className="h-6 w-6 text-black" strokeWidth={1.5} />
                 <ChatBadge mobile />
               </Link>
               <Link
                 href="/portal/clinic/prospects"
                 className="relative inline-flex"
               >
-                <Inbox className="h-5 w-5 text-gray-500" />
+                <Presentation className="h-6 w-6 text-black" strokeWidth={1.5} />
                 <LeadBadge mobile />
               </Link>
             </>
@@ -124,14 +129,14 @@ export function PortalLayoutClient({
           <button
             type="button"
             onClick={() => setIsMobileNavOpen((o) => !o)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#e0e0e0]  text-gray-600"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-black/20 text-black"
             aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileNavOpen}
           >
             {isMobileNavOpen ? (
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5" />
             ) : (
-              <Menu className="h-4 w-4" />
+              <Menu className="h-5 w-5" />
             )}
           </button>
         </div>
@@ -403,8 +408,38 @@ export function PortalLayoutClient({
         </aside>
 
         {/* Main */}
-        <div className="min-w-0 flex-1 p-10 flex flex-col">
-          <main className="flex-1 px-4 pt-0 pb-0">{children}</main>
+        <div className="min-w-0 flex-1 flex flex-col">
+          <div className="sticky top-0 z-10 hidden items-center justify-end gap-1 bg-[var(--primary-bg-color)] px-6 py-2.5 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:flex">
+            {entityType === "clinic" && (
+              <>
+                <HeaderIconLink
+                  href="/portal/clinic/calendar"
+                  label="Calendar"
+                  icon={CalendarClock}
+                  locked={plan === "free"}
+                />
+                <HeaderIconLink
+                  href="/portal/clinic/prospects"
+                  label="Prospects"
+                  icon={Presentation}
+                  badge={<LeadBadge mobile />}
+                />
+                <HeaderIconLink
+                  href="/portal/clinic/chat"
+                  label="Messages"
+                  icon={MessageSquareText}
+                  badge={<ChatBadge mobile />}
+                />
+              </>
+            )}
+            <HeaderProfileMenu
+              name={entityName || "My Portal"}
+              onLogout={handleLogout}
+            />
+          </div>
+          <div className="flex-1 p-10 flex flex-col">
+            <main className="flex-1 px-4 pt-0 pb-0">{children}</main>
+          </div>
         </div>
       </div>
 

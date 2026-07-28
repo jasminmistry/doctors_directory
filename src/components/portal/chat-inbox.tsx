@@ -29,6 +29,22 @@ interface ChatSession {
 
 const POLL_INTERVAL_MS = 3_000
 
+function StatusBadge({ status }: { status?: 'active' | 'closed' }) {
+  if (!status) return null
+  const isActive = status === 'active'
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 text-[10px] font-medium',
+        isActive ? 'text-green-600' : 'text-gray-500',
+      )}
+    >
+      <span className={cn('h-1.5 w-1.5 rounded-full', isActive ? 'bg-green-500' : 'bg-gray-300')} />
+      {isActive ? 'Active' : 'Closed'}
+    </span>
+  )
+}
+
 export function ChatInbox() {
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [activeId, setActiveId] = useState<number | null>(null)
@@ -36,10 +52,36 @@ export function ChatInbox() {
   const [draft, setDraft] = useState('')
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [paneHeight, setPaneHeight] = useState<number | null>(null)
 
+  const containerRef = useRef<HTMLDivElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const prevMsgCountRef = useRef(0)
+
+  // Pin the inbox to the actual remaining viewport space (measured, not guessed)
+  // and lock page-level scroll while it's mounted — otherwise, whenever the
+  // document itself is tall enough to scroll, opening a conversation or
+  // sending a message causes the browser to reflow/scroll-anchor the whole
+  // page instead of just the messages pane.
+  useEffect(() => {
+    function recalc() {
+      const el = containerRef.current
+      if (!el) return
+      const top = el.getBoundingClientRect().top
+      setPaneHeight(window.innerHeight - top)
+    }
+    recalc()
+    window.addEventListener('resize', recalc)
+
+    const prevOverflow = document.documentElement.style.overflow
+    document.documentElement.style.overflow = 'hidden'
+
+    return () => {
+      window.removeEventListener('resize', recalc)
+      document.documentElement.style.overflow = prevOverflow
+    }
+  }, [])
 
   // Reset scroll tracking when switching conversations
   useEffect(() => {
@@ -148,7 +190,10 @@ export function ChatInbox() {
   }
 
   return (
-    <div className="flex h-[calc(100dvh-8rem)] rounded-lg border border-gray-200 bg-white overflow-hidden">
+    <div
+      ref={containerRef}
+      style={paneHeight ? { height: paneHeight } : undefined}
+      className="flex h-[calc(100dvh-8rem)] rounded-lg border border-gray-200 bg-white overflow-hidden">
       {/* Session list — full width on mobile until a conversation is opened, fixed-width sidebar from md up */}
       <div
         className={cn(
@@ -199,9 +244,12 @@ export function ChatInbox() {
                 <p className={cn('text-xs truncate mt-0.5', unread ? 'text-gray-800' : 'text-gray-500')}>
                   {lastMsg?.content ?? 'No messages yet'}
                 </p>
-                {unread && (
-                  <span className="mt-1 inline-flex h-1.5 w-1.5 rounded-full bg-red-500" />
-                )}
+                <div className="mt-1 flex items-center gap-2">
+                  <StatusBadge status={s.status} />
+                  {unread && (
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500" />
+                  )}
+                </div>
               </button>
             )
           })}
@@ -231,16 +279,27 @@ export function ChatInbox() {
               </button>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-gray-900">{active?.patientName ?? 'Patient'}</p>
-                <p className="text-xs text-gray-500">
-                  {active?.patientEmail ?? active?.patientPhone ?? ''}
-                </p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <StatusBadge status={active?.status} />
+                  {(active?.patientEmail || active?.patientPhone) && (
+                    <p className="text-xs text-gray-500 truncate">
+                      {active?.patientEmail ?? active?.patientPhone}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Messages */}
-            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto flex flex-col gap-2 px-5 py-4">
+            <div
+              ref={messagesContainerRef}
+              className={cn(
+                'flex-1 overflow-y-auto flex flex-col gap-2 px-5 py-4',
+                messages.length === 0 && 'items-center justify-center',
+              )}
+            >
               {messages.length === 0 && (
-                <p className="text-xs text-gray-500 text-center py-4">No messages yet</p>
+                <p className="text-sm text-gray-500 text-center">No messages yet</p>
               )}
               {messages.map((msg) => (
                 <div
