@@ -63,6 +63,13 @@ export default function AdminLoginPage() {
   return (
     <div className="flex items-center justify-center bg-white min-h-[calc(100vh-72px)] px-4 py-8">
       <div className="w-full max-w-[22rem]">
+        <div className="flex align-items-center justify-center mb-6">
+          <img
+            src="/directory/images/Consentz Logo.webp"
+            alt="Logo"
+            className="w-[120px] md:w-[180px] h-auto cursor-pointer"
+          />
+        </div>
         <div className="mb-8 text-center">
           <span className="inline-block rounded-full border border-[#e0e0e0]  bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500 mb-4">
             Admin Portal

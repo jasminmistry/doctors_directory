@@ -477,7 +477,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
                 disabled={pulling}
                 size="sm"
                 variant="outline"
-                className="border-violet-200 text-violet-700 hover:bg-violet-50"
+                className="border-[#e0e0e0]"
               >
                 {pulling ? (
                   <><Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />Pulling…</>
@@ -487,7 +487,12 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
               </Button>
             )}
             {lead.coreSynced && coreUrl && (
-              <Button asChild size="sm" variant="outline" className="border-violet-200 text-violet-700 hover:bg-violet-50">
+              <Button 
+                asChild 
+                size="sm" 
+                variant="outline" 
+                className="border-[#e0e0e0]"
+              >
                 <a href={coreUrl} target="_blank" rel="noreferrer">
                   <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
                   View in Core
