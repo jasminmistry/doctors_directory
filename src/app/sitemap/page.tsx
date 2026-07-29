@@ -19,6 +19,7 @@ import {
 } from '@/lib/b2b-hub/templates-registry'
 import { countB2bExpansionSitemapPages, countB2bScaledSitemapPages, getB2bCitySitemapGroups, getB2bExpansionSitemapGroups, getB2bTemplateExpansionSampleLinks, getB2bTreatmentSitemapLinks } from '@/lib/b2b-hub/html-sitemap-links'
 import { countB2cSitemapPages } from '@/lib/b2c-sitemap-counts'
+import { isProductSitemapCrawlHeld } from '@/lib/sitemap-crawl-hold'
 
 const ACCREDITATIONS = [
   { key: 'cqc', name: 'Care Quality Commission (CQC)', field: 'isCQC' },
@@ -154,35 +155,75 @@ export default function HtmlSitemapPage() {
   const b2bExpansionGroups = getB2bExpansionSitemapGroups(24)
   const b2bTemplateExpansionSample = getB2bTemplateExpansionSampleLinks(48)
   const b2cCounts = countB2cSitemapPages()
+  const productSitemapsHeld = isProductSitemapCrawlHeld()
+  const directoryXmlSitemaps = productSitemapsHeld
+    ? XML_SITEMAPS.filter(({ file }) => !file.startsWith('products-'))
+    : XML_SITEMAPS
+  const sitePages = [
+    ['/', 'Home'],
+    ['/clinics', 'All Clinics'],
+    ['/practitioners', 'All Practitioners'],
+    ['/search', 'Search'],
+    ['/treatments', 'Treatments'],
+    ...(productSitemapsHeld
+      ? []
+      : ([
+          ['/products', 'Products'],
+          ['/products/brands', 'Product Brands'],
+          ['/products/category', 'Product Categories'],
+        ] as const)),
+    ['/accredited', 'Accredited Providers'],
+    ['/clinics/treatment-by-city/', 'Top Clinics by Treatment & City'],
+    ['/practitioners/treatment-by-city/', 'Top Practitioners by Treatment & City'],
+    ['/practitioners/credentials', 'Practitioner Credentials'],
+    ['/business/', 'B2B Software Buyer Hub'],
+    ['/register/clinic', 'Join Directory (Register a Clinic)'],
+    ['/register/practitioner', 'Update Profile (Register as a Practitioner)'],
+    ['/sitemap', 'HTML Sitemap'],
+  ] as const
 
   return (
     <main className="bg-white min-h-screen">
       <div className="mx-auto max-w-5xl px-4 py-8 md:py-14">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">HTML Sitemap</h1>
-        <p className="text-sm text-muted-foreground mb-10">
+        <p className="text-sm text-muted-foreground mb-6">
           A complete index of all sections and pages on the Healthcare Directory.
         </p>
 
-        <SitemapSection title="Site Pages">
-          <ul className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <nav aria-label="Sitemap sections" className="mb-10 rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <p className="text-sm font-semibold text-foreground mb-3">Major sections</p>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
             {[
-              ['/', 'Home'],
-              ['/clinics', 'All Clinics'],
-              ['/practitioners', 'All Practitioners'],
-              ['/search', 'Search'],
-              ['/treatments', 'Treatments'],
-              ['/products', 'Products'],
-              ['/products/brands', 'Product Brands'],
-              ['/products/category', 'Product Categories'],
-              ['/accredited', 'Accredited Providers'],
-              ['/clinics/treatment-by-city/', 'Top Clinics by Treatment & City'],
-              ['/practitioners/treatment-by-city/', 'Top Practitioners by Treatment & City'],
-              ['/practitioners/credentials', 'Practitioner Credentials'],
-              ['/business/', 'B2B Software Buyer Hub'],
-              ['/register/clinic', 'Join Directory (Register a Clinic)'],
-              ['/register/practitioner', 'Update Profile (Register as a Practitioner)'],
-              ['/sitemap', 'HTML Sitemap'],
+              ['#site-pages', 'Site Pages'],
+              ['#xml-sitemaps', 'Directory XML Sitemaps'],
+              ['#xml-sitemaps-b2b', 'B2B XML Sitemaps'],
+              ['#b2b-html', 'B2B Software Buyer Hub'],
+              ['#b2c-hubs', 'B2C Directory Hub Pages'],
+              ['#database-urls', 'Database URLs'],
             ].map(([href, label]) => (
+              <li key={href}>
+                <a href={href} className="text-sm text-black hover:underline">{label}</a>
+              </li>
+            ))}
+          </ul>
+          <p className="text-sm text-muted-foreground mb-2">Machine readable indexes for crawlers</p>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <li>
+              <Link href="/sitemap.xml" className="text-sm font-mono text-black hover:underline">
+                /directory/sitemap.xml
+              </Link>
+            </li>
+            <li>
+              <Link href="/business-sitemap.xml" className="text-sm font-mono text-black hover:underline">
+                /directory/business-sitemap.xml
+              </Link>
+            </li>
+          </ul>
+        </nav>
+
+        <SitemapSection title="Site Pages" id="site-pages">
+          <ul className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {sitePages.map(([href, label]) => (
               <li key={href}>
                 <Link href={href} className="text-sm text-black hover:underline">{label}</Link>
               </li>
@@ -190,7 +231,7 @@ export default function HtmlSitemapPage() {
           </ul>
         </SitemapSection>
 
-        <SitemapSection title="XML Sitemaps (machine-readable)">
+        <SitemapSection title="XML Sitemaps (machine-readable)" id="xml-sitemaps">
           <p className="text-sm text-muted-foreground mb-4">
             Directory feeds are referenced from the{' '}
             <Link href="/sitemap.xml" className="text-black hover:underline font-mono text-xs">sitemap.xml</Link>
@@ -198,7 +239,7 @@ export default function HtmlSitemapPage() {
             <span className="font-mono text-xs">/business/</span>.
           </p>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {XML_SITEMAPS.map(({ file, label }) => (
+            {directoryXmlSitemaps.map(({ file, label }) => (
               <li key={file} className="flex items-baseline gap-2">
                 <Link href={`/${file}`} className="text-sm text-black hover:underline">{label}</Link>
                 <span className="text-xs text-gray-400 font-mono">{file}</span>
@@ -207,7 +248,7 @@ export default function HtmlSitemapPage() {
           </ul>
         </SitemapSection>
 
-        <SitemapSection title="XML Sitemaps — B2B buyer hub">
+        <SitemapSection title="XML Sitemaps — B2B buyer hub" id="xml-sitemaps-b2b">
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {B2B_XML_SITEMAPS.map(({ file, label }) => (
               <li key={file} className="flex items-baseline gap-2">
@@ -218,7 +259,7 @@ export default function HtmlSitemapPage() {
           </ul>
         </SitemapSection>
 
-        <SitemapSection title="B2B Software Buyer Hub — HTML pages">
+        <SitemapSection title="B2B Software Buyer Hub — HTML pages" id="b2b-html">
           <p className="text-sm text-muted-foreground mb-6">
             Canonical hub URLs use <span className="font-mono text-xs">/business/</span> (separate from the B2C directory).
             Every buyer-hub page is listed below, including city-localized and treatment workflow URLs.
@@ -421,7 +462,7 @@ export default function HtmlSitemapPage() {
           </SubSection>
         </SitemapSection>
 
-        <SitemapSection title={`B2C directory hub pages (${b2cCounts.hubStyleTotal.toLocaleString()} pages)`}>
+        <SitemapSection title={`B2C directory hub pages (${b2cCounts.hubStyleTotal.toLocaleString()} pages)`} id="b2c-hubs">
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
             <li className="text-sm">Treatment × City: <strong>{b2cCounts.treatmentCityHub.toLocaleString()}</strong></li>
             <li className="text-sm">Best-in-city: <strong>{b2cCounts.bestInCity.toLocaleString()}</strong></li>
@@ -431,9 +472,28 @@ export default function HtmlSitemapPage() {
             <li className="text-sm pl-4 text-muted-foreground">↳ Product category: {b2cCounts.standaloneProductCategory.toLocaleString()}</li>
             <li className="text-sm">Service × City: <strong>{b2cCounts.serviceCity.toLocaleString()}</strong></li>
           </ul>
+          <p className="text-sm text-muted-foreground mb-3">
+            Full URL lists live in these XML feeds. Browse sample entry points below.
+          </p>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+            {[
+              ['/treatment-city-hub-pages.xml', 'Treatment hub by city XML'],
+              ['/best-in-city-pages.xml', 'Best in city XML'],
+              ['/standalone-treatment-product-pages.xml', 'Standalone treatments and products XML'],
+              ['/service-city-pages.xml', 'Service category by city XML'],
+              ['/clinics/london/', 'Sample clinics city page'],
+              ['/practitioners/london/', 'Sample practitioners city page'],
+              ['/treatments/', 'Treatments index'],
+              ['/search', 'Directory search'],
+            ].map(([href, label]) => (
+              <li key={href}>
+                <Link href={href} className="text-sm text-black hover:underline">{label}</Link>
+              </li>
+            ))}
+          </ul>
         </SitemapSection>
 
-        <SitemapSection title="Database URLs">
+        <SitemapSection title="Database URLs" id="database-urls">
           <p className="text-sm text-muted-foreground mb-8">
             All listing pages, grouped by category. These pages index individual clinic, practitioner, treatment, and product profiles.
           </p>
@@ -541,6 +601,7 @@ export default function HtmlSitemapPage() {
           </SubSection>
 
           {/* Products */}
+          {!productSitemapsHeld && (
           <SubSection title={`Products — ${categories.length} categories, ${brands.length} brands`}>
             <div className="mb-6">
               <p className="text-sm font-medium text-gray-700 mb-2">Categories</p>
@@ -569,15 +630,24 @@ export default function HtmlSitemapPage() {
               ))}
             </div>
           </SubSection>
+          )}
         </SitemapSection>
       </div>
     </main>
   )
 }
 
-function SitemapSection({ title, children }: { title: string; children: React.ReactNode }) {
+function SitemapSection({
+  title,
+  children,
+  id,
+}: {
+  title: string
+  children: React.ReactNode
+  id?: string
+}) {
   return (
-    <section className="mb-14">
+    <section id={id} className="mb-14 scroll-mt-6">
       <h2 className="text-xl font-bold text-gray-900 mb-5 pb-2 border-b-2 border-gray-300">{title}</h2>
       {children}
     </section>
