@@ -38,6 +38,7 @@ export async function GET(
     const res = await fetch(url, {
       cache: 'no-store',
       headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': appId },
+      signal: AbortSignal.timeout(5000),
     })
     console.log(`[events/clinic/availability] Core HTTP ${res.status}`)
 

@@ -39,6 +39,7 @@ async function handleEventBookingPayment(session: Stripe.Checkout.Session) {
       method: 'POST',
       cache: 'no-store',
       headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(8000),
       body: JSON.stringify({
         event_id: parseInt(meta.event_id, 10),
         practitioner_id: parseInt(meta.practitioner_id, 10),
@@ -67,6 +68,8 @@ async function handleEventBookingPayment(session: Stripe.Checkout.Session) {
     }
     const booking = data.booking
 
+    const patientId = meta.patient_id ? parseInt(meta.patient_id, 10) : null
+
     await prisma.booking.upsert({
       where: { coreBookingId: String(booking.id) },
       create: {
@@ -84,6 +87,7 @@ async function handleEventBookingPayment(session: Stripe.Checkout.Session) {
         videoCallJoinUrl: booking.video_call?.join_url ?? null,
         ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}),
         ...(amountPaid !== null ? { depositAmount: amountPaid } : {}),
+        ...(patientId ? { patientId } : {}),
       },
       update: {
         status: 'confirmed',
@@ -91,6 +95,7 @@ async function handleEventBookingPayment(session: Stripe.Checkout.Session) {
         videoCallJoinUrl: booking.video_call?.join_url ?? null,
         ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}),
         ...(amountPaid !== null ? { depositAmount: amountPaid } : {}),
+        ...(patientId ? { patientId } : {}),
       },
     })
 

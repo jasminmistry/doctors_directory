@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
-import { getPatientClaims } from '@/lib/patient-auth'
+import { requirePatient } from '@/lib/patient-auth'
 import { domainHasMailServer } from '@/lib/email-domain-check'
 
 function getCoreLiteBase() {
@@ -28,6 +28,9 @@ export async function POST(
   req: NextRequest,
   { params }: { params: { clinicSlug: string } },
 ) {
+  const { patient, error: authError } = await requirePatient(req)
+  if (authError) return authError
+
   const parsed = bodySchema.safeParse(await req.json())
   if (!parsed.success) {
     const message = parsed.error.issues[0]?.message ?? 'Please check the form and try again.'
@@ -62,6 +65,7 @@ export async function POST(
       method: 'POST',
       cache: 'no-store',
       headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': appId },
+      signal: AbortSignal.timeout(8000),
       body: requestPayload,
     })
 
@@ -100,17 +104,12 @@ export async function POST(
         video_call: { join_url: string | null } | null
       }
 
-      // Prefer logged-in patient session; fall back to matching by booking email
-      const sessionClaims = getPatientClaims(req)
-      const patient = sessionClaims
-        ? await prisma.patient.findUnique({ where: { id: sessionClaims.id }, select: { id: true } })
-        : await prisma.patient.findUnique({ where: { email: parsed.data.patient_email }, select: { id: true } })
-
       await prisma.booking.upsert({
         where: { coreBookingId: String(b.id) },
         create: {
           clinicId: clinic.id,
           coreBookingId: String(b.id),
+          patientId: patient.id,
           patientName: `${parsed.data.patient_first_name} ${parsed.data.patient_last_name}`,
           patientEmail: parsed.data.patient_email,
           patientPhone: parsed.data.patient_phone ?? '',
@@ -120,13 +119,12 @@ export async function POST(
           syncedFromCore: true,
           lastSyncedAt: new Date(),
           videoCallJoinUrl: b.video_call?.join_url ?? null,
-          ...(patient ? { patientId: patient.id } : {}),
         },
         update: {
           status: 'confirmed',
           lastSyncedAt: new Date(),
           videoCallJoinUrl: b.video_call?.join_url ?? null,
-          ...(patient ? { patientId: patient.id } : {}),
+          patientId: patient.id,
         },
       })
     }

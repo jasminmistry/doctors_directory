@@ -321,7 +321,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
             <div className="order-1 lg:order-2 col-span-1 lg:col-span-4">
               <div className="mb-4 space-y-4">
-                <EventBookingSection clinicSlug={slug} />
+                <EventBookingSection clinicSlug={slug} entityName={dbClinic.name ?? undefined} />
                 <AccreditationBadges
                   isConsentz={clinic.isConsentz}
                   isSaveFace={clinic.isSaveFace}

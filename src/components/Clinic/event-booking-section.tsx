@@ -1,7 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { format, addDays, isSameDay, parseISO } from 'date-fns'
+import { fromZonedTime } from 'date-fns-tz'
+import { toast } from 'sonner'
 import {
   ChevronLeft,
   ChevronRight,
@@ -11,9 +14,11 @@ import {
   ExternalLink,
   Clock,
   Calendar,
-  CreditCard,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { InlineLogin } from '@/components/consultation/inline-login'
+import { ConsultationRichForm } from '@/components/consultation/consultation-form'
+import type { ConsultationFormData } from '@/components/consultation/consultation-form'
 
 interface CoreEvent {
   id: number
@@ -55,20 +60,18 @@ interface BookingResponse {
   }
 }
 
-type Step = 'events' | 'date-slot' | 'details' | 'confirmation'
-type FieldErrors = Record<string, string>
+interface PatientMe {
+  id: number
+  email: string
+  firstName?: string
+  lastName?: string
+  phone?: string
+  dateOfBirth?: string
+}
+
+type Step = 'events' | 'login' | 'date-slot' | 'details' | 'confirmation'
 
 const WEEK_SIZE = 7
-const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-function isValidUkPhone(value: string): boolean {
-  return UK_PHONE_RE.test(value.trim().replace(/\s/g, ''))
-}
-
-function isValidEmail(value: string): boolean {
-  return EMAIL_RE.test(value.trim())
-}
 
 function dateKey(d: Date) {
   return format(d, 'yyyy-MM-dd')
@@ -99,33 +102,36 @@ function LocationBadge({ location }: { location: 'zoom' | 'video_call' }) {
 interface EventBookingSectionProps {
   practitionerSlug?: string
   clinicSlug?: string
+  entityName?: string
 }
 
-export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBookingSectionProps) {
+export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }: EventBookingSectionProps) {
   const basePath = clinicSlug
     ? `/directory/api/events/clinic/${clinicSlug}`
     : `/directory/api/events/${practitionerSlug}`
+
+  const pathname = usePathname()
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   const [events, setEvents] = useState<CoreEvent[] | null>(null)
   const [eventsLoading, setEventsLoading] = useState(true)
 
   const [step, setStep] = useState<Step>('events')
   const [selectedEvent, setSelectedEvent] = useState<CoreEvent | null>(null)
+  const [pendingEventId, setPendingEventId] = useState<number | null>(null)
+  const [checkingEventId, setCheckingEventId] = useState<number | null>(null)
 
   const [weekOffset, setWeekOffset] = useState(0)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [slots, setSlots] = useState<AvailableSlot[]>([])
   const [slotDuration, setSlotDuration] = useState(30)
+  const [slotTimezone, setSlotTimezone] = useState('Europe/London')
   const [slotsLoading, setSlotsLoading] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null)
 
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
+  const [patientMe, setPatientMe] = useState<PatientMe | null>(null)
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [confirmation, setConfirmation] = useState<BookingResponse['booking'] | null>(null)
 
   const today = new Date()
@@ -157,48 +163,83 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
       .then((d: AvailabilityResponse) => {
         setSlots(d.available ?? [])
         setSlotDuration(d.slot_duration ?? 30)
+        // Core silently falls back to the clinic's own timezone when it
+        // doesn't recognise the requested `tz` (e.g. deprecated aliases like
+        // "Asia/Calcutta"), without erroring — but it always reports which
+        // zone the returned `datetime` values are actually in. Trust that,
+        // not the zone we asked for, or slot conversion silently drifts.
+        setSlotTimezone(d.timezone || tz)
       })
       .catch(() => setSlots([]))
       .finally(() => setSlotsLoading(false))
   }, [selectedDate, selectedEvent, basePath])
 
-  function getFieldErrors(): FieldErrors {
-    const errors: FieldErrors = {}
-    if (!firstName.trim()) errors.firstName = 'First name is required.'
-    if (!lastName.trim()) errors.lastName = 'Last name is required.'
-    if (!email.trim()) errors.email = 'Email address is required.'
-    else if (!isValidEmail(email)) errors.email = 'Please enter a valid email address.'
-    if (phone.trim() && !isValidUkPhone(phone)) errors.phone = 'Please enter a valid UK phone number.'
-    return errors
+  async function fetchAndSetPatient(): Promise<PatientMe | null> {
+    try {
+      const res = await fetch('/directory/api/patient/me')
+      if (!res.ok) {
+        setPatientMe(null)
+        return null
+      }
+      const data: PatientMe = await res.json()
+      setPatientMe(data)
+      return data
+    } catch {
+      setPatientMe(null)
+      return null
+    }
   }
 
-  function mapServerErrorToField(message: string): FieldErrors | null {
-    const lower = message.toLowerCase()
-    if (lower.includes('first name')) return { firstName: message }
-    if (lower.includes('last name')) return { lastName: message }
-    if (lower.includes('email')) return { email: message }
-    if (lower.includes('phone')) return { phone: message }
-    return null
+  function selectEventAndAdvance(event: CoreEvent) {
+    setSelectedEvent(event)
+    setSelectedDate(null)
+    setSlots([])
+    setSelectedSlot(null)
+    setWeekOffset(0)
+    setStep('date-slot')
   }
 
-  async function handleBook() {
-    if (!selectedSlot || !selectedEvent) return
-    setError(null)
+  async function startBooking(event: CoreEvent) {
+    setCheckingEventId(event.id)
+    const patient = await fetchAndSetPatient()
+    setCheckingEventId(null)
 
-    const errors = getFieldErrors()
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors)
+    if (!patient) {
+      setPendingEventId(event.id)
+      setStep('login')
       return
     }
-    setFieldErrors({})
 
+    selectEventAndAdvance(event)
+  }
+
+  // Resume where the user left off after returning from magic-link / OAuth login
+  useEffect(() => {
+    const bookEventId = searchParams.get('bookEvent')
+    if (!bookEventId || !events) return
+    router.replace(pathname, { scroll: false })
+
+    const match = events.find((e) => e.id === Number(bookEventId))
+    void (async () => {
+      const patient = await fetchAndSetPatient()
+      if (match && patient) {
+        selectEventAndAdvance(match)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [events])
+
+  async function handleBook(data: ConsultationFormData) {
+    if (!selectedSlot || !selectedEvent) return
     setSubmitting(true)
     try {
-      // Core returns `datetime` as a naive wall-clock string in the timezone we
-      // requested (the `tz` query param, i.e. this browser's local timezone) —
-      // it is NOT UTC. Parse it as local time, then convert to a real UTC
-      // ISO-8601 string so the server never has to guess the offset.
-      const slotStart = new Date(selectedSlot.datetime.replace(' ', 'T')).toISOString()
+      // Core returns `datetime` as a naive wall-clock string in `slotTimezone`
+      // (the same tz we requested availability with) — it is NOT UTC, and it
+      // is NOT necessarily the browser's ambient default timezone either (those
+      // two can drift apart, e.g. under devtools timezone overrides). Convert
+      // explicitly against the known IANA zone rather than relying on
+      // `new Date()`'s implicit local-time parsing.
+      const slotStart = fromZonedTime(selectedSlot.datetime.replace(' ', 'T'), slotTimezone).toISOString()
       const slotEnd = new Date(new Date(slotStart).getTime() + slotDuration * 60 * 1000).toISOString()
 
       const commonPayload = {
@@ -206,10 +247,10 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
         practitioner_id: selectedSlot.practitioner_id,
         slot_start: slotStart,
         slot_end: slotEnd,
-        patient_first_name: firstName.trim(),
-        patient_last_name: lastName.trim(),
-        patient_email: email.trim(),
-        ...(phone.trim() ? { patient_phone: phone.trim() } : {}),
+        patient_first_name: data.firstName,
+        patient_last_name: data.lastName,
+        patient_email: data.email,
+        ...(data.phone ? { patient_phone: data.phone } : {}),
       }
 
       // Paid event → Stripe Checkout
@@ -224,18 +265,20 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
             cancel_url: window.location.href,
           }),
         })
-        const data = await res.json()
-        if (!res.ok) {
-          const message = data.error ?? 'Failed to start payment — please try again'
-          const mapped = mapServerErrorToField(message)
-          if (mapped) {
-            setFieldErrors(mapped)
-          } else {
-            setError(message)
-          }
+
+        if (res.status === 401) {
+          setPendingEventId(selectedEvent.id)
+          setStep('login')
+          toast.error('Your session expired — please sign in again to continue.')
           return
         }
-        window.location.href = (data as { url: string }).url
+
+        const resData = await res.json()
+        if (!res.ok) {
+          toast.error(resData.error ?? 'Failed to start payment — please try again')
+          return
+        }
+        window.location.href = (resData as { url: string }).url
         return
       }
 
@@ -246,55 +289,41 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
         body: JSON.stringify(commonPayload),
       })
 
-      const data = await res.json()
+      if (res.status === 401) {
+        setPendingEventId(selectedEvent.id)
+        setStep('login')
+        toast.error('Your session expired — please sign in again to continue.')
+        return
+      }
+
+      const resData = await res.json()
 
       if (!res.ok) {
         if (res.status === 409) {
-          setError('This slot was just taken, please select another time')
+          toast.error('This slot was just taken, please select another time')
         } else {
-          const message = data.error ?? 'Booking failed — please try again'
-          const mapped = mapServerErrorToField(message)
-          if (mapped) {
-            setFieldErrors(mapped)
-          } else {
-            setError(message)
-          }
+          toast.error(resData.error ?? 'Booking failed — please try again')
         }
         return
       }
 
-      setConfirmation((data as BookingResponse).booking)
+      setConfirmation((resData as BookingResponse).booking)
       setStep('confirmation')
     } catch {
-      setError('Booking failed — please try again')
+      toast.error('Booking failed — please try again')
     } finally {
       setSubmitting(false)
     }
   }
 
-  function startBooking(event: CoreEvent) {
-    setSelectedEvent(event)
-    setSelectedDate(null)
-    setSlots([])
-    setSelectedSlot(null)
-    setWeekOffset(0)
-    setError(null)
-    setStep('date-slot')
-  }
-
   function resetToEvents() {
     setStep('events')
     setSelectedEvent(null)
+    setPendingEventId(null)
     setSelectedDate(null)
     setSlots([])
     setSelectedSlot(null)
     setConfirmation(null)
-    setFirstName('')
-    setLastName('')
-    setEmail('')
-    setPhone('')
-    setError(null)
-    setFieldErrors({})
   }
 
   // Don't render section at all while loading or if no events
@@ -351,16 +380,43 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
     )
   }
 
-  // ── Patient details form ─────────────────────────────────────────────────────
-  if (step === 'details') {
-    const canSubmit = firstName.trim() && lastName.trim() && email.trim() && !submitting
-    const isPaid = !!selectedEvent?.price
+  // ── Login required ───────────────────────────────────────────────────────────
+  if (step === 'login') {
+    const nextUrl = `${pathname}?bookEvent=${pendingEventId ?? ''}`
     return (
       <section className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
           <button
             type="button"
-            onClick={() => { setStep('date-slot'); setError(null) }}
+            onClick={resetToEvents}
+            className="text-gray-500 hover:text-gray-600"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <h2 className="text-base font-semibold text-gray-900">Sign in to book</h2>
+        </div>
+        <InlineLogin next={nextUrl} />
+      </section>
+    )
+  }
+
+  // ── Patient details form ─────────────────────────────────────────────────────
+  if (step === 'details') {
+    const isPaid = !!selectedEvent?.price
+    const formDefaults = patientMe ? {
+      firstName: patientMe.firstName ?? '',
+      lastName: patientMe.lastName ?? '',
+      email: patientMe.email ?? '',
+      phone: patientMe.phone ?? '',
+      dateOfBirth: patientMe.dateOfBirth ?? '',
+    } : undefined
+
+    return (
+      <section className="border border-gray-200 rounded-lg overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setStep('date-slot')}
             className="text-gray-500 hover:text-gray-600"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -374,92 +430,26 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
             )}
           </div>
         </div>
-        <div className="px-5 py-4 space-y-3">
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <input
-                type="text"
-                placeholder="First name"
-                value={firstName}
-                onChange={(e) => { setFirstName(e.target.value); setFieldErrors((p) => ({ ...p, firstName: '' })) }}
-                className={cn(
-                  'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
-                  fieldErrors.firstName ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
-                )}
-              />
-              {fieldErrors.firstName && <p className="mt-1 text-xs text-red-600">{fieldErrors.firstName}</p>}
-            </div>
-            <div>
-              <input
-                type="text"
-                placeholder="Last name"
-                value={lastName}
-                onChange={(e) => { setLastName(e.target.value); setFieldErrors((p) => ({ ...p, lastName: '' })) }}
-                className={cn(
-                  'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
-                  fieldErrors.lastName ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
-                )}
-              />
-              {fieldErrors.lastName && <p className="mt-1 text-xs text-red-600">{fieldErrors.lastName}</p>}
-            </div>
-          </div>
-          <div>
-            <input
-              type="email"
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: '' })) }}
-              className={cn(
-                'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
-                fieldErrors.email ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
-              )}
-            />
-            {fieldErrors.email && <p className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>}
-          </div>
-          <div>
-            <input
-              type="tel"
-              placeholder="Phone (optional)"
-              value={phone}
-              onChange={(e) => { setPhone(e.target.value); setFieldErrors((p) => ({ ...p, phone: '' })) }}
-              className={cn(
-                'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
-                fieldErrors.phone ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
-              )}
-            />
-            {fieldErrors.phone && <p className="mt-1 text-xs text-red-600">{fieldErrors.phone}</p>}
-          </div>
 
-          {isPaid && (
-            <div className="rounded-lg bg-gray-50 border border-gray-100 px-4 py-3 flex items-center justify-between">
-              <span className="text-xs text-gray-500">Amount due</span>
-              <span className="text-sm font-medium text-gray-900">£{selectedEvent!.price}</span>
-            </div>
-          )}
-
-          {error && <p className="text-xs text-red-600">{error}</p>}
-
-          <button
-            type="button"
-            disabled={!canSubmit}
-            onClick={handleBook}
-            className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
-          >
-            {submitting ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> {isPaid ? 'Redirecting to payment…' : 'Booking…'}</>
-            ) : isPaid ? (
-              <><CreditCard className="h-4 w-4" /> Pay £{selectedEvent!.price}</>
+        <ConsultationRichForm
+          key={patientMe?.email ?? 'event'}
+          defaultValues={formDefaults}
+          clinicName={entityName ?? 'the clinic'}
+          description={
+            isPaid ? (
+              <>
+                You&apos;re booking <span className="font-semibold">{selectedEvent?.title}</span> for{' '}
+                <span className="font-semibold">£{selectedEvent?.price}</span>. You&apos;ll be redirected to
+                Stripe to complete payment securely.
+              </>
             ) : (
-              <><Video className="h-4 w-4" /> Confirm Booking</>
-            )}
-          </button>
-
-          {isPaid && !submitting && (
-            <p className="text-center text-[10px] text-gray-500">
-              You&apos;ll be redirected to Stripe to complete payment securely
-            </p>
-          )}
-        </div>
+              <>Confirm your details to book <span className="font-semibold">{selectedEvent?.title}</span>.</>
+            )
+          }
+          submitLabel={isPaid ? `Pay £${selectedEvent?.price}` : 'Confirm Booking'}
+          submitting={submitting}
+          onSubmit={handleBook}
+        />
       </section>
     )
   }
@@ -624,9 +614,11 @@ export function EventBookingSection({ practitionerSlug, clinicSlug }: EventBooki
             </div>
             <button
               type="button"
+              disabled={checkingEventId === event.id}
               onClick={() => startBooking(event)}
-              className="shrink-0 rounded-lg border border-gray-900 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white transition-colors"
+              className="shrink-0 rounded-lg border border-gray-900 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white transition-colors disabled:opacity-50 inline-flex items-center gap-1.5"
             >
+              {checkingEventId === event.id && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
               Book
             </button>
           </div>
