@@ -230,7 +230,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   String(practitioner.Payments) || "Not listed"
                 )}
               </Section>)}
-              <EventBookingSection practitionerSlug={slug} />
+              <EventBookingSection practitionerSlug={slug} entityName={clinic.practitioner_name ?? undefined} />
 
               <div className='flex flex-col sm:flex-row gap-2'>
 

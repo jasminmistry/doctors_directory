@@ -38,6 +38,7 @@ export async function GET(
         'Content-Type': 'application/json',
         'X-APPLICATION-ID': appId,
       },
+      signal: AbortSignal.timeout(5000),
     })
 
     console.log(`[events/clinic] Core responded HTTP ${res.status}`)

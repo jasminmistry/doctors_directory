@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
+import { requirePatient } from '@/lib/patient-auth'
 import { domainHasMailServer } from '@/lib/email-domain-check'
 
 export const dynamic = 'force-dynamic'
@@ -42,6 +43,9 @@ export async function POST(
   req: NextRequest,
   { params }: { params: { clinicSlug: string } },
 ) {
+  const { patient, error: authError } = await requirePatient(req)
+  if (authError) return authError
+
   const parsed = bodySchema.safeParse(await req.json().catch(() => null))
   if (!parsed.success) {
     const message = parsed.error.issues[0]?.message ?? 'Please check the form and try again.'
@@ -100,6 +104,7 @@ export async function POST(
         clinicSlug: params.clinicSlug,
         coreClinicId: String(clinic.coreClinicId),
         clinicId: String(clinic.id),
+        patient_id: String(patient.id),
         event_id: String(event_id),
         practitioner_id: String(practitioner_id),
         event_title,
