@@ -46,10 +46,12 @@ export function DesktopSearchView({
 
   const clearQuery = () => {
     setLocalFilters((prev) => ({ ...prev, query: "" }));
+    setShowResults(false);
   };
 
   const clearLocation = () => {
     setLocalFilters((prev) => ({ ...prev, location: "" }));
+    setShowResults(false);
   };
 
   return (
@@ -86,7 +88,7 @@ export function DesktopSearchView({
             <button
               type="button"
               aria-label="Clear search query"
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-gray-700"
+              className="absolute right-4 top-1/2 -translate-y-1/2 rounded p-0.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
               onMouseDown={(e) => e.preventDefault()}
               onClick={clearQuery}
             >
@@ -116,7 +118,7 @@ export function DesktopSearchView({
             <button
               type="button"
               aria-label="Clear location"
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-gray-700"
+              className="absolute right-4 top-1/2 -translate-y-1/2 rounded p-0.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
               onMouseDown={(e) => e.preventDefault()}
               onClick={clearLocation}
             >
