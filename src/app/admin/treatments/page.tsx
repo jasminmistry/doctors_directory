@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable } from '@/components/admin/DataTable'
 import { DEFAULT_PERSON, FallbackImage } from '@/components/ui/fallback-image'
+import { useConfirmDialog } from '@/hooks/use-confirm-dialog'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,6 +36,7 @@ export default function TreatmentsList() {
   const [treatments, setTreatments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const { confirm, dialog } = useConfirmDialog()
 
   useEffect(() => {
     fetch('/directory/api/admin/treatments')
@@ -45,13 +47,20 @@ export default function TreatmentsList() {
 
   return (
     <AdminLayout title="Treatments">
+      {dialog}
       <DataTable
         data={treatments}
         columns={columns}
         loading={loading}
         onEdit={(t) => router.push(`/admin/treatments/${t.slug}`)}
         onDelete={async (t) => {
-          if (!confirm(`Delete treatment "${t.name || t.slug}"?`)) return
+          const name = t.name || t.slug
+          const ok = await confirm({
+            title: 'Delete treatment?',
+            description: `This will permanently delete "${name}". This action cannot be undone.`,
+            confirmLabel: 'Delete treatment',
+          })
+          if (!ok) return
           await fetch(`/directory/api/admin/treatments/${t.slug}`, { method: 'DELETE' })
           setTreatments((prev) => prev.filter((r) => r.slug !== t.slug))
         }}
