@@ -41,16 +41,17 @@ export function ConfirmDialog({
       }}
     >
       <DialogContent showCloseButton={false} className="sm:max-w-md">
-        <DialogHeader>
+        <DialogHeader className="sm:text-center">
           <DialogTitle>{title}</DialogTitle>
           {description ? (
             <DialogDescription>{description}</DialogDescription>
           ) : null}
         </DialogHeader>
-        <DialogFooter>
+        <DialogFooter className="sm:justify-center">
           <Button
             type="button"
             variant="outline"
+            className="cursor-pointer"
             disabled={confirming}
             onClick={onCancel}
           >
@@ -59,6 +60,7 @@ export function ConfirmDialog({
           <Button
             type="button"
             variant={destructive ? "destructive" : "default"}
+            className="cursor-pointer"
             disabled={confirming}
             onClick={onConfirm}
           >
