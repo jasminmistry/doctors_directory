@@ -32,10 +32,36 @@ export default function ChatDetailPage() {
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [paneHeight, setPaneHeight] = useState<number | null>(null)
 
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const lastCreatedAt = useRef<string | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const prevMsgCountRef = useRef(0)
+
+  // Pin the card to the actual remaining viewport space (measured, not
+  // guessed) so the reply input always stays visible without needing to
+  // scroll the page — the fixed "8rem" chrome offset varies between mobile
+  // (topbar) and desktop (no topbar).
+  useEffect(() => {
+    function recalc() {
+      const el = containerRef.current
+      if (!el) return
+      const top = el.getBoundingClientRect().top
+      setPaneHeight(window.innerHeight - top - 16)
+    }
+    recalc()
+    window.addEventListener('resize', recalc)
+
+    const prevOverflow = document.documentElement.style.overflow
+    document.documentElement.style.overflow = 'hidden'
+
+    return () => {
+      window.removeEventListener('resize', recalc)
+      document.documentElement.style.overflow = prevOverflow
+    }
+  }, [loading, notFound])
 
   useEffect(() => {
     fetch(`/directory/api/patient/chats/${id}/messages`)
@@ -54,8 +80,24 @@ export default function ChatDetailPage() {
       .finally(() => setLoading(false))
   }, [id])
 
+  // Scroll the messages pane itself only — never scrollIntoView(), which walks
+  // up every scrollable ancestor (including the page) and lands the whole
+  // page at the bottom instead of just the chat thread.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const newCount = messages.length
+    const prevCount = prevMsgCountRef.current
+    prevMsgCountRef.current = newCount
+
+    if (newCount === 0) return
+
+    const el = messagesContainerRef.current
+    if (!el) return
+
+    if (prevCount === 0) {
+      el.scrollTop = el.scrollHeight
+    } else if (newCount > prevCount) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    }
   }, [messages])
 
   const poll = useCallback(async () => {
@@ -122,7 +164,11 @@ export default function ChatDetailPage() {
   const isClosed = session.status !== 'active'
 
   return (
-    <div className="max-w-2xl flex flex-col" style={{ height: 'calc(100dvh - 8rem)' }}>
+    <div
+      ref={containerRef}
+      className="max-w-2xl flex flex-col"
+      style={paneHeight ? { height: paneHeight } : { height: 'calc(100dvh - 8rem)' }}
+    >
       {/* Header */}
       <div className="shrink-0 flex items-center gap-3 mb-4">
         <Link href="/account/chats" className="text-gray-500 hover:text-gray-900">
@@ -140,9 +186,15 @@ export default function ChatDetailPage() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto rounded-lg bg-white border border-gray-200 p-4 space-y-3 min-h-0">
+      <div
+        ref={messagesContainerRef}
+        className={cn(
+          'flex-1 overflow-y-auto rounded-lg bg-white border border-gray-200 p-4 min-h-0',
+          messages.length === 0 ? 'flex items-center justify-center' : 'flex flex-col gap-3',
+        )}
+      >
         {messages.length === 0 && (
-          <p className="text-xs text-gray-500 text-center py-8">No messages yet</p>
+          <p className="text-xs text-gray-500 text-center">No messages yet</p>
         )}
         {messages.map((msg) => (
           <div
@@ -162,7 +214,6 @@ export default function ChatDetailPage() {
             </div>
           </div>
         ))}
-        <div ref={bottomRef} />
       </div>
 
       {/* Input */}
