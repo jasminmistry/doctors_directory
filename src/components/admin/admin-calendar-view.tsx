@@ -7,9 +7,10 @@ import { NewBookingModal, type NewBookingData } from '@/components/calendar/new-
 
 interface AdminCalendarViewProps {
   slug: string
+  clinicTimezone: string
 }
 
-export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
+export function AdminCalendarView({ slug, clinicTimezone }: AdminCalendarViewProps) {
   const [bookings, setBookings] = useState<CalendarBooking[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -75,14 +76,14 @@ export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
   if (loading) {
     return (
       <div className="flex justify-center py-24">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+      <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
     )
   }
 
@@ -90,6 +91,7 @@ export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
     <>
       <BookingCalendar
         bookings={bookings}
+        clinicTimezone={clinicTimezone}
         onRefresh={() => fetchBookings(true)}
         refreshing={refreshing}
         showSyncBadge
@@ -103,12 +105,14 @@ export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
           onClose={() => setShowNewModal(false)}
           onSave={handleCreateBooking}
           defaultDate={newBookingDate}
+          clinicTimezone={clinicTimezone}
         />
       )}
       {editingBooking && (
         <NewBookingModal
           onClose={() => setEditingBooking(null)}
           onSave={handleEditBooking}
+          clinicTimezone={clinicTimezone}
           initialData={{
             id: editingBooking.id,
             patientName: editingBooking.patientName,

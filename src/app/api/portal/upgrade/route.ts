@@ -4,8 +4,32 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
+import { PPL_LEAD_PRICE_PENCE, SUBSCRIPTION_MONTHLY_PRICE_PENCE } from '@/lib/pricing'
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+function resolveDirectoryBaseUrl(): string {
+  const candidates = [
+    process.env.NEXT_PUBLIC_DIRECTORY_BASE_URL,
+    process.env.DIRECTORY_BASE_URL,
+    process.env.NEXT_PUBLIC_BASE_URL,
+  ]
+
+  for (const candidate of candidates) {
+    const trimmed = candidate?.trim()
+    if (!trimmed) continue
+
+    const normalized = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+
+    try {
+      return new URL(normalized).origin
+    } catch {
+      continue
+    }
+  }
+
+  return 'http://localhost:3000'
+}
+
+const DIRECTORY_BASE_URL = resolveDirectoryBaseUrl()
 
 const PLAN_ORDER: Record<string, number> = { free: 0, pay_per_lead: 1, subscription: 2 }
 
@@ -13,12 +37,12 @@ const PLAN_CONFIG: Record<string, { name: string; description: string; amountPen
   pay_per_lead: {
     name: 'Pay-Per-Lead',
     description: 'Priority listing + Verified badge, unlimited instant leads',
-    amountPence: 1500,
+    amountPence: PPL_LEAD_PRICE_PENCE,
   },
   subscription: {
     name: 'Subscription',
     description: 'Priority listing + Verified badge, unlimited leads at £0 each',
-    amountPence: 9900,
+    amountPence: SUBSCRIPTION_MONTHLY_PRICE_PENCE,
   },
 }
 
@@ -74,8 +98,8 @@ export async function POST(req: NextRequest) {
       }],
       metadata: { claimId: String(claim.id), plan },
       subscription_data: { metadata: { claimId: String(claim.id), plan } },
-      success_url: `${BASE_URL}/directory/portal/upgrade/success?plan=${plan}`,
-      cancel_url: `${BASE_URL}/directory/portal/${user.entityType}`,
+      success_url: `${DIRECTORY_BASE_URL}/directory/portal/upgrade/success?plan=${plan}`,
+      cancel_url: `${DIRECTORY_BASE_URL}/directory/portal/${user.entityType}`,
     })
 
     return NextResponse.json({ redirect: session.url })

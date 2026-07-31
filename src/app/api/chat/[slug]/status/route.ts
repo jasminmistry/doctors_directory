@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 const PRESENCE_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
 
 const DOW_MAP: Record<number, string> = {

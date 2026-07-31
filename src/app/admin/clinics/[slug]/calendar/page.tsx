@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
+import { resolveClinicTimezone } from '@/lib/core-api'
 import { AdminCalendarView } from '@/components/admin/admin-calendar-view'
 
 interface Props {
@@ -9,10 +10,12 @@ interface Props {
 export default async function AdminClinicCalendarPage({ params }: Props) {
   const clinic = await prisma.clinic.findUnique({
     where: { slug: params.slug },
-    select: { id: true, name: true, slug: true, claimedPlan: true },
+    select: { id: true, name: true, slug: true, claimedPlan: true, coreClinicId: true },
   })
 
   if (!clinic) notFound()
+
+  const clinicTimezone = await resolveClinicTimezone(clinic.coreClinicId)
 
   return (
     <div className="p-6 space-y-4">
@@ -24,6 +27,7 @@ export default async function AdminClinicCalendarPage({ params }: Props) {
             {clinic.claimedPlan !== 'subscription' && (
               <span className="ml-2 text-amber-600">(Calendar sync requires Verified Subscription)</span>
             )}
+            <span className="ml-2">Times shown in {clinicTimezone}.</span>
           </p>
         </div>
         <a
@@ -34,7 +38,7 @@ export default async function AdminClinicCalendarPage({ params }: Props) {
         </a>
       </div>
 
-      <AdminCalendarView slug={params.slug} />
+      <AdminCalendarView slug={params.slug} clinicTimezone={clinicTimezone} />
     </div>
   )
 }

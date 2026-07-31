@@ -66,24 +66,24 @@ function TemplateLibraryCard({ item }: { item: HubTemplateLibraryItem }) {
           {item.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded px-2 py-0.5 text-[10px] font-bold tracking-wide bg-[#1A1A1A] text-white"
+              className="rounded px-2 py-0.5 text-[10px] font-medium tracking-wide bg-white border border-[#e0e0e0] text-[#111]"
             >
               {tag}
             </span>
           ))}
         </div>
-        <h3 className="text-base font-bold leading-snug text-[#111111] line-clamp-2 group-hover:text-neutral-700">
+        <h3 className="text-base font-medium leading-snug text-[#111111] line-clamp-2 group-hover:text-neutral-700">
           {item.title}
         </h3>
         <p className="line-clamp-2 text-sm leading-relaxed text-[#6B6B6B]">{item.description}</p>
         <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[#F0EDE8] pt-3 text-xs text-[#404040]">
           <span className="inline-flex items-center gap-1.5 font-medium text-[#111111]">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A1A] text-[10px] font-bold text-white">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A1A] text-[10px] font-medium text-white">
               C
             </span>
             {item.author}
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#EDE9E3] px-2 py-1 font-medium text-[#111111]">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white border border-[#e0e0e0] px-2 py-1 font-medium text-[#111111]">
             <CloudDownload className="h-3.5 w-3.5" aria-hidden />
             {item.downloads} downloads
           </span>
@@ -140,10 +140,10 @@ export function HubTemplateLibrarySection({
   const pageItems = filtered.slice(sliceStart, sliceStart + PAGE_SIZE)
 
   const tabCls = (active: boolean) =>
-    `rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors sm:px-4 sm:text-[15px] ${
+    `rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors sm:px-4 sm:text-[15px] hover:cursor-pointer ${
       active
         ? "bg-[#1A1A1A] text-white"
-        : "border border-[#E2DDD7] bg-white text-[#111111] hover:border-neutral-400"
+        : "border border-[#e0e0e0] bg-white text-[#111111] hover:border-neutral-400"
     }`
 
   const pageNumbers = (): (number | "ellipsis")[] => {
@@ -169,11 +169,11 @@ export function HubTemplateLibrarySection({
     <section
       className={cn(
         HUB_BLEED_FROM_CONTAINER,
-        "mb-0 border-t border-[#E5E7EB] bg-white px-4 py-12 sm:px-6 sm:py-16 md:py-20"
+        "mb-0 border-t border-[#e0e0e0] bg-white px-4 py-12 sm:px-6 sm:py-16 md:py-20"
       )}
     >
       <div className="mx-auto max-w-[1200px]">
-        <h2 className="mb-3 text-center text-[28px] font-bold leading-tight tracking-tight text-[#111111] md:text-[34px] md:leading-snug">
+        <h2 className="mb-3 text-center text-[28px] font-medium leading-tight tracking-tight text-[#111111] md:text-[34px] md:leading-snug">
           Find The Right Template For Your Clinic
         </h2>
         <p className="mx-auto mb-10 max-w-[720px] text-center text-base leading-relaxed text-[#4a4a4a] md:text-lg">
@@ -194,11 +194,11 @@ export function HubTemplateLibrarySection({
               setQuery(e.target.value)
               setPage(1)
             }}
-            className="min-h-[52px] flex-1 rounded-xl border border-[#E2DDD7] bg-white px-4 text-base text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#1A1A1A] focus:ring-1 focus:ring-[#1A1A1A]"
+            className="min-h-[52px] flex-1 rounded-lg border border-[#e0e0e0] bg-white px-4 text-base text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#1A1A1A] focus:ring-1 focus:ring-[#1A1A1A]"
           />
           <button
             type="button"
-            className="inline-flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-xl bg-[#1A1A1A] text-white transition-colors hover:bg-neutral-900"
+            className="inline-flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-lg bg-[#1A1A1A] text-white transition-colors hover:bg-neutral-900 hover:cursor-pointer"
             aria-label="Search"
           >
             <Search className="h-5 w-5" strokeWidth={2.5} />

@@ -77,7 +77,7 @@ export function HubTreatmentsIndexClient({ treatments }: Props) {
               <Link
                 key={e.key}
                 href={e.href}
-                className="w-full max-w-[404px] rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-4 flex flex-col gap-1.5 hover:border-neutral-400 hover:shadow-sm transition-all text-left min-h-[78px]"
+                className="w-full max-w-[404px] rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] px-4 py-4 flex flex-col gap-1.5 hover:border-neutral-400  transition-all text-left min-h-[78px]"
               >
                 <span className="font-semibold text-neutral-900 leading-snug">
                   {e.title}
@@ -98,19 +98,19 @@ export function HubTreatmentsIndexClient({ treatments }: Props) {
             {filteredTreatments.map((t) => (
               <section
                 key={t.slug}
-                className="rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] p-5 md:p-6"
+                className=""
               >
                 <h2 className="text-lg font-semibold text-neutral-900 mb-3">
                   {toDisplayTitle(t.label)}
                 </h2>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {TREATMENT_PAGE_TYPES.map((type) => {
                     const slug = buildTreatmentPageSlug(t.slug, type)
                     return (
                       <Link
                         key={type}
                         href={`/business/treatments/${slug}/`}
-                        className="rounded-lg border-2 border-[#111111] bg-white px-3 py-2.5 text-sm font-medium text-[#111111] hover:bg-neutral-50 transition-all"
+                        className="rounded-lg border-1 border-[#111111] bg-white px-3 py-2.5 text-sm font-medium text-[#111111] hover:bg-neutral-50 transition-all"
                       >
                         {TYPE_LABEL[type]}
                       </Link>

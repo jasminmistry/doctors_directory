@@ -1,14 +1,13 @@
 "use client";
-import { useState } from "react";
-import { HeroSection } from "@/components/hero-section";
+import { useState, type ReactNode } from "react";
+import dynamic from "next/dynamic";
+import { HeroSection, type HomeAudienceMode } from "@/components/hero-section";
 import LogoLoop from "./LogoLoop";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  Handshake,
-  ChartBarDecreasing,
-  CircleCheck,
-} from "lucide-react";
+import { Handshake, ChartBarDecreasing, CircleCheck, ClipboardPlus, Megaphone, Hospital, CircleEllipsis, Clock, ShieldCheck, ChartNoAxesCombined } from "lucide-react";
+import { Card } from "./ui/card";
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 
 const cityList = [
   "Aberaeron",
@@ -755,7 +754,7 @@ const cityItems: {
   node: (
     <Link
       href={`/clinics/${city.toLowerCase()}`}
-      className="flex items-center justify-center bg-[var(--alabaster)] border border-gray-300 rounded-full w-44 h-44 text-lg text-center font-medium hover:border-black transition-shadow"
+      className="flex items-center justify-center bg-[#fbfbfb] border border-[#e0e0e0] rounded-full w-44 h-44 text-lg text-center font-medium hover:border-black transition-shadow"
       title={`Find Top-Rated Aesthetic clinics in ${city}`}
       aria-label={`Find Top-Rated Aesthetic clinics in ${city}`}
     >
@@ -807,14 +806,44 @@ const specialists = [
     image: "directory/images/Wellness Specialist.webp",
     url: "/treatments/massage",
   },
+  {
+    name: "Aqualyx",
+    image: "directory/images/Aqualyx.png",
+    url: "/treatments/aqualyx",
+  },
 ];
 
 const treatments = [
-  { name: "Facial", image: "directory/images/Facial Treatment.webp", url: "/treatments/facial-treatments" },
-  { name: "Massage", image: "directory/treatments/massage.webp", url: "/treatments/massage" },
-  { name: "Lips", image: "directory/treatments/lips.webp", url: "/treatments/lips" },
-  { name: "Skin", image: "directory/images/Skin Treatment.webp", url: "/treatments/skin-booster" },
-  { name: "Hairline", image: "directory/images/Hairline Treatment.webp", url: "/treatments/hair-treatments" },
+  {
+    name: "Facial",
+    image: "directory/images/Facial Treatment.webp",
+    url: "/treatments/facial-treatments",
+  },
+  {
+    name: "Dermapen Treatment",
+    image: "directory/treatments/dermapen.webp",
+    url: "/treatments/dermapen-treatment",
+  },
+  {
+    name: "Botox",
+    image: "directory/treatments/botox.webp",
+    url: "/treatments/botox",
+  },
+  {
+    name: "Skin",
+    image: "directory/images/Skin Treatment.webp",
+    url: "/treatments/skin-booster",
+  },
+  {
+    name: "Hairline",
+    image: "directory/images/Hairline Treatment.webp",
+    url: "/treatments/hair-treatments",
+  },
+  {
+    name: "Acne",
+    image: "directory/images/acne.webp",
+    url: "/treatments/acne",
+  },
 ];
 
 const blogs = [
@@ -837,6 +866,10 @@ const blogs = [
     link: "https://www.consentz.com/aesthetic-clinic-marketing",
   },
 ];
+
+const MeshBackground = dynamic(() => import("./MeshBackground"), {
+  ssr: false,
+});
 
 const faqData = [
   {
@@ -861,10 +894,48 @@ const faqData = [
   },
 ];
 
+const providerFaqData = [
+  {
+    q: "How do I list my practice on Consentz?",
+    a: "Create a clinic listing from the registration flow, complete your profile with treatments and credentials, then publish. Patients searching the directory can discover and contact you.",
+  },
+  {
+    q: "Can I claim an existing clinic or practitioner profile?",
+    a: "Yes. If your practice is already listed, use Claim your profile to verify ownership. Once approved, you can manage your listing, leads, and portal tools from one place.",
+  },
+  {
+    q: "What do providers get from being listed?",
+    a: "A verified public profile, patient discovery, review collection, and optional Consentz tools for bookings, chat, and practice growth — depending on the plan you choose.",
+  },
+  {
+    q: "Is there a free way to get started?",
+    a: "Yes. You can list or claim your profile and start with free portal access. Paid plans unlock calendar sync, lead unlocks, and deeper Consentz Core integration.",
+  },
+  {
+    q: "How do patients find my clinic?",
+    a: "Patients search by city, treatment, and specialty across the Consentz Aesthetic Directory. A complete, verified profile with reviews helps you rank and convert more enquiries.",
+  },
+];
+
 const ITEMS_PER_PAGE = 9;
 
-export default function HomePage() {
+export default function HomePage({
+  featuredSection,
+}: {
+  featuredSection?: ReactNode;
+}) {
+  const [mode, setMode] = useState<HomeAudienceMode>("patient");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const bookDemoHref = b2bBookDemoHref();
+  const activeFaq = mode === "patient" ? faqData : providerFaqData;
+
+  function handleModeChange(next: HomeAudienceMode) {
+    setMode(next);
+    setOpenIndex(null);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
 
   const toggleFAQ = (index: number | null) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -872,14 +943,28 @@ export default function HomePage() {
 
   return (
     <main>
-      <HeroSection />
-      <section className="bg-white-50 py-15 md:py-20" aria-labelledby="specialists-heading">
-        <h2 id="specialists-heading" className="sr-only">Contact a Specialist</h2>
+      <div className="bg-[var(--primary-bg-color)] relative inset-0 overflow-hidden">
+        
+        <div className="relative z-3">
+          <HeroSection mode={mode} onModeChange={handleModeChange} />
+        </div> 
+
+      </div>
+
+      {mode === "patient" ? (
+      <>
+      <section
+        className="bg-white-50 py-15 md:py-20"
+        aria-labelledby="specialists-heading"
+      >
+        <h2 id="specialists-heading" className="sr-only">
+          Contact a Specialist
+        </h2>
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-xl md:text-4xl font-bold text-center mb-16">
+          <h2 className="text-xl md:text-3xl font-medium text-center mb-16">
             Contact a Specialist
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 align-items-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 align-items-center">
             {specialists.map((specialist, index) => (
               <article key={index} className="flex flex-col items-center gap-4">
                 <Link
@@ -904,9 +989,99 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <section
+        className="bg-white-10 mb-8"
+        aria-labelledby="specialists-heading"
+      >
+        <section className="bg-white py-6 md:py-10">
+          <div className="max-w-3xl mx-auto px-3 sm:px-4 lg:px-6">
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
+                    1.
+                  </div>
+
+                  <div>
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
+                      Tell Us What You’re Looking For
+                    </h2>
+
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
+                      Answer a few questions so we can understand your goals.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/clipboard.png"
+                    alt="Clipboard Icon"
+                    className="w-14 md:w-20 h-auto object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
+                    2.
+                  </div>
+
+                  <div>
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
+                      Get Expert Guidance
+                    </h2>
+
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
+                      Receive personalized recommendations from our aesthetics
+                      and wellness experts.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/video-chat.png"
+                    alt="Video Chat Icon"
+                    className="w-14 md:w-20 h-auto object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_100px] gap-3 items-center">
+                <div className="bg-[#fbfbfb] rounded-lg p-3 md:p-4 flex items-start gap-3">
+                  <div className="min-w-[44px] min-h-[44px] md:min-w-[56px] md:min-h-[56px] rounded-full border border-[#d9d9d9] flex items-center justify-center text-lg md:text-xl font-semibold text-black">
+                    3.
+                  </div>
+
+                  <div>
+                    <h2 className="text-lg md:text-xl font-medium text-black leading-tight">
+                      Match & Book With a Practitioner
+                    </h2>
+
+                    <p className="mt-1 text-xs md:text-base text-[#222] leading-relaxed max-w-xl">
+                      We match you with a trusted practitioner and help you book
+                      with ease.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-center md:justify-end">
+                  <img
+                    src="/directory/images/check.png"
+                    alt="Check Icon"
+                    className="w-14 md:w-20 h-auto object-contain"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
       <section className="bg-white-50 py-5 md:py-5">
-        <h2 className="text-xl md:text-3xl font-bold text-center mb-16">
-        Find Top-Rated Aesthetic Clinics Near You
+        <h2 className="text-xl md:text-3xl font-medium text-center mb-16">
+          Find Top-Rated Aesthetic Clinics Near You
         </h2>
         <div className="w-full">
           <LogoLoop
@@ -920,31 +1095,37 @@ export default function HomePage() {
           />
         </div>
       </section>
-      {/* Most Popular Treatments */}
-      <section className="py-15 md:py-20 relative" aria-labelledby="treatments-heading">
-        <h2 id="treatments-heading" className="sr-only">Most Popular Treatments</h2>
+      <section
+        className="py-15 md:py-20 relative"
+        aria-labelledby="treatments-heading"
+      >
+        <h2 id="treatments-heading" className="sr-only">
+          Most Popular Treatments
+        </h2>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center flex-col justify-between mb-12">
-            <h2 className="text-xl md:text-4xl font-bold text-center mb-10">
+            <h2 className="text-xl md:text-3xl font-medium text-center mb-6">
               Most Popular Treatments
             </h2>
-
           </div>
           <div className="relative flex flex-col items-center justify-center">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 justify-items-center items-center gap-4 pb-4 w-full">
+            <div className="mb-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 justify-items-center items-center gap-4 pb-4 w-full">
               {treatments.map((treatment, index) => (
                 <article key={index} className="flex-shrink-0">
                   <div
-    className="mx-auto
+                    className="mx-auto
                w-32 aspect-square
                rounded-full overflow-hidden"
-  >               <Link href={treatment.url}>
-                  <img
-                   
-                    src={`/${treatment.image || "/placeholder.svg"}`}
-                    alt={treatment.name}
-                    className="w-32 h-32 md:w-38 md:h-38 lg:w-45 lg:h-45 ml-auto mr-auto object-cover object-center rounded-lg"
-                  /></Link></div>
+                  >
+                    {" "}
+                    <Link href={treatment.url}>
+                      <img
+                        src={`/${treatment.image || "/placeholder.svg"}`}
+                        alt={treatment.name}
+                        className="w-32 h-32 md:w-38 md:h-38 lg:w-45 lg:h-45 ml-auto mr-auto object-cover object-center rounded-lg"
+                      />
+                    </Link>
+                  </div>
                   <p className="mt-4 text-base font-medium text-center">
                     {treatment.name}
                   </p>
@@ -952,23 +1133,21 @@ export default function HomePage() {
               ))}
             </div>
             <Button
-  asChild
-  className="bg-[var(--text-color)] hover:bg-black
-                         h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
->
-  <Link href="/treatments">
-    See all Treatments
-  </Link>
-</Button>
-
+              asChild
+              className=" w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
+            >
+              <Link href="/treatments">See all Treatments</Link>
+            </Button>
           </div>
-
-
-
-         </div>
-       </section>
-      <section className="py-10 md:py-15 relative" aria-labelledby="regulatory-heading">
-        <h2 id="regulatory-heading" className="sr-only">Trusted Regulatory Partners</h2>
+        </div>
+      </section>
+      <section
+        className="py-5 md:py-10 relative"
+        aria-labelledby="regulatory-heading"
+      >
+        <h2 id="regulatory-heading" className="sr-only">
+          Trusted Regulatory Partners
+        </h2>
         <LogoLoop
           logos={imageLogos}
           speed={100}
@@ -983,10 +1162,12 @@ export default function HomePage() {
           className="py-10 md:py-15 relative"
         />
       </section>
-      {/* Trust Section */}
+
+      {featuredSection}
+
       <section className="py-15 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-xl md:text-4xl font-bold text-center mb-10 md:mb-16">
+          <h2 className="text-xl md:text-3xl font-medium text-center mb-6 md:mb-16">
             Building trust and clarity in healthcare
           </h2>
           <div className="grid md:grid-cols-3 gap-6 md:gap-12">
@@ -1009,10 +1190,10 @@ export default function HomePage() {
             ].map((item, index) => (
               <div
                 key={index}
-                className="info-card bg-[var(--alabaster)] border-1 border-[var(--alto)] rounded-xl py-8 px-6 md:py-12 md:px-8 flex items-center flex-col"
+                className="info-card bg-[#fbfbfb] border-1 border-[var(--alto)] rounded-lg py-8 px-6 md:py-12 md:px-8 flex items-center flex-col"
               >
                 <item.icon className="w-12 h-12 mb-8 hidden md:flex" />
-                <h3 className="font-bold text-lg mb-4">{item.title}</h3>
+                <h3 className="font-medium text-lg mb-4">{item.title}</h3>
                 <p className="text-base font-normal text-center text-sm leading-relaxed">
                   {item.desc}
                 </p>
@@ -1021,65 +1202,144 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      {/* For Service Providers Section */}
-      <section className="py-10 md:py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-2 items-center">
-            <div>
-              <h2 className="text-lg md:text-3xl text-center md:text-left md:text-4xl font-bold mb-7">
-                For Service Providers
-              </h2>
-              <ul className="space-y-4 mb-8">
-                <li className="flex gap-3 items-start">
-                  <CircleCheck className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-base">
-                    Gather verified patient reviews with our digital platform.
-                  </span>
-                </li>
-                <li className="flex gap-3 items-start">
-                  <CircleCheck className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-base">
-                    Showcase and validate your clinical expertise.
-                  </span>
-                </li>
-                <li className="flex gap-3 items-start">
-                  <CircleCheck className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-base">
-                    Connect, engage, and better understand your patients.
-                  </span>
-                </li>
-                <li className="flex gap-3 items-start">
-                  <CircleCheck className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-base">
-                    Access real-time insights to continually enhance your care.
-                  </span>
-                </li>
-                <li className="flex gap-3 items-start">
-                  <CircleCheck className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-base">
-                    Connect with like-minded healthcare professionals.
-                  </span>
-                </li>
-              </ul>
-              <div className="text-center md:text-left mb-10 md:mb-0">
-                <Button
-                  asChild
-                  className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white"
-                >
-                  <a
-                    href="https://www.consentz.com/features/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Learn More
-                  </a>
-                </Button>
+      </>
+      ) : (
+      <>
+      <section className="bg-white-10 py-6 md:py-10">
+          <div className="max-w-3xl mx-auto px-3 sm:px-4 lg:px-6">
+            <h2
+              id="provider-steps-heading"
+              className="text-xl md:text-3xl font-medium text-center mb-6"
+            >
+              Accreditations
+            </h2>
+            <p className="text-center mb-8">Consentz is recognized by leading industry authorities, ensuring our software meets the highest standards for clinic management, patient safety, and data security. Trust in our commitment to quality and excellence.</p>
+
+            <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
+
+              <div className="mb-2 bg-white w-full max-w-md text-center">
+                <img
+                  src="/directory/images/iso.png"
+                  alt="Practitioner Banner"
+                  className="w-[130px] inline-block"
+                />
               </div>
+              <div className="mb-2 bg-white w-full max-w-md text-center">
+                <img
+                  src="/directory/images/qui.png"
+                  alt="Practitioner Banner"
+                  className="w-[130px] inline-block"
+                />
+              </div>
+              <div className="mb-2 bg-white w-full max-w-md text-center">
+                <img
+                  src="/directory/images/amazon.png"
+                  alt="Practitioner Banner"
+                  className="w-[130px] inline-block"
+                />
+              </div>
+              <div className="mb-2 bg-white w-full max-w-md text-center">
+                <img
+                  src="/directory/images/hipaa.png"
+                  alt="Practitioner Banner"
+                  className="w-[130px] inline-block"
+                />
+              </div>
+              
+            </div>
+          </div>
+      </section>
+
+      <section className="bg-white-10 py-6 md:py-10">
+        <div className="max-w-7xl m-auto px-3">
+            <h2
+              id="provider-steps-heading"
+              className="text-xl md:text-3xl font-medium text-center mb-6"
+            >
+              Streamline Aesthetics Clinic Management
+            </h2>
+            <p className="text-center m-auto mb-8 max-w-3xl">Consentz is the first aesthetics clinic management software system developed with the clinician-patient relationship at the heart of everything it does.</p>
+
+            <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <Clock size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Online Booking</h3>
+                <p>Patients will never have to ring you or leave your website or IG to book appointments.</p>
+              </div>
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <ChartNoAxesCombined size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Clinic Growth</h3>
+                <p>Email marketing and paid ads can be launched in minutes with the CONSENTZ marketing module.</p>
+              </div>
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <ShieldCheck size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Secure Payments</h3>
+                <p>Streamline all your payments. CONSENTZ offers online or in person point-of-sale systems.</p>
+              </div>
+
+            </div>
+          </div>
+      </section>
+
+      <section className="bg-white-10 py-6 md:py-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="head m-auto mb-14 max-w-3xl">
+            <h2
+              className="text-xl md:text-3xl font-medium text-center mb-6"
+            >
+              All The Tools You Need
+            </h2>
+            <p className="text-center">
+              A comprehensive suite of easy-to-use aesthetics clinic management software tools, Consentz builds patient relationships with powerful patient engagement and education tools, while significantly reducing the time burden in note taking and administration, all captured using state-of-the-art encryption.
+            </p>
+          </div>
+
+          <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
+            <div className="max-w-lg mx-auto">
+              <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-7">
+                SEO Optimized Website For Your Aesthetics Business
+              </h2>
+              <p>Achieve Patient growth with a custom branded website that incorporates best in practice SEO and patient booking tools</p>
+              
             </div>
             <div className="flex justify-center">
               <img
-                src="/directory/images/Aesthetic Software Interface.webp"
+                src="/directory/images/seo.png"
                 alt="Healthcare dashboard on laptop"
+                className="max-w-full"
+              />
+            </div>
+          </div>
+          <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
+            <div className="flex justify-center">
+              <img
+                src="/directory/images/cpm.png"
+                alt=""
+                className="max-w-full"
+              />
+            </div>
+            <div className="max-w-lg mx-auto">
+              <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-7">
+                 Create Powerful Marketing Pipelines and Campaigns
+              </h2>
+              <p>Bring new patients through the door with our unique Facebook and Google ads module and our automated email campaign builder customized for Aesthetics practices.</p>             
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4 items-center">
+            <div className="max-w-lg mx-auto">
+              <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-7">
+                Schedule patients with online booking and waitlist tools
+              </h2>
+              <p>Customize your schedules and practitioners calendars and place your booking link on your website.</p>
+              
+            </div>
+            <div className="flex justify-center">
+              <img
+                src="/directory/images/eps.png"
+                alt=""
                 className="max-w-full"
               />
             </div>
@@ -1087,29 +1347,106 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Ready to Get Started CTA Section */}
-      <section className="bg-[var(--dune)] py-20 text-white hidden">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <section className="bg-white-10 py-6 md:py-10">
+        <div className="max-w-7xl mx-auto flex items-center px-6 h-[400px] rounded-lg" 
+            style={{
+              backgroundImage: 'url("/directory/images/elite.png")',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+          <div className="head m-auto max-w-3xl text-white">
+            <h2
+              className="text-xl md:text-4xl font-bold text-center mb-6"
+            >
+              Powering Elite Aesthetics Practices Since 2012
+            </h2>
+            <p className="text-center">
+              Consentz clinic management software brings together all the tools you need to build patient relationships, grow your business, and save you time.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white-10 py-6 md:py-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="head m-auto mb-14 max-w-3xl">
+            <h2
+              className="text-xl md:text-3xl font-medium text-center mb-6"
+            >
+              All The Tools You Need In One
+            </h2>
+            <p className="text-center">
+              A comprehensive suite of easy-to-use medical management software tools for your practice.
+            </p>
+          </div>
+
+          <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <ClipboardPlus size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Medical Record Creation</h3>
+                <p>Mark Up Photos, dictate notes, mange records</p>
+              </div>
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <Megaphone size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Marketing Tools</h3>
+                <p>Find out all the features Consentz has to offer</p>
+              </div>
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <Hospital size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">Run Your Clinic</h3>
+                <p>Everything your need to manage your business</p>
+              </div>
+
+              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <CircleEllipsis size={36} className="mb-4" />
+                <h3 className="text-xl md:text-lg font-medium mb-4">And Much More</h3>
+                <p>Mark Up Photos, dictate notes, mange records</p>
+              </div>
+
+            </div>
+
+          
+        </div>
+      </section>
+
+   
+      <section className="bg-[var(--dune)] py-20 text-white">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-2">
+            <h2 className="text-3xl md:text-4xl font-medium mb-2">
               Ready to Get Started?
             </h2>
             <p className="text-gray-300">
               Join over 250+ clinics already growing with Consentz
             </p>
           </div>
-          <Button className="bg-white text-black hover:bg-gray-200">
+          <a
+            href={bookDemoHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-gray-200 transition-colors"
+          >
             BOOK DEMO
-          </Button>
+          </a>
         </div>
       </section>
+      </>
+      )}
 
-      {/* Latest blogs */}
-      <section className="max-w-7xl mx-auto px-4 md:px-6 py-12" aria-labelledby="blog-heading">
-        {/* Header */}
-        <h2 id="blog-heading" className="sr-only">Our Latest Blogs</h2>
+      <section
+        className="max-w-7xl mx-auto px-4 md:px-6 py-12"
+        aria-labelledby="blog-heading"
+      >
+        <h2 id="blog-heading" className="sr-only">
+          Our Latest Blogs
+        </h2>
         <div className="max-w-3xl mb-10">
-          <h2 className="text-lg md:text-3xl text-center md:text-left md:text-4xl font-bold mb-6">
+          <h2 className="text-xl md:text-3xl text-center md:text-left font-medium mb-6">
             Our Latest Blogs
           </h2>
           <p className="text-gray-700 text-base leading-relaxed">
@@ -1119,12 +1456,11 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Blog cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogs.map(({ id, title, img, link }) => (
             <article
               key={id}
-              className="bg-gray-100 border border-gray-400 rounded-xl p-6 relative overflow-hidden"
+              className="bg-white border border-[#e0e0e0] rounded-lg p-6 relative overflow-hidden"
             >
               <a href={link} className="block">
                 <img
@@ -1155,34 +1491,47 @@ export default function HomePage() {
         </div>
         <div className="flex align-items-center justify-center pt-6 mt-6 mb-4">
           <Button
-            onClick={() => globalThis.location.href='https://www.consentz.com/blog'}
-            className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
+            onClick={() =>
+              (globalThis.location.href = "https://www.consentz.com/blog")
+            }
+            className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#f4f4f4] px-6 py-3 text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
           >
             View All Blogs
           </Button>
         </div>
       </section>
-      {/* FAQ */}
-      <section className="max-w-4xl mx-auto pt-4 pb-20 px-6" aria-labelledby="faq-heading">
-        <h2 id="faq-heading" className="text-lg md:text-3xl text-center md:text-4xl font-bold mb-6">
+      <section
+        className="max-w-4xl mx-auto pt-4 pb-20 px-6"
+        aria-labelledby="faq-heading"
+      >
+        <h2
+          id="faq-heading"
+          className="text-xl md:text-3xl text-center font-medium mb-6"
+        >
           Frequently Asked Questions
         </h2>
         <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-          Find quick answers to common questions about the Consentz Aesthetic
-          Directory.
+          {mode === "patient"
+            ? "Find quick answers to common questions about the Consentz Aesthetic Directory."
+            : "Find quick answers for clinics and practitioners listing or claiming on Consentz."}
         </p>
 
         <div className="space-y-4">
-          {faqData.map((item, index) => {
+          {activeFaq.map((item, index) => {
             const isOpen = openIndex === index;
             return (
               <details
-                key={index}
+                key={`${mode}-${index}`}
                 open={isOpen}
-                onToggle={() => toggleFAQ(index)}
-                className="border border-gray-300 rounded-3xl p-4 transition-all duration-300"
+                className="border border-[#e0e0e0]  rounded-lg p-4 transition-all duration-300"
               >
-                <summary className="w-full flex items-center gap-4 text-left text-lg font-semibold cursor-pointer flex flex-row flex-wrap pl-10 relative list-none">
+                <summary
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleFAQ(index);
+                  }}
+                  className="w-full flex items-center gap-4 text-left text-lg font-semibold cursor-pointer flex flex-row flex-wrap pl-10 relative list-none"
+                >
                   <span className="text-2xl font-normal text-center w-7 h-7 rounded-full leading-6 text-black transition-all select-none bg-black text-white absolute left-0">
                     {isOpen ? "−" : "+"}
                   </span>
@@ -1198,10 +1547,12 @@ export default function HomePage() {
         </div>
         <div className="flex align-items-center justify-center pt-6 mt-6 mb-4">
           <Button
-            onClick={() => globalThis.location.href='https://www.consentz.com/faqs/'}
-            className="bg-[var(--text-color)] hover:bg-black h-auto rounded-lg text-lg px-7 py-3 text-white cursor-pointer"
+            onClick={() =>
+              (globalThis.location.href = "https://www.consentz.com/faqs/")
+            }
+            className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#f4f4f4] px-6 py-3 text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
           >
-            Read All FAQ'S
+            Read All FAQ&apos;S
           </Button>
         </div>
       </section>

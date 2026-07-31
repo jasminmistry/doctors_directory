@@ -92,7 +92,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
                   <Link
                     key={e.key}
                     href={e.href}
-                    className="w-full max-w-[404px] rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-4 flex flex-col gap-1.5 hover:border-neutral-400 hover:shadow-sm transition-all text-left min-h-[78px]"
+                    className="w-full max-w-[404px] rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] px-4 py-4 flex flex-col gap-1.5 hover:border-neutral-400  transition-all text-left min-h-[78px]"
                   >
                     <span className="font-semibold text-neutral-900 leading-snug">
                       {e.title}
@@ -127,7 +127,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
                 return (
                   <div
                     key={city}
-                    className="rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] p-4"
+                    className="rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] p-4"
                   >
                     <p className="font-medium text-neutral-900 mb-2">{city}</p>
                     <div className="flex flex-col gap-1.5">
@@ -211,7 +211,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
           </section>
 
           <section className="mb-12">
-            <h2 className="text-3xl font-bold text-center text-neutral-900 mb-10">
+            <h2 className="text-3xl font-medium text-center text-neutral-900 mb-10">
               Most Popular Treatments
             </h2>
             <div className="flex flex-wrap justify-center items-start gap-8 md:gap-12">
@@ -235,14 +235,14 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
             <div className="mt-8 flex justify-center">
               <Link
                 href="/treatments/"
-                className="inline-flex items-center rounded-[12px] bg-black text-white px-8 py-3 text-sm font-semibold hover:bg-neutral-900 transition-colors"
+                className="w-full h-auto sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-base font-medium text-white hover:bg-neutral-800 transition-colors"
               >
                 See All Treatments
               </Link>
             </div>
           </section>
 
-          <section className="rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] px-6 py-6">
+          <section className="rounded-lg border border-[#e0e0e0] bg-white px-6 py-6">
             <h3 className="text-xl font-semibold text-neutral-900 mb-2">
               City Coverage Reference
             </h3>
@@ -252,7 +252,7 @@ export function HubUkIndexClient({ allCities, featuredCityNames }: Props) {
             </p>
             <Link
               href="/business/"
-              className="inline-flex items-center justify-center rounded-[12px] border-2 border-neutral-900 bg-white px-8 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors"
+              className="inline-flex h-auto inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 bg-[#f4f4f4]  text-base font-medium text-[#1f1f1f] border border-[#e0e0e0] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors capitalize hover:cursor-pointer"
             >
               Back To Buyer Hub
             </Link>

@@ -57,7 +57,7 @@ type Props = {
 function NavCard({ href, label }: { href: string; label: string }) {
   const external = href.startsWith("http")
   const className =
-    "flex min-h-[80px] w-full min-w-0 items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-4 py-4 text-center text-base font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white sm:min-h-[93px] sm:px-5 sm:py-[18px] sm:text-lg md:text-xl"
+    "flex min-h-[80px] w-full min-w-0 items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-4 py-4 text-center text-base font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white sm:min-h-[93px] sm:px-5 sm:py-[18px] sm:text-lg md:text-xl"
   if (external) {
     return (
       <a href={href} target="_blank" rel="noreferrer" className={className}>
@@ -118,7 +118,7 @@ export function HubConsentDetailTemplate({ entry }: Props) {
       <HubContentStart>
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">Operational Reality</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Teams outgrow generic tools when consent, payments, and clinical evidence sit in different
@@ -126,7 +126,7 @@ export function HubConsentDetailTemplate({ entry }: Props) {
                 communication.
               </p>
             </div>
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">What Changes With Consentz</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Consentz is built as an operating layer for clinics: structured consent, workflow automation,
@@ -137,24 +137,24 @@ export function HubConsentDetailTemplate({ entry }: Props) {
         </section>
 
         <section className="mb-16">
-          <h2 className="mb-8 text-center text-2xl font-bold tracking-[-0.02em] text-[#111111] md:text-3xl">
+          <h2 className="mb-8 text-center text-2xl font-medium tracking-[-0.02em] text-[#111111] md:text-3xl">
             Treatment Types
           </h2>
           <div className="mx-auto grid max-w-[920px] grid-cols-1 gap-2.5 md:grid-cols-2 md:gap-2.5">
-            <div className="flex flex-col gap-1 rounded-xl border border-transparent bg-[#eef7f2] px-[18px] py-[14px]">
+            <div className="flex flex-col gap-1 rounded-lg border border-transparent bg-[#eef7f2] px-[18px] py-[14px]">
               <div className="flex items-start gap-3">
-                <span className="shrink-0 text-sm font-bold leading-6 text-[#1a6e45]">✓</span>
+                <span className="shrink-0 text-sm font-medium leading-6 text-[#1a6e45]">✓</span>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-[#6B6B6B]">{dynamic.stats.treatmentLabel}</p>
-                  <p className="mt-1 text-lg font-bold leading-snug text-[#1a6e45] md:text-xl">
+                  <p className="mt-1 text-lg font-medium leading-snug text-[#1a6e45] md:text-xl">
                     {dynamic.stats.treatmentValue}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col gap-1 rounded-xl border border-transparent bg-[#eef7f2] px-[18px] py-[14px]">
+            <div className="flex flex-col gap-1 rounded-lg border border-transparent bg-[#eef7f2] px-[18px] py-[14px]">
               <div className="flex items-start gap-3">
-                <span className="shrink-0 text-sm font-bold leading-6 text-[#1a6e45]">✓</span>
+                <span className="shrink-0 text-sm font-medium leading-6 text-[#1a6e45]">✓</span>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-[#6B6B6B]">Consent Required</p>
                   <p className="mt-1 whitespace-pre-line text-base font-semibold leading-snug text-[#1a1a1a] md:text-[18px]">
@@ -163,9 +163,9 @@ export function HubConsentDetailTemplate({ entry }: Props) {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col gap-1 rounded-xl border border-transparent bg-[#eef7f2] px-[18px] py-[14px]">
+            <div className="flex flex-col gap-1 rounded-lg border border-transparent bg-[#eef7f2] px-[18px] py-[14px]">
               <div className="flex items-start gap-3">
-                <span className="shrink-0 text-sm font-bold leading-6 text-[#1a6e45]">✓</span>
+                <span className="shrink-0 text-sm font-medium leading-6 text-[#1a6e45]">✓</span>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-[#6B6B6B]">CQC Evidence</p>
                   <p className="mt-1 whitespace-pre-line text-base font-semibold leading-snug text-[#1a1a1a] md:text-[18px]">
@@ -174,9 +174,9 @@ export function HubConsentDetailTemplate({ entry }: Props) {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col gap-1 rounded-xl border border-transparent bg-[#eef7f2] px-[18px] py-[14px]">
+            <div className="flex flex-col gap-1 rounded-lg border border-transparent bg-[#eef7f2] px-[18px] py-[14px]">
               <div className="flex items-start gap-3">
-                <span className="shrink-0 text-sm font-bold leading-6 text-[#1a6e45]">✓</span>
+                <span className="shrink-0 text-sm font-medium leading-6 text-[#1a6e45]">✓</span>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-[#6B6B6B]">Signature Method</p>
                   <p className="mt-1 whitespace-pre-line text-base font-semibold leading-snug text-[#1a1a1a] md:text-[18px]">
@@ -189,16 +189,16 @@ export function HubConsentDetailTemplate({ entry }: Props) {
         </section>
 
         <section className="mb-16">
-          <h2 className="mb-8 text-center text-2xl font-bold tracking-[-0.02em] text-[#111111] md:text-3xl">
+          <h2 className="mb-8 text-center text-2xl font-medium tracking-[-0.02em] text-[#111111] md:text-3xl">
             {dynamic.includesHeading}
           </h2>
           <div className="mx-auto grid max-w-[920px] grid-cols-1 gap-2.5 md:grid-cols-2 md:gap-2.5">
             {dynamic.includes.map((line) => (
               <div
                 key={line}
-                className="flex items-center gap-3 rounded-xl border border-transparent bg-[#eef7f2] px-[18px] py-[14px]"
+                className="flex items-center gap-3 rounded-lg border border-transparent bg-[#eef7f2] px-[18px] py-[14px]"
               >
-                <span className="shrink-0 text-sm font-bold text-[#1a6e45]">✓</span>
+                <span className="shrink-0 text-sm font-medium text-[#1a6e45]">✓</span>
                 <p className="text-base font-medium text-[#1a1a1a] md:text-[18px]">{line}</p>
               </div>
             ))}
@@ -209,7 +209,7 @@ export function HubConsentDetailTemplate({ entry }: Props) {
           <div className="mx-auto flex max-w-[1100px] flex-wrap justify-center gap-8 md:gap-10">
             {CONSENT_FLOW_STEPS.map((step) => (
               <div key={step.n} className="flex w-[120px] flex-col items-center gap-3 text-center sm:w-[130px]">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#1a877a] bg-white text-base font-bold text-[#1a877a]">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#1a877a] bg-white text-base font-medium text-[#1a877a]">
                   {step.n}
                 </div>
                 <p className="text-sm font-semibold leading-snug text-[#111111]">{step.label}</p>
@@ -241,8 +241,8 @@ export function HubConsentDetailTemplate({ entry }: Props) {
 
 
         <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
-          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">Our Latest Blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-gray-600">
             Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay
             informed with our latest articles.
           </p>
@@ -253,7 +253,7 @@ export function HubConsentDetailTemplate({ entry }: Props) {
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image

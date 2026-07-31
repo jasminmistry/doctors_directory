@@ -11,12 +11,17 @@ export const COOKIE_OPTS = {
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'lax' as const,
   path: COOKIE_PATH,
+  maxAge: 7 * 24 * 60 * 60, // 7 days
 }
 
 export function getConsentzAuthUrl(): string {
   const url = process.env.CONSENTZ_AUTH_API_URL
   if (!url) throw new Error('CONSENTZ_AUTH_API_URL is not configured')
   return url.replace(/\/$/, '')
+}
+
+export function getConsentzV1Url(): string {
+  return `${new URL(getConsentzAuthUrl()).origin}/api/v1`
 }
 
 export function getApplicationId(): string {
@@ -42,6 +47,7 @@ export async function consentzApi(
 
   return fetch(`${base}${path}`, {
     method,
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'X-APPLICATION-ID': getApplicationId(),
@@ -54,7 +60,7 @@ export async function consentzApi(
 
 /** Legacy alias kept for callers that pass a full URL — wraps fetch unchanged. */
 export function consentzFetch(url: string, init: RequestInit): Promise<Response> {
-  return fetch(url, init)
+  return fetch(url, { ...init, cache: 'no-store' })
 }
 
 export function extractTokens(data: Record<string, unknown>) {
