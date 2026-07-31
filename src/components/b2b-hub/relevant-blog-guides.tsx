@@ -10,7 +10,7 @@ export function RelevantBlogGuides() {
   return (
     <section className="relative z-0 mx-auto max-w-7xl px-4 pb-12 md:px-6 md:pb-16">
       <div className="mx-auto max-w-[1280px]">
-        <h2 className="mb-10 text-center text-2xl font-bold tracking-tight text-neutral-900 md:text-3xl">
+        <h2 className="mb-10 text-center text-2xl font-medium tracking-tight text-neutral-900 md:text-3xl">
           Related Articles
         </h2>
         <div className="grid gap-6 md:grid-cols-3 md:gap-8">
@@ -32,7 +32,7 @@ export function RelevantBlogGuides() {
                 />
               </div>
               <div className="flex flex-1 flex-col p-5">
-                <span className="mb-3 text-[10px] font-bold tracking-[0.12em] text-neutral-500">
+                <span className="mb-3 text-[10px] font-medium tracking-[0.12em] text-neutral-500">
                   CONSENTZ
                 </span>
                 <span className="text-base font-semibold leading-snug text-neutral-900 underline-offset-2 group-hover:underline">
@@ -52,7 +52,7 @@ export function RelevantBlogGuides() {
             rel="noreferrer"
             className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
           >
-            View all blogs
+            View All Blogs
           </a>
         </div>
       </div>

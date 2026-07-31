@@ -39,6 +39,7 @@ export interface City {
 }
 export interface Clinic {
   slug: string | undefined
+  name?: string
   image: string
   url: string | undefined
   rating: number
@@ -78,6 +79,11 @@ export interface Clinic {
   x_twitter: string
   Treatments?: string[]
   claimed?: boolean
+  isConsentz?: boolean
+  aestheticsAwards?: Array<{ year: number; result: string; category: string }>
+  tatlerGuideYears?: number[]
+  awardsBadgeLabel?: string | null
+  tatlerBadgeLabel?: string | null
   verified?: boolean
   domainVerified?: boolean
   gbpMatch?: boolean
@@ -181,7 +187,8 @@ export interface SearchFilters {
   location: string
   rating: number
   services: string[]
-  
+  accreditation: string
+
 }
 export interface Product {
   // Identification

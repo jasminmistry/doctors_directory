@@ -11,13 +11,39 @@ interface Props {
   claimId: number
   entityType: 'clinic' | 'practitioner'
   onVerified: (domainVerified: boolean, affiliated: boolean) => void
-  onResend: () => void
 }
 
-export function StepVerifyOtp({ email, claimId, entityType, onVerified, onResend }: Readonly<Props>) {
+export function StepVerifyOtp({ email, claimId, entityType, onVerified }: Readonly<Props>) {
   const [otp, setOtp] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [resending, setResending] = useState(false)
+  const [resendMessage, setResendMessage] = useState<string | null>(null)
+
+  async function handleResend() {
+    setResending(true)
+    setResendMessage(null)
+    setError(null)
+
+    try {
+      const res = await fetch('/directory/api/claim/resend-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ claimId }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setResendMessage(typeof data.error === 'string' ? data.error : 'Failed to resend code. Please try again.')
+        return
+      }
+      setOtp('')
+      setResendMessage('A new code has been sent to your email.')
+    } catch {
+      setResendMessage('Network error. Please check your connection and try again.')
+    } finally {
+      setResending(false)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -44,10 +70,10 @@ export function StepVerifyOtp({ email, claimId, entityType, onVerified, onResend
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       <div>
         <h2 className="text-xl font-semibold mb-1">Enter your verification code</h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground break-words">
           We sent a 6-digit code to <strong>{email}</strong>. It expires in 10 minutes.
         </p>
       </div>
@@ -61,9 +87,8 @@ export function StepVerifyOtp({ email, claimId, entityType, onVerified, onResend
           placeholder="000000"
           maxLength={6}
           value={otp}
-          onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+          onChange={(e) => { setOtp(e.target.value.replace(/\D/g, '')); setError(null) }}
           className="text-2xl tracking-widest text-center font-mono"
-          required
           autoComplete="one-time-code"
           autoFocus
         />
@@ -79,11 +104,13 @@ export function StepVerifyOtp({ email, claimId, entityType, onVerified, onResend
         <p className="text-xs text-muted-foreground mb-1">Didn&apos;t receive it? Check your spam folder.</p>
         <button
           type="button"
-          onClick={onResend}
-          className="text-xs underline text-muted-foreground hover:text-foreground"
+          onClick={handleResend}
+          disabled={resending}
+          className="text-xs underline text-muted-foreground hover:text-foreground disabled:opacity-50"
         >
-          Resend code
+          {resending ? 'Sending…' : 'Resend code'}
         </button>
+        {resendMessage && <p className="text-xs text-muted-foreground mt-1">{resendMessage}</p>}
       </div>
     </form>
   )

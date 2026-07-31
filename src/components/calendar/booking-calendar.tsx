@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import {
   format,
   startOfWeek,
@@ -14,15 +14,25 @@ import {
   subMonths,
   addWeeks,
   subWeeks,
-  parseISO,
-  isToday,
   setHours,
   setMinutes,
   differenceInMinutes,
 } from 'date-fns'
+import { toZonedTime } from 'date-fns-tz'
 import { ChevronLeft, ChevronRight, CalendarDays, List, RefreshCw, Plus, Pencil, Trash2, Loader2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+
+/**
+ * All booking times are stored as real UTC instants. Every render path converts
+ * through `toZonedTime(iso, clinicTimezone)` once, then treats the result as a
+ * normal local Date for date-fns formatting/arithmetic — never `parseISO`/`new Date`
+ * directly on a slotStart/slotEnd string, or the displayed time depends on the
+ * viewer's own browser timezone instead of the clinic's.
+ */
+function zoned(iso: string, timeZone: string) {
+  return toZonedTime(iso, timeZone)
+}
 
 export interface CalendarBooking {
   id: number
@@ -40,6 +50,7 @@ export interface CalendarBooking {
 
 interface BookingCalendarProps {
   bookings: CalendarBooking[]
+  clinicTimezone: string
   onRefresh?: () => void
   refreshing?: boolean
   showSyncBadge?: boolean
@@ -50,19 +61,22 @@ interface BookingCalendarProps {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  confirmed: 'bg-blue-100 border-blue-300 text-blue-800',
+  confirmed: 'bg-blue-100 border-blue-300 text-black',
   pending: 'bg-amber-100 border-amber-300 text-amber-800',
   completed: 'bg-emerald-100 border-emerald-300 text-emerald-800',
-  cancelled: 'bg-gray-100 border-gray-300 text-gray-500 line-through',
+  cancelled: 'bg-gray-100 border-[#e0e0e0]  text-gray-500 line-through',
   no_show: 'bg-red-100 border-red-300 text-red-700',
 }
 
 type ViewMode = 'month' | 'week' | 'list'
 
-export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge, onNewBooking, onSlotClick, onEditBooking, onDeleteBooking }: BookingCalendarProps) {
+export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshing, showSyncBadge, onNewBooking, onSlotClick, onEditBooking, onDeleteBooking }: BookingCalendarProps) {
   const [view, setView] = useState<ViewMode>('week')
-  const [cursor, setCursor] = useState(new Date())
+  const [cursor, setCursor] = useState(() => toZonedTime(new Date(), clinicTimezone))
   const [selected, setSelected] = useState<CalendarBooking | null>(null)
+
+  const todayZoned = toZonedTime(new Date(), clinicTimezone)
+  const isTodayZoned = (day: Date) => isSameDay(day, todayZoned)
 
   // --- Week view ---
   const weekStart = startOfWeek(cursor, { weekStartsOn: 1 })
@@ -77,7 +91,7 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
   const monthDays = eachDayOfInterval({ start: monthGridStart, end: monthGridEnd })
 
   function bookingsForDay(day: Date) {
-    return bookings.filter((b) => isSameDay(parseISO(b.slotStart), day))
+    return bookings.filter((b) => isSameDay(zoned(b.slotStart, clinicTimezone), day))
   }
 
   function navigate(dir: 1 | -1) {
@@ -94,13 +108,13 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
       : `${format(weekStart, 'd MMM')} – ${format(weekEnd, 'd MMM yyyy')}`
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+    <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-4 py-3">
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate(-1)}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
             aria-label="Previous"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -108,7 +122,7 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
           <span className="min-w-[180px] text-center text-sm font-semibold text-gray-800">{title}</span>
           <button
             onClick={() => navigate(1)}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
             aria-label="Next"
           >
             <ChevronRight className="h-4 w-4" />
@@ -116,7 +130,7 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setCursor(new Date())}
+            onClick={() => setCursor(toZonedTime(new Date(), clinicTimezone))}
             className="ml-1 text-xs text-gray-500 h-7 px-2"
           >
             Today
@@ -128,7 +142,6 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
             <Button
               size="sm"
               onClick={onNewBooking}
-              className="h-7 bg-gray-900 hover:bg-gray-700 text-white text-xs font-semibold px-3"
             >
               <Plus className="h-3.5 w-3.5 mr-1" />
               New Appointment
@@ -138,7 +151,7 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
             <button
               onClick={onRefresh}
               disabled={refreshing}
-              className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors disabled:opacity-40"
+              className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors disabled:opacity-40"
               aria-label="Sync from Core"
               title="Sync from Consentz Core"
             >
@@ -167,7 +180,7 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
         <div>
           <div className="grid grid-cols-7 border-b border-gray-100">
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
-              <div key={d} className="py-2 text-center text-xs font-semibold text-gray-400">{d}</div>
+              <div key={d} className="py-2 text-center text-xs font-semibold text-gray-500">{d}</div>
             ))}
           </div>
           <div className="grid grid-cols-7">
@@ -180,12 +193,12 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
                   className={cn(
                     'min-h-[80px] border-b border-r border-gray-100 p-1',
                     !inMonth && 'bg-gray-50',
-                    isToday(day) && 'bg-blue-50/60',
+                    isTodayZoned(day) && 'bg-blue-50/60',
                   )}
                 >
                   <p className={cn(
                     'mb-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium',
-                    isToday(day) ? 'bg-blue-600 text-white' : inMonth ? 'text-gray-700' : 'text-gray-300',
+                    isTodayZoned(day) ? 'bg-blue-600 text-white' : inMonth ? 'text-gray-700' : 'text-gray-300',
                   )}>
                     {format(day, 'd')}
                   </p>
@@ -199,11 +212,11 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
                           STATUS_STYLES[b.status],
                         )}
                       >
-                        {format(parseISO(b.slotStart), 'HH:mm')} {b.patientName}
+                        {format(zoned(b.slotStart, clinicTimezone), 'HH:mm')} {b.patientName}
                       </button>
                     ))}
                     {dayBookings.length > 2 && (
-                      <p className="pl-1 text-[10px] text-gray-400">+{dayBookings.length - 2} more</p>
+                      <p className="pl-1 text-[10px] text-gray-500">+{dayBookings.length - 2} more</p>
                     )}
                   </div>
                 </div>
@@ -215,21 +228,22 @@ export function BookingCalendar({ bookings, onRefresh, refreshing, showSyncBadge
 
       {/* Week view */}
       {view === 'week' && (
-        <WeekView days={weekDays} bookings={bookings} onSelect={setSelected} onSlotClick={onSlotClick} />
+        <WeekView days={weekDays} bookings={bookings} clinicTimezone={clinicTimezone} isTodayZoned={isTodayZoned} onSelect={setSelected} onSlotClick={onSlotClick} />
       )}
 
       {/* List view */}
       {view === 'list' && (
-        <ListViewWeek days={weekDays} bookings={bookings} onSelect={setSelected} />
+        <ListViewWeek days={weekDays} bookings={bookings} clinicTimezone={clinicTimezone} isTodayZoned={isTodayZoned} onSelect={setSelected} />
       )}
 
       {/* Booking detail panel */}
       {selected && (
         <BookingDetail
           booking={selected}
+          clinicTimezone={clinicTimezone}
           showSyncBadge={showSyncBadge}
           onClose={() => setSelected(null)}
-          onEdit={onEditBooking ? () => { onEditBooking(selected); setSelected(null) } : undefined}
+          onEdit={onEditBooking && selected.status !== 'cancelled' ? () => { onEditBooking(selected); setSelected(null) } : undefined}
           onDelete={onDeleteBooking ? () => { onDeleteBooking(selected); setSelected(null) } : undefined}
         />
       )}
@@ -246,11 +260,15 @@ const GRID_HEIGHT = 48 // px per hour
 function WeekView({
   days,
   bookings,
+  clinicTimezone,
+  isTodayZoned,
   onSelect,
   onSlotClick,
 }: {
   days: Date[]
   bookings: CalendarBooking[]
+  clinicTimezone: string
+  isTodayZoned: (day: Date) => boolean
   onSelect: (b: CalendarBooking) => void
   onSlotClick?: (date: Date) => void
 }) {
@@ -262,25 +280,25 @@ function WeekView({
           <div className="h-8 border-b border-gray-100" /> {/* header spacer */}
           {HOURS.map((h) => (
             <div key={h} className="flex items-start justify-end pr-2" style={{ height: GRID_HEIGHT }}>
-              <span className="text-[10px] text-gray-400 -translate-y-2">{String(h).padStart(2, '0')}:00</span>
+              <span className="text-[10px] text-gray-500 -translate-y-2">{String(h).padStart(2, '0')}:00</span>
             </div>
           ))}
         </div>
 
         {/* Day columns */}
         {days.map((day) => {
-          const dayBookings = bookings.filter((b) => isSameDay(parseISO(b.slotStart), day))
+          const dayBookings = bookings.filter((b) => isSameDay(zoned(b.slotStart, clinicTimezone), day))
           return (
             <div key={day.toISOString()} className="flex-1 min-w-0 border-r border-gray-100 last:border-r-0">
               {/* Day header */}
               <div className={cn(
                 'h-8 flex flex-col items-center justify-center border-b border-gray-100 text-xs',
-                isToday(day) && 'bg-blue-50',
+                isTodayZoned(day) && 'bg-blue-50',
               )}>
-                <span className="text-gray-400">{format(day, 'EEE')}</span>
+                <span className="text-gray-500">{format(day, 'EEE')}</span>
                 <span className={cn(
                   'font-semibold',
-                  isToday(day) ? 'text-blue-600' : 'text-gray-700',
+                  isTodayZoned(day) ? 'text-black' : 'text-gray-700',
                 )}>{format(day, 'd')}</span>
               </div>
 
@@ -297,8 +315,8 @@ function WeekView({
 
                 {/* Bookings positioned absolutely */}
                 {dayBookings.map((b) => {
-                  const start = parseISO(b.slotStart)
-                  const end = parseISO(b.slotEnd)
+                  const start = zoned(b.slotStart, clinicTimezone)
+                  const end = zoned(b.slotEnd, clinicTimezone)
                   const topMinutes = (start.getHours() - HOUR_START) * 60 + start.getMinutes()
                   const durationMinutes = Math.max(differenceInMinutes(end, start), 15)
                   const top = (topMinutes / 60) * GRID_HEIGHT
@@ -332,24 +350,28 @@ function WeekView({
 function ListViewWeek({
   days,
   bookings,
+  clinicTimezone,
+  isTodayZoned,
   onSelect,
 }: {
   days: Date[]
   bookings: CalendarBooking[]
+  clinicTimezone: string
+  isTodayZoned: (day: Date) => boolean
   onSelect: (b: CalendarBooking) => void
 }) {
   const grouped = days.map((day) => ({
     day,
     bookings: bookings
-      .filter((b) => isSameDay(parseISO(b.slotStart), day))
-      .sort((a, b) => parseISO(a.slotStart).getTime() - parseISO(b.slotStart).getTime()),
+      .filter((b) => isSameDay(zoned(b.slotStart, clinicTimezone), day))
+      .sort((a, b) => zoned(a.slotStart, clinicTimezone).getTime() - zoned(b.slotStart, clinicTimezone).getTime()),
   })).filter((g) => g.bookings.length > 0)
 
   if (grouped.length === 0) {
     return (
       <div className="flex flex-col items-center gap-2 py-16 text-center">
         <CalendarDays className="h-8 w-8 text-gray-200" />
-        <p className="text-sm text-gray-400">No bookings this week</p>
+        <p className="text-sm text-gray-500">No bookings this week</p>
       </div>
     )
   }
@@ -360,9 +382,9 @@ function ListViewWeek({
         <div key={day.toISOString()}>
           <div className={cn(
             'px-4 py-2 text-xs font-semibold text-gray-500',
-            isToday(day) && 'bg-blue-50 text-blue-700',
+            isTodayZoned(day) && 'bg-blue-50 text-blue-700',
           )}>
-            {isToday(day) ? 'Today — ' : ''}{format(day, 'EEEE, d MMMM')}
+            {isTodayZoned(day) ? 'Today — ' : ''}{format(day, 'EEEE, d MMMM')}
           </div>
           {dayBookings.map((b) => (
             <button
@@ -371,11 +393,11 @@ function ListViewWeek({
               className="w-full flex items-center gap-4 px-4 py-3 text-left hover:bg-gray-50 transition-colors"
             >
               <div className="w-16 shrink-0 text-sm font-medium text-gray-700">
-                {format(parseISO(b.slotStart), 'HH:mm')}
+                {format(zoned(b.slotStart, clinicTimezone), 'HH:mm')}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{b.patientName}</p>
-                {b.treatment && <p className="text-xs text-gray-400 truncate">{b.treatment}</p>}
+                {b.treatment && <p className="text-xs text-gray-500 truncate">{b.treatment}</p>}
               </div>
               <span className={cn(
                 'shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium capitalize',
@@ -394,12 +416,14 @@ function ListViewWeek({
 // ── Booking detail modal ──────────────────────────────────────────────────────
 function BookingDetail({
   booking,
+  clinicTimezone,
   onClose,
   showSyncBadge,
   onEdit,
   onDelete,
 }: {
   booking: CalendarBooking
+  clinicTimezone: string
   onClose: () => void
   showSyncBadge?: boolean
   onEdit?: () => void
@@ -429,7 +453,7 @@ function BookingDetail({
             )}>
               {booking.status.replace('_', ' ')}
             </span>
-            <button onClick={onClose} className="ml-1 text-gray-400 hover:text-gray-600 transition-colors">
+            <button onClick={onClose} className="ml-1 text-gray-500 hover:text-gray-600 transition-colors">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -438,28 +462,28 @@ function BookingDetail({
         {/* Details */}
         <dl className="grid grid-cols-2 gap-x-4 gap-y-3 px-5 py-4 text-xs">
           <div>
-            <dt className="text-gray-400 mb-0.5">Start</dt>
-            <dd className="font-medium text-gray-800">{format(parseISO(booking.slotStart), 'EEE d MMM, HH:mm')}</dd>
+            <dt className="text-gray-500 mb-0.5">Start</dt>
+            <dd className="font-medium text-gray-800">{format(zoned(booking.slotStart, clinicTimezone), 'EEE d MMM, HH:mm')}</dd>
           </div>
           <div>
-            <dt className="text-gray-400 mb-0.5">End</dt>
-            <dd className="font-medium text-gray-800">{format(parseISO(booking.slotEnd), 'HH:mm')}</dd>
+            <dt className="text-gray-500 mb-0.5">End</dt>
+            <dd className="font-medium text-gray-800">{format(zoned(booking.slotEnd, clinicTimezone), 'HH:mm')}</dd>
           </div>
           {booking.patientPhone && (
             <div>
-              <dt className="text-gray-400 mb-0.5">Phone</dt>
-              <dd><a href={`tel:${booking.patientPhone}`} className="text-blue-600 hover:underline">{booking.patientPhone}</a></dd>
+              <dt className="text-gray-500 mb-0.5">Phone</dt>
+              <dd><a href={`tel:${booking.patientPhone}`} className="text-black hover:underline">{booking.patientPhone}</a></dd>
             </div>
           )}
           {booking.patientEmail && (
             <div className={booking.patientPhone ? '' : 'col-span-2'}>
-              <dt className="text-gray-400 mb-0.5">Email</dt>
-              <dd><a href={`mailto:${booking.patientEmail}`} className="text-blue-600 hover:underline truncate block">{booking.patientEmail}</a></dd>
+              <dt className="text-gray-500 mb-0.5">Email</dt>
+              <dd><a href={`mailto:${booking.patientEmail}`} className="text-black hover:underline truncate block">{booking.patientEmail}</a></dd>
             </div>
           )}
           {booking.notes && (
             <div className="col-span-2">
-              <dt className="text-gray-400 mb-0.5">Notes</dt>
+              <dt className="text-gray-500 mb-0.5">Notes</dt>
               <dd className="text-gray-700">{booking.notes}</dd>
             </div>
           )}
@@ -471,7 +495,7 @@ function BookingDetail({
             {onEdit && (
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1.5 rounded-lg border border-[#e0e0e0]  bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <Pencil className="h-3.5 w-3.5" />
                 Edit

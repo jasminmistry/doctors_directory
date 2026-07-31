@@ -19,6 +19,7 @@ export const useSearchStore = create<SearchState>((set) => ({
     location: "",
     rating: 0,
     services: [],
+    accreditation: "",
   },
 
   setFilters: (update) =>

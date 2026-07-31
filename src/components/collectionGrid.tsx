@@ -87,7 +87,7 @@ export default function ItemsGrid({ items, customLink }: PractitionerCardProps) 
 
   return (
     <div className="w-full space-y-6">
-      <div className="grid items-stretch md:gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid items-stretch mb-4 md:gap-6 md:grid-cols-2 lg:grid-cols-3">
         {itemsList.map((clinic) => (
           <div
             key={typeof clinic === "string" ? clinic : ("practitioner_name" in clinic ? clinic.practitioner_name! + clinic.practitioner_title : clinic.slug)}

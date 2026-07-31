@@ -15,23 +15,23 @@ interface BestRankedBlockProps {
 }
 
 type CardLabel =
-  | "🥇 Best Overall"
-  | "💰 Best Value"
-  | "🏆 Premium Choice"
-  | "⭐ Most Reviewed"
+  | "Best Overall"
+  | "Best Value"
+  | "Premium Choice"
+  | "Most Reviewed"
 
 const labelPriority: CardLabel[] = [
-  "🥇 Best Overall",
-  "💰 Best Value",
-  "🏆 Premium Choice",
-  "⭐ Most Reviewed",
+  "Best Overall",
+  "Best Value",
+  "Premium Choice",
+  "Most Reviewed",
 ]
 
 const badgeClassByLabel: Record<CardLabel, string> = {
-  "🥇 Best Overall": "bg-amber-100 text-amber-900 border-amber-200",
-  "💰 Best Value": "bg-emerald-100 text-emerald-800 border-emerald-200",
-  "🏆 Premium Choice": "bg-indigo-100 text-indigo-800 border-indigo-200",
-  "⭐ Most Reviewed": "bg-sky-100 text-sky-800 border-sky-200",
+  "Best Overall": "bg-amber-100 text-amber-900 border-amber-200",
+  "Best Value": "bg-emerald-100 text-emerald-800 border-emerald-200",
+  "Premium Choice": "bg-indigo-100 text-indigo-800 border-indigo-200",
+  "Most Reviewed": "bg-sky-100 text-sky-800 border-sky-200",
 }
 
 const pickIndex = (
@@ -123,12 +123,12 @@ const buildCardLabels = (entries: RankedEntry[]): CardLabel[] => {
     .map((e) => e.averagePrice)
     .filter((p): p is number => p !== null)
 
-  assign(pickIndex(entries, (entry) => entry.scoreValue, used, "max"), "🥇 Best Overall")
-  assign(pickPriceIndex(entries, used, "min", allPrices), "💰 Best Value")
-  assign(pickPriceIndex(entries, used, "max", allPrices), "🏆 Premium Choice")
+  assign(pickIndex(entries, (entry) => entry.scoreValue, used, "max"), "Best Overall")
+  assign(pickPriceIndex(entries, used, "min", allPrices), "Best Value")
+  assign(pickPriceIndex(entries, used, "max", allPrices), "Premium Choice")
   assign(
     pickIndex(entries, (entry) => entry.reviewCount, used, "max"),
-    "⭐ Most Reviewed"
+    "Most Reviewed"
   )
 
   const remainingLabels = [...labelPriority]
@@ -144,11 +144,11 @@ const buildCardLabels = (entries: RankedEntry[]): CardLabel[] => {
       continue
     }
 
-    const nextLabel = remainingLabels.shift() ?? "🥇 Best Overall"
+    const nextLabel = remainingLabels.shift() ?? "Best Overall"
     labelsByIndex.set(index, nextLabel)
   }
 
-  return entries.map((_, index) => labelsByIndex.get(index) ?? "🥇 Best Overall")
+  return entries.map((_, index) => labelsByIndex.get(index) ?? "Best Overall")
 }
 
 export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProps>) {
@@ -165,7 +165,7 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
         {entries.map((entry, index) => (
           <article
             key={`${entry.href}-${index}`}
-            className="relative flex h-full flex-col overflow-hidden rounded-md border border-[#C4C4C4] bg-white"
+            className="relative flex flex-col bg-white border border-[#C4C4C4] rounded-lg"
           >
             {/* Image + rank badge + name + score + price */}
             <div className="flex flex-col items-center px-3 pt-4 pb-2 text-center">
@@ -197,7 +197,7 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
                 {entry.reviewCount > 0 ? (
                   <DirectoryStarRating
                     reviewCount={entry.reviewCount}
-                    starClassName="h-3.5 w-3.5 fill-amber-500 text-amber-500"
+                    starClassName="h-3.5 w-3.5 fill-black text-black"
                     className="mt-2 flex-col items-center gap-1 text-xs"
                   />
                 ) : null}
@@ -214,7 +214,7 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
                 </Badge>
               </div>
               <Link href={entry.href} prefetch={false}>
-                <Button className="w-full flex border rounded-lg px-4 py-2 bg-black text-white hover:bg-white hover:text-black cursor-pointer justify-center text-sm">
+                <Button className="whitespace-nowrap disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive has-[>svg]:px-3 mb-0 w-full mt-4 h-auto sm:w-full inline-flex items-center justify-center gap-2 rounded-lg px-2 py-2 bg-black text-base font-medium text-white hover:bg-neutral-800 transition-colors capitalize hover:cursor-pointer">
                   View Profile
                 </Button>
               </Link>

@@ -11,7 +11,7 @@ export function HubTestimonialsSection({ title, className }: Props) {
   return (
     <section className={cn("mb-16", className)}>
       {title ? (
-        <h2 className="mb-8 text-center text-2xl font-bold text-[#111111] md:text-3xl">
+        <h2 className="mb-8 text-center text-2xl font-medium text-[#111111] md:text-3xl">
           {title}
         </h2>
       ) : null}
@@ -43,7 +43,7 @@ export function HubTestimonialsSection({ title, className }: Props) {
                 <p className="text-[11px] leading-snug text-[#5C564E]">{t.role}</p>
               </div>
             </div>
-            <span className="inline-flex w-fit items-center rounded-md bg-[#EDE9E3] px-2 py-1 text-[10px] font-semibold tracking-wide text-[#1A1A1A]">
+            <span className="inline-flex w-fit items-center rounded-lg bg-[#EDE9E3] px-2 py-1 text-[10px] font-semibold tracking-wide text-[#1A1A1A]">
               ↑ {t.tag}
             </span>
           </article>

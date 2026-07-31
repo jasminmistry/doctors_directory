@@ -4,6 +4,16 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { prisma } from '@/lib/db'
 import { ClaimWizard } from '@/components/claim/claim-wizard'
+import { getConsentzAuthUrl } from '@/lib/auth'
+import { getClaimState, isOwnActiveClaim } from '@/lib/claim-utils'
+
+function getConsentzLoginUrl(): string {
+  try {
+    return new URL(getConsentzAuthUrl()).origin + '/admin/login'
+  } catch {
+    return ''
+  }
+}
 
 interface Props {
   params: { slug: string }
@@ -27,6 +37,20 @@ export default async function ClaimPractitionerPage({ params, searchParams }: Re
 
   if (!practitioner) notFound()
 
+  const claimState = await getClaimState({
+    claimed: practitioner.claimed,
+    entityType: 'practitioner',
+    slug: practitioner.slug,
+  })
+
+  // A claimant resuming their own in-progress wizard (e.g. backing out of Stripe
+  // Checkout back to the plan step) should never be blocked by the pending guard.
+  const claimIdParam = searchParams.claimId ? parseInt(searchParams.claimId, 10) : null
+  const resumingOwnClaim =
+    claimState === 'pending' && claimIdParam !== null && !Number.isNaN(claimIdParam)
+      ? await isOwnActiveClaim({ entityType: 'practitioner', entityId: practitioner.id, claimId: claimIdParam })
+      : false
+
   const entityName = practitioner.displayName ?? params.slug
 
   return (
@@ -46,11 +70,11 @@ export default async function ClaimPractitionerPage({ params, searchParams }: Re
               {practitioner.specialty}
             </p>
           )}
-          <h1 className="text-2xl font-bold">{entityName}</h1>
+          <h1 className="text-2xl font-medium">{entityName}</h1>
         </div>
 
-        {practitioner.claimed ? (
-          <div className="rounded-xl border border-border p-6 text-center">
+        {claimState === 'claimed' ? (
+          <div className="rounded-lg border border-border p-6 text-center">
             <p className="font-medium">This profile has already been claimed.</p>
             <p className="text-sm text-muted-foreground mt-1">
               If you believe this is an error, contact{' '}
@@ -60,8 +84,19 @@ export default async function ClaimPractitionerPage({ params, searchParams }: Re
               .
             </p>
           </div>
+        ) : claimState === 'pending' && !resumingOwnClaim ? (
+          <div className="rounded-lg border border-border p-6 text-center">
+            <p className="font-medium">A claim request for this profile is already under review.</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              We&apos;ll be in touch once it&apos;s been reviewed. If you believe this is an error, contact{' '}
+              <a href="mailto:support@consentz.com" className="underline">
+                support@consentz.com
+              </a>
+              .
+            </p>
+          </div>
         ) : (
-          <div className="rounded-xl border border-border p-6">
+          <div className="rounded-lg border border-border p-6">
             <Suspense fallback={null}>
               <ClaimWizard
                 entityType="practitioner"
@@ -69,6 +104,7 @@ export default async function ClaimPractitionerPage({ params, searchParams }: Re
                 practitionerSlug={practitioner.slug}
                 initialStep={searchParams.step}
                 initialClaimId={searchParams.claimId ? parseInt(searchParams.claimId, 10) : null}
+                consentzLoginUrl={getConsentzLoginUrl()}
               />
             </Suspense>
           </div>

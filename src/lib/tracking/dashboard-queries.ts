@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client"
 import { getClinicDisplayName } from "@/lib/clinic-display"
 import { hasTrackingDatabaseConfig, prisma } from "@/lib/prisma"
+import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from "@/lib/pricing"
 
 const PAGE_TYPES = ["practitioner_page", "clinic_page", "collection_page", "other"] as const
 const DEVICE_TYPES = ["mobile", "desktop"] as const
@@ -299,8 +300,8 @@ function mapLeadRow(row: {
 }
 
 function planDisplayLabel(plan: string | null): string {
-  if (plan === "subscription") return "Subscription (£99/mo)"
-  if (plan === "pay_per_lead") return "Pay per lead (£15/lead)"
+  if (plan === "subscription") return `Subscription (£${SUBSCRIPTION_MONTHLY_PRICE}/mo)`
+  if (plan === "pay_per_lead") return `Pay per lead (£${PPL_LEAD_PRICE}/lead)`
   if (plan === "free") return "Free (£0)"
   return "Not selected"
 }

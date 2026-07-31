@@ -2,6 +2,11 @@
 
 import { useMemo, useRef } from "react";
 import { search_categories, locations } from "@/lib/data";
+import type { TreatmentSearchOption } from "@/lib/uk-treatment-search";
+
+function toTitleCase(str: string) {
+  return str.replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+}
 
 interface SearchDropdownProps {
   isMobile: boolean;
@@ -14,6 +19,7 @@ interface SearchDropdownProps {
   };
   options: string[];
   isSearchPage: boolean;
+  treatmentSearchOptions?: TreatmentSearchOption[];
   setLocalFilters: (updater: (prev: any) => any) => void;
   setActiveDropdown: (dropdown: 'type' | 'category' | 'location' | null) => void;
   setShowResults: (show: boolean) => void;
@@ -26,6 +32,7 @@ export function SearchDropdown({
   localFilters,
   options,
   isSearchPage,
+  treatmentSearchOptions = [],
   setLocalFilters,
   setActiveDropdown,
   setShowResults
@@ -34,21 +41,37 @@ export function SearchDropdown({
   if (!isMobile && !showResults && !activeDropdown) return null;
 
   const dropdownClasses = isMobile
-    ? "absolute top-full left-0 w-full bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 mt-1"
-    : "flex w-full bg-white rounded-lg shadow-lg border border-gray-200 p-6";
+    ? "absolute top-full left-0 w-full bg-white rounded-lg border border-gray-200 p-4 z-50 mt-1"
+    : "flex w-full bg-white rounded-lg border border-gray-200 p-6";
 
   const clsgrd = "gap-4";
   const gridClasses = isMobile
     ? "w-full"
     : `grid grid-cols-3 w-full ${clsgrd}`;
 
-  const filteredCategories = search_categories.filter((category: string) =>
-    category.toLowerCase().includes(localFilters.query.toLowerCase())
-  ).length > 0
-    ? search_categories.filter((category: string) =>
-        category.toLowerCase().includes(localFilters.query.toLowerCase())
-      )
-    : search_categories;
+  const categoryQuery = (localFilters.query || "").trim().toLowerCase();
+  const categoryMatches = categoryQuery.length === 0
+    ? search_categories
+    : search_categories.filter((category: string) =>
+        category.toLowerCase().includes(categoryQuery)
+      );
+  const filteredCategories = (categoryMatches.length > 0 ? categoryMatches : search_categories)
+    .slice()
+    .sort((a: string, b: string) => a.localeCompare(b));
+
+  const isTreatmentSearch = localFilters.type === "Treatments";
+  const treatmentQuery = localFilters.query.trim().toLowerCase();
+  const filteredTreatments = treatmentSearchOptions.filter((treatment) => {
+    if (!treatmentQuery) return true;
+    return (
+      treatment.name.toLowerCase().includes(treatmentQuery) ||
+      treatment.slug.includes(treatmentQuery.replace(/\s+/g, "-"))
+    );
+  });
+  const middleColumnLabel = isTreatmentSearch ? "Treatments" : "Service Categories";
+  const middleColumnItems = isTreatmentSearch
+    ? filteredTreatments.map((treatment) => treatment.name)
+    : filteredCategories;
 
   const locationQuery = (localFilters.location || "").trim().toLowerCase();
   const filteredLocations = locations.filter(
@@ -76,13 +99,25 @@ export function SearchDropdown({
   }, [filteredLocations]);
 
   const handleTypeClick = (opt: string) => {
-    setLocalFilters((prev) => ({ ...prev, type: opt }));
+    setLocalFilters((prev) => ({
+      ...prev,
+      type: opt,
+      // category/location/rating/services/accreditation are overloaded per type
+      // (e.g. "location" means City for Clinic/Practitioner but distributor for
+      // Product) — stale values from the previous type would otherwise leak
+      // into the new type's filters and get miscounted as active.
+      category: "",
+      location: "",
+      rating: 0,
+      services: [],
+      accreditation: "",
+    }));
     setActiveDropdown(null);
     setShowResults(false);
   };
 
   const handleCategoryClick = (specialty: string) => {
-    setLocalFilters((prev) => ({ ...prev, query: specialty }));
+    setLocalFilters((prev) => ({ ...prev, query: toTitleCase(specialty) }));
     setActiveDropdown(null);
     setShowResults(false);
   };
@@ -137,15 +172,15 @@ export function SearchDropdown({
 
         {(activeDropdown === 'category' || (!isMobile && showResults)) && (
           <div className="flex flex-col min-w-0 h-96">
-            <h3 className="font-semibold text-left text-gray-900 mb-4">Service Categories</h3>
+            <h3 className="font-semibold text-left text-gray-900 mb-4">{middleColumnLabel}</h3>
             <div className="flex-1 space-y-2 overflow-y-auto">
-              {filteredCategories.map((specialty: string) => (
+              {middleColumnItems.map((specialty: string) => (
                 <button
                   key={specialty}
                   onClick={() => handleCategoryClick(specialty)}
                   className="hover:bg-gray-50 hover:text-black active:bg-gray-100 text-left text-sm font-medium w-full flex items-center gap-3 p-2 rounded"
                 >
-                  {specialty}
+                  {toTitleCase(specialty)}
                 </button>
               ))}
             </div>

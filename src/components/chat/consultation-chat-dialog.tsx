@@ -1,6 +1,7 @@
 'use client'
 
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Send, X, CalendarDays, Loader2, Video, RotateCcw } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -8,9 +9,14 @@ import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { BookingWidget } from '@/components/Clinic/booking-widget'
 import { CallBookingForm } from '@/components/Clinic/call-booking-form'
+import { InlineLogin } from '@/components/consultation/inline-login'
+import { ConsultationRichForm } from '@/components/consultation/consultation-form'
+import type { ConsultationFormData } from '@/components/consultation/consultation-form'
 import { cn } from '@/lib/utils'
 import { trackCtaClick } from '@/lib/tracking/client'
 import type { DirectoryPageType } from '@/lib/tracking/types'
+import { useExclusiveFloatingPanel } from '@/lib/floating-panel-bus'
+import { CHAT_MESSAGE_MAX_LENGTH } from '@/lib/consentz-chat'
 
 interface Message {
   id: number
@@ -25,21 +31,26 @@ interface StoredSession {
   savedAt: number
 }
 
+interface PatientMe {
+  id: number
+  email: string
+  firstName?: string
+  lastName?: string
+  phone?: string
+  dateOfBirth?: string
+}
+
 interface ConsultationChatDialogProps {
   clinicSlug: string
   clinicName: string
+  clinicImage?: string
   hasCoreCalendar: boolean
-  treatment?: string
   location?: string
   pageType: Extract<DirectoryPageType, 'clinic_page' | 'practitioner_page' | 'collection_page'>
   buttonClassName?: string
 }
 
-export interface ConsultationChatDialogHandle {
-  open: () => void
-}
-
-type Phase = 'intro' | 'chat' | 'offline'
+type Phase = 'intro' | 'chat' | 'offline' | 'login_required'
 
 const POLL_INTERVAL_MS = 3_000
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000
@@ -68,25 +79,38 @@ function clearStoredSession(slug: string) {
   localStorage.removeItem(sessionKey(slug))
 }
 
-export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, ConsultationChatDialogProps>(function ConsultationChatDialog({
+export function ConsultationChatDialog({
   clinicSlug,
   clinicName,
+  clinicImage,
   hasCoreCalendar,
-  treatment,
   pageType,
   buttonClassName,
-}, ref) {
+}: ConsultationChatDialogProps) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [open, setOpen] = useState(false)
   const [bookingOpen, setBookingOpen] = useState(false)
   const [callOpen, setCallOpen] = useState(false)
   const [phase, setPhase] = useState<Phase>('intro')
+
+  useExclusiveFloatingPanel(`chat:${clinicSlug}`, open, setOpen)
   const [checking, setChecking] = useState(false)
-  // Whether the current session was restored from a previous visit (vs. started fresh this session)
   const [isRestored, setIsRestored] = useState(false)
 
-  // Intro form
-  const [name, setName] = useState('')
-  const [contact, setContact] = useState('')
+  // Patient session — fetched on open/auth-check
+  const [patientMe, setPatientMe] = useState<PatientMe | null>(null)
+  // Form data captured after the intro form is submitted (for CallBookingForm prefill)
+  const [chatFormData, setChatFormData] = useState<ConsultationFormData | null>(null)
+
+  // Whether we are submitting the offline lead form
+  const [offlineSubmitting, setOfflineSubmitting] = useState(false)
+  const [offlineSent, setOfflineSent] = useState(false)
+
+  // Whether we are starting the chat (intro submit)
+  const [startingChat, setStartingChat] = useState(false)
 
   // Chat state
   const [messages, setMessages] = useState<Message[]>([])
@@ -96,9 +120,10 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
   const [sending, setSending] = useState(false)
   const [loadingHistory, setLoadingHistory] = useState(false)
 
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const lastCreatedAt = useRef<string | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const prevMsgCountRef = useRef(0)
 
   // Restore session from localStorage on mount
   useEffect(() => {
@@ -110,9 +135,40 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
     setIsRestored(true)
   }, [clinicSlug])
 
-  // Scroll to bottom whenever messages change
+  // Auto-open when returning from magic link / OAuth with ?consult=open
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (searchParams.get('consult') !== 'open') return
+    router.replace(pathname, { scroll: false })
+    void handleAutoOpen()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Reset scroll tracking when switching sessions (new chat / restored chat)
+  useEffect(() => {
+    prevMsgCountRef.current = 0
+  }, [sessionId])
+
+  // Auto-scroll only when new messages arrive AND the visitor is near the
+  // bottom already — otherwise sending/receiving a message would yank
+  // someone reviewing earlier history back down to the latest message
+  useEffect(() => {
+    const newCount = messages.length
+    const prevCount = prevMsgCountRef.current
+    prevMsgCountRef.current = newCount
+
+    if (newCount === 0) return
+
+    const el = messagesContainerRef.current
+    if (!el) return
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 150
+
+    // Scroll the panel's own body only — never scrollIntoView(), which walks
+    // up every scrollable ancestor and can misalign the target within them
+    if (prevCount === 0) {
+      el.scrollTop = el.scrollHeight
+    } else if (newCount > prevCount && isNearBottom) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    }
   }, [messages])
 
   // Poll for new messages — only while the panel is open
@@ -176,56 +232,122 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
     }
   }
 
+  async function fetchAndSetPatient(): Promise<PatientMe | null> {
+    try {
+      const res = await fetch('/directory/api/patient/me')
+      if (!res.ok) return null
+      const data: PatientMe = await res.json()
+      setPatientMe(data)
+      return data
+    } catch {
+      return null
+    }
+  }
+
   async function handleOpen() {
     setOpen(true)
     trackCtaClick({ ctaLabel: 'Request Consultation', pageType })
 
     if (sessionId && visitorToken) {
-      // Existing session — go straight to chat and reload history from server
       setPhase('chat')
       await loadHistory(sessionId, visitorToken)
+      return
+    }
+
+    const patient = await fetchAndSetPatient()
+    if (!patient) {
+      setPhase('login_required')
       return
     }
 
     await checkOnlineStatus()
   }
 
-  useImperativeHandle(ref, () => ({ open: handleOpen }))
+  // Separate path for auto-open (no tracking — already fired when user clicked)
+  async function handleAutoOpen() {
+    setOpen(true)
 
-  async function handleStartChat() {
-    if (!name.trim() || !contact.trim()) return
-    setSending(true)
+    if (sessionId && visitorToken) {
+      setPhase('chat')
+      await loadHistory(sessionId, visitorToken)
+      return
+    }
+
+    const patient = await fetchAndSetPatient()
+    if (!patient) {
+      setPhase('login_required')
+      return
+    }
+
+    await checkOnlineStatus()
+  }
+
+  async function handleStartChat(data: ConsultationFormData) {
+    setStartingChat(true)
     try {
-      const initialMessage = treatment
-        ? `Hi, I'm interested in ${treatment}.`
-        : "Hi, I'd like to enquire about a consultation."
+      const patientName = `${data.firstName} ${data.lastName}`.trim()
+      const initialMessage = "Hi, I'd like to enquire about a consultation."
 
       const res = await fetch(`/directory/api/chat/${clinicSlug}/session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          patientName: name.trim(),
-          ...(contact.includes('@')
-            ? { patientEmail: contact.trim() }
-            : { patientPhone: contact.trim() }),
+          patientName,
+          patientEmail: data.email,
+          patientPhone: data.phone,
           initialMessage,
         }),
       })
       if (!res.ok) throw new Error()
-      const data: { sessionId: number; visitorToken: string } = await res.json()
+      const result: { sessionId: number; visitorToken: string; message: Message | null } = await res.json()
 
-      setSessionId(data.sessionId)
-      setVisitorToken(data.visitorToken)
+      setSessionId(result.sessionId)
+      setVisitorToken(result.visitorToken)
+      setChatFormData(data)
       setIsRestored(false)
-      // Persist the session pointer so it survives page navigation
-      writeStoredSession(clinicSlug, data.sessionId, data.visitorToken)
+      writeStoredSession(clinicSlug, result.sessionId, result.visitorToken)
 
       setPhase('chat')
-      await sendMessage(data.sessionId, data.visitorToken, initialMessage)
+      // The session endpoint already stored this message — reflect it locally instead of
+      // re-sending it, which would create a duplicate in the clinic's inbox.
+      if (result.message) {
+        setMessages([result.message])
+        lastCreatedAt.current = result.message.createdAt
+      } else {
+        await sendMessage(result.sessionId, result.visitorToken, initialMessage)
+      }
     } catch {
       toast.error('Could not start chat. Please try again.')
     } finally {
-      setSending(false)
+      setStartingChat(false)
+    }
+  }
+
+  async function handleOfflineSubmit(data: ConsultationFormData) {
+    setOfflineSubmitting(true)
+    try {
+      const res = await fetch('/directory/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clinicSlug,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phone: data.phone,
+          dateOfBirth: data.dateOfBirth,
+        }),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        toast.error((err as { error?: string }).error ?? 'Something went wrong, please try again.')
+        return
+      }
+      setOfflineSent(true)
+    } catch {
+      toast.error('Something went wrong, please try again.')
+    } finally {
+      setOfflineSubmitting(false)
     }
   }
 
@@ -235,7 +357,10 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content, visitorToken: token }),
     })
-    if (!res.ok) throw new Error()
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new Error((err as { error?: string }).error ?? 'Failed to send message.')
+    }
     const data: { message: Message } = await res.json()
     setMessages((prev) => [...prev, data.message])
     lastCreatedAt.current = data.message.createdAt
@@ -248,39 +373,59 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
     setSending(true)
     try {
       await sendMessage(sessionId, visitorToken, content)
-    } catch {
-      toast.error('Failed to send message.')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to send message.')
       setDraft(content)
     } finally {
       setSending(false)
     }
   }
 
-  // Just hide the panel — session stays alive for when they return
   function handleClose() {
     setOpen(false)
     if (pollRef.current) clearInterval(pollRef.current)
   }
 
-  // Explicitly start a fresh conversation
   async function handleNewSession() {
     clearStoredSession(clinicSlug)
     setSessionId(null)
     setVisitorToken(null)
     setMessages([])
-    setName('')
-    setContact('')
+    setChatFormData(null)
+    setOfflineSent(false)
     setIsRestored(false)
     lastCreatedAt.current = null
     if (pollRef.current) clearInterval(pollRef.current)
+
+    const patient = await fetchAndSetPatient()
+    if (!patient) { setPhase('login_required'); return }
     await checkOnlineStatus()
   }
 
   const hasActiveSession = sessionId !== null
 
+  // Prefill defaults from the fetched patient session
+  const formDefaults = patientMe ? {
+    firstName: patientMe.firstName ?? '',
+    lastName: patientMe.lastName ?? '',
+    email: patientMe.email ?? '',
+    phone: patientMe.phone ?? '',
+    dateOfBirth: patientMe.dateOfBirth ?? '',
+  } : undefined
+
+  // For CallBookingForm — use captured form data, fall back to session
+  const bookingPrefill = {
+    firstName: chatFormData?.firstName ?? patientMe?.firstName ?? '',
+    lastName: chatFormData?.lastName ?? patientMe?.lastName ?? '',
+    email: chatFormData?.email ?? patientMe?.email ?? '',
+    phone: chatFormData?.phone ?? patientMe?.phone ?? '',
+  }
+
+  const consultationNext = `${pathname}?consult=open`
+
   return (
     <>
-      {/* Trigger button — stretches full width in a flex-col parent */}
+      {/* Trigger button */}
       <div className="relative flex w-full">
         <Button
           type="button"
@@ -295,9 +440,7 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
         )}
       </div>
 
-      {/* Floating chat panel
-          Mobile : spans edge-to-edge with 1rem margins, max height respects viewport
-          Desktop: fixed 384px wide anchored to bottom-right               */}
+      {/* Floating chat panel */}
       <div
         className={cn(
           'fixed z-50 flex flex-col bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden',
@@ -307,44 +450,53 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
             ? 'opacity-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 translate-y-4 pointer-events-none',
         )}
-        style={{ height: 'min(560px, calc(100dvh - 5rem))' }}
+        style={{ height: 'min(600px, calc(100dvh - 5rem))' }}
         aria-hidden={!open}
       >
         {/* Header */}
         <div className="shrink-0 flex flex-row items-center justify-between px-4 py-3 border-b bg-white">
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-gray-900 truncate">{clinicName}</p>
-            <div className="flex items-center gap-2 mt-0.5">
-              {phase === 'chat' && !isRestored && (
-                <span className="flex items-center gap-1.5 text-xs text-green-600 font-medium">
-                  <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                  Online now
-                </span>
-              )}
-              {phase === 'chat' && isRestored && (
-                <span className="text-xs text-gray-400">Previous conversation</span>
-              )}
-              {phase === 'offline' && (
-                <span className="flex items-center gap-1.5 text-xs text-gray-400">
-                  <span className="h-2 w-2 rounded-full bg-gray-400" />
-                  Currently offline
-                </span>
-              )}
-              {phase === 'chat' && (
-                <button
-                  onClick={handleNewSession}
-                  className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-700 transition-colors"
-                  title="Start a new conversation"
-                >
-                  <RotateCcw className="h-2.5 w-2.5" />
-                  New chat
-                </button>
-              )}
+          <div className="min-w-0 flex-1 flex items-center gap-2.5">
+            {clinicImage && (
+              <img
+                src={clinicImage}
+                alt={clinicName}
+                className="h-8 w-8 shrink-0 rounded-full object-cover"
+              />
+            )}
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-gray-900 truncate">{clinicName}</p>
+              <div className="flex items-center gap-2 mt-0.5">
+                {phase === 'chat' && !isRestored && (
+                  <span className="flex items-center gap-1.5 text-xs text-green-600 font-medium">
+                    <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                    Online now
+                  </span>
+                )}
+                {phase === 'chat' && isRestored && (
+                  <span className="text-xs text-gray-500">Previous conversation</span>
+                )}
+                {phase === 'offline' && (
+                  <span className="flex items-center gap-1.5 text-xs text-gray-500">
+                    <span className="h-2 w-2 rounded-full bg-gray-400" />
+                    Currently offline
+                  </span>
+                )}
+                {phase === 'chat' && (
+                  <button
+                    onClick={handleNewSession}
+                    className="flex items-center gap-1 text-[11px] text-gray-500 hover:text-gray-700 transition-colors"
+                    title="Start a new conversation"
+                  >
+                    <RotateCcw className="h-2.5 w-2.5" />
+                    New chat
+                  </button>
+                )}
+              </div>
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="ml-2 shrink-0 rounded-md p-1 text-gray-400 hover:text-gray-600 transition-colors"
+            className="ml-2 shrink-0 rounded-lg p-1 text-gray-500 hover:text-gray-600 transition-colors"
             aria-label="Close chat"
           >
             <X className="h-4 w-4" />
@@ -352,57 +504,62 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto min-h-0">
+        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto min-h-0">
           {(checking || loadingHistory) && (
             <div className="flex h-full items-center justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+              <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
             </div>
           )}
 
-          {/* Offline fallback */}
+          {/* Login required */}
+          {!checking && !loadingHistory && phase === 'login_required' && (
+            <InlineLogin next={consultationNext} />
+          )}
+
+          {/* Offline — rich lead capture form */}
           {!checking && !loadingHistory && phase === 'offline' && (
-            <OfflineForm
-              clinicSlug={clinicSlug}
-              name={name}
-              setName={setName}
-              contact={contact}
-              setContact={setContact}
-              treatment={treatment}
-            />
+            offlineSent ? (
+              <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
+                <p className="text-2xl">✓</p>
+                <p className="font-semibold">Request sent!</p>
+                <p className="text-sm text-gray-500">The clinic will be in touch shortly.</p>
+              </div>
+            ) : (
+              <ConsultationRichForm
+                key={patientMe?.email ?? 'offline'}
+                defaultValues={formDefaults}
+                clinicName={clinicName}
+                description="The clinic is currently offline. Leave your details and they'll get back to you."
+                submitLabel="Send request"
+                submitting={offlineSubmitting}
+                onSubmit={handleOfflineSubmit}
+              />
+            )
           )}
 
-          {/* Intro — collect name/contact before starting chat */}
+          {/* Intro — collect details before starting chat */}
           {!checking && !loadingHistory && phase === 'intro' && (
-            <div className="flex flex-col h-full justify-center gap-4 px-6 py-8">
-              <p className="text-sm text-gray-600">
-                This clinic is <span className="font-semibold text-green-600">online</span> right
-                now. Enter your details to start chatting.
-              </p>
-              <Input
-                placeholder="Your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                autoFocus={open}
-              />
-              <Input
-                placeholder="Email or phone number"
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-              />
-              <Button
-                disabled={!name.trim() || !contact.trim() || sending}
-                onClick={handleStartChat}
-              >
-                {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Start Chat'}
-              </Button>
-            </div>
+            <ConsultationRichForm
+              key={patientMe?.email ?? 'intro'}
+              defaultValues={formDefaults}
+              clinicName={clinicName}
+              description={
+                <>
+                  This clinic is <span className="font-semibold text-green-600">online</span> right
+                  now. Enter your details to start chatting.
+                </>
+              }
+              submitLabel="Start Chat"
+              submitting={startingChat}
+              onSubmit={handleStartChat}
+            />
           )}
 
           {/* Chat messages */}
           {!checking && !loadingHistory && phase === 'chat' && (
             <div className="flex flex-col gap-2 px-4 py-3">
               {messages.length === 0 && (
-                <p className="text-xs text-gray-400 text-center py-4">
+                <p className="text-xs text-gray-500 text-center py-4">
                   Conversation started — say hello!
                 </p>
               )}
@@ -411,7 +568,7 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
                   key={msg.id}
                   className={cn('flex w-full flex-col gap-0.5', msg.sender === 'patient' ? 'items-end' : 'items-start')}
                 >
-                  <span className="text-[10px] text-gray-400 px-1">
+                  <span className="text-[10px] text-gray-500 px-1">
                     {msg.sender === 'patient' ? 'You' : clinicName}
                   </span>
                   <div
@@ -426,7 +583,6 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
                   </div>
                 </div>
               ))}
-              <div ref={bottomRef} />
             </div>
           )}
         </div>
@@ -435,19 +591,32 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
         {phase === 'chat' && !loadingHistory && (
           <div className="shrink-0 border-t bg-white">
             <div className="flex items-center gap-2 px-3 py-2">
-              <Input
-                className="flex-1 h-9 text-sm"
-                placeholder="Type a message…"
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    handleSend()
-                  }
-                }}
-                autoFocus={open && phase === 'chat'}
-              />
+              <div className="relative flex-1">
+                <Input
+                  className={cn('h-9 text-sm', draft.length > CHAT_MESSAGE_MAX_LENGTH - 200 && 'pr-12')}
+                  placeholder="Type a message…"
+                  value={draft}
+                  maxLength={CHAT_MESSAGE_MAX_LENGTH}
+                  onChange={(e) => setDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      handleSend()
+                    }
+                  }}
+                  autoFocus={open && phase === 'chat'}
+                />
+                {draft.length > CHAT_MESSAGE_MAX_LENGTH - 200 && (
+                  <span
+                    className={cn(
+                      'pointer-events-none absolute right-1 bottom-1 text-[10px]',
+                      draft.length >= CHAT_MESSAGE_MAX_LENGTH ? 'text-red-500' : 'text-gray-400',
+                    )}
+                  >
+                    {draft.length}/{CHAT_MESSAGE_MAX_LENGTH}
+                  </span>
+                )}
+              </div>
               <Button
                 size="icon"
                 className="h-9 w-9 shrink-0"
@@ -508,87 +677,21 @@ export const ConsultationChatDialog = forwardRef<ConsultationChatDialogHandle, C
           <DialogContent className="max-w-sm p-0 overflow-hidden">
             <DialogHeader className="px-4 pt-4 pb-0">
               <DialogTitle className="text-sm flex items-center gap-2">
-                <Video className="h-4 w-4 text-gray-400" />
+                <Video className="h-4 w-4 text-gray-500" />
                 Book a Video Call
               </DialogTitle>
             </DialogHeader>
             <CallBookingForm
               clinicSlug={clinicSlug}
-              prefillFirstName={name.split(' ')[0] ?? ''}
-              prefillLastName={name.split(' ').slice(1).join(' ')}
-              prefillEmail={contact.includes('@') ? contact : ''}
-              prefillPhone={!contact.includes('@') ? contact : ''}
+              prefillFirstName={bookingPrefill.firstName}
+              prefillLastName={bookingPrefill.lastName}
+              prefillEmail={bookingPrefill.email}
+              prefillPhone={bookingPrefill.phone}
               compact
             />
           </DialogContent>
         </Dialog>
       )}
     </>
-  )
-})
-
-// ---------------------------------------------------------------------------
-// Offline fallback — mirrors the existing RequestConsultationDialog form
-// ---------------------------------------------------------------------------
-interface OfflineFormProps {
-  clinicSlug: string
-  name: string
-  setName: (v: string) => void
-  contact: string
-  setContact: (v: string) => void
-  treatment?: string
-}
-
-function OfflineForm({ clinicSlug, name, setName, contact, setContact, treatment }: OfflineFormProps) {
-  const [leadTreatment, setLeadTreatment] = useState(treatment ?? '')
-  const [submitting, setSubmitting] = useState(false)
-  const [sent, setSent] = useState(false)
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!name.trim() || !contact.trim() || submitting) return
-    setSubmitting(true)
-    try {
-      const res = await fetch('/directory/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          clinicSlug,
-          patientName: name.trim(),
-          contact: contact.trim(),
-          treatment: leadTreatment.trim() || undefined,
-        }),
-      })
-      if (!res.ok) throw new Error()
-      setSent(true)
-    } catch {
-      toast.error('Something went wrong, please try again.')
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  if (sent) {
-    return (
-      <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
-        <p className="text-2xl">✓</p>
-        <p className="font-semibold">Request sent!</p>
-        <p className="text-sm text-gray-500">The clinic will be in touch shortly.</p>
-      </div>
-    )
-  }
-
-  return (
-    <form className="flex flex-col gap-4 px-6 py-8" onSubmit={handleSubmit}>
-      <p className="text-sm text-gray-500">
-        The clinic is currently offline. Leave your details and they&apos;ll get back to you.
-      </p>
-      <Input required placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
-      <Input required placeholder="Email or phone number" value={contact} onChange={(e) => setContact(e.target.value)} />
-      <Input placeholder="Treatment (optional)" value={leadTreatment} onChange={(e) => setLeadTreatment(e.target.value)} />
-      <Button disabled={!name.trim() || !contact.trim() || submitting} type="submit">
-        {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send request'}
-      </Button>
-    </form>
   )
 }
