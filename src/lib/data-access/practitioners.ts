@@ -1,9 +1,10 @@
 import { prisma } from '@/lib/db'
 import { Prisma } from '@prisma/client'
 import { cache } from 'react'
-import { unstable_cache } from 'next/cache'
+import NodeCache from 'node-cache'
 import type { Practitioner, RankingMeta, ItemMeta } from '@/lib/types'
 import { isRemovedPractitionerSlug, hasTripleLetterSequence } from '@/lib/directory-removals'
+import { getCache, setCache } from '@/lib/redis-cache'
 
 const DAY_LABELS: Record<string, string> = {
   MONDAY: 'Monday',
@@ -121,45 +122,65 @@ const CLINIC_SELECT = {
   },
 }
 
+// Serialized payload regularly exceeds Next's 2MB unstable_cache item limit, so this
+// uses the same NodeCache + Redis tiered pattern as src/lib/search-cache.ts instead.
+const PRACTITIONERS_SEARCH_CACHE_KEY = 'practitioners-for-search:v1'
+const PRACTITIONERS_SEARCH_TTL_SECONDS = 300
+
+const practitionersSearchMemoryCache = new NodeCache({
+  stdTTL: PRACTITIONERS_SEARCH_TTL_SECONDS,
+  useClones: false,
+})
+
+async function fetchAllPractitionersForSearch(): Promise<Practitioner[]> {
+  const rows = await prisma.practitioner.findMany({
+    where: { isHidden: false },
+    include: {
+      ranking: true,
+      treatments: {
+        select: {
+          treatment: { select: { name: true } },
+        },
+      },
+      clinicAssociations: {
+        orderBy: { clinicId: 'asc' },
+        take: 1,
+        include: {
+          clinic: { select: CLINIC_SELECT },
+        },
+      },
+    },
+    orderBy: { displayName: 'asc' },
+  })
+
+  return rows
+    .filter((p) => p.clinicAssociations.length > 0)
+    .filter(
+      (p) =>
+        !isRemovedPractitionerSlug(p.slug) &&
+        !hasTripleLetterSequence(p.displayName),
+    )
+    .map(convertDbPractitionerToOldType)
+}
+
 /**
  * All practitioners with primary clinic merged — for search, city pages, sitemaps (cached)
  */
-export const getAllPractitionersForSearch = cache(
-  unstable_cache(
-    async (): Promise<Practitioner[]> => {
-      const rows = await prisma.practitioner.findMany({
-        where: { isHidden: false },
-        include: {
-          ranking: true,
-          treatments: {
-            select: {
-              treatment: { select: { name: true } },
-            },
-          },
-          clinicAssociations: {
-            orderBy: { clinicId: 'asc' },
-            take: 1,
-            include: {
-              clinic: { select: CLINIC_SELECT },
-            },
-          },
-        },
-        orderBy: { displayName: 'asc' },
-      })
+export const getAllPractitionersForSearch = cache(async (): Promise<Practitioner[]> => {
+  const local = practitionersSearchMemoryCache.get<Practitioner[]>(PRACTITIONERS_SEARCH_CACHE_KEY)
+  if (local !== undefined) return local
 
-      return rows
-        .filter((p) => p.clinicAssociations.length > 0)
-        .filter(
-          (p) =>
-            !isRemovedPractitionerSlug(p.slug) &&
-            !hasTripleLetterSequence(p.displayName),
-        )
-        .map(convertDbPractitionerToOldType)
-    },
-    ['practitioners-for-search'],
-    { revalidate: 300 }
-  )
-)
+  const remote = await getCache<Practitioner[]>(PRACTITIONERS_SEARCH_CACHE_KEY)
+  if (remote !== null) {
+    practitionersSearchMemoryCache.set(PRACTITIONERS_SEARCH_CACHE_KEY, remote)
+    return remote
+  }
+
+  const fresh = await fetchAllPractitionersForSearch()
+  practitionersSearchMemoryCache.set(PRACTITIONERS_SEARCH_CACHE_KEY, fresh)
+  await setCache(PRACTITIONERS_SEARCH_CACHE_KEY, fresh, PRACTITIONERS_SEARCH_TTL_SECONDS)
+  return fresh
+})
 
 /**
  * Single practitioner by slug with full clinic data including hours (cached)

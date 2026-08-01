@@ -28,6 +28,11 @@ interface ChatSession {
 }
 
 const POLL_INTERVAL_MS = 3_000
+// Matches the portal layout's bottom padding (p-10 on the main content
+// wrapper in PortalLayoutClient) so the pane stops short of the viewport
+// edge instead of covering it — window.innerHeight alone doesn't know
+// about that padding.
+const LAYOUT_BOTTOM_GAP = 40
 
 function StatusBadge({ status }: { status?: 'active' | 'closed' }) {
   if (!status) return null
@@ -69,7 +74,7 @@ export function ChatInbox() {
       const el = containerRef.current
       if (!el) return
       const top = el.getBoundingClientRect().top
-      setPaneHeight(window.innerHeight - top)
+      setPaneHeight(window.innerHeight - top - LAYOUT_BOTTOM_GAP)
     }
     recalc()
     window.addEventListener('resize', recalc)

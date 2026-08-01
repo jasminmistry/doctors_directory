@@ -15,7 +15,7 @@ import {
 import ClinicLabels from "./Clinic/clinicLabels";
 import { PrestigeSearchPill } from "./Clinic/prestige-search-pill";
 import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
-import { locations, TreatmentMap } from "@/lib/data";
+import { getTreatmentImage, locations } from "@/lib/data";
 import { Button } from "./ui/button";
 import { isClinic, isPractitioner, isProduct, toUrlSlug } from "@/lib/utils";
 import { getClinicDisplayName } from "@/lib/clinic-display";
@@ -173,7 +173,7 @@ function getTreatmentHref(
 }
 
 function getTreatmentImageSrc(treatmentName: string): string {
-  return TreatmentMap[treatmentName] || "/directory/images/default-dr-profile-1.webp";
+  return getTreatmentImage(treatmentName) || "/directory/images/default-dr-profile-1.webp";
 }
 
 function getAwardHref(
