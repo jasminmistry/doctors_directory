@@ -6,6 +6,7 @@ import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable } from '@/components/admin/DataTable'
 import { DEFAULT_PERSON, FallbackImage } from '@/components/ui/fallback-image'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useConfirmDialog } from '@/hooks/use-confirm-dialog'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,6 +72,7 @@ export default function ClinicsList() {
   const [filterClaimed, setFilterClaimed] = useState<'all' | 'claimed' | 'unclaimed'>('all')
   const [filterVerified, setFilterVerified] = useState<'all' | 'verified' | 'unverified'>('all')
   const router = useRouter()
+  const { confirm, dialog } = useConfirmDialog()
 
   useEffect(() => {
     fetch('/directory/api/admin/clinics')
@@ -133,6 +135,7 @@ export default function ClinicsList() {
 
   return (
     <AdminLayout title="Clinics">
+      {dialog}
       <DataTable
         data={filtered}
         columns={columns}
@@ -140,7 +143,13 @@ export default function ClinicsList() {
         filters={filterControls}
         onEdit={(clinic) => router.push(`/admin/clinics/${clinic.slug}`)}
         onDelete={async (clinic) => {
-          if (!confirm(`Delete clinic "${clinic.name || clinic.slug}"?`)) return
+          const name = clinic.name || clinic.slug
+          const ok = await confirm({
+            title: 'Delete clinic?',
+            description: `This will permanently delete "${name}". This action cannot be undone.`,
+            confirmLabel: 'Delete clinic',
+          })
+          if (!ok) return
           await fetch(`/directory/api/admin/clinics/${clinic.slug}`, { method: 'DELETE' })
           setClinics((prev) => prev.filter((c) => c.slug !== clinic.slug))
         }}

@@ -6,6 +6,7 @@ import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DataTable } from '@/components/admin/DataTable'
 import { DEFAULT_PERSON, FallbackImage } from '@/components/ui/fallback-image'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useConfirmDialog } from '@/hooks/use-confirm-dialog'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,6 +72,7 @@ export default function PractitionersList() {
   const [filterClaimed, setFilterClaimed] = useState<'all' | 'claimed' | 'unclaimed'>('all')
   const [filterVerified, setFilterVerified] = useState<'all' | 'verified' | 'unverified'>('all')
   const router = useRouter()
+  const { confirm, dialog } = useConfirmDialog()
 
   useEffect(() => {
     fetch('/directory/api/admin/practitioners')
@@ -126,6 +128,7 @@ export default function PractitionersList() {
 
   return (
     <AdminLayout title="Practitioners">
+      {dialog}
       <DataTable
         data={filtered}
         columns={columns}
@@ -133,7 +136,13 @@ export default function PractitionersList() {
         filters={filterControls}
         onEdit={(p) => router.push(`/admin/practitioners/${p.slug}`)}
         onDelete={async (p) => {
-          if (!confirm(`Delete practitioner "${p.displayName || p.slug}"?`)) return
+          const name = p.displayName || p.slug
+          const ok = await confirm({
+            title: 'Delete practitioner?',
+            description: `This will permanently delete "${name}". This action cannot be undone.`,
+            confirmLabel: 'Delete practitioner',
+          })
+          if (!ok) return
           await fetch(`/directory/api/admin/practitioners/${p.slug}`, { method: 'DELETE' })
           setPractitioners((prev) => prev.filter((r) => r.slug !== p.slug))
         }}

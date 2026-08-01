@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { toUrlSlug } from '@/lib/utils'
 
-const DEFAULT_BASE_URL = 'https://staging.consentz.com'
+const DEFAULT_BASE_URL = 'https://www.consentz.com'
 
 export interface SitemapUrl {
   loc: string
