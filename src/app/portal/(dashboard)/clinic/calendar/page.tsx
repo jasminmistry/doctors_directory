@@ -39,7 +39,7 @@ export default async function CalendarPage() {
           Upgrade your plan to manage appointments and accept online bookings.
         </p>
         <a
-          href="/portal/clinic/upgrade"
+          href="/directory/portal/upgrade"
           className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-700 transition-colors"
         >
           View Plans

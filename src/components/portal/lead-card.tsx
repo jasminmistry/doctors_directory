@@ -45,13 +45,13 @@ interface LeadCardProps {
   highlighted?: boolean
 }
 
-const PIPELINE_STATUSES: { value: PipelineStatus; label: string; color: string }[] = [
-  { value: 'new',       label: 'New',       color: 'bg-blue-100 text-blue-700 border-blue-200' },
-  { value: 'contacted', label: 'Contacted', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
-  { value: 'booked',    label: 'Booked',    color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
-  { value: 'lost',      label: 'Lost',      color: 'bg-gray-100 text-gray-500 border-gray-200' },
-  { value: 'spam',      label: 'Spam',      color: 'bg-red-100 text-red-600 border-red-200' },
-  { value: 'archived',  label: 'Archived',  color: 'bg-gray-50 text-gray-500 border-gray-100' },
+const PIPELINE_STATUSES: { value: PipelineStatus; label: string; color: string; dot: string }[] = [
+  { value: 'new',       label: 'New',       color: 'bg-blue-100 text-blue-700 border-blue-200',    dot: 'bg-blue-500' },
+  { value: 'contacted', label: 'Contacted', color: 'bg-yellow-100 text-yellow-700 border-yellow-200', dot: 'bg-yellow-500' },
+  { value: 'booked',    label: 'Booked',    color: 'bg-emerald-100 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500' },
+  { value: 'lost',      label: 'Lost',      color: 'bg-gray-100 text-gray-500 border-gray-200',    dot: 'bg-gray-400' },
+  { value: 'spam',      label: 'Spam',      color: 'bg-red-100 text-red-600 border-red-200',       dot: 'bg-red-500' },
+  { value: 'archived',  label: 'Archived',  color: 'bg-gray-50 text-gray-500 border-gray-100',     dot: 'bg-gray-400' },
 ]
 
 function StatusPill({
@@ -87,7 +87,7 @@ function StatusPill({
         <ChevronDown className={cn('h-3 w-3 transition-transform', open && 'rotate-180')} />
       </button>
       {open && (
-        <div className="absolute left-0 top-full mt-1 z-20 w-36 rounded-lg border border-gray-200 bg-white py-1">
+        <div className="absolute left-0 top-full mt-1 z-40 w-36 rounded-lg border border-gray-200 bg-white py-1">
           {PIPELINE_STATUSES.map((s) => (
             <button
               key={s.value}
@@ -98,7 +98,7 @@ function StatusPill({
                 status === s.value ? 'text-gray-900' : 'text-gray-600',
               )}
             >
-              <span className={cn('h-2 w-2 rounded-full shrink-0', s.color.split(' ')[0])} />
+              <span className={cn('h-2 w-2 rounded-full shrink-0', s.dot)} />
               {s.label}
               {status === s.value && <CheckCircle2 className="ml-auto h-3.5 w-3.5 text-gray-500" />}
             </button>
@@ -109,7 +109,7 @@ function StatusPill({
   )
 }
 
-function NotesSection({ leadId, initialNotes, onSaved }: { leadId: number; initialNotes: string | null; onSaved: (n: string | null) => void }) {
+function NotesSection({ leadId, initialNotes, onSaved, locked }: { leadId: number; initialNotes: string | null; onSaved: (n: string | null) => void; locked?: boolean }) {
   const [editing, setEditing] = useState(false)
   const [value, setValue] = useState(initialNotes ?? '')
   const [saving, setSaving] = useState(false)
@@ -133,8 +133,9 @@ function NotesSection({ leadId, initialNotes, onSaved }: { leadId: number; initi
     return (
       <button
         type="button"
+        disabled={locked}
         onClick={() => setEditing(true)}
-        className="flex w-full items-start gap-1.5 rounded-md px-1.5 py-1 -mx-1.5 text-left transition-colors hover:bg-gray-50 group"
+        className="flex w-full items-start gap-1.5 rounded-md px-1.5 py-1 -mx-1.5 text-left transition-colors hover:bg-gray-50 group disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:opacity-60"
       >
         <FileText className="h-3.5 w-3.5 mt-0.5 text-gray-500 group-hover:text-gray-600 shrink-0" />
         <span className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
@@ -175,7 +176,7 @@ function NotesSection({ leadId, initialNotes, onSaved }: { leadId: number; initi
   )
 }
 
-function OwnerField({ leadId, initialOwner, onSaved }: { leadId: number; initialOwner: string | null; onSaved: (o: string | null) => void }) {
+function OwnerField({ leadId, initialOwner, onSaved, locked }: { leadId: number; initialOwner: string | null; onSaved: (o: string | null) => void; locked?: boolean }) {
   const [editing, setEditing] = useState(false)
   const [value, setValue] = useState(initialOwner ?? '')
   const [saving, setSaving] = useState(false)
@@ -199,8 +200,9 @@ function OwnerField({ leadId, initialOwner, onSaved }: { leadId: number; initial
     return (
       <button
         type="button"
+        disabled={locked}
         onClick={() => setEditing(true)}
-        className="flex items-center gap-1 rounded-md px-1.5 py-1 -mx-1.5 transition-colors hover:bg-gray-50 group"
+        className="flex items-center gap-1 rounded-md px-1.5 py-1 -mx-1.5 transition-colors hover:bg-gray-50 group disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:opacity-60"
       >
         <User className="h-3.5 w-3.5 text-gray-500 group-hover:text-gray-600" />
         <span className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
@@ -421,11 +423,13 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
           leadId={lead.id}
           initialOwner={localOwner}
           onSaved={(o) => { setLocalOwner(o); onUpdated(lead.id, { ownerName: o }) }}
+          locked={locked}
         />
         <NotesSection
           leadId={lead.id}
           initialNotes={localNotes}
           onSaved={(n) => { setLocalNotes(n); onUpdated(lead.id, { notes: n }) }}
+          locked={locked}
         />
       </div>
 

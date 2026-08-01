@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/db'
 import { COOKIE_USERNAME } from '@/lib/auth'
+import { getClinicDisplayName } from '@/lib/clinic-display'
 
 export type PortalUser = {
   claimId: number
@@ -26,7 +27,7 @@ export async function getPortalUser(): Promise<PortalUser | null> {
   const claim = await prisma.claimRequest.findFirst({
     where: { consentzUsername: username, status: 'approved' },
     include: {
-      clinic: { select: { name: true, slug: true } },
+      clinic: { select: { slug: true, gmapsUrl: true } },
       practitioner: { select: { displayName: true, slug: true } },
     },
     orderBy: { approvedAt: 'desc' },
@@ -41,7 +42,9 @@ export async function getPortalUser(): Promise<PortalUser | null> {
 
   const entityName =
     claim.entityType === 'clinic'
-      ? (claim.clinic?.name ?? claim.clinicNameInput ?? claim.clinicSlug ?? '')
+      ? (claim.clinic
+          ? getClinicDisplayName({ slug: claim.clinic.slug, url: claim.clinic.gmapsUrl ?? undefined })
+          : (claim.clinicNameInput ?? claim.clinicSlug ?? ''))
       : (claim.practitioner?.displayName ?? claim.practitionerSlug ?? '')
 
   return {

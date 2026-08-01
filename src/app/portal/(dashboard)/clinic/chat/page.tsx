@@ -35,7 +35,7 @@ export default async function ClinicChatPage() {
           <strong>Free plan — limited chat.</strong> You can receive and reply to patient chats, but
           conversations are not synced to Consentz Core and patient contact details are not stored in
           your Core inbox. Upgrade to Pay-Per-Lead or Subscription to unlock full Core integration.{' '}
-          <a href="/portal/clinic/upgrade" className="underline font-medium">
+          <a href="/directory/portal/upgrade" className="underline font-medium">
             View plans →
           </a>
         </div>

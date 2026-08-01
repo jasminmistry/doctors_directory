@@ -1547,6 +1547,23 @@ export const TreatmentMap: Record<string, string> = {
   "Vulval Dermatology": "/directory/treatments/vulval-dermatology.webp",
   "Weight Loss": "/directory/treatments/weight-loss.webp"
 };
+
+function normalizeTreatmentKey(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+const treatmentImageByNormalizedName: Record<string, string> = Object.fromEntries(
+  Object.entries(TreatmentMap).map(([name, image]) => [normalizeTreatmentKey(name), image]),
+);
+
+// Falls back to a normalized (case/punctuation-insensitive) key match against TreatmentMap.
+export function getTreatmentImage(treatmentName: string): string | undefined {
+  return (
+    TreatmentMap[treatmentName] ??
+    treatmentImageByNormalizedName[normalizeTreatmentKey(treatmentName)]
+  );
+}
+
 export const edu = [
     "BA",
     "BAO",
