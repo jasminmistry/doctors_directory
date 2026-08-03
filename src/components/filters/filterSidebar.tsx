@@ -411,10 +411,10 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
               type="button"
               variant="ghost"
               size="sm"
-              className="inline-flex md:hidden p-2"
+              className="inline-flex md:hidden p-2 text-gray-500 hover:text-gray-600"
               onClick={() => onToggle()}
             >
-              <X className="w-4 h-4 text-medium" />
+              <X className="w-4 h-4" />
             </Button>
           </CardHeader>
 
