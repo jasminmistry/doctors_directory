@@ -11,7 +11,7 @@ type Props = {
 export function DirectoryStarRating({
   reviewCount,
   reviewsLabel,
-  starClassName = "h-4 w-4 fill-amber-500 text-amber-500",
+  starClassName = "h-4 w-4 fill-black text-black",
   className,
 }: Props) {
   if (reviewCount <= 0) return null

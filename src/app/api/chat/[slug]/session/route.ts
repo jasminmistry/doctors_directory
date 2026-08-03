@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { startCoreConversation } from '@/lib/consentz-chat'
 import { splitName } from '@/lib/auth'
+import { getPatientClaims } from '@/lib/patient-auth'
 import crypto from 'crypto'
 import { z } from 'zod'
 
@@ -19,7 +20,7 @@ export async function POST(
   try {
     const clinic = await prisma.clinic.findUnique({
       where: { slug: params.slug },
-      select: { id: true, claimed: true, coreClinicId: true },
+      select: { id: true, claimed: true, coreClinicId: true, claimedPlan: true },
     })
 
     if (!clinic?.claimed) {
@@ -32,44 +33,84 @@ export async function POST(
     }
 
     const visitorToken = crypto.randomBytes(32).toString('hex')
+    const openingMessage = body.data.initialMessage?.trim() || ''
+
+    // Link to the logged-in patient (the widget requires login) so it shows up under
+    // their account's chat history — otherwise /api/patient/chats can never find it.
+    const patientId = getPatientClaims(req)?.id ?? null
 
     const session = await prisma.chatSession.create({
       data: {
         clinicId: clinic.id,
         visitorToken,
+        patientId,
         patientName: body.data.patientName,
         patientEmail: body.data.patientEmail,
         patientPhone: body.data.patientPhone,
       },
     })
 
-    // Push to Consentz Core when the clinic has a coreClinicId and an email is available
-    if (clinic.coreClinicId && body.data.patientEmail) {
+    // Every consultation request must surface as a prospect, not just the ones caught
+    // while the clinic is offline — mirror the lead created by POST /api/leads so the
+    // "online" branch (chat) doesn't silently skip the Prospects tab.
+    await prisma.consultationLead.create({
+      data: {
+        clinicId: clinic.id,
+        patientName: body.data.patientName,
+        patientPhone: body.data.patientPhone ?? '',
+        patientEmail: body.data.patientEmail,
+        ...(patientId ? { patientId } : {}),
+      },
+    }).catch((err) => {
+      console.error('[chat/session] failed to create consultation lead:', err)
+    })
+
+    // Always store the initial message locally so the clinic portal can see it.
+    // The client must not also POST it to the messages endpoint — that would duplicate it.
+    let message: { id: number; sender: string; content: string; createdAt: Date } | null = null
+    if (openingMessage) {
+      message = await prisma.chatMessage.create({
+        data: { sessionId: session.id, sender: 'patient', content: openingMessage },
+        select: { id: true, sender: true, content: true, createdAt: true },
+      }).catch((err) => {
+        console.error('[chat/session] failed to store initial message locally:', err)
+        return null
+      })
+    }
+
+    // Push to Consentz Core — paid plans with coreClinicId only
+    const isFree = !clinic.claimedPlan || clinic.claimedPlan === 'free'
+    const shouldSyncToCore = !isFree && clinic.coreClinicId && body.data.patientEmail
+
+    console.log(`[chat/session] slug=${params.slug} coreClinicId=${clinic.coreClinicId ?? 'null'} plan=${clinic.claimedPlan ?? 'none'} syncToCore=${!!shouldSyncToCore}`)
+
+    if (shouldSyncToCore) {
       const { firstName, lastName } = splitName(body.data.patientName)
-      const openingMessage =
-        body.data.initialMessage?.trim() ||
-        "Hi, I'd like to enquire about a consultation."
+      const coreMessage = openingMessage || "Hi, I'd like to enquire about a consultation."
 
       startCoreConversation({
-        coreClinicId: clinic.coreClinicId,
+        coreClinicId: clinic.coreClinicId!,
         firstName,
         lastName,
-        email: body.data.patientEmail,
+        email: body.data.patientEmail!,
         phone: body.data.patientPhone,
-        message: openingMessage,
+        message: coreMessage,
       })
         .then(async (conversationId) => {
           if (conversationId) {
+            console.log(`[chat/session] Core conversation started id=${conversationId} session=${session.id}`)
             await prisma.chatSession.update({
               where: { id: session.id },
               data: { coreConversationId: String(conversationId) },
             })
+          } else {
+            console.warn(`[chat/session] Core conversation returned null for session=${session.id} — messages will be local-only`)
           }
         })
-        .catch(() => {})
+        .catch((err) => console.error('[chat/session] failed to persist coreConversationId:', err))
     }
 
-    return NextResponse.json({ sessionId: session.id, visitorToken })
+    return NextResponse.json({ sessionId: session.id, visitorToken, message })
   } catch (err) {
     console.error('[chat/session POST]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

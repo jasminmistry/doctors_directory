@@ -72,7 +72,7 @@ function PaginationPrevious({
       aria-label="Go to previous page"
       data-slot="pagination-link"
       className={cn(
-        "inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium",
+        "inline-flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium",
         "border border-border bg-background text-foreground",
         "hover:bg-primary hover:text-primary-foreground hover:border-primary",
         "cursor-pointer disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-40 transition-colors",
@@ -95,7 +95,7 @@ function PaginationNext({
       aria-label="Go to next page"
       data-slot="pagination-link"
       className={cn(
-        "inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium",
+        "inline-flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium",
         "border border-border bg-background text-foreground",
         "hover:bg-primary hover:text-primary-foreground hover:border-primary",
         "cursor-pointer disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-40 transition-colors",

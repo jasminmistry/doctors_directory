@@ -10,7 +10,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const parsed = verifyOtpSchema.safeParse(body)
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+      const message = parsed.error.issues[0]?.message ?? 'Please enter a valid 6-digit code.'
+      return NextResponse.json({ error: message }, { status: 400 })
     }
 
     const { claimId, otp } = parsed.data

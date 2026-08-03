@@ -1,7 +1,6 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
-import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { AdminLayout } from "@/components/admin/AdminLayout"
 import { Button } from "@/components/ui/button"
@@ -187,15 +186,6 @@ export function MainSiteTrackingDashboard() {
   return (
     <AdminLayout title="Main site tracking">
       <div className="space-y-6 overflow-x-hidden">
-        <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-4">
-          <Link href="/admin/tracking" className="text-sm underline">
-            Directory tracking
-          </Link>
-          <Link href="/admin" className="ml-auto text-sm underline">
-            Admin home
-          </Link>
-        </div>
-
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-gray-600">Overview window:</span>
           <Button
@@ -351,7 +341,7 @@ export function MainSiteTrackingDashboard() {
         </div>
 
         {error && (
-          <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
         )}
 
         <div className="text-sm text-gray-600">

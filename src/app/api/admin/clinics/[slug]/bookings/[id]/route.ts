@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
+const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+
 export async function PUT(req: NextRequest, { params }: { params: { slug: string; id: string } }) {
   const clinic = await prisma.clinic.findUnique({ where: { slug: params.slug }, select: { id: true } })
   if (!clinic) return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
@@ -14,10 +16,12 @@ export async function PUT(req: NextRequest, { params }: { params: { slug: string
   const body = await req.json().catch(() => null)
   if (!body) return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
 
-  const { patientName, patientPhone, patientEmail, treatment, notes, slotStart, slotEnd, status } = body
+  const { patientName, patientPhone, treatment, notes, slotStart, slotEnd, status } = body
 
   if (!patientName?.trim() || !slotStart || !slotEnd)
-    return NextResponse.json({ error: 'patientName, slotStart and slotEnd are required' }, { status: 400 })
+    return NextResponse.json({ error: 'Patient name is required.' }, { status: 400 })
+  if (patientPhone?.trim() && !UK_PHONE_RE.test(patientPhone.trim().replace(/\s/g, '')))
+    return NextResponse.json({ error: 'Please enter a valid UK phone number.' }, { status: 400 })
   if (new Date(slotEnd) <= new Date(slotStart))
     return NextResponse.json({ error: 'End time must be after start time' }, { status: 400 })
 
@@ -26,7 +30,8 @@ export async function PUT(req: NextRequest, { params }: { params: { slug: string
     data: {
       patientName: patientName.trim(),
       patientPhone: patientPhone?.trim() ?? '',
-      patientEmail: patientEmail?.trim() || null,
+      // patientEmail is intentionally not editable here — it's tied to Booking.patientId,
+      // which an email-only update would leave stale. See new-booking-modal.tsx isEdit gate.
       treatment: treatment?.trim() || null,
       notes: notes?.trim() || null,
       slotStart: new Date(slotStart),

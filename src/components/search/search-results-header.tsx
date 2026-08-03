@@ -28,22 +28,48 @@ export function SearchResultsHeader({
   const startIndex = (currentPage - 1) * itemsPerPage + 1;
   const endIndex = Math.min(currentPage * itemsPerPage, totalResults);
 
-  const hasQuery = typeof filters.query === "string" && filters.query.trim().length > 0;
+  // Each directory type overloads category/location/rating/services/accreditation for
+  // different concepts (e.g. "location" is City for Clinic/Practitioner but distributor
+  // for Product) — only count a field toward the badge when it's actually surfaced as a
+  // filter for the currently selected type, so stale values from a previous type (or
+  // fields the type has no UI for) never inflate the count.
+  const APPLICABLE_FIELDS: Record<string, readonly string[]> = {
+    Clinic: ["query", "location", "services", "rating"],
+    Practitioner: ["query", "location", "services", "category", "accreditation"],
+    Product: ["query", "location", "services", "category"],
+    Treatments: ["category", "services", "location"],
+  };
+  const applicable = APPLICABLE_FIELDS[filters.type] ?? Object.keys(APPLICABLE_FIELDS).flatMap((k) => APPLICABLE_FIELDS[k]);
+
+  const hasQuery =
+    applicable.includes("query") &&
+    typeof filters.query === "string" &&
+    filters.query.trim().length > 0;
   const hasCategory =
+    applicable.includes("category") &&
     typeof filters.category === "string" &&
     filters.category.trim().length > 0 &&
     filters.category !== "All Categories";
   const hasLocation =
+    applicable.includes("location") &&
     typeof filters.location === "string" &&
     filters.location.trim().length > 0 &&
     filters.location.toLowerCase() !== "all";
+  const hasAccreditation =
+    applicable.includes("accreditation") &&
+    typeof filters.accreditation === "string" &&
+    filters.accreditation.trim().length > 0 &&
+    filters.accreditation.toLowerCase() !== "all";
+  const hasRating = applicable.includes("rating") && filters.rating > 0;
+  const servicesCount = applicable.includes("services") ? filters.services.length : 0;
 
   const activeFiltersCount =
     (hasQuery ? 1 : 0) +
     (hasCategory ? 1 : 0) +
     (hasLocation ? 1 : 0) +
-    (filters.rating > 0 ? 1 : 0) +
-    filters.services.length;
+    (hasAccreditation ? 1 : 0) +
+    (hasRating ? 1 : 0) +
+    servicesCount;
 
   return (
     <div className="flex flex-col md:flex-row gap-4 items-start justify-between">
@@ -108,7 +134,7 @@ export function SearchResultsHeader({
         </Select> */}
 
       {/* View Mode */}
-      {/* <div className="flex border border-border rounded-md">
+      {/* <div className="flex border border-border rounded-lg">
           <Button
             variant={viewMode === "grid" ? "default" : "ghost"}
             size="sm"

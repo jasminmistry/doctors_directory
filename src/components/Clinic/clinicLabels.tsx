@@ -1,5 +1,6 @@
 import { Clinic } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { isConsentzClinic } from "@/lib/consentz-customers";
 
 type ClinicLabelsProps = {
   clinic: Clinic
@@ -7,7 +8,14 @@ type ClinicLabelsProps = {
 }
 
 export default function ClinicLabels({ clinic, size = "md" }: Readonly<ClinicLabelsProps>) {
-  const labels = clinic.isCQC?.[0] || clinic.isHIW?.[0] || clinic.isHIS?.[0] || clinic.isJCCP?.[0] || clinic.isRQIA?.[0] || clinic.isSaveFace
+  const labels =
+    isConsentzClinic(clinic) ||
+    clinic.isCQC?.[0] ||
+    clinic.isHIW?.[0] ||
+    clinic.isHIS?.[0] ||
+    clinic.isJCCP?.[0] ||
+    clinic.isRQIA?.[0] ||
+    clinic.isSaveFace
   const iconClass = size === "sm"
     ? "h-5 w-5 rounded-full object-cover ring-1 ring-white shadow-sm"
     : "h-8 w-8 md:h-9 md:w-9 rounded-full object-cover"
@@ -16,6 +24,9 @@ export default function ClinicLabels({ clinic, size = "md" }: Readonly<ClinicLab
 
   return (
     <div className={cn("flex items-center", size === "sm" ? "gap-0.5" : "gap-2")}>
+      {isConsentzClinic(clinic) && (
+        <img src="/directory/consentz-customer-badge.jpg" alt="Consentz Customer" title="Consentz Customer" className={iconClass} />
+      )}
       {clinic.isCQC?.[0] && (
         <img src="/directory/qcc_logo.jpg" alt="CQC" title="CQC — Care Quality Commission" className={iconClass} />
       )}

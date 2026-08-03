@@ -26,19 +26,13 @@ export default async function ProfilePage() {
 
 
   return (
-    <main className="min-h-screen bg-(--primary-bg-color)">
+    <main className="min-h-screen bg-white">
       {/* Navigation */}
       <div className="sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
-          <Link href="/" prefetch={false}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-            >
+          <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
               <ArrowLeft className="h-4 w-4" />
               Back to Directory
-            </Button>
           </Link>
         </div>
         <div className="container mx-auto max-w-6xl px-4 py-2">
@@ -78,7 +72,7 @@ export default async function ProfilePage() {
             return (
               <div key={brand} style={{ animationDelay: `${index * 50}ms` }}>
                 <Link href={`/products/category/${toUrlSlug(brand)}`} className="block">
-                  <Card className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
+                  <Card className="group bg-white transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
                     <CardHeader className="pb-2 px-2">
                       <h2 id={`brand-${brand}`} className="text-center">
                         {brand}

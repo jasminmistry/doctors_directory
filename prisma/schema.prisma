@@ -27,12 +27,6 @@ enum AdviceItemType {
   priority_90d
 }
 
-enum PendingStatus {
-  pending
-  approved
-  rejected
-}
-
 enum ClaimEntityType {
   clinic
   practitioner
@@ -44,6 +38,7 @@ enum ClaimStatus {
   pending_approval
   approved
   rejected
+  awaiting_consentz_link
 }
 
 enum ClaimPlan {
@@ -61,7 +56,16 @@ enum VerificationStatus {
 enum LeadStatus {
   new
   contacted
+  booked
+  lost
+  spam
+  archived
   closed
+}
+
+enum LeadSource {
+  consultation
+  pricing
 }
 
 enum BookingStatus {
@@ -215,12 +219,12 @@ model Clinic {
   rqiaUrl    String? @db.VarChar(500)
 
   // JSON — display-only, not queried with SQL predicates
-  insuranceInfo      Json? // string[]
-  paymentMethods     Json? // string[]
-  reviewAnalysis     Json? // ReviewAnalysis object
-  weightedAnalysis   Json? // { [category]: ItemMeta }
-  criteriaBreakdown  Json? // { [category]: CriteriaItem[] }
-  advice             Json? // { strengths, gaps, priority_30d, priority_90d }
+  insuranceInfo     Json? // string[]
+  paymentMethods    Json? // string[]
+  reviewAnalysis    Json? // ReviewAnalysis object
+  weightedAnalysis  Json? // { [category]: ItemMeta }
+  criteriaBreakdown Json? // { [category]: CriteriaItem[] }
+  advice            Json? // { strengths, gaps, priority_30d, priority_90d }
 
   // Claim & trust flags
   claimed        Boolean    @default(false)
@@ -232,6 +236,12 @@ model Clinic {
   gbpVerified    Boolean    @default(false)
   idVerified     Boolean    @default(false)
   manualVerified Boolean    @default(false)
+  isHidden       Boolean    @default(false)
+
+  // Cold-outreach campaign — claim-invite emails to unclaimed clinics
+  campaignOptedOut            Boolean   @default(false)
+  campaignEmailedAt           DateTime?
+  directoryRemovalRequestedAt DateTime?
 
   // Profile enhancements
   coverImage   String?       @db.Text
@@ -239,15 +249,19 @@ model Clinic {
   avgReplyTime AvgReplyTime?
 
   // Consentz Core — populated at claim approval; used for calendar + booking API calls
-  coreClinicId Int?
+  coreClinicId          Int?      @unique
+  coreUnlinkRequestedAt DateTime?
 
   // Stripe — stored after PPL SetupIntent completes so we can charge per-lead unlock
-  stripeCustomerId String? @db.VarChar(255)
+  stripeCustomerId         String?   @db.VarChar(255)
+  // Subscription lifecycle — kept in sync by webhook handlers
+  stripeSubscriptionStatus String?   @db.VarChar(50) // active | past_due | unpaid | canceled | cancel_at_period_end
+  subscriptionCancelAt     DateTime? // set when cancel_at_period_end=true; cleared when restored
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  city                     City?                          @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  city                     City?                           @relation(fields: [cityId], references: [id], onDelete: SetNull)
   hours                    ClinicHour[]
   fees                     ClinicFee[]
   reviews                  ClinicReview[]
@@ -266,6 +280,7 @@ model Clinic {
   @@index([rating])
   @@index([category])
   @@index([reviewCount])
+  @@index([claimed, campaignOptedOut, campaignEmailedAt])
   @@map("clinics")
 }
 
@@ -329,7 +344,7 @@ model ClinicStaff {
   specialty      Json?
   linkedinUrl    String? @db.VarChar(500)
   profileUrl     Json?
-  practitionerId Int?    // FK set when this staff entry resolves to a Practitioner row
+  practitionerId Int? // FK set when this staff entry resolves to a Practitioner row
 
   clinic       Clinic        @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   practitioner Practitioner? @relation(fields: [practitionerId], references: [id], onDelete: SetNull)
@@ -415,6 +430,10 @@ model Practitioner {
   licensed       Boolean    @default(false)
   idVerified     Boolean    @default(false)
   manualVerified Boolean    @default(false)
+  isHidden       Boolean    @default(false)
+
+  // Consentz Core — set when claimed via Consentz link; used for calendar + booking API calls
+  coreClinicId Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -496,7 +515,7 @@ model Product {
   // Compliance
   mhraApproved String? @db.VarChar(255)
   ceMarked     String? @db.VarChar(255)
-  mhraLink     String?  @db.VarChar(500)
+  mhraLink     String? @db.VarChar(500)
 
   // About
   brandAbout  String? @db.Text
@@ -597,34 +616,6 @@ model AccreditationBody {
   @@map("accreditation_bodies")
 }
 
-// ============================================================
-// ADMIN — PENDING SUBMISSIONS
-// ============================================================
-
-model PendingClinic {
-  id            Int           @id @default(autoincrement())
-  submittedData String        @db.LongText // raw JSON string until reviewed
-  status        PendingStatus @default(pending)
-  submittedAt   DateTime      @default(now())
-  reviewedAt    DateTime?
-  reviewerNotes String?       @db.Text
-
-  @@index([status])
-  @@map("pending_clinics")
-}
-
-model PendingPractitioner {
-  id            Int           @id @default(autoincrement())
-  submittedData String        @db.LongText // raw JSON string until reviewed
-  status        PendingStatus @default(pending)
-  submittedAt   DateTime      @default(now())
-  reviewedAt    DateTime?
-  reviewerNotes String?       @db.Text
-
-  @@index([status])
-  @@map("pending_practitioners")
-}
-
 model DirectoryEvent {
   id           BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
   timestamp    DateTime @db.DateTime(3)
@@ -632,7 +623,7 @@ model DirectoryEvent {
   pageType     String   @map("page_type") @db.VarChar(64)
   referrer     String   @db.Text
   country      String   @default("unknown") @db.VarChar(8)
-  deviceType   String   @map("device_type") @default("desktop") @db.VarChar(16)
+  deviceType   String   @default("desktop") @map("device_type") @db.VarChar(16)
   ctaLabel     String   @map("cta_label") @db.VarChar(255)
   ctaTargetUrl String?  @map("cta_target_url") @db.Text
 
@@ -648,7 +639,7 @@ model DirectoryLead {
   pageType   String   @map("page_type") @db.VarChar(64)
   referrer   String   @db.Text
   country    String   @default("unknown") @db.VarChar(8)
-  deviceType String   @map("device_type") @default("desktop") @db.VarChar(16)
+  deviceType String   @default("desktop") @map("device_type") @db.VarChar(16)
   name       String   @db.VarChar(255)
   contact    String   @db.VarChar(255)
   treatment  String?  @db.VarChar(255)
@@ -669,15 +660,15 @@ model ClaimRequest {
   entityType ClaimEntityType @default(clinic)
 
   // Entity — exactly one is set
-  clinicId          Int?
-  clinicSlug        String? @db.VarChar(255)
-  practitionerId    Int?
-  practitionerSlug  String? @db.VarChar(255)
+  clinicId         Int?
+  clinicSlug       String? @db.VarChar(255)
+  practitionerId   Int?
+  practitionerSlug String? @db.VarChar(255)
 
   // Claimer details
-  claimerName   String  @db.VarChar(255)
-  claimerEmail  String  @db.VarChar(255)
-  claimerPhone  String? @db.VarChar(50)
+  claimerName  String  @db.VarChar(255)
+  claimerEmail String  @db.VarChar(255)
+  claimerPhone String? @db.VarChar(50)
 
   // Clinic-specific inputs
   clinicNameInput    String? @db.VarChar(255)
@@ -702,6 +693,10 @@ model ClaimRequest {
   // Anti-fraud
   requiresManualReview Boolean @default(false)
 
+  // New business registration (no existing Clinic/Practitioner row yet)
+  isNewRegistration Boolean @default(false)
+  newListingData    String? @db.LongText // raw JSON string of submitted business details
+
   // Plan & Stripe
   selectedPlan         ClaimPlan?
   stripeSessionId      String?    @db.VarChar(255)
@@ -709,10 +704,18 @@ model ClaimRequest {
   stripeSubscriptionId String?    @db.VarChar(255)
 
   // Consentz account provisioning (set on admin approval)
-  consentzClinicId  Int?
-  consentzUserId    Int?
-  consentzUsername  String? @db.VarChar(100)
-  mustResetPassword Boolean @default(false)
+  consentzClinicId   Int?
+  consentzUserId     Int?
+  consentzUsername   String? @db.VarChar(100)
+  mustResetPassword  Boolean @default(false)
+  scheduleWizardDone Boolean @default(false)
+  scheduleConfigured Boolean @default(false)
+  scheduleJson       String? @db.Text
+
+  // Consentz link token (used when claimant already has a Consentz account)
+  linkToken          String?   @unique @db.VarChar(80)
+  linkTokenExpiresAt DateTime?
+  linkTokenUsed      Boolean   @default(false)
 
   // Workflow
   status     ClaimStatus @default(pending_otp)
@@ -738,24 +741,24 @@ model ClaimRequest {
 // ============================================================
 
 model VerificationRequest {
-  id           Int                @id @default(autoincrement())
+  id           Int             @id @default(autoincrement())
   entityType   ClaimEntityType
-  entitySlug   String             @db.VarChar(255)
-  claimerName  String             @db.VarChar(255)
-  claimerEmail String             @db.VarChar(255)
+  entitySlug   String          @db.VarChar(255)
+  claimerName  String          @db.VarChar(255)
+  claimerEmail String          @db.VarChar(255)
 
   // Uploaded file names (stored in ./uploads/verification/{id}/)
-  govIdFile    String?            @db.VarChar(255)
-  selfieFile   String?            @db.VarChar(255)
-  proofType    String?            @db.VarChar(50)  // work_email|contract|website|letter
-  proofFile    String?            @db.VarChar(255)
+  govIdFile  String? @db.VarChar(255)
+  selfieFile String? @db.VarChar(255)
+  proofType  String? @db.VarChar(50) // work_email|contract|website|letter
+  proofFile  String? @db.VarChar(255)
 
-  status       VerificationStatus @default(pending)
-  adminNotes   String?            @db.Text
-  reviewedAt   DateTime?
+  status     VerificationStatus @default(pending)
+  adminNotes String?            @db.Text
+  reviewedAt DateTime?
 
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([entitySlug])
   @@index([status])
@@ -767,16 +770,17 @@ model VerificationRequest {
 // ============================================================
 
 model ConsultationLead {
-  id           Int        @id @default(autoincrement())
-  clinicId     Int
-  patientName  String     @db.VarChar(200)
-  patientPhone String     @db.VarChar(30)
-  patientEmail String?    @db.VarChar(255)
-  treatment    String?    @db.VarChar(255)
-  preferredTime String?   @db.VarChar(100) // "morning", "afternoon", "evening"
-  location     String?    @db.VarChar(255) // city/area for context
+  id            Int        @id @default(autoincrement())
+  clinicId      Int
+  patientName   String     @db.VarChar(200)
+  patientPhone  String     @db.VarChar(30)
+  patientEmail  String?    @db.VarChar(255)
+  treatment     String?    @db.VarChar(255)
+  preferredTime String?    @db.VarChar(100) // "morning", "afternoon", "evening"
+  location      String?    @db.VarChar(255) // city/area for context
+  source        LeadSource @default(consultation)
 
-  status       LeadStatus @default(new)
+  status LeadStatus @default(new)
 
   // Unlock (PPL plan — patient data revealed on £15 payment)
   isUnlocked            Boolean   @default(false)
@@ -787,18 +791,29 @@ model ConsultationLead {
   isGhostLead     Boolean   @default(false)
   ghostNotifiedAt DateTime? // when FOMO email was sent to clinic's public contact
 
+  // Pipeline CRM fields
+  pipelineStatus LeadStatus @default(new)
+  notes          String?    @db.Text
+  ownerName      String?    @db.VarChar(100)
+  coreSynced     Boolean    @default(false)
+
   // Read tracking for nav badge
   seenAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patientId Int?
+
+  clinic  Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient? @relation(fields: [patientId], references: [id], onDelete: SetNull)
 
   @@index([clinicId])
   @@index([isUnlocked])
   @@index([seenAt])
   @@index([createdAt])
+  @@index([patientId])
+  @@index([pipelineStatus])
   @@map("consultation_leads")
 }
 
@@ -807,8 +822,8 @@ model ConsultationLead {
 // ============================================================
 
 model Booking {
-  id        Int    @id @default(autoincrement())
-  clinicId  Int
+  id       Int @id @default(autoincrement())
+  clinicId Int
 
   // Core CRM reference — set when synced; null for directory-only bookings
   coreBookingId String? @unique @db.VarChar(255)
@@ -822,24 +837,32 @@ model Booking {
   slotStart DateTime
   slotEnd   DateTime
 
-  status       BookingStatus @default(pending)
+  status                BookingStatus @default(pending)
   // Stripe deposit — populated if patient paid at booking time
-  stripePaymentIntentId String? @db.VarChar(255)
-  depositAmount         Decimal? @db.Decimal(10, 2)
+  stripePaymentIntentId String?       @db.VarChar(255)
+  depositAmount         Decimal?      @db.Decimal(10, 2)
 
   // Sync metadata
-  syncedFromCore  Boolean   @default(false)
-  lastSyncedAt    DateTime?
+  syncedFromCore Boolean   @default(false)
+  lastSyncedAt   DateTime?
+
+  patientId Int?
+
+  // Video call fields — set when booked via /api/call/[slug]
+  videoCallMeetingId String? @db.VarChar(255)
+  videoCallJoinUrl   String? @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  clinic  Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient? @relation(fields: [patientId], references: [id], onDelete: SetNull)
 
   @@index([clinicId])
   @@index([slotStart])
   @@index([status])
   @@index([coreBookingId])
+  @@index([patientId])
   @@map("bookings")
 }
 
@@ -850,8 +873,9 @@ model Booking {
 model PlatformReview {
   id                Int          @id @default(autoincrement())
   clinicId          Int
+  patientId         Int?
   patientName       String       @db.VarChar(200)
-  rating            Int          @db.TinyInt  // 1–5
+  rating            Int          @db.TinyInt // 1–5
   reviewText        String       @db.Text
   treatment         String?      @db.VarChar(255)
   isVerifiedPatient Boolean      @default(false)
@@ -864,8 +888,10 @@ model PlatformReview {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  clinic  Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient? @relation(fields: [patientId], references: [id])
 
+  @@unique([clinicId, patientId])
   @@index([clinicId])
   @@index([status])
   @@map("platform_reviews")
@@ -876,35 +902,41 @@ model PlatformReview {
 // ============================================================
 
 model ChatSession {
-  id           Int               @id @default(autoincrement())
-  clinicId     Int
-  visitorToken String            @unique @db.VarChar(64)
-  patientName  String?           @db.VarChar(200)
-  patientEmail String?           @db.VarChar(255)
-  patientPhone String?           @db.VarChar(30)
-  status       ChatSessionStatus @default(active)
+  id                 Int               @id @default(autoincrement())
+  clinicId           Int
+  visitorToken       String            @unique @db.VarChar(64)
+  patientName        String?           @db.VarChar(200)
+  patientEmail       String?           @db.VarChar(255)
+  patientPhone       String?           @db.VarChar(30)
+  status             ChatSessionStatus @default(active)
   // Consentz Core reference — populated when conversation is pushed (stub, implement later)
-  coreConversationId String?     @db.VarChar(255)
-  closedAt     DateTime?
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  coreConversationId String?           @db.VarChar(255)
+  // Timestamp of the newest message the clinic has viewed — drives unread badges
+  clinicLastReadAt   DateTime?
+  closedAt           DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  patientId Int?
 
   clinic   Clinic        @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient  Patient?      @relation(fields: [patientId], references: [id], onDelete: SetNull)
   messages ChatMessage[]
 
   @@index([clinicId])
   @@index([status])
+  @@index([patientId])
   @@map("chat_sessions")
 }
 
 model ChatMessage {
-  id        Int        @id @default(autoincrement())
-  sessionId Int
-  sender    ChatSender
-  content   String     @db.Text
+  id            Int        @id @default(autoincrement())
+  sessionId     Int
+  sender        ChatSender
+  content       String     @db.Text
   // Consentz Core reference — populated when message is pushed (stub, implement later)
-  coreMessageId String? @db.VarChar(255)
-  createdAt DateTime   @default(now())
+  coreMessageId String?    @db.VarChar(255)
+  createdAt     DateTime   @default(now())
 
   session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
@@ -929,7 +961,7 @@ model MainSiteEvent {
   pageUrl      String   @map("page_url") @db.Text
   referrer     String   @db.Text
   country      String   @default("unknown") @db.VarChar(8)
-  deviceType   String   @map("device_type") @default("desktop") @db.VarChar(16)
+  deviceType   String   @default("desktop") @map("device_type") @db.VarChar(16)
   eventType    String   @map("event_type") @db.VarChar(64)
   eventName    String   @map("event_name") @db.VarChar(255)
   targetUrl    String?  @map("target_url") @db.Text
@@ -944,4 +976,75 @@ model MainSiteEvent {
   @@index([eventName], map: "idx_main_site_events_event_name")
   @@index([contentType], map: "idx_main_site_events_content_type")
   @@map("main_site_events")
+}
+
+// ============================================================
+// PATIENT ACCOUNTS
+// ============================================================
+
+model Patient {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique @db.VarChar(255)
+  firstName     String?  @db.VarChar(100)
+  lastName      String?  @db.VarChar(100)
+  phone         String?  @db.VarChar(30)
+  emailVerified Boolean  @default(false)
+  passwordHash  String?  @db.VarChar(255)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  dateOfBirth DateTime? @map("date_of_birth")
+
+  // Consentz patient account — populated on first booking
+  consentzPassword         String?   @db.VarChar(255)
+  consentzSessionToken     String?   @db.VarChar(512)
+  consentzRefreshToken     String?   @db.VarChar(512)
+  consentzSessionExpiresAt DateTime?
+  consentzRefreshExpiresAt DateTime?
+
+  bookings        Booking[]
+  chatSessions    ChatSession[]
+  leads           ConsultationLead[]
+  oauthAccounts   PatientOAuthAccount[]
+  platformReviews PlatformReview[]
+
+  @@map("patients")
+}
+
+model PatientMagicLink {
+  id        Int       @id @default(autoincrement())
+  tokenHash String    @unique @db.VarChar(64)
+  email     String    @db.VarChar(255)
+  expiresAt DateTime
+  usedAt    DateTime?
+  next      String?   @db.VarChar(500)
+  createdAt DateTime  @default(now())
+
+  @@index([email])
+  @@map("patient_magic_links")
+}
+
+model PatientOAuthAccount {
+  id                Int     @id @default(autoincrement())
+  patientId         Int
+  provider          String  @db.VarChar(20)
+  providerAccountId String  @db.VarChar(255)
+  email             String? @db.VarChar(255)
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([patientId])
+  @@map("patient_oauth_accounts")
+}
+
+model FeaturedProfile {
+  id         Int      @id @default(autoincrement())
+  clinicSlug String   @unique @db.VarChar(255)
+  position   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([position])
+  @@map("featured_profiles")
 }

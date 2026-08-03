@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { domainHasMailServer } from '@/lib/email-domain-check'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 async function saveFile(file: File, dir: string): Promise<string> {
   const ext = file.name.split('.').pop() ?? 'bin'
@@ -20,15 +22,24 @@ export async function POST(req: NextRequest) {
 
     const entityType = formData.get('entityType') as string | null
     const entitySlug = formData.get('entitySlug') as string | null
-    const claimerName = formData.get('claimerName') as string | null
-    const claimerEmail = formData.get('claimerEmail') as string | null
+    const claimerName = (formData.get('claimerName') as string | null)?.trim() || null
+    const claimerEmail = (formData.get('claimerEmail') as string | null)?.trim() || null
     const proofType = formData.get('proofType') as string | null
 
-    if (!entityType || !entitySlug || !claimerName || !claimerEmail) {
+    if (!entityType || !entitySlug) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
     if (entityType !== 'clinic' && entityType !== 'practitioner') {
       return NextResponse.json({ error: 'Invalid entity type' }, { status: 400 })
+    }
+    if (!claimerName) {
+      return NextResponse.json({ error: 'Full name is required.' }, { status: 400 })
+    }
+    if (!claimerEmail || !EMAIL_RE.test(claimerEmail)) {
+      return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
+    }
+    if (!(await domainHasMailServer(claimerEmail))) {
+      return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
 
     const govIdFile = formData.get('govId') as File | null
@@ -36,7 +47,7 @@ export async function POST(req: NextRequest) {
     const proofFile = formData.get('proof') as File | null
 
     if (!govIdFile) {
-      return NextResponse.json({ error: 'Government ID is required' }, { status: 400 })
+      return NextResponse.json({ error: 'Government ID is required.' }, { status: 400 })
     }
     if (govIdFile.size > MAX_FILE_SIZE) {
       return NextResponse.json({ error: 'Government ID file is too large (max 10 MB)' }, { status: 400 })

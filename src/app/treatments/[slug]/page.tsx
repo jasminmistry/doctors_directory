@@ -10,6 +10,7 @@ import {
 } from "@/lib/treatment-content";
 import { getTreatmentCategory, getTreatmentCategorySlug } from "@/lib/treatment-categories";
 import { toUrlSlug } from "@/lib/utils";
+import { getTreatmentImage, TreatmentMap } from "@/lib/data";
 import { TreatmentDetail } from "@/components/treatment-detail";
 import Script from "next/script";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
@@ -19,6 +20,12 @@ import Link from "next/link";
 import ItemsGrid from "@/components/collectionGrid";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
+import { NationalTreatmentListingsLoader } from "@/components/treatment/national-treatment-listings-loader";
+import { NationalTreatmentListingsSkeleton } from "@/components/treatment/national-treatment-listings-section";
+import { TreatmentCityPickerSection } from "@/components/treatment/treatment-city-picker-section";
+import { getTreatmentCityHubCitiesForTreatment } from "@/lib/treatment-city-hub";
+import { resolveTreatmentHubSlug } from "@/lib/treatment-hub-registry";
+import { Suspense } from "react";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
 
 interface ProfilePageProps {
@@ -26,87 +33,6 @@ interface ProfilePageProps {
     slug: string;
   };
 }
-const TreatmentMap: Record<string, string> = {
-  Acne: "/directory/treatments/acne.webp",
-  Alopecia: "/directory/treatments/alopecia.webp",
-  "Anti Wrinkle Treatment": "/directory/treatments/anti wrinkle treatment.webp",
-  Aqualyx: "/directory/treatments/aqualyx.webp",
-  Aviclear: "/directory/treatments/aviclear.webp",
-  "B12 Injection": "/directory/treatments/b12.webp",
-  Birthmarks: "/directory/treatments/birthmarks.webp",
-  Botox: "/directory/treatments/botox.webp",
-  "Breast Augmentation": "/directory/treatments/breast-augmentation.webp",
-  "Cheek Enhancement": "/directory/treatments/cheek-enhancement.webp",
-  "Chemical Peel": "/directory/treatments/chemical-peel.webp",
-  "Chin Enhancement": "/directory/treatments/chin-enhancement.webp",
-  "Aesthetic Skin Consultation": "/directory/treatments/consultation.webp",
-  "Contact Dermatitis": "/directory/treatments/contact-dermatitis.webp",
-  CoolSculpting: "/directory/treatments/coolsculpting.webp",
-  "Cysts Treatment": "/directory/treatments/cyst-treatment.webp",
-  "Dermapen Treatment": "/directory/treatments/dermapen.webp",
-  "Dermatitis Treatment": "/directory/treatments/dermatitis-treatment.webp",
-  "Dermatology Treatments": "/directory/treatments/dermatology-treatments.webp",
-  "Eczema Treatment": "/directory/treatments/exzema-treatment.webp",
-  "Eyebrows and Lashes": "/directory/treatments/eyebrow-lashes.webp",
-  "Facial Treatments": "/directory/treatments/facial-treatments.webp",
-  "Hair Treatments": "/directory/treatments/hair.webp",
-  HIFU: "/directory/treatments/hifu.webp",
-  "Hives Treatment": "/directory/treatments/hives.webp",
-  Hyperhidrosis: "/directory/treatments/Hyperhidrosis.webp",
-  "Inflammatory Skin Conditions":
-    "/directory/treatments/inflammatory skin conditions.webp",
-  "IPL Treatment": "/directory/treatments/ipl-treatments.webp",
-  "Keloid Removal": "/directory/treatments/keloid removal.webp",
-  "Tattoo Removal": "/directory/treatments/laser-tattoo-removal.webp",
-  "Laser Treatments": "/directory/treatments/laser-treatments.webp",
-  Fillers: "/directory/treatments/lip-filler-6485474_640.webp",
-  Liposuction: "/directory/treatments/liposuction illustration.webp",
-  Lips: "/directory/treatments/lips.webp",
-  "Lymphatic Drainage": "/directory/treatments/lymphatic-drainage.webp",
-  Marionettes: "/directory/treatments/marionettes.webp",
-  Massage: "/directory/treatments/massage.webp",
-  "Melanoma Treatment": "/directory/treatments/melanoma-treatments.webp",
-  "Melasma Treatment": "/directory/treatments/melasma.webp",
-  "Microneedling": "/directory/treatments/micro-needling.webp",
-  Microblading: "/directory/treatments/microblading.webp",
-  "Microneedling with Radiofrequency":
-    "/directory/treatments/microneedling with radiofrequency.webp",
-  Moles: "/directory/treatments/moles.webp",
-  Nails: "/directory/treatments/nail-polish-2112358_640.webp",
-  Obagi: "/directory/treatments/obagi.webp",
-  "Patch Testing": "/directory/treatments/patch-testing.webp",
-  "Photodynamic Therapy (PDT)":
-    "/directory/treatments/photodynamic therapy.webp",
-  "Pigmentation Treatment":
-    "/directory/treatments/pigmentation-treatments.webp",
-  "Polynucleotide Treatment":
-    "/directory/treatments/polynucleotide-treatment.webp",
-  Profhilo: "/directory/treatments/profhilo.webp",
-  "Platelet Rich Plasma": "/directory/treatments/prp.webp",
-  Psoriasis: "/directory/treatments/psoriasis.webp",
-  "Rash Treatment": "/directory/treatments/rash-treatment.webp",
-  "Rosacea Treatment": "/directory/treatments/rosacea.webp",
-  Scarring: "/directory/treatments/scarring.webp",
-  "Seborrheic Keratosis Treatment":
-    "/directory/treatments/seborrheic keratosis.webp",
-  "Seborrhoeic Dermatitis": "/directory/treatments/seborrhoeic dermatitis.webp",
-  Rhinoplasty:
-    "/directory/treatments/side-view-doctor-checking-patient-before-rhinoplasty.webp",
-  "Skin Texture and Tightening":
-    "/directory/treatments/skin texture and tightening.webp",
-  "Skin Booster": "/directory/treatments/skin-booster.webp",
-  "Skin Cancer": "/directory/treatments/skin-cancer.webp",
-  "Skin Lesions": "/directory/treatments/skin-lesions.webp",
-  "Skin Tags": "/directory/treatments/skin-tags.webp",
-  "Tear Trough Treatment": "/directory/treatments/tear-through-treatments.webp",
-  Threading: "/directory/treatments/threading.webp",
-  "Varicose Vein Procedure": "/directory/treatments/varicose-vein.webp",
-  "Verruca Treatment": "/directory/treatments/verruca treatment.webp",
-  "Vitamin Therapy": "/directory/treatments/vitamin-therapy.webp",
-  "Vulval Dermatology": "/directory/treatments/vulval-dermatology.webp",
-  "Weight Loss": "/directory/treatments/weight-loss.webp",
-};
-
 const getTreatmentContentValue = (
   treatmentData: Record<string, unknown> | undefined | null,
   candidateKeys: readonly string[],
@@ -336,7 +262,7 @@ const getPractitionerCount = (practitioners: Clinic['Practitioners']) => {
   return 0;
 };
 
-export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const allClinics = getClinics();
   const practitionerProfiles: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const { slug } = params;
@@ -354,7 +280,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 
   const treatment = {
     name: resolvedTreatmentName.charAt(0).toUpperCase() + resolvedTreatmentName.slice(1),
-    image: TreatmentMap[resolvedTreatmentName],
+    image: getTreatmentImage(resolvedTreatmentName) || '/directory/treatments/default-treatment.webp',
     satisfaction: 82,
     averageCost: "£300-£1,200+",
     reviews: 47,
@@ -429,6 +355,8 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const downtime = getDowntime(treatment.name, treatmentData);
   const satisfaction = getSatisfaction(reviews);
   const rankedTreatmentClinics = buildClinicRankedEntries(filteredClinics, 5);
+  const canonicalTreatmentSlug = resolveTreatmentHubSlug(slug);
+  const treatmentCityOptions = getTreatmentCityHubCitiesForTreatment(slug);
 
   treatment.satisfaction = satisfaction;
   treatment.averageCost = averageCost;
@@ -481,20 +409,14 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
           __html: JSON.stringify(structuredData),
         }}
       />
-      <main className="bg-(--primary-bg-color)">
+      <main className="bg-white">
         {/* Treatment Detail Section */}
         <div className="bg-white">
           <div className="bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-            <div className="container mx-auto max-w-7xl px-4 py-4">
-              <Link className="mb-2 inline-block" href="/" prefetch={false}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Directory
-                </Button>
+            <div className="mx-auto max-w-7xl px-6 py-4">
+              <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
+               <ArrowLeft className="h-4 w-4" />
+                Back to Directory
               </Link>
               <Breadcrumb>
                 <BreadcrumbList>
@@ -503,13 +425,13 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/directory/treatments">
+                    <BreadcrumbLink href="/treatments">
                       Treatments
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href={`/directory/treatments/category/${treatmentCategorySlug}`}>
+                    <BreadcrumbLink href={`/treatments/category/${treatmentCategorySlug}`}>
                       {treatmentCategory}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
@@ -525,14 +447,14 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
             treatment={treatment}
             treatmentData={treatmentData}
           />
-          <div className="container mx-auto max-w-7xl px-4 pt-2 pb-2">
+          <div className="mx-auto max-w-7xl px-6 pt-2 pb-2">
             <BestRankedBlock
               title={`Best ${treatment.name} Clinics`}
               entries={rankedTreatmentClinics}
             />
           </div>
           {/* Similar Clinics Section */}
-          <div className="container mx-auto max-w-7xl px-4 py-4">
+          <div className="mx-auto max-w-7xl px-6 py-4">
             <div className="px-4 md:px-0 space-y-6 mt-8">
               <h3 className="text-lg font-semibold text-foreground mb-2">
                 Top Clinics for {treatment.name}
@@ -540,7 +462,18 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
               <ItemsGrid items={filteredClinics.slice(0, 6)} />
             </div>
           </div>
+          <TreatmentCityPickerSection
+            treatmentName={treatment.name}
+            treatmentSlug={canonicalTreatmentSlug}
+            cities={treatmentCityOptions}
+          />
         </div>
+        <Suspense fallback={<NationalTreatmentListingsSkeleton />}>
+          <NationalTreatmentListingsLoader
+            treatmentSlug={slug}
+            treatmentName={treatment.name}
+          />
+        </Suspense>
       </main>
     </>
   );
@@ -568,7 +501,7 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
       : overview;
 
   const title = `${treatmentName} Treatment - Find Qualified Practitioners | Healthcare Directory`;
-  const image = TreatmentMap[resolvedTreatmentName] || '/directory/treatments/default-treatment.webp';
+  const image = getTreatmentImage(resolvedTreatmentName) || '/directory/treatments/default-treatment.webp';
   const url = `${baseUrl}/directory/treatments/${slug}`;
 
   return {

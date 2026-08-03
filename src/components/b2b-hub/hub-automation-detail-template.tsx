@@ -100,7 +100,7 @@ function HowReactivationRunsSection() {
           {reactivationWorkflowSteps.map(({ step, title, body, circleVariant }) => (
             <div
               key={step}
-              className="flex w-full items-start gap-4 rounded-[12px] border border-[#E5E7EB] bg-white p-5"
+              className="flex w-full items-start gap-4 rounded-lg border border-[#e0e0e0] bg-white p-5"
             >
               <div
                 className={`relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[18px] text-center text-sm font-semibold text-[#1a1a1a] ${
@@ -135,10 +135,10 @@ function AutomationWorkflowSpotlight() {
         <p className="mb-2 text-center text-xs font-semibold uppercase tracking-[0.2em] text-[#6B6B6B]">
           Live Workflows
         </p>
-        <h2 className="mb-10 text-center text-[28px] font-bold leading-tight text-[#111111] md:text-[34px]">
+        <h2 className="mb-10 text-center text-[28px] font-medium leading-tight text-[#111111] md:text-[34px]">
           End-To-End Automation Your Clinic Can Rely On
         </h2>
-        <div className="overflow-hidden rounded-2xl border border-[#E2DDD7] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
+        <div className="overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
           <div className="grid grid-cols-1 gap-10 p-8 md:grid-cols-2 md:gap-12 md:p-12 lg:items-center">
             <div className="min-w-0">
               <p className="mb-8 text-sm font-medium text-[#6B6B6B]">
@@ -153,7 +153,7 @@ function AutomationWorkflowSpotlight() {
                         aria-hidden
                       />
                     ) : null}
-                    <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-xs font-bold text-white">
+                    <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-xs font-medium text-white">
                       {step}
                     </span>
                     <div>
@@ -164,7 +164,7 @@ function AutomationWorkflowSpotlight() {
                 ))}
               </ol>
             </div>
-            <div className="flex items-center justify-center rounded-xl bg-[#F8F7F5] p-6 md:p-8">
+            <div className="flex items-center justify-center rounded-lg bg-[#F8F7F5] p-6 md:p-8">
               <Image
                 src={SOFTWARE_LAPTOP_MOCKUP_SRC}
                 alt=""
@@ -219,7 +219,7 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
     <>
       <section
         className={cn(
-          "w-full border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+          "w-full border-b border-[#e0e0e0] bg-[var(--primary-bg-color)]",
           HUB_DETAIL_HERO_VIEWPORT_CLASS
         )}
       >
@@ -300,7 +300,7 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
       <article className="mx-auto w-full min-w-0 max-w-[1280px] px-4 pb-0 pt-8 md:pt-10 [font-family:Inter,system-ui,sans-serif]">
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">Operational Reality</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Teams outgrow generic tools when consent, payments, and clinical evidence sit in different
@@ -308,7 +308,7 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
                 communication.
               </p>
             </div>
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 shadow-sm md:p-8">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 shadow-sm md:p-8">
               <h2 className="mb-3 text-lg font-semibold text-[#111111]">What Changes With Consentz</h2>
               <p className="text-base leading-relaxed text-[#1A1A1A]">
                 Consentz is built as an operating layer for clinics: structured consent, workflow automation,
@@ -328,7 +328,7 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
+                className="flex min-h-[93px] items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
               >
                 {item.label}
               </Link>
@@ -354,8 +354,8 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
         />
 
         <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">Our Latest Blogs</h2>
-          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-[#1A1A1A]">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">Our Latest Blogs</h2>
+          <p className="mb-10 max-w-[1280px] text-xl leading-snug text-gray-600">
             Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay
             informed with our latest articles.
           </p>
@@ -366,7 +366,7 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#FAFAFA] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image
@@ -395,7 +395,7 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
               rel="noreferrer"
               className={HUB_BTN_VIEW_ALL_BLOGS_CLASS}
             >
-              View all blogs
+              View All Blogs
             </a>
           </div>
         </section>

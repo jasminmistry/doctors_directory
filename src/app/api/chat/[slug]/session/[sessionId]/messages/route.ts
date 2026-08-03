@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { sendCoreMessage, pollCoreMessages } from '@/lib/consentz-chat'
+import { sendCoreMessage, pollCoreMessages, CHAT_MESSAGE_MAX_LENGTH } from '@/lib/consentz-chat'
 import { z } from 'zod'
 
 const bodySchema = z.object({
-  content: z.string().min(1).max(2000),
+  content: z.string().min(1).max(CHAT_MESSAGE_MAX_LENGTH),
   visitorToken: z.string().length(64),
 })
 
@@ -70,7 +70,14 @@ export async function POST(
   try {
     const body = bodySchema.safeParse(await req.json())
     if (!body.success) {
-      return NextResponse.json({ error: 'Invalid request', issues: body.error.issues }, { status: 400 })
+      const contentIssue = body.error.issues.find((i) => i.path[0] === 'content')
+      const error =
+        contentIssue?.code === 'too_big'
+          ? `Message is too long (max ${CHAT_MESSAGE_MAX_LENGTH} characters).`
+          : contentIssue?.code === 'too_small'
+            ? 'Message cannot be empty.'
+            : 'Invalid request'
+      return NextResponse.json({ error, issues: body.error.issues }, { status: 400 })
     }
 
     const session = await resolveSession(params.slug, params.sessionId, body.data.visitorToken)
@@ -97,7 +104,9 @@ export async function POST(
         await prisma.chatMessage.update({
           where: { id: message.id },
           data: { coreMessageId: String(coreMessageId) },
-        }).catch(() => {})
+        }).catch((err) => console.error('[chat/messages POST] failed to store coreMessageId:', err))
+      } else {
+        console.warn(`[chat/messages POST] Core sendMessage returned null for session=${session.id}`)
       }
 
       return NextResponse.json({ message }, { status: 201 })
