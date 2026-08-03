@@ -65,7 +65,7 @@ export function PortalScheduleView() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16 text-gray-500">
+      <div className="flex items-center justify-center py-16 text-gray-600">
         <Loader2 className="h-5 w-5 animate-spin mr-2" />
         <span className="text-sm">Loading schedule…</span>
       </div>
@@ -109,26 +109,26 @@ export function PortalScheduleView() {
       {enabledDays.length > 0 && (
         <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
           <div className="flex items-center gap-2">
-            <Eye className="h-4 w-4 text-gray-500 shrink-0" />
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Patient view — bookable hours</p>
+            <Eye className="h-4 w-4 text-gray-600 shrink-0" />
+            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Patient view — bookable hours</p>
           </div>
           <div className="space-y-1">
             {enabledDays.map((d) => (
               <div key={d.day} className="flex items-center justify-between text-sm">
                 <span className="text-gray-700 w-28">{d.day}</span>
-                <span className="text-gray-500">{d.startTime} – {d.endTime}</span>
+                <span className="text-gray-600">{d.startTime} – {d.endTime}</span>
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-500">This is what patients see when choosing a booking slot.</p>
+          <p className="text-xs text-gray-600">This is what patients see when choosing a booking slot.</p>
         </div>
       )}
 
       {/* How schedule rules work */}
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3 text-sm text-gray-700">
+      <div className="rounded-lg bg-white border border-gray-200 bg-gray-50 p-4 space-y-3 text-sm text-gray-700">
         <div className="flex items-center gap-2 mb-1">
           <Info className="h-4 w-4 text-gray-400 shrink-0" />
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">How schedule rules work</p>
+          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">How schedule rules work</p>
         </div>
         <div className="space-y-2.5 text-sm text-gray-900">
           <div className="flex items-start gap-2">

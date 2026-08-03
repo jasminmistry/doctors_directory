@@ -31,7 +31,7 @@ export default function AccountBookingsPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
       </div>
     )
   }
@@ -43,7 +43,7 @@ export default function AccountBookingsPage() {
       {bookings.length === 0 ? (
         <div className="rounded-lg bg-white border border-gray-200 px-6 py-10 text-center">
           <CalendarDays className="h-8 w-8 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 text-sm">No bookings yet.</p>
+          <p className="text-gray-600 text-sm">No bookings yet.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -64,17 +64,17 @@ export default function AccountBookingsPage() {
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs text-gray-600 mt-0.5">
                     {b.treatment ?? 'Appointment'} · {format(new Date(b.slotStart), 'd MMM yyyy, HH:mm')}
                   </p>
                   {b.clinic.city && (
-                    <p className="text-xs text-gray-500 mt-0.5">{b.clinic.city}</p>
+                    <p className="text-xs text-gray-600 mt-0.5">{b.clinic.city}</p>
                   )}
                 </div>
                 <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
                   b.status === 'confirmed' ? 'bg-green-100 text-green-700' :
                   b.status === 'cancelled' ? 'bg-red-100 text-red-600' :
-                  'bg-gray-100 text-gray-500'
+                  'bg-gray-100 text-gray-600'
                 }`}>
                   {capitalize(b.status)}
                 </span>

@@ -443,7 +443,7 @@ export function PractitionerCard({
                         <li key={index}>
                           <Badge
                             variant="outline"
-                            className="text-[11px] font-normal text-gray-500"
+                            className="text-[11px] font-normal text-gray-600"
                           >
                             {value.price}
                           </Badge>
@@ -453,7 +453,7 @@ export function PractitionerCard({
                     <li>
                       <Badge
                         variant="outline"
-                        className="text-[11px] font-normal text-gray-500"
+                        className="text-[11px] font-normal text-gray-600"
                       >
                         {practitioner.all_prices.length - 2} more
                       </Badge>

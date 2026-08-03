@@ -158,7 +158,7 @@ export default function AccountLoginPage() {
         </div>
 
         <div className="mt-6 rounded-lg border border-gray-100 bg-gray-50 px-4 py-4 space-y-2">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Are you a clinic or practitioner?</p>
+          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Are you a clinic or practitioner?</p>
           <div className="flex flex-col gap-1.5">
             <Link href="/register/clinic" className="text-sm text-gray-700 hover:text-black hover:underline">
               → List your practice

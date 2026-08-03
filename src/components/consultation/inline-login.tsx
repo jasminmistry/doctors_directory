@@ -55,7 +55,7 @@ export function InlineLogin({ next }: InlineLoginProps) {
         </div>
         <div className="space-y-1">
           <p className="text-sm font-semibold text-gray-900">Check your inbox</p>
-          <p className="text-xs text-gray-500 leading-relaxed max-w-[220px]">
+          <p className="text-xs text-gray-600 leading-relaxed max-w-[220px]">
             We sent a sign-in link to <span className="font-medium text-gray-700">{email}</span>.
             It expires in 15 minutes.
           </p>

@@ -228,13 +228,13 @@ export function RequestConsultationDialog({
             <div className="min-w-0">
               <p className="text-sm font-semibold text-gray-900 truncate">{dialogTitle}</p>
               {entityName && (
-                <p className="text-xs text-gray-500 truncate">{entityName}</p>
+                <p className="text-xs text-gray-600 truncate">{entityName}</p>
               )}
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="ml-2 shrink-0 rounded-lg p-1 text-gray-500 hover:text-gray-600 transition-colors"
+            className="ml-2 shrink-0 rounded-lg p-1 text-gray-600 hover:text-gray-600 transition-colors"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
@@ -262,7 +262,7 @@ export function RequestConsultationDialog({
             <div className="flex h-full flex-col items-center justify-center gap-2 px-6 py-8 text-center">
               <p className="text-2xl">✓</p>
               <p className="font-semibold">Request sent!</p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-600">
                 The clinic will contact you at <strong>{submittedEmail ?? patientMe?.email}</strong>.
               </p>
             </div>

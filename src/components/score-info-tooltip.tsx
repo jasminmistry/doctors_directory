@@ -63,7 +63,7 @@ export function ScoreInfoTooltip({
             <p className="mt-1 text-xs leading-relaxed text-gray-600">{tooltipText}</p>
           </div>
           <div className="px-4 py-3">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-gray-600">
               Core pillars
             </p>
             <div className="flex flex-wrap gap-2">
@@ -76,7 +76,7 @@ export function ScoreInfoTooltip({
                 </span>
               ))}
             </div>
-            <p className="mt-2 text-[11px] leading-relaxed text-gray-500">
+            <p className="mt-2 text-[11px] leading-relaxed text-gray-600">
               This is a criteria-based quality signal, not paid placement.
             </p>
           </div>

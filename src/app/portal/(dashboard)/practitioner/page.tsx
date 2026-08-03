@@ -101,7 +101,7 @@ export default function PortalPractitionerPage() {
             {subscription.stripeSubscriptionId && (
               <div className="col-span-2 sm:col-span-3">
                 <p className="text-xs text-gray-600 mb-0.5">Subscription ID</p>
-                <p className="text-xs text-gray-500 font-mono">{subscription.stripeSubscriptionId}</p>
+                <p className="text-xs text-gray-600 font-mono">{subscription.stripeSubscriptionId}</p>
               </div>
             )}
           </div>
@@ -113,7 +113,7 @@ export default function PortalPractitionerPage() {
             if (!options.length) return null
             return (
               <div className="mt-5 pt-4 border-t border-gray-100">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Upgrade plan</p>
+                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Upgrade plan</p>
                 <div className="flex flex-col sm:flex-row gap-2">
                   {options.map((opt) => (
                     <button
@@ -125,7 +125,7 @@ export default function PortalPractitionerPage() {
                       <p className="text-sm font-semibold text-gray-900">
                         {upgrading === opt.key ? 'Redirecting…' : opt.label}
                       </p>
-                      <p className="text-xs text-gray-500 mt-0.5">{opt.description}</p>
+                      <p className="text-xs text-gray-600 mt-0.5">{opt.description}</p>
                     </button>
                   ))}
                 </div>

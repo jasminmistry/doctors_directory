@@ -27,7 +27,7 @@ export default function AccountChatsPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
       </div>
     )
   }
@@ -39,7 +39,7 @@ export default function AccountChatsPage() {
       {sessions.length === 0 ? (
         <div className="rounded-lg bg-white border border-gray-200 px-6 py-10 text-center">
           <MessageSquare className="h-8 w-8 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 text-sm">No consultations yet.</p>
+          <p className="text-gray-600 text-sm">No consultations yet.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -55,16 +55,16 @@ export default function AccountChatsPage() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-gray-900 truncate">{s.clinic.name}</p>
                     {last ? (
-                      <p className="text-xs text-gray-500 truncate mt-0.5">
+                      <p className="text-xs text-gray-600 truncate mt-0.5">
                         {last.sender === 'clinic' ? `${s.clinic.name}: ` : 'You: '}{last.content}
                       </p>
                     ) : (
-                      <p className="text-xs text-gray-500 mt-0.5">No messages</p>
+                      <p className="text-xs text-gray-600 mt-0.5">No messages</p>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">{format(new Date(s.createdAt), 'd MMM yyyy')}</p>
+                    <p className="text-xs text-gray-600 mt-1">{format(new Date(s.createdAt), 'd MMM yyyy')}</p>
                   </div>
                   <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
-                    s.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                    s.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
                   }`}>
                     {s.status}
                   </span>

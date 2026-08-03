@@ -37,13 +37,13 @@ const columns = [
   { key: 'name', label: 'Name' },
   { key: 'email', label: 'Email', render: (value: string) => value ? <span className="text-gray-600 text-xs">{value}</span> : <span className="text-gray-300">—</span> },
   { key: 'gmapsPhone', label: 'Phone', render: (value: string) => value ? <span className="text-gray-600 text-xs whitespace-nowrap">{value}</span> : <span className="text-gray-300">—</span> },
-  { key: 'gmapsAddress', label: 'Address', render: (value: string) => value ? <span className="block max-w-xs text-gray-500 text-xs leading-snug">{value}</span> : <span className="text-gray-300">—</span> },
+  { key: 'gmapsAddress', label: 'Address', render: (value: string) => value ? <span className="block max-w-xs text-gray-600 text-xs leading-snug">{value}</span> : <span className="text-gray-300">—</span> },
   {
     key: 'claimed',
     label: 'Claimed',
     render: (value: boolean) => value
       ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Claimed</span>
-      : <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">Unclaimed</span>,
+      : <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Unclaimed</span>,
   },
   {
     key: 'idVerified',
@@ -125,7 +125,7 @@ export default function ClinicsList() {
       {(filterClaimed !== 'all' || filterVerified !== 'all') && (
         <button
           onClick={() => { setFilterClaimed('all'); setFilterVerified('all') }}
-          className="text-xs text-gray-500 underline hover:text-gray-700"
+          className="text-xs text-gray-600 underline hover:text-gray-700"
         >
           Clear
         </button>

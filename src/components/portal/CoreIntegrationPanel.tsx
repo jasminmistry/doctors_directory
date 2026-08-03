@@ -126,7 +126,7 @@ export function CoreIntegrationPanel({ hasCoreLink, unlinkRequestedAt, onRefresh
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">Linked to Consentz Core</p>
-              <p className="text-xs text-gray-500">Calendar, booking sync, and Core chat are active.</p>
+              <p className="text-xs text-gray-600">Calendar, booking sync, and Core chat are active.</p>
             </div>
           </div>
           <button

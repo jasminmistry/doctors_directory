@@ -29,7 +29,7 @@ const columns = [
     label: 'Description',
     sortable: false,
     render: (value: string) =>
-      value ? <span className="block max-w-xs truncate text-gray-500">{value}</span> : <span className="text-gray-300">—</span>,
+      value ? <span className="block max-w-xs truncate text-gray-600">{value}</span> : <span className="text-gray-300">—</span>,
   },
 ]
 

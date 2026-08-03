@@ -48,7 +48,7 @@ const columns = [
     label: 'Claimed',
     render: (value: boolean) => value
       ? <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Claimed</span>
-      : <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">Unclaimed</span>,
+      : <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Unclaimed</span>,
   },
   {
     key: 'verified',
@@ -118,7 +118,7 @@ export default function PractitionersList() {
       {(filterClaimed !== 'all' || filterVerified !== 'all') && (
         <button
           onClick={() => { setFilterClaimed('all'); setFilterVerified('all') }}
-          className="text-xs text-gray-500 underline hover:text-gray-700"
+          className="text-xs text-gray-600 underline hover:text-gray-700"
         >
           Clear
         </button>

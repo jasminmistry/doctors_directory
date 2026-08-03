@@ -133,7 +133,7 @@ export default function UpgradePage() {
               </span>
               <div className="mb-4">
                 <span className="text-2xl font-semibold text-gray-900">{plan.price}</span>
-                <span className="text-sm text-gray-500"> {plan.cadence}</span>
+                <span className="text-sm text-gray-600"> {plan.cadence}</span>
               </div>
               <div className="space-y-2 flex-1 mb-6">
                 {plan.features.map((f) => (
@@ -173,7 +173,7 @@ export default function UpgradePage() {
         })}
       </div>
 
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-gray-600">
         Downgrades and cancellations can be managed from your{" "}
         <a href="/directory/portal/clinic" className="underline hover:no-underline">
           clinic settings

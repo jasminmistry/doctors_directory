@@ -90,7 +90,7 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
                     "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200",
                     mode === "patient"
                       ? "bg-black text-white shadow-sm"
-                      : "text-gray-500 hover:text-black",
+                      : "text-gray-600 hover:text-black",
                   )}
                 >
                   Patient
@@ -102,7 +102,7 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
                     "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200",
                     mode === "clinic"
                       ? "bg-black text-white shadow-sm"
-                      : "text-gray-500 hover:text-black",
+                      : "text-gray-600 hover:text-black",
                   )}
                 >
                   Provider

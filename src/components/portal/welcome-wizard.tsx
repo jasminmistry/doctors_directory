@@ -81,7 +81,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
             <h2 className="text-xl font-medium text-gray-900">
               Welcome{entityName ? `, ${entityName}` : ''}!
             </h2>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-gray-600">
               Let&apos;s confirm your weekly availability so patients know when you&apos;re open for bookings.
             </p>
 
@@ -106,7 +106,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
                 type="button"
                 onClick={skip}
                 disabled={saving || loadingSchedule}
-                className="text-sm text-gray-500 hover:text-gray-600 transition-colors disabled:opacity-50"
+                className="text-sm text-gray-600 hover:text-gray-600 transition-colors disabled:opacity-50"
               >
                 Skip for now
               </button>
@@ -118,7 +118,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
           <div className="p-6">
             <div className="mb-5">
               <h2 className="text-lg font-medium text-gray-900">Weekly schedule</h2>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-600">
                 Toggle each day and set your opening hours. Bookings are only accepted on enabled days.
               </p>
             </div>
@@ -132,7 +132,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
                 type="button"
                 onClick={() => setStep('welcome')}
                 disabled={saving}
-                className="text-sm text-gray-500 hover:text-gray-600 transition-colors disabled:opacity-50"
+                className="text-sm text-gray-600 hover:text-gray-600 transition-colors disabled:opacity-50"
               >
                 Back
               </button>
@@ -141,7 +141,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
                   type="button"
                   onClick={skip}
                   disabled={saving}
-                  className="text-sm text-gray-500 hover:text-gray-600 transition-colors disabled:opacity-50"
+                  className="text-sm text-gray-600 hover:text-gray-600 transition-colors disabled:opacity-50"
                 >
                   Skip
                 </button>

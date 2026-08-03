@@ -363,7 +363,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
             </a>
           )}
 
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-600">
             A confirmation email has been sent to{' '}
             <span className="font-medium">{confirmation.patient.email}</span>
           </p>
@@ -371,7 +371,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
           <button
             type="button"
             onClick={resetToEvents}
-            className="text-xs text-gray-500 underline hover:text-gray-600 mt-2"
+            className="text-xs text-gray-600 underline hover:text-gray-600 mt-2"
           >
             Book another consultation
           </button>
@@ -389,7 +389,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
           <button
             type="button"
             onClick={resetToEvents}
-            className="text-gray-500 hover:text-gray-600"
+            className="text-gray-600 hover:text-gray-600"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -417,14 +417,14 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
           <button
             type="button"
             onClick={() => setStep('date-slot')}
-            className="text-gray-500 hover:text-gray-600"
+            className="text-gray-600 hover:text-gray-600"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
           <div>
             <h2 className="text-base font-semibold text-gray-900">Your Details</h2>
             {selectedEvent && selectedDate && selectedSlot && (
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-gray-600 mt-0.5">
                 {selectedEvent.title} · {format(selectedDate, 'd MMM')} at {selectedSlot.time}
               </p>
             )}
@@ -462,7 +462,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
           <button
             type="button"
             onClick={resetToEvents}
-            className="text-gray-500 hover:text-gray-600"
+            className="text-gray-600 hover:text-gray-600"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -471,7 +471,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
               {selectedEvent?.title}
             </h2>
             {selectedEvent && (
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-gray-600 mt-0.5">
                 {selectedEvent.duration}
                 {selectedEvent.price ? ` · £${selectedEvent.price}` : ''}
               </p>
@@ -481,7 +481,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
 
         <div className="px-5 py-4 space-y-4">
           {/* Step indicator */}
-          <div className="flex items-center gap-1 text-[10px] text-gray-500">
+          <div className="flex items-center gap-1 text-[10px] text-gray-600">
             <span className="font-medium text-gray-900">1. Date &amp; Time</span>
             <span>›</span>
             <span>2. Your Details</span>
@@ -493,17 +493,17 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
               type="button"
               onClick={() => setWeekOffset((o) => Math.max(0, o - 1))}
               disabled={weekOffset === 0}
-              className="rounded p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30"
+              className="rounded p-1 text-gray-600 hover:text-gray-700 disabled:opacity-30"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-gray-600">
               {format(weekStart, 'd MMM')} – {format(weekDays[6], 'd MMM')}
             </span>
             <button
               type="button"
               onClick={() => setWeekOffset((o) => o + 1)}
-              className="rounded p-1 text-gray-500 hover:text-gray-700"
+              className="rounded p-1 text-gray-600 hover:text-gray-700"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -540,10 +540,10 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
             <div>
               {slotsLoading ? (
                 <div className="flex justify-center py-4">
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
+                  <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
                 </div>
               ) : slots.length === 0 ? (
-                <p className="text-center text-xs text-gray-500 py-3">
+                <p className="text-center text-xs text-gray-600 py-3">
                   No slots available on this date
                 </p>
               ) : (
@@ -598,7 +598,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
                 <span className="text-sm font-medium text-gray-900">{event.title}</span>
                 <LocationBadge location={event.location} />
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-500">
+              <div className="flex items-center gap-2 text-xs text-gray-600">
                 <Clock className="h-3 w-3 shrink-0" />
                 <span>{event.duration}</span>
                 {event.price && (
@@ -609,7 +609,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
                 )}
               </div>
               {event.description && (
-                <p className="text-xs text-gray-500 line-clamp-2">{event.description}</p>
+                <p className="text-xs text-gray-600 line-clamp-2">{event.description}</p>
               )}
             </div>
             <button
