@@ -77,6 +77,10 @@ function dateKey(d: Date) {
   return format(d, 'yyyy-MM-dd')
 }
 
+function isPaidEvent(price: string | null): boolean {
+  return price !== null && Number(price) > 0
+}
+
 function detectTimezone(): string {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -254,7 +258,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
       }
 
       // Paid event → Stripe Checkout
-      if (selectedEvent.price) {
+      if (isPaidEvent(selectedEvent.price)) {
         const res = await fetch(`${basePath}/checkout`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -402,7 +406,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
 
   // ── Patient details form ─────────────────────────────────────────────────────
   if (step === 'details') {
-    const isPaid = !!selectedEvent?.price
+    const isPaid = isPaidEvent(selectedEvent?.price ?? null)
     const formDefaults = patientMe ? {
       firstName: patientMe.firstName ?? '',
       lastName: patientMe.lastName ?? '',
@@ -473,7 +477,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
             {selectedEvent && (
               <p className="text-xs text-gray-600 mt-0.5">
                 {selectedEvent.duration}
-                {selectedEvent.price ? ` · £${selectedEvent.price}` : ''}
+                {isPaidEvent(selectedEvent.price) ? ` · £${selectedEvent.price}` : ''}
               </p>
             )}
           </div>
@@ -601,7 +605,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
               <div className="flex items-center gap-2 text-xs text-gray-600">
                 <Clock className="h-3 w-3 shrink-0" />
                 <span>{event.duration}</span>
-                {event.price && (
+                {isPaidEvent(event.price) && (
                   <>
                     <span className="text-gray-300">·</span>
                     <span className="font-medium text-gray-700">£{event.price}</span>
