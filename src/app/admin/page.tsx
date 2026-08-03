@@ -82,10 +82,10 @@ function fmt(n: number) {
 }
 
 function Delta({ current, previous }: { current: number; previous: number }) {
-  if (previous === 0 && current === 0) return <span className="text-xs text-gray-500">—</span>
+  if (previous === 0 && current === 0) return <span className="text-xs text-gray-600">—</span>
   if (previous === 0) return <span className="text-xs text-emerald-600 flex items-center gap-0.5"><ArrowUp className="h-3 w-3" />New</span>
   const pct = ((current - previous) / previous) * 100
-  if (Math.abs(pct) < 0.5) return <span className="text-xs text-gray-500 flex items-center gap-0.5"><Minus className="h-3 w-3" />Flat</span>
+  if (Math.abs(pct) < 0.5) return <span className="text-xs text-gray-600 flex items-center gap-0.5"><Minus className="h-3 w-3" />Flat</span>
   return pct > 0 ? (
     <span className="text-xs text-emerald-600 flex items-center gap-0.5"><ArrowUp className="h-3 w-3" />{pct.toFixed(0)}%</span>
   ) : (
@@ -120,10 +120,10 @@ function EarningsTile({
       </div>
       <div>
         <p className="text-2xl font-medium text-gray-900">{primary}</p>
-        {secondary && <p className="text-sm text-gray-500 mt-0.5">{secondary}</p>}
-        {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
+        {secondary && <p className="text-sm text-gray-600 mt-0.5">{secondary}</p>}
+        {sub && <p className="text-xs text-gray-600 mt-1">{sub}</p>}
       </div>
-      <p className="text-xs font-medium text-gray-500">{label}</p>
+      <p className="text-xs font-medium text-gray-600">{label}</p>
     </div>
   )
 }
@@ -136,7 +136,7 @@ function PlanBar({ free, ppl, sub }: { free: number; ppl: number; sub: number })
   const subW  = (sub / total) * 100
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-5 space-y-4">
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Plan distribution — {total} claimed</p>
+      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Plan distribution — {total} claimed</p>
       <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
         {freeW > 0 && <div className="bg-gray-300 rounded-l-full" style={{ width: `${freeW}%` }} title={`Free: ${free}`} />}
         {pplW  > 0 && <div className="bg-violet-400"              style={{ width: `${pplW}%`  }} title={`PPL: ${ppl}`} />}
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
                 <div className="text-2xl font-medium text-gray-900">
                   {stats ? stats[key].toLocaleString() : <span className="text-gray-300">-</span>}
                 </div>
-                <div className="mt-0.5 text-sm text-gray-500">{label}</div>
+                <div className="mt-0.5 text-sm text-gray-600">{label}</div>
               </div>
             </Link>
           ))}
@@ -264,8 +264,8 @@ export default function AdminDashboard() {
         {/* ── Earnings ─────────────────────────────────────────── */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Revenue</h2>
-            <p className="text-xs text-gray-500">Across all clinics · all time</p>
+            <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Revenue</h2>
+            <p className="text-xs text-gray-600">Across all clinics · all time</p>
           </div>
 
           {earnings ? (
@@ -450,7 +450,7 @@ export default function AdminDashboard() {
               />
             </>
           ) : (
-            <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+            <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-600">
               Loading revenue data…
             </div>
           )}
@@ -459,8 +459,8 @@ export default function AdminDashboard() {
         {/* ── Patients & Prospects ─────────────────────────────── */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Patients &amp; Prospects</h2>
-            <p className="text-xs text-gray-500">Registered patient accounts · all time</p>
+            <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Patients &amp; Prospects</h2>
+            <p className="text-xs text-gray-600">Registered patient accounts · all time</p>
           </div>
 
           {patientStats ? (
@@ -502,7 +502,7 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Auth method breakdown */}
                 <div className="rounded-lg border border-gray-200 bg-white p-5 space-y-4">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Sign-in methods</p>
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Sign-in methods</p>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50">
@@ -560,7 +560,7 @@ export default function AdminDashboard() {
 
                 {/* Lead breakdown */}
                 <div className="rounded-lg border border-gray-200 bg-white p-5 space-y-4">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Lead breakdown</p>
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Lead breakdown</p>
                   <div className="space-y-2.5">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Total leads</span>
@@ -601,7 +601,7 @@ export default function AdminDashboard() {
               </div>
             </>
           ) : (
-            <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+            <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-600">
               Loading patient data…
             </div>
           )}

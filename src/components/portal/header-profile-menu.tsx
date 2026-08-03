@@ -42,7 +42,7 @@ export function HeaderProfileMenu({ name, onLogout }: HeaderProfileMenuProps) {
 
       {open && (
         <div className="absolute right-0 top-full z-40 mt-2 w-56 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
-          <p className="truncate px-3 py-2 text-xs font-medium text-gray-500">
+          <p className="truncate px-3 py-2 text-xs font-medium text-gray-600">
             {name}
           </p>
           <div className="mx-1 border-t border-gray-100" />

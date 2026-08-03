@@ -115,9 +115,9 @@ export default function PortalLoginPage() {
         <div className="mb-8 text-center">
           <div className="flex align-items-center justify-center mb-6">
             <img
-              src="/directory/images/Consentz Logo.webp"
+              src="/directory/images/logo-sm.jpg"
               alt="Logo"
-              className="w-[120px] md:w-[180px] h-auto cursor-pointer"
+              className="w-[50px] rounded-full md:w-[50px] h-auto cursor-pointer"
             />
           </div>
           <h1 className="text-2xl font-medium text-black">Clinic Portal</h1>

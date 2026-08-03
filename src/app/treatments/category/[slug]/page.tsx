@@ -74,7 +74,7 @@ export default function TreatmentCategoryPage({ params }: Readonly<CategoryPageP
   const treatments = getCategoryTreatments(categoryLabel);
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#fbfbfb]">
       <div className="bg-white backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-0 py-2">
           <Link href="/treatments" prefetch={false}>

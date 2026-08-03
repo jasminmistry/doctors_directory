@@ -66,7 +66,7 @@ function IconInput({ icon, hasError, className, ...props }: IconInputProps) {
           hasError
             ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
             : 'border-gray-200 focus:border-gray-400 focus:ring-gray-100',
-          props.readOnly && 'bg-gray-50 text-gray-500 cursor-default',
+          props.readOnly && 'bg-gray-50 text-gray-600 cursor-default',
           className,
         )}
       />
@@ -221,7 +221,7 @@ export default function AccountProfilePage() {
       {/* Page heading */}
       <div>
         <h1 className="text-xl font-semibold text-gray-900">My Profile</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-600 mt-1">
           Details saved here pre-fill consultation request forms automatically.
         </p>
       </div>

@@ -67,7 +67,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
   if (similarProducts.length === 0) {
     return (
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-[#fbfbfb]">
         <div className="sticky top-0 z-10">
           <div className="container mx-auto max-w-6xl px-4 py-4">
             <Link href="/products/brands" prefetch={false}>
@@ -85,7 +85,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
         <div className="container mx-auto max-w-6xl px-4 py-16 space-y-8">
           <div className="text-center space-y-3">
             <h1 className="text-2xl font-medium text-foreground">Brand not found</h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-600 text-sm">
               We couldn&apos;t find any products for &ldquo;{brand}&rdquo;. Browse our top product brands below.
             </p>
           </div>
@@ -110,7 +110,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#fbfbfb]">
       {/* Navigation */}
       <div className="sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
@@ -212,7 +212,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                             <li key={i}>
                               <Badge
                                 variant="outline"
-                                className="text-[11px] font-normal text-gray-500"
+                                className="text-[11px] font-normal text-gray-600"
                               >
                                 {value.price}
                               </Badge>
@@ -223,7 +223,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                           <li>
                             <Badge
                               variant="outline"
-                              className="text-[11px] font-normal text-gray-500"
+                              className="text-[11px] font-normal text-gray-600"
                             >
                               + {practitioner.all_prices.length - 3} more
                             </Badge>

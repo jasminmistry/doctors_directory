@@ -34,7 +34,7 @@ export default async function CalendarPage() {
           <CalendarDays className="h-7 w-7 text-amber-600" />
         </div>
         <h1 className="text-xl font-semibold text-gray-900">Calendar not available</h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-600">
           The Calendar is available on Pay-Per-Lead (£{PPL_LEAD_PRICE}/lead) and Subscription (£{SUBSCRIPTION_MONTHLY_PRICE}/mo) plans.
           Upgrade your plan to manage appointments and accept online bookings.
         </p>
@@ -55,7 +55,7 @@ export default async function CalendarPage() {
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold text-gray-900">Calendar</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-600">
             Manage your appointments. Click <strong>New Appointment</strong> to manually book a patient.
             {clinic.claimedPlan === 'subscription' && ' Bookings from Consentz Core sync here automatically.'}
             {' '}Times are shown in the clinic&apos;s timezone ({clinicTimezone}).

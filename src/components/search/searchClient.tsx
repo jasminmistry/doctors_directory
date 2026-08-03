@@ -174,7 +174,7 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
           <AdvancedFilterSidebar />
         </div>
       </div>
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-[#fbfbfb]">
         <div className="bg-white backdrop-blur-sm sticky top-0 z-10">
           <div className="container mx-auto max-w-7xl px-2 py-2">
             <Link href="/" prefetch={false}>

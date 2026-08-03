@@ -75,7 +75,7 @@ export function PortalCalendarView({ clinicTimezone }: PortalCalendarViewProps) 
   if (loading) {
     return (
       <div className="flex justify-center py-24">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
       </div>
     )
   }

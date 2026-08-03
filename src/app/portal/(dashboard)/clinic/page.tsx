@@ -66,7 +66,7 @@ function InfoRow({ icon: Icon, label, value }: { icon: React.ElementType; label:
         <Icon className="h-3.5 w-3.5 text-gray-600" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-gray-500">{label}</p>
+        <p className="text-xs font-medium text-gray-600">{label}</p>
         <p className="text-sm text-gray-900 mt-0.5">{value}</p>
       </div>
     </div>
@@ -125,7 +125,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
 
       {isCancelled && subscription.stripeStatus === 'canceled' && (
         <div className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
-          <XCircle className="h-4 w-4 text-gray-500 shrink-0 mt-0.5" />
+          <XCircle className="h-4 w-4 text-gray-600 shrink-0 mt-0.5" />
           <div className="text-sm text-gray-700">
             <p className="font-semibold">Subscription ended</p>
             <p className="mt-0.5 text-xs">
@@ -166,7 +166,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
 
       {/* Features */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Included features</p>
+        <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Included features</p>
         {meta.features.map((f) => (
           <div key={f} className="flex items-start gap-2">
             <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
@@ -177,7 +177,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
 
       {/* Fees */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Platform fees &amp; payouts</p>
+        <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Platform fees &amp; payouts</p>
         <div className="space-y-3 text-sm text-gray-700">
           <p>
             <span className="font-medium text-gray-900">Platform fee: </span>

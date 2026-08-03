@@ -340,7 +340,7 @@ console.log(failedTestMessages)
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Total Tests</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Total Tests</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-medium">{report.numTotalTests}</div>
@@ -349,7 +349,7 @@ console.log(failedTestMessages)
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Passed</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Passed</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
@@ -364,7 +364,7 @@ console.log(failedTestMessages)
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Failed</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Failed</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
@@ -379,11 +379,11 @@ console.log(failedTestMessages)
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Test Suites</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Test Suites</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-medium">{report.numTotalTestSuites}</div>
-                  <div className="text-sm text-gray-500 mt-1">
+                  <div className="text-sm text-gray-600 mt-1">
                     {report.numPassedTestSuites} passed, {report.numFailedTestSuites} failed
                   </div>
                 </CardContent>
@@ -391,7 +391,7 @@ console.log(failedTestMessages)
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Test Run Time</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Test Run Time</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
@@ -400,7 +400,7 @@ console.log(failedTestMessages)
                       {formatDuration(report.testResults.reduce((acc, suite) => acc + (suite.endTime - suite.startTime), 0))}
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500 mt-1">
+                  <div className="text-sm text-gray-600 mt-1">
                     {formatTimestamp(report.startTime)}
                   </div>
                 </CardContent>
@@ -408,7 +408,7 @@ console.log(failedTestMessages)
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Overall Status</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Overall Status</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {report.success ? (
@@ -680,7 +680,7 @@ console.log(failedTestMessages)
                 <CardContent className="py-12 text-center">
                   <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900">All Tests Passed!</h3>
-                  <p className="text-gray-500 mt-2">No failed tests to display.</p>
+                  <p className="text-gray-600 mt-2">No failed tests to display.</p>
                 </CardContent>
               </Card>
             ) : (
@@ -737,7 +737,7 @@ console.log(failedTestMessages)
                         <Badge variant="outline">
                           {suite.assertionResults.length} tests
                         </Badge>
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <div className="flex items-center gap-1 text-sm text-gray-600">
                           <Clock className="w-4 h-4" />
                           {formatDuration(suiteDuration)}
                         </div>

@@ -118,23 +118,23 @@ export default function FeaturedProfilesPage() {
   return (
     <AdminLayout title="Featured Profiles">
       <div className="max-w-2xl space-y-6">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-600">
           Choose up to 8 clinics to appear as featured tiles on the homepage. Drag or use the arrows to reorder.
         </p>
 
         {/* Search to add */}
         <div className="relative">
           <div className="flex items-center gap-2 rounded-lg border border-[#e0e0e0]  bg-white px-3 py-2 focus-within:border-gray-500 focus-within:ring-1 focus-within:ring-gray-300">
-            <Search className="h-4 w-4 shrink-0 text-gray-500" />
+            <Search className="h-4 w-4 shrink-0 text-gray-600" />
             <input
               type="text"
               placeholder="Search clinics to add…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-500"
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-600"
             />
             {query && (
-              <button type="button" onClick={() => setQuery('')} className="text-gray-500 hover:text-gray-600">
+              <button type="button" onClick={() => setQuery('')} className="text-gray-600 hover:text-gray-600">
                 <X className="h-4 w-4" />
               </button>
             )}
@@ -157,7 +157,7 @@ export default function FeaturedProfilesPage() {
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-gray-900 truncate">{clinic.name || clinic.slug}</p>
-                      {clinic.category && <p className="text-xs text-gray-500 truncate">{clinic.category}</p>}
+                      {clinic.category && <p className="text-xs text-gray-600 truncate">{clinic.category}</p>}
                     </div>
                     {clinic.rating && (
                       <span className="flex items-center gap-1 text-xs text-amber-600 shrink-0">
@@ -174,9 +174,9 @@ export default function FeaturedProfilesPage() {
 
         {/* Current featured list */}
         {loading ? (
-          <p className="text-sm text-gray-500">Loading…</p>
+          <p className="text-sm text-gray-600">Loading…</p>
         ) : featured.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-[#e0e0e0]  py-10 text-center text-sm text-gray-500">
+          <div className="rounded-lg border border-dashed border-[#e0e0e0]  py-10 text-center text-sm text-gray-600">
             No featured clinics yet. Search above to add one.
           </div>
         ) : (
@@ -186,7 +186,7 @@ export default function FeaturedProfilesPage() {
                 key={entry.clinicSlug}
                 className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-3"
               >
-                <span className="w-5 shrink-0 text-center text-xs font-medium text-gray-500">{i + 1}</span>
+                <span className="w-5 shrink-0 text-center text-xs font-medium text-gray-600">{i + 1}</span>
                 <FallbackImage
                   src={entry.image ?? ''}
                   alt={entry.name}
@@ -195,8 +195,8 @@ export default function FeaturedProfilesPage() {
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-gray-900 truncate">{entry.name}</p>
-                  {entry.category && <p className="text-xs text-gray-500 truncate">{entry.category}</p>}
-                  {entry.gmapsAddress && <p className="text-xs text-gray-500 truncate">{entry.gmapsAddress}</p>}
+                  {entry.category && <p className="text-xs text-gray-600 truncate">{entry.category}</p>}
+                  {entry.gmapsAddress && <p className="text-xs text-gray-600 truncate">{entry.gmapsAddress}</p>}
                 </div>
                 {entry.rating && (
                   <span className="flex items-center gap-1 text-xs text-amber-600 shrink-0">
@@ -209,7 +209,7 @@ export default function FeaturedProfilesPage() {
                     type="button"
                     onClick={() => move(i, -1)}
                     disabled={i === 0}
-                    className="rounded p-0.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="rounded p-0.5 text-gray-600 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
                     aria-label="Move up"
                   >
                     <ChevronUp className="h-4 w-4" />
@@ -218,7 +218,7 @@ export default function FeaturedProfilesPage() {
                     type="button"
                     onClick={() => move(i, 1)}
                     disabled={i === featured.length - 1}
-                    className="rounded p-0.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="rounded p-0.5 text-gray-600 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
                     aria-label="Move down"
                   >
                     <ChevronDown className="h-4 w-4" />
@@ -227,7 +227,7 @@ export default function FeaturedProfilesPage() {
                 <button
                   type="button"
                   onClick={() => removeClinic(entry.clinicSlug)}
-                  className="shrink-0 rounded p-1 text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                  className="shrink-0 rounded p-1 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
                   aria-label={`Remove ${entry.name}`}
                 >
                   <X className="h-4 w-4" />
@@ -238,7 +238,7 @@ export default function FeaturedProfilesPage() {
         )}
 
         {(saving || saved) && (
-          <p className={`text-sm font-medium ${saved ? 'text-emerald-600' : 'text-gray-500'}`}>
+          <p className={`text-sm font-medium ${saved ? 'text-emerald-600' : 'text-gray-600'}`}>
             {saving ? 'Saving…' : 'Saved'}
           </p>
         )}

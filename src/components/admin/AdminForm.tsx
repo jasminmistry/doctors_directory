@@ -245,7 +245,7 @@ export default function AdminForm({ entityType, apiBasePath, redirectPath }: Adm
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         {slugValue && (
           <div className="mb-5 pb-5 border-b border-gray-100">
-            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</Label>
+            <Label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Slug</Label>
             <p className="mt-1 text-sm font-mono text-gray-600 bg-gray-50 rounded px-2 py-1.5 border border-gray-200">{slugValue}</p>
           </div>
         )}
@@ -268,7 +268,7 @@ export default function AdminForm({ entityType, apiBasePath, redirectPath }: Adm
             </div>
           ))}
           {visibleEntries.length === 0 && !isNew && (
-            <p className="md:col-span-2 text-sm text-gray-500">No editable fields found.</p>
+            <p className="md:col-span-2 text-sm text-gray-600">No editable fields found.</p>
           )}
         </div>
       </div>

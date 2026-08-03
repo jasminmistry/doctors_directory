@@ -74,7 +74,7 @@ export default function AdminClaimInvitesPage() {
 
   return (
     <AdminLayout title="Claim Invites">
-      <p className="mb-4 text-sm text-gray-500">
+      <p className="mb-4 text-sm text-gray-600">
         Unclaimed clinics eligible for the &ldquo;claim your free listing&rdquo; outreach email. Clinics that have
         unsubscribed or already been claimed are excluded automatically.
       </p>
@@ -97,16 +97,16 @@ export default function AdminClaimInvitesPage() {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-gray-500" /></div>
+        <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-gray-600" /></div>
       ) : clinics.length === 0 ? (
-        <p className="text-sm text-gray-500 py-8 text-center">No eligible unclaimed clinics.</p>
+        <p className="text-sm text-gray-600 py-8 text-center">No eligible unclaimed clinics.</p>
       ) : (
         <div className="space-y-3">
           <div className="flex items-center gap-3 px-1">
-            <button type="button" onClick={toggleAll} className="text-gray-500 hover:text-gray-700">
+            <button type="button" onClick={toggleAll} className="text-gray-600 hover:text-gray-700">
               {allSelected ? <CheckSquare className="h-4 w-4 text-gray-700" /> : <Square className="h-4 w-4" />}
             </button>
-            <span className="text-xs text-gray-500">{allSelected ? 'Deselect all' : 'Select all'}</span>
+            <span className="text-xs text-gray-600">{allSelected ? 'Deselect all' : 'Select all'}</span>
             <span className="text-xs text-gray-400 ml-auto">{clinics.length} eligible</span>
           </div>
 
@@ -120,15 +120,15 @@ export default function AdminClaimInvitesPage() {
                 selected.has(c.id) ? 'border-gray-400 bg-gray-50' : 'border-gray-200 hover:bg-gray-50',
               )}
             >
-              <span className="mt-0.5 shrink-0 text-gray-500">
+              <span className="mt-0.5 shrink-0 text-gray-600">
                 {selected.has(c.id) ? <CheckSquare className="h-4 w-4 text-gray-700" /> : <Square className="h-4 w-4" />}
               </span>
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2 flex-wrap">
                   <span className="font-medium text-sm text-gray-900">{c.name}</span>
-                  {c.cityName && <span className="text-xs text-gray-500">{c.cityName}</span>}
+                  {c.cityName && <span className="text-xs text-gray-600">{c.cityName}</span>}
                 </span>
-                <span className="block text-xs text-gray-500 mt-0.5">{c.email}</span>
+                <span className="block text-xs text-gray-600 mt-0.5">{c.email}</span>
                 {c.campaignEmailedAt && (
                   <span className="block text-[11px] text-amber-600 mt-1">
                     Last emailed {formatDistanceToNow(new Date(c.campaignEmailedAt), { addSuffix: true })}

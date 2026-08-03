@@ -55,9 +55,9 @@ export function MobileSearchView({
           className="w-full flex items-center bg-white border border-[#e0e0e0]  rounded-lg px-4 py-3 cursor-pointer hover:shadow-md transition-shadow"
           onClick={() => setIsExpanded(true)}
         >
-          <Search className="w-5 h-5 text-gray-500 mr-3" />
-          <span className="text-gray-500 flex-1">{getDynamicPlaceholderText()}</span>
-          <ChevronDown className="w-5 h-5 text-gray-500" />
+          <Search className="w-5 h-5 text-gray-600 mr-3" />
+          <span className="text-gray-600 flex-1">{getDynamicPlaceholderText()}</span>
+          <ChevronDown className="w-5 h-5 text-gray-600" />
         </button>
       ) : (
         <div className="rounded-lg p-4 z-50">
@@ -108,7 +108,7 @@ export function MobileSearchView({
                 <button
                   type="button"
                   aria-label="Clear search query"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 transition-colors hover:text-gray-700"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 transition-colors hover:text-gray-700"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={clearQuery}
                 >
@@ -132,7 +132,7 @@ export function MobileSearchView({
 
             <div className="relative">
               <div className="relative">
-                <Locate className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <Locate className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" />
                 <Input
                   placeholder="Location"
                   value={localFilters.location}
@@ -148,7 +148,7 @@ export function MobileSearchView({
                   <button
                     type="button"
                     aria-label="Clear location"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 transition-colors hover:text-gray-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 transition-colors hover:text-gray-700"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={clearLocation}
                   >
@@ -185,7 +185,7 @@ export function MobileSearchView({
            
             <button
               onClick={() => setIsExpanded(false)}
-              className="text-sm text-gray-500 hover:text-gray-700 mx-auto block"
+              className="text-sm text-gray-600 hover:text-gray-700 mx-auto block"
             >
               Collapse
             </button>

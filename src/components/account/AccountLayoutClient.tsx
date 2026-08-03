@@ -68,7 +68,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
   if (isLoginPage) return <>{children}</>;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#fbfbfb]">
       {/* Mobile topbar */}
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
         <span className="text-sm font-semibold text-black truncate">
@@ -108,7 +108,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
         >
           {/* Brand */}
           <div className="shrink-0 border-b border-gray-200 px-4 py-4">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-500">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">
               My Account
             </p>
             <p className="mt-1 text-sm font-medium text-gray-900 truncate">

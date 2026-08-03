@@ -42,7 +42,7 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
               className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 transition-colors"
             >
               {label}
-              <ExternalLink className="h-3 w-3 text-gray-500" />
+              <ExternalLink className="h-3 w-3 text-gray-600" />
             </a>
           ) : (
             <span
@@ -54,7 +54,7 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
           )
         )}
       </div>
-      <p className="text-xs text-gray-500 leading-relaxed">
+      <p className="text-xs text-gray-600 leading-relaxed">
         Self-reported by the clinic. Confirm directly with the relevant regulatory body.
       </p>
     </div>

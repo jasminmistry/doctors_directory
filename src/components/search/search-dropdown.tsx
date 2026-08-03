@@ -192,7 +192,7 @@ export function SearchDropdown({
                     </button>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500 p-2">No results found.</p>
+                  <p className="text-sm text-gray-600 p-2">No results found.</p>
                 )}
               </div>
               <div className="flex flex-col justify-between h-full sticky top-0">
@@ -205,7 +205,7 @@ export function SearchDropdown({
                       type="button"
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={(e) => handleLocationLetterJump(letter, e)}
-                      className="w-4 flex-1 rounded text-[10px] font-semibold leading-none transition-colors flex items-center justify-center border border-gray-200 text-gray-500 hover:border-gray-400 hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-25 disabled:hover:border-gray-200 disabled:hover:bg-transparent disabled:hover:text-gray-500"
+                      className="w-4 flex-1 rounded text-[10px] font-semibold leading-none transition-colors flex items-center justify-center border border-gray-200 text-gray-600 hover:border-gray-400 hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-25 disabled:hover:border-gray-200 disabled:hover:bg-transparent disabled:hover:text-gray-600"
                       aria-label={`Jump to locations starting with ${letter}`}
                       disabled={!isAvailable}
                       title={`${letter}${!isAvailable ? ' (no results)' : ''}`}

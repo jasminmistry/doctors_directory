@@ -32,7 +32,7 @@ export default async function ProspectsPage() {
     <div className="w-full mx-auto">
       <div className="mb-6">
         <h1 className="text-xl font-semibold text-gray-900">Prospects</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-600">
           Consultation requests from patients who found your clinic on Consentz Directory.
         </p>
       </div>

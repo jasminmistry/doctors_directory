@@ -71,7 +71,7 @@ const getEnhancedTreatment = (treatment: any) => {
 //               {Array.isArray(product.all_prices) &&
 //                 product.all_prices.map((value: any, index: number) => (
 //                   <li key={index}>
-//                     <Badge variant="outline" className="text-[11px] font-normal text-gray-500">
+//                     <Badge variant="outline" className="text-[11px] font-normal text-gray-600">
 //                       {value.price}
 //                     </Badge>
 //                   </li>
@@ -273,7 +273,7 @@ const getEnhancedTreatment = (treatment: any) => {
 //                 </div>
 //                 <div className="flex items-start md:items-center flex-col pl-4 md:pl-0 w-[calc(100%-80px)] md:w-full">
 //                   {practitioner.practitioner_title && (
-//                     <p className="text-xs text-gray-500 mb-1">
+//                     <p className="text-xs text-gray-600 mb-1">
 //                       {practitioner.practitioner_title
 //                         .split("/")[0]
 //                         .split("(")[0]
