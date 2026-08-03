@@ -41,7 +41,7 @@ function StatusBadge({ status }: { status?: 'active' | 'closed' }) {
     <span
       className={cn(
         'inline-flex items-center gap-1 text-[10px] font-medium',
-        isActive ? 'text-green-600' : 'text-gray-500',
+        isActive ? 'text-green-600' : 'text-gray-600',
       )}
     >
       <span className={cn('h-1.5 w-1.5 rounded-full', isActive ? 'bg-green-500' : 'bg-gray-300')} />
@@ -214,14 +214,14 @@ export function ChatInbox() {
         <div className="flex-1 overflow-y-auto">
           {loading && (
             <div className="flex justify-center pt-8">
-              <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+              <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
             </div>
           )}
 
           {!loading && sessions.length === 0 && (
             <div className="flex flex-col items-center gap-2 pt-10 text-center px-4">
               <MessageSquare className="h-8 w-8 text-gray-300" />
-              <p className="text-sm text-gray-500">No conversations yet</p>
+              <p className="text-sm text-gray-600">No conversations yet</p>
             </div>
           )}
 
@@ -242,11 +242,11 @@ export function ChatInbox() {
                   <span className={cn('text-sm truncate', unread ? 'font-semibold text-gray-900' : 'text-gray-700')}>
                     {s.patientName ?? 'Patient'}
                   </span>
-                  <span className="shrink-0 text-[10px] text-gray-500">
+                  <span className="shrink-0 text-[10px] text-gray-600">
                     {lastMsg ? formatTime(lastMsg.createdAt) : ''}
                   </span>
                 </div>
-                <p className={cn('text-xs truncate mt-0.5', unread ? 'text-gray-800' : 'text-gray-500')}>
+                <p className={cn('text-xs truncate mt-0.5', unread ? 'text-gray-800' : 'text-gray-600')}>
                   {lastMsg?.content ?? 'No messages yet'}
                 </p>
                 <div className="mt-1 flex items-center gap-2">
@@ -266,7 +266,7 @@ export function ChatInbox() {
         {!activeId && (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center px-8">
             <MessageSquare className="h-10 w-10 text-gray-200" />
-            <p className="text-sm text-gray-500">Select a conversation to reply</p>
+            <p className="text-sm text-gray-600">Select a conversation to reply</p>
           </div>
         )}
 
@@ -277,7 +277,7 @@ export function ChatInbox() {
               <button
                 type="button"
                 onClick={() => setActiveId(null)}
-                className="md:hidden -ml-1 shrink-0 rounded-lg p-1 text-gray-500 hover:text-gray-700"
+                className="md:hidden -ml-1 shrink-0 rounded-lg p-1 text-gray-600 hover:text-gray-700"
                 aria-label="Back to conversations"
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -287,7 +287,7 @@ export function ChatInbox() {
                 <div className="flex items-center gap-2 mt-0.5">
                   <StatusBadge status={active?.status} />
                   {(active?.patientEmail || active?.patientPhone) && (
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs text-gray-600 truncate">
                       {active?.patientEmail ?? active?.patientPhone}
                     </p>
                   )}
@@ -304,14 +304,14 @@ export function ChatInbox() {
               )}
             >
               {messages.length === 0 && (
-                <p className="text-sm text-gray-500 text-center">No messages yet</p>
+                <p className="text-sm text-gray-600 text-center">No messages yet</p>
               )}
               {messages.map((msg) => (
                 <div
                   key={msg.id}
                   className={cn('flex w-full flex-col gap-0.5', msg.sender === 'clinic' ? 'items-end' : 'items-start')}
                 >
-                  <span className="text-[10px] text-gray-500 px-1">
+                  <span className="text-[10px] text-gray-600 px-1">
                     {msg.sender === 'clinic' ? 'You' : (active?.patientName ?? 'Patient')}
                   </span>
                   <div
@@ -323,7 +323,7 @@ export function ChatInbox() {
                     )}
                   >
                     {msg.content}
-                    <p className="text-[10px] mt-1 text-gray-500">
+                    <p className="text-[10px] mt-1 text-gray-600">
                       {format(new Date(msg.createdAt), 'HH:mm')}
                     </p>
                   </div>
@@ -378,7 +378,7 @@ export function ChatInbox() {
               </div>
             )}
             {active?.status === 'closed' && (
-              <p className="shrink-0 px-4 py-3 border-t text-xs text-gray-500 text-center">
+              <p className="shrink-0 px-4 py-3 border-t text-xs text-gray-600 text-center">
                 Conversation closed
               </p>
             )}

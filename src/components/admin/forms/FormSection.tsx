@@ -14,7 +14,7 @@ interface FormSectionProps {
 
 export function FormSection({ title, description, icon: Icon, children, className }: FormSectionProps) {
   return (
-    <div className={cn('rounded-2xl border border-gray-200 overflow-hidden', className)}>
+    <div className={cn('rounded-2xl bg-white border border-gray-200 overflow-hidden', className)}>
       <div className="px-6 py-4 border-b border-[#e4dccf] flex items-center gap-3">
         {Icon && (
           <div className=" h-10 w-10 flex items-center justify-center rounded-full border border-[#e0e0e0] bg-white">
@@ -23,7 +23,7 @@ export function FormSection({ title, description, icon: Icon, children, classNam
         )}
         <div>
           <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
-          {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
+          {description && <p className="text-xs text-gray-600 mt-0.5">{description}</p>}
         </div>
       </div>
       <div className="p-6">{children}</div>

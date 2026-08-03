@@ -109,14 +109,14 @@ export function CategoryProductsGrid({ products, category }: Readonly<CategoryPr
                     <ul className="flex flex-wrap md:items-center md:justify-center gap-1 text-center" aria-label="Product prices">
                       {practitioner?.all_prices?.slice(0, 3).map((value: any, i: number) => (
                         <li key={i}>
-                          <Badge variant="outline" className="text-[11px] font-normal text-gray-500">
+                          <Badge variant="outline" className="text-[11px] font-normal text-gray-600">
                             {value.price}
                           </Badge>
                         </li>
                       ))}
                       {(practitioner?.all_prices?.length ?? 0) > 3 && (
                         <li>
-                          <Badge variant="outline" className="text-[11px] font-normal text-gray-500">
+                          <Badge variant="outline" className="text-[11px] font-normal text-gray-600">
                             + {practitioner.all_prices.length - 3} more
                           </Badge>
                         </li>

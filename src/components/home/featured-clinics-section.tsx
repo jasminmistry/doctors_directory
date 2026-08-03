@@ -116,7 +116,7 @@ export default async function FeaturedClinicsSection() {
                   </div>
 
                   {clinic.gmapsAddress && (
-                    <div className="flex items-start gap-2 mt-4 text-gray-500 text-sm w-full">
+                    <div className="flex items-start gap-2 mt-4 text-gray-600 text-sm w-full">
                       <MapPin className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
                       <span className="min-w-0 text-left line-clamp-2">
                         {clinic.gmapsAddress}

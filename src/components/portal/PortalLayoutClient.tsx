@@ -104,7 +104,7 @@ export function PortalLayoutClient({
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#fbfbfb]">
       {/* Mobile topbar */}
       <div className="sticky top-0 z-30 flex items-center justify-between bg-[var(--primary-bg-color)] px-4 py-3 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:hidden">
         <span className="text-sm font-semibold text-gray-900 truncate">
@@ -114,14 +114,20 @@ export function PortalLayoutClient({
           {entityType === "clinic" && (
             <>
               <Link href="/portal/clinic/chat" className="relative inline-flex">
-                <MessageSquareText className="h-6 w-6 text-black" strokeWidth={1.5} />
+                <MessageSquareText
+                  className="h-6 w-6 text-black"
+                  strokeWidth={1.5}
+                />
                 <ChatBadge mobile />
               </Link>
               <Link
                 href="/portal/clinic/prospects"
                 className="relative inline-flex"
               >
-                <Presentation className="h-6 w-6 text-black" strokeWidth={1.5} />
+                <Presentation
+                  className="h-6 w-6 text-black"
+                  strokeWidth={1.5}
+                />
                 <LeadBadge mobile />
               </Link>
             </>
@@ -155,14 +161,14 @@ export function PortalLayoutClient({
         {/* Sidebar */}
         <aside
           className={cn(
-            "fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-hidden bg-white border-r border-gray-200 transition-transform duration-200 rounded-none lg:sticky lg:top-0 lg:w-56 lg:translate-x-0",
+            "fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-white border-r border-gray-200 transition-transform duration-200 rounded-none lg:static lg:top-0 lg:w-[56px] lg:translate-x-0",
             isMobileNavOpen ? "translate-x-0" : "-translate-x-full",
           )}
         >
-          {/* Brand */}
-          <div className="shrink-0 border-b border-gray-200 px-4 py-4">
+          {/* Brand NOT is use */}
+          {/* <div className="shrink-0 border-b border-gray-200 px-4 py-4">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-500">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">
                 Consentz Portal
               </p>
 
@@ -175,7 +181,7 @@ export function PortalLayoutClient({
                     plan === "pay_per_lead" &&
                       "border-violet-300 bg-violet-50 text-violet-700",
                     plan === "free" &&
-                      "border-gray-200 bg-gray-50 text-gray-500",
+                      "border-gray-200 bg-gray-50 text-gray-600",
                   )}
                 >
                   {plan === "subscription"
@@ -190,252 +196,351 @@ export function PortalLayoutClient({
             <p className="mt-1 text-sm font-medium text-gray-900 truncate">
               {entityName || "My Portal"}
             </p>
-          </div>
+          </div> */}
 
           {/* Nav */}
-          <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
-            {baseNav.map(({ href, label, icon: Icon }) => {
-              const active = pathname === href;
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setIsMobileNavOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    active
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                  )}
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  {label}
-                </Link>
-              );
-            })}
-
-            {entityType === "clinic" && (
-              <>
-                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-500">
-                  Marketing
-                </p>
-
-                <Link
-                  href="/portal/clinic/prospects"
-                  onClick={() => setIsMobileNavOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    pathname.startsWith("/portal/clinic/prospects")
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                  )}
-                >
-                  <Inbox className="h-4 w-4 shrink-0" />
-                  <span className="flex-1">Prospects</span>
-                  <LeadBadge />
-                </Link>
-
-                {plan === "free" ? (
-                  <Link
-                    href="/portal/clinic/calendar"
-                    onClick={() => setIsMobileNavOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-400 cursor-not-allowed"
-                    title="Upgrade to access Calendar"
+          <nav className="min-h-0 flex-1 px-0 py-3">
+            <div className="font-medium text-xl">
+              <img
+                src="/directory/images/logo-sm.jpg"
+                alt="Logo"
+                className="rounded-full m-auto mb-[30px] w-[40px] md:w-[40px] h-auto cursor-pointer"
+              />
+            </div>
+            <ul className="space-y-0.5">
+              {baseNav.map(({ href, label, icon: Icon }) => {
+                const active = pathname === href;
+                return (
+                  <li
+                    key={href}
+                    className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2"
                   >
-                    <CalendarDays className="h-4 w-4 shrink-0" />
-                    <span className="flex-1">Calendar</span>
-                    <Lock className="h-3 w-3 shrink-0" />
-                  </Link>
-                ) : (
-                  <Link
-                    href="/portal/clinic/calendar"
-                    onClick={() => setIsMobileNavOpen(false)}
-                    className={cn(
-                      "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                      pathname.startsWith("/portal/clinic/calendar")
-                        ? "bg-gray-100 text-gray-900"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                    )}
-                  >
-                    <CalendarDays className="h-4 w-4 shrink-0" />
-                    Calendar
-                  </Link>
-                )}
+                    <Link
+                      href={href}
+                      onClick={() => setIsMobileNavOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                        active
+                          ? "bg-[#f3f3f3] text-gray-900"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                      )}
+                    >
+                      <Icon className="w-6 h-6 shrink-0" />
+                      <span className="lg:hidden">{label}</span>
+                    </Link>
+                    <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                      {label}
+                    </span>
+                  </li>
+                );
+              })}
 
-                <Link
-                  href="/portal/clinic/chat"
-                  onClick={() => setIsMobileNavOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    pathname.startsWith("/portal/clinic/chat")
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+              {entityType === "clinic" && (
+                <>
+                  <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                    <Link
+                      href="/portal/clinic/prospects"
+                      onClick={() => setIsMobileNavOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                        pathname.startsWith("/portal/clinic/prospects")
+                          ? "bg-[#f3f3f3] text-gray-900"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                      )}
+                    >
+                      <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
+                        <Inbox className="h-6 w-6" />
+                        <span className="absolute -top-1 -right-1">
+                          <LeadBadge />
+                        </span>
+                      </span>
+                      <span className="lg:hidden">Prospects</span>
+                    </Link>
+                    <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                      Prospects
+                    </span>
+                  </li>
+
+                  {plan === "free" ? (
+                    <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                      <Link
+                        href="/portal/clinic/calendar"
+                        onClick={() => setIsMobileNavOpen(false)}
+                        className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-400 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
+                        title="Upgrade to access Calendar"
+                      >
+                        <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
+                          <CalendarDays className="h-6 w-6" />
+                          <Lock className="absolute -bottom-1 -right-1 h-3 w-3 shrink-0" />
+                        </span>
+                        <span className="lg:hidden">Calendar</span>
+                      </Link>
+                      <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                        Calendar
+                      </span>
+                    </li>
+                  ) : (
+                    <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                      <Link
+                        href="/portal/clinic/calendar"
+                        onClick={() => setIsMobileNavOpen(false)}
+                        className={cn(
+                          "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                          pathname.startsWith("/portal/clinic/calendar")
+                            ? "bg-[#f3f3f3] text-gray-900"
+                            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                        )}
+                      >
+                        <CalendarDays className="w-6 h-6 shrink-0" />
+                        <span className="lg:hidden">Calendar</span>
+                      </Link>
+                      <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                        Calendar
+                      </span>
+                    </li>
                   )}
-                >
-                  <MessageSquare className="h-4 w-4 shrink-0" />
-                  <span className="flex-1">Chat</span>
-                  <ChatBadge />
-                </Link>
 
-                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-500">
-                  Consultations
-                </p>
+                  <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                    <Link
+                      href="/portal/clinic/chat"
+                      onClick={() => setIsMobileNavOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                        pathname.startsWith("/portal/clinic/chat")
+                          ? "bg-[#f3f3f3] text-gray-900"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                      )}
+                    >
+                      <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
+                        <MessageSquare className="h-6 w-6" />
+                        <span className="absolute -top-1 -right-1">
+                          <ChatBadge />
+                        </span>
+                      </span>
+                      <span className="lg:hidden">Chat</span>
+                    </Link>
+                    <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                      Chat
+                    </span>
+                  </li>
 
+                  <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                    <Link
+                      href="/portal/practitioner/events"
+                      onClick={() => setIsMobileNavOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                        pathname.startsWith("/portal/practitioner/events")
+                          ? "bg-[#f3f3f3] text-gray-900"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                      )}
+                    >
+                      <CalendarCheck className="w-6 h-6 shrink-0" />
+                      <span className="lg:hidden">My Events</span>
+                    </Link>
+                    <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                      My Events
+                    </span>
+                  </li>
+
+                  <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                    <Link
+                      href="/portal/practitioner/earnings"
+                      onClick={() => setIsMobileNavOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                        pathname.startsWith("/portal/practitioner/earnings")
+                          ? "bg-[#f3f3f3] text-gray-900"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                      )}
+                    >
+                      <PoundSterling className="w-6 h-6 shrink-0" />
+                      <span className="lg:hidden">Earnings</span>
+                    </Link>
+                    <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                      Earnings
+                    </span>
+                  </li>
+
+                  <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                    <Link
+                      href="/portal/clinic/schedule"
+                      onClick={() => setIsMobileNavOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                        pathname.startsWith("/portal/clinic/schedule")
+                          ? "bg-[#f3f3f3] text-gray-900"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                      )}
+                    >
+                      <Clock className="w-6 h-6 shrink-0" />
+                      <span className="lg:hidden">Schedule</span>
+                    </Link>
+                    <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                      Schedule
+                    </span>
+                  </li>
+                </>
+              )}
+
+              {entityType === "practitioner" && (
+                <>
+                  <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                    <Link
+                      href="/portal/practitioner/events"
+                      onClick={() => setIsMobileNavOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                        pathname.startsWith("/portal/practitioner/events")
+                          ? "bg-[#f3f3f3] text-gray-900"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                      )}
+                    >
+                      <CalendarCheck className="w-6 h-6 shrink-0" />
+                      <span className="lg:hidden">My Events</span>
+                    </Link>
+                    <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                      My Events
+                    </span>
+                  </li>
+
+                  <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                    <Link
+                      href="/portal/practitioner/earnings"
+                      onClick={() => setIsMobileNavOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                        pathname.startsWith("/portal/practitioner/earnings")
+                          ? "bg-[#f3f3f3] text-gray-900"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                      )}
+                    >
+                      <PoundSterling className="w-6 h-6 shrink-0" />
+                      <span className="lg:hidden">Earnings</span>
+                    </Link>
+                    <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                      Earnings
+                    </span>
+                  </li>
+
+                  <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                    <Link
+                      href="/portal/practitioner/schedule"
+                      onClick={() => setIsMobileNavOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                        pathname.startsWith("/portal/practitioner/schedule")
+                          ? "bg-[#f3f3f3] text-gray-900"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                      )}
+                    >
+                      <Clock className="w-6 h-6 shrink-0" />
+                      <span className="lg:hidden">Schedule</span>
+                    </Link>
+                    <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                      Schedule
+                    </span>
+                  </li>
+                </>
+              )}
+
+              <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
                 <Link
-                  href="/portal/practitioner/events"
+                  href="/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => setIsMobileNavOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    pathname.startsWith("/portal/practitioner/events")
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                  )}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
                 >
-                  <CalendarCheck className="h-4 w-4 shrink-0" />
-                  My Events
+                  <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
+                    <Globe className="h-6 w-6" />
+                    <ExternalLink className="absolute -bottom-1 -right-1 h-3 w-3 opacity-80" />
+                  </span>
+                  <span className="lg:hidden">View Directory</span>
                 </Link>
+                <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                  View Directory
+                </span>
+              </li>
 
-                <Link
-                  href="/portal/practitioner/earnings"
-                  onClick={() => setIsMobileNavOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    pathname.startsWith("/portal/practitioner/earnings")
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                  )}
+              <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                <button
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
                 >
-                  <PoundSterling className="h-4 w-4 shrink-0" />
-                  Earnings
-                </Link>
-
-                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-500">
-                  Settings
-                </p>
-
-                <Link
-                  href="/portal/clinic/schedule"
-                  onClick={() => setIsMobileNavOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    pathname.startsWith("/portal/clinic/schedule")
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                  )}
-                >
-                  <Clock className="h-4 w-4 shrink-0" />
-                  Schedule
-                </Link>
-              </>
-            )}
-
-            {entityType === "practitioner" && (
-              <>
-                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-500">
-                  Consultations
-                </p>
-
-                <Link
-                  href="/portal/practitioner/events"
-                  onClick={() => setIsMobileNavOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    pathname.startsWith("/portal/practitioner/events")
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                  )}
-                >
-                  <CalendarCheck className="h-4 w-4 shrink-0" />
-                  My Events
-                </Link>
-
-                <Link
-                  href="/portal/practitioner/earnings"
-                  onClick={() => setIsMobileNavOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    pathname.startsWith("/portal/practitioner/earnings")
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                  )}
-                >
-                  <PoundSterling className="h-4 w-4 shrink-0" />
-                  Earnings
-                </Link>
-
-                <p className="mt-3 mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-500">
-                  Settings
-                </p>
-
-                <Link
-                  href="/portal/practitioner/schedule"
-                  onClick={() => setIsMobileNavOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    pathname.startsWith("/portal/practitioner/schedule")
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                  )}
-                >
-                  <Clock className="h-4 w-4 shrink-0" />
-                  Schedule
-                </Link>
-              </>
-            )}
-
-            <div className="my-2 mx-1 border-t border-gray-200" />
-
-            <Link
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setIsMobileNavOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-            >
-              <Globe className="h-4 w-4 shrink-0" />
-              <span className="flex-1">View Directory</span>
-              <ExternalLink className="h-3 w-3 opacity-80" />
-            </Link>
-
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors"
-            >
-              <LogOut className="h-4 w-4 shrink-0" />
-              Sign out
-            </button>
+                  <LogOut className="h-6 w-6 shrink-0" />
+                  <span className="lg:hidden">Sign out</span>
+                </button>
+                <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                  Sign out
+                </span>
+              </li>
+            </ul>
           </nav>
         </aside>
 
         {/* Main */}
         <div className="min-w-0 flex-1 flex flex-col">
-          <div className="sticky top-0 z-10 hidden items-center justify-end gap-1 bg-[var(--primary-bg-color)] px-6 py-2.5 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:flex">
-            {entityType === "clinic" && (
-              <>
-                <HeaderIconLink
-                  href="/portal/clinic/calendar"
-                  label="Calendar"
-                  icon={CalendarClock}
-                  locked={plan === "free"}
-                />
-                <HeaderIconLink
-                  href="/portal/clinic/prospects"
-                  label="Prospects"
-                  icon={Presentation}
-                  badge={<LeadBadge mobile />}
-                />
-                <HeaderIconLink
-                  href="/portal/clinic/chat"
-                  label="Messages"
-                  icon={MessageSquareText}
-                  badge={<ChatBadge mobile />}
-                />
-              </>
-            )}
-            <HeaderProfileMenu
-              name={entityName || "My Portal"}
-              onLogout={handleLogout}
-            />
+          <div className="hidden items-center justify-between gap-1 bg-[var(--primary-bg-color)] px-6 py-2.5 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:flex">
+            <div className="shrink-0">
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">
+                  Consentz Portal
+                </p>
+
+                {plan && (
+                  <span
+                    className={cn(
+                      "rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border",
+                      plan === "subscription" &&
+                        "border-cyan-300 bg-cyan-50 text-cyan-700",
+                      plan === "pay_per_lead" &&
+                        "border-violet-300 bg-violet-50 text-violet-700",
+                      plan === "free" &&
+                        "border-gray-200 bg-gray-50 text-gray-600",
+                    )}
+                  >
+                    {plan === "subscription"
+                      ? "Sub"
+                      : plan === "pay_per_lead"
+                        ? "PPL"
+                        : "Free"}
+                  </span>
+                )}
+              </div>
+
+              <p className="mt-1 text-sm font-medium text-gray-900 truncate">
+                {entityName || "My Portal"}
+              </p>
+            </div>
+            <div className="flex">
+              {entityType === "clinic" && (
+                <>
+                  <HeaderIconLink
+                    href="/portal/clinic/calendar"
+                    label="Calendar"
+                    icon={CalendarClock}
+                    locked={plan === "free"}
+                  />
+                  <HeaderIconLink
+                    href="/portal/clinic/prospects"
+                    label="Prospects"
+                    icon={Presentation}
+                    badge={<LeadBadge mobile />}
+                  />
+                  <HeaderIconLink
+                    href="/portal/clinic/chat"
+                    label="Messages"
+                    icon={MessageSquareText}
+                    badge={<ChatBadge mobile />}
+                  />
+                </>
+              )}
+              <HeaderProfileMenu
+                name={entityName || "My Portal"}
+                onLogout={handleLogout}
+              />
+            </div>
           </div>
           <div className="flex-1 p-10 flex flex-col">
             <main className="flex-1 px-4 pt-0 pb-0">{children}</main>

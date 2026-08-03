@@ -330,29 +330,29 @@ export function TrackingDashboard() {
 
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">CTA clicks</div>
+            <div className="text-xs uppercase text-gray-600">CTA clicks</div>
             <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.totalClicks ?? 0}</div>
-            <div className="mt-1 text-xs text-gray-500">
+            <div className="mt-1 text-xs text-gray-600">
               Pricing {overviewLoading ? "…" : overview?.pricingClicks ?? 0} · Consultation{" "}
               {overviewLoading ? "…" : overview?.consultationClicks ?? 0}
             </div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Total patient leads</div>
+            <div className="text-xs uppercase text-gray-600">Total patient leads</div>
             <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.totalLeads ?? 0}</div>
-            <div className="mt-1 text-xs text-gray-500">
+            <div className="mt-1 text-xs text-gray-600">
               Consultation {overviewLoading ? "…" : overview?.consultationLeads ?? 0} · Pricing{" "}
               {overviewLoading ? "…" : overview?.pricingLeads ?? 0}
             </div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Sign-ups</div>
+            <div className="text-xs uppercase text-gray-600">Sign-ups</div>
             <div className="mt-2 text-2xl font-semibold">
               {overviewLoading
                 ? "…"
                 : (overview?.clinicSignUps ?? 0) + (overview?.practitionerSignUps ?? 0)}
             </div>
-            <div className="mt-1 text-xs text-gray-500">
+            <div className="mt-1 text-xs text-gray-600">
               Clinics {overviewLoading ? "…" : overview?.clinicSignUps ?? 0} · Practitioners{" "}
               {overviewLoading ? "…" : overview?.practitionerSignUps ?? 0}
             </div>
@@ -361,14 +361,14 @@ export function TrackingDashboard() {
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Conversion rate</div>
+            <div className="text-xs uppercase text-gray-600">Conversion rate</div>
             <div className="mt-2 text-2xl font-semibold">
               {overviewLoading ? "…" : `${(overview?.conversionRate ?? 0).toFixed(1)}%`}
             </div>
-            <div className="mt-1 text-xs text-gray-500">Patient leads divided by CTA clicks</div>
+            <div className="mt-1 text-xs text-gray-600">Patient leads divided by CTA clicks</div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Most searched term</div>
+            <div className="text-xs uppercase text-gray-600">Most searched term</div>
             <div className="mt-2 text-sm font-semibold truncate" title={overview?.topSearches?.[0]?.label || ""}>
               {overviewLoading ? "…" : overview?.topSearches?.[0]?.label || "No search data"}
             </div>
@@ -389,16 +389,16 @@ export function TrackingDashboard() {
                 const leadsWidth = Math.max(4, (point.leads / maxValue) * 100)
                 return (
                   <div key={point.date} className="space-y-1">
-                    <div className="text-xs text-gray-500">{point.date}</div>
+                    <div className="text-xs text-gray-600">{point.date}</div>
                     <div className="flex items-center gap-2">
-                      <span className="w-12 text-xs text-gray-500">Clicks</span>
+                      <span className="w-12 text-xs text-gray-600">Clicks</span>
                       <div className="h-2 flex-1 rounded bg-gray-100">
                         <div className="h-2 rounded bg-blue-500" style={{ width: `${clicksWidth}%` }} />
                       </div>
                       <span className="w-8 text-right text-xs">{point.clicks}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="w-12 text-xs text-gray-500">Leads</span>
+                      <span className="w-12 text-xs text-gray-600">Leads</span>
                       <div className="h-2 flex-1 rounded bg-gray-100">
                         <div className="h-2 rounded bg-emerald-500" style={{ width: `${leadsWidth}%` }} />
                       </div>
@@ -408,7 +408,7 @@ export function TrackingDashboard() {
                 )
               })}
               {!overviewLoading && (overview?.trend.length ?? 0) === 0 && (
-                <div className="text-sm text-gray-500">No activity in this range.</div>
+                <div className="text-sm text-gray-600">No activity in this range.</div>
               )}
               </div>
             </div>
@@ -438,7 +438,7 @@ export function TrackingDashboard() {
                     </div>
                   ))}
                   {!overviewLoading && (items as OverviewItem[]).length === 0 && (
-                    <div className="text-sm text-gray-500">No data</div>
+                    <div className="text-sm text-gray-600">No data</div>
                   )}
                 </div>
               </div>
@@ -662,7 +662,7 @@ export function TrackingDashboard() {
               {!loading && rows.length === 0 && (
                 <tr>
                   <td
-                    className="px-3 py-6 text-center text-gray-500"
+                    className="px-3 py-6 text-center text-gray-600"
                     colSpan={tab === "events" ? 9 : tab === "signups" ? 7 : 11}
                   >
                     No rows match these filters.

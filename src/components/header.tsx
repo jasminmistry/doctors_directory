@@ -317,7 +317,7 @@ export default function Header() {
               </button>
               <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <div className="px-4 py-2.5 border-b border-gray-100">
-                  <p className="text-xs text-gray-500 capitalize">
+                  <p className="text-xs text-gray-600 capitalize">
                     {portalUser.entityType} portal
                   </p>
                 </div>
@@ -434,7 +434,7 @@ export default function Header() {
               HOME
             </button>
             <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
                 Features
               </p>
               <Link
@@ -467,7 +467,7 @@ export default function Header() {
               FAQS
             </a>
             <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
                 List Your Practice
               </p>
               <Link
@@ -528,7 +528,7 @@ export default function Header() {
               <span className="text-sm font-semibold text-gray-600">
                 {portalUser.entityName}
               </span>
-              <span className="text-xs text-gray-500 capitalize">
+              <span className="text-xs text-gray-600 capitalize">
                 {portalUser.entityType} portal
               </span>
               <Link
@@ -551,7 +551,7 @@ export default function Header() {
             </div>
           ) : (
             <div className="mt-4 border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
                 Log In
               </p>
               <Link

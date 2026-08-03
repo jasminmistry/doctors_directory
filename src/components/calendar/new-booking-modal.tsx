@@ -146,7 +146,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
       <div className="w-full max-w-md rounded-2xl bg-white shadow-xl">
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
           <h2 className="text-sm font-semibold text-gray-900">{isEdit ? 'Edit Appointment' : 'New Appointment'}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-gray-600 hover:text-gray-600 transition-colors">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -154,7 +154,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
         <form onSubmit={handleSubmit} noValidate className="p-5 space-y-4">
           {/* Patient details */}
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Patient</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-600">Patient</p>
             <Field label="Name *" error={fieldErrors.patientName}>
               <input
                 type="text"
@@ -182,7 +182,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
                   placeholder="jane@example.com"
                   disabled={isEdit}
                   title={isEdit ? "Email can't be changed after the appointment is created" : undefined}
-                  className={cn(inputCls, fieldErrors.patientEmail && 'border-red-400', isEdit && 'cursor-not-allowed bg-gray-50 text-gray-500')}
+                  className={cn(inputCls, fieldErrors.patientEmail && 'border-red-400', isEdit && 'cursor-not-allowed bg-gray-50 text-gray-600')}
                 />
               </Field>
             </div>
@@ -190,7 +190,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
 
           {/* Appointment details */}
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Appointment</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-600">Appointment</p>
             <Field label="Treatment / Service">
               <input
                 type="text"
@@ -272,7 +272,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
   )
 }
 
-const inputCls = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+const inputCls = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (

@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function Loading() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#fbfbfb]">
       <div className="bg-white backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto max-w-7xl px-4 py-4">
           <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">

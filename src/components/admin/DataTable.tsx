@@ -101,7 +101,7 @@ export function DataTable<T extends Record<string, any>>({
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-600" />
             <Input
               placeholder="Search…"
               value={search}
@@ -112,7 +112,7 @@ export function DataTable<T extends Record<string, any>>({
           {filters}
         </div>
         <div className="flex items-center gap-2 ml-auto">
-          <div className="flex items-center gap-1.5 text-sm text-gray-500">
+          <div className="flex items-center gap-1.5 text-sm text-gray-600">
             <span>Rows</span>
             <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1) }}>
               <SelectTrigger className="h-9 w-20 min-w-20 text-sm">
@@ -170,7 +170,7 @@ export function DataTable<T extends Record<string, any>>({
                 ))
               ) : pageData.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length + 1} className="py-16 text-center text-gray-500 text-sm">
+                  <td colSpan={columns.length + 1} className="py-16 text-center text-gray-600 text-sm">
                     {search ? 'No results match your search.' : 'No records yet.'}
                   </td>
                 </tr>
@@ -225,7 +225,7 @@ export function DataTable<T extends Record<string, any>>({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50/50 text-xs text-gray-500">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50/50 text-xs text-gray-600">
           <span>
             {sorted.length === 0 ? 'No records' : `Showing ${from}–${to} of ${sorted.length.toLocaleString()}`}
           </span>

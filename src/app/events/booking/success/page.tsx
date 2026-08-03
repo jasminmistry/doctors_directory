@@ -61,34 +61,34 @@ export default async function EventBookingSuccessPage({
             <CheckCircle2 className="w-7 h-7 text-green-600" />
           </div>
           <h1 className="text-xl font-medium text-gray-900">Booking Confirmed</h1>
-          <p className="text-sm text-gray-500 mt-1">Payment received successfully</p>
+          <p className="text-sm text-gray-600 mt-1">Payment received successfully</p>
         </div>
 
         {/* Details */}
         <div className="px-6 py-6 space-y-4">
           <div className="flex items-start gap-3">
-            <Video className="h-4 w-4 text-gray-500 mt-0.5 shrink-0" />
+            <Video className="h-4 w-4 text-gray-600 mt-0.5 shrink-0" />
             <div>
-              <p className="text-xs text-gray-500">Event</p>
+              <p className="text-xs text-gray-600">Event</p>
               <p className="text-sm font-semibold text-gray-900">{event_title}</p>
               {amountPaid !== null && (
-                <p className="text-xs text-gray-500 mt-0.5">£{amountPaid.toFixed(2)} paid</p>
+                <p className="text-xs text-gray-600 mt-0.5">£{amountPaid.toFixed(2)} paid</p>
               )}
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <Calendar className="h-4 w-4 text-gray-500 mt-0.5 shrink-0" />
+            <Calendar className="h-4 w-4 text-gray-600 mt-0.5 shrink-0" />
             <div>
-              <p className="text-xs text-gray-500">Date &amp; Time</p>
+              <p className="text-xs text-gray-600">Date &amp; Time</p>
               <p className="text-sm font-semibold text-gray-900">{formatSlotDate(slot_start)}</p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <Mail className="h-4 w-4 text-gray-500 mt-0.5 shrink-0" />
+            <Mail className="h-4 w-4 text-gray-600 mt-0.5 shrink-0" />
             <div>
-              <p className="text-xs text-gray-500">Confirmation sent to</p>
+              <p className="text-xs text-gray-600">Confirmation sent to</p>
               <p className="text-sm font-semibold text-gray-900">{patient_email}</p>
             </div>
           </div>

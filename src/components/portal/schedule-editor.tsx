@@ -61,7 +61,7 @@ export function ScheduleEditor({ value, onChange, disabled }: Props) {
             />
           </button>
 
-          <span className={cn('w-24 shrink-0 text-sm font-medium', day.enabled ? 'text-gray-900' : 'text-gray-500')}>
+          <span className={cn('w-24 shrink-0 text-sm font-medium', day.enabled ? 'text-gray-900' : 'text-gray-600')}>
             {day.day}
           </span>
 
@@ -74,7 +74,7 @@ export function ScheduleEditor({ value, onChange, disabled }: Props) {
                 onChange={(e) => update(i, 'startTime', e.target.value)}
                 className="rounded-lg border border-gray-200 px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 disabled:opacity-50"
               />
-              <span className="text-xs text-gray-500">to</span>
+              <span className="text-xs text-gray-600">to</span>
               <input
                 type="time"
                 value={day.endTime}
@@ -84,7 +84,7 @@ export function ScheduleEditor({ value, onChange, disabled }: Props) {
               />
             </div>
           ) : (
-            <span className="ml-auto text-xs text-gray-500">Closed</span>
+            <span className="ml-auto text-xs text-gray-600">Closed</span>
           )}
         </div>
       ))}

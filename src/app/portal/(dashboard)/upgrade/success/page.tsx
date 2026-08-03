@@ -21,7 +21,7 @@ export default function UpgradeSuccessPage() {
           </svg>
         </div>
         <h1 className="text-xl font-medium text-gray-900">Upgrade successful!</h1>
-        <p className="text-gray-500 text-sm">
+        <p className="text-gray-600 text-sm">
           You're now on the <strong>{PLAN_LABELS[plan] ?? plan}</strong> plan. Your profile has been updated.
         </p>
         <Link

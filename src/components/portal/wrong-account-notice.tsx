@@ -20,7 +20,7 @@ export function WrongAccountNotice({ requiredEntityType, currentEntityType, next
         <AlertTriangle className="h-7 w-7 text-amber-600" />
       </div>
       <h1 className="text-xl font-semibold text-gray-900">Wrong account type</h1>
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-gray-600">
         This page is only available to {requiredEntityType} accounts. You&apos;re currently signed in with a{' '}
         {currentEntityType} account.
       </p>

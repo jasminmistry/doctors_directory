@@ -135,7 +135,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
 
   return (
     <AdminCountsContext.Provider value={{ refreshCounts }}>
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#fbfbfb]">
         <div className="sticky top-0 z-30 flex items-center justify-between bg-[var(--primary-bg-color)] px-4 py-3 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:hidden">
           <h1 className="text-base font-semibold text-gray-900">{title}</h1>
           <button
@@ -172,7 +172,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
           >
             {/* Brand */}
             <div className="shrink-0 border-b border-gray-200 px-4 py-3">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-500">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">
                 Consentz
               </p>
               <p className="mt-1 text-sm font-medium text-gray-900">

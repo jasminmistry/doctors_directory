@@ -33,7 +33,7 @@ const STATUS_STYLES: Record<string, string> = {
   confirmed: 'bg-green-50 text-green-700',
   completed: 'bg-blue-50 text-blue-700',
   pending: 'bg-yellow-50 text-yellow-700',
-  no_show: 'bg-gray-100 text-gray-500',
+  no_show: 'bg-gray-100 text-gray-600',
   cancelled: 'bg-red-50 text-red-600',
 }
 
@@ -79,13 +79,13 @@ export function PractitionerEarnings() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold text-gray-900">Earnings</h1>
-          <p className="mt-0.5 text-sm text-gray-500">
+          <p className="mt-0.5 text-sm text-gray-600">
             Payments collected from patients who booked consultations through the directory.
           </p>
         </div>
 
         {/* Period filter */}
-        <div className="flex gap-1 rounded-lg border border-gray-200 p-1 bg-gray-50 self-start sm:self-auto">
+        <div className="flex gap-1 rounded-lg border border-gray-200 p-2 bg-gray-50 self-start sm:self-auto">
           {(Object.keys(PERIOD_LABELS) as Period[]).map((p) => (
             <button
               key={p}
@@ -95,7 +95,7 @@ export function PractitionerEarnings() {
                 'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
                 period === p
                   ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700',
+                  : 'text-gray-600 hover:text-gray-700',
               )}
             >
               {PERIOD_LABELS[p]}
@@ -106,7 +106,7 @@ export function PractitionerEarnings() {
 
       {loading ? (
         <div className="flex justify-center py-16">
-          <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+          <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
         </div>
       ) : (
         <>
@@ -140,12 +140,12 @@ export function PractitionerEarnings() {
 
           {/* Bookings table */}
           {bookings.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-gray-200 py-16 text-center">
+            <div className="bg-white rounded-lg border border-dashed border-gray-200 py-16 text-center">
               <PoundSterling className="mx-auto h-8 w-8 text-gray-300 mb-3" />
               <p className="text-sm font-medium text-gray-700">
                 {period === 'all' ? 'No paid bookings yet' : `No paid bookings for ${PERIOD_LABELS[period].toLowerCase()}`}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-600 mt-1">
                 Earnings appear here when patients pay for consultations through the directory.
               </p>
             </div>
@@ -154,18 +154,18 @@ export function PractitionerEarnings() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Patient</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide hidden sm:table-cell">Consultation</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Status</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">Gross</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">Patient</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide hidden sm:table-cell">Consultation</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide hidden md:table-cell">Status</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wide">Gross</th>
                     {feeRate > 0 && (
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide hidden lg:table-cell">
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wide hidden lg:table-cell">
                         Fee ({(feeRate * 100).toFixed(0)}%)
                       </th>
                     )}
                     {feeRate > 0 && (
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">Net</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wide">Net</th>
                     )}
                   </tr>
                 </thead>
@@ -176,14 +176,14 @@ export function PractitionerEarnings() {
                         <p className="text-xs font-medium text-gray-900">
                           {format(new Date(b.slotStart), 'd MMM yyyy')}
                         </p>
-                        <p className="text-[10px] text-gray-500">
+                        <p className="text-[10px] text-gray-600">
                           {format(new Date(b.slotStart), 'HH:mm')}
                         </p>
                       </td>
                       <td className="px-4 py-3">
                         <p className="text-sm font-medium text-gray-900">{b.patientName}</p>
                         {b.patientEmail && (
-                          <p className="text-[10px] text-gray-500 truncate max-w-[140px]">{b.patientEmail}</p>
+                          <p className="text-[10px] text-gray-600 truncate max-w-[140px]">{b.patientEmail}</p>
                         )}
                       </td>
                       <td className="px-4 py-3 hidden sm:table-cell">
@@ -198,9 +198,9 @@ export function PractitionerEarnings() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <p className="text-sm text-gray-500">£{fmt(b.depositAmount)}</p>
+                        <p className="text-sm text-gray-600">£{fmt(b.depositAmount)}</p>
                         {b.stripePaymentIntentId && (
-                          <p className="text-[10px] text-gray-500 font-mono">
+                          <p className="text-[10px] text-gray-600 font-mono">
                             {b.stripePaymentIntentId.slice(0, 12)}…
                           </p>
                         )}
@@ -220,26 +220,26 @@ export function PractitionerEarnings() {
                 </tbody>
                 <tfoot>
                   <tr className="border-t border-gray-200 bg-gray-50">
-                    <td colSpan={3} className="px-4 py-3 text-xs text-gray-500 hidden sm:table-cell">
+                    <td colSpan={3} className="px-4 py-3 text-xs text-gray-600 hidden sm:table-cell">
                       {bookings.length} {bookings.length === 1 ? 'booking' : 'bookings'} shown
                     </td>
                     {feeRate > 0 ? (
                       <>
                         <td className="px-4 py-3 text-right hidden md:table-cell" />
                         <td className="px-4 py-3 text-right">
-                          <span className="text-xs text-gray-500 mr-2">Gross</span>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-xs text-gray-600 mr-2">Gross</span>
+                          <span className="text-sm text-gray-600">
                             £{fmt(bookings.reduce((s, b) => s + b.depositAmount, 0))}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right hidden lg:table-cell">
-                          <span className="text-xs text-gray-500 mr-2">Fee</span>
+                          <span className="text-xs text-gray-600 mr-2">Fee</span>
                           <span className="text-sm text-red-500">
                             −£{fmt(bookings.reduce((s, b) => s + b.depositAmount * feeRate, 0))}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <span className="text-xs text-gray-500 mr-2">Net</span>
+                          <span className="text-xs text-gray-600 mr-2">Net</span>
                           <span className="text-sm font-medium text-gray-900">
                             £{fmt(bookings.reduce((s, b) => s + b.depositAmount * (1 - feeRate), 0))}
                           </span>
@@ -247,7 +247,7 @@ export function PractitionerEarnings() {
                       </>
                     ) : (
                       <td colSpan={2} className="px-4 py-3 text-right">
-                        <span className="text-xs text-gray-500 mr-2">Subtotal</span>
+                        <span className="text-xs text-gray-600 mr-2">Subtotal</span>
                         <span className="text-sm font-medium text-gray-900">
                           £{fmt(bookings.reduce((s, b) => s + b.depositAmount, 0))}
                         </span>
@@ -260,8 +260,8 @@ export function PractitionerEarnings() {
           )}
 
           {/* Commercial info */}
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3 text-sm text-gray-700">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">How earnings work</p>
+          <div className="rounded-lg bg-white border border-gray-200 bg-gray-50 p-4 space-y-3 text-sm text-gray-700">
+            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">How earnings work</p>
             <p>
               <span className="font-medium text-gray-900">Platform fee: </span>
               {(claimedPlan === 'subscription' || claimedPlan === 'pay_per_lead')
@@ -303,10 +303,10 @@ function SummaryCard({
         <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100">
           <Icon className="h-3.5 w-3.5 text-gray-600" />
         </div>
-        <p className="text-xs text-gray-500">{label}</p>
+        <p className="text-xs text-gray-600">{label}</p>
       </div>
       <p className="text-2xl font-medium text-gray-900">{value}</p>
-      <p className="text-[10px] text-gray-500">{sub}</p>
+      <p className="text-[10px] text-gray-600">{sub}</p>
     </div>
   )
 }

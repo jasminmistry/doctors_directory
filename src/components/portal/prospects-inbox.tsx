@@ -116,9 +116,9 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
   if (loading) {
     return (
       <div className="flex flex-col items-center gap-3 py-16">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
         {setupStatus === 'activating' && (
-          <p className="text-sm text-gray-500">Activating your payment method…</p>
+          <p className="text-sm text-gray-600">Activating your payment method…</p>
         )}
       </div>
     )
@@ -167,7 +167,7 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
                 {tab.label}
                 {count > 0 && (
                   <span className={cn('ml-1.5 rounded-full px-1.5 py-0.5 text-[10px]',
-                    activeTab === tab.value ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500',
+                    activeTab === tab.value ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600',
                   )}>
                     {count}
                   </span>
@@ -179,13 +179,13 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
       )}
 
       {visibleLeads.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-gray-200 py-16 text-center">
+        <div className="flex bg-white flex-col items-center gap-3 rounded-lg border border-dashed border-gray-200 py-16 text-center">
           <Inbox className="h-8 w-8 text-gray-300" />
           <div>
             {leads.length === 0 ? (
               <>
                 <p className="text-sm font-medium text-gray-600">No leads yet</p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-600 mt-1">
                   When patients request a consultation from your profile, they will appear here.
                 </p>
               </>

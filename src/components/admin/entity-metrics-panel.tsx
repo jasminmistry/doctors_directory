@@ -59,7 +59,7 @@ function StatCard({
   color?: 'gray' | 'blue' | 'green' | 'violet' | 'amber'
 }) {
   const colors = {
-    gray: 'bg-gray-50 text-gray-500',
+    gray: 'bg-gray-50 text-gray-600',
     blue: 'bg-blue-50 text-blue-600',
     green: 'bg-emerald-50 text-emerald-600',
     violet: 'bg-violet-50 text-violet-600',
@@ -72,9 +72,9 @@ function StatCard({
           <Icon className="h-4 w-4" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium text-gray-500 truncate">{label}</p>
+          <p className="text-xs font-medium text-gray-600 truncate">{label}</p>
           <p className="mt-0.5 text-2xl font-medium text-gray-900">{value}</p>
-          {sub && <p className="mt-0.5 text-xs text-gray-500">{sub}</p>}
+          {sub && <p className="mt-0.5 text-xs text-gray-600">{sub}</p>}
         </div>
       </div>
     </div>
@@ -133,7 +133,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
             onChange={(e) => setDateRange((prev) => ({ ...prev, from: e.target.value }))}
             className="rounded-lg border border-[#e0e0e0]  bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
-          <span className="text-sm text-gray-500">to</span>
+          <span className="text-sm text-gray-600">to</span>
           <input
             type="date"
             value={dateRange.to}
@@ -169,7 +169,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
         <>
           {/* Internal metrics */}
           <div className="mb-4">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-500">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-600">
               Internal
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -197,7 +197,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
           {/* GSC metrics */}
           <div>
             <div className="mb-3 flex items-center gap-2">
-              <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-600">
                 Google Search Console
               </p>
               {!data.gscConfigured && (
@@ -208,11 +208,11 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
             </div>
 
             {data.gscConfigured && !data.gsc && (
-              <p className="text-sm text-gray-500">No GSC data for this period.</p>
+              <p className="text-sm text-gray-600">No GSC data for this period.</p>
             )}
 
             {!data.gscConfigured && (
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-600">
                 Add <code className="rounded bg-gray-100 px-1 text-xs">GSC_SERVICE_ACCOUNT_CREDENTIALS</code> and{' '}
                 <code className="rounded bg-gray-100 px-1 text-xs">GSC_SITE_URL</code> to enable Google Search Console metrics.
               </p>
@@ -245,8 +245,8 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
                 {data.gsc.topKeywords.length > 0 && (
                   <div>
                     <div className="mb-2 flex items-center gap-2">
-                      <Search className="h-3.5 w-3.5 text-gray-500" />
-                      <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                      <Search className="h-3.5 w-3.5 text-gray-600" />
+                      <p className="text-xs font-semibold uppercase tracking-widest text-gray-600">
                         Top Keywords
                       </p>
                     </div>
@@ -254,11 +254,11 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="border-b border-gray-100 bg-gray-50">
-                            <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-500">Keyword</th>
-                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-500">Clicks</th>
-                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-500">Impressions</th>
-                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-500">CTR</th>
-                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-500">Position</th>
+                            <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-600">Keyword</th>
+                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">Clicks</th>
+                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">Impressions</th>
+                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">CTR</th>
+                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">Position</th>
                           </tr>
                         </thead>
                         <tbody>

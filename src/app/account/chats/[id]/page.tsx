@@ -145,7 +145,7 @@ export default function ChatDetailPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
       </div>
     )
   }
@@ -153,10 +153,10 @@ export default function ChatDetailPage() {
   if (notFound || !session) {
     return (
       <div className="max-w-lg space-y-4">
-        <Link href="/account/chats" className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900">
+        <Link href="/account/chats" className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900">
           <ArrowLeft className="h-3.5 w-3.5" /> Back
         </Link>
-        <p className="text-gray-500">Conversation not found.</p>
+        <p className="text-gray-600">Conversation not found.</p>
       </div>
     )
   }
@@ -171,14 +171,14 @@ export default function ChatDetailPage() {
     >
       {/* Header */}
       <div className="shrink-0 flex items-center gap-3 mb-4">
-        <Link href="/account/chats" className="text-gray-500 hover:text-gray-900">
+        <Link href="/account/chats" className="text-gray-600 hover:text-gray-900">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
           <p className="text-sm font-semibold text-gray-900">{session.clinic.name}</p>
           <span className={cn(
             'text-[10px] px-2 py-0.5 rounded-full',
-            isClosed ? 'bg-gray-100 text-gray-500' : 'bg-green-100 text-green-700',
+            isClosed ? 'bg-gray-100 text-gray-600' : 'bg-green-100 text-green-700',
           )}>
             {session.status}
           </span>
@@ -194,14 +194,14 @@ export default function ChatDetailPage() {
         )}
       >
         {messages.length === 0 && (
-          <p className="text-xs text-gray-500 text-center">No messages yet</p>
+          <p className="text-xs text-gray-600 text-center">No messages yet</p>
         )}
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={cn('flex flex-col gap-0.5', msg.sender === 'patient' ? 'items-end' : 'items-start')}
           >
-            <span className="text-[10px] text-gray-500 px-1">
+            <span className="text-[10px] text-gray-600 px-1">
               {msg.sender === 'patient' ? 'You' : session.clinic.name}
             </span>
             <div className={cn(
@@ -218,11 +218,11 @@ export default function ChatDetailPage() {
 
       {/* Input */}
       {isClosed ? (
-        <p className="mt-3 text-center text-xs text-gray-500">This consultation has been closed.</p>
+        <p className="mt-3 text-center text-xs text-gray-600">This consultation has been closed.</p>
       ) : (
         <div className="shrink-0 mt-3 flex items-center gap-2">
           <Input
-            className="flex-1 bg-white border-gray-200 text-gray-900 placeholder:text-gray-500"
+            className="flex-1 bg-white border-gray-200 text-gray-900 placeholder:text-gray-600"
             placeholder="Type a message…"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}

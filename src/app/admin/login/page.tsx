@@ -65,17 +65,17 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-[22rem]">
         <div className="flex align-items-center justify-center mb-6">
           <img
-            src="/directory/images/Consentz Logo.webp"
+            src="/directory/images/logo-sm.jpg"
             alt="Logo"
-            className="w-[120px] md:w-[180px] h-auto cursor-pointer"
+            className="w-[50px] rounded-full md:w-[50px] h-auto cursor-pointer"
           />
         </div>
         <div className="mb-8 text-center">
-          <span className="inline-block rounded-full border border-[#e0e0e0]  bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500 mb-4">
+          <span className="inline-block rounded-full border border-[#e0e0e0]  bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-600 mb-4">
             Admin Portal
           </span>
           <h1 className="text-2xl font-medium text-black">Sign In</h1>
-          <p className="mt-1.5 text-sm text-gray-500">Access your Consentz dashboard</p>
+          <p className="mt-1.5 text-sm text-gray-600">Access your Consentz dashboard</p>
         </div>
 
         <div className="p-6 bg-white border border-[#C4C4C4] rounded-lg">
