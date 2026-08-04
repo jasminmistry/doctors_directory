@@ -72,7 +72,7 @@ export function CookieConsentBanner() {
       role="dialog"
       aria-modal="false"
       aria-label="Manage Consent"
-      className="animate-in slide-in-from-bottom-8 fade-in-0 fixed bottom-4 right-4 z-50 w-[calc(100%-2rem)] max-w-md rounded-2xl border-2 border-[var(--dune)]/20 bg-[var(--primary-bg-color)] p-6 shadow-[0_12px_40px_rgb(38_36_34_/_25%)] duration-500"
+      className="animate-in slide-in-from-bottom-8 fade-in-0 fixed bottom-4 right-4 z-50 w-[calc(100%-2rem)] max-w-md rounded-lg border-2 border-[var(--dune)]/20 bg-[var(--primary-bg-color)] p-6 shadow-[0_12px_40px_rgb(38_36_34_/_25%)] duration-500"
     >
       <button
         type="button"

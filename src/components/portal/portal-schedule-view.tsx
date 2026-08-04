@@ -97,6 +97,8 @@ export function PortalScheduleView() {
       <div className="flex justify-end">
         <Button
           type="button"
+          size="lg"
+          variant="default"
           onClick={handleSave}
           disabled={saving}
         >

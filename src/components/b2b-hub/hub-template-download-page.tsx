@@ -144,7 +144,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
 
       <HubContentStart>
         <section className="mb-12 grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-12">
-          <div id="download-form" className="rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] p-6 md:p-8">
+          <div id="download-form" className="rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] p-6 md:p-8">
             <h2 className="mb-2 text-xl font-semibold text-[#111111]">Register to Download Your Template</h2>
             <p className="mb-6 text-sm text-[#6B6B6B]">
               Create your clinic account to download the PDF and get practical tips for digitising this workflow in
@@ -193,7 +193,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
           </ul>
         </section>
 
-        <section className="mb-12 rounded-2xl border border-[#e0e0e0] bg-[#faf8f5] p-8 text-center md:p-10 md:text-left">
+        <section className="mb-12 rounded-lg border border-[#e0e0e0] bg-[#faf8f5] p-8 text-center md:p-10 md:text-left">
           <h2 className="mb-3 text-2xl font-medium text-[#111111]">Make It Digital With Consentz</h2>
           <p className="mx-auto mb-6 max-w-2xl text-base leading-relaxed text-[#1A1A1A] md:mx-0">
             {content.digitalPitch}
@@ -275,7 +275,7 @@ export function HubTemplateDownloadPage({ entry, cityTitle, canonicalPath }: Pro
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-lg border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image

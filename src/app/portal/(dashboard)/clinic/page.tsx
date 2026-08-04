@@ -83,7 +83,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
   const isCancelled  = subscription.stripeStatus === 'canceled' || subscription.plan === 'free';
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-5">
+    <div className="rounded-lg border border-gray-200 bg-white p-6 space-y-5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-xs font-medium text-black uppercase tracking-[0.2em] mb-1">
@@ -259,7 +259,7 @@ export default function PortalClinicPage() {
     <div className="w-full mx-auto px-0 space-y-6">
       {/* ID Verification */}
       {idVerified === false && entitySlug && (
-        <div className="rounded-2xl border border-gray-200 bg-white p-6">
+        <div className="rounded-lg border border-gray-200 bg-white p-6">
           <h2 className="text-xs font-medium text-black uppercase tracking-[0.2em] mb-3">
             Identity Verification
           </h2>

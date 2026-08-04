@@ -487,7 +487,7 @@ export function ConsultationChatDialog({
       {/* Floating chat panel */}
       <div
         className={cn(
-          'fixed z-50 flex flex-col bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden',
+          'fixed z-50 flex flex-col bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden',
           'bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-96',
           'transition-all duration-300 ease-in-out',
           open
@@ -617,7 +617,7 @@ export function ConsultationChatDialog({
                   </span>
                   <div
                     className={cn(
-                      'max-w-[80%] rounded-2xl px-3.5 py-2 text-sm',
+                      'max-w-[80%] rounded-lg px-3.5 py-2 text-sm',
                       msg.sender === 'patient'
                         ? 'bg-black text-white rounded-br-sm'
                         : 'bg-gray-100 text-gray-900 rounded-bl-sm',

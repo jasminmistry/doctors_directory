@@ -58,7 +58,7 @@ export function AdminScheduleCard({ entityType, slug }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
         <h2 className="text-base font-semibold text-gray-900">Weekly Schedule</h2>
         {!noConsentzId && !loading && (

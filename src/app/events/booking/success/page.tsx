@@ -60,7 +60,7 @@ export default async function EventBookingSuccessPage({
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="w-full max-w-md bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
         {/* Header */}
         <div className="bg-green-50 px-6 py-8 text-center border-b border-green-100">
           <div className="flex items-center justify-center w-14 h-14 rounded-full bg-green-100 mx-auto mb-4">

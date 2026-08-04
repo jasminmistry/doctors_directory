@@ -90,7 +90,7 @@ export function HubIndexHeroSearch({
                   aria-label="Search"
                   className="inline-flex h-[52px] w-full shrink-0 items-center justify-center rounded-lg bg-black text-white hover:bg-neutral-800 hover:cursor-pointer transition-colors sm:w-14"
                 >
-                  <Search className="h-5 w-5" strokeWidth={2} />
+                  <Search className="h-5 w-5" strokeWidth={1.5} />
                 </button>
               </div>
             ) : null}

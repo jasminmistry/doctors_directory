@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Button } from '@/components/ui/button'
 import { Plus, Pencil, Trash2, Video, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -301,21 +302,24 @@ function EventModal({ event, onClose, onSaved }: EventModalProps) {
           </div>
 
           <div className="flex gap-2 pt-1">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="flex-1 rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+              className="flex-1"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="default"
+              size="lg"
               disabled={saving}
-              className="flex-1 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+              className="flex-1"
             >
               {saving && <Loader2 className="h-4 w-4 animate-spin" />}
               {saving ? "Saving…" : isEdit ? "Save Changes" : "Create Event"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -454,14 +458,15 @@ export function PractitionerEvents() {
               Manage consultation events visible to patients on your profile.
             </p>
           </div>
-          <button
+          <Button
             type="button"
+            variant="default"
+            size="lg"
             onClick={() => setModalEvent("new")}
-            className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 transition-colors"
           >
             <Plus className="h-4 w-4" />
             Add Event
-          </button>
+          </Button>
         </div>
 
         {/* Content */}
@@ -471,19 +476,21 @@ export function PractitionerEvents() {
           </div>
         ) : events.length === 0 ? (
           <div className="bg-white rounded-lg border border-dashed border-gray-200 py-16 text-center">
-            <Video className="mx-auto h-8 w-8 text-gray-300 mb-3" />
+            <Video className="mx-auto h-8 w-8 text-gray-600 mb-3" />
             <p className="text-sm font-medium text-gray-700">No events yet</p>
             <p className="text-xs text-gray-600 mt-1">
               Add your first consultation event to let patients book online.
             </p>
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="lg"
               onClick={() => setModalEvent("new")}
-              className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm text-black hover:bg-gray-50 transition-colors"
+              className="mt-4 inline-flex"
             >
               <Plus className="h-4 w-4" />
               Add your first event
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="rounded-lg border border-gray-200 overflow-hidden">
