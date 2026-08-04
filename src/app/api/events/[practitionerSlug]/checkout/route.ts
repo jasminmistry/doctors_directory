@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { requirePatient } from '@/lib/patient-auth'
 import { domainHasMailServer } from '@/lib/email-domain-check'
+import { isSlotInPast } from '@/lib/core-api'
 
 export const dynamic = 'force-dynamic'
 
@@ -66,6 +67,10 @@ export async function POST(
   const pricePence = Math.round(parseFloat(event_price) * 100)
   if (isNaN(pricePence) || pricePence <= 0) {
     return NextResponse.json({ error: 'Invalid event price' }, { status: 400 })
+  }
+
+  if (isSlotInPast(new Date(slot_start))) {
+    return NextResponse.json({ error: 'This time slot has already passed — please pick another time' }, { status: 409 })
   }
 
   // Resolve coreClinicId so the webhook can create the booking

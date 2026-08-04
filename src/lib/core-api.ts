@@ -131,6 +131,11 @@ export async function getCoreClinicProfile(
   return res.json()
 }
 
+/** Rejects booking creation for a slot that has already started — display-side filtering can't be trusted alone (stale page, direct API calls, slow form-fill). */
+export function isSlotInPast(slotStart: Date): boolean {
+  return slotStart.getTime() <= Date.now()
+}
+
 const DEFAULT_CLINIC_TIMEZONE = 'Europe/London'
 
 /** Resolves a clinic's IANA timezone from Core, falling back to Europe/London if unset/unreachable. */

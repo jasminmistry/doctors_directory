@@ -7,8 +7,13 @@ import {
   CalendarDays, MessageSquare, UserCircle, ArrowRight,
   Search, Video, Star, ChevronRight, HelpCircle,
 } from 'lucide-react'
-import { format, isFuture, addMinutes } from 'date-fns'
+import { isFuture, addMinutes } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import { capitalize, cn } from '@/lib/utils'
+
+// Bookings are always shown in the clinic's own timezone, never the visitor's
+// browser timezone — every clinic in this directory is UK-based.
+const CLINIC_TIMEZONE = 'Europe/London'
 
 interface PatientMe {
   id: number
@@ -176,7 +181,8 @@ export default function AccountDashboardPage() {
               Next: {nextBooking.clinic.name}
             </p>
             <p className="text-xs text-blue-600 mt-0.5">
-              {nextBooking.treatment ?? 'Appointment'} · {format(new Date(nextBooking.slotStart), 'd MMM yyyy, HH:mm')}
+              {nextBooking.treatment ?? 'Appointment'} ·{' '}
+              {formatInTimeZone(nextBooking.slotStart, CLINIC_TIMEZONE, 'd MMM yyyy, HH:mm')}
             </p>
           </div>
           <ChevronRight className="h-4 w-4 text-blue-400 shrink-0" />
@@ -202,7 +208,8 @@ export default function AccountDashboardPage() {
                 <div>
                   <p className="text-sm font-medium text-gray-900">{b.clinic.name}</p>
                   <p className="text-xs text-gray-600">
-                    {b.treatment ?? 'Appointment'} · {format(new Date(b.slotStart), 'd MMM yyyy, HH:mm')}
+                    {b.treatment ?? 'Appointment'} ·{' '}
+                    {formatInTimeZone(b.slotStart, CLINIC_TIMEZONE, 'd MMM yyyy, HH:mm')}
                   </p>
                 </div>
                 <span className={cn(

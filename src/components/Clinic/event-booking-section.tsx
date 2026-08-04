@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { format, addDays, isSameDay, parseISO } from 'date-fns'
-import { fromZonedTime } from 'date-fns-tz'
+import { format, addDays, isSameDay } from 'date-fns'
+import { fromZonedTime, formatInTimeZone } from 'date-fns-tz'
 import { toast } from 'sonner'
 import {
   ChevronLeft,
@@ -15,7 +15,7 @@ import {
   Clock,
   Calendar,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatTimezoneAbbr } from '@/lib/utils'
 import { InlineLogin } from '@/components/consultation/inline-login'
 import { ConsultationRichForm } from '@/components/consultation/consultation-form'
 import type { ConsultationFormData } from '@/components/consultation/consultation-form'
@@ -77,12 +77,8 @@ function dateKey(d: Date) {
   return format(d, 'yyyy-MM-dd')
 }
 
-function detectTimezone(): string {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone
-  } catch {
-    return 'Europe/London'
-  }
+function isPaidEvent(price: string | null): boolean {
+  return price !== null && Number(price) > 0
 }
 
 function LocationBadge({ location }: { location: 'zoom' | 'video_call' }) {
@@ -152,23 +148,18 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
     setSlotsLoading(true)
     setSlots([])
     setSelectedSlot(null)
-    const tz = detectTimezone()
     const qs = new URLSearchParams({
       eventId: String(selectedEvent.id),
       date: dateKey(selectedDate),
-      timezone: tz,
     })
     fetch(`${basePath}/availability?${qs}`)
       .then((r) => r.json())
       .then((d: AvailabilityResponse) => {
         setSlots(d.available ?? [])
         setSlotDuration(d.slot_duration ?? 30)
-        // Core silently falls back to the clinic's own timezone when it
-        // doesn't recognise the requested `tz` (e.g. deprecated aliases like
-        // "Asia/Calcutta"), without erroring — but it always reports which
-        // zone the returned `datetime` values are actually in. Trust that,
-        // not the zone we asked for, or slot conversion silently drifts.
-        setSlotTimezone(d.timezone || tz)
+        // Slots are always in the clinic's own timezone (we never send one),
+        // but trust whatever Core reports the `datetime` values are actually in.
+        setSlotTimezone(d.timezone || 'Europe/London')
       })
       .catch(() => setSlots([]))
       .finally(() => setSlotsLoading(false))
@@ -254,7 +245,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
       }
 
       // Paid event → Stripe Checkout
-      if (selectedEvent.price) {
+      if (isPaidEvent(selectedEvent.price)) {
         const res = await fetch(`${basePath}/checkout`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -332,7 +323,6 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
 
   // ── Confirmation ────────────────────────────────────────────────────────────
   if (step === 'confirmation' && confirmation) {
-    const startDt = parseISO(confirmation.slot_start)
     const joinUrl = confirmation.video_call?.join_url ?? null
 
     return (
@@ -345,7 +335,8 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
           <div className="space-y-1">
             <p className="font-semibold text-gray-900">{confirmation.event.title}</p>
             <p className="text-sm text-gray-600">
-              {format(startDt, "EEE d MMM 'at' HH:mm")} with{' '}
+              {formatInTimeZone(confirmation.slot_start, slotTimezone, "EEE d MMM 'at' HH:mm")}{' '}
+              ({formatTimezoneAbbr(slotTimezone, new Date(confirmation.slot_start))}) with{' '}
               <span className="font-medium">{confirmation.practitioner.name}</span>
             </p>
           </div>
@@ -402,7 +393,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
 
   // ── Patient details form ─────────────────────────────────────────────────────
   if (step === 'details') {
-    const isPaid = !!selectedEvent?.price
+    const isPaid = isPaidEvent(selectedEvent?.price ?? null)
     const formDefaults = patientMe ? {
       firstName: patientMe.firstName ?? '',
       lastName: patientMe.lastName ?? '',
@@ -425,7 +416,8 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
             <h2 className="text-base font-semibold text-gray-900">Your Details</h2>
             {selectedEvent && selectedDate && selectedSlot && (
               <p className="text-xs text-gray-600 mt-0.5">
-                {selectedEvent.title} · {format(selectedDate, 'd MMM')} at {selectedSlot.time}
+                {selectedEvent.title} · {format(selectedDate, 'd MMM')} at {selectedSlot.time}{' '}
+                ({formatTimezoneAbbr(slotTimezone, selectedDate)})
               </p>
             )}
           </div>
@@ -473,7 +465,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
             {selectedEvent && (
               <p className="text-xs text-gray-600 mt-0.5">
                 {selectedEvent.duration}
-                {selectedEvent.price ? ` · £${selectedEvent.price}` : ''}
+                {isPaidEvent(selectedEvent.price) ? ` · £${selectedEvent.price}` : ''}
               </p>
             )}
           </div>
@@ -538,6 +530,11 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
           {/* Slots */}
           {selectedDate && (
             <div>
+              {slots.length > 0 && !slotsLoading && (
+                <p className="text-[10px] text-gray-600 mb-1.5">
+                  Times shown in clinic time ({formatTimezoneAbbr(slotTimezone, selectedDate)})
+                </p>
+              )}
               {slotsLoading ? (
                 <div className="flex justify-center py-4">
                   <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
@@ -601,7 +598,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
               <div className="flex items-center gap-2 text-xs text-gray-600">
                 <Clock className="h-3 w-3 shrink-0" />
                 <span>{event.duration}</span>
-                {event.price && (
+                {isPaidEvent(event.price) && (
                   <>
                     <span className="text-gray-300">·</span>
                     <span className="font-medium text-gray-700">£{event.price}</span>

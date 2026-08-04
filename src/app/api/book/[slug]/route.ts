@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
-import { createCoreBooking, isCoreConfigured } from '@/lib/core-api'
+import { createCoreBooking, isCoreConfigured, isSlotInPast, resolveClinicTimezone } from '@/lib/core-api'
 import { COOKIE_TOKEN } from '@/lib/auth'
 import { getPatientClaims } from '@/lib/patient-auth'
 import { getConsentzToken, generateConsentzPassword, initConsentzPatient } from '@/lib/patient-consentz'
 import { addMinutes } from 'date-fns'
+import { fromZonedTime } from 'date-fns-tz'
 import { isClinicScheduleConfigured, SCHEDULE_NOT_CONFIGURED_RESPONSE } from '@/lib/schedule-check'
 
 const bodySchema = z.object({
@@ -39,8 +40,18 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
   if (!clinic.coreClinicId) return NextResponse.json({ error: 'Online booking not available for this clinic' }, { status: 422 })
   if (!isCoreConfigured()) return NextResponse.json({ error: 'Booking service unavailable' }, { status: 503 })
 
-  const slotStart = new Date(slotDatetime.replace(' ', 'T') + '+00:00')
+  // slotDatetime ("YYYY-MM-DD HH:MM:SS") is clinic-local wall-clock time from
+  // Core's slot list — convert using the clinic's real timezone, not UTC.
+  const clinicTimezone = await resolveClinicTimezone(clinic.coreClinicId)
+  const [datePart, timePart] = slotDatetime.split(' ')
+  const [year, month, day] = datePart.split('-').map(Number)
+  const [hour, minute, second = 0] = timePart.split(':').map(Number)
+  const slotStart = fromZonedTime(new Date(year, month - 1, day, hour, minute, second), clinicTimezone)
   const slotEnd = addMinutes(slotStart, slotDuration)
+
+  if (isSlotInPast(slotStart)) {
+    return NextResponse.json({ error: 'This time slot has already passed — please pick another time' }, { status: 409 })
+  }
 
   // Resolve logged-in patient for token-linked booking
   const patientClaims = getPatientClaims(req)

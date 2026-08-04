@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { format, isPast, isFuture, addMinutes } from 'date-fns'
+import { isPast, isFuture, addMinutes } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import {
   ArrowLeft,
   CalendarDays,
@@ -18,8 +19,12 @@ import {
   X,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { capitalize, cn } from '@/lib/utils'
+import { capitalize, cn, formatTimezoneAbbr } from '@/lib/utils'
 import { toast } from 'sonner'
+
+// Bookings are always shown in the clinic's own timezone, never the visitor's
+// browser timezone — every clinic in this directory is UK-based.
+const CLINIC_TIMEZONE = 'Europe/London'
 
 interface Booking {
   id: number
@@ -354,9 +359,15 @@ export default function BookingDetailPage() {
                 <CalendarDays className="h-4 w-4 text-gray-600 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-xs text-gray-600">Date &amp; time</p>
-                  <p className="text-sm font-medium text-gray-900">{format(start, 'd MMM yyyy')}</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {formatInTimeZone(start, CLINIC_TIMEZONE, 'd MMM yyyy')}
+                  </p>
                   <p className="text-sm text-gray-700">
-                    {format(start, 'HH:mm')} – {format(end, 'HH:mm')}
+                    {formatInTimeZone(start, CLINIC_TIMEZONE, 'HH:mm')} –{' '}
+                    {formatInTimeZone(end, CLINIC_TIMEZONE, 'HH:mm')}{' '}
+                    <span className="text-xs text-gray-600">
+                      ({formatTimezoneAbbr(CLINIC_TIMEZONE, start)})
+                    </span>
                   </p>
                 </div>
               </div>
@@ -422,7 +433,8 @@ export default function BookingDetailPage() {
                 <p className="text-sm text-gray-600">
                   Join link available from{' '}
                   <span className="font-medium text-gray-700">
-                    {format(addMinutes(start, -15), 'HH:mm')} on {format(start, 'd MMM')}
+                    {formatInTimeZone(addMinutes(start, -15), CLINIC_TIMEZONE, 'HH:mm')} on{' '}
+                    {formatInTimeZone(start, CLINIC_TIMEZONE, 'd MMM')} ({formatTimezoneAbbr(CLINIC_TIMEZONE, start)})
                   </span>
                 </p>
               </div>

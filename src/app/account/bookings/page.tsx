@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import { CalendarDays, Loader2, Video } from 'lucide-react'
-import { capitalize } from '@/lib/utils'
+import { capitalize, formatTimezoneAbbr } from '@/lib/utils'
+
+// Bookings are always shown in the clinic's own timezone, never the visitor's
+// browser timezone — every clinic in this directory is UK-based.
+const CLINIC_TIMEZONE = 'Europe/London'
 
 interface Booking {
   id: number
@@ -65,7 +69,9 @@ export default function AccountBookingsPage() {
                     )}
                   </div>
                   <p className="text-xs text-gray-600 mt-0.5">
-                    {b.treatment ?? 'Appointment'} · {format(new Date(b.slotStart), 'd MMM yyyy, HH:mm')}
+                    {b.treatment ?? 'Appointment'} ·{' '}
+                    {formatInTimeZone(b.slotStart, CLINIC_TIMEZONE, 'd MMM yyyy, HH:mm')}{' '}
+                    {formatTimezoneAbbr(CLINIC_TIMEZONE, new Date(b.slotStart))}
                   </p>
                   {b.clinic.city && (
                     <p className="text-xs text-gray-600 mt-0.5">{b.clinic.city}</p>

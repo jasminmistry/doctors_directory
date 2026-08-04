@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { requirePatient } from '@/lib/patient-auth'
 import { domainHasMailServer } from '@/lib/email-domain-check'
+import { isSlotInPast } from '@/lib/core-api'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -39,6 +40,10 @@ export async function POST(
 
   if (!(await domainHasMailServer(parsed.data.patient_email))) {
     return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
+  }
+
+  if (isSlotInPast(new Date(parsed.data.slot_start))) {
+    return NextResponse.json({ error: 'This time slot has already passed — please pick another time' }, { status: 409 })
   }
 
   try {

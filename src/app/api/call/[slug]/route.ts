@@ -6,6 +6,8 @@ import { isClinicScheduleConfigured, SCHEDULE_NOT_CONFIGURED_RESPONSE } from '@/
 import { getPatientClaims } from '@/lib/patient-auth'
 import { getConsentzToken, generateConsentzPassword, initConsentzPatient } from '@/lib/patient-consentz'
 import { domainHasMailServer } from '@/lib/email-domain-check'
+import { isSlotInPast, resolveClinicTimezone } from '@/lib/core-api'
+import { fromZonedTime } from 'date-fns-tz'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -58,6 +60,23 @@ export async function POST(
       return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
 
+    // slot_start/slot_end ("YYYY-MM-DD HH:MM") are clinic-local wall-clock
+    // time from Core's slot list — convert using the clinic's real timezone,
+    // not UTC, both to validate against "now" and to mirror locally below.
+    const clinicTimezone = await resolveClinicTimezone(clinic.coreClinicId)
+    const toClinicUtc = (datetime: string) => {
+      const [datePart, timePart] = datetime.split(' ')
+      const [year, month, day] = datePart.split('-').map(Number)
+      const [hour, minute, second = 0] = timePart.split(':').map(Number)
+      return fromZonedTime(new Date(year, month - 1, day, hour, minute, second), clinicTimezone)
+    }
+    const slotStart = toClinicUtc(body.data.slot_start)
+    const slotEnd = toClinicUtc(body.data.slot_end)
+
+    if (isSlotInPast(slotStart)) {
+      return NextResponse.json({ error: 'This time slot has already passed — please pick another time' }, { status: 409 })
+    }
+
     // Resolve logged-in patient for token-linked booking
     const patientClaims = getPatientClaims(req)
     const patient = patientClaims
@@ -107,9 +126,7 @@ export async function POST(
       )
     }
 
-    // Mirror into local DB so the patient dashboard can show it
-    const slotStart = new Date(`${body.data.slot_start.replace(' ', 'T')}+00:00`)
-    const slotEnd = new Date(`${body.data.slot_end.replace(' ', 'T')}+00:00`)
+    // Mirror into local DB so the patient dashboard can show it.
     prisma.booking.create({
       data: {
         clinicId: clinic.id,
