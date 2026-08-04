@@ -205,7 +205,7 @@ export default function ChatDetailPage() {
               {msg.sender === 'patient' ? 'You' : session.clinic.name}
             </span>
             <div className={cn(
-              'max-w-[80%] rounded-2xl px-3.5 py-2 text-sm',
+              'max-w-[80%] rounded-lg px-3.5 py-2 text-sm',
               msg.sender === 'patient'
                 ? 'bg-black text-white rounded-br-sm'
                 : 'bg-gray-100 text-gray-900 rounded-bl-sm',

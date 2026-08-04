@@ -46,7 +46,7 @@ export default function AccountBookingsPage() {
 
       {bookings.length === 0 ? (
         <div className="rounded-lg bg-white border border-gray-200 px-6 py-10 text-center">
-          <CalendarDays className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+          <CalendarDays className="h-8 w-8 text-gray-600 mx-auto mb-3" />
           <p className="text-gray-600 text-sm">No bookings yet.</p>
         </div>
       ) : (

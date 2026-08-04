@@ -434,7 +434,7 @@ function BookingDetail({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-sm rounded-2xl bg-white shadow-xl">
+      <div className="w-full max-w-sm rounded-lg bg-white shadow-xl">
         {/* Header */}
         <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-5 py-4">
           <div>

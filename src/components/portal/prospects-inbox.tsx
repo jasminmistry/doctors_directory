@@ -180,7 +180,7 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
 
       {visibleLeads.length === 0 ? (
         <div className="flex bg-white flex-col items-center gap-3 rounded-lg border border-dashed border-gray-200 py-16 text-center">
-          <Inbox className="h-8 w-8 text-gray-300" />
+          <Inbox className="h-8 w-8 text-gray-600" />
           <div>
             {leads.length === 0 ? (
               <>

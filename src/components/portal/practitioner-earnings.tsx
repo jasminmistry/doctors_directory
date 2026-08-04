@@ -146,7 +146,7 @@ export function PractitionerEarnings() {
           {/* Bookings table */}
           {bookings.length === 0 ? (
             <div className="bg-white rounded-lg border border-dashed border-gray-200 py-16 text-center">
-              <PoundSterling className="mx-auto h-8 w-8 text-gray-300 mb-3" />
+              <PoundSterling className="mx-auto h-8 w-8 text-gray-600 mb-3" />
               <p className="text-sm font-medium text-gray-700">
                 {period === 'all' ? 'No paid bookings yet' : `No paid bookings for ${PERIOD_LABELS[period].toLowerCase()}`}
               </p>
@@ -305,8 +305,8 @@ function SummaryCard({
   return (
     <div className="rounded-lg border border-gray-200 bg-white px-4 py-4 space-y-2">
       <div className="flex items-center gap-2">
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100">
-          <Icon className="h-3.5 w-3.5 text-gray-600" />
+        <div className="flex">
+          <Icon className="h-6 w-6 text-black" />
         </div>
         <p className="text-xs text-gray-600">{label}</p>
       </div>

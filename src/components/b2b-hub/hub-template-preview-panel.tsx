@@ -9,7 +9,7 @@ export function HubTemplatePreviewPanel({ entry }: Props) {
   const title = toDisplayTitle(entry.title)
 
   return (
-    <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white shadow-sm lg:min-h-0">
+    <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-lg border border-[#e0e0e0] bg-white shadow-sm lg:min-h-0">
       <div
         className="relative flex flex-1 flex-col overflow-hidden p-4 sm:p-6"
         style={{

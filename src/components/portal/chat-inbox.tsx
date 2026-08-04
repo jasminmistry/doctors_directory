@@ -220,7 +220,7 @@ export function ChatInbox() {
 
           {!loading && sessions.length === 0 && (
             <div className="flex flex-col items-center gap-2 pt-10 text-center px-4">
-              <MessageSquare className="h-8 w-8 text-gray-300" />
+              <MessageSquare className="h-8 w-8 text-gray-600" />
               <p className="text-sm text-gray-600">No conversations yet</p>
             </div>
           )}
@@ -272,7 +272,7 @@ export function ChatInbox() {
       <div className={cn('flex-1 flex-col min-w-0', activeId ? 'flex' : 'hidden md:flex')}>
         {!activeId && (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center px-8">
-            <MessageSquare className="h-10 w-10 text-gray-200" />
+            <MessageSquare className="h-10 w-10 text-gray-600" />
             <p className="text-sm text-gray-600">Select a conversation to reply</p>
           </div>
         )}
@@ -323,7 +323,7 @@ export function ChatInbox() {
                   </span>
                   <div
                     className={cn(
-                      'max-w-[75%] rounded-2xl px-3.5 py-2 text-sm',
+                      'max-w-[75%] rounded-lg px-3.5 py-2 text-sm',
                       msg.sender === 'clinic'
                         ? 'bg-gray-100 text-gray-900 rounded-br-sm'
                         : 'bg-gray-100 text-gray-900 rounded-bl-sm',

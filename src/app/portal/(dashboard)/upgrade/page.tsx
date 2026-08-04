@@ -124,7 +124,7 @@ export default function UpgradePage() {
             <div
               key={plan.id}
               className={cn(
-                "rounded-2xl border bg-white p-6 flex flex-col",
+                "rounded-lg border bg-white p-6 flex flex-col",
                 isCurrent ? "border-gray-900 ring-1 ring-gray-900" : "border-gray-200"
               )}
             >

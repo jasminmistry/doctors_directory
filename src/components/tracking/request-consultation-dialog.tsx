@@ -205,7 +205,7 @@ export function RequestConsultationDialog({
       {/* Floating side panel */}
       <div
         className={cn(
-          'fixed z-50 flex flex-col bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden',
+          'fixed z-50 flex flex-col bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden',
           'bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-96',
           'transition-all duration-300 ease-in-out',
           open
