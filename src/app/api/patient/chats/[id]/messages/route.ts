@@ -34,6 +34,17 @@ export async function GET(
     orderBy: { createdAt: 'asc' },
   })
 
+  // Mark everything up to the newest message as read by the patient — clears
+  // the unread badge for this conversation. Fire-and-forget so it doesn't
+  // slow down the response; only write when there's something new to avoid
+  // hammering the DB on every 3s poll of an already-read chat.
+  const latest = messages[messages.length - 1]
+  if (latest && (!session.patientLastReadAt || latest.createdAt > session.patientLastReadAt)) {
+    prisma.chatSession
+      .update({ where: { id: session.id }, data: { patientLastReadAt: latest.createdAt } })
+      .catch((err) => console.error('[patient/chats/messages GET] failed to mark read:', err))
+  }
+
   return NextResponse.json({ session, messages }, { headers: { 'Cache-Control': 'no-store' } })
 }
 

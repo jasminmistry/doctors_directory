@@ -23,7 +23,7 @@ interface ChatSession {
   patientPhone: string | null
   status: 'active' | 'closed'
   updatedAt: string
-  unread: boolean
+  unread: number
   messages: { content: string; sender: string; createdAt: string }[]
 }
 
@@ -239,21 +239,28 @@ export function ChatInbox() {
                 )}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <span className={cn('text-sm truncate', unread ? 'font-semibold text-gray-900' : 'text-gray-700')}>
+                  <span className={cn('text-sm truncate', unread > 0 ? 'font-semibold text-gray-900' : 'text-gray-700')}>
                     {s.patientName ?? 'Patient'}
                   </span>
                   <span className="shrink-0 text-[10px] text-gray-600">
                     {lastMsg ? formatTime(lastMsg.createdAt) : ''}
                   </span>
                 </div>
-                <p className={cn('text-xs truncate mt-0.5', unread ? 'text-gray-800' : 'text-gray-600')}>
-                  {lastMsg?.content ?? 'No messages yet'}
-                </p>
+                <div className="flex items-start justify-between gap-2 mt-0.5">
+                  <p className={cn('text-xs truncate', unread > 0 ? 'text-gray-800 font-medium' : 'text-gray-600')}>
+                    {lastMsg?.content ?? 'No messages yet'}
+                  </p>
+                  {unread > 0 && (
+                    <span
+                      className="shrink-0 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-medium text-white"
+                      aria-label={`${unread} unread message${unread === 1 ? '' : 's'}`}
+                    >
+                      {unread > 99 ? '99+' : unread}
+                    </span>
+                  )}
+                </div>
                 <div className="mt-1 flex items-center gap-2">
                   <StatusBadge status={s.status} />
-                  {unread && (
-                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500" />
-                  )}
                 </div>
               </button>
             )

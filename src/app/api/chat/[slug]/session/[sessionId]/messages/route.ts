@@ -8,6 +8,17 @@ const bodySchema = z.object({
   visitorToken: z.string().length(64),
 })
 
+// Mark everything up to `latestCreatedAt` as read by the patient — clears the
+// unread badge for this conversation. Fire-and-forget so it doesn't slow down
+// the response; only write when there's something new to avoid hammering the
+// DB on every 3s poll of an already-read chat.
+function markPatientRead(sessionId: number, patientLastReadAt: Date | null, latestCreatedAt: Date) {
+  if (patientLastReadAt && latestCreatedAt <= patientLastReadAt) return
+  prisma.chatSession
+    .update({ where: { id: sessionId }, data: { patientLastReadAt: latestCreatedAt } })
+    .catch((err) => console.error('[chat/messages GET] failed to mark read:', err))
+}
+
 async function resolveSession(slug: string, sessionId: string, visitorToken: string) {
   const id = parseInt(sessionId, 10)
   if (isNaN(id)) return null
@@ -16,6 +27,7 @@ async function resolveSession(slug: string, sessionId: string, visitorToken: str
     select: {
       id: true,
       coreConversationId: true,
+      patientLastReadAt: true,
       clinic: { select: { coreClinicId: true } },
     },
   })
@@ -42,6 +54,8 @@ export async function GET(
       const sinceIso = req.nextUrl.searchParams.get('since')
       const after = sinceIso ? Math.floor(new Date(sinceIso).getTime() / 1000) : undefined
       const messages = await pollCoreMessages({ coreClinicId, conversationId: coreConversationId, after })
+      const latest = messages[messages.length - 1]
+      if (latest) markPatientRead(session.id, session.patientLastReadAt, new Date(latest.createdAt))
       return NextResponse.json({ messages })
     }
 
@@ -55,6 +69,9 @@ export async function GET(
       orderBy: { createdAt: 'asc' },
       select: { id: true, sender: true, content: true, createdAt: true },
     })
+
+    const latest = messages[messages.length - 1]
+    if (latest) markPatientRead(session.id, session.patientLastReadAt, latest.createdAt)
 
     return NextResponse.json({ messages })
   } catch (err) {

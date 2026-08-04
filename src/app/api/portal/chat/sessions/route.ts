@@ -30,17 +30,30 @@ export async function GET() {
       },
     })
 
-    // Unread — last message is from the patient AND the clinic hasn't viewed
-    // this conversation since that message arrived (viewing a conversation
-    // sets clinicLastReadAt; a plain reply also flips the last-sender check)
-    const sessionsWithUnread = sessions.map(({ clinicLastReadAt, ...s }) => {
-      const lastMsg = s.messages[0]
-      const unread =
-        s.status === 'active' &&
-        lastMsg?.sender === 'patient' &&
-        (!clinicLastReadAt || lastMsg.createdAt > clinicLastReadAt)
-      return { ...s, unread }
-    })
+    // Unread count — number of patient messages the clinic hasn't viewed yet
+    // (viewing a conversation sets clinicLastReadAt)
+    const unreadCountsBySessionId = new Map(
+      await Promise.all(
+        sessions.map(async (s) => {
+          const count =
+            s.status === 'active'
+              ? await prisma.chatMessage.count({
+                  where: {
+                    sessionId: s.id,
+                    sender: 'patient',
+                    ...(s.clinicLastReadAt ? { createdAt: { gt: s.clinicLastReadAt } } : {}),
+                  },
+                })
+              : 0
+          return [s.id, count] as const
+        }),
+      ),
+    )
+
+    const sessionsWithUnread = sessions.map(({ clinicLastReadAt: _clinicLastReadAt, ...s }) => ({
+      ...s,
+      unread: unreadCountsBySessionId.get(s.id) ?? 0,
+    }))
 
     // Sort by last activity, not `updatedAt` — that column only changes when the
     // session row itself is touched (read receipts, Core sync), not when a new

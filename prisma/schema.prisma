@@ -913,6 +913,8 @@ model ChatSession {
   coreConversationId String?           @db.VarChar(255)
   // Timestamp of the newest message the clinic has viewed — drives unread badges
   clinicLastReadAt   DateTime?
+  // Timestamp of the newest message the patient has viewed — drives unread badges
+  patientLastReadAt  DateTime?
   closedAt           DateTime?
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt

@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AccountChatBadge } from "@/components/account/chat-badge";
 
 interface PatientMe {
   id: number;
@@ -135,6 +136,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
                 >
                   <Icon className="h-4 w-4 shrink-0" />
                   {label}
+                  {href === "/account/chats" && <AccountChatBadge />}
                 </Link>
               );
             })}
