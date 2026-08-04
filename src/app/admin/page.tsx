@@ -522,7 +522,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100">
+                      <div className="flex h-7 w-7 items-center justify-center">
                         <Apple className="h-3.5 w-3.5 text-gray-700" />
                       </div>
                       <div className="flex-1">

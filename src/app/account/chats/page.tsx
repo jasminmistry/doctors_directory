@@ -39,7 +39,7 @@ export default function AccountChatsPage() {
 
       {sessions.length === 0 ? (
         <div className="rounded-lg bg-white border border-gray-200 px-6 py-10 text-center">
-          <MessageSquare className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+          <MessageSquare className="h-8 w-8 text-gray-600 mx-auto mb-3" />
           <p className="text-gray-600 text-sm">No consultations yet.</p>
         </div>
       ) : (

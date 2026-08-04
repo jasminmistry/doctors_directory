@@ -225,7 +225,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <Icon className="w-6 h-6 shrink-0" />
+                      <Icon strokeWidth={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">{label}</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -291,7 +291,7 @@ export function PortalLayoutClient({
                             : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                         )}
                       >
-                        <CalendarDays className="w-6 h-6 shrink-0" />
+                        <CalendarDays strokeWidth={1.5} className="w-6 h-6 shrink-0" />
                         <span className="lg:hidden">Calendar</span>
                       </Link>
                       <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -335,7 +335,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <CalendarCheck className="w-6 h-6 shrink-0" />
+                      <CalendarCheck strokeWidth={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">My Events</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -354,7 +354,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <PoundSterling className="w-6 h-6 shrink-0" />
+                      <PoundSterling strokeWidth={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">Earnings</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -373,7 +373,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <Clock className="w-6 h-6 shrink-0" />
+                      <Clock strokeWidth={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">Schedule</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -396,7 +396,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <CalendarCheck className="w-6 h-6 shrink-0" />
+                      <CalendarCheck strokeWidth={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">My Events</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -415,7 +415,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <PoundSterling className="w-6 h-6 shrink-0" />
+                      <PoundSterling strokeWidth={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">Earnings</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -434,7 +434,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <Clock className="w-6 h-6 shrink-0" />
+                      <Clock strokeWidth={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">Schedule</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -453,7 +453,7 @@ export function PortalLayoutClient({
                   className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
                 >
                   <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
-                    <Globe className="h-6 w-6" />
+                    <Globe strokeWidth={1.5} className="h-6 w-6" />
                     <ExternalLink className="absolute -bottom-1 -right-1 h-3 w-3 opacity-80" />
                   </span>
                   <span className="lg:hidden">View Directory</span>
@@ -491,7 +491,7 @@ export function PortalLayoutClient({
                 {plan && (
                   <span
                     className={cn(
-                      "rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border",
+                      "rounded-full ml-2 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border",
                       plan === "subscription" &&
                         "border-cyan-300 bg-cyan-50 text-cyan-700",
                       plan === "pay_per_lead" &&

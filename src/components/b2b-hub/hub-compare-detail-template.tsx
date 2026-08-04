@@ -100,7 +100,7 @@ function CompareHeroPreviewCard({ competitorLabel }: { competitorLabel: string }
   ] as const;
 
   return (
-    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm`}>
+    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-lg border border-[#e6e0d8] bg-white shadow-sm`}>
       <div className="flex flex-wrap items-center gap-2 border-b border-[#e6e0d8] bg-[#faf8f5] px-4 py-3 sm:px-6 sm:py-4">
         <span className="flex-1 text-[13px] font-semibold text-[#2e2e2e]">
           Feature Comparison
@@ -143,7 +143,7 @@ function PlatformCard() {
     ["Email Campaigns", "CQC Compliance"],
   ] as const;
   return (
-    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm`}>
+    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-lg border border-[#e6e0d8] bg-white shadow-sm`}>
       <div className="flex items-center gap-2 bg-[#1a1a1a] px-6 py-3.5">
         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/90" aria-hidden />
         <span className="text-[13px] font-semibold text-white">Consentz Platform</span>
@@ -181,7 +181,7 @@ function TemplateLibraryCard() {
     { label: "CQC", highlight: false },
   ] as const;
   return (
-    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm`}>
+    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-lg border border-[#e6e0d8] bg-white shadow-sm`}>
       <div className="flex items-center gap-2 bg-[#1a1a1a] px-6 py-3.5">
         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/90" aria-hidden />
         <span className="text-[13px] font-semibold text-white">Template Library</span>
@@ -219,7 +219,7 @@ function CqcEvidenceCard() {
     "Patient communication logged",
   ] as const;
   return (
-    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm`}>
+    <div className={`${HUB_INLINE_CARD} overflow-hidden rounded-lg border border-[#e6e0d8] bg-white shadow-sm`}>
       <div className="flex items-center gap-2 bg-[#1a1a1a] px-6 py-3.5">
         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/90" aria-hidden />
         <span className="text-[13px] font-semibold text-white">CQC Evidence Overview</span>
@@ -451,7 +451,7 @@ export function HubCompareDetailTemplate({ entry }: Props) {
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-lg border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image

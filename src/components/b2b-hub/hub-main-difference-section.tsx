@@ -47,7 +47,7 @@ function DifferenceCard({
   bullets: readonly string[]
 }) {
   return (
-    <div className="flex w-full flex-col gap-4 rounded-2xl border border-[#e6e0d8] bg-[#f5f3ee] p-6 sm:gap-5 sm:p-8 md:p-9">
+    <div className="flex w-full flex-col gap-4 rounded-lg border border-[#e6e0d8] bg-[#f5f3ee] p-6 sm:gap-5 sm:p-8 md:p-9">
       <div className="flex items-center justify-center gap-3 lg:justify-start">
         {variant === "consentz" ? (
           <ConsentzBrandLogo />

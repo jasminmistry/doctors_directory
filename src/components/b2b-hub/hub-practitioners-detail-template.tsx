@@ -190,7 +190,7 @@ const complianceCards = [
 
 function PractitionerHeroMockup() {
   return (
-    <div className="flex h-[min(400px,70vw)] w-full max-w-[560px] flex-col overflow-hidden rounded-2xl border border-[#e6e0d8] bg-white shadow-sm lg:h-[400px]">
+    <div className="flex h-[min(400px,70vw)] w-full max-w-[560px] flex-col overflow-hidden rounded-lg border border-[#e6e0d8] bg-white shadow-sm lg:h-[400px]">
       <div className="flex items-center gap-4 border-b border-[#1a1a1a] bg-[#1a1a1a] px-5 py-3 text-[11px] text-white">
         <span className="font-medium">Consentz</span>
         <span className="h-px flex-1 bg-white/20" />
@@ -415,7 +415,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               {roleCards.map(({ title, body, bullets, Icon }) => (
                 <div
                   key={title}
-                  className="flex flex-col gap-4 rounded-2xl border border-[#e6e0d8] bg-white p-8"
+                  className="flex flex-col gap-4 rounded-lg border border-[#e6e0d8] bg-white p-8"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#e0f1ed]">
                     <Icon className="h-6 w-6 text-[#106057]" strokeWidth={1.5} aria-hidden />
@@ -539,7 +539,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
 
         <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-0 bg-[#fcfbf9] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]")}>
           <div className="mx-auto flex max-w-[800px] flex-col items-center gap-8">
-            <div className="w-full max-w-[720px] rounded-2xl border border-[#e6e0d8] bg-white shadow-sm">
+            <div className="w-full max-w-[720px] rounded-lg border border-[#e6e0d8] bg-white shadow-sm">
               <div className="h-1 w-full rounded-t-2xl bg-[#1a877a]" />
               <div className="flex flex-col gap-4 px-7 pb-8 pt-6">
                 <p className="text-[10px] font-semibold tracking-[2px] text-[#1a877a]">
@@ -582,7 +582,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               {complianceCards.map(({ title, body }) => (
                 <div
                   key={title}
-                  className="flex flex-col gap-4 rounded-2xl border border-[#e6e0d8] bg-white p-8"
+                  className="flex flex-col gap-4 rounded-lg border border-[#e6e0d8] bg-white p-8"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#e0f1ed]">
                     <FileText className="h-6 w-6 text-[#106057]" strokeWidth={1.5} aria-hidden />

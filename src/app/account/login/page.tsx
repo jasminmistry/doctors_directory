@@ -69,7 +69,7 @@ export default function AccountLoginPage() {
       <div className="w-full max-w-[22rem]">
         <div className="mb-5 text-center">
           <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center border border-[#e0e0e0] rounded-full bg-white">
-            <UserCircle className="h-5 w-5 text-black" />
+            <UserCircle strokeWidth={1.5} className="h-6 w-6 text-black" />
           </div>
           <h1 className="text-xl font-medium text-black">Sign in to your account</h1>
           <p className="mt-1.5 text-sm text-slate-500">Book consultations and manage your appointments</p>

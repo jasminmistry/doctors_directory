@@ -251,7 +251,7 @@ function DetailRow({
 }) {
   return (
     <div className="flex items-center gap-2 text-sm">
-      <Icon className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+      <Icon className="h-3.5 w-3.5 shrink-0 text-gray-600" />
       <span className="w-10 shrink-0 text-xs text-gray-600">{label}</span>
       {locked ? (
         <span className={cn('h-4 rounded bg-gray-200 blur-[3px] select-none', placeholderWidth)} aria-hidden="true" />
@@ -401,7 +401,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
       </div>
 
       {/* Patient details */}
-      <div className="space-y-1.5 mb-3 rounded-lg bg-gray-50/60 px-2.5 py-2">
+      <div className="space-y-1.5 mb-3 px-2.5 py-2">
         <DetailRow icon={User} label="Name" value={lead.patientName} locked={locked} placeholderWidth="w-32" emphasis />
         <DetailRow icon={Phone} label="Phone" value={lead.patientPhone} locked={locked} placeholderWidth="w-28" />
         <DetailRow icon={Mail} label="Email" value={lead.patientEmail} locked={locked} placeholderWidth="w-40" />
@@ -461,14 +461,22 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
       {!locked && (
         <div className="space-y-1.5">
           <div className="flex flex-wrap gap-2">
-            <Button asChild size="sm" className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-white hover:bg-primary/90 hover:cursor-pointer transition-colors">
+            <Button 
+              asChild 
+              variant="default"
+              size="sm"
+            >
               <a href={`tel:${lead.patientPhone}`}>
                 <Phone className="h-3.5 w-3.5 mr-1.5" />
                 Call
               </a>
             </Button>
             {lead.patientEmail && (
-              <Button asChild size="sm" variant="outline" className="border-[#e0e0e0] ">
+              <Button 
+                asChild 
+                size="sm" 
+                variant="outline"
+              >
                 <a href={`mailto:${lead.patientEmail}`}>
                   <Mail className="h-3.5 w-3.5 mr-1.5" />
                   Email
@@ -481,7 +489,6 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
                 disabled={pulling}
                 size="sm"
                 variant="outline"
-                className="border-[#e0e0e0]"
               >
                 {pulling ? (
                   <><Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />Pulling…</>
@@ -495,7 +502,6 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
                 asChild 
                 size="sm" 
                 variant="outline" 
-                className="border-[#e0e0e0]"
               >
                 <a href={coreUrl} target="_blank" rel="noreferrer">
                   <ExternalLink className="h-3.5 w-3.5 mr-1.5" />

@@ -287,7 +287,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
         </section>
 
         <section className="mb-16" aria-labelledby="migrate-progress-heading">
-          <div className="mx-auto max-w-[920px] overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white shadow-sm">
+          <div className="mx-auto max-w-[920px] overflow-hidden rounded-lg border border-[#e0e0e0] bg-white shadow-sm">
             <div className="border-b border-[#ECEAE6] bg-[#faf9f7] px-6 py-4">
               <p
                 id="migrate-progress-heading"
@@ -346,7 +346,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-16 rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] px-6 py-10 md:px-12 md:py-12">
+        <section className="mb-16 rounded-lg border border-[#e0e0e0] bg-[#fbfbfb] px-6 py-10 md:px-12 md:py-12">
           <h2 className="mb-2 text-center text-3xl font-medium text-[#111111] md:text-[32px]">
             Everything Comes With You
           </h2>
@@ -380,7 +380,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
           </div>
         </section>
 
-        <section className="mb-16 w-full min-w-0 rounded-2xl border border-[#e0e0e0] bg-white px-4 py-10 text-center sm:px-6 md:px-12 md:py-14">
+        <section className="mb-16 w-full min-w-0 rounded-lg border border-[#e0e0e0] bg-white px-4 py-10 text-center sm:px-6 md:px-12 md:py-14">
           <h2 className="text-2xl font-medium text-[#111111] md:text-3xl">
             We Have A Dedicated Migration Path For {platform}
           </h2>
@@ -455,7 +455,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-lg border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image

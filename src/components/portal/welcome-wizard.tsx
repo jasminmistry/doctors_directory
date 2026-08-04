@@ -71,11 +71,11 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="relative w-full max-w-lg rounded-2xl bg-white shadow-2xl">
+      <div className="relative w-full max-w-lg rounded-lg bg-white shadow-2xl">
 
         {step === 'welcome' && (
           <div className="p-8 text-center">
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-900">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-lg bg-gray-900">
               <CalendarDays className="h-7 w-7 text-white" />
             </div>
             <h2 className="text-xl font-medium text-gray-900">

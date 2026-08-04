@@ -138,7 +138,7 @@ function AutomationWorkflowSpotlight() {
         <h2 className="mb-10 text-center text-[28px] font-medium leading-tight text-[#111111] md:text-[34px]">
           End-To-End Automation Your Clinic Can Rely On
         </h2>
-        <div className="overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
+        <div className="overflow-hidden rounded-lg border border-[#e0e0e0] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
           <div className="grid grid-cols-1 gap-10 p-8 md:grid-cols-2 md:gap-12 md:p-12 lg:items-center">
             <div className="min-w-0">
               <p className="mb-8 text-sm font-medium text-[#6B6B6B]">
@@ -366,7 +366,7 @@ export function HubAutomationDetailTemplate({ entry, officialToolUrl }: Props) {
                 href={post.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
+                className="flex flex-col overflow-hidden rounded-lg border border-[#DCDBD9] bg-[#fbfbfb] transition-shadow hover:shadow-md"
               >
                 <div className="relative h-[200px] w-full overflow-hidden bg-[#E8E6E2]">
                   <Image

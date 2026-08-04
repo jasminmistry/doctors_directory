@@ -116,7 +116,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
   const handleApply = () => fetchMetrics(dateRange.from, dateRange.to)
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
       {/* Header */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">

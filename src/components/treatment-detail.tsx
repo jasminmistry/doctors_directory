@@ -375,7 +375,7 @@ export function TreatmentDetail({
       {/* Header Section - Responsive Design */}
 
       {/* Mobile Layout */}
-      <header className="lg:hidden bg-white rounded-2xl border border-gray-200 p-2 mb-8">
+      <header className="lg:hidden bg-white rounded-lg border border-gray-200 p-2 mb-8">
         <div className="flex gap-6">
           {/* Treatment Image */}
           <div className="flex-shrink-0">
@@ -442,7 +442,7 @@ export function TreatmentDetail({
       </header>
 
       {/* Desktop Layout - Original Design */}
-      <div className="hidden lg:flex flex-col lg:flex-row gap-8 mb-8 p-5 rounded-2xl bg-[#F2EDE6]">
+      <div className="hidden lg:flex flex-col lg:flex-row gap-8 mb-8 p-5 rounded-lg bg-[#F2EDE6]">
         {/* Treatment Image */}
         <div className="shrink-0">
           <div className="w-48 h-48 rounded-full overflow-hidden">

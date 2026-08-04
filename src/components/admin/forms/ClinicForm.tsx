@@ -235,13 +235,13 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="lg">
                 <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
                 Preview
               </Button>
             </a>
           )}
-          <Button size="sm" onClick={handleSave} disabled={saving}>
+          <Button size="lg" onClick={handleSave} disabled={saving}>
             <Save className="h-3.5 w-3.5 mr-1.5" />
             {saving ? 'Saving…' : 'Save'}
           </Button>
@@ -463,7 +463,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
 
       {/* Footer save */}
       <div className="flex justify-end pt-2">
-        <Button size="sm" onClick={handleSave} disabled={saving}>
+        <Button size="lg" onClick={handleSave} disabled={saving}>
           <Save className="h-3.5 w-3.5 mr-1.5" />
           {saving ? 'Saving…' : 'Save Clinic'}
         </Button>

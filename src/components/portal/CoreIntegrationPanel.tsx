@@ -48,7 +48,7 @@ export function CoreIntegrationPanel({ hasCoreLink, unlinkRequestedAt, onRefresh
   }
 
   return (
-    <div className="rounded-2xl border border-[#e4dccf] bg-[#f2eee5] p-6 space-y-4">
+    <div className="rounded-lg border border-[#e4dccf] bg-[#f2eee5] p-6 space-y-4">
       <h2 className="text-xs font-medium text-black uppercase tracking-[0.2em]">
         Consentz Core Integration
       </h2>

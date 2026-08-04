@@ -447,7 +447,7 @@ console.log(failedTestMessages)
                     
 
 
-                    <section className="bg-white rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-lg p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         1. One Test = One Page Render
                       </h2>
@@ -475,7 +475,7 @@ console.log(failedTestMessages)
                     </section>
 
 
-                    <section className="bg-white rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-lg p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         2. A Failed Test Does Not Always Mean the Page Is Broken
                       </h2>
@@ -508,7 +508,7 @@ console.log(failedTestMessages)
                     </section>
 
 
-                    <section className="bg-white rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-lg p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         3. The Testing Mindset & Workflow
                       </h2>
@@ -558,7 +558,7 @@ console.log(failedTestMessages)
                     </section>
 
 
-                    <section className="bg-white rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-lg p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         4. Expanding the Horizon
                       </h2>
@@ -614,7 +614,7 @@ console.log(failedTestMessages)
                       </div>
                       
                     </section>
-                    <section className="bg-white rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-lg p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">CMS</h2>
                       <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded">
                       <li className="text-indigo-900 font-medium">/directory/admin/clinics</li>
