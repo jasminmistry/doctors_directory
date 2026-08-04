@@ -13,7 +13,6 @@ export async function GET(
 ) {
   const eventId = req.nextUrl.searchParams.get('eventId')
   const date = req.nextUrl.searchParams.get('date')
-  const timezone = req.nextUrl.searchParams.get('timezone') ?? 'Europe/London'
 
   if (!eventId || !date) {
     return NextResponse.json({ error: 'eventId and date are required' }, { status: 400 })
@@ -37,7 +36,7 @@ export async function GET(
       return NextResponse.json({ available: [], slot_duration: 30 })
     }
 
-    const qs = new URLSearchParams({ eventId, date, timezone })
+    const qs = new URLSearchParams({ eventId, date })
     const url = `${getCoreLiteBase()}/clinics/${coreClinicId}/availability?${qs}`
     const appId = process.env.CONSENTZ_APPLICATION_ID ?? 'admin'
     console.log(`[events/availability] GET ${url}  appId=${appId}`)

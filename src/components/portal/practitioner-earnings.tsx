@@ -2,10 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import { Loader2, PoundSterling, TrendingUp, CalendarDays, ReceiptText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 import { commissionRate, commissionPct, clinicNetRate } from '@/lib/pricing'
+
+// Bookings are always shown in the clinic's own timezone, never the visitor's
+// browser timezone — every clinic in this directory is UK-based.
+const CLINIC_TIMEZONE = 'Europe/London'
 
 type Period = 'all' | 'this_month' | 'last_month'
 
@@ -174,10 +179,10 @@ export function PractitionerEarnings() {
                     <tr key={b.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-4 py-3 whitespace-nowrap">
                         <p className="text-xs font-medium text-gray-900">
-                          {format(new Date(b.slotStart), 'd MMM yyyy')}
+                          {formatInTimeZone(b.slotStart, CLINIC_TIMEZONE, 'd MMM yyyy')}
                         </p>
                         <p className="text-[10px] text-gray-600">
-                          {format(new Date(b.slotStart), 'HH:mm')}
+                          {formatInTimeZone(b.slotStart, CLINIC_TIMEZONE, 'HH:mm')}
                         </p>
                       </td>
                       <td className="px-4 py-3">

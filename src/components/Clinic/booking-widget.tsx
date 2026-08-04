@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { format, addDays, isSameDay } from 'date-fns'
 import { ChevronLeft, ChevronRight, Loader2, CheckCircle2, Video, ExternalLink } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatTimezoneAbbr } from '@/lib/utils'
 import type { CoreSlot } from '@/lib/core-api'
 
 interface BookingWidgetProps {
@@ -38,6 +38,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
   const [weekOffset, setWeekOffset] = useState(0)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [slots, setSlots] = useState<CoreSlot[]>([])
+  const [slotTimezone, setSlotTimezone] = useState('Europe/London')
   const [slotsLoading, setSlotsLoading] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<CoreSlot | null>(null)
   const [videoCall, setVideoCall] = useState(false)
@@ -60,7 +61,10 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
     setSelectedSlot(null)
     fetch(`/directory/api/book/${slug}/availability?date=${dateKey(selectedDate)}`)
       .then(r => r.json())
-      .then(d => setSlots(d.available ?? []))
+      .then(d => {
+        setSlots(d.available ?? [])
+        setSlotTimezone(d.timezone || 'Europe/London')
+      })
       .catch(() => setSlots([]))
       .finally(() => setSlotsLoading(false))
   }, [selectedDate, slug, hasCoreCalendar])
@@ -89,7 +93,9 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
         setError(data.error ?? 'Booking failed')
         return
       }
-      setBookedSlot(`${selectedSlot.time_12h} with ${selectedSlot.practitioner}`)
+      setBookedSlot(
+        `${selectedSlot.time_12h} ${formatTimezoneAbbr(slotTimezone, new Date(selectedSlot.datetime))} with ${selectedSlot.practitioner}`,
+      )
       setBookedVideoCall(data.booking?.video_call ?? null)
       setStep(3)
     } catch {
@@ -193,6 +199,11 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
           {/* Slots */}
           {selectedDate && (
             <div>
+              {slots.length > 0 && !slotsLoading && (
+                <p className="text-[10px] text-gray-600 mb-1.5">
+                  Times shown in clinic time ({formatTimezoneAbbr(slotTimezone, selectedDate)})
+                </p>
+              )}
               {slotsLoading ? (
                 <div className="flex justify-center py-4">
                   <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
@@ -252,6 +263,8 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
           <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-600 flex items-center gap-2 flex-wrap">
             <span>
               <span className="font-medium">{selectedSlot?.time_12h}</span>
+              {' '}
+              ({formatTimezoneAbbr(slotTimezone, selectedDate ?? undefined)})
               {' · '}
               {selectedSlot && selectedDate && format(selectedDate, 'EEE d MMM')}
               {' · '}

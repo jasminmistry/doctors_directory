@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { toZonedTime } from 'date-fns-tz'
 import { prisma } from '@/lib/db'
 import { getCoreAvailability, isCoreConfigured } from '@/lib/core-api'
 import { COOKIE_TOKEN } from '@/lib/auth'
 import { isClinicScheduleConfigured, SCHEDULE_NOT_CONFIGURED_RESPONSE } from '@/lib/schedule-check'
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const
+
+// Matches DEFAULT_CLINIC_TIMEZONE in src/lib/core-api.ts — every clinic in
+// this directory is UK-based, and the local fallback has no per-clinic
+// timezone data to work with.
+const CLINIC_TIMEZONE = 'Europe/London'
 
 interface DaySchedule {
   day: string
@@ -31,14 +37,23 @@ function computeLocalSlots(
   const entry = schedule.find((s) => s.day === dayName && s.enabled)
   if (!entry) return { available: [], slot_duration: 30 }
 
+  const nowZoned = toZonedTime(new Date(), CLINIC_TIMEZONE)
+  const todayKey = `${nowZoned.getFullYear()}-${String(nowZoned.getMonth() + 1).padStart(2, '0')}-${String(nowZoned.getDate()).padStart(2, '0')}`
+  if (date < todayKey) return { available: [], slot_duration: 30 }
+
   const [startH, startM] = entry.startTime.split(':').map(Number)
   const [endH, endM] = entry.endTime.split(':').map(Number)
   const startMin = startH * 60 + startM
   const endMin = endH * 60 + endM
   const slotDuration = 30
 
+  // Skip slots that have already passed, when the requested date is today —
+  // compared in the clinic's own timezone, not the server's system timezone.
+  const nowMin = date === todayKey ? nowZoned.getHours() * 60 + nowZoned.getMinutes() : -1
+
   const slots = []
   for (let m = startMin; m + slotDuration <= endMin; m += slotDuration) {
+    if (m <= nowMin) continue
     const h = Math.floor(m / 60)
     const min = m % 60
     const hh = String(h).padStart(2, '0')

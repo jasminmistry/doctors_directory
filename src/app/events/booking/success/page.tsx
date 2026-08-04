@@ -2,18 +2,24 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Stripe from 'stripe'
 import { CheckCircle2, Video, Calendar, Mail } from 'lucide-react'
+import { formatTimezoneAbbr } from '@/lib/utils'
+
+// Always shown in the clinic's own timezone, never the visitor's browser
+// timezone — every clinic in this directory is UK-based.
+const CLINIC_TIMEZONE = 'Europe/London'
 
 function formatSlotDate(isoStr: string): string {
   try {
-    return new Date(isoStr).toLocaleString('en-GB', {
+    const formatted = new Date(isoStr).toLocaleString('en-GB', {
       weekday: 'short',
       day: 'numeric',
       month: 'long',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      timeZone: 'Europe/London',
+      timeZone: CLINIC_TIMEZONE,
     })
+    return `${formatted} (${formatTimezoneAbbr(CLINIC_TIMEZONE, new Date(isoStr))})`
   } catch {
     return isoStr
   }

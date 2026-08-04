@@ -6,6 +6,20 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/**
+ * Booking slot times are always shown in the clinic's own timezone (never the
+ * visitor's browser timezone) — this renders the short abbreviation, e.g.
+ * "Europe/London" -> "GMT" or "BST" depending on the date shown.
+ */
+export function formatTimezoneAbbr(timezone: string, date: Date = new Date()): string {
+  try {
+    const parts = new Intl.DateTimeFormat('en-GB', { timeZone: timezone, timeZoneName: 'short' }).formatToParts(date)
+    return parts.find(p => p.type === 'timeZoneName')?.value ?? timezone
+  } catch {
+    return timezone
+  }
+}
+
 function credentialToSlug(name: string): string {
   return name
     .toLowerCase()

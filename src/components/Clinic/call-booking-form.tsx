@@ -2,8 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { format, addDays, isSameDay } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import { ChevronLeft, ChevronRight, CheckCircle2, Loader2, Video, ExternalLink, Clock } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatTimezoneAbbr } from '@/lib/utils'
+
+// Video call slot times are always shown in the clinic's own timezone, never
+// the visitor's browser timezone — every clinic in this directory is UK-based.
+const CLINIC_TIMEZONE = 'Europe/London'
 
 interface CallSlot {
   practitioner_id: number
@@ -189,7 +194,6 @@ export function CallBookingForm({
 
   // ── Step 3: success ─────────────────────────────────────────────────────────
   if (step === 3 && result) {
-    const startDt = new Date(result.slot_start)
     const readyUrl = joinUrl ?? (result.join_url_ready ? result.join_url : null)
     const isZoomWaiting = result.call_type === 'zoom' && !readyUrl
 
@@ -203,7 +207,8 @@ export function CallBookingForm({
         <div className="space-y-1">
           <p className="font-semibold text-gray-900 text-sm">Video call booked!</p>
           <p className="text-xs text-gray-600">
-            {format(startDt, "EEE d MMM 'at' HH:mm")} with{' '}
+            {formatInTimeZone(result.slot_start, CLINIC_TIMEZONE, "EEE d MMM 'at' HH:mm")}{' '}
+            ({formatTimezoneAbbr(CLINIC_TIMEZONE, new Date(result.slot_start))}) with{' '}
             <span className="font-medium">{result.practitioner.name}</span>
           </p>
         </div>
@@ -244,6 +249,7 @@ export function CallBookingForm({
         {/* Slot recap */}
         <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-600">
           <span className="font-medium">{selectedSlot?.start} – {selectedSlot?.end}</span>
+          {' '}({formatTimezoneAbbr(CLINIC_TIMEZONE, selectedDate ?? undefined)})
           {' · '}{selectedDayLabel}
           {' · '}{selectedSlot?.practitioner}
         </div>
