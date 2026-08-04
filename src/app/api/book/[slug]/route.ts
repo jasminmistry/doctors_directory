@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { createCoreBooking, isCoreConfigured, isSlotInPast, resolveClinicTimezone } from '@/lib/core-api'
 import { COOKIE_TOKEN } from '@/lib/auth'
-import { getPatientClaims } from '@/lib/patient-auth'
+import { requirePatient } from '@/lib/patient-auth'
 import { getConsentzToken, generateConsentzPassword, initConsentzPatient } from '@/lib/patient-consentz'
 import { addMinutes } from 'date-fns'
 import { fromZonedTime } from 'date-fns-tz'
@@ -21,6 +21,9 @@ const bodySchema = z.object({
 })
 
 export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
+  const { patient, error: authError } = await requirePatient(req)
+  if (authError) return authError
+
   const parsed = bodySchema.safeParse(await req.json())
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
@@ -53,23 +56,15 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     return NextResponse.json({ error: 'This time slot has already passed — please pick another time' }, { status: 409 })
   }
 
-  // Resolve logged-in patient for token-linked booking
-  const patientClaims = getPatientClaims(req)
-  let patient = patientClaims
-    ? await prisma.patient.findUnique({ where: { id: patientClaims.id } })
-    : null
-
   // For first-time bookings: generate a Consentz password so Core can create the patient account.
   // NOTE: Consentz must accept `patient_password` in the booking body to set up the account.
   let pendingPassword: string | null = null
   let patientToken: string | null = null
 
-  if (patient) {
-    if (patient.consentzPassword) {
-      patientToken = await getConsentzToken(patient)
-    } else {
-      pendingPassword = generateConsentzPassword()
-    }
+  if (patient.consentzPassword) {
+    patientToken = await getConsentzToken(patient)
+  } else {
+    pendingPassword = generateConsentzPassword()
   }
 
   try {
@@ -91,7 +86,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     const booking = coreRes.booking
 
     // Acquire Consentz tokens now that the account exists (first booking only)
-    if (patient && pendingPassword) {
+    if (pendingPassword) {
       initConsentzPatient(patient.id, patientEmail, pendingPassword).catch(
         (err) => console.error('[book] initConsentzPatient failed:', err),
       )
@@ -114,7 +109,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
         lastSyncedAt: new Date(),
         videoCallMeetingId: booking.video_call ? String(booking.id) : null,
         videoCallJoinUrl: booking.video_call?.join_url ?? null,
-        ...(patient ? { patientId: patient.id } : {}),
+        patientId: patient.id,
       },
       update: {
         status: 'confirmed',

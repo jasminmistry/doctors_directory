@@ -21,15 +21,27 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: 'desc' },
   })
 
-  // Unread — last message is from the clinic AND the patient hasn't viewed
-  // this conversation since that message arrived
-  const sessionsWithUnread = sessions.map(({ patientLastReadAt, ...s }) => {
-    const lastMsg = s.messages[0]
-    const unread =
-      lastMsg?.sender === 'clinic' &&
-      (!patientLastReadAt || lastMsg.createdAt > patientLastReadAt)
-    return { ...s, unread }
-  })
+  // Unread count — number of clinic messages the patient hasn't viewed yet
+  // (viewing a conversation sets patientLastReadAt)
+  const unreadCountsBySessionId = new Map(
+    await Promise.all(
+      sessions.map(async (s) => {
+        const count = await prisma.chatMessage.count({
+          where: {
+            sessionId: s.id,
+            sender: 'clinic',
+            ...(s.patientLastReadAt ? { createdAt: { gt: s.patientLastReadAt } } : {}),
+          },
+        })
+        return [s.id, count] as const
+      }),
+    ),
+  )
+
+  const sessionsWithUnread = sessions.map(({ patientLastReadAt: _patientLastReadAt, ...s }) => ({
+    ...s,
+    unread: unreadCountsBySessionId.get(s.id) ?? 0,
+  }))
 
   return NextResponse.json({ sessions: sessionsWithUnread }, { headers: { 'Cache-Control': 'no-store' } })
 }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
-import { getCoreSchedule, setCoreSchedule } from '@/lib/core-api'
+import { getCoreSchedule, setCoreSchedule, resolveClinicTimezone } from '@/lib/core-api'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,9 +38,10 @@ export async function GET() {
 
   const claim = await getClaimIds(user)
   const consentzUserId = claim?.consentzUserId
-  console.log(`[portal/schedule] GET user=${user.claimerEmail} consentzUserId=${consentzUserId ?? 'none'}`)
+  const timezone = await resolveClinicTimezone(claim?.consentzClinicId ?? null)
+  console.log(`[portal/schedule] GET user=${user.claimerEmail} consentzUserId=${consentzUserId ?? 'none'} timezone=${timezone}`)
 
-  if (!consentzUserId) return NextResponse.json({ schedule: [] })
+  if (!consentzUserId) return NextResponse.json({ schedule: [], timezone })
 
   try {
     const fetchedSchedule = await getCoreSchedule(consentzUserId)
@@ -54,10 +55,10 @@ export async function GET() {
       }).catch(() => {})
     }
 
-    return NextResponse.json({ schedule: fetchedSchedule })
+    return NextResponse.json({ schedule: fetchedSchedule, timezone })
   } catch (err) {
     console.error('[portal/schedule] GET unexpected error:', err)
-    return NextResponse.json({ schedule: [] })
+    return NextResponse.json({ schedule: [], timezone })
   }
 }
 
@@ -101,6 +102,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, schedule: result })
   } catch (err) {
     console.error('[portal/schedule] POST unexpected error:', err)
-    return NextResponse.json({ error: 'Failed to save schedule' }, { status: 500 })
+    const status = (err as { status?: number }).status
+    const body = (err as { body?: string }).body
+    let message = 'Failed to save schedule'
+    if (body) {
+      try {
+        message = (JSON.parse(body) as { error?: { message?: string } }).error?.message ?? message
+      } catch { /* raw, non-JSON body */ }
+    }
+    const clientStatus = status && status >= 400 && status < 500 ? status : 500
+    return NextResponse.json({ error: message }, { status: clientStatus })
   }
 }

@@ -2,26 +2,24 @@
 
 import { useState, useEffect } from 'react'
 import { format, addDays, isSameDay } from 'date-fns'
-import { ChevronLeft, ChevronRight, Loader2, CheckCircle2, Video, ExternalLink } from 'lucide-react'
+import { formatInTimeZone } from 'date-fns-tz'
+import { toast } from 'sonner'
+import { ChevronLeft, ChevronRight, CheckCircle2, Loader2, Video, ExternalLink, Calendar } from 'lucide-react'
 import { cn, formatTimezoneAbbr } from '@/lib/utils'
+import { ConsultationRichForm } from '@/components/consultation/consultation-form'
+import type { ConsultationFormData } from '@/components/consultation/consultation-form'
 import type { CoreSlot } from '@/lib/core-api'
 
 interface BookingWidgetProps {
   slug: string
   clinicName: string
   hasCoreCalendar: boolean
+  // Prefill for the details form — the chat dialog already resolves the logged-in
+  // patient before this widget is ever shown, so there's no separate login step here.
+  defaultValues?: Partial<ConsultationFormData>
 }
 
-type Step = 1 | 2 | 3
-
-interface PatientForm {
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-}
-
-const WEEK_SIZE = 7
+type Step = 'date-slot' | 'details' | 'confirmation'
 
 interface VideoCall {
   type: 'zoom' | 'jitsi'
@@ -29,12 +27,21 @@ interface VideoCall {
   start_url: string
 }
 
+interface BookingConfirmation {
+  slotStart: string
+  practitionerName: string
+  patientEmail: string
+  videoCall: VideoCall | null
+}
+
+const WEEK_SIZE = 7
+
 function dateKey(d: Date) {
   return format(d, 'yyyy-MM-dd')
 }
 
-export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidgetProps) {
-  const [step, setStep] = useState<Step>(1)
+export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues }: BookingWidgetProps) {
+  const [step, setStep] = useState<Step>('date-slot')
   const [weekOffset, setWeekOffset] = useState(0)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [slots, setSlots] = useState<CoreSlot[]>([])
@@ -42,11 +49,8 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
   const [slotsLoading, setSlotsLoading] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<CoreSlot | null>(null)
   const [videoCall, setVideoCall] = useState(false)
-  const [patient, setPatient] = useState<PatientForm>({ firstName: '', lastName: '', email: '', phone: '' })
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [bookedSlot, setBookedSlot] = useState<string | null>(null)
-  const [bookedVideoCall, setBookedVideoCall] = useState<VideoCall | null>(null)
+  const [confirmation, setConfirmation] = useState<BookingConfirmation | null>(null)
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -63,16 +67,17 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
       .then(r => r.json())
       .then(d => {
         setSlots(d.available ?? [])
+        // Slots are always in the clinic's own timezone (we never send one),
+        // but trust whatever Core reports the `datetime` values are actually in.
         setSlotTimezone(d.timezone || 'Europe/London')
       })
       .catch(() => setSlots([]))
       .finally(() => setSlotsLoading(false))
   }, [selectedDate, slug, hasCoreCalendar])
 
-  async function handleConfirm() {
+  async function handleBook(data: ConsultationFormData) {
     if (!selectedSlot) return
     setSubmitting(true)
-    setError(null)
     try {
       const res = await fetch(`/directory/api/book/${slug}`, {
         method: 'POST',
@@ -81,239 +86,264 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar }: BookingWidg
           practitionerId: selectedSlot.practitioner_id,
           slotDatetime: selectedSlot.datetime,
           slotDuration: 30,
-          patientFirstName: patient.firstName,
-          patientLastName: patient.lastName,
-          patientEmail: patient.email,
-          patientPhone: patient.phone,
+          patientFirstName: data.firstName,
+          patientLastName: data.lastName,
+          patientEmail: data.email,
+          patientPhone: data.phone,
           videoCall,
         }),
       })
-      const data = await res.json()
+      const resData = await res.json()
       if (!res.ok) {
-        setError(data.error ?? 'Booking failed')
+        if (res.status === 409) {
+          toast.error('This slot was just taken, please select another time')
+        } else {
+          toast.error(resData.error ?? 'Booking failed — please try again')
+        }
         return
       }
-      setBookedSlot(
-        `${selectedSlot.time_12h} ${formatTimezoneAbbr(slotTimezone, new Date(selectedSlot.datetime))} with ${selectedSlot.practitioner}`,
-      )
-      setBookedVideoCall(data.booking?.video_call ?? null)
-      setStep(3)
+      const booking = resData.booking as {
+        slot_start: string
+        practitioner: { name: string }
+        video_call: VideoCall | null
+      }
+      setConfirmation({
+        slotStart: booking.slot_start,
+        practitionerName: booking.practitioner?.name ?? selectedSlot.practitioner,
+        patientEmail: data.email,
+        videoCall: booking.video_call,
+      })
+      setStep('confirmation')
     } catch {
-      setError('Booking failed — please try again')
+      toast.error('Booking failed — please try again')
     } finally {
       setSubmitting(false)
     }
   }
 
+  function resetToDateSlot() {
+    setStep('date-slot')
+    setSelectedDate(null)
+    setSlots([])
+    setSelectedSlot(null)
+    setVideoCall(false)
+    setConfirmation(null)
+  }
+
   if (!hasCoreCalendar) return null
 
-  if (step === 3) {
+  // ── Confirmation ─────────────────────────────────────────────────────────────
+  if (step === 'confirmation' && confirmation) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-5 text-center space-y-3">
-        <CheckCircle2 className="mx-auto h-10 w-10 text-green-500" />
-        <h3 className="text-sm font-semibold text-gray-900">
-          {bookedVideoCall ? 'Video call booked!' : 'Booking confirmed!'}
-        </h3>
-        <p className="text-xs text-gray-600">
-          Your {bookedVideoCall ? 'video call' : 'appointment'} at{' '}
-          <span className="font-medium">{bookedSlot}</span> has been booked.
-          {!bookedVideoCall && ` A confirmation will be sent to ${patient.email}.`}
-        </p>
-        {bookedVideoCall?.join_url && (
-          <a
-            href={bookedVideoCall.join_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-700 transition-colors"
+      <div>
+        <div className="px-5 py-4 border-b border-gray-100">
+          <h2 className="text-base font-semibold text-gray-900">Booking Confirmed</h2>
+        </div>
+        <div className="flex flex-col items-center gap-4 text-center px-6 py-10">
+          <CheckCircle2 className="h-10 w-10 text-green-500 shrink-0" />
+          <div className="space-y-1">
+            <p className="font-semibold text-gray-900">Appointment with {confirmation.practitionerName}</p>
+            <p className="text-sm text-gray-600">
+              {formatInTimeZone(confirmation.slotStart, slotTimezone, "EEE d MMM 'at' HH:mm")}{' '}
+              ({formatTimezoneAbbr(slotTimezone, new Date(confirmation.slotStart))})
+            </p>
+          </div>
+
+          {confirmation.videoCall?.join_url && (
+            <a
+              href={confirmation.videoCall.join_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+            >
+              <Video className="h-4 w-4" />
+              Join Meeting
+              <ExternalLink className="h-3.5 w-3.5 opacity-70" />
+            </a>
+          )}
+
+          <p className="text-xs text-gray-600">
+            A confirmation email has been sent to{' '}
+            <span className="font-medium">{confirmation.patientEmail}</span>
+          </p>
+
+          <button
+            type="button"
+            onClick={resetToDateSlot}
+            className="text-xs text-gray-600 underline hover:text-gray-600 mt-2"
           >
-            <Video className="h-4 w-4" />
-            Join Video Call
-            <ExternalLink className="h-3.5 w-3.5 opacity-70" />
-          </a>
-        )}
+            Book another appointment
+          </button>
+        </div>
       </div>
     )
   }
 
-  return (
-    <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
-      {/* Step indicator — always visible */}
-      <div className="flex items-center gap-1 text-[10px] text-gray-600 px-5 pt-5 pb-0">
-        <span className={cn('font-medium', step === 1 && 'text-gray-900')}>1. Date &amp; Time</span>
-        <span>›</span>
-        <span className={cn('font-medium', step === 2 && 'text-gray-900')}>2. Your Details</span>
-      </div>
-      {/* Scrollable content capped at viewport height */}
-      <div className="overflow-y-auto max-h-[min(520px,calc(100vh-10rem))] p-5 pt-4 space-y-4">
-
-      {step === 1 && (
-        <div className="space-y-3">
-          {/* Week nav */}
-          <div className="flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => setWeekOffset(o => Math.max(0, o - 1))}
-              disabled={weekOffset === 0}
-              className="rounded p-1 text-gray-600 hover:text-gray-700 disabled:opacity-30"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <span className="text-xs text-gray-600">
-              {format(weekStart, 'd MMM')} – {format(weekDays[6], 'd MMM')}
-            </span>
-            <button
-              type="button"
-              onClick={() => setWeekOffset(o => o + 1)}
-              className="rounded p-1 text-gray-600 hover:text-gray-700"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-
-          {/* Day buttons */}
-          <div className="grid grid-cols-7 gap-0.5">
-            {weekDays.map(day => {
-              const isPast = day < today
-              const isSelected = selectedDate && isSameDay(day, selectedDate)
-              return (
-                <button
-                  key={day.toISOString()}
-                  type="button"
-                  disabled={isPast}
-                  onClick={() => setSelectedDate(day)}
-                  className={cn(
-                    'flex flex-col items-center rounded-lg py-1.5 text-[10px] leading-tight transition-colors',
-                    isPast && 'opacity-30 cursor-not-allowed',
-                    isSelected
-                      ? 'bg-gray-900 text-white'
-                      : 'text-gray-600 hover:bg-gray-100',
-                  )}
-                >
-                  <span>{format(day, 'EEE')[0]}</span>
-                  <span className="font-semibold text-xs">{format(day, 'd')}</span>
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Slots */}
-          {selectedDate && (
-            <div>
-              {slots.length > 0 && !slotsLoading && (
-                <p className="text-[10px] text-gray-600 mb-1.5">
-                  Times shown in clinic time ({formatTimezoneAbbr(slotTimezone, selectedDate)})
-                </p>
-              )}
-              {slotsLoading ? (
-                <div className="flex justify-center py-4">
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
-                </div>
-              ) : slots.length === 0 ? (
-                <p className="text-center text-xs text-gray-600 py-3">No availability on this day</p>
-              ) : (
-                <div className="grid grid-cols-2 gap-1.5">
-                  {slots.map(slot => (
-                    <button
-                      key={slot.datetime}
-                      type="button"
-                      onClick={() => setSelectedSlot(s => s?.datetime === slot.datetime ? null : slot)}
-                      className={cn(
-                        'rounded-lg border px-2 py-2 text-left text-xs transition-colors',
-                        selectedSlot?.datetime === slot.datetime
-                          ? 'border-gray-900 bg-gray-900 text-white'
-                          : 'border-gray-200 text-gray-700 hover:border-gray-400',
-                      )}
-                    >
-                      <div className="font-medium">{slot.time_12h}</div>
-                      <div className="text-[10px] opacity-70 truncate">{slot.practitioner}</div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Video call toggle */}
-          <label className="flex items-center gap-2.5 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={videoCall}
-              onChange={(e) => setVideoCall(e.target.checked)}
-              className="h-4 w-4 rounded border-[#e0e0e0]  accent-gray-900"
-            />
-            <span className="flex items-center gap-1.5 text-xs text-gray-700">
-              <Video className="h-3.5 w-3.5 text-gray-600" />
-              Book as video call
-            </span>
-          </label>
-
+  // ── Patient details form ─────────────────────────────────────────────────────
+  if (step === 'details') {
+    return (
+      <div>
+        <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
           <button
             type="button"
-            disabled={!selectedSlot}
-            onClick={() => setStep(2)}
-            className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors"
+            onClick={() => setStep('date-slot')}
+            className="text-gray-600 hover:text-gray-600"
           >
-            Next →
+            <ChevronLeft className="h-4 w-4" />
           </button>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div className="space-y-3">
-          <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-600 flex items-center gap-2 flex-wrap">
-            <span>
-              <span className="font-medium">{selectedSlot?.time_12h}</span>
-              {' '}
-              ({formatTimezoneAbbr(slotTimezone, selectedDate ?? undefined)})
-              {' · '}
-              {selectedSlot && selectedDate && format(selectedDate, 'EEE d MMM')}
-              {' · '}
-              {selectedSlot?.practitioner}
-            </span>
-            {videoCall && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-700">
-                <Video className="h-3 w-3" />
-                Video call
-              </span>
+          <div>
+            <h2 className="text-base font-semibold text-gray-900">Your Details</h2>
+            {selectedDate && selectedSlot && (
+              <p className="text-xs text-gray-600 mt-0.5">
+                {format(selectedDate, 'd MMM')} at {selectedSlot.time}{' '}
+                ({formatTimezoneAbbr(slotTimezone, selectedDate)})
+                {videoCall ? ' · Video call' : ''}
+              </p>
             )}
           </div>
-
-          {(['firstName', 'lastName', 'email', 'phone'] as const).map(field => (
-            <div key={field}>
-              <label className="block text-[10px] font-medium uppercase tracking-wide text-gray-600 mb-1">
-                {field === 'firstName' ? 'First name' : field === 'lastName' ? 'Last name' : field === 'email' ? 'Email' : 'Phone'}
-              </label>
-              <input
-                type={field === 'email' ? 'email' : field === 'phone' ? 'tel' : 'text'}
-                value={patient[field]}
-                onChange={e => setPatient(p => ({ ...p, [field]: e.target.value }))}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
-              />
-            </div>
-          ))}
-
-          {error && <p className="text-xs text-red-600">{error}</p>}
-
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => { setStep(1); setError(null) }}
-              className="flex-1 rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
-            >
-              ← Back
-            </button>
-            <button
-              type="button"
-              disabled={submitting || !patient.firstName || !patient.lastName || !patient.email || !patient.phone}
-              onClick={handleConfirm}
-              className="flex-1 rounded-lg bg-gray-900 px-3 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors flex items-center justify-center gap-1.5"
-            >
-              {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-              Confirm
-            </button>
-          </div>
         </div>
-      )}
+
+        <ConsultationRichForm
+          key={defaultValues?.email ?? 'booking'}
+          defaultValues={defaultValues}
+          clinicName={clinicName}
+          description={
+            <>Confirm your details to book your appointment with{' '}
+              <span className="font-semibold">{clinicName}</span>.
+            </>
+          }
+          submitLabel="Confirm Booking"
+          submitting={submitting}
+          onSubmit={handleBook}
+        />
+      </div>
+    )
+  }
+
+  // ── Date + slot picker ───────────────────────────────────────────────────────
+  return (
+    <div>
+      <div className="px-5 py-4 border-b border-gray-100">
+        <h2 className="text-base font-semibold text-gray-900">Book an appointment</h2>
+      </div>
+
+      <div className="px-5 py-4 space-y-4">
+        {/* Step indicator */}
+        <div className="flex items-center gap-1 text-[10px] text-gray-600">
+          <span className="font-medium text-gray-900">1. Date &amp; Time</span>
+          <span>›</span>
+          <span>2. Your Details</span>
+        </div>
+
+        {/* Week nav */}
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setWeekOffset(o => Math.max(0, o - 1))}
+            disabled={weekOffset === 0}
+            className="rounded p-1 text-gray-600 hover:text-gray-700 disabled:opacity-30"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <span className="text-xs text-gray-600">
+            {format(weekStart, 'd MMM')} – {format(weekDays[6], 'd MMM')}
+          </span>
+          <button
+            type="button"
+            onClick={() => setWeekOffset(o => o + 1)}
+            className="rounded p-1 text-gray-600 hover:text-gray-700"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Day picker */}
+        <div className="grid grid-cols-7 gap-0.5">
+          {weekDays.map(day => {
+            const isPast = day < today
+            const isSelected = selectedDate ? isSameDay(day, selectedDate) : false
+            return (
+              <button
+                key={day.toISOString()}
+                type="button"
+                disabled={isPast}
+                onClick={() => setSelectedDate(day)}
+                className={cn(
+                  'flex flex-col items-center rounded-lg py-1.5 text-[10px] leading-tight transition-colors',
+                  isPast && 'opacity-30 cursor-not-allowed',
+                  isSelected
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-600 hover:bg-gray-100',
+                )}
+              >
+                <span>{format(day, 'EEE')[0]}</span>
+                <span className="font-semibold text-xs">{format(day, 'd')}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Slots */}
+        {selectedDate && (
+          <div>
+            {slots.length > 0 && !slotsLoading && (
+              <p className="text-[10px] text-gray-600 mb-1.5">
+                Times shown in clinic time ({formatTimezoneAbbr(slotTimezone, selectedDate)})
+              </p>
+            )}
+            {slotsLoading ? (
+              <div className="flex justify-center py-4">
+                <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
+              </div>
+            ) : slots.length === 0 ? (
+              <p className="text-center text-xs text-gray-600 py-3">No availability on this day</p>
+            ) : (
+              <div className="grid grid-cols-3 gap-1.5">
+                {slots.map((slot, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setSelectedSlot(s =>
+                      s?.datetime === slot.datetime ? null : slot,
+                    )}
+                    className={cn(
+                      'rounded-lg border px-2 py-2 text-xs transition-colors text-center',
+                      selectedSlot?.datetime === slot.datetime
+                        ? 'border-gray-900 bg-gray-900 text-white'
+                        : 'border-gray-200 text-gray-700 hover:border-gray-400',
+                    )}
+                  >
+                    {slot.time}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Video call toggle */}
+        <label className="flex items-center gap-2.5 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={videoCall}
+            onChange={(e) => setVideoCall(e.target.checked)}
+            className="h-4 w-4 rounded border-[#e0e0e0] accent-gray-900"
+          />
+          <span className="flex items-center gap-1.5 text-xs text-gray-700">
+            <Video className="h-3.5 w-3.5 text-gray-600" />
+            Book as video call
+          </span>
+        </label>
+
+        <button
+          type="button"
+          disabled={!selectedSlot}
+          onClick={() => setStep('details')}
+          className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+        >
+          <Calendar className="h-4 w-4" />
+          Next — Your Details
+        </button>
       </div>
     </div>
   )

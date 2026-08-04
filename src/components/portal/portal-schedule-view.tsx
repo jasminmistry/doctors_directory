@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Loader2, Clock, Info, CalendarDays, RefreshCw, Video, Eye } from 'lucide-react'
+import { Loader2, Clock, Info, CalendarDays, RefreshCw, Video, Eye, Globe } from 'lucide-react'
 import { toast } from 'sonner'
+import { formatTimezoneAbbr } from '@/lib/utils'
 import { ScheduleEditor, DEFAULT_SCHEDULE, DAYS, type DaySchedule } from '@/components/portal/schedule-editor'
 
 function mergeIntoDefaults(fetched: DaySchedule[]): DaySchedule[] {
@@ -13,6 +14,7 @@ function mergeIntoDefaults(fetched: DaySchedule[]): DaySchedule[] {
 
 export function PortalScheduleView() {
   const [schedule, setSchedule] = useState<DaySchedule[]>(DEFAULT_SCHEDULE)
+  const [timezone, setTimezone] = useState('Europe/London')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [hasConsentzId, setHasConsentzId] = useState<boolean | null>(null)
@@ -31,6 +33,9 @@ export function PortalScheduleView() {
           const data = await schedRes.json()
           if (data?.schedule?.length) {
             setSchedule(mergeIntoDefaults(data.schedule as DaySchedule[]))
+          }
+          if (data?.timezone) {
+            setTimezone(data.timezone as string)
           }
         }
       } catch {
@@ -92,6 +97,14 @@ export function PortalScheduleView() {
 
   return (
     <div className="max-w-xl space-y-6">
+      <div className="flex items-center gap-1.5 text-xs text-gray-600">
+        <Globe className="h-3.5 w-3.5 shrink-0" />
+        <span>
+          Times below are in <span className="font-medium text-gray-800">{timezone}</span>
+          {' '}({formatTimezoneAbbr(timezone)})
+        </span>
+      </div>
+
       <ScheduleEditor value={schedule} onChange={setSchedule} disabled={saving} />
 
       <div className="flex justify-end">
@@ -112,7 +125,9 @@ export function PortalScheduleView() {
         <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
           <div className="flex items-center gap-2">
             <Eye className="h-4 w-4 text-gray-600 shrink-0" />
-            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Patient view — bookable hours</p>
+            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+              Patient view — bookable hours ({formatTimezoneAbbr(timezone)})
+            </p>
           </div>
           <div className="space-y-1">
             {enabledDays.map((d) => (
