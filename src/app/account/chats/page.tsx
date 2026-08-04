@@ -9,6 +9,7 @@ interface ChatSession {
   id: number
   status: string
   createdAt: string
+  unread: boolean
   clinic: { name: string; slug: string; city: string | null }
   messages: { content: string; sender: string; createdAt: string }[]
 }
@@ -53,9 +54,14 @@ export default function AccountChatsPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{s.clinic.name}</p>
+                    <div className="flex items-center gap-2">
+                      {s.unread && <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />}
+                      <p className={`text-sm truncate ${s.unread ? 'font-semibold text-gray-900' : 'font-medium text-gray-900'}`}>
+                        {s.clinic.name}
+                      </p>
+                    </div>
                     {last ? (
-                      <p className="text-xs text-gray-600 truncate mt-0.5">
+                      <p className={`text-xs truncate mt-0.5 ${s.unread ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
                         {last.sender === 'clinic' ? `${s.clinic.name}: ` : 'You: '}{last.content}
                       </p>
                     ) : (

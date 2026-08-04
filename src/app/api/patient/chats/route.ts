@@ -21,5 +21,15 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: 'desc' },
   })
 
-  return NextResponse.json({ sessions }, { headers: { 'Cache-Control': 'no-store' } })
+  // Unread — last message is from the clinic AND the patient hasn't viewed
+  // this conversation since that message arrived
+  const sessionsWithUnread = sessions.map(({ patientLastReadAt, ...s }) => {
+    const lastMsg = s.messages[0]
+    const unread =
+      lastMsg?.sender === 'clinic' &&
+      (!patientLastReadAt || lastMsg.createdAt > patientLastReadAt)
+    return { ...s, unread }
+  })
+
+  return NextResponse.json({ sessions: sessionsWithUnread }, { headers: { 'Cache-Control': 'no-store' } })
 }

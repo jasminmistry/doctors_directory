@@ -119,6 +119,7 @@ export function ConsultationChatDialog({
   const [draft, setDraft] = useState('')
   const [sending, setSending] = useState(false)
   const [loadingHistory, setLoadingHistory] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const lastCreatedAt = useRef<string | null>(null)
@@ -198,6 +199,39 @@ export function ConsultationChatDialog({
       if (pollRef.current) clearInterval(pollRef.current)
     }
   }, [phase, open, pollMessages])
+
+  // Poll for an unread reply while the panel is closed — read-only, does not
+  // mark the conversation as read (only actually opening it does that)
+  useEffect(() => {
+    if (!sessionId || !visitorToken || open) return
+
+    let cancelled = false
+    async function checkUnread() {
+      try {
+        const res = await fetch(
+          `/directory/api/chat/${clinicSlug}/session/${sessionId}/unread?visitorToken=${encodeURIComponent(visitorToken!)}`,
+        )
+        if (!res.ok || cancelled) return
+        const data: { unread: number } = await res.json()
+        setUnreadCount(data.unread)
+      } catch {
+        // silently ignore
+      }
+    }
+
+    checkUnread()
+    const id = setInterval(checkUnread, POLL_INTERVAL_MS)
+    return () => {
+      cancelled = true
+      clearInterval(id)
+    }
+  }, [clinicSlug, sessionId, visitorToken, open])
+
+  // Opening the panel loads full history, which marks the conversation as
+  // read server-side — clear the badge optimistically right away
+  useEffect(() => {
+    if (open) setUnreadCount(0)
+  }, [open])
 
   // Load full message history from server (used when restoring a session)
   const loadHistory = useCallback(async (sid: number, tok: string) => {
@@ -390,6 +424,7 @@ export function ConsultationChatDialog({
     clearStoredSession(clinicSlug)
     setSessionId(null)
     setVisitorToken(null)
+    setUnreadCount(0)
     setMessages([])
     setChatFormData(null)
     setOfflineSent(false)
@@ -436,7 +471,16 @@ export function ConsultationChatDialog({
           Request Consultation
         </Button>
         {hasActiveSession && !open && (
-          <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-green-500 border-2 border-white" />
+          unreadCount > 0 ? (
+            <span
+              className="absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-medium text-white border-2 border-white"
+              aria-label={`${unreadCount} unread message${unreadCount === 1 ? '' : 's'}`}
+            >
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          ) : (
+            <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-green-500 border-2 border-white" />
+          )
         )}
       </div>
 
