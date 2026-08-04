@@ -55,7 +55,7 @@ export function DesktopSearchView({
   };
 
   return (
-    <div className="hidden md:block">
+    <div className="relative hidden md:block">
       <div className="flex flex-row items-center mb-2">
         <div className="relative">
           <button
