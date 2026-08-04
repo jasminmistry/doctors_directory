@@ -23,6 +23,15 @@ const PIPELINE_TABS: { value: PipelineStatus | 'all'; label: string }[] = [
   { value: 'archived',  label: 'Archived' },
 ]
 
+// "New" is a time window (recently submitted), independent of pipeline stage —
+// distinct from the "new" pipelineStatus value, which is a CRM triage stage
+// that only changes when staff manually update it via the status pill.
+const RECENT_LEAD_WINDOW_MS = 24 * 60 * 60 * 1000
+
+function isRecentLead(createdAt: string): boolean {
+  return Date.now() - new Date(createdAt).getTime() <= RECENT_LEAD_WINDOW_MS
+}
+
 export function ProspectsInbox({ plan }: ProspectsInboxProps) {
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
@@ -108,10 +117,16 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
 
   const visibleLeads = activeTab === 'all'
     ? leads
-    : leads.filter((l) => l.pipelineStatus === activeTab)
+    : activeTab === 'new'
+      ? leads.filter((l) => isRecentLead(l.createdAt))
+      : leads.filter((l) => l.pipelineStatus === activeTab)
 
   const countFor = (tab: PipelineStatus | 'all') =>
-    tab === 'all' ? leads.length : leads.filter((l) => l.pipelineStatus === tab).length
+    tab === 'all'
+      ? leads.length
+      : tab === 'new'
+        ? leads.filter((l) => isRecentLead(l.createdAt)).length
+        : leads.filter((l) => l.pipelineStatus === tab).length
 
   if (loading) {
     return (

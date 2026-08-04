@@ -710,6 +710,7 @@ export function ConsultationChatDialog({
               slug={clinicSlug}
               clinicName={clinicName}
               hasCoreCalendar={true}
+              defaultValues={formDefaults}
             />
           </DialogContent>
         </Dialog>

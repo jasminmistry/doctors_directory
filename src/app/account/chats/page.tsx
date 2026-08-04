@@ -9,7 +9,7 @@ interface ChatSession {
   id: number
   status: string
   createdAt: string
-  unread: boolean
+  unread: number
   clinic: { name: string; slug: string; city: string | null }
   messages: { content: string; sender: string; createdAt: string }[]
 }
@@ -55,13 +55,12 @@ export default function AccountChatsPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      {s.unread && <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />}
-                      <p className={`text-sm truncate ${s.unread ? 'font-semibold text-gray-900' : 'font-medium text-gray-900'}`}>
+                      <p className={`text-sm truncate ${s.unread > 0 ? 'font-semibold text-gray-900' : 'font-medium text-gray-900'}`}>
                         {s.clinic.name}
                       </p>
                     </div>
                     {last ? (
-                      <p className={`text-xs truncate mt-0.5 ${s.unread ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
+                      <p className={`text-xs truncate mt-0.5 ${s.unread > 0 ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
                         {last.sender === 'clinic' ? `${s.clinic.name}: ` : 'You: '}{last.content}
                       </p>
                     ) : (
@@ -69,11 +68,18 @@ export default function AccountChatsPage() {
                     )}
                     <p className="text-xs text-gray-600 mt-1">{format(new Date(s.createdAt), 'd MMM yyyy')}</p>
                   </div>
-                  <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
-                    s.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    {s.status}
-                  </span>
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    {s.unread > 0 && (
+                      <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-medium text-white">
+                        {s.unread > 99 ? '99+' : s.unread}
+                      </span>
+                    )}
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      s.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {s.status}
+                    </span>
+                  </div>
                 </div>
               </Link>
             )

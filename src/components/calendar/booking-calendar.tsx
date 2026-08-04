@@ -110,7 +110,7 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
   return (
     <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
       {/* Toolbar */}
-      <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-3 py-3 sm:gap-3 sm:px-4">
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate(-1)}
@@ -119,7 +119,7 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <span className="min-w-[180px] text-center text-sm font-semibold text-gray-800">{title}</span>
+          <span className="min-w-[140px] text-center text-sm font-semibold text-gray-800 sm:min-w-[180px]">{title}</span>
           <button
             onClick={() => navigate(1)}
             className="rounded-lg p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-700 transition-colors"
@@ -143,8 +143,8 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
               size="sm"
               onClick={onNewBooking}
             >
-              <Plus className="h-3.5 w-3.5 mr-1" />
-              New Appointment
+              <Plus className="h-3.5 w-3.5 sm:mr-1" />
+              <span className="hidden sm:inline">New Appointment</span>
             </Button>
           )}
           {onRefresh && (
@@ -196,12 +196,17 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
                     isTodayZoned(day) && 'bg-blue-50/60',
                   )}
                 >
-                  <p className={cn(
-                    'mb-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium',
-                    isTodayZoned(day) ? 'bg-blue-600 text-white' : inMonth ? 'text-gray-700' : 'text-gray-300',
-                  )}>
+                  <button
+                    type="button"
+                    onClick={() => { setCursor(day); setView('week') }}
+                    className={cn(
+                      'mb-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-colors',
+                      isTodayZoned(day) ? 'bg-blue-600 text-white' : inMonth ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-300',
+                    )}
+                    aria-label={`View all appointments for ${format(day, 'd MMMM')}`}
+                  >
                     {format(day, 'd')}
-                  </p>
+                  </button>
                   <div className="space-y-0.5">
                     {dayBookings.slice(0, 2).map((b) => (
                       <button
@@ -216,7 +221,13 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
                       </button>
                     ))}
                     {dayBookings.length > 2 && (
-                      <p className="pl-1 text-[10px] text-gray-600">+{dayBookings.length - 2} more</p>
+                      <button
+                        type="button"
+                        onClick={() => { setCursor(day); setView('week') }}
+                        className="w-full pl-1 text-left text-[10px] text-gray-600 hover:text-gray-900 hover:underline"
+                      >
+                        +{dayBookings.length - 2} more
+                      </button>
                     )}
                   </div>
                 </div>
