@@ -85,7 +85,7 @@ export function RequestConsultationDialog({
 
   async function fetchAndSetPatient(): Promise<PatientMe | null> {
     try {
-      const res = await fetch('/directory/api/patient/me')
+      const res = await fetch('/directory/api/patient/me/')
       if (!res.ok) return null
       const data: PatientMe = await res.json()
       setPatientMe(data)

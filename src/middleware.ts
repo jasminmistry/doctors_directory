@@ -42,10 +42,8 @@ export async function middleware(request: NextRequest) {
   const isPatientApiRoute = pathname.startsWith('/api/patient') && !pathname.startsWith('/api/patient/auth')
   const isAdminLoginPage = pathname === '/admin/login' || pathname === '/admin/login/'
   const isPortalLoginPage = pathname === '/portal/login' || pathname === '/portal/login/'
-  const isAdminWrongAccountPage = pathname === '/admin/wrong-account' || pathname === '/admin/wrong-account/'
-  const isPortalWrongAccountPage = pathname === '/portal/wrong-account' || pathname === '/portal/wrong-account/'
 
-  if (isAdminLoginPage || isPortalLoginPage || isAdminWrongAccountPage || isPortalWrongAccountPage) {
+  if (isAdminLoginPage || isPortalLoginPage) {
     return NextResponse.next()
   }
 
@@ -85,22 +83,17 @@ export async function middleware(request: NextRequest) {
 
   const role = request.cookies.get(COOKIE_ROLE)?.value
 
+  // A stale session from a different account type (e.g. staff previously signed into
+  // admin, now landing on a portal route) should not block access with an error — clear
+  // the stale cookies and send the user straight to the right login page.
   if (isAdminRoute && role === 'portal') {
     if (pathname.startsWith('/api/')) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    const noticeUrl = request.nextUrl.clone()
-    noticeUrl.pathname = '/admin/wrong-account'
-    noticeUrl.search = ''
-    noticeUrl.searchParams.set('next', pathname)
-    return NextResponse.redirect(noticeUrl)
+    return clearAuthAndRedirect(request, pathname, '/admin/login')
   }
 
   if (isPortalRoute && role === 'admin') {
     if (pathname.startsWith('/api/')) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    const noticeUrl = request.nextUrl.clone()
-    noticeUrl.pathname = '/portal/wrong-account'
-    noticeUrl.search = ''
-    noticeUrl.searchParams.set('next', pathname)
-    return NextResponse.redirect(noticeUrl)
+    return clearAuthAndRedirect(request, pathname, '/portal/login')
   }
 
   return NextResponse.next()

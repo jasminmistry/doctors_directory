@@ -39,7 +39,7 @@ export function NavigationHeader() {
   const [portalUser, setPortalUser] = useState<PortalUser | null | undefined>(undefined)
 
   useEffect(() => {
-    fetch('/directory/api/patient/me').then((r) => r.ok ? r.json() : null).then(setPatientUser)
+    fetch('/directory/api/patient/me/').then((r) => r.ok ? r.json() : null).then(setPatientUser)
     fetch('/directory/api/portal/me').then((r) => r.ok ? r.json() : null).then(setPortalUser)
   }, [pathname])
 

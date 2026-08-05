@@ -11,8 +11,6 @@ export default async function ClinicSchedulePage() {
   if (!user.clinicId) {
     return (
       <WrongAccountNotice
-        requiredEntityType="clinic"
-        currentEntityType={user.entityType}
         next="/portal/clinic/schedule"
       />
     )

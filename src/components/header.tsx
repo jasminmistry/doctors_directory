@@ -40,7 +40,7 @@ export default function Header() {
   }
 
   useEffect(() => {
-    fetch("/directory/api/patient/me", { cache: "no-store" })
+    fetch("/directory/api/patient/me/", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => setPatient(data))
       .catch(() => setPatient(null));

@@ -14,8 +14,6 @@ export default async function ProspectsPage() {
   if (!user.clinicId) {
     return (
       <WrongAccountNotice
-        requiredEntityType="clinic"
-        currentEntityType={user.entityType}
         next="/portal/clinic/prospects"
       />
     )
