@@ -41,7 +41,12 @@ function validateToken(raw: string): SsoPayload | null {
   const signature = raw.slice(dotIndex + 1)
 
   const expected = crypto.createHmac('sha256', getSecret()).update(encoded).digest('hex')
-  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+  const sigBuf = Buffer.from(signature)
+  const expectedBuf = Buffer.from(expected)
+  // timingSafeEqual throws (rather than returning false) when the buffers differ in length,
+  // e.g. a truncated/garbled signature — treat that the same as a mismatch, not an error.
+  if (sigBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(sigBuf, expectedBuf)) {
+    console.error('consentz-sso: signature mismatch')
     return null
   }
 
@@ -49,10 +54,14 @@ function validateToken(raw: string): SsoPayload | null {
   try {
     payload = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'))
   } catch {
+    console.error('consentz-sso: malformed token payload')
     return null
   }
 
-  if (!payload.exp || Date.now() / 1000 > payload.exp) return null
+  if (!payload.exp || Date.now() / 1000 > payload.exp) {
+    console.error('consentz-sso: token expired', { exp: payload.exp, now: Date.now() / 1000 })
+    return null
+  }
 
   return payload
 }
@@ -70,7 +79,8 @@ export async function GET(req: NextRequest) {
   let payload: SsoPayload | null
   try {
     payload = validateToken(rawToken)
-  } catch {
+  } catch (err) {
+    console.error('consentz-sso: unexpected error validating token', err)
     return NextResponse.redirect(new URL(loginUrl, BASE_URL))
   }
 
@@ -88,6 +98,7 @@ export async function GET(req: NextRequest) {
   })
 
   if (!claim) {
+    console.error('consentz-sso: no linked claim for consentzClinicId', payload.consentzClinicId)
     return NextResponse.redirect(new URL(`${loginUrl}?error=not_linked`, BASE_URL))
   }
 
@@ -98,6 +109,10 @@ export async function GET(req: NextRequest) {
   // Verify the SSO token's username matches the one stored on the claim to prevent a different
   // Consentz user at the same clinic from hijacking the portal session.
   if (claim.consentzUsername && claim.consentzUsername !== payload.consentzUsername) {
+    console.error('consentz-sso: username mismatch', {
+      claimUsername: claim.consentzUsername,
+      tokenUsername: payload.consentzUsername,
+    })
     return NextResponse.redirect(new URL(`${loginUrl}?error=username_mismatch`, BASE_URL))
   }
 
