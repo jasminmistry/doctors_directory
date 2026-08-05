@@ -97,6 +97,12 @@ export async function DELETE(req: NextRequest) {
         patientId: null,
       },
     }),
+    // Detach (but keep) consent records — this is the proof-of-consent audit
+    // trail; it must survive account deletion, just no longer linked to a patient.
+    prisma.patientConsent.updateMany({
+      where: { patientId: patient.id },
+      data: { patientId: null },
+    }),
     // Hard delete the patient (cascades OTPs)
     prisma.patient.delete({ where: { id: patient.id } }),
   ])

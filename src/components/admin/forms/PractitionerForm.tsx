@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { FormSection, Field } from './FormSection'
 import { cn } from '@/lib/utils'
 
@@ -350,18 +351,21 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
           ))}
           {!isPortal && (
             <Field label="City" required hint="Determines the practitioner's public profile URL">
-              <select
-                value={data.clinicId ?? ''}
-                onChange={(e) => set('clinicId', e.target.value ? Number(e.target.value) : null)}
-                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+              <Select
+                value={data.clinicId ? String(data.clinicId) : ''}
+                onValueChange={(v) => set('clinicId', v ? Number(v) : null)}
               >
-                <option value="">Select a city / clinic…</option>
-                {clinics.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.cityName} — {c.name || c.slug}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a city / clinic…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {clinics.map((c) => (
+                    <SelectItem key={c.id} value={String(c.id)}>
+                      {c.cityName} — {c.name || c.slug}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
           )}
           <Field label="Title">

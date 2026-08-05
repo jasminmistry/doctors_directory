@@ -80,9 +80,12 @@ const columns = [
     key: 'status',
     label: 'Status',
     render: (value: string) => (
-      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[value] ?? 'bg-gray-100 text-gray-600'}`}>
+      <Badge
+        variant="outline"
+        className={`font-medium border-transparent ${STATUS_COLORS[value] ?? 'bg-gray-100 text-gray-600'}`}
+      >
         {STATUS_LABELS[value] ?? value}
-      </span>
+      </Badge>
     ),
   },
   {

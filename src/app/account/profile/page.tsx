@@ -127,6 +127,9 @@ export default function AccountProfilePage() {
   const [deleting, setDeleting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
+  const [withdrawing, setWithdrawing] = useState(false)
+  const [confirmWithdraw, setConfirmWithdraw] = useState(false)
+  const [withdrawn, setWithdrawn] = useState(false)
 
   useEffect(() => {
     fetch('/directory/api/patient/profile')
@@ -217,6 +220,21 @@ export default function AccountProfilePage() {
       toast.error('Failed to save — please try again')
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleWithdrawConsent() {
+    setWithdrawing(true)
+    try {
+      const res = await fetch('/directory/api/patient/consent/withdraw', { method: 'POST' })
+      if (!res.ok) throw new Error()
+      setWithdrawn(true)
+      setConfirmWithdraw(false)
+      toast.success('Consent withdrawn')
+    } catch {
+      toast.error('Failed to withdraw consent — please try again')
+    } finally {
+      setWithdrawing(false)
     }
   }
 
@@ -350,6 +368,52 @@ export default function AccountProfilePage() {
           )}
         </div>
       </form>
+
+      {/* Withdraw data-sharing consent */}
+      <div className="rounded-xl border border-amber-200 bg-amber-50 divide-y divide-amber-100">
+        <div className="px-5 py-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-500">Consent</p>
+        </div>
+        <div className="px-5 py-5 space-y-3">
+          <div>
+            <p className="text-sm font-medium text-amber-800">Withdraw consent to share my details</p>
+            <p className="text-xs text-amber-700/80 mt-1 leading-relaxed">
+              This stops future enquiries from sharing your details with clinics. It does not affect
+              enquiries already sent, and does not delete your account.
+            </p>
+          </div>
+          {withdrawn ? (
+            <p className="text-xs text-amber-700">Consent withdrawn.</p>
+          ) : !confirmWithdraw ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-amber-300 text-amber-700 hover:bg-amber-100 hover:border-amber-400 hover:text-amber-800"
+              onClick={() => setConfirmWithdraw(true)}
+            >
+              Withdraw consent
+            </Button>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Button
+                size="sm"
+                className="bg-amber-600 hover:bg-amber-700 text-white border-0"
+                disabled={withdrawing}
+                onClick={handleWithdrawConsent}
+              >
+                {withdrawing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Yes, withdraw consent'}
+              </Button>
+              <button
+                type="button"
+                className="text-xs text-amber-700 hover:text-amber-800 transition-colors"
+                onClick={() => setConfirmWithdraw(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* GDPR delete */}
       <div className="rounded-xl border border-red-200 bg-red-50 divide-y divide-red-100">

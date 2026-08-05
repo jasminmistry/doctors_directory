@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db'
 import { startCoreConversation } from '@/lib/consentz-chat'
 import { splitName } from '@/lib/auth'
 import { getPatientClaims } from '@/lib/patient-auth'
+import { CONSENT_FORM_VERSION, consentCheckboxWording } from '@/lib/consent'
 import crypto from 'crypto'
 import { z } from 'zod'
 
@@ -20,7 +21,7 @@ export async function POST(
   try {
     const clinic = await prisma.clinic.findUnique({
       where: { slug: params.slug },
-      select: { id: true, claimed: true, coreClinicId: true, claimedPlan: true },
+      select: { id: true, name: true, claimed: true, coreClinicId: true, claimedPlan: true },
     })
 
     if (!clinic?.claimed) {
@@ -64,6 +65,21 @@ export async function POST(
     }).catch((err) => {
       console.error('[chat/session] failed to create consultation lead:', err)
     })
+
+    if (patientId) {
+      const wording = consentCheckboxWording(clinic.name ?? params.slug)
+      await prisma.patientConsent.createMany({
+        data: (['share', 'privacy', 'age'] as const).map((checkbox) => ({
+          patientId,
+          checkbox,
+          ticked: true,
+          wordingShown: wording[checkbox],
+          formVersion: CONSENT_FORM_VERSION,
+        })),
+      }).catch((err) => console.error('[chat/session] failed to record consent:', err))
+    } else {
+      console.warn(`[chat/session] no patientId resolved for slug=${params.slug} — skipping consent record`)
+    }
 
     // Always store the initial message locally so the clinic portal can see it.
     // The client must not also POST it to the messages endpoint — that would duplicate it.
