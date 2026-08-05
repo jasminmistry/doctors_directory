@@ -244,11 +244,21 @@ const nextConfig = {
         ],
       },
       {
-        // HTML pages only — exclude API routes and the shorter-cached detail pages above,
-        // since Next.js applies every matching rule rather than stopping at the first match
-        // (an unscoped catch-all here would append a second, longer-lived Cache-Control
-        // header to clinic/practitioner pages and defeat their 30s freshness window).
-        source: '/((?!api/|clinics/[^/]+/clinic/|practitioners/[^/]+/profile/).*)',
+        // Cookie-gated, per-session pages must never be cached by a shared cache —
+        // otherwise one user's rendered HTML (e.g. clinic name in the portal header)
+        // can be served to the next session that hits the same URL.
+        source: '/(portal|admin|account|verify)/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'private, no-store, must-revalidate' },
+        ],
+      },
+      {
+        // HTML pages only — exclude API routes, authenticated routes above, and the
+        // shorter-cached detail pages above, since Next.js applies every matching rule
+        // rather than stopping at the first match (an unscoped catch-all here would
+        // append a second, longer-lived Cache-Control header to clinic/practitioner
+        // pages and defeat their 30s freshness window).
+        source: '/((?!api/|portal/|admin/|account/|verify/|clinics/[^/]+/clinic/|practitioners/[^/]+/profile/).*)',
         headers: [
           { key: 'Cache-Control', value: 'public, s-maxage=300, stale-while-revalidate=86400' },
         ],
