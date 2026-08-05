@@ -109,7 +109,7 @@ export function ReviewsSection({ clinicSlug, reviews, googleReviewCount = 0, goo
   async function openForm() {
     setFormPhase('checking')
     try {
-      const meRes = await fetch('/directory/api/patient/me')
+      const meRes = await fetch('/directory/api/patient/me/')
       if (!meRes.ok) {
         setFormPhase('login_required')
         return

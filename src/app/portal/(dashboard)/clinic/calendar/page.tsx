@@ -15,8 +15,6 @@ export default async function CalendarPage() {
   if (!user.clinicId) {
     return (
       <WrongAccountNotice
-        requiredEntityType="clinic"
-        currentEntityType={user.entityType}
         next="/portal/clinic/calendar"
       />
     )

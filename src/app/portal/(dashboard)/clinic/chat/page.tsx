@@ -12,8 +12,6 @@ export default async function ClinicChatPage() {
   if (!user.clinicId) {
     return (
       <WrongAccountNotice
-        requiredEntityType="clinic"
-        currentEntityType={user.entityType}
         next="/portal/clinic/chat"
       />
     )

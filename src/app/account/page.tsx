@@ -95,7 +95,7 @@ export default function AccountDashboardPage() {
   const [sessionTotal, setSessionTotal] = useState(0)
 
   useEffect(() => {
-    fetch('/directory/api/patient/me').then((r) => r.ok ? r.json() : null).then(setPatient)
+    fetch('/directory/api/patient/me/').then((r) => r.ok ? r.json() : null).then(setPatient)
     fetch('/directory/api/patient/bookings').then((r) => r.ok ? r.json() : null).then((d) => {
       const all: Booking[] = d?.bookings ?? []
       setBookingTotal(all.length)

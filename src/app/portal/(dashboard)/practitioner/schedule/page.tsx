@@ -11,8 +11,6 @@ export default async function PractitionerSchedulePage() {
   if (!user.practitionerId) {
     return (
       <WrongAccountNotice
-        requiredEntityType="practitioner"
-        currentEntityType={user.entityType}
         next="/portal/practitioner/schedule"
       />
     )

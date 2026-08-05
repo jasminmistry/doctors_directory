@@ -136,10 +136,20 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
   const weekDays = Array.from({ length: WEEK_SIZE }, (_, i) => addDays(weekStart, i))
 
   useEffect(() => {
+    console.log(`[EventBookingSection] fetching events from ${basePath}`)
     fetch(basePath)
-      .then((r) => r.json())
-      .then((d) => setEvents(d.events ?? []))
-      .catch(() => setEvents([]))
+      .then((r) => {
+        console.log(`[EventBookingSection] ${basePath} responded HTTP ${r.status}`)
+        return r.json()
+      })
+      .then((d) => {
+        console.log(`[EventBookingSection] ${basePath} returned ${(d.events ?? []).length} events`, d)
+        setEvents(d.events ?? [])
+      })
+      .catch((err) => {
+        console.error(`[EventBookingSection] ${basePath} fetch failed:`, err)
+        setEvents([])
+      })
       .finally(() => setEventsLoading(false))
   }, [basePath])
 
@@ -167,7 +177,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
 
   async function fetchAndSetPatient(): Promise<PatientMe | null> {
     try {
-      const res = await fetch('/directory/api/patient/me')
+      const res = await fetch('/directory/api/patient/me/')
       if (!res.ok) {
         setPatientMe(null)
         return null

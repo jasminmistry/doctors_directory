@@ -24,7 +24,7 @@ export async function GET(
     console.log(`[events/clinic] coreClinicId=${coreClinicId}`)
 
     if (!coreClinicId) {
-      console.log(`[events/clinic] no coreClinicId — returning empty`)
+      console.log(`[events/clinic] EMPTY REASON: clinic "${clinicSlug}" has no coreClinicId linked — returning empty`)
       return NextResponse.json({ events: [] })
     }
 
@@ -45,20 +45,22 @@ export async function GET(
 
     if (!res.ok) {
       const body = await res.text().catch(() => '')
-      console.error(`[events/clinic] Core error body: ${body}`)
+      console.error(`[events/clinic] EMPTY REASON: Core returned HTTP ${res.status} for clinic ${coreClinicId} — returning empty. Body: ${body}`)
       return NextResponse.json({ events: [] })
     }
 
     const data = await res.json()
     const eventsArr = data.events ?? []
-    console.log(`[events/clinic] Core returned ${eventsArr.length} events`)
-    if (eventsArr.length > 0) {
+    if (eventsArr.length === 0) {
+      console.log(`[events/clinic] EMPTY REASON: Core returned HTTP ${res.status} with 0 events for clinic ${coreClinicId} (likely all events are status=false/inactive, since the core-lite endpoint filters those out)`)
+    } else {
+      console.log(`[events/clinic] Core returned ${eventsArr.length} events for clinic ${coreClinicId}`)
       console.log(`[events/clinic] first event keys:`, Object.keys(eventsArr[0]))
       console.log(`[events/clinic] first event sample:`, JSON.stringify(eventsArr[0]))
     }
     return NextResponse.json(data)
   } catch (err) {
-    console.error('[events/clinic] unexpected error:', err)
+    console.error(`[events/clinic] EMPTY REASON: unexpected error for slug "${clinicSlug}" — returning empty:`, err)
     return NextResponse.json({ events: [] })
   }
 }
