@@ -163,7 +163,7 @@ export function PortalLayoutClient({
         {/* Sidebar */}
         <aside
           className={cn(
-            "fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-white border-r border-gray-200 transition-transform duration-200 rounded-none lg:static lg:top-0 lg:w-[56px] lg:translate-x-0",
+            "fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-y-auto bg-white border-r border-gray-200 transition-transform duration-200 rounded-none lg:sticky lg:top-0 lg:h-[100svh] lg:w-[56px] lg:translate-x-0",
             isMobileNavOpen ? "translate-x-0" : "-translate-x-full",
           )}
         >

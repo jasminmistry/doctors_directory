@@ -73,6 +73,19 @@ function StatusPill({
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
+  // The menu is an absolutely-positioned child of the pill, not a portal, so it
+  // has no collision/flip logic — if the page (or any scrollable ancestor) scrolls
+  // while it's open, it can end up floating outside the card's bounds. Closing on
+  // scroll avoids that instead of trying to reposition it.
+  useEffect(() => {
+    if (!open) return
+    function handleScroll() {
+      setOpen(false)
+    }
+    window.addEventListener('scroll', handleScroll, { capture: true, passive: true })
+    return () => window.removeEventListener('scroll', handleScroll, { capture: true })
+  }, [open])
+
   return (
     <div className="relative" ref={ref}>
       <button
