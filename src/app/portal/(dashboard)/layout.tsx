@@ -11,16 +11,29 @@ export default async function PortalLayout({ children }: { children: React.React
   }
 
   let plan: string | null = null
+  let hasCoreClinic = false
   if (user.clinicId) {
     const clinic = await prisma.clinic.findUnique({
       where: { id: user.clinicId },
-      select: { claimedPlan: true },
+      select: { claimedPlan: true, coreClinicId: true },
     })
     plan = clinic?.claimedPlan ?? null
+    hasCoreClinic = clinic?.coreClinicId != null
+  } else if (user.practitionerId) {
+    const association = await prisma.practitionerClinicAssociation.findFirst({
+      where: { practitionerId: user.practitionerId },
+      select: { clinic: { select: { coreClinicId: true } } },
+    })
+    hasCoreClinic = association?.clinic.coreClinicId != null
   }
 
   return (
-    <PortalLayoutClient entityType={user.entityType} entityName={user.entityName} plan={plan}>
+    <PortalLayoutClient
+      entityType={user.entityType}
+      entityName={user.entityName}
+      plan={plan}
+      hasCoreClinic={hasCoreClinic}
+    >
       {children}
     </PortalLayoutClient>
   )

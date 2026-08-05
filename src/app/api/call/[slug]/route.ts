@@ -95,6 +95,7 @@ export async function POST(
     }
 
     const sessionToken = req.cookies.get(COOKIE_TOKEN)?.value
+    const appId = process.env.CONSENTZ_APPLICATION_ID ?? 'admin'
     const res = await fetch(
       `${getCoreLiteBase()}/clinics/${clinic.coreClinicId}/call-booking`,
       {
@@ -102,6 +103,7 @@ export async function POST(
         cache: 'no-store',
         headers: {
           'Content-Type': 'application/json',
+          'X-APPLICATION-ID': appId,
           ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),
         },
         body: JSON.stringify({
