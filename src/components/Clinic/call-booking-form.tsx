@@ -258,6 +258,9 @@ export function CallBookingForm({
           <label className={labelCls}>Your details</label>
           <div className="grid grid-cols-2 gap-2">
             <div>
+              <label className="mb-1 block text-xs font-medium text-gray-600">
+                First name<span className="ml-0.5 text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 placeholder="First name"
@@ -271,6 +274,9 @@ export function CallBookingForm({
               {fieldErrors.firstName && <p className="mt-1 text-xs text-red-600">{fieldErrors.firstName}</p>}
             </div>
             <div>
+              <label className="mb-1 block text-xs font-medium text-gray-600">
+                Last name<span className="ml-0.5 text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 placeholder="Last name"
@@ -285,6 +291,9 @@ export function CallBookingForm({
             </div>
           </div>
           <div>
+            <label className="mb-1 block text-xs font-medium text-gray-600">
+              Email address<span className="ml-0.5 text-red-500">*</span>
+            </label>
             <input
               type="email"
               placeholder="Email address"
@@ -298,9 +307,10 @@ export function CallBookingForm({
             {fieldErrors.email && <p className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>}
           </div>
           <div>
+            <label className="mb-1 block text-xs font-medium text-gray-600">Phone (optional)</label>
             <input
               type="tel"
-              placeholder="Phone (optional)"
+              placeholder="Phone"
               value={phone}
               onChange={(e) => { setPhone(e.target.value); setFieldErrors((p) => ({ ...p, phone: '' })) }}
               className={cn(

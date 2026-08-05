@@ -23,15 +23,19 @@ const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 
 interface FieldProps {
   label: string
+  required?: boolean
   hint?: string
   error?: string
   children: React.ReactNode
 }
 
-function Field({ label, hint, error, children }: FieldProps) {
+function Field({ label, required, hint, error, children }: FieldProps) {
   return (
     <div className="space-y-1.5">
-      <label className="block text-xs font-medium text-gray-600">{label}</label>
+      <label className="block text-xs font-medium text-gray-600">
+        {label}
+        {required && <span className="ml-0.5 text-red-500">*</span>}
+      </label>
       {children}
       {error && (
         <p className="flex items-center gap-1.5 text-xs text-red-500">
@@ -115,6 +119,8 @@ export default function AccountProfilePage() {
   const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
   const [dateOfBirth, setDateOfBirth] = useState('')
+  const [firstNameError, setFirstNameError] = useState('')
+  const [lastNameError, setLastNameError] = useState('')
   const [phoneError, setPhoneError] = useState('')
   const [dobError, setDobError] = useState('')
   const [saving, setSaving] = useState(false)
@@ -141,24 +147,38 @@ export default function AccountProfilePage() {
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
+    setFirstNameError('')
+    setLastNameError('')
     setPhoneError('')
     setDobError('')
 
-    if (phone) {
-      const clean = phone.replace(/\s/g, '')
-      if (!UK_PHONE_RE.test(clean)) {
-        setPhoneError('Enter a valid UK number — e.g. 07700 900000 or +447700 900000')
-        return
-      }
+    let hasError = false
+    if (!firstName.trim()) {
+      setFirstNameError('First name is required.')
+      hasError = true
     }
-
-    if (dateOfBirth) {
+    if (!lastName.trim()) {
+      setLastNameError('Last name is required.')
+      hasError = true
+    }
+    if (!phone.trim()) {
+      setPhoneError('Phone number is required.')
+      hasError = true
+    } else if (!UK_PHONE_RE.test(phone.replace(/\s/g, ''))) {
+      setPhoneError('Enter a valid UK number — e.g. 07700 900000 or +447700 900000')
+      hasError = true
+    }
+    if (!dateOfBirth) {
+      setDobError('Date of birth is required.')
+      hasError = true
+    } else {
       const dobMessage = getDobValidationError(dateOfBirth)
       if (dobMessage) {
         setDobError(dobMessage)
-        return
+        hasError = true
       }
     }
+    if (hasError) return
 
     setSaving(true)
     try {
@@ -166,19 +186,24 @@ export default function AccountProfilePage() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          firstName: firstName.trim() || null,
-          lastName: lastName.trim() || null,
-          phone: phone.replace(/\s/g, '') || null,
-          dateOfBirth: dateOfBirth || null,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          phone: phone.replace(/\s/g, ''),
+          dateOfBirth,
         }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => null)
         const message = typeof data?.error === 'string' ? data.error : 'Failed to save — please try again'
-        if (message.toLowerCase().includes('phone')) {
+        const lower = message.toLowerCase()
+        if (lower.includes('phone')) {
           setPhoneError(message)
-        } else if (message.toLowerCase().includes('date of birth') || message.toLowerCase().includes('18 or over')) {
+        } else if (lower.includes('date of birth') || lower.includes('18 or over')) {
           setDobError(message)
+        } else if (lower.includes('first name')) {
+          setFirstNameError(message)
+        } else if (lower.includes('last name')) {
+          setLastNameError(message)
         } else {
           toast.error(message)
         }
@@ -238,20 +263,22 @@ export default function AccountProfilePage() {
         <div className="px-5 py-5 space-y-4">
           {/* Name row */}
           <div className="grid grid-cols-2 gap-3">
-            <Field label="First name">
+            <Field label="First name" required error={firstNameError}>
               <IconInput
                 icon={<User className="h-3.5 w-3.5" />}
                 placeholder="Jane"
                 value={firstName}
-                onChange={(e) => { setFirstName(e.target.value); markDirty() }}
+                hasError={!!firstNameError}
+                onChange={(e) => { setFirstName(e.target.value); setFirstNameError(''); markDirty() }}
                 autoComplete="given-name"
               />
             </Field>
-            <Field label="Last name">
+            <Field label="Last name" required error={lastNameError}>
               <IconInput
                 placeholder="Smith"
                 value={lastName}
-                onChange={(e) => { setLastName(e.target.value); markDirty() }}
+                hasError={!!lastNameError}
+                onChange={(e) => { setLastName(e.target.value); setLastNameError(''); markDirty() }}
                 autoComplete="family-name"
               />
             </Field>
@@ -268,7 +295,7 @@ export default function AccountProfilePage() {
           </Field>
 
           {/* Phone */}
-          <Field label="Phone number" error={phoneError} hint="UK numbers only — e.g. 07700 900000">
+          <Field label="Phone number" required error={phoneError} hint="UK numbers only — e.g. 07700 900000">
             <IconInput
               icon={<Phone className="h-3.5 w-3.5" />}
               type="tel"
@@ -283,6 +310,7 @@ export default function AccountProfilePage() {
           {/* Date of birth */}
           <Field
             label="Date of birth"
+            required
             error={dobError}
             hint="You must be 18 or over to request consultations"
           >

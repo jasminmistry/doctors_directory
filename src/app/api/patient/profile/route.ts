@@ -9,12 +9,12 @@ import { getDobValidationError } from '@/lib/dob'
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 
 const updateSchema = z.object({
-  firstName: z.string().trim().min(1).max(100).optional().nullable(),
-  lastName: z.string().trim().min(1).max(100).optional().nullable(),
-  phone: z.string().trim().max(30).optional().nullable()
-    .refine((v) => !v || UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
-  dateOfBirth: z.string().optional().nullable()
-    .refine((v) => !v || !getDobValidationError(v), (v) => ({ message: getDobValidationError(v!) ?? 'Please enter a valid date of birth.' })),
+  firstName: z.string().trim().min(1, 'First name is required.').max(100),
+  lastName: z.string().trim().min(1, 'Last name is required.').max(100),
+  phone: z.string().trim().min(1, 'Phone number is required.').max(30)
+    .refine((v) => UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
+  dateOfBirth: z.string().min(1, 'Date of birth is required.')
+    .refine((v) => !getDobValidationError(v), (v) => ({ message: getDobValidationError(v) ?? 'Please enter a valid date of birth.' })),
 })
 
 export async function GET(req: NextRequest) {
@@ -46,9 +46,7 @@ export async function PUT(req: NextRequest) {
     where: { id: patient.id },
     data: {
       ...rest,
-      ...(dateOfBirth !== undefined
-        ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
-        : {}),
+      dateOfBirth: new Date(dateOfBirth),
     },
   })
 
