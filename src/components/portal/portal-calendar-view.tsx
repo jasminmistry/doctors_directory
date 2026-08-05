@@ -21,7 +21,7 @@ export function PortalCalendarView({ clinicTimezone }: PortalCalendarViewProps) 
   const fetchBookings = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true)
     try {
-      const res = await fetch('/directory/api/portal/bookings', { cache: 'no-store' })
+      const res = await fetch('/directory/api/portal/bookings/', { cache: 'no-store' })
       if (!res.ok) {
         const data = await res.json()
         setError(data.error ?? 'Failed to load bookings')
@@ -40,7 +40,7 @@ export function PortalCalendarView({ clinicTimezone }: PortalCalendarViewProps) 
   useEffect(() => { fetchBookings() }, [fetchBookings])
 
   async function handleCreateBooking(data: NewBookingData) {
-    const res = await fetch('/directory/api/portal/bookings', {
+    const res = await fetch('/directory/api/portal/bookings/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -54,7 +54,7 @@ export function PortalCalendarView({ clinicTimezone }: PortalCalendarViewProps) 
 
   async function handleEditBooking(data: NewBookingData) {
     if (!editingBooking) return
-    const res = await fetch(`/directory/api/portal/bookings/${editingBooking.id}`, {
+    const res = await fetch(`/directory/api/portal/bookings/${editingBooking.id}/`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -67,7 +67,7 @@ export function PortalCalendarView({ clinicTimezone }: PortalCalendarViewProps) 
   }
 
   async function handleDeleteBooking(booking: CalendarBooking) {
-    const res = await fetch(`/directory/api/portal/bookings/${booking.id}`, { method: 'DELETE' })
+    const res = await fetch(`/directory/api/portal/bookings/${booking.id}/`, { method: 'DELETE' })
     if (!res.ok) return
     setBookings((prev) => prev.filter((b) => b.id !== booking.id))
   }

@@ -40,7 +40,7 @@ export function NavigationHeader() {
 
   useEffect(() => {
     fetch('/directory/api/patient/me/').then((r) => r.ok ? r.json() : null).then(setPatientUser)
-    fetch('/directory/api/portal/me').then((r) => r.ok ? r.json() : null).then(setPortalUser)
+    fetch('/directory/api/portal/me/').then((r) => r.ok ? r.json() : null).then(setPortalUser)
   }, [pathname])
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export function NavigationHeader() {
   }, [])
 
   async function handlePatientLogout() {
-    await fetch('/directory/api/patient/auth/logout', { method: 'POST' })
+    await fetch('/directory/api/patient/auth/logout/', { method: 'POST' })
     setPatientUser(null)
     setIsPatientOpen(false)
     router.push('/')
@@ -68,7 +68,7 @@ export function NavigationHeader() {
   }
 
   async function handlePortalLogout() {
-    await fetch('/directory/api/auth/logout', { method: 'POST' })
+    await fetch('/directory/api/auth/logout/', { method: 'POST' })
     setPortalUser(null)
     setIsPortalOpen(false)
     router.push('/')

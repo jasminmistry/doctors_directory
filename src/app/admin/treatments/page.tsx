@@ -40,7 +40,7 @@ export default function TreatmentsList() {
   const { confirm, dialog } = useConfirmDialog()
 
   useEffect(() => {
-    fetch('/directory/api/admin/treatments')
+    fetch('/directory/api/admin/treatments/')
       .then((r) => r.json())
       .then((data) => { setTreatments(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -62,7 +62,7 @@ export default function TreatmentsList() {
             confirmLabel: 'Delete treatment',
           })
           if (!ok) return
-          await fetch(`/directory/api/admin/treatments/${t.slug}`, { method: 'DELETE' })
+          await fetch(`/directory/api/admin/treatments/${t.slug}/`, { method: 'DELETE' })
           setTreatments((prev) => prev.filter((r) => r.slug !== t.slug))
         }}
         onAdd={() => router.push('/admin/treatments/new')}

@@ -26,7 +26,7 @@ export default function AccountBookingsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/directory/api/patient/bookings')
+    fetch('/directory/api/patient/bookings/')
       .then((r) => r.ok ? r.json() : { bookings: [] })
       .then((d) => setBookings(d.bookings ?? []))
       .finally(() => setLoading(false))

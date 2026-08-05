@@ -65,7 +65,7 @@ export default function UpgradePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/directory/api/portal/clinic")
+    fetch("/directory/api/portal/clinic/")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => setCurrentPlan(data?.subscription?.plan ?? "free"))
       .catch(() => setCurrentPlan("free"))
@@ -76,7 +76,7 @@ export default function UpgradePage() {
     setError(null);
     setPendingPlan(plan);
     try {
-      const res = await fetch("/directory/api/portal/upgrade", {
+      const res = await fetch("/directory/api/portal/upgrade/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan }),

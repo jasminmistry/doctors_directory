@@ -63,7 +63,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
     setSlotsLoading(true)
     setSlots([])
     setSelectedSlot(null)
-    fetch(`/directory/api/book/${slug}/availability?date=${dateKey(selectedDate)}`)
+    fetch(`/directory/api/book/${slug}/availability/?date=${dateKey(selectedDate)}`)
       .then(r => r.json())
       .then(d => {
         setSlots(d.available ?? [])
@@ -79,7 +79,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
     if (!selectedSlot) return
     setSubmitting(true)
     try {
-      const res = await fetch(`/directory/api/book/${slug}`, {
+      const res = await fetch(`/directory/api/book/${slug}/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

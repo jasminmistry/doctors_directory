@@ -123,8 +123,8 @@ function EventModal({ event, onClose, onSaved }: EventModalProps) {
       };
 
       const url = isEdit
-        ? `/directory/api/portal/events/${event!.id}`
-        : "/directory/api/portal/events";
+        ? `/directory/api/portal/events/${event!.id}/`
+        : "/directory/api/portal/events/";
 
       const res = await fetch(url, {
         method: isEdit ? "PUT" : "POST",
@@ -339,7 +339,7 @@ function DeleteConfirm({ event, onClose, onDeleted }: DeleteConfirmProps) {
   async function handleDelete() {
     setDeleting(true);
     try {
-      const res = await fetch(`/directory/api/portal/events/${event.id}`, {
+      const res = await fetch(`/directory/api/portal/events/${event.id}/`, {
         method: "DELETE",
       });
       if (!res.ok) {
@@ -403,7 +403,7 @@ export function PractitionerEvents() {
   const [deleteEvent, setDeleteEvent] = useState<CoreEvent | null>(null);
 
   useEffect(() => {
-    fetch("/directory/api/portal/events")
+    fetch("/directory/api/portal/events/")
       .then((r) => r.json())
       .then((d) => setEvents(d.events ?? []))
       .catch(() => setEvents([]))
@@ -414,7 +414,7 @@ export function PractitionerEvents() {
     const updated = { ...event, status: !event.status };
     setEvents((ev) => ev.map((e) => (e.id === event.id ? updated : e)));
     try {
-      const res = await fetch(`/directory/api/portal/events/${event.id}`, {
+      const res = await fetch(`/directory/api/portal/events/${event.id}/`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: updated.status }),

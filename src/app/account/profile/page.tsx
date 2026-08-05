@@ -132,7 +132,7 @@ export default function AccountProfilePage() {
   const [withdrawn, setWithdrawn] = useState(false)
 
   useEffect(() => {
-    fetch('/directory/api/patient/profile')
+    fetch('/directory/api/patient/profile/')
       .then((r) => r.ok ? r.json() : null)
       .then((data: PatientProfile | null) => {
         if (!data) return
@@ -185,7 +185,7 @@ export default function AccountProfilePage() {
 
     setSaving(true)
     try {
-      const res = await fetch('/directory/api/patient/profile', {
+      const res = await fetch('/directory/api/patient/profile/', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -226,7 +226,7 @@ export default function AccountProfilePage() {
   async function handleWithdrawConsent() {
     setWithdrawing(true)
     try {
-      const res = await fetch('/directory/api/patient/consent/withdraw', { method: 'POST' })
+      const res = await fetch('/directory/api/patient/consent/withdraw/', { method: 'POST' })
       if (!res.ok) throw new Error()
       setWithdrawn(true)
       setConfirmWithdraw(false)
@@ -241,7 +241,7 @@ export default function AccountProfilePage() {
   async function handleDelete() {
     setDeleting(true)
     try {
-      const res = await fetch('/directory/api/patient/profile', { method: 'DELETE' })
+      const res = await fetch('/directory/api/patient/profile/', { method: 'DELETE' })
       if (!res.ok) throw new Error()
       toast.success('Account deleted')
       window.location.href = '/directory'

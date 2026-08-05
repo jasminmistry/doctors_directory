@@ -130,7 +130,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       setLoading(false)
       return
     }
-    fetch(`/directory/api/admin/clinics/${slug}`)
+    fetch(`/directory/api/admin/clinics/${slug}/`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json() })
       .then((d) => {
         if (!d.name) {
@@ -179,7 +179,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       affiliations: formatListForSave(rest.affiliations),
     }
     const body = isNew ? { slug: data.slug.trim(), ...serialised } : serialised
-    const url = saveUrl ?? (isNew ? '/directory/api/admin/clinics' : `/directory/api/admin/clinics/${slug}`)
+    const url = saveUrl ?? (isNew ? '/directory/api/admin/clinics/' : `/directory/api/admin/clinics/${slug}/`)
     try {
       const res = await fetch(url, {
         method: isNew ? 'POST' : 'PUT',

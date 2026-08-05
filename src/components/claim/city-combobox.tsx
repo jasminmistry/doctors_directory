@@ -24,7 +24,7 @@ export function CityCombobox({ value, onChange, placeholder, id, invalid }: Read
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    fetch('/directory/api/cities')
+    fetch('/directory/api/cities/')
       .then((r) => (r.ok ? r.json() : []))
       .then((data: City[]) => setCities(Array.isArray(data) ? data : []))
       .catch(() => setCities([]))

@@ -24,7 +24,7 @@ export default function AdminClaimInvitesPage() {
 
   useEffect(() => {
     let cancelled = false
-    fetch('/directory/api/admin/clinics/claim-invites', { cache: 'no-store' })
+    fetch('/directory/api/admin/clinics/claim-invites/', { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => { if (!cancelled) setClinics(data.clinics ?? []) })
       .catch(() => { if (!cancelled) toast.error('Failed to load unclaimed clinics') })
@@ -51,7 +51,7 @@ export default function AdminClaimInvitesPage() {
 
     setSending(true)
     try {
-      const res = await fetch('/directory/api/admin/clinics/claim-invites', {
+      const res = await fetch('/directory/api/admin/clinics/claim-invites/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ clinicIds }),

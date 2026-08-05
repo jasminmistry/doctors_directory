@@ -14,7 +14,7 @@ export function LeadBadge({ mobile = false }: LeadBadgeProps) {
 
     async function fetchCount() {
       try {
-        const res = await fetch('/directory/api/portal/leads/count', { cache: 'no-store' })
+        const res = await fetch('/directory/api/portal/leads/count/', { cache: 'no-store' })
         if (!res.ok) return
         const data = await res.json()
         if (!cancelled) setCount(data.new ?? 0)

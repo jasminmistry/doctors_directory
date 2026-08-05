@@ -25,7 +25,7 @@ export default function Header() {
 
   async function signOut() {
     setPatient(null);
-    await fetch("/directory/api/patient/auth/logout", { method: "POST" }).catch(
+    await fetch("/directory/api/patient/auth/logout/", { method: "POST" }).catch(
       () => {},
     );
     window.location.replace("/directory");
@@ -33,7 +33,7 @@ export default function Header() {
 
   async function portalSignOut() {
     setPortalUser(null);
-    await fetch("/directory/api/auth/logout", { method: "POST" }).catch(
+    await fetch("/directory/api/auth/logout/", { method: "POST" }).catch(
       () => {},
     );
     window.location.replace("/directory");
@@ -44,7 +44,7 @@ export default function Header() {
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => setPatient(data))
       .catch(() => setPatient(null));
-    fetch("/directory/api/portal/me", { cache: "no-store" })
+    fetch("/directory/api/portal/me/", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => setPortalUser(data))
       .catch(() => setPortalUser(null));

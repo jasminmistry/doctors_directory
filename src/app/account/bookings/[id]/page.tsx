@@ -98,7 +98,7 @@ function ReviewPanel({ booking, alreadyReviewed }: { booking: Booking; alreadyRe
     if (!rating || !reviewText.trim()) return
     setSubmitting(true)
     try {
-      const res = await fetch('/directory/api/patient/reviews', {
+      const res = await fetch('/directory/api/patient/reviews/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -165,7 +165,7 @@ function CancelButton({ booking, onCancelled }: { booking: Booking; onCancelled:
   async function handleCancel() {
     setCancelling(true)
     try {
-      const res = await fetch(`/directory/api/patient/bookings/${booking.id}`, {
+      const res = await fetch(`/directory/api/patient/bookings/${booking.id}/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'cancelled' }),
@@ -261,7 +261,7 @@ export default function BookingDetailPage() {
     if (!booking || messagingClinic) return
     setMessagingClinic(true)
     try {
-      const res = await fetch('/directory/api/patient/chats/start', {
+      const res = await fetch('/directory/api/patient/chats/start/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ clinicSlug: booking.clinic.slug }),
@@ -276,7 +276,7 @@ export default function BookingDetailPage() {
   }
 
   useEffect(() => {
-    fetch(`/directory/api/patient/bookings/${id}`)
+    fetch(`/directory/api/patient/bookings/${id}/`)
       .then((r) => {
         if (r.status === 404) { setNotFound(true); return null }
         return r.ok ? r.json() : null
@@ -286,7 +286,7 @@ export default function BookingDetailPage() {
         const b: Booking = d.booking
         setBooking(b)
         if (b.status === 'completed' && b.clinic.slug) {
-          fetch(`/directory/api/patient/reviews?clinicSlug=${encodeURIComponent(b.clinic.slug)}`)
+          fetch(`/directory/api/patient/reviews/?clinicSlug=${encodeURIComponent(b.clinic.slug)}`)
             .then((r) => (r.ok ? r.json() : null))
             .then((rd) => setHasReview(Boolean(rd?.review)))
             .catch(() => setHasReview(false))

@@ -126,7 +126,7 @@ export function ChatInbox() {
 
   async function fetchSessions() {
     try {
-      const res = await fetch('/directory/api/portal/chat/sessions', { cache: 'no-store' })
+      const res = await fetch('/directory/api/portal/chat/sessions/', { cache: 'no-store' })
       if (!res.ok) return
       const data: { sessions: ChatSession[] } = await res.json()
       setSessions(data.sessions)
@@ -139,7 +139,7 @@ export function ChatInbox() {
 
   const fetchMessages = useCallback(async (sid: number) => {
     try {
-      const res = await fetch(`/directory/api/portal/chat/sessions/${sid}/messages`, { cache: 'no-store' })
+      const res = await fetch(`/directory/api/portal/chat/sessions/${sid}/messages/`, { cache: 'no-store' })
       if (!res.ok) return
       const data: { messages: ChatMessage[] } = await res.json()
       setMessages(data.messages)
@@ -166,7 +166,7 @@ export function ChatInbox() {
     setDraft('')
     setSending(true)
     try {
-      const res = await fetch(`/directory/api/portal/chat/sessions/${activeId}/messages`, {
+      const res = await fetch(`/directory/api/portal/chat/sessions/${activeId}/messages/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),

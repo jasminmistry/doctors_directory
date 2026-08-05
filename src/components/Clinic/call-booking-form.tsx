@@ -96,7 +96,7 @@ export function CallBookingForm({
     setSlotsLoading(true)
     setSlots([])
     setSelectedSlot(null)
-    fetch(`/directory/api/call/${clinicSlug}/slots?date=${dateKey(selectedDate)}`)
+    fetch(`/directory/api/call/${clinicSlug}/slots/?date=${dateKey(selectedDate)}`)
       .then((r) => r.json())
       .then((d) => setSlots(d.slots ?? []))
       .catch(() => setSlots([]))
@@ -108,7 +108,7 @@ export function CallBookingForm({
     if (!result || result.call_type !== 'zoom' || result.join_url_ready) return
     pollRef.current = setInterval(async () => {
       try {
-        const r = await fetch(`/directory/api/call/${clinicSlug}/meeting/${result.meeting_id}`)
+        const r = await fetch(`/directory/api/call/${clinicSlug}/meeting/${result.meeting_id}/`)
         if (!r.ok) return
         const d: BookingResult = await r.json()
         if (d.join_url_ready && d.join_url) {
@@ -154,7 +154,7 @@ export function CallBookingForm({
 
     setSubmitting(true)
     try {
-      const res = await fetch(`/directory/api/call/${clinicSlug}`, {
+      const res = await fetch(`/directory/api/call/${clinicSlug}/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

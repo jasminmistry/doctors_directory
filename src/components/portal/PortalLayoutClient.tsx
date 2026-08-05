@@ -54,7 +54,7 @@ export function PortalLayoutClient({
 
   // Check whether to show the welcome wizard on first visit
   useEffect(() => {
-    fetch("/directory/api/portal/wizard")
+    fetch("/directory/api/portal/wizard/")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data) return;
@@ -70,7 +70,7 @@ export function PortalLayoutClient({
   useEffect(() => {
     if (entityType !== "clinic") return;
     function ping() {
-      fetch("/directory/api/portal/presence", { method: "POST" }).catch(
+      fetch("/directory/api/portal/presence/", { method: "POST" }).catch(
         () => {},
       );
     }
@@ -101,7 +101,7 @@ export function PortalLayoutClient({
         : [];
 
   async function handleLogout() {
-    await fetch("/directory/api/auth/logout", { method: "POST" });
+    await fetch("/directory/api/auth/logout/", { method: "POST" });
     window.location.href = "/directory/portal/login";
   }
 

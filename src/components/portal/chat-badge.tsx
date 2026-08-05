@@ -14,7 +14,7 @@ export function ChatBadge({ mobile = false }: ChatBadgeProps) {
 
     async function fetchCount() {
       try {
-        const res = await fetch('/directory/api/portal/chat/count', { cache: 'no-store' })
+        const res = await fetch('/directory/api/portal/chat/count/', { cache: 'no-store' })
         if (!res.ok) return
         const data = await res.json()
         if (!cancelled) setCount(data.unread ?? 0)

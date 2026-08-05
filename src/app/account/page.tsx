@@ -96,12 +96,12 @@ export default function AccountDashboardPage() {
 
   useEffect(() => {
     fetch('/directory/api/patient/me/').then((r) => r.ok ? r.json() : null).then(setPatient)
-    fetch('/directory/api/patient/bookings').then((r) => r.ok ? r.json() : null).then((d) => {
+    fetch('/directory/api/patient/bookings/').then((r) => r.ok ? r.json() : null).then((d) => {
       const all: Booking[] = d?.bookings ?? []
       setBookingTotal(all.length)
       setBookings(all.slice(0, 3))
     })
-    fetch('/directory/api/patient/chats').then((r) => r.ok ? r.json() : null).then((d) => {
+    fetch('/directory/api/patient/chats/').then((r) => r.ok ? r.json() : null).then((d) => {
       const all: ChatSession[] = d?.sessions ?? []
       setSessionTotal(all.length)
       setSessions(all.slice(0, 3))

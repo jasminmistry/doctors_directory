@@ -179,7 +179,7 @@ export function StepDetails(props: Readonly<Props>) {
               ...(isRegister ? { city: city.trim(), about: about.trim() || undefined } : {}),
             }
 
-      const res = await fetch('/directory/api/claim/initiate', {
+      const res = await fetch('/directory/api/claim/initiate/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

@@ -33,18 +33,28 @@ const PRACTITIONER_EDIT_SELECT = {
     take: 1,
     include: {
       clinic: {
-        select: { id: true, city: { select: { slug: true } } },
+        select: { id: true, name: true, city: { select: { slug: true, name: true } } },
       },
     },
   },
 }
 
-function flattenPractitioner<T extends { clinicAssociations: { clinic: { id: number; city: { slug: string } | null } }[] }>(
-  practitioner: T
-) {
+function flattenPractitioner<
+  T extends {
+    clinicAssociations: { clinic: { id: number; name: string | null; city: { slug: string; name: string } | null } }[]
+  }
+>(practitioner: T) {
   const primaryClinic = practitioner.clinicAssociations[0]?.clinic ?? null
   const { clinicAssociations: _ca, ...rest } = practitioner
-  return { ...rest, clinicId: primaryClinic?.id ?? null, citySlug: primaryClinic?.city?.slug ?? null }
+  return {
+    ...rest,
+    clinicId: primaryClinic?.id ?? null,
+    citySlug: primaryClinic?.city?.slug ?? null,
+    // Seeds the admin form's clinic combobox label without it having to fetch
+    // the full clinics table just to resolve one id back to a display name.
+    clinicName: primaryClinic?.name ?? null,
+    cityName: primaryClinic?.city?.name ?? null,
+  }
 }
 
 export async function GET(

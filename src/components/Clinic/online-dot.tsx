@@ -15,7 +15,7 @@ export function OnlineDot({ slug, refreshMs = 120_000 }: OnlineDotProps) {
 
     async function check() {
       try {
-        const res = await fetch(`/directory/api/chat/${slug}/status`)
+        const res = await fetch(`/directory/api/chat/${slug}/status/`)
         const data: { online: boolean } = await res.json()
         if (!cancelled) setOnline(data.online)
       } catch {

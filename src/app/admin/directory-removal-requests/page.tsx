@@ -31,7 +31,7 @@ export default function DirectoryRemovalRequestsPage() {
   const [busy, setBusy] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    fetch('/directory/api/admin/directory-removal-requests')
+    fetch('/directory/api/admin/directory-removal-requests/')
       .then((r) => r.json())
       .then((data) => { setRows(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -52,7 +52,7 @@ export default function DirectoryRemovalRequestsPage() {
 
   async function handleApprove(slug: string) {
     const res = await doAction(slug, 'approve', () =>
-      fetch(`/directory/api/admin/clinics/${slug}/approve-directory-removal`, { method: 'POST' })
+      fetch(`/directory/api/admin/clinics/${slug}/approve-directory-removal/`, { method: 'POST' })
     )
     if (res) {
       const data = await res.json()
@@ -63,7 +63,7 @@ export default function DirectoryRemovalRequestsPage() {
 
   async function handleDismiss(slug: string) {
     const res = await doAction(slug, 'dismiss', () =>
-      fetch(`/directory/api/admin/clinics/${slug}/dismiss-directory-removal`, { method: 'POST' })
+      fetch(`/directory/api/admin/clinics/${slug}/dismiss-directory-removal/`, { method: 'POST' })
     )
     if (res) {
       toast.success('Removal request dismissed.')

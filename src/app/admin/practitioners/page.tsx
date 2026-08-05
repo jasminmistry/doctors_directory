@@ -75,7 +75,7 @@ export default function PractitionersList() {
   const { confirm, dialog } = useConfirmDialog()
 
   useEffect(() => {
-    fetch('/directory/api/admin/practitioners')
+    fetch('/directory/api/admin/practitioners/')
       .then((r) => r.json())
       .then((data) => { setPractitioners(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -143,7 +143,7 @@ export default function PractitionersList() {
             confirmLabel: 'Delete practitioner',
           })
           if (!ok) return
-          await fetch(`/directory/api/admin/practitioners/${p.slug}`, { method: 'DELETE' })
+          await fetch(`/directory/api/admin/practitioners/${p.slug}/`, { method: 'DELETE' })
           setPractitioners((prev) => prev.filter((r) => r.slug !== p.slug))
         }}
         onAdd={() => router.push('/admin/practitioners/new')}
