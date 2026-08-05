@@ -36,6 +36,7 @@ interface PortalLayoutClientProps {
   entityType: "clinic" | "practitioner" | null;
   entityName: string;
   plan?: string | null;
+  hasCoreClinic?: boolean;
 }
 
 export function PortalLayoutClient({
@@ -43,6 +44,7 @@ export function PortalLayoutClient({
   entityType,
   entityName,
   plan,
+  hasCoreClinic = false,
 }: PortalLayoutClientProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -324,24 +326,42 @@ export function PortalLayoutClient({
                     </span>
                   </li>
 
-                  <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
-                    <Link
-                      href="/portal/practitioner/events"
-                      onClick={() => setIsMobileNavOpen(false)}
-                      className={cn(
-                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
-                        pathname.startsWith("/portal/practitioner/events")
-                          ? "bg-[#f3f3f3] text-gray-900"
-                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                      )}
-                    >
-                      <CalendarCheck strokeWidth={1.5} className="w-6 h-6 shrink-0" />
-                      <span className="lg:hidden">My Events</span>
-                    </Link>
-                    <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
-                      My Events
-                    </span>
-                  </li>
+                  {hasCoreClinic ? (
+                    <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                      <Link
+                        href="/portal/practitioner/events"
+                        onClick={() => setIsMobileNavOpen(false)}
+                        className={cn(
+                          "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                          pathname.startsWith("/portal/practitioner/events")
+                            ? "bg-[#f3f3f3] text-gray-900"
+                            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                        )}
+                      >
+                        <CalendarCheck strokeWidth={1.5} className="w-6 h-6 shrink-0" />
+                        <span className="lg:hidden">My Events</span>
+                      </Link>
+                      <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                        My Events
+                      </span>
+                    </li>
+                  ) : (
+                    <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                      <span
+                        className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-400 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
+                        title="Link your Consentz Core clinic to unlock Events"
+                      >
+                        <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
+                          <CalendarCheck className="h-6 w-6" />
+                          <Lock className="absolute -bottom-1 -right-1 h-3 w-3 shrink-0" />
+                        </span>
+                        <span className="lg:hidden">My Events</span>
+                      </span>
+                      <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                        Link Core to unlock Events
+                      </span>
+                    </li>
+                  )}
 
                   <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
                     <Link
@@ -385,24 +405,42 @@ export function PortalLayoutClient({
 
               {entityType === "practitioner" && (
                 <>
-                  <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
-                    <Link
-                      href="/portal/practitioner/events"
-                      onClick={() => setIsMobileNavOpen(false)}
-                      className={cn(
-                        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
-                        pathname.startsWith("/portal/practitioner/events")
-                          ? "bg-[#f3f3f3] text-gray-900"
-                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                      )}
-                    >
-                      <CalendarCheck strokeWidth={1.5} className="w-6 h-6 shrink-0" />
-                      <span className="lg:hidden">My Events</span>
-                    </Link>
-                    <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
-                      My Events
-                    </span>
-                  </li>
+                  {hasCoreClinic ? (
+                    <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                      <Link
+                        href="/portal/practitioner/events"
+                        onClick={() => setIsMobileNavOpen(false)}
+                        className={cn(
+                          "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                          pathname.startsWith("/portal/practitioner/events")
+                            ? "bg-[#f3f3f3] text-gray-900"
+                            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                        )}
+                      >
+                        <CalendarCheck strokeWidth={1.5} className="w-6 h-6 shrink-0" />
+                        <span className="lg:hidden">My Events</span>
+                      </Link>
+                      <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                        My Events
+                      </span>
+                    </li>
+                  ) : (
+                    <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                      <span
+                        className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-400 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
+                        title="Link your Consentz Core clinic to unlock Events"
+                      >
+                        <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
+                          <CalendarCheck className="h-6 w-6" />
+                          <Lock className="absolute -bottom-1 -right-1 h-3 w-3 shrink-0" />
+                        </span>
+                        <span className="lg:hidden">My Events</span>
+                      </span>
+                      <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                        Link Core to unlock Events
+                      </span>
+                    </li>
+                  )}
 
                   <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
                     <Link

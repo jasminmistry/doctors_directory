@@ -42,6 +42,7 @@ export async function GET(
     if (practitionerId) qs.set('practitioner_id', practitionerId)
 
     const sessionToken = req.cookies.get(COOKIE_TOKEN)?.value
+    const appId = process.env.CONSENTZ_APPLICATION_ID ?? 'admin'
     const url = `${getCoreLiteBase()}/clinics/${clinic.coreClinicId}/call-slots?${qs}`
     console.log(`[call/slots] GET ${url} hasToken=${!!sessionToken}`)
 
@@ -49,6 +50,7 @@ export async function GET(
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
+        'X-APPLICATION-ID': appId,
         ...(sessionToken ? { 'X-SESSION-TOKEN': sessionToken } : {}),
       },
     })

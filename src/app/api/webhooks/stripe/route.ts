@@ -35,10 +35,11 @@ async function handleEventBookingPayment(session: Stripe.Checkout.Session) {
   const amountPaid = session.amount_total ? session.amount_total / 100 : null
 
   try {
+    const appId = process.env.CONSENTZ_APPLICATION_ID ?? 'admin'
     const res = await fetch(`${getCoreLiteBase()}/clinics/${coreClinicId}/bookings`, {
       method: 'POST',
       cache: 'no-store',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': appId },
       signal: AbortSignal.timeout(8000),
       body: JSON.stringify({
         event_id: parseInt(meta.event_id, 10),

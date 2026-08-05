@@ -29,6 +29,10 @@ function getChatBase(): string {
   return `${new URL(authUrl).origin}/api/core-lite`
 }
 
+function getAppId(): string {
+  return process.env.CONSENTZ_APPLICATION_ID ?? 'admin'
+}
+
 function normalize(m: ConsentzMessage): NormalizedMessage {
   return {
     id: m.id,
@@ -56,7 +60,7 @@ export async function startCoreConversation(payload: {
       {
         method: 'POST',
         cache: 'no-store',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': getAppId() },
         body: JSON.stringify({
           first_name: payload.firstName,
           last_name: payload.lastName,
@@ -93,7 +97,7 @@ export async function sendCoreMessage(payload: {
       {
         method: 'POST',
         cache: 'no-store',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': getAppId() },
         body: JSON.stringify({ message: payload.message }),
       },
     )
@@ -125,7 +129,10 @@ export async function pollCoreMessages(payload: {
     )
     if (payload.after) url.searchParams.set('after', String(payload.after))
 
-    const res = await fetch(url.toString(), { cache: 'no-store', headers: { 'Content-Type': 'application/json' } })
+    const res = await fetch(url.toString(), {
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': getAppId() },
+    })
     if (!res.ok) {
       console.error('[consentz-chat] poll messages failed', res.status)
       return []
