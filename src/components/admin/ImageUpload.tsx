@@ -24,7 +24,7 @@ export function ImageUpload({ value, onChange, shape = 'square', className }: Re
     try {
       const form = new FormData()
       form.append('file', file)
-      const res = await fetch('/directory/api/admin/upload', { method: 'POST', body: form })
+      const res = await fetch('/directory/api/admin/upload/', { method: 'POST', body: form })
       const data = await res.json()
       if (!res.ok) {
         setError(data.error ?? 'Upload failed')

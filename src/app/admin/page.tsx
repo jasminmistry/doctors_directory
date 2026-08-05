@@ -157,9 +157,9 @@ export default function AdminDashboard() {
   const [patientStats, setPatientStats] = useState<PatientStats | null>(null)
 
   useEffect(() => {
-    fetch('/directory/api/admin/stats').then((r) => r.json()).then(setStats).catch(() => {})
-    fetch('/directory/api/admin/earnings').then((r) => r.ok ? r.json() : null).then(setEarnings).catch(() => {})
-    fetch('/directory/api/admin/patient-stats').then((r) => r.ok ? r.json() : null).then(setPatientStats).catch(() => {})
+    fetch('/directory/api/admin/stats/').then((r) => r.json()).then(setStats).catch(() => {})
+    fetch('/directory/api/admin/earnings/').then((r) => r.ok ? r.json() : null).then(setEarnings).catch(() => {})
+    fetch('/directory/api/admin/patient-stats/').then((r) => r.ok ? r.json() : null).then(setPatientStats).catch(() => {})
   }, [])
 
   const pending = stats ? stats.pendingClaims : 0

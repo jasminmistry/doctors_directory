@@ -41,7 +41,7 @@ export default function AdminReviewsPage() {
     let cancelled = false
     setLoading(true)
     setSelected(new Set())
-    fetch(`/directory/api/admin/reviews?status=${tab}&_t=${Date.now()}`, { cache: 'no-store' })
+    fetch(`/directory/api/admin/reviews/?status=${tab}&_t=${Date.now()}`, { cache: 'no-store' })
       .then(r => r.json())
       .then(data => { if (!cancelled) setReviews(data.reviews ?? []) })
       .catch(() => { if (!cancelled) toast.error('Failed to load reviews') })
@@ -52,7 +52,7 @@ export default function AdminReviewsPage() {
   async function action(id: number, act: 'approve' | 'reject', verifiedPatient?: boolean) {
     setActioning(id)
     try {
-      const res = await fetch(`/directory/api/admin/reviews/${id}`, {
+      const res = await fetch(`/directory/api/admin/reviews/${id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: act, isVerifiedPatient: verifiedPatient }),
@@ -71,7 +71,7 @@ export default function AdminReviewsPage() {
   async function deleteOne(id: number) {
     setActioning(id)
     try {
-      const res = await fetch(`/directory/api/admin/reviews/${id}`, { method: 'DELETE' })
+      const res = await fetch(`/directory/api/admin/reviews/${id}/`, { method: 'DELETE' })
       if (!res.ok) { toast.error('Delete failed'); return }
       toast.success('Review deleted')
       setReviews((prev) => prev.filter((r) => r.id !== id))
@@ -88,7 +88,7 @@ export default function AdminReviewsPage() {
     if (!ids.length) return
     setBulkActioning(true)
     try {
-      const res = await fetch('/directory/api/admin/reviews', {
+      const res = await fetch('/directory/api/admin/reviews/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: act, ids }),

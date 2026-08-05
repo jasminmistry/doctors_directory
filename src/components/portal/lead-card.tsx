@@ -130,7 +130,7 @@ function NotesSection({ leadId, initialNotes, onSaved, locked }: { leadId: numbe
   async function save() {
     setSaving(true)
     try {
-      await fetch(`/directory/api/portal/leads/${leadId}`, {
+      await fetch(`/directory/api/portal/leads/${leadId}/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes: value }),
@@ -197,7 +197,7 @@ function OwnerField({ leadId, initialOwner, onSaved, locked }: { leadId: number;
   async function save() {
     setSaving(true)
     try {
-      await fetch(`/directory/api/portal/leads/${leadId}`, {
+      await fetch(`/directory/api/portal/leads/${leadId}/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ownerName: value }),
@@ -294,7 +294,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
   const locked = !lead.isUnlocked
 
   async function handleStatusChange(s: PipelineStatus) {
-    await fetch(`/directory/api/portal/leads/${lead.id}`, {
+    await fetch(`/directory/api/portal/leads/${lead.id}/`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pipelineStatus: s }),
@@ -306,7 +306,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
     setUnlockError(null)
     setUnlocking(true)
     try {
-      const res = await fetch(`/directory/api/portal/leads/${lead.id}/unlock`, { method: 'POST' })
+      const res = await fetch(`/directory/api/portal/leads/${lead.id}/unlock/`, { method: 'POST' })
       const data = await res.json()
       if (!res.ok) {
         if (data.setupRequired && data.url) { window.location.href = data.url; return }
@@ -329,7 +329,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
   function handleSeen() {
     if (lead.isNew) {
       onSeen(lead.id)
-      fetch(`/directory/api/portal/leads/${lead.id}/seen`, { method: 'POST' }).catch(() => null)
+      fetch(`/directory/api/portal/leads/${lead.id}/seen/`, { method: 'POST' }).catch(() => null)
     }
   }
 
@@ -337,7 +337,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
     setPullError(null)
     setPulling(true)
     try {
-      const res = await fetch(`/directory/api/portal/leads/${lead.id}/pull-to-core`, { method: 'POST' })
+      const res = await fetch(`/directory/api/portal/leads/${lead.id}/pull-to-core/`, { method: 'POST' })
       const data = await res.json()
       if (!res.ok) {
         setPullError(data.error ?? 'Failed to pull lead into Core')

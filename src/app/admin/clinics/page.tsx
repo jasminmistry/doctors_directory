@@ -73,7 +73,7 @@ export default function ClinicsList() {
   const router = useRouter()
 
   useEffect(() => {
-    fetch('/directory/api/admin/clinics')
+    fetch('/directory/api/admin/clinics/')
       .then((r) => r.json())
       .then((data) => {
         const rows = Array.isArray(data) ? data : []
@@ -141,7 +141,7 @@ export default function ClinicsList() {
         onEdit={(clinic) => router.push(`/admin/clinics/${clinic.slug}`)}
         onDelete={async (clinic) => {
           if (!confirm(`Delete clinic "${clinic.name || clinic.slug}"?`)) return
-          await fetch(`/directory/api/admin/clinics/${clinic.slug}`, { method: 'DELETE' })
+          await fetch(`/directory/api/admin/clinics/${clinic.slug}/`, { method: 'DELETE' })
           setClinics((prev) => prev.filter((c) => c.slug !== clinic.slug))
         }}
         onAdd={() => router.push('/admin/clinics/new')}

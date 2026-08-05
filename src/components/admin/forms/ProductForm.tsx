@@ -121,7 +121,7 @@ export function ProductForm() {
       setLoading(false)
       return
     }
-    fetch(`/directory/api/admin/products/${slug}`)
+    fetch(`/directory/api/admin/products/${slug}/`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json() })
       .then((d) => { setData(d); setLoading(false) })
       .catch(() => router.push('/admin/products'))
@@ -138,7 +138,7 @@ export function ProductForm() {
     setSaving(true)
     const { slug: _s, ...rest } = data
     const body = isNew ? { slug: data.slug.trim(), ...rest } : rest
-    const url = isNew ? '/directory/api/admin/products' : `/directory/api/admin/products/${slug}`
+    const url = isNew ? '/directory/api/admin/products/' : `/directory/api/admin/products/${slug}/`
     try {
       const res = await fetch(url, {
         method: isNew ? 'POST' : 'PUT',

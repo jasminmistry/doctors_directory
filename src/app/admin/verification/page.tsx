@@ -49,7 +49,7 @@ export default function AdminVerificationPage() {
   function fetchRequests(status?: string) {
     setLoading(true)
     const qs = status && status !== 'all' ? `?status=${status}` : ''
-    fetch(`/directory/api/admin/verification${qs}`, { cache: 'no-store' })
+    fetch(`/directory/api/admin/verification/${qs}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => { setRequests(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -61,7 +61,7 @@ export default function AdminVerificationPage() {
     if (!selected) return
     setSubmitting(true)
     try {
-      const res = await fetch(`/directory/api/admin/verification/${selected.id}`, {
+      const res = await fetch(`/directory/api/admin/verification/${selected.id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action, adminNotes }),

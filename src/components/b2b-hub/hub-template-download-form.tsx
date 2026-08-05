@@ -85,7 +85,7 @@ export function HubTemplateDownloadForm({ templateTitle }: Props) {
       : "Template download request"
 
     try {
-      const res = await fetch("/directory/api/b2b-hub/template-download", {
+      const res = await fetch("/directory/api/b2b-hub/template-download/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

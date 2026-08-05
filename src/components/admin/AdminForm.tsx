@@ -162,7 +162,7 @@ export default function AdminForm({ entityType, apiBasePath, redirectPath }: Adm
       setLoading(false)
       return
     }
-    fetch(`/directory/api/admin/${entityType}/${slug}`)
+    fetch(`/directory/api/admin/${entityType}/${slug}/`)
       .then((res) => {
         if (!res.ok) throw new Error('Not found')
         return res.json()
@@ -178,8 +178,8 @@ export default function AdminForm({ entityType, apiBasePath, redirectPath }: Adm
   async function handleSubmit() {
     setSaving(true)
     const url = isNew
-      ? `/directory/api/admin/${entityType}`
-      : `${apiBasePath}/${slug}`
+      ? `/directory/api/admin/${entityType}/`
+      : `${apiBasePath}/${slug}/`
     const method = isNew ? 'POST' : 'PUT'
 
     try {

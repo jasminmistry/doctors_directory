@@ -73,7 +73,7 @@ export function TreatmentForm() {
       setLoading(false)
       return
     }
-    fetch(`/directory/api/admin/treatments/${slug}`)
+    fetch(`/directory/api/admin/treatments/${slug}/`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json() })
       .then((d) => { setData(d); setLoading(false) })
       .catch(() => router.push('/admin/treatments'))
@@ -89,8 +89,8 @@ export function TreatmentForm() {
 
     setSaving(true)
     const url = isNew
-      ? '/directory/api/admin/treatments'
-      : `/directory/api/admin/treatments/${slug}`
+      ? '/directory/api/admin/treatments/'
+      : `/directory/api/admin/treatments/${slug}/`
 
     const body: Record<string, unknown> = {
       name: data.name,

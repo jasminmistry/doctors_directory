@@ -38,7 +38,7 @@ export default function TreatmentsList() {
   const router = useRouter()
 
   useEffect(() => {
-    fetch('/directory/api/admin/treatments')
+    fetch('/directory/api/admin/treatments/')
       .then((r) => r.json())
       .then((data) => { setTreatments(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -53,7 +53,7 @@ export default function TreatmentsList() {
         onEdit={(t) => router.push(`/admin/treatments/${t.slug}`)}
         onDelete={async (t) => {
           if (!confirm(`Delete treatment "${t.name || t.slug}"?`)) return
-          await fetch(`/directory/api/admin/treatments/${t.slug}`, { method: 'DELETE' })
+          await fetch(`/directory/api/admin/treatments/${t.slug}/`, { method: 'DELETE' })
           setTreatments((prev) => prev.filter((r) => r.slug !== t.slug))
         }}
         onAdd={() => router.push('/admin/treatments/new')}

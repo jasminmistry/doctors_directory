@@ -10,7 +10,7 @@ export function AccountChatBadge() {
 
     async function fetchCount() {
       try {
-        const res = await fetch('/directory/api/patient/chats/count', { cache: 'no-store' })
+        const res = await fetch('/directory/api/patient/chats/count/', { cache: 'no-store' })
         if (!res.ok) return
         const data = await res.json()
         if (!cancelled) setCount(data.unread ?? 0)

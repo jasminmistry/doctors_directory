@@ -46,7 +46,7 @@ export default function AccountLoginPage() {
 
     setLoading(true)
     try {
-      const res = await fetch('/directory/api/patient/auth/magic-link', {
+      const res = await fetch('/directory/api/patient/auth/magic-link/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: trimmedEmail, next: next !== '/account' ? next : undefined }),

@@ -32,7 +32,7 @@ export default function UnlinkRequestsPage() {
   const [busy, setBusy] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    fetch('/directory/api/admin/unlink-requests')
+    fetch('/directory/api/admin/unlink-requests/')
       .then((r) => r.json())
       .then((data) => { setRows(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -53,7 +53,7 @@ export default function UnlinkRequestsPage() {
 
   async function handleUnlink(slug: string) {
     const res = await doAction(slug, 'unlink', () =>
-      fetch(`/directory/api/admin/clinics/${slug}/unlink-core`, { method: 'POST' })
+      fetch(`/directory/api/admin/clinics/${slug}/unlink-core/`, { method: 'POST' })
     )
     if (res) {
       toast.success('Core account unlinked.')
@@ -63,7 +63,7 @@ export default function UnlinkRequestsPage() {
 
   async function handleDismiss(slug: string) {
     const res = await doAction(slug, 'dismiss', () =>
-      fetch(`/directory/api/admin/clinics/${slug}/dismiss-unlink`, { method: 'POST' })
+      fetch(`/directory/api/admin/clinics/${slug}/dismiss-unlink/`, { method: 'POST' })
     )
     if (res) {
       toast.success('Unlink request dismissed.')
@@ -73,7 +73,7 @@ export default function UnlinkRequestsPage() {
 
   async function handleToggleHidden(slug: string, hide: boolean) {
     const res = await doAction(slug, 'hide', () =>
-      fetch(`/directory/api/admin/clinics/${slug}/toggle-hidden`, {
+      fetch(`/directory/api/admin/clinics/${slug}/toggle-hidden/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ hidden: hide }),

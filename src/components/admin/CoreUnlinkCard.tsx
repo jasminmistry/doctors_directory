@@ -15,7 +15,7 @@ export function CoreUnlinkCard({ slug }: CoreUnlinkCardProps) {
   const [loading, setLoading] = useState<'unlink' | 'dismiss' | null>(null)
 
   useEffect(() => {
-    fetch(`/directory/api/admin/clinics/${slug}`)
+    fetch(`/directory/api/admin/clinics/${slug}/`)
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
         if (!data) return
@@ -30,7 +30,7 @@ export function CoreUnlinkCard({ slug }: CoreUnlinkCardProps) {
   async function handleUnlink() {
     setLoading('unlink')
     try {
-      const res = await fetch(`/directory/api/admin/clinics/${slug}/unlink-core`, { method: 'POST' })
+      const res = await fetch(`/directory/api/admin/clinics/${slug}/unlink-core/`, { method: 'POST' })
       if (!res.ok) { toast.error('Failed to unlink'); return }
       toast.success('Core account unlinked successfully.')
       setRequestedAt(null)
@@ -45,7 +45,7 @@ export function CoreUnlinkCard({ slug }: CoreUnlinkCardProps) {
   async function handleDismiss() {
     setLoading('dismiss')
     try {
-      const res = await fetch(`/directory/api/admin/clinics/${slug}/dismiss-unlink`, { method: 'POST' })
+      const res = await fetch(`/directory/api/admin/clinics/${slug}/dismiss-unlink/`, { method: 'POST' })
       if (!res.ok) { toast.error('Failed to dismiss'); return }
       toast.success('Unlink request dismissed.')
       setRequestedAt(null)

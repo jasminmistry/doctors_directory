@@ -110,7 +110,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
   });
 
   function refreshCounts() {
-    fetch("/directory/api/admin/pending-counts")
+    fetch("/directory/api/admin/pending-counts/")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data) setCounts(data);
@@ -123,7 +123,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
   }, [pathname]);
 
   async function handleLogout() {
-    await fetch("/directory/api/auth/logout", { method: "POST" });
+    await fetch("/directory/api/auth/logout/", { method: "POST" });
     router.push("/admin/login");
   }
 

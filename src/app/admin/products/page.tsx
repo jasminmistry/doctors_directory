@@ -32,7 +32,7 @@ export default function ProductsList() {
   const router = useRouter()
 
   useEffect(() => {
-    fetch('/directory/api/admin/products')
+    fetch('/directory/api/admin/products/')
       .then((r) => r.json())
       .then((data) => { setProducts(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -47,7 +47,7 @@ export default function ProductsList() {
         onEdit={(p) => router.push(`/admin/products/${p.slug}`)}
         onDelete={async (p) => {
           if (!confirm(`Delete product "${p.productName || p.slug}"?`)) return
-          await fetch(`/directory/api/admin/products/${p.slug}`, { method: 'DELETE' })
+          await fetch(`/directory/api/admin/products/${p.slug}/`, { method: 'DELETE' })
           setProducts((prev) => prev.filter((r) => r.slug !== p.slug))
         }}
         onAdd={() => router.push('/admin/products/new')}

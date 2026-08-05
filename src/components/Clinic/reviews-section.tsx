@@ -117,7 +117,7 @@ export function ReviewsSection({ clinicSlug, reviews, googleReviewCount = 0, goo
       const me: PatientMe = await meRes.json()
       setPatientMe(me)
 
-      const reviewRes = await fetch(`/directory/api/patient/reviews?clinicSlug=${encodeURIComponent(clinicSlug)}`)
+      const reviewRes = await fetch(`/directory/api/patient/reviews/?clinicSlug=${encodeURIComponent(clinicSlug)}`)
       const reviewData = reviewRes.ok ? await reviewRes.json() : { review: null }
       if (reviewData.review) {
         setExistingReview(reviewData.review)
@@ -150,7 +150,7 @@ export function ReviewsSection({ clinicSlug, reviews, googleReviewCount = 0, goo
 
     setSubmitting(true)
     try {
-      const res = await fetch('/directory/api/patient/reviews', {
+      const res = await fetch('/directory/api/patient/reviews/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ clinicSlug, rating, reviewText: text.trim(), treatment: treatment.trim() || undefined }),

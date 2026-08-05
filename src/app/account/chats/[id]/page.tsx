@@ -64,7 +64,7 @@ export default function ChatDetailPage() {
   }, [loading, notFound])
 
   useEffect(() => {
-    fetch(`/directory/api/patient/chats/${id}/messages`)
+    fetch(`/directory/api/patient/chats/${id}/messages/`)
       .then((r) => {
         if (r.status === 404) { setNotFound(true); return null }
         return r.ok ? r.json() : null
@@ -103,7 +103,7 @@ export default function ChatDetailPage() {
   const poll = useCallback(async () => {
     const params = lastCreatedAt.current ? `?since=${encodeURIComponent(lastCreatedAt.current)}` : ''
     try {
-      const res = await fetch(`/directory/api/patient/chats/${id}/messages${params}`)
+      const res = await fetch(`/directory/api/patient/chats/${id}/messages/${params}`)
       if (!res.ok) return
       const data: { messages: Message[] } = await res.json()
       if (data.messages?.length > 0) {
@@ -125,7 +125,7 @@ export default function ChatDetailPage() {
     setDraft('')
     setSending(true)
     try {
-      const res = await fetch(`/directory/api/patient/chats/${id}/messages`, {
+      const res = await fetch(`/directory/api/patient/chats/${id}/messages/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),

@@ -146,7 +146,7 @@ export function RequestConsultationDialog({
     setIsSubmitting(true)
     try {
       if (clinicSlug) {
-        const res = await fetch("/directory/api/leads", {
+        const res = await fetch("/directory/api/leads/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

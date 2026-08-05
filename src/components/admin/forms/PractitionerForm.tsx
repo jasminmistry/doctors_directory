@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Badge } from '@/components/ui/badge'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ClinicCombobox } from './clinic-combobox'
 import { FormSection, Field } from './FormSection'
 import { cn } from '@/lib/utils'
 
@@ -25,13 +25,6 @@ type PractitionerData = {
   experience: string[]
   citySlug: string | null
   clinicId: number | null
-}
-
-type ClinicOption = {
-  id: number
-  name: string | null
-  slug: string
-  cityName: string | null
 }
 
 const EMPTY: PractitionerData = {
@@ -138,28 +131,15 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [isNew, setIsNew] = useState(false)
-  const [clinics, setClinics] = useState<ClinicOption[]>([])
+  // Display label for the currently selected clinic, seeded from the practitioner
+  // record's own clinicName/cityName — avoids fetching every clinic just to resolve
+  // one id back to a name (see ClinicCombobox).
+  const [clinicLabel, setClinicLabel] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const router = useRouter()
   const params = useParams()
   const slug = (params?.slug as string) ?? ''
   const isPortal = mode === 'portal'
-
-  useEffect(() => {
-    if (isPortal) return
-    fetch('/directory/api/admin/clinics')
-      .then((r) => { if (!r.ok) throw new Error(); return r.json() })
-      .then((list) => {
-        setClinics(
-          Array.isArray(list)
-            ? list
-                .filter((c: any) => c.citySlug)
-                .map((c: any) => ({ id: c.id, name: c.name, slug: c.slug, cityName: c.cityName }))
-            : []
-        )
-      })
-      .catch(() => setClinics([]))
-  }, [isPortal])
 
   useEffect(() => {
     if (fetchUrl) {
@@ -180,6 +160,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
             citySlug: d.citySlug ?? null,
             clinicId: d.clinicId ?? null,
           })
+          setClinicLabel(d.cityName ? `${d.cityName} — ${d.clinicName ?? ''}`.trim() : (d.clinicName ?? null))
           setLoading(false)
         })
         .catch(() => setLoading(false))
@@ -190,7 +171,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
       setLoading(false)
       return
     }
-    fetch(`/directory/api/admin/practitioners/${slug}`)
+    fetch(`/directory/api/admin/practitioners/${slug}/`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json() })
       .then((d) => {
         setData({
@@ -207,6 +188,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
           citySlug: d.citySlug ?? null,
           clinicId: d.clinicId ?? null,
         })
+        setClinicLabel(d.cityName ? `${d.cityName} — ${d.clinicName ?? ''}`.trim() : (d.clinicName ?? null))
         setLoading(false)
       })
       .catch(() => router.push('/admin/practitioners'))
@@ -243,7 +225,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
     setSaving(true)
     const { slug: _s, ...rest } = data
     const body = isNew ? { slug: data.slug.trim(), ...rest } : rest
-    const url = saveUrl ?? (isNew ? '/directory/api/admin/practitioners' : `/directory/api/admin/practitioners/${slug}`)
+    const url = saveUrl ?? (isNew ? '/directory/api/admin/practitioners/' : `/directory/api/admin/practitioners/${slug}/`)
     try {
       const res = await fetch(url, {
         method: isNew ? 'POST' : 'PUT',
@@ -350,22 +332,17 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
             </div>
           ))}
           {!isPortal && (
-            <Field label="City" required hint="Determines the practitioner's public profile URL">
-              <Select
-                value={data.clinicId ? String(data.clinicId) : ''}
-                onValueChange={(v) => set('clinicId', v ? Number(v) : null)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a city / clinic…" />
-                </SelectTrigger>
-                <SelectContent>
-                  {clinics.map((c) => (
-                    <SelectItem key={c.id} value={String(c.id)}>
-                      {c.cityName} — {c.name || c.slug}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <Field
+              label="City"
+              required
+              hint="Determines the practitioner's public profile URL"
+              error={fieldErrors.clinicId}
+            >
+              <ClinicCombobox
+                onChange={(clinicId) => set('clinicId', clinicId)}
+                initialLabel={clinicLabel}
+                invalid={Boolean(fieldErrors.clinicId)}
+              />
             </Field>
           )}
           <Field label="Title">

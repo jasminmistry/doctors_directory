@@ -8,7 +8,7 @@ type WrongAccountNoticeProps = {
 
 export function WrongAccountNotice({ next }: WrongAccountNoticeProps) {
   useEffect(() => {
-    fetch('/directory/api/auth/logout', { method: 'POST' }).finally(() => {
+    fetch('/directory/api/auth/logout/', { method: 'POST' }).finally(() => {
       window.location.href = `/directory/portal/login?next=${encodeURIComponent(next)}`
     })
   }, [next])

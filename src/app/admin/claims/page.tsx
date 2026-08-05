@@ -149,7 +149,7 @@ export default function AdminClaimsPage() {
   function fetchClaims(status?: string) {
     setLoading(true)
     const qs = status && status !== 'all' ? `?status=${status}` : ''
-    fetch(`/directory/api/admin/claims${qs}`, { cache: 'no-store' })
+    fetch(`/directory/api/admin/claims/${qs}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data: Claim[]) => {
         if (!Array.isArray(data)) { setClaims([]); setLoading(false); return }
@@ -183,7 +183,7 @@ export default function AdminClaimsPage() {
   async function handleMarkPaid(claim: Claim) {
     setMarkingPaid(claim.id)
     try {
-      const res = await fetch(`/directory/api/admin/claims/${claim.id}`, {
+      const res = await fetch(`/directory/api/admin/claims/${claim.id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'mark_paid' }),
@@ -201,7 +201,7 @@ export default function AdminClaimsPage() {
   async function handleReprovision(claim: Claim) {
     setReprovisioning(claim.id)
     try {
-      const res = await fetch(`/directory/api/admin/claims/${claim.id}`, {
+      const res = await fetch(`/directory/api/admin/claims/${claim.id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'reprovision' }),
@@ -220,7 +220,7 @@ export default function AdminClaimsPage() {
     if (!reviewClaim) return
     setSubmitting(true)
     try {
-      const res = await fetch(`/directory/api/admin/claims/${reviewClaim.id}`, {
+      const res = await fetch(`/directory/api/admin/claims/${reviewClaim.id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action, adminNotes }),

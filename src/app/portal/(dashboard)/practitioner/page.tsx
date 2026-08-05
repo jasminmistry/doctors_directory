@@ -34,7 +34,7 @@ export default function PortalPractitionerPage() {
 
   const fetchPractitionerData = useCallback(() => {
     setVerificationChecked(false)
-    fetch('/directory/api/portal/practitioner')
+    fetch('/directory/api/portal/practitioner/')
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
         if (!data) return
@@ -51,7 +51,7 @@ export default function PortalPractitionerPage() {
   async function handleUpgrade(plan: string) {
     setUpgrading(plan)
     try {
-      const res = await fetch('/directory/api/portal/upgrade', {
+      const res = await fetch('/directory/api/portal/upgrade/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plan }),
@@ -154,8 +154,8 @@ export default function PortalPractitionerPage() {
       {/* Profile editor — only mount once verification status is known */}
       {verificationChecked && (
         <PractitionerForm
-          fetchUrl="/directory/api/portal/practitioner"
-          saveUrl="/directory/api/portal/practitioner"
+          fetchUrl="/directory/api/portal/practitioner/"
+          saveUrl="/directory/api/portal/practitioner/"
           mode="portal"
           disabled={idVerified !== true}
           onSaved={fetchPractitionerData}

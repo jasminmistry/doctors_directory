@@ -26,7 +26,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
   useEffect(() => {
     if (!hasConsentzId) return
     setLoadingSchedule(true)
-    fetch('/directory/api/portal/schedule')
+    fetch('/directory/api/portal/schedule/')
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data?.schedule?.length) {
@@ -40,7 +40,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
   async function skip() {
     setSaving(true)
     try {
-      await fetch('/directory/api/portal/wizard', { method: 'POST' })
+      await fetch('/directory/api/portal/wizard/', { method: 'POST' })
     } finally {
       setSaving(false)
       onDone()
@@ -50,7 +50,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
   async function save() {
     setSaving(true)
     try {
-      const res = await fetch('/directory/api/portal/schedule', {
+      const res = await fetch('/directory/api/portal/schedule/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ schedule, wizardComplete: true }),

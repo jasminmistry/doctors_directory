@@ -38,8 +38,8 @@ export default function FeaturedProfilesPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/directory/api/admin/featured-profiles').then((r) => r.json()),
-      fetch('/directory/api/admin/clinics').then((r) => r.json()),
+      fetch('/directory/api/admin/featured-profiles/').then((r) => r.json()),
+      fetch('/directory/api/admin/clinics/').then((r) => r.json()),
     ])
       .then(([feat, clinics]) => {
         setFeatured(Array.isArray(feat) ? feat : [])
@@ -53,7 +53,7 @@ export default function FeaturedProfilesPage() {
     setSaving(true)
     setSaved(false)
     try {
-      await fetch('/directory/api/admin/featured-profiles', {
+      await fetch('/directory/api/admin/featured-profiles/', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ slugs: entries.map((e) => e.clinicSlug) }),

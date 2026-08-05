@@ -23,8 +23,8 @@ export function PortalScheduleView() {
     async function load() {
       try {
         const [schedRes, wizRes] = await Promise.all([
-          fetch('/directory/api/portal/schedule'),
-          fetch('/directory/api/portal/wizard'),
+          fetch('/directory/api/portal/schedule/'),
+          fetch('/directory/api/portal/wizard/'),
         ])
         const wizData = wizRes.ok ? await wizRes.json() : null
         setHasConsentzId(wizData?.hasConsentzId ?? false)
@@ -50,7 +50,7 @@ export function PortalScheduleView() {
   async function handleSave() {
     setSaving(true)
     try {
-      const res = await fetch('/directory/api/portal/schedule', {
+      const res = await fetch('/directory/api/portal/schedule/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ schedule }),

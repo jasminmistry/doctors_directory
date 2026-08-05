@@ -48,7 +48,7 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
         if (setupDone) {
           setSetupStatus('activating')
           const leadParam = searchParams.get('lead') ?? ''
-          const url = `/directory/api/portal/leads/activate-card${leadParam ? `?lead=${leadParam}` : ''}`
+          const url = `/directory/api/portal/leads/activate-card/${leadParam ? `?lead=${leadParam}` : ''}`
 
           let activated = false
           for (let attempt = 0; attempt < 3; attempt++) {
@@ -69,7 +69,7 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
           if (!activated) setSetupStatus('card_saved')
         }
 
-        const r = await fetch('/directory/api/portal/leads', { cache: 'no-store' })
+        const r = await fetch('/directory/api/portal/leads/', { cache: 'no-store' })
         const data = await r.json()
         setLeads(data.leads ?? [])
       } catch {

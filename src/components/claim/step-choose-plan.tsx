@@ -80,7 +80,7 @@ export function StepChoosePlan({ claimId, entitySlug, onPending }: Readonly<Prop
     setLoading(true)
 
     try {
-      const res = await fetch('/directory/api/claim/select-plan', {
+      const res = await fetch('/directory/api/claim/select-plan/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ claimId, plan: selected }),

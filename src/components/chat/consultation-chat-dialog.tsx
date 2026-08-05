@@ -256,7 +256,7 @@ export function ConsultationChatDialog({
   async function checkOnlineStatus() {
     setChecking(true)
     try {
-      const res = await fetch(`/directory/api/chat/${clinicSlug}/status`)
+      const res = await fetch(`/directory/api/chat/${clinicSlug}/status/`)
       const data: { online: boolean } = await res.json()
       setPhase(data.online ? 'intro' : 'offline')
     } catch {
@@ -322,7 +322,7 @@ export function ConsultationChatDialog({
       const patientName = `${data.firstName} ${data.lastName}`.trim()
       const initialMessage = "Hi, I'd like to enquire about a consultation."
 
-      const res = await fetch(`/directory/api/chat/${clinicSlug}/session`, {
+      const res = await fetch(`/directory/api/chat/${clinicSlug}/session/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -360,7 +360,7 @@ export function ConsultationChatDialog({
   async function handleOfflineSubmit(data: ConsultationFormData) {
     setOfflineSubmitting(true)
     try {
-      const res = await fetch('/directory/api/leads', {
+      const res = await fetch('/directory/api/leads/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -386,7 +386,7 @@ export function ConsultationChatDialog({
   }
 
   async function sendMessage(sid: number, token: string, content: string) {
-    const res = await fetch(`/directory/api/chat/${clinicSlug}/session/${sid}/messages`, {
+    const res = await fetch(`/directory/api/chat/${clinicSlug}/session/${sid}/messages/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content, visitorToken: token }),

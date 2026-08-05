@@ -19,7 +19,7 @@ export default function AccountChatsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/directory/api/patient/chats')
+    fetch('/directory/api/patient/chats/')
       .then((r) => r.ok ? r.json() : { sessions: [] })
       .then((d) => setSessions(d.sessions ?? []))
       .finally(() => setLoading(false))

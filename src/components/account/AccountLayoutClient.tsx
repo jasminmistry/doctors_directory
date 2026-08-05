@@ -54,7 +54,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
   }, [router, isLoginPage]);
 
   async function handleLogout() {
-    await fetch("/directory/api/patient/auth/logout", { method: "POST" });
+    await fetch("/directory/api/patient/auth/logout/", { method: "POST" });
     router.push("/account/login");
     router.refresh();
   }

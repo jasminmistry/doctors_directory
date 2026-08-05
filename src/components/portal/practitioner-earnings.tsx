@@ -61,7 +61,7 @@ export function PractitionerEarnings() {
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/directory/api/portal/earnings?period=${period}`)
+    fetch(`/directory/api/portal/earnings/?period=${period}`)
       .then((r) => r.json())
       .then((d) => {
         setSummary(d.summary ?? null)

@@ -239,7 +239,7 @@ export default function PortalClinicPage() {
 
   const fetchClinicData = useCallback(() => {
     setVerificationChecked(false);
-    fetch("/directory/api/portal/clinic")
+    fetch("/directory/api/portal/clinic/")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data) return;
@@ -279,8 +279,8 @@ export default function PortalClinicPage() {
       {/* Profile editor */}
       {verificationChecked && (
         <ClinicForm
-          fetchUrl="/directory/api/portal/clinic"
-          saveUrl="/directory/api/portal/clinic"
+          fetchUrl="/directory/api/portal/clinic/"
+          saveUrl="/directory/api/portal/clinic/"
           mode="portal"
           disabled={idVerified !== true}
           onSaved={fetchClinicData}

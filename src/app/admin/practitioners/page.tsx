@@ -73,7 +73,7 @@ export default function PractitionersList() {
   const router = useRouter()
 
   useEffect(() => {
-    fetch('/directory/api/admin/practitioners')
+    fetch('/directory/api/admin/practitioners/')
       .then((r) => r.json())
       .then((data) => { setPractitioners(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -134,7 +134,7 @@ export default function PractitionersList() {
         onEdit={(p) => router.push(`/admin/practitioners/${p.slug}`)}
         onDelete={async (p) => {
           if (!confirm(`Delete practitioner "${p.displayName || p.slug}"?`)) return
-          await fetch(`/directory/api/admin/practitioners/${p.slug}`, { method: 'DELETE' })
+          await fetch(`/directory/api/admin/practitioners/${p.slug}/`, { method: 'DELETE' })
           setPractitioners((prev) => prev.filter((r) => r.slug !== p.slug))
         }}
         onAdd={() => router.push('/admin/practitioners/new')}

@@ -20,7 +20,7 @@ export function CoreIntegrationPanel({ hasCoreLink, unlinkRequestedAt, onRefresh
   async function handleRequestUnlink() {
     setLoading(true)
     try {
-      const res = await fetch('/directory/api/portal/clinic/request-unlink', { method: 'POST' })
+      const res = await fetch('/directory/api/portal/clinic/request-unlink/', { method: 'POST' })
       const data = await res.json()
       if (!res.ok) { toast.error(data.error ?? 'Something went wrong'); return }
       toast.success('Unlink request submitted. An admin will review it shortly.')
@@ -36,7 +36,7 @@ export function CoreIntegrationPanel({ hasCoreLink, unlinkRequestedAt, onRefresh
   async function handleCancelUnlink() {
     setLoading(true)
     try {
-      const res = await fetch('/directory/api/portal/clinic/cancel-unlink', { method: 'POST' })
+      const res = await fetch('/directory/api/portal/clinic/cancel-unlink/', { method: 'POST' })
       if (!res.ok) { toast.error('Something went wrong'); return }
       toast.success('Unlink request cancelled.')
       onRefresh()

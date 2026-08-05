@@ -11,15 +11,24 @@ function omitNullish(data: Record<string, unknown>) {
   )
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const search = searchParams.get('search')?.trim()
+
     const clinics = await prisma.clinic.findMany({
+      where: search
+        ? { OR: [{ name: { contains: search } }, { city: { name: { contains: search } } }] }
+        : undefined,
       select: {
         id: true, slug: true, name: true, image: true, rating: true, reviewCount: true,
         gmapsAddress: true, gmapsPhone: true, email: true, claimed: true, idVerified: true, claimedPlan: true,
         city: { select: { slug: true, name: true } },
       },
       orderBy: { name: 'asc' },
+      // Unbounded list is only safe because it's used by the full clinics admin table;
+      // a `search` query is the combobox use case and must stay small.
+      ...(search ? { take: 20 } : {}),
     })
     return NextResponse.json(clinics.map(({ city, ...c }) => ({
       ...c,

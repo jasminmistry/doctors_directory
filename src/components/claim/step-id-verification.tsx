@@ -90,7 +90,7 @@ export function StepIdVerification({ entityType, entitySlug, claimerName, claime
       if (proof) fd.append('proof', proof)
       if (proofType) fd.append('proofType', proofType)
 
-      const res = await fetch('/directory/api/verification/submit', {
+      const res = await fetch('/directory/api/verification/submit/', {
         method: 'POST',
         body: fd,
       })
