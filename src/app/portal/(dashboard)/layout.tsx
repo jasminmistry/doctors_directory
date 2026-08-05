@@ -3,6 +3,8 @@ import { PortalLayoutClient } from '@/components/portal/PortalLayoutClient'
 import { getPortalUser } from '@/lib/portal'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
   const user = await getPortalUser()
 
