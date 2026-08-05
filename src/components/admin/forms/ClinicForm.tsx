@@ -301,11 +301,9 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
           <Field label="Category">
             <Input value={data.category ?? ''} onChange={(e) => set('category', e.target.value || null)} placeholder="e.g. Aesthetics" />
           </Field>
-          {!isPortal && (
-            <Field label="Image" fullWidth>
-              <ImageUpload value={data.image ?? null} onChange={(url) => set('image', url)} />
-            </Field>
-          )}
+          <Field label="Image" fullWidth>
+            <ImageUpload value={data.image ?? null} onChange={(url) => set('image', url)} />
+          </Field>
         </div>
       </FormSection>
 

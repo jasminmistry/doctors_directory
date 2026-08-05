@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { format, addMinutes } from 'date-fns'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { X, Loader2 } from 'lucide-react'
@@ -86,6 +86,14 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
 
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prevOverflow
+    }
+  }, [])
+
   function set(field: string, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }))
     setFieldErrors((prev) => {
@@ -143,15 +151,15 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+      <div className="flex w-full max-w-md max-h-[90vh] flex-col rounded-lg bg-white shadow-xl">
+        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 shrink-0">
           <h2 className="text-sm font-semibold text-gray-900">{isEdit ? 'Edit Appointment' : 'New Appointment'}</h2>
           <button onClick={onClose} className="text-gray-600 hover:text-gray-600 transition-colors">
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} noValidate className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} noValidate className="p-5 space-y-4 overflow-y-auto">
           {/* Patient details */}
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-wider text-gray-600">Patient</p>

@@ -705,7 +705,7 @@ export function ConsultationChatDialog({
       {/* Appointment booking popup */}
       {hasCoreCalendar && (
         <Dialog open={bookingOpen} onOpenChange={setBookingOpen}>
-          <DialogContent className="max-w-lg p-0 overflow-hidden">
+          <DialogContent className="max-w-lg p-0 max-h-[85vh] overflow-y-auto">
             <BookingWidget
               slug={clinicSlug}
               clinicName={clinicName}
@@ -719,7 +719,7 @@ export function ConsultationChatDialog({
       {/* Video call booking popup */}
       {hasCoreCalendar && (
         <Dialog open={callOpen} onOpenChange={setCallOpen}>
-          <DialogContent className="max-w-sm p-0 overflow-hidden">
+          <DialogContent className="max-w-sm p-0 max-h-[85vh] overflow-y-auto">
             <DialogHeader className="px-4 pt-4 pb-0">
               <DialogTitle className="text-sm flex items-center gap-2">
                 <Video className="h-4 w-4 text-gray-600" />

@@ -1009,8 +1009,34 @@ model Patient {
   leads           ConsultationLead[]
   oauthAccounts   PatientOAuthAccount[]
   platformReviews PlatformReview[]
+  consents        PatientConsent[]
 
   @@map("patients")
+}
+
+enum ConsentCheckbox {
+  share
+  privacy
+  age
+}
+
+// Append-only audit trail — one row per checkbox per submission. Never updated
+// or deleted; a withdrawal is a new row with ticked=false, not a mutation of
+// the original. patientId is nullable/SetNull (not Cascade) so GDPR account
+// deletion anonymises rather than destroys the proof-of-consent history.
+model PatientConsent {
+  id           Int             @id @default(autoincrement())
+  patientId    Int?
+  checkbox     ConsentCheckbox
+  ticked       Boolean
+  wordingShown String          @db.Text
+  formVersion  String          @db.VarChar(20)
+  createdAt    DateTime        @default(now())
+
+  patient Patient? @relation(fields: [patientId], references: [id], onDelete: SetNull)
+
+  @@index([patientId])
+  @@map("patient_consents")
 }
 
 model PatientMagicLink {

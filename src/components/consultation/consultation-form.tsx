@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Loader2, Mail, Phone, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { consentDisclaimer, consentCheckboxWording } from '@/lib/consent'
 import { cn } from '@/lib/utils'
 
 export interface ConsultationFormData {
@@ -128,6 +129,8 @@ export function ConsultationRichForm({
   const [consentPrivacy, setConsentPrivacy] = useState(false)
   const [consentAge, setConsentAge] = useState(false)
   const [consentError, setConsentError] = useState('')
+
+  const consentWording = consentCheckboxWording(clinicName)
 
   const canSubmit =
     firstName.trim() && lastName.trim() && email.trim() && phone.trim() && dateOfBirth &&
@@ -281,15 +284,18 @@ export function ConsultationRichForm({
         <p className="text-[11px] text-gray-400">You must be 18 or over to request a consultation</p>
       </Field>
 
-      {/* Consent checkboxes */}
+      {/* Consent disclaimer + checkboxes */}
       <div className="space-y-2.5">
+        <p className="rounded-lg bg-gray-50 px-3 py-2.5 text-xs text-gray-600 leading-relaxed">
+          {consentDisclaimer(clinicName)}
+        </p>
         <label className="flex items-start gap-2 text-xs text-gray-600">
           <Checkbox
             checked={consentShare}
             onCheckedChange={(checked) => { setConsentShare(checked === true); setConsentError('') }}
             className="mt-0.5"
           />
-          <span>I consent to my details being shared with {clinicName} so they can respond to my enquiry.</span>
+          <span>{consentWording.share}</span>
         </label>
         <label className="flex items-start gap-2 text-xs text-gray-600">
           <Checkbox
@@ -306,7 +312,8 @@ export function ConsultationRichForm({
               className="underline hover:text-gray-900"
             >
               Privacy Policy
-            </a>.
+            </a>
+            , which explains how Consentz uses my information and how I can withdraw my consent.
           </span>
         </label>
         <label className="flex items-start gap-2 text-xs text-gray-600">
@@ -315,7 +322,7 @@ export function ConsultationRichForm({
             onCheckedChange={(checked) => { setConsentAge(checked === true); setConsentError('') }}
             className="mt-0.5"
           />
-          <span>I confirm that I am 18 years of age or older.</span>
+          <span>{consentWording.age}</span>
         </label>
         {consentError && (
           <p className="flex items-center gap-1 text-xs text-red-500">

@@ -520,36 +520,43 @@ export function PortalLayoutClient({
         {/* Main */}
         <div className="min-w-0 flex-1 flex flex-col">
           <div className="hidden items-center justify-between gap-1 bg-[var(--primary-bg-color)] px-6 py-2.5 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:flex">
-            <div className="shrink-0">
-              <div className="flex items-center justify-between">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">
-                  Consentz Portal
+            <div className="shrink-0 flex items-center gap-2.5">
+              <img
+                src="/directory/images/default-dr-profile-1.webp"
+                alt={entityName || "Clinic"}
+                className="h-9 w-9 shrink-0 rounded-full object-cover"
+              />
+              <div>
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">
+                    Consentz Portal
+                  </p>
+
+                  {plan && (
+                    <span
+                      className={cn(
+                        "rounded-full ml-2 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border",
+                        plan === "subscription" &&
+                          "border-cyan-300 bg-cyan-50 text-cyan-700",
+                        plan === "pay_per_lead" &&
+                          "border-violet-300 bg-violet-50 text-violet-700",
+                        plan === "free" &&
+                          "border-gray-200 bg-gray-50 text-gray-600",
+                      )}
+                    >
+                      {plan === "subscription"
+                        ? "Sub"
+                        : plan === "pay_per_lead"
+                          ? "PPL"
+                          : "Free"}
+                    </span>
+                  )}
+                </div>
+
+                <p className="mt-1 text-sm font-medium text-gray-900 truncate">
+                  {entityName || "My Portal"}
                 </p>
-
-                {plan && (
-                  <span
-                    className={cn(
-                      "rounded-full ml-2 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border",
-                      plan === "subscription" &&
-                        "border-cyan-300 bg-cyan-50 text-cyan-700",
-                      plan === "pay_per_lead" &&
-                        "border-violet-300 bg-violet-50 text-violet-700",
-                      plan === "free" &&
-                        "border-gray-200 bg-gray-50 text-gray-600",
-                    )}
-                  >
-                    {plan === "subscription"
-                      ? "Sub"
-                      : plan === "pay_per_lead"
-                        ? "PPL"
-                        : "Free"}
-                  </span>
-                )}
               </div>
-
-              <p className="mt-1 text-sm font-medium text-gray-900 truncate">
-                {entityName || "My Portal"}
-              </p>
             </div>
             <div className="flex">
               {entityType === "clinic" && (

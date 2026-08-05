@@ -5,6 +5,7 @@ import { getPatientClaims } from '@/lib/patient-auth'
 import { domainHasMailServer } from '@/lib/email-domain-check'
 import { sendGhostLeadHook, sendLeadNotificationEmail, sendPplLeadTeaserEmail } from '@/lib/email'
 import { getClaimState } from '@/lib/claim-utils'
+import { CONSENT_FORM_VERSION, consentCheckboxWording } from '@/lib/consent'
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 const NAME_RE = /^[A-Za-z]+(?:[-' ][A-Za-z]+)*$/
@@ -139,6 +140,19 @@ export async function POST(req: NextRequest) {
         ...(patientId ? { patientId } : {}),
       },
     })
+
+    if (patientId) {
+      const wording = consentCheckboxWording(clinic.name ?? clinicSlug)
+      await prisma.patientConsent.createMany({
+        data: (['share', 'privacy', 'age'] as const).map((checkbox) => ({
+          patientId,
+          checkbox,
+          ticked: true,
+          wordingShown: wording[checkbox],
+          formVersion: CONSENT_FORM_VERSION,
+        })),
+      }).catch((err) => console.error('[leads] failed to record consent:', err))
+    }
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
 

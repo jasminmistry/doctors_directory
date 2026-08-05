@@ -74,6 +74,7 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
   const [view, setView] = useState<ViewMode>('week')
   const [cursor, setCursor] = useState(() => toZonedTime(new Date(), clinicTimezone))
   const [selected, setSelected] = useState<CalendarBooking | null>(null)
+  const [expandedDay, setExpandedDay] = useState<Date | null>(null)
 
   const todayZoned = toZonedTime(new Date(), clinicTimezone)
   const isTodayZoned = (day: Date) => isSameDay(day, todayZoned)
@@ -223,7 +224,7 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
                     {dayBookings.length > 2 && (
                       <button
                         type="button"
-                        onClick={() => { setCursor(day); setView('week') }}
+                        onClick={() => setExpandedDay(day)}
                         className="w-full pl-1 text-left text-[10px] text-gray-600 hover:text-gray-900 hover:underline"
                       >
                         +{dayBookings.length - 2} more
@@ -245,6 +246,17 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
       {/* List view */}
       {view === 'list' && (
         <ListViewWeek days={weekDays} bookings={bookings} clinicTimezone={clinicTimezone} isTodayZoned={isTodayZoned} onSelect={setSelected} />
+      )}
+
+      {/* Day overflow panel */}
+      {expandedDay && (
+        <DayOverflow
+          day={expandedDay}
+          bookings={bookingsForDay(expandedDay)}
+          clinicTimezone={clinicTimezone}
+          onClose={() => setExpandedDay(null)}
+          onSelect={(b) => { setExpandedDay(null); setSelected(b) }}
+        />
       )}
 
       {/* Booking detail panel */}
@@ -420,6 +432,61 @@ function ListViewWeek({
           ))}
         </div>
       ))}
+    </div>
+  )
+}
+
+// ── Day overflow panel (month view "+N more") ──────────────────────────────────
+function DayOverflow({
+  day,
+  bookings,
+  clinicTimezone,
+  onClose,
+  onSelect,
+}: {
+  day: Date
+  bookings: CalendarBooking[]
+  clinicTimezone: string
+  onClose: () => void
+  onSelect: (b: CalendarBooking) => void
+}) {
+  const sorted = [...bookings].sort(
+    (a, b) => zoned(a.slotStart, clinicTimezone).getTime() - zoned(b.slotStart, clinicTimezone).getTime(),
+  )
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+      <div className="w-full max-w-sm rounded-lg bg-white shadow-xl">
+        <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-5 py-4">
+          <h3 className="text-sm font-semibold text-gray-900">{format(day, 'EEEE, d MMMM')}</h3>
+          <button onClick={onClose} className="text-gray-600 hover:text-gray-600 transition-colors" aria-label="Close">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="max-h-80 overflow-y-auto divide-y divide-gray-100">
+          {sorted.map((b) => (
+            <button
+              key={b.id}
+              onClick={() => onSelect(b)}
+              className="w-full flex items-center gap-4 px-5 py-3 text-left hover:bg-gray-50 transition-colors"
+            >
+              <div className="w-14 shrink-0 text-xs font-medium text-gray-700">
+                {format(zoned(b.slotStart, clinicTimezone), 'HH:mm')}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">{b.patientName}</p>
+                {b.treatment && <p className="text-xs text-gray-600 truncate">{b.treatment}</p>}
+              </div>
+              <span className={cn(
+                'shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium capitalize',
+                STATUS_STYLES[b.status],
+              )}>
+                {b.status.replace('_', ' ')}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
