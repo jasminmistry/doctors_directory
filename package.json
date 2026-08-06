@@ -19,7 +19,8 @@
     "db:migrate": "prisma migrate deploy",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio",
-    "campaign:claim-invites": "tsx scripts/send-claim-invites.ts"
+    "campaign:claim-invites": "tsx scripts/send-claim-invites.ts",
+    "chats:merge-duplicates": "tsx scripts/merge-duplicate-chat-sessions.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
