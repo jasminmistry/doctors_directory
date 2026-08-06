@@ -180,7 +180,7 @@ export default function ChatDetailPage() {
             'text-[10px] px-2 py-0.5 rounded-full',
             isClosed ? 'bg-gray-100 text-gray-600' : 'bg-green-100 text-green-700',
           )}>
-            {session.status}
+            {isClosed ? 'Closed' : 'Active'}
           </span>
         </div>
       </div>

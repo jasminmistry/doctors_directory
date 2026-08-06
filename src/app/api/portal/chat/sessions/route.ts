@@ -12,7 +12,9 @@ export async function GET() {
     }
 
     const sessions = await prisma.chatSession.findMany({
-      where: { clinicId: user.clinicId },
+      // Excludes sessions left empty by the duplicate-thread merge (their messages were
+      // reassigned to a primary session) — a 0-message thread has nothing to show anyway.
+      where: { clinicId: user.clinicId, messages: { some: {} } },
       select: {
         id: true,
         patientName: true,

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { startCoreConversation } from '@/lib/consentz-chat'
+import { sendCoreMessage, startCoreConversation } from '@/lib/consentz-chat'
 import { splitName } from '@/lib/auth'
 import { getPatientClaims } from '@/lib/patient-auth'
 import { CONSENT_FORM_VERSION, consentCheckboxWording } from '@/lib/consent'
@@ -39,6 +39,54 @@ export async function POST(
     // Link to the logged-in patient (the widget requires login) so it shows up under
     // their account's chat history — otherwise /api/patient/chats can never find it.
     const patientId = getPatientClaims(req)?.id ?? null
+
+    // Continue an existing active conversation instead of spawning a duplicate — the
+    // widget only knows about its own localStorage pointer, which expires after 24h or
+    // is lost on a different device, so without this check every "New chat" after that
+    // point minted a fresh ChatSession for the same patient/clinic pair.
+    if (patientId) {
+      const existing = await prisma.chatSession.findFirst({
+        where: { patientId, clinicId: clinic.id, status: 'active' },
+        orderBy: { createdAt: 'desc' },
+        select: { id: true, visitorToken: true, coreConversationId: true },
+      })
+
+      if (existing) {
+        let message: { id: number; sender: string; content: string; createdAt: Date } | null = null
+        if (openingMessage) {
+          const coreConversationId = existing.coreConversationId
+            ? parseInt(existing.coreConversationId, 10)
+            : null
+
+          if (clinic.coreClinicId && coreConversationId) {
+            const [coreMessageId, created] = await Promise.all([
+              sendCoreMessage({ coreClinicId: clinic.coreClinicId, conversationId: coreConversationId, message: openingMessage }),
+              prisma.chatMessage.create({
+                data: { sessionId: existing.id, sender: 'patient', content: openingMessage },
+                select: { id: true, sender: true, content: true, createdAt: true },
+              }),
+            ])
+            message = created
+            if (coreMessageId) {
+              await prisma.chatMessage.update({
+                where: { id: created.id },
+                data: { coreMessageId: String(coreMessageId) },
+              }).catch((err) => console.error('[chat/session] failed to store coreMessageId:', err))
+            }
+          } else {
+            message = await prisma.chatMessage.create({
+              data: { sessionId: existing.id, sender: 'patient', content: openingMessage },
+              select: { id: true, sender: true, content: true, createdAt: true },
+            }).catch((err) => {
+              console.error('[chat/session] failed to store message on existing session:', err)
+              return null
+            })
+          }
+        }
+
+        return NextResponse.json({ sessionId: existing.id, visitorToken: existing.visitorToken, message })
+      }
+    }
 
     const session = await prisma.chatSession.create({
       data: {
