@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { DEFAULT_PERSON, FallbackImage } from '@/components/ui/fallback-image'
-import { Search, X, ChevronUp, ChevronDown, Star } from 'lucide-react'
+import { IconChevronDown, IconChevronUp, IconSearch, IconStar, IconX } from '@tabler/icons-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -125,7 +125,7 @@ export default function FeaturedProfilesPage() {
         {/* Search to add */}
         <div className="relative">
           <div className="flex items-center gap-2 rounded-lg border border-[#e0e0e0]  bg-white px-3 py-2 focus-within:border-gray-500 focus-within:ring-1 focus-within:ring-gray-300">
-            <Search className="h-4 w-4 shrink-0 text-gray-600" />
+            <IconSearch stroke={1.5} className="h-4 w-4 shrink-0" />
             <input
               type="text"
               placeholder="Search clinics to add…"
@@ -135,7 +135,7 @@ export default function FeaturedProfilesPage() {
             />
             {query && (
               <button type="button" onClick={() => setQuery('')} className="text-gray-600 hover:text-gray-600">
-                <X className="h-4 w-4" />
+                <IconX stroke={1.5} className="h-4 w-4" />
               </button>
             )}
           </div>
@@ -161,7 +161,7 @@ export default function FeaturedProfilesPage() {
                     </div>
                     {clinic.rating && (
                       <span className="flex items-center gap-1 text-xs text-amber-600 shrink-0">
-                        <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                        <IconStar stroke={1.5} className="h-3 w-3" />
                         {clinic.rating}
                       </span>
                     )}
@@ -200,7 +200,7 @@ export default function FeaturedProfilesPage() {
                 </div>
                 {entry.rating && (
                   <span className="flex items-center gap-1 text-xs text-amber-600 shrink-0">
-                    <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                    <IconStar stroke={1.5} className="h-3 w-3" />
                     {entry.rating}
                   </span>
                 )}
@@ -212,7 +212,7 @@ export default function FeaturedProfilesPage() {
                     className="rounded p-0.5 text-gray-600 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
                     aria-label="Move up"
                   >
-                    <ChevronUp className="h-4 w-4" />
+                    <IconChevronUp stroke={1.5} className="h-4 w-4" />
                   </button>
                   <button
                     type="button"
@@ -221,7 +221,7 @@ export default function FeaturedProfilesPage() {
                     className="rounded p-0.5 text-gray-600 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
                     aria-label="Move down"
                   >
-                    <ChevronDown className="h-4 w-4" />
+                    <IconChevronDown stroke={1.5} className="h-4 w-4" />
                   </button>
                 </div>
                 <button

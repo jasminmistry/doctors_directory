@@ -418,7 +418,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   className="flex flex-col gap-4 rounded-lg border border-[#e6e0d8] bg-white p-8"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#e0f1ed]">
-                    <Icon className="h-6 w-6 text-[#106057]" strokeWidth={1.5} aria-hidden />
+                    <Icon className="h-6 w-6 text-[#106057]" stroke={1.5} aria-hidden />
                   </div>
                   <h3 className="text-[22px] font-medium leading-[30px] text-[#2e2e2e]">{title}</h3>
                   <p className="text-[15px] leading-6 text-[#928b82]">{body}</p>
@@ -458,7 +458,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   className="flex flex-col gap-3.5 rounded-[14px] border border-[#e6e0d8] bg-[#fcfbf9] p-7"
                 >
                   <div className="flex h-11 w-11 items-center justify-center rounded-[10px] border border-[#e6e0d8] bg-[#f2eee6]">
-                    <Icon className="h-5 w-5 text-[#2e2e2e]" strokeWidth={1.5} aria-hidden />
+                    <Icon className="h-5 w-5 text-[#2e2e2e]" stroke={1.5} aria-hidden />
                   </div>
                   <h3 className="text-[17px] font-semibold leading-[25px] text-[#2e2e2e]">{title}</h3>
                   <p className="text-sm leading-[22px] text-[#928b82]">{desc}</p>
@@ -527,7 +527,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   className="flex flex-col gap-3 rounded-[14px] border border-[#e6e0d8] bg-white p-6"
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#e0f1ed]">
-                    <Icon className="h-5 w-5 text-[#106057]" strokeWidth={1.5} aria-hidden />
+                    <Icon className="h-5 w-5 text-[#106057]" stroke={1.5} aria-hidden />
                   </div>
                   <h3 className="text-base font-semibold leading-6 text-[#2e2e2e]">{title}</h3>
                   <p className="text-[13px] leading-5 text-[#928b82]">{body}</p>
@@ -585,7 +585,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   className="flex flex-col gap-4 rounded-lg border border-[#e6e0d8] bg-white p-8"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#e0f1ed]">
-                    <FileText className="h-6 w-6 text-[#106057]" strokeWidth={1.5} aria-hidden />
+                    <FileText className="h-6 w-6 text-[#106057]" stroke={1.5} aria-hidden />
                   </div>
                   <h3 className="text-xl font-medium leading-7 text-[#2e2e2e]">{title}</h3>
                   <p className="text-[15px] leading-6 text-[#928b82]">{body}</p>

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from "@/lib/pricing";
+import { IconCircleCheck, IconLoader2 } from "@tabler/icons-react";
 
 export const dynamic = "force-dynamic";
 
@@ -138,7 +138,7 @@ export default function UpgradePage() {
               <div className="space-y-2 flex-1 mb-6">
                 {plan.features.map((f) => (
                   <div key={f} className="flex items-start gap-2">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                    <IconCircleCheck stroke={1.5} className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
                     <p className="text-sm text-gray-700">{f}</p>
                   </div>
                 ))}
@@ -160,7 +160,7 @@ export default function UpgradePage() {
                 >
                   {isBusy ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <IconLoader2 stroke={1.5} className="h-4 w-4 mr-2 animate-spin" />
                       Redirecting to checkout…
                     </>
                   ) : (

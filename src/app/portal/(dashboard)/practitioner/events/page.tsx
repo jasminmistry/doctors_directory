@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { getPortalUser } from '@/lib/portal'
 import { prisma } from '@/lib/db'
 import { PractitionerEvents } from '@/components/portal/practitioner-events'
-import { CalendarCheck } from 'lucide-react'
+import { IconCalendarCheck } from '@tabler/icons-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,7 +32,7 @@ export default async function PractitionerEventsPage() {
     return (
       <div className="max-w-lg mx-auto mt-16 text-center space-y-4">
         <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-amber-100">
-          <CalendarCheck className="h-7 w-7 text-amber-600" />
+          <IconCalendarCheck stroke={1.5} className="h-7 w-7 text-amber-600" />
         </div>
         <h1 className="text-xl font-semibold text-gray-900">Events not available</h1>
         <p className="text-sm text-gray-600">
@@ -47,7 +47,7 @@ export default async function PractitionerEventsPage() {
     return (
       <div className="max-w-lg mx-auto mt-16 text-center space-y-4">
         <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-amber-100">
-          <CalendarCheck className="h-7 w-7 text-amber-600" />
+          <IconCalendarCheck stroke={1.5} className="h-7 w-7 text-amber-600" />
         </div>
         <h1 className="text-xl font-semibold text-gray-900">Events not available</h1>
         <p className="text-sm text-gray-600">

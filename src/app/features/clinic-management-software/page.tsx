@@ -1,47 +1,37 @@
-import {
-  MessageSquare,
-  Brain,
-  Clock3,
-  ClipboardList,
-  HeartHandshake,
-  FileText,
-  Stethoscope,
-  MapPinHouse,
-  Hospital,
-  ClipboardPlus
-} from "lucide-react";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
+import { IconBrain, IconClipboard, IconClock, IconFileText, IconHeartHandshake, IconMessage, IconStethoscope } from "@tabler/icons-react";
+
 export default function ClinicManagementSoftwarePage() {
     const bookDemoHref = b2bBookDemoHref();
 const featuresList = [
   {
-    name: "Messaging",
-    icon: MessageSquare,
-  },
+      name: "Messaging",
+      icon: IconMessage,
+    },
+    {
+      name: "Memory Jog",
+      icon: IconBrain,
+    },
+    {
+      name: "Waiting List",
+      icon: IconClock,
+    },
+    {
+      name: "Questionnaire Builder",
+      icon: IconClipboard,
+    },
+    {
+      name: "Engage your patients",
+      icon: IconHeartHandshake,
+    },
   {
-    name: "Memory Jog",
-    icon: Brain,
-  },
-  {
-    name: "Waiting List",
-    icon: Clock3,
-  },
-  {
-    name: "Questionnaire Builder",
-    icon: ClipboardList,
-  },
-  {
-    name: "Engage your patients",
-    icon: HeartHandshake,
-  },
-  {
-    name: "Treatment Notes",
-    icon: FileText,
-  },
-  {
-    name: "Clinicians",
-    icon: Stethoscope,
-  },
+      name: "Treatment Notes",
+      icon: IconFileText,
+    },
+    {
+      name: "Clinicians",
+      icon: IconStethoscope,
+    },
 ];
   return (
     <main>
@@ -81,7 +71,7 @@ const featuresList = [
                 return (
                     <div className="text-center" key={feature.name}>
                     <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                        <Icon strokeWidth={1.5} className="w-8 h-8 text-primary" />
+                        <Icon stroke={1.5} className="w-8 h-8 text-primary" />
                     </div>
                     <p className="text-gray-700">{feature.name}</p>
                     </div>
@@ -125,19 +115,19 @@ const featuresList = [
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <Hospital strokeWidth={1.5} className="mb-4" size={36} />
+                <IconStethoscope stroke={1.5} className="mb-4" size={36} />
                 <h3 className="text-xl md:text-lg font-medium mb-4">Clinicians</h3>
                 <p className="text-gray-700">Show when clinicians are available or unavailable. See weeks and months ahead, and overbook if you need to.</p>
               </div>
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <MapPinHouse strokeWidth={1.5} className="mb-4" size={36} />
+                <IconMapPin stroke={1.5} className="mb-4" size={36} />
                 <h3 className="text-xl md:text-lg font-medium mb-4">Locations & Equipment</h3>
                 <p className="text-gray-700">Easily see what rooms and equipment are free and which aren't. Ensure a patient requiring multiple rooms or equipment has an enjoyable experience.</p>
               </div>
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <ClipboardPlus strokeWidth={1.5} className="mb-4" size={36} />
+                <IconClipboardPlus stroke={1.5} className="mb-4" size={36} />
                 <h3 className="text-xl md:text-lg font-medium mb-4">Change Appointment</h3>
                 <p className="text-gray-700">Manage all aspects of an appointment from the information window, where changing an appointment is very easy, without having to type.</p>
               </div>

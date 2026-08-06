@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/components/Practitioner/profile-header";
 import { GoogleMapsEmbed } from "@/components/gmaps-embed";
@@ -30,6 +29,7 @@ import { getClaimState } from "@/lib/claim-utils";
 import { getPortalUser } from "@/lib/portal";
 import { getPractitionerProfileRobots } from "@/lib/practitioner-profile-robots";
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
@@ -109,7 +109,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
         <div className="container mx-auto max-w-6xl px-4 py-4">
           <Link className="mb-3 inline-block" href="/" prefetch={false}>
             <Button variant="ghost" size="sm" className="gap-2 hover:cursor-pointer">
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
             </Button>
           </Link>

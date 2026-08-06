@@ -5,9 +5,9 @@ import { HeroSection, type HomeAudienceMode } from "@/components/hero-section";
 import LogoLoop from "./LogoLoop";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Handshake, ChartBarDecreasing, CircleCheck, ClipboardPlus, Megaphone, Hospital, CircleEllipsis, Clock, ShieldCheck, ChartNoAxesCombined } from "lucide-react";
 import { Card } from "./ui/card";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
+import { IconBuildingHospital, IconChartCovariate, IconChartDots, IconCircleCheck, IconClipboardPlus, IconClock, IconDotsCircleHorizontal, IconHeadphones, IconHeartHandshake, IconShieldCheck } from "@tabler/icons-react";
 
 const cityList = [
   "Aberaeron",
@@ -1173,17 +1173,17 @@ export default function HomePage({
           <div className="grid md:grid-cols-3 gap-6 md:gap-12">
             {[
               {
-                icon: Handshake,
+                icon: IconHeartHandshake,
                 title: "Our commitment",
                 desc: "We deliver a home to real ethical professionals. All professionals boast on our platform are verified and trusted by patients.",
               },
               {
-                icon: ChartBarDecreasing,
+                icon: IconChartCovariate,
                 title: "Insight that matters",
                 desc: "We ensure that patient reviews are genuine, with verified services with confidence by providing transparent information.",
               },
               {
-                icon: CircleCheck,
+                icon: IconCircleCheck,
                 title: "Safe & reliable",
                 desc: "We protect your data and ensure secure medical quality information is secured and protected from abuse, helping them.",
               },
@@ -1263,19 +1263,19 @@ export default function HomePage({
             <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <Clock size={36} className="mb-4" />
+                <IconClock stroke={1.5} size={36} className="mb-4" />
                 <h3 className="text-xl md:text-lg font-medium mb-4">Online Booking</h3>
                 <p>Patients will never have to ring you or leave your website or IG to book appointments.</p>
               </div>
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <ChartNoAxesCombined size={36} className="mb-4" />
+                <IconChartDots stroke={1.5} size={36} className="mb-4" />
                 <h3 className="text-xl md:text-lg font-medium mb-4">Clinic Growth</h3>
                 <p>Email marketing and paid ads can be launched in minutes with the CONSENTZ marketing module.</p>
               </div>
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <ShieldCheck size={36} className="mb-4" />
+                <IconShieldCheck stroke={1.5}   size={36} className="mb-4" />
                 <h3 className="text-xl md:text-lg font-medium mb-4">Secure Payments</h3>
                 <p>Streamline all your payments. CONSENTZ offers online or in person point-of-sale systems.</p>
               </div>
@@ -1385,25 +1385,25 @@ export default function HomePage({
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <ClipboardPlus size={36} className="mb-4" />
+                <IconClipboardPlus stroke={1.5} size={36} className="mb-4" />
                 <h3 className="text-xl md:text-lg font-medium mb-4">Medical Record Creation</h3>
                 <p>Mark Up Photos, dictate notes, mange records</p>
               </div>
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <Megaphone size={36} className="mb-4" />
+                <IconHeadphones stroke={1.5} size={36} className="mb-4" />
                 <h3 className="text-xl md:text-lg font-medium mb-4">Marketing Tools</h3>
                 <p>Find out all the features Consentz has to offer</p>
               </div>
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <Hospital size={36} className="mb-4" />
+                <IconBuildingHospital stroke={1.5} size={36} className="mb-4" />
                 <h3 className="text-xl md:text-lg font-medium mb-4">Run Your Clinic</h3>
                 <p>Everything your need to manage your business</p>
               </div>
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <CircleEllipsis size={36} className="mb-4" />
+                <IconDotsCircleHorizontal stroke={1.5} size={36} className="mb-4" />
                 <h3 className="text-xl md:text-lg font-medium mb-4">And Much More</h3>
                 <p>Mark Up Photos, dictate notes, mange records</p>
               </div>

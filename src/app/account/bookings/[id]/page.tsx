@@ -5,22 +5,10 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { isPast, isFuture, addMinutes } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
-import {
-  ArrowLeft,
-  CalendarDays,
-  CalendarPlus,
-  ExternalLink,
-  Loader2,
-  MapPin,
-  MessageCircle,
-  Navigation,
-  Star,
-  Video,
-  X,
-} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { capitalize, cn, formatTimezoneAbbr } from '@/lib/utils'
 import { toast } from 'sonner'
+import { IconArrowNarrowLeft, IconCalendarPlus, IconCalendarWeek, IconExternalLink, IconLoader2, IconMapPin, IconMessageCircle, IconStar, IconVideo, IconX } from '@tabler/icons-react'
 
 // Bookings are always shown in the clinic's own timezone, never the visitor's
 // browser timezone — every clinic in this directory is UK-based.
@@ -76,7 +64,7 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
           className="p-0.5"
           aria-label={`${n} star`}
         >
-          <Star
+          <IconStar
             className={cn(
               'h-6 w-6 transition-colors',
               (hover || value) >= n ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300',
@@ -151,7 +139,7 @@ function ReviewPanel({ booking, alreadyReviewed }: { booking: Booking; alreadyRe
         className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
         size="sm"
       >
-        {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : null}
+        {submitting ? <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin mr-1.5" /> : null}
         Submit review
       </Button>
     </div>
@@ -206,7 +194,7 @@ function CancelButton({ booking, onCancelled }: { booking: Booking; onCancelled:
             onClick={handleCancel}
             disabled={cancelling}
           >
-            {cancelling ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Yes, cancel'}
+            {cancelling ? <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" /> : 'Yes, cancel'}
           </Button>
         </div>
       </div>
@@ -219,7 +207,7 @@ function CancelButton({ booking, onCancelled }: { booking: Booking; onCancelled:
       onClick={() => setConfirming(true)}
       className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors"
     >
-      <X className="h-4 w-4 shrink-0" />
+      <IconX stroke={1.5} className="h-4 w-4 shrink-0" />
       Cancel booking
     </button>
   )
@@ -298,7 +286,7 @@ export default function BookingDetailPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
+        <IconLoader2 stroke={1.5} className="h-5 w-5 animate-spin" />
       </div>
     )
   }
@@ -307,7 +295,7 @@ export default function BookingDetailPage() {
     return (
       <div className="max-w-lg space-y-4">
         <Link href="/account/bookings" className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900">
-          <ArrowLeft className="h-3.5 w-3.5" /> Back to bookings
+          <IconArrowNarrowLeft stroke={1.5} className="h-3.5 w-3.5" /> Back to bookings
         </Link>
         <p className="text-gray-600">Booking not found.</p>
       </div>
@@ -336,7 +324,7 @@ export default function BookingDetailPage() {
   return (
     <div className="max-w-4xl space-y-6">
       <Link href="/account/bookings" className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900">
-        <ArrowLeft className="h-3.5 w-3.5" /> Back to bookings
+        <IconArrowNarrowLeft stroke={1.5} className="h-3.5 w-3.5" /> Back to bookings
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -356,7 +344,7 @@ export default function BookingDetailPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-start gap-2">
-                <CalendarDays className="h-4 w-4 text-gray-600 mt-0.5 shrink-0" />
+                <IconCalendarWeek stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-xs text-gray-600">Date &amp; time</p>
                   <p className="text-sm font-medium text-gray-900">
@@ -374,7 +362,7 @@ export default function BookingDetailPage() {
 
               {(booking.clinic.gmapsAddress || booking.clinic.city) && (
                 <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-gray-600 mt-0.5 shrink-0" />
+                  <IconMapPin stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" />
                   <div>
                     <p className="text-xs text-gray-600">Location</p>
                     {isVideoCall ? (
@@ -391,7 +379,7 @@ export default function BookingDetailPage() {
 
             {isVideoCall && (
               <div className="rounded-lg bg-gray-50 border border-gray-100 px-4 py-3 flex items-center gap-2">
-                <Video className="h-4 w-4 text-gray-600 shrink-0" />
+                <IconVideo stroke={1.5} className="h-4 w-4 shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900">Video consultation</p>
                   {!inJoinWindow && isUpcoming && (
@@ -423,13 +411,13 @@ export default function BookingDetailPage() {
                 rel="noopener noreferrer"
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 hover:bg-green-700 transition-colors px-4 py-3.5 text-sm font-semibold text-white"
               >
-                <Video className="h-4 w-4" />
+                <IconVideo stroke={1.5} className="h-4 w-4" />
                 Join video call
-                <ExternalLink className="h-3.5 w-3.5 opacity-70" />
+                <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 opacity-70" />
               </a>
             ) : isUpcoming ? (
               <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3.5 flex items-center gap-2.5">
-                <Video className="h-4 w-4 text-gray-600 shrink-0" />
+                <IconVideo stroke={1.5} className="h-4 w-4 shrink-0" />
                 <p className="text-sm text-gray-600">
                   Join link available from{' '}
                   <span className="font-medium text-gray-700">
@@ -450,9 +438,9 @@ export default function BookingDetailPage() {
               className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-60"
             >
               {messagingClinic ? (
-                <Loader2 className="h-4 w-4 shrink-0 text-gray-600 animate-spin" />
+                <IconLoader2 stroke={1.5} className="h-4 w-4 shrink-0 animate-spin" />
               ) : (
-                <MessageCircle className="h-4 w-4 shrink-0 text-gray-600" />
+                <IconMessageCircle stroke={1.5} className="h-4 w-4 shrink-0" />
               )}
               Message clinic
             </button>
@@ -466,7 +454,7 @@ export default function BookingDetailPage() {
               rel="noopener noreferrer"
               className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              <CalendarPlus className="h-4 w-4 shrink-0 text-gray-600" />
+              <IconCalendarPlus stroke={1.5} className="h-4 w-4 shrink-0" />
               Add to Google Calendar
             </a>
           )}
@@ -479,7 +467,7 @@ export default function BookingDetailPage() {
               rel="noopener noreferrer"
               className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              <Navigation className="h-4 w-4 shrink-0 text-gray-600" />
+              <IconNavigation stroke={1.5} className="h-4 w-4 shrink-0" />
               Get directions
             </a>
           )}

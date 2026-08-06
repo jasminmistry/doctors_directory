@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { Clinic, City } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
-import { Star, MapPin } from "lucide-react";
 import fs from "fs";
 import path from "path";
 import {
@@ -15,7 +14,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
 import { CityTreatmentPage } from "@/components/cityxTreatmentPage";
 import  ItemsGrid  from "@/components/collectionGrid";
 import { MoreItems } from "@/components/MoreItems";
@@ -27,6 +25,7 @@ import { capitalize, toUrlSlug } from "@/lib/utils";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -120,7 +119,7 @@ const serviceMatch = categories.some((cat: string) =>
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
             <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
-                <ArrowLeft className="h-4 w-4" />
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
             </Link>
             <Breadcrumb>

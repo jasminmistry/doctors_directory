@@ -3,25 +3,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Building2,
-  User,
-  Globe,
-  LogOut,
-  Menu,
-  X,
-  Inbox,
-  CalendarDays,
-  CalendarClock,
-  MessageSquare,
-  MessageSquareText,
-  Presentation,
-  Lock,
-  ExternalLink,
-  Clock,
-  CalendarCheck,
-  PoundSterling,
-} from "lucide-react";
+import { IconBuildingHospital, IconMailOpened, IconCalendarWeek, IconLogout, IconExternalLink, IconWorld, IconUser, IconLock, IconMessages, IconCalendarCheck, IconX, IconMenu2, IconCalendarMonth, IconCalendarClock, IconMessage, IconPresentation, IconClock, IconCurrencyPound } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { LeadBadge } from "@/components/portal/lead-badge";
 import { ChatBadge } from "@/components/portal/chat-badge";
@@ -100,9 +82,9 @@ export function PortalLayoutClient({
 
   const baseNav =
     entityType === "clinic"
-      ? [{ href: "/portal/clinic", label: "My Clinic", icon: Building2 }]
+      ? [{ href: "/portal/clinic", label: "My Clinic", icon: IconBuildingHospital }]
       : entityType === "practitioner"
-        ? [{ href: "/portal/practitioner", label: "My Profile", icon: User }]
+        ? [{ href: "/portal/practitioner", label: "My Profile", icon: IconUser }]
         : [];
 
   async function handleLogout() {
@@ -121,20 +103,14 @@ export function PortalLayoutClient({
           {entityType === "clinic" && (
             <>
               <Link href="/portal/clinic/chat" className="relative inline-flex">
-                <MessageSquareText
-                  className="h-6 w-6 text-black"
-                  strokeWidth={1.5}
-                />
+                <IconMessage stroke={1.5} className="h-6 w-6 text-black" />
                 <ChatBadge mobile />
               </Link>
               <Link
                 href="/portal/clinic/prospects"
                 className="relative inline-flex"
               >
-                <Presentation
-                  className="h-6 w-6 text-black"
-                  strokeWidth={1.5}
-                />
+                <IconPresentation stroke={1.5} className="h-6 w-6 text-black" />
                 <LeadBadge mobile />
               </Link>
             </>
@@ -147,9 +123,9 @@ export function PortalLayoutClient({
             aria-expanded={isMobileNavOpen}
           >
             {isMobileNavOpen ? (
-              <X className="h-5 w-5" />
+              <IconX stroke={1.5} className="h-5 w-5" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <IconMenu2 stroke={1.5} className="h-5 w-5" />
             )}
           </button>
         </div>
@@ -168,7 +144,7 @@ export function PortalLayoutClient({
         {/* Sidebar */}
         <aside
           className={cn(
-            "fixed inset-y-0 left-0 z-30 flex w-64 flex-col overflow-y-auto bg-white border-r border-gray-200 transition-transform duration-200 rounded-none lg:sticky lg:top-0 lg:h-[100svh] lg:w-[56px] lg:translate-x-0",
+            "inset-y-0 left-0 z-30 flex w-64 flex-col bg-white border-r border-gray-200 transition-transform duration-200 rounded-none lg:sticky lg:top-0 lg:h-[100svh] lg:w-[56px] lg:translate-x-0",
             isMobileNavOpen ? "translate-x-0" : "-translate-x-full",
           )}
         >
@@ -232,7 +208,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <Icon strokeWidth={1.5} className="w-6 h-6 shrink-0" />
+                      <Icon stroke={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">{label}</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -256,7 +232,7 @@ export function PortalLayoutClient({
                       )}
                     >
                       <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
-                        <Inbox className="h-6 w-6" />
+                        <IconMailOpened stroke={1.5} />
                         <span className="absolute -top-1 -right-1">
                           <LeadBadge />
                         </span>
@@ -277,8 +253,8 @@ export function PortalLayoutClient({
                         title="Upgrade to access Calendar"
                       >
                         <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
-                          <CalendarDays className="h-6 w-6" />
-                          <Lock className="absolute -bottom-1 -right-1 h-3 w-3 shrink-0" />
+                          <IconCalendarWeek stroke={1.5} />
+                          <IconLock stroke={1.5} className="absolute -bottom-1 -right-1 h-3 w-3 shrink-0" />
                         </span>
                         <span className="lg:hidden">Calendar</span>
                       </Link>
@@ -298,7 +274,7 @@ export function PortalLayoutClient({
                             : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                         )}
                       >
-                        <CalendarDays strokeWidth={1.5} className="w-6 h-6 shrink-0" />
+                        <IconCalendarMonth stroke={1.5} className="w-6 h-6 shrink-0" />
                         <span className="lg:hidden">Calendar</span>
                       </Link>
                       <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -319,7 +295,7 @@ export function PortalLayoutClient({
                       )}
                     >
                       <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
-                        <MessageSquare className="h-6 w-6" />
+                        <IconMessages stroke={1.5} />
                         <span className="absolute -top-1 -right-1">
                           <ChatBadge />
                         </span>
@@ -343,7 +319,7 @@ export function PortalLayoutClient({
                             : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                         )}
                       >
-                        <CalendarCheck strokeWidth={1.5} className="w-6 h-6 shrink-0" />
+                        <IconCalendarCheck stroke={1.5} className="w-6 h-6 shrink-0" />
                         <span className="lg:hidden">My Events</span>
                       </Link>
                       <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -357,8 +333,8 @@ export function PortalLayoutClient({
                         title={eventsLockedTitle}
                       >
                         <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
-                          <CalendarCheck className="h-6 w-6" />
-                          <Lock className="absolute -bottom-1 -right-1 h-3 w-3 shrink-0" />
+                          <IconCalendarCheck stroke={1.5} />
+                          <IconLock stroke={1.5} className="absolute -bottom-1 -right-1 h-3 w-3 shrink-0" />
                         </span>
                         <span className="lg:hidden">My Events</span>
                       </span>
@@ -379,7 +355,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <PoundSterling strokeWidth={1.5} className="w-6 h-6 shrink-0" />
+                      <IconCurrencyPound stroke={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">Earnings</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -398,7 +374,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <Clock strokeWidth={1.5} className="w-6 h-6 shrink-0" />
+                      <IconClock stroke={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">Schedule</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -422,7 +398,7 @@ export function PortalLayoutClient({
                             : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                         )}
                       >
-                        <CalendarCheck strokeWidth={1.5} className="w-6 h-6 shrink-0" />
+                        <IconCalendarCheck stroke={1.5} className="w-6 h-6 shrink-0" />
                         <span className="lg:hidden">My Events</span>
                       </Link>
                       <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -436,8 +412,8 @@ export function PortalLayoutClient({
                         title={eventsLockedTitle}
                       >
                         <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
-                          <CalendarCheck className="h-6 w-6" />
-                          <Lock className="absolute -bottom-1 -right-1 h-3 w-3 shrink-0" />
+                          <IconCalendarCheck stroke={1.5} className="h-6 w-6" />
+                          <IconLock stroke={1.5} className="absolute -bottom-1 -right-1 h-3 w-3 shrink-0" />
                         </span>
                         <span className="lg:hidden">My Events</span>
                       </span>
@@ -458,7 +434,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <PoundSterling strokeWidth={1.5} className="w-6 h-6 shrink-0" />
+                      <IconCurrencyPound stroke={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">Earnings</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -477,7 +453,7 @@ export function PortalLayoutClient({
                           : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                       )}
                     >
-                      <Clock strokeWidth={1.5} className="w-6 h-6 shrink-0" />
+                      <IconClock stroke={1.5} className="w-6 h-6 shrink-0" />
                       <span className="lg:hidden">Schedule</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -496,8 +472,8 @@ export function PortalLayoutClient({
                   className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
                 >
                   <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
-                    <Globe strokeWidth={1.5} className="h-6 w-6" />
-                    <ExternalLink className="absolute -bottom-1 -right-1 h-3 w-3 opacity-80" />
+                    <IconWorld stroke={1.5} />
+                    <IconExternalLink stroke={1.5} className="absolute -bottom-1 -right-2 h-3 w-3 opacity-80" />
                   </span>
                   <span className="lg:hidden">View Directory</span>
                 </Link>
@@ -509,9 +485,9 @@ export function PortalLayoutClient({
               <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
                 <button
                   onClick={handleLogout}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 hover:cursor-pointer lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
                 >
-                  <LogOut className="h-6 w-6 shrink-0" />
+                  <IconLogout stroke={1.5} />
                   <span className="lg:hidden">Sign out</span>
                 </button>
                 <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
@@ -524,7 +500,7 @@ export function PortalLayoutClient({
 
         {/* Main */}
         <div className="min-w-0 flex-1 flex flex-col">
-          <div className="hidden items-center justify-between gap-1 bg-[var(--primary-bg-color)] px-6 py-2.5 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:flex">
+          <div className="hidden items-center justify-between gap-1 bg-white px-[10px] py-2 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:flex">
             <div className="shrink-0 flex items-center gap-2.5">
               <img
                 src="/directory/images/default-dr-profile-1.webp"
@@ -563,25 +539,25 @@ export function PortalLayoutClient({
                 </p>
               </div>
             </div>
-            <div className="flex">
+            <div className="flex gap-2">
               {entityType === "clinic" && (
                 <>
                   <HeaderIconLink
                     href="/portal/clinic/calendar"
                     label="Calendar"
-                    icon={CalendarClock}
+                    icon={IconCalendarClock}
                     locked={plan === "free"}
                   />
                   <HeaderIconLink
                     href="/portal/clinic/prospects"
                     label="Prospects"
-                    icon={Presentation}
+                    icon={IconPresentation}
                     badge={<LeadBadge mobile />}
                   />
                   <HeaderIconLink
                     href="/portal/clinic/chat"
                     label="Messages"
-                    icon={MessageSquareText}
+                    icon={IconMessage}
                     badge={<ChatBadge mobile />}
                   />
                 </>

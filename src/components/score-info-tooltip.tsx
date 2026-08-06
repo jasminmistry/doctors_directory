@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { CircleHelp } from "lucide-react"
+import { IconHelpCircle } from "@tabler/icons-react"
 
 interface ScoreInfoTooltipProps {
   entityLabel: "clinic" | "practitioner"
@@ -53,7 +53,7 @@ export function ScoreInfoTooltip({
         onPointerLeave={(e) => { if (e.pointerType === "mouse") setOpen(false) }}
         onClick={() => { if (lastPointerType.current !== "mouse") setOpen((prev) => !prev) }}
       >
-        <CircleHelp className="h-4 w-4" />
+        <IconHelpCircle stroke={1.5} className="h-4 w-4" />
       </button>
 
       {open && (

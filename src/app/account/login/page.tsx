@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { UserCircle, Loader2, Mail } from 'lucide-react'
+import { IconLoader2, IconMail, IconUserCircle } from '@tabler/icons-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,7 +69,7 @@ export default function AccountLoginPage() {
       <div className="w-full max-w-[22rem]">
         <div className="mb-5 text-center">
           <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center border border-[#e0e0e0] rounded-full bg-white">
-            <UserCircle strokeWidth={1.5} className="h-6 w-6 text-black" />
+            <IconUserCircle stroke={1.5} className="h-6 w-6 text-black" />
           </div>
           <h1 className="text-xl font-medium text-black">Sign in to your account</h1>
           <p className="mt-1.5 text-sm text-slate-500">Book consultations and manage your appointments</p>
@@ -83,7 +83,7 @@ export default function AccountLoginPage() {
           {sent ? (
             <div className="text-center space-y-3">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-50 border border-green-200">
-                <Mail className="h-5 w-5 text-green-600" />
+                <IconMail stroke={1.5} className="h-5 w-5" />
               </div>
               <p className="text-sm font-medium text-black">Check your inbox</p>
               <p className="text-sm text-slate-500">
@@ -150,7 +150,7 @@ export default function AccountLoginPage() {
                   className="w-full bg-white border border-[#C4C4C4] text-black hover:bg-gray-50 transition"
                   disabled={loading}
                 >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send magic link'}
+                  {loading ? <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" /> : 'Send magic link'}
                 </Button>
               </form>
             </>

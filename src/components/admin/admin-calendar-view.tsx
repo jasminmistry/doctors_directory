@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Loader2 } from 'lucide-react'
 import { BookingCalendar, type CalendarBooking } from '@/components/calendar/booking-calendar'
 import { NewBookingModal, type NewBookingData } from '@/components/calendar/new-booking-modal'
+import { IconLoader2 } from '@tabler/icons-react'
 
 interface AdminCalendarViewProps {
   slug: string
@@ -76,7 +76,7 @@ export function AdminCalendarView({ slug, clinicTimezone }: AdminCalendarViewPro
   if (loading) {
     return (
       <div className="flex justify-center py-24">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
+        <IconLoader2 stroke={1.5} className="h-6 w-6 animate-spin" />
       </div>
     )
   }

@@ -3,15 +3,9 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { AdminLayout } from '@/components/admin/AdminLayout'
-import {
-  Building2, Clock, Package, Stethoscope, Users,
-  PoundSterling, TrendingUp, Unlock, CalendarDays,
-  RotateCcw, ArrowUp, ArrowDown, Minus, Percent,
-  UserCheck, Mail, Chrome, Apple, MessageSquare, BookOpen,
-  Link2Off, Trash2,
-} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PPL_LEAD_PRICE } from '@/lib/pricing'
+import { IconBox, IconBuildingHospital, IconTrendingUp2, IconClock, IconCurrencyPound, IconStethoscope, IconUsers, IconLockOpen2, IconCalendarWeek, IconCirclePercentage, IconRotate, IconArrowNarrowUp, IconArrowNarrowDown, IconMinus, IconUserCheck, IconMail, IconBrandChrome, IconBrandApple, IconLinkOff } from '@tabler/icons-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,10 +65,10 @@ interface EarningsData {
 }
 
 const STAT_CARDS = [
-  { key: 'clinics' as const,       label: 'Clinics',       href: '/admin/clinics',       icon: Building2,   color: 'text-black bg-blue-50' },
-  { key: 'practitioners' as const, label: 'Practitioners', href: '/admin/practitioners', icon: Users,       color: 'text-violet-600 bg-violet-50' },
-  { key: 'products' as const,      label: 'Products',      href: '/admin/products',      icon: Package,     color: 'text-emerald-600 bg-emerald-50' },
-  { key: 'treatments' as const,    label: 'Treatments',    href: '/admin/treatments',    icon: Stethoscope, color: 'text-orange-600 bg-orange-50' },
+  { key: 'clinics' as const,       label: 'Clinics',       href: '/admin/clinics',       icon: IconBuildingHospital,   color: 'text-black bg-blue-50' },
+  { key: 'practitioners' as const, label: 'Practitioners', href: '/admin/practitioners', icon: IconUsers,       color: 'text-violet-600 bg-violet-50' },
+  { key: 'products' as const,      label: 'Products',      href: '/admin/products',      icon: IconBox,     color: 'text-emerald-600 bg-emerald-50' },
+  { key: 'treatments' as const,    label: 'Treatments',    href: '/admin/treatments',    icon: IconStethoscope, color: 'text-orange-600 bg-orange-50' },
 ]
 
 function fmt(n: number) {
@@ -83,13 +77,13 @@ function fmt(n: number) {
 
 function Delta({ current, previous }: { current: number; previous: number }) {
   if (previous === 0 && current === 0) return <span className="text-xs text-gray-600">—</span>
-  if (previous === 0) return <span className="text-xs text-emerald-600 flex items-center gap-0.5"><ArrowUp className="h-3 w-3" />New</span>
+  if (previous === 0) return <span className="text-xs text-emerald-600 flex items-center gap-0.5"><IconArrowNarrowUp className="h-3 w-3" stroke={1.5} />New</span>
   const pct = ((current - previous) / previous) * 100
-  if (Math.abs(pct) < 0.5) return <span className="text-xs text-gray-600 flex items-center gap-0.5"><Minus className="h-3 w-3" />Flat</span>
+  if (Math.abs(pct) < 0.5) return <span className="text-xs text-gray-600 flex items-center gap-0.5"><IconMinus stroke={1.5} className="h-3 w-3" />Flat</span>
   return pct > 0 ? (
-    <span className="text-xs text-emerald-600 flex items-center gap-0.5"><ArrowUp className="h-3 w-3" />{pct.toFixed(0)}%</span>
+    <span className="text-xs text-emerald-600 flex items-center gap-0.5"><IconArrowNarrowUp className="h-3 w-3" stroke={1.5} />{pct.toFixed(0)}%</span>
   ) : (
-    <span className="text-xs text-red-500 flex items-center gap-0.5"><ArrowDown className="h-3 w-3" />{Math.abs(pct).toFixed(0)}%</span>
+    <span className="text-xs text-red-500 flex items-center gap-0.5"><IconArrowNarrowDown className="h-3 w-3" stroke={1.5} />{Math.abs(pct).toFixed(0)}%</span>
   )
 }
 
@@ -193,7 +187,7 @@ export default function AdminDashboard() {
         {pending > 0 && stats && (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-              <Clock className="h-4 w-4 text-amber-600" />
+              <IconClock stroke={1.5} className="h-4 w-4" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-amber-900">
@@ -219,7 +213,7 @@ export default function AdminDashboard() {
         {stats && stats.pendingUnlinkRequests > 0 && (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-              <Link2Off className="h-4 w-4 text-amber-600" />
+              <IconLinkOff stroke={1.5} className="h-4 w-4" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-amber-900">
@@ -242,7 +236,7 @@ export default function AdminDashboard() {
         {stats && stats.pendingDirectoryRemovalRequests > 0 && (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-              <Trash2 className="h-4 w-4 text-amber-600" />
+              <IconTrash2 stroke={1.5} className="h-4 w-4" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-amber-900">
@@ -273,7 +267,7 @@ export default function AdminDashboard() {
               {/* Top-line totals */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <EarningsTile
-                  icon={RotateCcw}
+                  icon={IconRotate}
                   iconBg="bg-cyan-50 text-cyan-600"
                   label="Monthly recurring (MRR)"
                   primary={`£${fmt(earnings.totals.mrr)}`}
@@ -282,7 +276,7 @@ export default function AdminDashboard() {
                   delta={<Delta current={earnings.subscription.newThisMonth} previous={earnings.subscription.newLastMonth} />}
                 />
                 <EarningsTile
-                  icon={Percent}
+                  icon={IconCirclePercentage}
                   iconBg="bg-orange-50 text-orange-600"
                   label="Directory commission (all time)"
                   primary={`£${fmt(earnings.commission.allTime)}`}
@@ -291,14 +285,14 @@ export default function AdminDashboard() {
                   delta={<Delta current={earnings.commission.thisMonth} previous={earnings.commission.lastMonth} />}
                 />
                 <EarningsTile
-                  icon={TrendingUp}
+                  icon={IconTrendingUp2}
                   iconBg="bg-blue-50 text-blue-600"
                   label="This month (PPL + deposits)"
                   primary={`£${fmt(earnings.totals.thisMonth)}`}
                   delta={<Delta current={earnings.totals.thisMonth} previous={earnings.totals.lastMonth} />}
                 />
                 <EarningsTile
-                  icon={PoundSterling}
+                  icon={IconCurrencyPound}
                   iconBg="bg-emerald-50 text-emerald-600"
                   label="Total one-time (all time)"
                   primary={`£${fmt(earnings.totals.allTime)}`}
@@ -313,7 +307,7 @@ export default function AdminDashboard() {
                 <div className="rounded-lg border border-cyan-100 bg-cyan-50 p-5 space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-100">
-                      <RotateCcw className="h-3.5 w-3.5 text-cyan-700" />
+                      <IconRotate stroke={1.5} className="h-3.5 w-3.5" />
                     </div>
                     <p className="text-xs font-semibold text-cyan-800 uppercase tracking-wide">Subscriptions</p>
                   </div>
@@ -342,7 +336,7 @@ export default function AdminDashboard() {
                 <div className="rounded-lg border border-violet-100 bg-violet-50 p-5 space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-100">
-                      <Unlock className="h-3.5 w-3.5 text-violet-700" />
+                      <IconLockOpen2 stroke={1.5} className="h-3.5 w-3.5" />
                     </div>
                     <p className="text-xs font-semibold text-violet-800 uppercase tracking-wide">Pay Per Lead</p>
                   </div>
@@ -375,7 +369,7 @@ export default function AdminDashboard() {
                 <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-5 space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100">
-                      <CalendarDays className="h-3.5 w-3.5 text-emerald-700" />
+                      <IconCalendarWeek stroke={1.5} className="h-3.5 w-3.5" />
                     </div>
                     <p className="text-xs font-semibold text-emerald-800 uppercase tracking-wide">Booking Deposits</p>
                   </div>
@@ -404,7 +398,7 @@ export default function AdminDashboard() {
                 <div className="rounded-lg border border-orange-100 bg-orange-50 p-5 space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-100">
-                      <Percent className="h-3.5 w-3.5 text-orange-700" />
+                      <IconCirclePercentage stroke={1.5} className="h-3.5 w-3.5" />
                     </div>
                     <p className="text-xs font-semibold text-orange-800 uppercase tracking-wide">Directory Commission</p>
                   </div>
@@ -476,21 +470,21 @@ export default function AdminDashboard() {
                   delta={<Delta current={patientStats.patients.newThisMonth} previous={patientStats.patients.newLastMonth} />}
                 />
                 <EarningsTile
-                  icon={UserCheck}
+                  icon={IconUserCheck}
                   iconBg="bg-emerald-50 text-emerald-600"
                   label="With bookings"
                   primary={patientStats.patients.withBookings.toLocaleString()}
                   secondary={`${patientStats.patients.total > 0 ? Math.round((patientStats.patients.withBookings / patientStats.patients.total) * 100) : 0}% of all patients`}
                 />
                 <EarningsTile
-                  icon={MessageSquare}
+                  icon={IconMessage}
                   iconBg="bg-blue-50 text-blue-600"
                   label="With chat sessions"
                   primary={patientStats.patients.withChats.toLocaleString()}
                   secondary={`${patientStats.patients.total > 0 ? Math.round((patientStats.patients.withChats / patientStats.patients.total) * 100) : 0}% of all patients`}
                 />
                 <EarningsTile
-                  icon={BookOpen}
+                  icon={IconBook}
                   iconBg="bg-violet-50 text-violet-600"
                   label="Total leads generated"
                   primary={patientStats.leads.total.toLocaleString()}
@@ -506,7 +500,7 @@ export default function AdminDashboard() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50">
-                        <Chrome className="h-3.5 w-3.5 text-red-500" />
+                        <IconBrandChrome stroke={1.5} className="h-3.5 w-3.5 text-red-500" />
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between text-sm mb-1">
@@ -523,7 +517,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex h-7 w-7 items-center justify-center">
-                        <Apple className="h-3.5 w-3.5 text-gray-700" />
+                        <IconBrandApple stroke={1.5} className="h-3.5 w-3.5" />
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between text-sm mb-1">
@@ -540,7 +534,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50">
-                        <Mail className="h-3.5 w-3.5 text-blue-500" />
+                        <IconMail stroke={1.5} className="h-3.5 w-3.5" />
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between text-sm mb-1">

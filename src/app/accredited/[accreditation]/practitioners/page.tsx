@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import {
@@ -16,6 +15,7 @@ import { SearchBar } from "@/components/search/search-bar";
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
+import { IconArrowNarrowLeft } from "@tabler/icons-react"
 
 function mapAccreditationToFieldPractitioner(accreditation: string): keyof Practitioner {
   const mapping: Record<string, keyof Practitioner> = {
@@ -91,7 +91,7 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
             <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
-                <ArrowLeft className="h-4 w-4" />
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
             </Link>
             <Breadcrumb>

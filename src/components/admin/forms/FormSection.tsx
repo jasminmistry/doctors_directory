@@ -1,13 +1,13 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import type { LucideIcon } from 'lucide-react'
+import type { Icon } from '@tabler/icons-react'
 import { cn } from '@/lib/utils'
 
 interface FormSectionProps {
   title: string
   description?: string
-  icon?: LucideIcon
+  icon?: Icon
   children: ReactNode
   className?: string
 }
@@ -15,10 +15,10 @@ interface FormSectionProps {
 export function FormSection({ title, description, icon: Icon, children, className }: FormSectionProps) {
   return (
     <div className={cn('rounded-lg bg-white border border-gray-200 overflow-hidden', className)}>
-      <div className="px-6 py-4 border-b border-[#e4dccf] flex items-center gap-3">
+      <div className="px-6 py-4 border-b border-[#e0e0e0] flex items-center gap-3">
         {Icon && (
           <div className="flex items-center justify-center">
-            <Icon strokeWidth={1.5} className="h-6 w-6 text-black" />
+            <Icon stroke={1.5} className="h-6 w-6 text-black" />
           </div>
         )}
         <div>

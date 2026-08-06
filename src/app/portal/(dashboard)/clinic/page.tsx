@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { format, addMonths } from "date-fns";
-import { CheckCircle2, Info, PoundSterling, Clock, RotateCcw, AlertCircle, XCircle, CreditCard } from "lucide-react";
 import { ClinicForm } from "@/components/admin/forms/ClinicForm";
 import { CoreIntegrationPanel } from "@/components/portal/CoreIntegrationPanel";
 import { cn } from "@/lib/utils";
 import { commissionPct, clinicNetRate, PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from "@/lib/pricing";
+import { IconAlertCircle, IconCircleCheck, IconClockHour4, IconCreditCard, IconCurrencyPound, IconInfoCircle, IconRotate, IconXboxX } from "@tabler/icons-react";
 
 export const dynamic = "force-dynamic";
 
@@ -99,7 +99,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
       {/* Subscription status banners */}
       {isPastDue && (
         <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
-          <CreditCard className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
+          <IconCreditCard className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
           <div className="text-sm text-red-800">
             <p className="font-semibold">Payment failed — subscription at risk</p>
             <p className="mt-0.5 text-xs">
@@ -112,7 +112,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
 
       {isCancelling && subscription.cancelAt && (
         <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
-          <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+          <IconAlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
           <div className="text-sm text-amber-800">
             <p className="font-semibold">Subscription cancels on {format(new Date(subscription.cancelAt), "d MMMM yyyy")}</p>
             <p className="mt-0.5 text-xs">
@@ -125,7 +125,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
 
       {isCancelled && subscription.stripeStatus === 'canceled' && (
         <div className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
-          <XCircle className="h-4 w-4 text-gray-600 shrink-0 mt-0.5" />
+          <IconXboxX className="h-4 w-4 text-gray-600 shrink-0 mt-0.5" />
           <div className="text-sm text-gray-700">
             <p className="font-semibold">Subscription ended</p>
             <p className="mt-0.5 text-xs">
@@ -140,24 +140,24 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
 
       {/* Plan details */}
       <div className="rounded-lg border border-gray-200 bg-white divide-y divide-gray-100 p-4">
-        <InfoRow icon={PoundSterling} label="Price" value={`${meta.price} — ${meta.cadence}`} />
+        <InfoRow icon={IconCurrencyPound} label="Price" value={`${meta.price} — ${meta.cadence}`} />
         {subscription.approvedAt && (
           <InfoRow
-            icon={Clock}
+            icon={IconClockHour4}
             label="Active since"
             value={format(new Date(subscription.approvedAt), "d MMMM yyyy")}
           />
         )}
         {subscription.stripeSubscriptionId && !isCancelling && !isCancelled && renewalDate && (
           <InfoRow
-            icon={RotateCcw}
+            icon={IconRotate}
             label="Next renewal"
             value={format(renewalDate, "d MMMM yyyy")}
           />
         )}
         {isCancelling && subscription.cancelAt && (
           <InfoRow
-            icon={XCircle}
+            icon={IconXboxX}
             label="Access until"
             value={format(new Date(subscription.cancelAt), "d MMMM yyyy")}
           />
@@ -169,7 +169,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
         <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Included features</p>
         {meta.features.map((f) => (
           <div key={f} className="flex items-start gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+            <IconCircleCheck className="h-3.5 w-3.5 shrink-0 mt-0.5" />
             <p className="text-sm text-gray-700">{f}</p>
           </div>
         ))}
@@ -196,7 +196,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
       {/* Refunds / cancellations */}
       <div className="rounded-lg border border-amber-100 bg-amber-50 p-4 space-y-2">
         <div className="flex items-center gap-2 mb-2">
-          <AlertCircle className="h-4 w-4 text-amber-600 shrink-0" />
+          <IconAlertCircle className="h-4 w-4 text-amber-600 shrink-0" />
           <p className="text-xs font-semibold text-amber-800 uppercase tracking-wide">No-refund policy</p>
         </div>
         <div className="space-y-2 text-sm text-amber-900">
@@ -215,7 +215,7 @@ function CommercialPanel({ subscription }: { subscription: SubscriptionInfo }) {
 
       {subscription.plan === "free" && (
         <div className="flex items-start gap-2 rounded-lg border border-blue-100 bg-blue-50 p-4">
-          <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+          <IconInfoCircle className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
           <p className="text-sm text-blue-800">
             Upgrade to Pay Per Lead or Subscription to unlock patient contact details, calendar bookings,
             and Core sync.{" "}

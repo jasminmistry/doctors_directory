@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mail, Phone } from "lucide-react";
 import { HUB_CTA_FOOTER_LIGHT_CLASS } from "@/components/b2b-hub/hub-cta-buttons";
 import { cn } from "@/lib/utils";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 import { openCookieConsentPreferences } from "@/lib/cookie-consent";
+import { IconMail, IconPhone } from "@tabler/icons-react";
 
 const FOOTER_COLUMN_HEADING =
   "font-medium text-base leading-7 text-white font-inter mb-2";
@@ -211,19 +211,19 @@ export function Footer() {
               <h3 className={FOOTER_COLUMN_HEADING}>Contacts</h3>
               <div className="space-y-1 text-sm">
                 <p className="flex items-center gap-2">
-                  <Phone className="h-5 w-5 shrink-0 text-gray-300" aria-hidden />
+                  <IconPhone stroke={1.5} className="h-5 w-5 shrink-0" aria-hidden />
                   <a href="tel:+442080503372" className={FOOTER_WP_LINK}>
                     (UK) +44 (0) 208 050 3372
                   </a>
                 </p>
                 <p className="flex items-center gap-2">
-                  <Phone className="h-5 w-5 shrink-0 text-gray-300" aria-hidden />
+                  <IconPhone stroke={1.5} className="h-5 w-5 shrink-0" aria-hidden />
                   <a href="tel:+16467861949" className={FOOTER_WP_LINK}>
                     (US) +1 646 786 1949
                   </a>
                 </p>
                 <p className="flex items-center gap-2">
-                  <Mail className="h-5 w-5 shrink-0 text-gray-300" aria-hidden />
+                  <IconMail stroke={1.5} className="h-5 w-5 shrink-0" aria-hidden />
                   <a
                     href="mailto:contact@consentz.com"
                     className={FOOTER_WP_LINK}

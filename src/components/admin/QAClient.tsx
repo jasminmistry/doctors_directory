@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { CheckCircle, XCircle, Clock, FileText, AlertTriangle, Droplet } from 'lucide-react'
+import { IconCircleCheck, IconClock, IconFileText, IconXboxX } from '@tabler/icons-react'
 
 
 const testDetails = {
@@ -353,7 +353,7 @@ console.log(failedTestMessages)
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    <IconCircleCheck stroke={1.5} className="w-5 h-5 text-green-600" />
                     <div className="text-3xl font-medium text-green-600">{report.numPassedTests}</div>
                   </div>
                   <Badge variant="outline" className="mt-2 text-green-600 border-green-600">
@@ -368,7 +368,7 @@ console.log(failedTestMessages)
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <XCircle className="w-5 h-5 text-red-600" />
+                    <IconXboxX stroke={1.5} className="w-5 h-5" />
                     <div className="text-3xl font-medium text-red-600">{report.numFailedTests}</div>
                   </div>
                   <Badge variant="destructive" className="mt-2">
@@ -395,7 +395,7 @@ console.log(failedTestMessages)
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-gray-600" />
+                    <IconClock stroke={1.5} className="w-5 h-5" />
                     <div className="text-3xl font-medium">
                       {formatDuration(report.testResults.reduce((acc, suite) => acc + (suite.endTime - suite.startTime), 0))}
                     </div>
@@ -413,12 +413,12 @@ console.log(failedTestMessages)
                 <CardContent>
                   {report.success ? (
                     <Badge variant="default" className="text-sm">
-                      <CheckCircle className="w-4 h-4 mr-1" />
+                      <IconCircleCheck stroke={1.5} className="w-4 h-4 mr-1" />
                       Passed
                     </Badge>
                   ) : (
                     <Badge variant="destructive" className="text-sm">
-                      <XCircle className="w-4 h-4 mr-1" />
+                      <IconXboxX stroke={1.5} className="w-4 h-4 mr-1" />
                       Failed
                     </Badge>
                   )}
@@ -678,7 +678,7 @@ console.log(failedTestMessages)
             {failedTests.length === 0 ? (
               <Card>
                 <CardContent className="py-12 text-center">
-                  <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                  <IconCircleCheck stroke={1.5} className="w-16 h-16 text-green-600 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900">All Tests Passed!</h3>
                   <p className="text-gray-600 mt-2">No failed tests to display.</p>
                 </CardContent>
@@ -688,18 +688,18 @@ console.log(failedTestMessages)
                 <Card key={index} className="border-red-200">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-red-900">
-                      <XCircle className="w-5 h-5" />
+                      <IconXboxX stroke={1.5} className="w-5 h-5" />
                       {test.fullName}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Clock className="w-4 h-4" />
+                        <IconClock stroke={1.5} className="w-4 h-4" />
                         Duration: {formatDuration(test.duration)}
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <FileText className="w-4 h-4" />
+                        <IconFileText stroke={1.5} className="w-4 h-4" />
                         {extractFileName(report.testResults.find(s => s.assertionResults.includes(test))?.name || '')}
                       </div>
                       <div className="mt-4">
@@ -726,9 +726,9 @@ console.log(failedTestMessages)
                     <AccordionTrigger className="hover:no-underline">
                       <div className="flex items-center gap-3 flex-1">
                         {suitePassed ? (
-                          <CheckCircle className="w-5 h-5 text-green-600" />
+                          <IconCircleCheck stroke={1.5} className="w-5 h-5" />
                         ) : (
-                          <XCircle className="w-5 h-5 text-red-600" />
+                          <IconXboxX stroke={1.5} className="w-5 h-5" />
                         )}
                         <span className="font-medium">{extractFileName(suite.name)}</span>
                         <Badge variant={suitePassed ? "default" : "destructive"} className="ml-auto">
@@ -738,7 +738,7 @@ console.log(failedTestMessages)
                           {suite.assertionResults.length} tests
                         </Badge>
                         <div className="flex items-center gap-1 text-sm text-gray-600">
-                          <Clock className="w-4 h-4" />
+                          <IconClock stroke={1.5} className="w-4 h-4" />
                           {formatDuration(suiteDuration)}
                         </div>
                       </div>
@@ -759,9 +759,9 @@ console.log(failedTestMessages)
                           >
                             <div className="flex items-start gap-2">
                               {test.status === 'failed' ? (
-                                <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                                <IconXboxX stroke={1.5} className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                               ) : (
-                                <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                                <IconCircleCheck stroke={1.5} className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                               )}
                               <div className="flex-1 min-w-0">
                                 <div className="font-medium text-gray-900">{test.title}</div>

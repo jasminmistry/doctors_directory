@@ -3,7 +3,6 @@
 import { useState, FormEvent, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Building2 } from 'lucide-react'
 
 type DevClaim = {
   username: string

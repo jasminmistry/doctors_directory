@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Loader2, Save } from 'lucide-react'
 import { toast } from 'sonner'
 import { ScheduleEditor, DEFAULT_SCHEDULE, type DaySchedule } from '@/components/portal/schedule-editor'
+import { IconDeviceFloppy, IconLoader } from '@tabler/icons-react'
 
 interface Props {
   entityType: 'clinic' | 'practitioner'
@@ -68,7 +68,7 @@ export function AdminScheduleCard({ entityType, slug }: Props) {
             disabled={saving}
             className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-gray-700 transition-colors disabled:opacity-50"
           >
-            {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+            {saving ? <IconLoader stroke={1.5} className="h-3 w-3 animate-spin" /> : <IconDeviceFloppy stroke={1.5} className="h-3 w-3" />}
             {saving ? 'Saving…' : 'Save'}
           </button>
         )}
@@ -77,7 +77,7 @@ export function AdminScheduleCard({ entityType, slug }: Props) {
       <div className="p-6">
         {loading ? (
           <div className="flex justify-center py-8">
-            <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
+            <IconLoader stroke={1.5} className="h-5 w-5 animate-spin" />
           </div>
         ) : noConsentzId ? (
           <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">

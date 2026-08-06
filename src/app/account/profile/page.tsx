@@ -3,11 +3,9 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import {
-  Loader2, Trash2, Mail, Phone, Calendar, User, CheckCircle2, AlertCircle,
-} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getDobValidationError, maxDobDate } from '@/lib/dob'
+import { IconAlertCircle, IconCalendarWeek, IconCheck, IconLoader2, IconMail, IconPhone, IconTrash, IconUser } from '@tabler/icons-react'
 
 interface PatientProfile {
   id: number
@@ -95,8 +93,8 @@ function ProfileCompleteness({ profile, dob }: { profile: PatientProfile; dob: s
       complete ? 'border-green-100 bg-green-50' : 'border-amber-100 bg-amber-50',
     )}>
       {complete
-        ? <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
-        : <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+        ? <IconCheck stroke={1.5} className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
+        : <IconAlertCircle stroke={1.5} className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
       }
       <div className="min-w-0">
         <p className={cn('text-xs font-medium', complete ? 'text-green-800' : 'text-amber-800')}>
@@ -254,7 +252,7 @@ export default function AccountProfilePage() {
   if (!profile) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+        <IconLoader2 stroke={1.5} className="h-5 w-5 animate-spin" />
       </div>
     )
   }
@@ -283,7 +281,7 @@ export default function AccountProfilePage() {
           <div className="grid grid-cols-2 gap-3">
             <Field label="First name" required error={firstNameError}>
               <IconInput
-                icon={<User className="h-3.5 w-3.5" />}
+                icon={<IconUser stroke={1.5} className="h-3.5 w-3.5" />}
                 placeholder="Jane"
                 value={firstName}
                 hasError={!!firstNameError}
@@ -305,7 +303,7 @@ export default function AccountProfilePage() {
           {/* Email — read-only */}
           <Field label="Email address" hint="Your email address cannot be changed">
             <IconInput
-              icon={<Mail className="h-3.5 w-3.5" />}
+              icon={<IconMail stroke={1.5} className="h-3.5 w-3.5" />}
               value={profile.email}
               readOnly
               tabIndex={-1}
@@ -315,7 +313,7 @@ export default function AccountProfilePage() {
           {/* Phone */}
           <Field label="Phone number" required error={phoneError} hint="UK numbers only — e.g. 07700 900000">
             <IconInput
-              icon={<Phone className="h-3.5 w-3.5" />}
+              icon={<IconPhone stroke={1.5} className="h-3.5 w-3.5" />}
               type="tel"
               placeholder="07700 900000"
               value={phone}
@@ -334,7 +332,7 @@ export default function AccountProfilePage() {
           >
             <div className="relative">
               <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <Calendar className="h-3.5 w-3.5" />
+                <IconCalendarWeek stroke={1.5} className="h-3.5 w-3.5" />
               </span>
               <input
                 type="date"
@@ -358,7 +356,7 @@ export default function AccountProfilePage() {
             disabled={saving || !isDirty}
             className="h-9 px-5 text-sm"
           >
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save changes'}
+            {saving ? <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" /> : 'Save changes'}
           </Button>
           {isDirty && !saving && (
             <p className="text-xs text-amber-600">You have unsaved changes</p>
@@ -401,7 +399,7 @@ export default function AccountProfilePage() {
                 disabled={withdrawing}
                 onClick={handleWithdrawConsent}
               >
-                {withdrawing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Yes, withdraw consent'}
+                {withdrawing ? <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" /> : 'Yes, withdraw consent'}
               </Button>
               <button
                 type="button"
@@ -434,7 +432,7 @@ export default function AccountProfilePage() {
               className="border-red-300 text-red-600 hover:bg-red-100 hover:border-red-400 hover:text-red-700"
               onClick={() => setConfirmDelete(true)}
             >
-              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+              <IconTrash stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
               Delete my account
             </Button>
           ) : (
@@ -445,7 +443,7 @@ export default function AccountProfilePage() {
                 disabled={deleting}
                 onClick={handleDelete}
               >
-                {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Yes, delete permanently'}
+                {deleting ? <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" /> : 'Yes, delete permanently'}
               </Button>
               <button
                 type="button"

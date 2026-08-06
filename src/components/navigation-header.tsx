@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Search, Menu, Home, User, ChevronDown, Building2, Tag, Briefcase, LogOut, LayoutDashboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
+import { IconBriefcase, IconBuildingHospital, IconChevronDown, IconHome, IconLayoutDashboard, IconLogout, IconMenu2, IconSearch, IconTag, IconUser } from "@tabler/icons-react"
 
 interface PatientUser {
   id: number
@@ -99,7 +99,7 @@ export function NavigationHeader() {
             className="flex items-center gap-2 font-medium text-xl text-foreground hover:text-accent transition-colors"
           >
             <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-              <Search className="h-4 w-4 text-accent-foreground" />
+              <IconSearch stroke={1.5} className="h-4 w-4 text-accent-foreground" />
             </div>
             HealthDirectory
           </Link>
@@ -113,7 +113,7 @@ export function NavigationHeader() {
                 pathname === "/" ? "text-accent" : "text-muted-foreground",
               )}
             >
-              <Home className="h-4 w-4" />
+              <IconHome stroke={1.5} className="h-4 w-4" />
               Directory
             </Link>
 
@@ -129,7 +129,7 @@ export function NavigationHeader() {
                     {patientDisplayName.charAt(0).toUpperCase()}
                   </div>
                   {patientDisplayName}
-                  <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isPatientOpen && "rotate-180")} />
+                  <IconChevronDown stroke={1.5} className={cn("h-3.5 w-3.5 transition-transform", isPatientOpen && "rotate-180")} />
                 </button>
                 {isPatientOpen && (
                   <div className="absolute right-0 top-full mt-1.5 w-52 rounded-lg border border-border bg-background py-1 z-50">
@@ -141,14 +141,14 @@ export function NavigationHeader() {
                       onClick={() => setIsPatientOpen(false)}
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-accent/10 transition-colors"
                     >
-                      <User className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <IconUser stroke={1.5} className="h-4 w-4 text-muted-foreground shrink-0" />
                       My account
                     </Link>
                     <button
                       onClick={handlePatientLogout}
                       className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-accent/10 transition-colors"
                     >
-                      <LogOut className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <IconLogout stroke={1.5} className="h-4 w-4 text-muted-foreground shrink-0" />
                       Sign out
                     </button>
                   </div>
@@ -159,7 +159,7 @@ export function NavigationHeader() {
                 href="/account/login"
                 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
               >
-                <User className="h-4 w-4" />
+                <IconUser stroke={1.5} className="h-4 w-4" />
                 Patient sign in
               </Link>
             ) : null /* loading */}
@@ -174,9 +174,9 @@ export function NavigationHeader() {
                   onClick={() => setIsPortalOpen((o) => !o)}
                   aria-expanded={isPortalOpen}
                 >
-                  <Building2 className="h-4 w-4" />
+                  <IconBuildingHospital stroke={1.5} className="h-4 w-4" />
                   {portalDisplayName}
-                  <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isPortalOpen && "rotate-180")} />
+                  <IconChevronDown stroke={1.5} className={cn("h-3.5 w-3.5 transition-transform", isPortalOpen && "rotate-180")} />
                 </Button>
                 {isPortalOpen && (
                   <div className="absolute right-0 top-full mt-1.5 w-52 rounded-lg border border-border bg-background py-1 z-50">
@@ -189,14 +189,14 @@ export function NavigationHeader() {
                       onClick={() => setIsPortalOpen(false)}
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-accent/10 transition-colors"
                     >
-                      <LayoutDashboard className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <IconLayoutDashboard stroke={1.5} className="h-4 w-4 text-muted-foreground shrink-0" />
                       Go to portal
                     </Link>
                     <button
                       onClick={handlePortalLogout}
                       className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-accent/10 transition-colors"
                     >
-                      <LogOut className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <IconLogout stroke={1.5} className="h-4 w-4 text-muted-foreground shrink-0" />
                       Sign out
                     </button>
                   </div>
@@ -212,9 +212,9 @@ export function NavigationHeader() {
                   onClick={() => setIsProviderOpen((o) => !o)}
                   aria-expanded={isProviderOpen}
                 >
-                  <Building2 className="h-4 w-4" />
+                  <IconBuildingHospital stroke={1.5} className="h-4 w-4" />
                   For providers
-                  <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isProviderOpen && "rotate-180")} />
+                  <IconChevronDown stroke={1.5} className={cn("h-3.5 w-3.5 transition-transform", isProviderOpen && "rotate-180")} />
                 </Button>
                 {isProviderOpen && (
                   <div className="absolute right-0 top-full mt-1.5 w-52 rounded-lg border border-border bg-background py-1 z-50">
@@ -223,7 +223,7 @@ export function NavigationHeader() {
                       onClick={() => setIsProviderOpen(false)}
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-accent/10 transition-colors"
                     >
-                      <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <IconBuildingHospital stroke={1.5} className="h-4 w-4 text-muted-foreground shrink-0" />
                       List your practice
                     </Link>
                     <Link
@@ -231,7 +231,7 @@ export function NavigationHeader() {
                       onClick={() => setIsProviderOpen(false)}
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-accent/10 transition-colors"
                     >
-                      <Tag className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <IconTag stroke={1.5} className="h-4 w-4 text-muted-foreground shrink-0" />
                       Claim your profile
                     </Link>
                     <Link
@@ -239,7 +239,7 @@ export function NavigationHeader() {
                       onClick={() => setIsProviderOpen(false)}
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-accent/10 transition-colors"
                     >
-                      <Briefcase className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <IconBriefcase stroke={1.5} className="h-4 w-4 text-muted-foreground shrink-0" />
                       Register as practitioner
                     </Link>
                   </div>
@@ -252,7 +252,7 @@ export function NavigationHeader() {
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="sm">
-                <Menu className="h-5 w-5" />
+                <IconMenu2 stroke={1.5} className="h-5 w-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-80">
@@ -265,7 +265,7 @@ export function NavigationHeader() {
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Home className="h-5 w-5" />
+                  <IconHome stroke={1.5} className="h-5 w-5" />
                   Directory
                 </Link>
 
@@ -283,14 +283,14 @@ export function NavigationHeader() {
                       className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-base font-medium transition-colors hover:bg-accent/10"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <User className="h-5 w-5" />
+                      <IconUser stroke={1.5} className="h-5 w-5" />
                       My account
                     </Link>
                     <button
                       onClick={() => { handlePatientLogout(); setIsMobileMenuOpen(false) }}
                       className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-base font-medium transition-colors hover:bg-accent/10 text-left"
                     >
-                      <LogOut className="h-5 w-5" />
+                      <IconLogout stroke={1.5} className="h-5 w-5" />
                       Sign out
                     </button>
                   </>
@@ -321,14 +321,14 @@ export function NavigationHeader() {
                       className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-base font-medium transition-colors hover:bg-accent/10"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <LayoutDashboard className="h-5 w-5" />
+                      <IconLayoutDashboard stroke={1.5} className="h-5 w-5" />
                       Go to portal
                     </Link>
                     <button
                       onClick={() => { handlePortalLogout(); setIsMobileMenuOpen(false) }}
                       className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-base font-medium transition-colors hover:bg-accent/10 text-left"
                     >
-                      <LogOut className="h-5 w-5" />
+                      <IconLogout stroke={1.5} className="h-5 w-5" />
                       Sign out
                     </button>
                   </>
@@ -339,7 +339,7 @@ export function NavigationHeader() {
                       className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-base font-medium transition-colors hover:bg-accent/10"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <Building2 className="h-5 w-5" />
+                      <IconBuildingHospital stroke={1.5} className="h-5 w-5" />
                       List your practice
                     </Link>
                     <Link
@@ -347,7 +347,7 @@ export function NavigationHeader() {
                       className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-base font-medium transition-colors hover:bg-accent/10"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <Tag className="h-5 w-5" />
+                      <IconTag stroke={1.5} className="h-5 w-5" />
                       Claim your profile
                     </Link>
                     <Link
@@ -355,7 +355,7 @@ export function NavigationHeader() {
                       className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-base font-medium transition-colors hover:bg-accent/10"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <Briefcase className="h-5 w-5" />
+                      <IconBriefcase stroke={1.5} className="h-5 w-5" />
                       Register as practitioner
                     </Link>
                   </>

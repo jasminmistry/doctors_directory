@@ -27,11 +27,11 @@ export function HeaderIconLink({
       title={locked ? `Upgrade to access ${label}` : label}
       aria-label={label}
       className={cn(
-        'relative inline-flex h-11 w-11 items-center justify-center rounded-lg text-black transition-colors hover:bg-black/10',
+        'relative inline-flex h-[40px] w-[40px] items-center justify-center rounded-full text-black transition-colors hover:bg-black/10',
         active && 'bg-black/10',
       )}
     >
-      <Icon className="h-6 w-6" strokeWidth={1.5} />
+      <Icon className="h-6 w-6" stroke={1.5} />
       {locked ? (
         <Lock className="absolute -right-1 -bottom-1 h-3.5 w-3.5 rounded-full bg-white text-gray-600" />
       ) : (

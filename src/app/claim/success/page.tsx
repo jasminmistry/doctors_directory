@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { prisma } from '@/lib/db'
+import { IconCircleCheck } from '@tabler/icons-react'
 
 interface Props {
   searchParams: { session_id?: string }
@@ -22,7 +22,7 @@ export default async function ClaimSuccessPage({ searchParams }: Readonly<Props>
       <div className="max-w-sm w-full text-center">
         <div className="flex justify-center mb-4">
           <div className="flex items-center justify-center w-14 h-14 rounded-full bg-emerald-50">
-            <CheckCircle2 className="w-7 h-7 text-emerald-600" />
+            <IconCircleCheck stroke={1.5} className="w-7 h-7 text-emerald-600" />
           </div>
         </div>
         <h1 className="text-lg font-semibold mb-2">Payment confirmed</h1>

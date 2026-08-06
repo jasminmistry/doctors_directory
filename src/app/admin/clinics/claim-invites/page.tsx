@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { AdminLayout } from '@/components/admin/AdminLayout'
-import { Loader2, CheckSquare, Square, Mail } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { IconLoader2, IconMail, IconSquare, IconSquareCheck } from '@tabler/icons-react'
 
 interface EligibleClinic {
   id: number
@@ -89,7 +89,7 @@ export default function AdminClaimInvitesPage() {
               onClick={sendInvites}
               className="flex items-center gap-1.5 rounded-lg bg-gray-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-700 disabled:opacity-50"
             >
-              {sending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Mail className="h-3 w-3" />}
+              {sending ? <IconLoader2 stroke={1.5} className="h-3 w-3 animate-spin" /> : <IconMail stroke={1.5} className="h-3 w-3" />}
               Send claim invite
             </button>
           </div>
@@ -97,14 +97,14 @@ export default function AdminClaimInvitesPage() {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-gray-600" /></div>
+        <div className="flex justify-center py-20"><IconLoader2 stroke={1.5} className="h-6 w-6 animate-spin text-gray-600" /></div>
       ) : clinics.length === 0 ? (
         <p className="text-sm text-gray-600 py-8 text-center">No eligible unclaimed clinics.</p>
       ) : (
         <div className="space-y-3">
           <div className="flex items-center gap-3 px-1">
             <button type="button" onClick={toggleAll} className="text-gray-600 hover:text-gray-700">
-              {allSelected ? <CheckSquare className="h-4 w-4 text-gray-700" /> : <Square className="h-4 w-4" />}
+              {allSelected ? <IconSquareCheck stroke={1.5} className="h-4 w-4 text-gray-700" /> : <IconSquare stroke={1.5} className="h-4 w-4" />}
             </button>
             <span className="text-xs text-gray-600">{allSelected ? 'Deselect all' : 'Select all'}</span>
             <span className="text-xs text-gray-400 ml-auto">{clinics.length} eligible</span>
@@ -121,7 +121,7 @@ export default function AdminClaimInvitesPage() {
               )}
             >
               <span className="mt-0.5 shrink-0 text-gray-600">
-                {selected.has(c.id) ? <CheckSquare className="h-4 w-4 text-gray-700" /> : <Square className="h-4 w-4" />}
+                {selected.has(c.id) ? <IconSquareCheck stroke={1.5} className="h-4 w-4 text-gray-700" /> : <IconSquare stroke={1.5} className="h-4 w-4" />}
               </span>
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2 flex-wrap">

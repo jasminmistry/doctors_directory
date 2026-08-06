@@ -1,24 +1,4 @@
-import {
-  MessageSquare,
-  Brain,
-  Clock3,
-  ClipboardList,
-  HeartHandshake,
-  FileText,
-  Stethoscope,
-  NotebookPen,
-  SquarePen,
-  Trash,
-  BookOpen,
-  Share,
-  Calendar,
-  CalendarClock,
-  Images,
-  ChartBarStacked,
-  PenTool,
-  Cone,
-  UserRoundCheck
-} from "lucide-react";
+import { IconBrain, IconClockHour4, IconMessage, IconClipboardList, IconHeartHandshake, IconFileText, IconStethoscope, IconNotebook, IconPolaroid, IconWritingSign, IconTrash, IconBook, IconShare3, IconCalendar, IconCalendarTime, IconChartBarPopular, IconCone, IconUserCheck } from "@tabler/icons-react";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 export default function ClinicManagementSoftwarePage() {
   const bookDemoHref = b2bBookDemoHref();
@@ -35,31 +15,31 @@ export default function ClinicManagementSoftwarePage() {
   const featuresList = [
     {
       name: "Messaging",
-      icon: MessageSquare,
+      icon: IconMessage,
     },
     {
       name: "Memory Jog",
-      icon: Brain,
+      icon: IconBrain,
     },
     {
       name: "Waiting List",
-      icon: Clock3,
+      icon: IconClockHour4,
     },
     {
       name: "Questionnaire Builder",
-      icon: ClipboardList,
+      icon: IconClipboardList,
     },
     {
       name: "Engage your patients",
-      icon: HeartHandshake,
+      icon: IconHeartHandshake,
     },
     {
       name: "Treatment Notes",
-      icon: FileText,
+      icon: IconFileText,
     },
     {
       name: "Clinicians",
-      icon: Stethoscope,
+      icon: IconStethoscope,
     },
   ];
   
@@ -117,7 +97,7 @@ export default function ClinicManagementSoftwarePage() {
             return (
               <div className="text-center" key={feature.name}>
                 <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <Icon strokeWidth={1.5} className="w-8 h-8 text-primary" />
+                  <Icon stroke={1.5} className="w-8 h-8 text-primary" />
                 </div>
                 <p className="text-gray-700">{feature.name}</p>
               </div>
@@ -157,7 +137,7 @@ export default function ClinicManagementSoftwarePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <PenTool strokeWidth={1.5} className="mb-4" size={36} />
+              <IconWritingSign stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">Drawing</h3>
               <p className="text-gray-700">
                 Tools range from changing colours, font sizes and shading whole
@@ -167,7 +147,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <ChartBarStacked strokeWidth={1.5} className="mb-4" size={36} />
+              <IconChartBarPopular stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Comparisons
               </h3>
@@ -179,7 +159,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Images strokeWidth={1.5} className="mb-4" size={36} />
+              <IconPolaroid stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Photo Management
               </h3>
@@ -226,7 +206,7 @@ export default function ClinicManagementSoftwarePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <CalendarClock strokeWidth={1.5} className="mb-4" size={36} />
+              <IconCalendarTime stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Scheduling
               </h3>
@@ -237,7 +217,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Calendar strokeWidth={1.5} className="mb-4" size={36} />
+              <IconCalendar stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">Calendar</h3>
               <p className="text-gray-700">
                 The Treatment Plan can the seen by the receptionist to make the
@@ -246,7 +226,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Share strokeWidth={1.5} className="mb-4" size={36} />
+              <IconShare3 stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">Share</h3>
               <p className="text-gray-700">
                 Share completed Treatment Plans with a patient, either sending
@@ -291,7 +271,7 @@ export default function ClinicManagementSoftwarePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <BookOpen strokeWidth={1.5} className="mb-4" size={36} />
+              <IconBook stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">Library</h3>
               <p className="text-gray-700">
                 Never have to find or print a consent form again. Ensure you
@@ -301,7 +281,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Cone strokeWidth={1.5} className="mb-4" size={36} />
+              <IconCone stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Highlight & Initial
               </h3>
@@ -313,7 +293,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <UserRoundCheck strokeWidth={1.5} className="mb-4" size={36} />
+              <IconUserCheck stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Always Signed
               </h3>
@@ -359,7 +339,7 @@ export default function ClinicManagementSoftwarePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <NotebookPen strokeWidth={1.5} className="mb-4" size={36} />
+              <IconNotebook stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Pre-Set Notes
               </h3>
@@ -371,7 +351,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <SquarePen strokeWidth={1.5} className="mb-4" size={36} />
+              <IconWritingSign stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Easy to Compile & Edit
               </h3>
@@ -384,7 +364,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Trash strokeWidth={1.5} className="mb-4" size={36} />
+              <IconTrash stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 No Deletion
               </h3>
