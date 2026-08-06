@@ -25,14 +25,6 @@ import {
 } from "@/components/b2b-hub/hub-hero-layout-classes"
 
 import { cn } from "@/lib/utils";
-import {
-  CalendarDays,
-  FileWarning,
-  Layers,
-  Mail,
-  Table2,
-  UserRound,
-} from "lucide-react";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
 import {
   SoftwareHeroVisual,
@@ -51,6 +43,7 @@ import { COMPETITOR_LABEL } from "@/lib/b2b-hub/competitors";
 import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry";
 import { segmentLabel } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
+import { IconCalendarWeek, IconFileAlert, IconLayersUnion, IconMail, IconTable, IconUserCircle } from "@tabler/icons-react"
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
@@ -58,27 +51,27 @@ const baseUrl =
 const SOFTWARE_LAPTOP_MOCKUP_SRC = "/directory/images/software-laptop-mockup.svg";
 const alternativesPainPoints = [
   {
-    Icon: FileWarning,
+    Icon: IconFileAlert,
     text: "Paper consent forms get lost — creating direct CQC risk",
   },
   {
-    Icon: UserRound,
+    Icon: IconUserCircle,
     text: "Patients aren’t reactivated after treatment",
   },
   {
-    Icon: Table2,
+    Icon: IconTable,
     text: "CQC evidence scattered across spreadsheets",
   },
   {
-    Icon: CalendarDays,
+    Icon: IconCalendarWeek,
     text: "Booking software doesn’t handle compliance requirements",
   },
   {
-    Icon: Mail,
+    Icon: IconMail,
     text: "No automated follow-up or aftercare workflows",
   },
   {
-    Icon: Layers,
+    Icon: IconLayersUnion,
     text: "Clinic data siloed across too many disconnected tools",
   },
 ] as const;

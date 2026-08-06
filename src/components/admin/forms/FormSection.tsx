@@ -51,7 +51,7 @@ export function Field({ label, required, hint, error, fullWidth, children }: Fie
       {error ? (
         <p className="text-xs text-red-600 mt-1">{error}</p>
       ) : hint ? (
-        <p className="text-xs text-gray-400 mt-1">{hint}</p>
+        <p className="text-xs text-gray-600 mt-1">{hint}</p>
       ) : null}
     </div>
   )

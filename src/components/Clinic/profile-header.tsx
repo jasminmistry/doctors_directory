@@ -1,10 +1,5 @@
 "use client"
 import { useState } from "react";
-import {
-  MapPin,
-  Phone,
-  ShieldCheck,
-} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import type { Clinic } from "@/lib/types";
 import SocialMediaIcons from "../Clinic/clinicSocialMedia";
@@ -16,6 +11,7 @@ import { OnlineDot } from "@/components/Clinic/online-dot";
 import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dialog";
 import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
+import { IconMapPin, IconPhone, IconShieldCheck } from "@tabler/icons-react";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
@@ -97,13 +93,13 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                 )}
                 {clinic.idVerified && (
                   <Badge className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border-emerald-200 text-xs font-medium shrink-0">
-                    <ShieldCheck className="h-3 w-3" />
+                    <IconShieldCheck stroke={1.5} className="h-3 w-3" />
                     ID Verified
                   </Badge>
                 )}
                 {!clinic.idVerified && clinic.manualVerified && (
                   <Badge className="inline-flex items-center gap-1 bg-blue-100 text-black border-blue-200 text-xs font-medium shrink-0">
-                    <ShieldCheck className="h-3 w-3" />
+                    <IconShieldCheck stroke={1.5} className="h-3 w-3" />
                     Manually Verified
                   </Badge>
                 )}
@@ -112,7 +108,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                     variant="outline"
                     className="inline-flex items-center gap-1 border-foreground/30 text-foreground text-xs font-medium shrink-0"
                   >
-                    <ShieldCheck className="h-3 w-3" />
+                    <IconShieldCheck stroke={1.5} className="h-3 w-3" />
                     Verified
                   </Badge>
                 )}
@@ -128,12 +124,12 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
             {/* Address + phone — desktop only */}
             <div className="hidden md:flex flex-col gap-1.5 mt-1">
               <address className="not-italic text-sm leading-snug flex items-start gap-2">
-                <MapPin className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
+                <IconMapPin stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
                 <span>{clinic.gmapsAddress}</span>
               </address>
               {clinic.gmapsPhone && (
                 <span className="inline-flex items-center text-sm">
-                  <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                  <IconPhone stroke={1.5} className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
                   {clinic.gmapsPhone}
                 </span>
               )}
@@ -144,12 +140,12 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
         {/* Address + phone — mobile only */}
         <div className="flex flex-col gap-1.5 md:hidden pt-1">
           <address className="not-italic text-sm leading-snug flex items-start gap-2">
-            <MapPin className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
+            <IconMapPin stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
             <span>{clinic.gmapsAddress}</span>
           </address>
           {clinic.gmapsPhone && (
             <span className="inline-flex items-center text-sm">
-              <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+              <IconPhone stroke={1.5} className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
               {clinic.gmapsPhone}
             </span>
           )}

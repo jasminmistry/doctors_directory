@@ -68,10 +68,10 @@ export function ImageUpload({ value, onChange, shape = 'square', className }: Re
             <button
               type="button"
               onClick={() => onChange(null)}
-              className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-gray-700 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
+              className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-gray-700 text-black flex items-center justify-center hover:bg-red-600 hover:cursor-pointer transition-colors"
               aria-label="Remove image"
             >
-              <IconX stroke={1.5} className="h-2.5 w-2.5" />
+              <IconX stroke={1.5} className="h-2.5 w-2.5 " style={{ stroke: 'white !important' }} />
             </button>
           </div>
         ) : (

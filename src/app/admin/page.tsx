@@ -573,7 +573,7 @@ export default function AdminDashboard() {
                       <span className="font-semibold text-emerald-700">
                         {patientStats.leads.unlocked}
                         {patientStats.leads.total > 0 && (
-                          <span className="text-gray-400 font-normal ml-1">
+                          <span className="text-gray-600 font-normal ml-1">
                             ({Math.round((patientStats.leads.unlocked / patientStats.leads.total) * 100)}%)
                           </span>
                         )}

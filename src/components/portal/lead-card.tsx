@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react'
 import {
-  Lock, Unlock, Phone, Mail, Clock, Loader2, MapPin, CalendarDays,
-  ChevronDown, RefreshCw, FileText, User, CheckCircle2, ExternalLink,
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+  IconLock, IconLockOpen, IconPhone, IconMail, IconClock, IconLoader2, IconMapPin, IconCalendar,
+  IconChevronDown, IconRefresh, IconFileText, IconUser, IconCircleCheck, IconExternalLink,
+} from '@tabler/icons-react'
+import type { Icon as TablerIcon } from '@tabler/icons-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
@@ -97,7 +97,7 @@ function StatusPill({
         )}
       >
         {current.label}
-        <ChevronDown className={cn('h-3 w-3 transition-transform', open && 'rotate-180')} />
+        <IconChevronDown stroke={1.5} className={cn('h-3 w-3 transition-transform', open && 'rotate-180')} />
       </button>
       {open && (
         <div className="absolute left-0 top-full mt-1 z-40 w-36 rounded-lg border border-gray-200 bg-white py-1">
@@ -113,7 +113,7 @@ function StatusPill({
             >
               <span className={cn('h-2 w-2 rounded-full shrink-0', s.dot)} />
               {s.label}
-              {status === s.value && <CheckCircle2 className="ml-auto h-3.5 w-3.5 text-gray-600" />}
+              {status === s.value && <IconCircleCheck stroke={1.5} className="ml-auto h-3.5 w-3.5 text-gray-600" />}
             </button>
           ))}
         </div>
@@ -150,7 +150,7 @@ function NotesSection({ leadId, initialNotes, onSaved, locked }: { leadId: numbe
         onClick={() => setEditing(true)}
         className="flex w-full items-start gap-1.5 rounded-md px-1.5 py-1 -mx-1.5 text-left transition-colors hover:bg-gray-50 group disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:opacity-60"
       >
-        <FileText className="h-3.5 w-3.5 mt-0.5 text-gray-600 group-hover:text-gray-600 shrink-0" />
+        <IconFileText stroke={1.5} className="h-3.5 w-3.5 mt-0.5 text-gray-600 group-hover:text-gray-600 shrink-0" />
         <span className="text-xs text-gray-600 group-hover:text-gray-600 transition-colors">
           {initialNotes ? initialNotes : 'Add note…'}
         </span>
@@ -175,7 +175,7 @@ function NotesSection({ leadId, initialNotes, onSaved, locked }: { leadId: numbe
           disabled={saving}
           className="rounded-lg bg-gray-900 px-2.5 py-1 text-xs font-medium text-white disabled:opacity-50"
         >
-          {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Save'}
+          {saving ? <IconLoader2 stroke={1.5} className="h-3 w-3 animate-spin" /> : 'Save'}
         </button>
         <button
           type="button"
@@ -217,7 +217,7 @@ function OwnerField({ leadId, initialOwner, onSaved, locked }: { leadId: number;
         onClick={() => setEditing(true)}
         className="flex items-center gap-1 rounded-md px-1.5 py-1 -mx-1.5 transition-colors hover:bg-gray-50 group disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:opacity-60"
       >
-        <User className="h-3.5 w-3.5 text-gray-600 group-hover:text-gray-600" />
+        <IconUser stroke={1.5} className="h-3.5 w-3.5 text-gray-600 group-hover:text-gray-600" />
         <span className="text-xs text-gray-600 group-hover:text-gray-600 transition-colors">
           {initialOwner ?? 'Assign…'}
         </span>
@@ -241,7 +241,7 @@ function OwnerField({ leadId, initialOwner, onSaved, locked }: { leadId: number;
         disabled={saving}
         className="rounded-lg bg-gray-900 px-2 py-1 text-xs font-medium text-white disabled:opacity-50"
       >
-        {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : 'OK'}
+        {saving ? <IconLoader2 stroke={1.5} className="h-3 w-3 animate-spin" /> : 'OK'}
       </button>
     </div>
   )
@@ -255,7 +255,7 @@ function DetailRow({
   placeholderWidth,
   emphasis,
 }: {
-  icon: LucideIcon
+  icon: TablerIcon
   label: string
   value: string | null
   locked: boolean
@@ -264,7 +264,7 @@ function DetailRow({
 }) {
   return (
     <div className="flex items-center gap-2 text-sm">
-      <Icon className="h-3.5 w-3.5 shrink-0 text-gray-600" />
+      <Icon stroke={1.5} className="h-3.5 w-3.5 shrink-0 text-gray-600" />
       <span className="w-10 shrink-0 text-xs text-gray-600">{label}</span>
       {locked ? (
         <span className={cn('h-4 rounded bg-gray-200 blur-[3px] select-none', placeholderWidth)} aria-hidden="true" />
@@ -380,7 +380,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
             </p>
             {lead.location && (
               <p className="text-xs text-gray-600 flex items-center gap-1 mt-0.5">
-                <MapPin className="h-3 w-3" />
+                <IconMapPin stroke={1.5} className="h-3 w-3" />
                 {lead.location}
               </p>
             )}
@@ -394,19 +394,19 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
               title="Synced to Consentz Core"
               className="inline-flex items-center gap-1 rounded-full bg-violet-50 border border-violet-200 px-2 py-0.5 text-[10px] font-medium text-violet-700"
             >
-              <RefreshCw className="h-2.5 w-2.5" />
+              <IconRefresh stroke={1.5} className="h-2.5 w-2.5" />
               Core
             </span>
           )}
           <StatusPill status={lead.pipelineStatus} onChange={handleStatusChange} />
           {locked ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-medium text-amber-700">
-              <Lock className="h-3 w-3" />
+              <IconLock stroke={1.5} className="h-3 w-3" />
               Locked
             </span>
           ) : (
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
-              <Unlock className="h-3 w-3" />
+              <IconLockOpen stroke={1.5} className="h-3 w-3" />
               Unlocked
             </span>
           )}
@@ -415,13 +415,13 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
 
       {/* Patient details */}
       <div className="space-y-1.5 mb-3 px-2.5 py-2">
-        <DetailRow icon={User} label="Name" value={lead.patientName} locked={locked} placeholderWidth="w-32" emphasis />
-        <DetailRow icon={Phone} label="Phone" value={lead.patientPhone} locked={locked} placeholderWidth="w-28" />
-        <DetailRow icon={Mail} label="Email" value={lead.patientEmail} locked={locked} placeholderWidth="w-40" />
-        <DetailRow icon={CalendarDays} label="Age" value={lead.patientAge != null ? String(lead.patientAge) : null} locked={locked} placeholderWidth="w-8" />
+        <DetailRow icon={IconUser} label="Name" value={lead.patientName} locked={locked} placeholderWidth="w-32" emphasis />
+        <DetailRow icon={IconPhone} label="Phone" value={lead.patientPhone} locked={locked} placeholderWidth="w-28" />
+        <DetailRow icon={IconMail} label="Email" value={lead.patientEmail} locked={locked} placeholderWidth="w-40" />
+        <DetailRow icon={IconCalendar} label="Age" value={lead.patientAge != null ? String(lead.patientAge) : null} locked={locked} placeholderWidth="w-8" />
         {lead.preferredTime && (
           <div className="flex items-center gap-2 text-xs text-gray-600">
-            <Clock className="h-3 w-3" />
+            <IconClock stroke={1.5} className="h-3 w-3" />
             Prefers {lead.preferredTime}
           </div>
         )}
@@ -456,9 +456,9 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
             className="border-[#e0e0e0]"
           >
             {unlocking ? (
-              <><Loader2 className="h-4 w-4 animate-spin mr-2" />Processing…</>
+              <><IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin mr-2" />Processing…</>
             ) : (
-              <><Unlock className="h-4 w-4 mr-2" />Unlock — £{PPL_LEAD_PRICE}</>
+              <><IconLockOpen stroke={1.5} className="h-4 w-4 mr-2" />Unlock — £{PPL_LEAD_PRICE}</>
             )}
           </Button>
           {unlockError && <p className="text-xs text-red-600 text-center">{unlockError}</p>}
@@ -480,7 +480,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
               size="sm"
             >
               <a href={`tel:${lead.patientPhone}`}>
-                <Phone className="h-3.5 w-3.5 mr-1.5" />
+                <IconPhone stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
                 Call
               </a>
             </Button>
@@ -491,7 +491,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
                 variant="outline"
               >
                 <a href={`mailto:${lead.patientEmail}`}>
-                  <Mail className="h-3.5 w-3.5 mr-1.5" />
+                  <IconMail stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
                   Email
                 </a>
               </Button>
@@ -504,9 +504,9 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
                 variant="outline"
               >
                 {pulling ? (
-                  <><Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />Pulling…</>
+                  <><IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin mr-1.5" />Pulling…</>
                 ) : (
-                  <><RefreshCw className="h-3.5 w-3.5 mr-1.5" />Pull into Consentz Core</>
+                  <><IconRefresh stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />Pull into Consentz Core</>
                 )}
               </Button>
             )}
@@ -517,7 +517,7 @@ export function LeadCard({ lead, plan, onUnlocked, onSeen, onUpdated, onPulledTo
                 variant="outline" 
               >
                 <a href={coreUrl} target="_blank" rel="noreferrer">
-                  <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                  <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
                   View in Core
                 </a>
               </Button>

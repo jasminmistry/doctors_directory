@@ -74,7 +74,7 @@ export default function DirectoryRemovalRequestsPage() {
   return (
     <AdminLayout title="Removal Requests">
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-sm text-gray-400">
+        <div className="flex items-center justify-center py-16 text-sm text-gray-600">
           Loading…
         </div>
       ) : rows.length === 0 ? (
@@ -83,7 +83,7 @@ export default function DirectoryRemovalRequestsPage() {
             <IconTrash stroke={1.5} className="h-5 w-5" />
           </div>
           <p className="text-sm font-medium">No pending removal requests</p>
-          <p className="text-xs text-gray-400">Clinics that ask to be removed from the directory will appear here.</p>
+          <p className="text-xs text-gray-600">Clinics that ask to be removed from the directory will appear here.</p>
         </div>
       ) : (
         <div className="space-y-4">

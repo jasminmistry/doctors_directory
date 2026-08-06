@@ -41,7 +41,7 @@ function Field({ label, required, hint, error, children }: FieldProps) {
           {error}
         </p>
       )}
-      {!error && hint && <p className="text-[11px] text-gray-400">{hint}</p>}
+      {!error && hint && <p className="text-[11px] text-gray-600">{hint}</p>}
     </div>
   )
 }
@@ -55,14 +55,14 @@ function IconInput({ icon, hasError, className, ...props }: IconInputProps) {
   return (
     <div className="relative">
       {icon && (
-        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-600">
           {icon}
         </span>
       )}
       <input
         {...props}
         className={cn(
-          'w-full rounded-lg border bg-white py-2.5 text-sm text-gray-900 placeholder:text-gray-400',
+          'w-full rounded-lg border bg-white py-2.5 text-sm text-gray-900 placeholder:text-gray-600',
           'transition-colors focus:outline-none focus:ring-2',
           icon ? 'pl-9 pr-3' : 'px-3',
           hasError
@@ -261,7 +261,7 @@ export default function AccountProfilePage() {
     <div className="max-w-lg space-y-6">
       {/* Page heading */}
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">My Profile</h1>
+        <h1 className="text-3xl text-gray-900">My Profile</h1>
         <p className="text-sm text-gray-600 mt-1">
           Details saved here pre-fill consultation request forms automatically.
         </p>
@@ -273,7 +273,7 @@ export default function AccountProfilePage() {
       {/* Personal details form */}
       <form onSubmit={handleSave} noValidate className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100">
         <div className="px-5 py-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Personal details</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">Personal details</p>
         </div>
 
         <div className="px-5 py-5 space-y-4">
@@ -331,7 +331,7 @@ export default function AccountProfilePage() {
             hint="You must be 18 or over to request consultations"
           >
             <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-600">
                 <IconCalendarWeek stroke={1.5} className="h-3.5 w-3.5" />
               </span>
               <input
@@ -362,7 +362,7 @@ export default function AccountProfilePage() {
             <p className="text-xs text-amber-600">You have unsaved changes</p>
           )}
           {!isDirty && !saving && (
-            <p className="text-xs text-gray-400">All changes saved</p>
+            <p className="text-xs text-gray-600">All changes saved</p>
           )}
         </div>
       </form>

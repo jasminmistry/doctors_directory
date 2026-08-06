@@ -34,7 +34,7 @@ export default async function PractitionerEventsPage() {
         <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-amber-100">
           <IconCalendarCheck stroke={1.5} className="h-7 w-7 text-amber-600" />
         </div>
-        <h1 className="text-xl font-semibold text-gray-900">Events not available</h1>
+        <h1 className="text-3xl text-gray-900">Events not available</h1>
         <p className="text-sm text-gray-600">
           Events require your clinic to be linked to Consentz Core — otherwise patients can&apos;t see
           or book them on your public profile. Contact support to get your clinic linked.
@@ -49,7 +49,7 @@ export default async function PractitionerEventsPage() {
         <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-amber-100">
           <IconCalendarCheck stroke={1.5} className="h-7 w-7 text-amber-600" />
         </div>
-        <h1 className="text-xl font-semibold text-gray-900">Events not available</h1>
+        <h1 className="text-3xl text-gray-900">Events not available</h1>
         <p className="text-sm text-gray-600">
           Events are available on the Subscription plan. Upgrade your plan to let patients book
           events on your public profile.

@@ -3,7 +3,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { IconBuildingHospital, IconMailOpened, IconCalendarWeek, IconLogout, IconExternalLink, IconWorld, IconUser, IconLock, IconMessages, IconCalendarCheck, IconX, IconMenu2, IconCalendarMonth, IconCalendarClock, IconMessage, IconPresentation, IconClock, IconCurrencyPound } from "@tabler/icons-react";
+import { IconBuildingHospital, IconMailOpened, IconCalendarWeek, IconLogout, IconExternalLink, IconWorld, IconUser, IconLock, IconMessages, IconCalendarCheck, IconX, IconMenu2, IconCalendarMonth, IconCalendarClock, IconMessage, IconPresentation, IconClock, IconCurrencyPound, IconCalendarDue, IconPresentationAnalytics } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { LeadBadge } from "@/components/portal/lead-badge";
 import { ChatBadge } from "@/components/portal/chat-badge";
@@ -249,7 +249,7 @@ export function PortalLayoutClient({
                       <Link
                         href="/portal/clinic/calendar"
                         onClick={() => setIsMobileNavOpen(false)}
-                        className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-400 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
+                        className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
                         title="Upgrade to access Calendar"
                       >
                         <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
@@ -329,7 +329,7 @@ export function PortalLayoutClient({
                   ) : (
                     <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
                       <span
-                        className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-400 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
+                        className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
                         title={eventsLockedTitle}
                       >
                         <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
@@ -408,7 +408,7 @@ export function PortalLayoutClient({
                   ) : (
                     <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
                       <span
-                        className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-400 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
+                        className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
                         title={eventsLockedTitle}
                       >
                         <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
@@ -540,33 +540,33 @@ export function PortalLayoutClient({
               </div>
             </div>
             <div className="flex gap-2">
-              {entityType === "clinic" && (
-                <>
-                  <HeaderIconLink
-                    href="/portal/clinic/calendar"
-                    label="Calendar"
-                    icon={IconCalendarClock}
-                    locked={plan === "free"}
-                  />
-                  <HeaderIconLink
-                    href="/portal/clinic/prospects"
-                    label="Prospects"
-                    icon={IconPresentation}
-                    badge={<LeadBadge mobile />}
-                  />
-                  <HeaderIconLink
-                    href="/portal/clinic/chat"
-                    label="Messages"
-                    icon={IconMessage}
-                    badge={<ChatBadge mobile />}
-                  />
-                </>
-              )}
-              <HeaderProfileMenu
-                name={entityName || "My Portal"}
-                onLogout={handleLogout}
-              />
-            </div>
+  {entityType === "clinic" && (
+    <>
+      <HeaderIconLink
+        href="/portal/clinic/calendar"
+        label="Calendar"
+        icon={IconCalendarDue}
+        locked={plan === "free"}
+      />
+      <HeaderIconLink
+        href="/portal/clinic/prospects"
+        label="Prospects"
+        icon={IconPresentationAnalytics}
+        badge={<LeadBadge mobile />}
+      />
+      <HeaderIconLink
+        href="/portal/clinic/chat"
+        label="Messages"
+        icon={IconMessage}
+        badge={<ChatBadge mobile />}
+      />
+    </>
+  )}
+  <HeaderProfileMenu
+    name={entityName || "My Portal"}
+    onLogout={handleLogout}
+  />
+</div>
           </div>
           <div className="flex-1 p-10 flex flex-col">
             <main className="flex-1 px-4 pt-0 pb-0">{children}</main>

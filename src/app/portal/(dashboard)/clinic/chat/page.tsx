@@ -26,7 +26,7 @@ export default async function ClinicChatPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-gray-900">Consultation Chat</h1>
+      <h1 className="text-3xl text-gray-900">Consultation Chat</h1>
 
       {isFree && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">

@@ -1,9 +1,9 @@
 "use client";
 
-import { ChevronDown, Locate, X } from "lucide-react";
+import { IconChevronDown, IconCurrentLocation, IconX } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Search } from "lucide-react";
+import { IconLoader2, IconSearch } from "@tabler/icons-react";
 import { SearchDropdown } from "./search-dropdown";
 import { SearchButton } from "./search-button";
 
@@ -55,9 +55,9 @@ export function MobileSearchView({
           className="w-full flex items-center bg-white border border-[#e0e0e0]  rounded-lg px-4 py-3 cursor-pointer hover:shadow-md transition-shadow"
           onClick={() => setIsExpanded(true)}
         >
-          <Search className="w-5 h-5 text-gray-600 mr-3" />
+          <IconSearch stroke={1.5} className="w-5 h-5 text-gray-600 mr-3" />
           <span className="text-gray-600 flex-1">{getDynamicPlaceholderText()}</span>
-          <ChevronDown className="w-5 h-5 text-gray-600" />
+          <IconChevronDown stroke={1.5} className="w-5 h-5 text-gray-600" />
         </button>
       ) : (
         <div className="rounded-lg p-4 z-50">
@@ -112,7 +112,7 @@ export function MobileSearchView({
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={clearQuery}
                 >
-                  <X className="h-4 w-4" />
+                  <IconX stroke={1.5} className="h-4 w-4" />
                 </button>
               )}
               {activeDropdown === 'category' && (
@@ -132,7 +132,7 @@ export function MobileSearchView({
 
             <div className="relative">
               <div className="relative">
-                <Locate className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" />
+                <IconCurrentLocation stroke={1.5} className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" />
                 <Input
                   placeholder="Location"
                   value={localFilters.location}
@@ -152,7 +152,7 @@ export function MobileSearchView({
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={clearLocation}
                   >
-                    <X className="h-4 w-4" />
+                    <IconX stroke={1.5} className="h-4 w-4" />
                   </button>
                 )}
               </div>
@@ -176,9 +176,9 @@ export function MobileSearchView({
               disabled={isLoading}
             >
               {isLoading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <IconLoader2 stroke={1.5} className="h-5 w-5 animate-spin" />
               ) : (
-                <Search className="h-5 w-5" />
+                <IconSearch stroke={1.5} className="h-5 w-5" />
               )}
             </Button>
 

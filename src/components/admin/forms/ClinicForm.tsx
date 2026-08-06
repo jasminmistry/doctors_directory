@@ -221,7 +221,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
           )}
           <div className="min-w-0">
             {!isPortal && <p className="text-xs text-gray-600 font-medium">Clinics</p>}
-            <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
+            <h2 className="text-3xl text-gray-900 truncate">{title}</h2>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">

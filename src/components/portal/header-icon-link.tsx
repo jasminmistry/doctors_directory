@@ -1,13 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { LucideIcon, Lock } from 'lucide-react'
+import { Icon, IconLock } from '@tabler/icons-react'
 import { cn } from '@/lib/utils'
 
 interface HeaderIconLinkProps {
   href: string
   label: string
-  icon: LucideIcon
+  icon: Icon
   badge?: React.ReactNode
   locked?: boolean
   active?: boolean
@@ -33,7 +33,7 @@ export function HeaderIconLink({
     >
       <Icon className="h-6 w-6" stroke={1.5} />
       {locked ? (
-        <Lock className="absolute -right-1 -bottom-1 h-3.5 w-3.5 rounded-full bg-white text-gray-600" />
+        <IconLock className="absolute -right-1 -bottom-1 h-3.5 w-3.5 rounded-full bg-white text-gray-600" />
       ) : (
         badge
       )}

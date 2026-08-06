@@ -103,16 +103,16 @@ export default function UnlinkRequestsPage() {
   return (
     <AdminLayout title="Unlink Requests">
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-sm text-gray-400">
+        <div className="flex items-center justify-center py-16 text-sm text-gray-600">
           Loading…
         </div>
       ) : rows.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-600">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-            <IconLinkOff stroke={1.5} className="h-5 w-5 text-gray-400" />
+            <IconLinkOff stroke={1.5} className="h-5 w-5 text-gray-600" />
           </div>
           <p className="text-sm font-medium">No pending unlink requests</p>
-          <p className="text-xs text-gray-400">Clinics that request to disconnect from Consentz Core will appear here.</p>
+          <p className="text-xs text-gray-600">Clinics that request to disconnect from Consentz Core will appear here.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -155,7 +155,7 @@ export default function UnlinkRequestsPage() {
                   {row.practitioners.length > 0 && (
                     <div className="mt-4 rounded-lg bg-gray-50 border border-gray-100 p-3">
                       <div className="flex items-center gap-1.5 mb-2">
-                        <IconUsers stroke={1.5} className="h-3.5 w-3.5 text-gray-400" />
+                        <IconUsers stroke={1.5} className="h-3.5 w-3.5 text-gray-600" />
                         <p className="text-xs font-medium text-gray-600">{row.practitioners.length} associated practitioner{row.practitioners.length !== 1 ? 's' : ''}</p>
                       </div>
                       <div className="flex flex-wrap gap-2">

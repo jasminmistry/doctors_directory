@@ -1,12 +1,12 @@
 "use client"
 import { useState } from "react"
 import {
-  Star,
-  MapPin,
-  Phone,
-  Mail,
-  ShieldCheck,
-} from "lucide-react";
+  IconStar,
+  IconMapPin,
+  IconPhone,
+  IconMail,
+  IconShieldCheck,
+} from "@tabler/icons-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Practitioner } from "@/lib/types";
@@ -16,7 +16,7 @@ import ClinicTabsHeader from "./clinicTabsHeader";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
-import { Link as LinkIcon} from "lucide-react"
+import { IconLink as LinkIcon } from "@tabler/icons-react"
 import { OnlineDot } from "@/components/Clinic/online-dot";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 interface ProfileHeaderProps {
@@ -104,19 +104,19 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
                   )}
                   {clinic.idVerified && (
                     <Badge className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border-emerald-200 text-xs font-medium shrink-0">
-                      <ShieldCheck className="h-3 w-3" />
+                      <IconShieldCheck stroke={1.5} className="h-3 w-3" />
                       ID Verified
                     </Badge>
                   )}
                   {!clinic.idVerified && clinic.manualVerified && (
                     <Badge className="inline-flex items-center gap-1 bg-blue-100 text-black border-blue-200 text-xs font-medium shrink-0">
-                      <ShieldCheck className="h-3 w-3" />
+                      <IconShieldCheck stroke={1.5} className="h-3 w-3" />
                       Manually Verified
                     </Badge>
                   )}
                   {!clinic.idVerified && !clinic.manualVerified && clinic.verified && (
                     <Badge variant="outline" className="inline-flex items-center gap-1 border-foreground/30 text-xs font-medium shrink-0">
-                      <ShieldCheck className="h-3 w-3" />
+                      <IconShieldCheck stroke={1.5} className="h-3 w-3" />
                       Verified
                     </Badge>
                   )}
@@ -132,7 +132,8 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
 
               <div className="hidden md:block gap-0 flex items-center md:items-start flex-col ">
                 <address className="mb-2 not-italic text-sm leading-relaxed flex items-start justify-start sm:items-start gap-2">
-                  <MapPin
+                  <IconMapPin
+                    stroke={1.5}
                     className="h-4 w-4 mt-1 shrink-0 "
                     aria-hidden="true"
                   />
@@ -144,7 +145,7 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
                 {k_value.gmapsPhone && (
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center text-sm">
-                      <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                      <IconPhone stroke={1.5} className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
                       {k_value.gmapsPhone}
                     </span>
                   </div>
@@ -162,7 +163,7 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
 
         <div className="block md:hidden gap-0 flex items-start md:mb-4 md:items-start flex-col ">
           <address className="mb-2 not-italic text-sm leading-relaxed flex items-start justify-start sm:items-start gap-2">
-            <MapPin className="h-4 w-4 mt-1 shrink-0 " aria-hidden="true" />
+            <IconMapPin stroke={1.5} className="h-4 w-4 mt-1 shrink-0 " aria-hidden="true" />
             <span className="block max-w-[300px] break-words sm:whitespace-normal">
               {k_value.gmapsAddress}
             </span>
@@ -171,7 +172,7 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
           {k_value.gmapsPhone && (
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center text-sm">
-                <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                <IconPhone stroke={1.5} className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
                 {k_value.gmapsPhone}
               </span>
             </div>

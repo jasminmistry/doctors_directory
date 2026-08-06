@@ -8,14 +8,6 @@ import {
 } from "@/components/b2b-hub/hub-cta-buttons"
 import Image from "next/image";
 import Link from "next/link";
-import {
-  CalendarDays,
-  FileWarning,
-  Layers,
-  Mail,
-  Table2,
-  UserRound,
-} from "lucide-react";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
 import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq";
 import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell";
@@ -45,6 +37,7 @@ import { HUB_BLOG_LINKS, HUB_CQC_GUIDE_LINKS } from "@/lib/b2b-hub/hub-blog-link
 import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry";
 import { segmentLabel } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
+import { IconCalendarWeek, IconFileAlert, IconLayersUnion, IconMail, IconTable, IconUserCircle } from "@tabler/icons-react";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
@@ -82,54 +75,54 @@ export { hubBuyerHubTestimonials } from "@/lib/b2b-hub/hub-testimonials";
 
 const softwarePainPoints = [
   {
-    Icon: FileWarning,
+    Icon: IconFileAlert,
     text: "Paper consent forms get lost — creating direct CQC risk",
   },
   {
-    Icon: UserRound,
+    Icon: IconUserCircle,
     text: "Patients aren’t reactivated after treatment",
   },
   {
-    Icon: Table2,
+    Icon: IconTable,
     text: "CQC evidence scattered across spreadsheets",
   },
   {
-    Icon: CalendarDays,
+    Icon: IconCalendarWeek,
     text: "Booking software doesn’t handle compliance requirements",
   },
   {
-    Icon: Mail,
+    Icon: IconMail,
     text: "No automated follow-up or aftercare workflows",
   },
   {
-    Icon: Layers,
+    Icon: IconLayersUnion,
     text: "Clinic data siloed across too many disconnected tools",
   },
 ] as const;
 
 const cqcPainPoints = [
   {
-    Icon: FileWarning,
+    Icon: IconFileAlert,
     text: "Evidence lives across drives, paper, and tools — not one consistent audit trail",
   },
   {
-    Icon: UserRound,
+    Icon: IconUserCircle,
     text: "Training and competency proof is hard to evidence consistently across teams",
   },
   {
-    Icon: Table2,
+    Icon: IconTable,
     text: "Inspectors ask for samples that take days to locate when records are siloed",
   },
   {
-    Icon: CalendarDays,
+    Icon: IconCalendarWeek,
     text: "Inspection readiness becomes a sprint instead of continuous operational practice",
   },
   {
-    Icon: Mail,
+    Icon: IconMail,
     text: "Governance updates do not reach front-desk workflows in a traceable way",
   },
   {
-    Icon: Layers,
+    Icon: IconLayersUnion,
     text: "Policies exist on paper while day-to-day practice is difficult to demonstrate",
   },
 ] as const;

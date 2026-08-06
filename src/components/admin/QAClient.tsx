@@ -671,7 +671,7 @@ console.log(failedTestMessages)
           </TabsContent>
 
           <TabsContent value="failed" className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-900">
+            <h3 className="text-3xl text-gray-900">
               Unique Error Codes:
               <pre className="bg-slate-900 text-slate-100 text-sm p-4 rounded-lg overflow-x-auto"><code>{Array.from(failedTestMessages).join('\n')}</code></pre>
             </h3>
@@ -679,7 +679,7 @@ console.log(failedTestMessages)
               <Card>
                 <CardContent className="py-12 text-center">
                   <IconCircleCheck stroke={1.5} className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900">All Tests Passed!</h3>
+                  <h3 className="text-3xl text-gray-900">All Tests Passed!</h3>
                   <p className="text-gray-600 mt-2">No failed tests to display.</p>
                 </CardContent>
               </Card>

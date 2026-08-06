@@ -1,4 +1,4 @@
-import { AlertTriangle, Check, X } from "lucide-react"
+import { IconAlertTriangle, IconCheck, IconX } from "@tabler/icons-react";
 
 type Typical = { type: "not" | "warn" | "basic"; label: string }
 
@@ -114,14 +114,14 @@ function TypicalCell({
   if (typical.type === "not") {
     return (
       <span className={`inline-flex items-center gap-2 ${textCls}`}>
-        <X className={`${iconCls} text-[#CB3333]`} strokeWidth={2.5} aria-hidden />
+        <IconX className={`${iconCls} text-[#CB3333]`} stroke={1.5} aria-hidden />
         <span>{typical.label}</span>
       </span>
     )
   }
   return (
     <span className={`inline-flex items-center gap-2 ${textCls}`}>
-      <AlertTriangle className={`${iconCls} text-[#CA7F18]`} strokeWidth={2.5} aria-hidden />
+      <IconAlertTriangle className={`${iconCls} text-[#CA7F18]`} stroke={1.5} aria-hidden />
       <span>{typical.label}</span>
     </span>
   )
@@ -131,14 +131,14 @@ function NativePill({ large }: { large?: boolean }) {
   if (large) {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-[#DBFCE7] px-2.5 py-1 text-[#1E904C] font-semibold text-sm">
-        <Check className="h-4 w-4 shrink-0" strokeWidth={2.5} aria-hidden />
+        <IconCheck className="h-4 w-4 shrink-0" stroke={1.5} aria-hidden />
         Native
       </span>
     )
   }
   return (
     <span className="inline-flex items-center gap-2 text-emerald-700 font-medium">
-      <Check className="h-4 w-4 shrink-0" strokeWidth={2.5} aria-hidden />
+      <IconCheck className="h-4 w-4 shrink-0" stroke={1.5} aria-hidden />
       Native
     </span>
   )

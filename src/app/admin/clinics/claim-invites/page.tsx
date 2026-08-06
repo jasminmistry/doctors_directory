@@ -107,7 +107,7 @@ export default function AdminClaimInvitesPage() {
               {allSelected ? <IconSquareCheck stroke={1.5} className="h-4 w-4 text-gray-700" /> : <IconSquare stroke={1.5} className="h-4 w-4" />}
             </button>
             <span className="text-xs text-gray-600">{allSelected ? 'Deselect all' : 'Select all'}</span>
-            <span className="text-xs text-gray-400 ml-auto">{clinics.length} eligible</span>
+            <span className="text-xs text-gray-600 ml-auto">{clinics.length} eligible</span>
           </div>
 
           {clinics.map((c) => (

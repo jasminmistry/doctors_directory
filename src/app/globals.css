@@ -138,6 +138,9 @@
   .tabler-icon {
     stroke: black;
   }
+  .bg-primary .tabler-icon {
+    stroke: white;
+  }
 }
 
 body {

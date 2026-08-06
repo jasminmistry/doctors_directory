@@ -1,12 +1,12 @@
 "use client"
 
-import { Search } from "lucide-react"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import {
   HUB_INDEX_HERO_TITLE_CLASS_DEFAULT,
   HUB_INDEX_HERO_VIEWPORT_CLASS,
 } from "@/lib/b2b-hub/hub-index-hero-layout"
 import { cn } from "@/lib/utils"
+import { IconSearch } from "@tabler/icons-react"
 
 export {
   HUB_INDEX_HERO_TITLE_CLASS_DEFAULT,
@@ -90,7 +90,7 @@ export function HubIndexHeroSearch({
                   aria-label="Search"
                   className="inline-flex h-[52px] w-full shrink-0 items-center justify-center rounded-lg bg-black text-white hover:bg-neutral-800 hover:cursor-pointer transition-colors sm:w-14"
                 >
-                  <Search className="h-5 w-5" stroke={1.5} />
+                  <IconSearch className="h-5 w-5" stroke={1.5} />
                 </button>
               </div>
             ) : null}

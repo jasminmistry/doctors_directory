@@ -1,13 +1,13 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Send, Loader2, MessageSquare, ChevronLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { CHAT_MESSAGE_MAX_LENGTH } from '@/lib/consentz-chat'
 import { format, isToday } from 'date-fns'
+import { IconChevronLeft, IconLoader2, IconMessage, IconSend } from '@tabler/icons-react'
 
 interface ChatMessage {
   id: number
@@ -214,13 +214,13 @@ export function ChatInbox() {
         <div className="flex-1 overflow-y-auto">
           {loading && (
             <div className="flex justify-center pt-8">
-              <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
+              <IconLoader2  stroke={1.5} className="h-5 w-5 animate-spin text-gray-600" />
             </div>
           )}
 
           {!loading && sessions.length === 0 && (
             <div className="flex flex-col items-center gap-2 pt-10 text-center px-4">
-              <MessageSquare className="h-8 w-8 text-gray-600" />
+              <IconMessage stroke={1.5} className="h-8 w-8" />
               <p className="text-sm text-gray-600">No conversations yet</p>
             </div>
           )}
@@ -272,7 +272,7 @@ export function ChatInbox() {
       <div className={cn('flex-1 flex-col min-w-0', activeId ? 'flex' : 'hidden md:flex')}>
         {!activeId && (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center px-8">
-            <MessageSquare className="h-10 w-10 text-gray-600" />
+            <IconMessage stroke={1.5} className="h-10 w-10" />
             <p className="text-sm text-gray-600">Select a conversation to reply</p>
           </div>
         )}
@@ -287,7 +287,7 @@ export function ChatInbox() {
                 className="md:hidden -ml-1 shrink-0 rounded-lg p-1 text-gray-600 hover:text-gray-700"
                 aria-label="Back to conversations"
               >
-                <ChevronLeft className="h-5 w-5" />
+                <IconChevronLeft stroke={1.5} className="h-5 w-5" />
               </button>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-gray-900">{active?.patientName ?? 'Patient'}</p>
@@ -362,7 +362,7 @@ export function ChatInbox() {
                     <span
                       className={cn(
                         'pointer-events-none absolute right-1 bottom-1 text-[10px]',
-                        draft.length >= CHAT_MESSAGE_MAX_LENGTH ? 'text-red-500' : 'text-gray-400',
+                        draft.length >= CHAT_MESSAGE_MAX_LENGTH ? 'text-red-500' : 'text-gray-600',
                       )}
                     >
                       {draft.length}/{CHAT_MESSAGE_MAX_LENGTH}
@@ -377,9 +377,9 @@ export function ChatInbox() {
                   aria-label="Send reply"
                 >
                   {sending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Send className="h-4 w-4" />
+                    <IconSend stroke={1.5} className="h-4 w-4" />
                   )}
                 </Button>
               </div>
