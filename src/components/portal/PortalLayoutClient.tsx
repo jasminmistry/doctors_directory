@@ -93,6 +93,11 @@ export function PortalLayoutClient({
     return () => window.removeEventListener("pageshow", handlePageShow);
   }, []);
 
+  const eventsUnlocked = hasCoreClinic && plan === "subscription";
+  const eventsLockedTitle = !hasCoreClinic
+    ? "Link your Consentz Core clinic to unlock Events"
+    : "Upgrade to the Subscription plan to unlock Events";
+
   const baseNav =
     entityType === "clinic"
       ? [{ href: "/portal/clinic", label: "My Clinic", icon: Building2 }]
@@ -326,7 +331,7 @@ export function PortalLayoutClient({
                     </span>
                   </li>
 
-                  {hasCoreClinic ? (
+                  {eventsUnlocked ? (
                     <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
                       <Link
                         href="/portal/practitioner/events"
@@ -349,7 +354,7 @@ export function PortalLayoutClient({
                     <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
                       <span
                         className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-400 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
-                        title="Link your Consentz Core clinic to unlock Events"
+                        title={eventsLockedTitle}
                       >
                         <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
                           <CalendarCheck className="h-6 w-6" />
@@ -358,7 +363,7 @@ export function PortalLayoutClient({
                         <span className="lg:hidden">My Events</span>
                       </span>
                       <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
-                        Link Core to unlock Events
+                        {eventsLockedTitle}
                       </span>
                     </li>
                   )}
@@ -405,7 +410,7 @@ export function PortalLayoutClient({
 
               {entityType === "practitioner" && (
                 <>
-                  {hasCoreClinic ? (
+                  {eventsUnlocked ? (
                     <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
                       <Link
                         href="/portal/practitioner/events"
@@ -428,7 +433,7 @@ export function PortalLayoutClient({
                     <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
                       <span
                         className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-400 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
-                        title="Link your Consentz Core clinic to unlock Events"
+                        title={eventsLockedTitle}
                       >
                         <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
                           <CalendarCheck className="h-6 w-6" />
@@ -437,7 +442,7 @@ export function PortalLayoutClient({
                         <span className="lg:hidden">My Events</span>
                       </span>
                       <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
-                        Link Core to unlock Events
+                        {eventsLockedTitle}
                       </span>
                     </li>
                   )}
