@@ -24,8 +24,9 @@ export default async function PortalLayout({ children }: { children: React.React
   } else if (user.practitionerId) {
     const association = await prisma.practitionerClinicAssociation.findFirst({
       where: { practitionerId: user.practitionerId },
-      select: { clinic: { select: { coreClinicId: true } } },
+      select: { clinic: { select: { claimedPlan: true, coreClinicId: true } } },
     })
+    plan = association?.clinic.claimedPlan ?? null
     hasCoreClinic = association?.clinic.coreClinicId != null
   }
 

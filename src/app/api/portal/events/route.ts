@@ -43,9 +43,32 @@ async function getClaimConsentzUserId(user: Awaited<ReturnType<typeof getPortalU
   })
 }
 
+async function hasSubscriptionPlan(user: Awaited<ReturnType<typeof getPortalUser>>) {
+  if (!user) return false
+  if (user.clinicId) {
+    const clinic = await prisma.clinic.findUnique({
+      where: { id: user.clinicId },
+      select: { claimedPlan: true },
+    })
+    return clinic?.claimedPlan === 'subscription'
+  }
+  if (user.practitionerId) {
+    const association = await prisma.practitionerClinicAssociation.findFirst({
+      where: { practitionerId: user.practitionerId },
+      select: { clinic: { select: { claimedPlan: true } } },
+    })
+    return association?.clinic.claimedPlan === 'subscription'
+  }
+  return false
+}
+
 export async function GET() {
   const user = await getPortalUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  if (!(await hasSubscriptionPlan(user))) {
+    return NextResponse.json({ events: [] })
+  }
 
   const claim = await getClaimConsentzUserId(user)
   if (!claim?.consentzUserId) {
@@ -81,6 +104,10 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     const message = parsed.error.issues[0]?.message ?? 'Please check the form and try again.'
     return NextResponse.json({ error: message }, { status: 400 })
+  }
+
+  if (!(await hasSubscriptionPlan(user))) {
+    return NextResponse.json({ error: 'Events require the Subscription plan' }, { status: 403 })
   }
 
   const claim = await getClaimConsentzUserId(user)
