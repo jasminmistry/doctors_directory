@@ -8,7 +8,7 @@ import { formatInTimeZone } from 'date-fns-tz'
 import { Button } from '@/components/ui/button'
 import { capitalize, cn, formatTimezoneAbbr } from '@/lib/utils'
 import { toast } from 'sonner'
-import { IconArrowNarrowLeft, IconCalendarPlus, IconCalendarWeek, IconExternalLink, IconLoader2, IconMapPin, IconMessageCircle, IconStar, IconVideo, IconX } from '@tabler/icons-react'
+import { IconArrowNarrowLeft, IconCalendarPlus, IconCalendarWeek, IconExternalLink, IconLoader2, IconMapPin, IconMessageCircle, IconNavigation, IconStar, IconVideo, IconX } from '@tabler/icons-react'
 
 // Bookings are always shown in the clinic's own timezone, never the visitor's
 // browser timezone — every clinic in this directory is UK-based.

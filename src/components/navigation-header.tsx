@@ -300,7 +300,7 @@ export function NavigationHeader() {
                     className="flex items-center gap-3 px-2 py-2.5 rounded-lg text-base font-medium transition-colors hover:bg-accent/10"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <User className="h-5 w-5" />
+                    <IconUser className="h-5 w-5" />
                     Sign in / Create account
                   </Link>
                 )}

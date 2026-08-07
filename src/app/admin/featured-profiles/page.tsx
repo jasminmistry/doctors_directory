@@ -230,7 +230,7 @@ export default function FeaturedProfilesPage() {
                   className="shrink-0 rounded p-1 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
                   aria-label={`Remove ${entry.name}`}
                 >
-                  <X className="h-4 w-4" />
+                  <IconX className="h-4 w-4" />
                 </button>
               </li>
             ))}
