@@ -532,31 +532,9 @@ export function PortalLayoutClient({
                 className="h-9 w-9 shrink-0 rounded-full object-cover"
               />
               <div>
-                <div className="flex items-center justify-between">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">
-                    Consentz Portal
-                  </p>
-
-                  {plan && (
-                    <span
-                      className={cn(
-                        "rounded-full ml-2 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border",
-                        plan === "subscription" &&
-                          "border-cyan-300 bg-cyan-50 text-cyan-700",
-                        plan === "pay_per_lead" &&
-                          "border-violet-300 bg-violet-50 text-violet-700",
-                        plan === "free" &&
-                          "border-gray-200 bg-gray-50 text-gray-600",
-                      )}
-                    >
-                      {plan === "subscription"
-                        ? "Sub"
-                        : plan === "pay_per_lead"
-                          ? "PPL"
-                          : "Free"}
-                    </span>
-                  )}
-                </div>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">
+                  Consentz Portal
+                </p>
 
                 <p className="mt-1 text-sm font-medium text-gray-900 truncate">
                   {entityName || "My Portal"}

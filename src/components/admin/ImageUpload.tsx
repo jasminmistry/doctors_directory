@@ -11,9 +11,16 @@ interface Props {
   onChange: (url: string | null) => void
   shape?: 'square' | 'circle'
   className?: string
+  endpoint?: string
 }
 
-export function ImageUpload({ value, onChange, shape = 'square', className }: Readonly<Props>) {
+export function ImageUpload({
+  value,
+  onChange,
+  shape = 'square',
+  className,
+  endpoint = '/directory/api/admin/upload/',
+}: Readonly<Props>) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -24,7 +31,7 @@ export function ImageUpload({ value, onChange, shape = 'square', className }: Re
     try {
       const form = new FormData()
       form.append('file', file)
-      const res = await fetch('/directory/api/admin/upload/', { method: 'POST', body: form })
+      const res = await fetch(endpoint, { method: 'POST', body: form })
       const data = await res.json()
       if (!res.ok) {
         setError(data.error ?? 'Upload failed')
