@@ -62,7 +62,7 @@ function IconInput({ icon, hasError, className, ...props }: IconInputProps) {
       <input
         {...props}
         className={cn(
-          'w-full rounded-lg border bg-white py-2.5 text-sm text-gray-900 placeholder:text-gray-600',
+          'w-full rounded-lg border bg-white py-2.5 text-sm text-gray-900 placeholder:text-gray-400',
           'transition-colors focus:outline-none focus:ring-2',
           icon ? 'pl-9 pr-3' : 'px-3',
           hasError
