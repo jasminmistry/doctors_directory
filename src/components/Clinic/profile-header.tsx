@@ -1,10 +1,5 @@
 "use client"
 import { useState } from "react";
-import {
-  MapPin,
-  Phone,
-  ShieldCheck,
-} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import type { Clinic } from "@/lib/types";
 import SocialMediaIcons from "../Clinic/clinicSocialMedia";
@@ -18,6 +13,7 @@ import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dial
 import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 import { getClinicDisplayName } from "@/lib/clinic-display";
+import { IconMapPin, IconPhone, IconShieldCheck } from "@tabler/icons-react";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
@@ -96,76 +92,71 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 min-w-0 flex-1">
-              <div className="flex flex-col md:flex-row md:items-center gap-2">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="font-semibold text-lg md:text-2xl leading-tight">
-                    {practitionerName}
-                  </h1>
-                  {clinic.claimed && clinic.slug && (
-                    <OnlineDot slug={clinic.slug} />
-                  )}
-                  {clinic.idVerified && (
-                    <Badge className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border-emerald-200 text-xs font-medium shrink-0">
-                      <ShieldCheck className="h-3 w-3" />
-                      ID Verified
-                    </Badge>
-                  )}
-                  {!clinic.idVerified && clinic.manualVerified && (
-                    <Badge className="inline-flex items-center gap-1 bg-blue-100 text-black border-blue-200 text-xs font-medium shrink-0">
-                      <ShieldCheck className="h-3 w-3" />
-                      Manually Verified
-                    </Badge>
-                  )}
-                  {!clinic.idVerified && !clinic.manualVerified && clinic.verified && (
-                    <Badge
-                      variant="outline"
-                      className="inline-flex items-center gap-1 border-foreground/30 text-foreground text-xs font-medium shrink-0"
-                    >
-                      <ShieldCheck className="h-3 w-3" />
-                      Verified
-                    </Badge>
-                  )}
-                </div>
-                <ClinicLabels clinic={clinic} />
-              </div>
-
-              <p className="text-sm font-semibold text-muted-foreground leading-tight">
-                {roleTitle}
-              </p>
-
-              <div className="hidden md:flex flex-col gap-1.5 mt-1">
-                <address className="not-italic text-sm leading-snug flex items-start gap-2">
-                  <MapPin className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
-                  <span>{clinic.gmapsAddress}</span>
-                </address>
-                {clinic.gmapsPhone && (
-                  <span className="inline-flex items-center text-sm">
-                    <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                    {clinic.gmapsPhone}
-                  </span>
+          {/* Text info — uniform gap between every row */}
+          <div className="flex flex-col gap-2 min-w-0 flex-1">
+            {/* Name + verification badges + CQC labels (side by side on desktop) */}
+            <div className="flex flex-col md:flex-row md:items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="font-semibold text-lg md:text-2xl leading-tight">
+                  {practitionerName}
+                </h1>
+                {clinic.claimed && clinic.slug && (
+                  <OnlineDot slug={clinic.slug} />
+                )}
+                {clinic.idVerified && (
+                  <Badge className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border-emerald-200 text-xs font-medium shrink-0">
+                    <IconShieldCheck stroke={1.5} className="h-3 w-3" />
+                    ID Verified
+                  </Badge>
+                )}
+                {!clinic.idVerified && clinic.manualVerified && (
+                  <Badge className="inline-flex items-center gap-1 bg-blue-100 text-black border-blue-200 text-xs font-medium shrink-0">
+                    <IconShieldCheck stroke={1.5} className="h-3 w-3" />
+                    Manually Verified
+                  </Badge>
+                )}
+                {!clinic.idVerified && !clinic.manualVerified && clinic.verified && (
+                  <Badge
+                    variant="outline"
+                    className="inline-flex items-center gap-1 border-foreground/30 text-foreground text-xs font-medium shrink-0"
+                  >
+                    <IconShieldCheck stroke={1.5} className="h-3 w-3" />
+                    Verified
+                  </Badge>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="md:hidden">
-            <PrestigeProfileBadge
-              awardsBadgeLabel={clinic.awardsBadgeLabel}
-              tatlerBadgeLabel={clinic.tatlerBadgeLabel}
-              size="md"
-            />
+            {/* Role / category */}
+            <p className="text-sm font-semibold text-muted-foreground leading-tight">
+              {roleTitle}
+            </p>
+
+            {/* Address + phone — desktop only */}
+            <div className="hidden md:flex flex-col gap-1.5 mt-1">
+              <address className="not-italic text-sm leading-snug flex items-start gap-2">
+                <IconMapPin stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
+                <span>{clinic.gmapsAddress}</span>
+              </address>
+              {clinic.gmapsPhone && (
+                <span className="inline-flex items-center text-sm">
+                  <IconPhone stroke={1.5} className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                  {clinic.gmapsPhone}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5 md:hidden pt-1">
           <address className="not-italic text-sm leading-snug flex items-start gap-2">
-            <MapPin className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
+            <IconMapPin stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
             <span>{clinic.gmapsAddress}</span>
           </address>
           {clinic.gmapsPhone && (
             <span className="inline-flex items-center text-sm">
-              <Phone className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+              <IconPhone stroke={1.5} className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
               {clinic.gmapsPhone}
             </span>
           )}

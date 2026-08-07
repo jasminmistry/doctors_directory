@@ -2,7 +2,7 @@ import { PractitionerCardSkeleton } from "@/components/loading-skeleton";
 import { SearchBar } from "@/components/search/search-bar";
 import { SearchResultsHeader } from "@/components/search/search-results-header";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Sliders } from "lucide-react";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
 
 export default function Loading() {
@@ -11,7 +11,7 @@ export default function Loading() {
       <div className="bg-white backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto max-w-7xl px-4 py-4">
           <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
           </Link>
         </div>

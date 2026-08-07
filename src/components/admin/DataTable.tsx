@@ -6,10 +6,7 @@ import { Button } from '@/components/ui/button'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
-import {
-  Search, Plus, Pencil, Trash2, CheckCircle,
-  ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight,
-} from 'lucide-react'
+import { IconChevronDown, IconChevronLeft, IconChevronRight, IconChevronUp, IconCircleCheck, IconPencil, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react'
 
 export interface Column<T> {
   key: keyof T | string
@@ -34,10 +31,10 @@ interface DataTableProps<T extends Record<string, any>> {
 const PAGE_SIZES = [10, 25, 50, 100]
 
 function SortIcon({ active, dir }: { active: boolean; dir: 'asc' | 'desc' }) {
-  if (!active) return <ChevronsUpDown className="h-3 w-3 opacity-30" />
+  if (!active) return <IconChevronDown stroke={1.5} className="h-3 w-3 opacity-30" />
   return active && dir === 'asc'
-    ? <ChevronUp className="h-3 w-3 text-gray-700" />
-    : <ChevronDown className="h-3 w-3 text-gray-700" />
+    ? <IconChevronUp stroke={1.5} className="h-3 w-3" />
+    : <IconChevronDown stroke={1.5} className="h-3 w-3" />
 }
 
 function getPages(current: number, total: number): (number | '…')[] {
@@ -101,7 +98,7 @@ export function DataTable<T extends Record<string, any>>({
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-600" />
+            <IconSearch stroke={1.5} className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5" />
             <Input
               placeholder="Search…"
               value={search}
@@ -127,7 +124,7 @@ export function DataTable<T extends Record<string, any>>({
           </div>
           {onAdd && (
             <Button onClick={onAdd} size="sm" className="h-9">
-              <Plus className="h-3.5 w-3.5 mr-1.5" />
+              <IconPlus stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
               {addLabel}
             </Button>
           )}
@@ -196,13 +193,13 @@ export function DataTable<T extends Record<string, any>>({
                             className="h-8 text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                             onClick={() => onApprove(item)}
                           >
-                            <CheckCircle className="h-3.5 w-3.5 mr-1" />
+                            <IconCircleCheck stroke={1.5} className="h-3.5 w-3.5 mr-1" />
                             Approve
                           </Button>
                         )}
                         {onEdit && (
                           <Button variant="ghost" size="sm" className="h-8" onClick={() => onEdit(item)}>
-                            <Pencil className="h-3.5 w-3.5 mr-1" />
+                            <IconPencil stroke={1.5} className="h-3.5 w-3.5 mr-1" />
                             Edit
                           </Button>
                         )}
@@ -212,7 +209,7 @@ export function DataTable<T extends Record<string, any>>({
                             className="h-8 w-8 p-0 text-red-400 hover:text-red-600 hover:bg-red-50"
                             onClick={() => onDelete(item)}
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <IconTrash stroke={1.5} className="h-3.5 w-3.5" />
                           </Button>
                         )}
                       </div>
@@ -237,7 +234,7 @@ export function DataTable<T extends Record<string, any>>({
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={curPage === 1}
               >
-                <ChevronLeft className="h-3.5 w-3.5" />
+                <IconChevronLeft stroke={1.5} className="h-3.5 w-3.5" />
               </Button>
               {getPages(curPage, totalPages).map((p, i) =>
                 p === '…' ? (
@@ -260,7 +257,7 @@ export function DataTable<T extends Record<string, any>>({
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={curPage === totalPages}
               >
-                <ChevronRight className="h-3.5 w-3.5" />
+                <IconChevronRight stroke={1.5} className="h-3.5 w-3.5" />
               </Button>
             </div>
           )}

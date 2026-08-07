@@ -1,4 +1,4 @@
-import { ExternalLink } from 'lucide-react'
+import { IconExternalLink } from '@tabler/icons-react'
 
 interface Badge {
   label: string
@@ -42,29 +42,30 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
       <h3 className="text-sm font-semibold text-gray-900">Accreditations &amp; Certifications</h3>
-      {badges.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {badges.map(({ label, url }) =>
-            url ? (
-              <a
-                key={label}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${pillClass} gap-1.5 hover:bg-gray-100 transition-colors`}
-              >
-                {label}
-                <ExternalLink className="h-3 w-3 text-gray-400" />
-              </a>
-            ) : (
-              <span key={label} className={pillClass}>
-                {label}
-              </span>
-            )
-          )}
-        </div>
-      )}
-      {awards.length > 0 && (
+      <div className="flex flex-wrap gap-2">
+        {badges.map(({ label, url }) =>
+          url ? (
+            <a
+              key={label}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+            >
+              {label}
+              <IconExternalLink stroke={1.5} className="h-3 w-3" />
+            </a>
+          ) : (
+            <span
+              key={label}
+              className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700"
+            >
+              {label}
+            </span>
+          )
+        )}
+      </div>
+            {awards.length > 0 && (
         <div className="space-y-2 border-t border-gray-100 pt-3">
           <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-900">
             <span aria-hidden>🏆</span>
@@ -98,7 +99,8 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
           </div>
         </div>
       )}
-      <p className="text-xs text-gray-400 leading-relaxed">
+
+      <p className="text-xs text-gray-600 leading-relaxed">
         Self-reported by the clinic. Confirm directly with the relevant regulatory body.
       </p>
     </div>

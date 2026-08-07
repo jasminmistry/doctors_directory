@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Loader2, Clock, Info, CalendarDays, RefreshCw, Video, Eye, Globe } from 'lucide-react'
+import { IconLoader2, IconClock, IconInfoCircle, IconCalendar, IconRefresh, IconVideo, IconEye, IconWorld } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { formatTimezoneAbbr } from '@/lib/utils'
 import { ScheduleEditor, DEFAULT_SCHEDULE, DAYS, type DaySchedule } from '@/components/portal/schedule-editor'
@@ -71,7 +71,7 @@ export function PortalScheduleView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16 text-gray-600">
-        <Loader2 className="h-5 w-5 animate-spin mr-2" />
+        <IconLoader2 stroke={1.5} className="h-5 w-5 animate-spin mr-2" />
         <span className="text-sm">Loading schedule…</span>
       </div>
     )
@@ -81,7 +81,7 @@ export function PortalScheduleView() {
     return (
       <div className="max-w-lg rounded-lg border border-amber-200 bg-amber-50 p-6">
         <div className="flex items-start gap-3">
-          <Clock className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
+          <IconClock stroke={1.5} className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
           <div>
             <p className="text-sm font-semibold text-amber-800">Account setup in progress</p>
             <p className="mt-1 text-sm text-amber-700">
@@ -98,7 +98,7 @@ export function PortalScheduleView() {
   return (
     <div className="max-w-xl space-y-6">
       <div className="flex items-center gap-1.5 text-xs text-gray-600">
-        <Globe className="h-3.5 w-3.5 shrink-0" />
+        <IconWorld stroke={1.5} className="h-3.5 w-3.5 shrink-0" />
         <span>
           Times below are in <span className="font-medium text-gray-800">{timezone}</span>
           {' '}({formatTimezoneAbbr(timezone)})
@@ -115,7 +115,7 @@ export function PortalScheduleView() {
           onClick={handleSave}
           disabled={saving}
         >
-          {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+          {saving && <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" />}
           {saving ? 'Saving…' : 'Save schedule'}
         </Button>
       </div>
@@ -124,7 +124,7 @@ export function PortalScheduleView() {
       {enabledDays.length > 0 && (
         <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
           <div className="flex items-center gap-2">
-            <Eye className="h-4 w-4 text-gray-600 shrink-0" />
+            <IconEye stroke={1.5} className="h-4 w-4 text-gray-600 shrink-0" />
             <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
               Patient view — bookable hours ({formatTimezoneAbbr(timezone)})
             </p>
@@ -144,12 +144,12 @@ export function PortalScheduleView() {
       {/* How schedule rules work */}
       <div className="rounded-lg bg-white border border-gray-200 bg-gray-50 p-4 space-y-3 text-sm text-gray-700">
         <div className="flex items-center gap-2 mb-1">
-          <Info className="h-4 w-4 text-gray-400 shrink-0" />
+          <IconInfoCircle stroke={1.5} className="h-4 w-4 shrink-0" />
           <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">How schedule rules work</p>
         </div>
         <div className="space-y-2.5 text-sm text-gray-900">
           <div className="flex items-start gap-2">
-            <CalendarDays className="h-4 w-4 shrink-0 mt-0.5 text-gray-400" />
+            <IconCalendar stroke={1.5} className="h-4 w-4 shrink-0 mt-0.5" />
             <p>
               <span className="font-medium">Booking window: </span>
               Patients can only book on days you have enabled, and only within your stated start–end hours.
@@ -157,7 +157,7 @@ export function PortalScheduleView() {
             </p>
           </div>
           <div className="flex items-start gap-2">
-            <Clock className="h-4 w-4 shrink-0 mt-0.5 text-gray-400" />
+            <IconClock stroke={1.5} className="h-4 w-4 shrink-0 mt-0.5" />
             <p>
               <span className="font-medium">Event duration: </span>
               Each consultation event has a set duration (15, 30, or 60 minutes). Booking a 60-minute
@@ -165,7 +165,7 @@ export function PortalScheduleView() {
             </p>
           </div>
           <div className="flex items-start gap-2">
-            <Video className="h-4 w-4 shrink-0 mt-0.5 text-gray-400" />
+            <IconVideo stroke={1.5} className="h-4 w-4 shrink-0 mt-0.5" />
             <p>
               <span className="font-medium">Online status: </span>
               You appear online when your portal is open, you are within schedule hours, and your last
@@ -174,7 +174,7 @@ export function PortalScheduleView() {
           </div>
           {hasConsentzId && (
             <div className="flex items-start gap-2">
-              <RefreshCw className="h-4 w-4 shrink-0 mt-0.5 text-gray-400" />
+              <IconRefresh stroke={1.5} className="h-4 w-4 shrink-0 mt-0.5" />
               <p>
                 <span className="font-medium">Core calendar conflicts: </span>
                 Appointments already booked in your Consentz Core calendar are automatically blocked

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Award, ExternalLink, Plus, Save, User, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ImageUpload } from '@/components/admin/ImageUpload'
@@ -11,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { ClinicCombobox } from './clinic-combobox'
 import { FormSection, Field } from './FormSection'
 import { cn } from '@/lib/utils'
+import { IconArrowNarrowLeft, IconAward, IconDeviceFloppy, IconExternalLink, IconPlus, IconUser, IconX } from '@tabler/icons-react'
 
 type PractitionerData = {
   slug: string
@@ -82,7 +82,7 @@ function StringArrayField({
                 className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 focus:outline-none"
                 aria-label={`Remove ${item}`}
               >
-                <X className="h-3 w-3" />
+                <IconX stroke={1.5} className="h-3 w-3" />
               </button>
             </Badge>
           ))}
@@ -105,7 +105,7 @@ function StringArrayField({
           onClick={add}
           disabled={!draft.trim()}
         >
-          <Plus className="h-3.5 w-3.5" />
+          <IconPlus stroke={1.5} className="h-3.5 w-3.5" />
         </Button>
       </div>
     </div>
@@ -267,12 +267,12 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
         <div className="flex items-center gap-3 min-w-0">
           {!isPortal && (
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => router.push('/admin/practitioners')}>
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
             </Button>
           )}
           <div className="min-w-0">
             {!isPortal && <p className="text-xs text-gray-600 font-medium">Practitioners</p>}
-            <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
+            <h2 className="text-3xl text-gray-900 truncate">{title}</h2>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -283,25 +283,25 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
               rel="noopener noreferrer"
             >
               <Button variant="outline" size="sm">
-                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
                 Preview
               </Button>
             </a>
           ) : (
             <Button variant="outline" size="sm" disabled title="Set a city before previewing">
-              <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+              <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
               Preview
             </Button>
           ))}
           <Button size="sm" onClick={handleSave} disabled={saving}>
-            <Save className="h-3.5 w-3.5 mr-1.5" />
+            <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
             {saving ? 'Saving…' : 'Save'}
           </Button>
         </div>
       </div>
 
       {/* Profile */}
-      <FormSection title="Profile" icon={User}>
+      <FormSection title="Profile" icon={IconUser}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Display Name" required error={fieldErrors.displayName}>
             <Input
@@ -362,7 +362,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
       </FormSection>
 
       {/* Credentials */}
-      <FormSection title="Credentials" icon={Award}>
+      <FormSection title="Credentials" icon={IconAward}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Qualifications" hint='e.g. MBBS, FRCS'>
             <StringArrayField
@@ -410,7 +410,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
 
       <div className="flex justify-end pt-2">
         <Button size="sm" onClick={handleSave} disabled={saving}>
-          <Save className="h-3.5 w-3.5 mr-1.5" />
+          <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
           {saving ? 'Saving…' : 'Save Practitioner'}
         </Button>
       </div>

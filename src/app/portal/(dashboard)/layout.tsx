@@ -14,26 +14,36 @@ export default async function PortalLayout({ children }: { children: React.React
 
   let plan: string | null = null
   let hasCoreClinic = false
+  let entityImage: string | null = null
   if (user.clinicId) {
     const clinic = await prisma.clinic.findUnique({
       where: { id: user.clinicId },
-      select: { claimedPlan: true, coreClinicId: true },
+      select: { claimedPlan: true, coreClinicId: true, image: true },
     })
     plan = clinic?.claimedPlan ?? null
     hasCoreClinic = clinic?.coreClinicId != null
+    entityImage = clinic?.image ?? null
   } else if (user.practitionerId) {
-    const association = await prisma.practitionerClinicAssociation.findFirst({
-      where: { practitionerId: user.practitionerId },
-      select: { clinic: { select: { claimedPlan: true, coreClinicId: true } } },
-    })
+    const [association, practitioner] = await Promise.all([
+      prisma.practitionerClinicAssociation.findFirst({
+        where: { practitionerId: user.practitionerId },
+        select: { clinic: { select: { claimedPlan: true, coreClinicId: true } } },
+      }),
+      prisma.practitioner.findUnique({
+        where: { id: user.practitionerId },
+        select: { imageUrl: true },
+      }),
+    ])
     plan = association?.clinic.claimedPlan ?? null
     hasCoreClinic = association?.clinic.coreClinicId != null
+    entityImage = practitioner?.imageUrl ?? null
   }
 
   return (
     <PortalLayoutClient
       entityType={user.entityType}
       entityName={user.entityName}
+      entityImage={entityImage}
       plan={plan}
       hasCoreClinic={hasCoreClinic}
     >

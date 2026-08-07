@@ -1,10 +1,10 @@
 import { unstable_cache } from "next/cache";
-import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getAllClinicsForSearch } from "@/lib/data-access/clinics";
 import { cleanRouteSlug } from "@/lib/utils";
 import { FallbackImage, DEFAULT_PERSON } from "@/components/ui/fallback-image";
+import { IconMapPin } from "@tabler/icons-react";
 
 export interface FeaturedClinic {
   slug: string;
@@ -117,7 +117,7 @@ export default async function FeaturedClinicsSection() {
 
                   {clinic.gmapsAddress && (
                     <div className="flex items-start gap-2 mt-4 text-gray-600 text-sm w-full">
-                      <MapPin className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
+                      <IconMapPin stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
                       <span className="min-w-0 text-left line-clamp-2">
                         {clinic.gmapsAddress}
                       </span>

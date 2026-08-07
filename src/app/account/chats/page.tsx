@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { MessageSquare, Loader2 } from 'lucide-react'
+import { IconMessage, IconLoader2 } from '@tabler/icons-react'
 
 interface ChatSession {
   id: number
@@ -28,7 +28,7 @@ export default function AccountChatsPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
+        <IconLoader2 stroke={1.5} className="h-5 w-5 animate-spin" />
       </div>
     )
   }
@@ -39,7 +39,7 @@ export default function AccountChatsPage() {
 
       {sessions.length === 0 ? (
         <div className="rounded-lg bg-white border border-gray-200 px-6 py-10 text-center">
-          <MessageSquare className="h-8 w-8 text-gray-600 mx-auto mb-3" />
+          <IconMessage stroke={1.5} className="h-8 w-8 mx-auto mb-3" />
           <p className="text-gray-600 text-sm">No consultations yet.</p>
         </div>
       ) : (

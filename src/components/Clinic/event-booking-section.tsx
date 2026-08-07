@@ -5,20 +5,11 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { format, addDays, isSameDay } from 'date-fns'
 import { fromZonedTime, formatInTimeZone } from 'date-fns-tz'
 import { toast } from 'sonner'
-import {
-  ChevronLeft,
-  ChevronRight,
-  CheckCircle2,
-  Loader2,
-  Video,
-  ExternalLink,
-  Clock,
-  Calendar,
-} from 'lucide-react'
 import { cn, formatTimezoneAbbr } from '@/lib/utils'
 import { InlineLogin } from '@/components/consultation/inline-login'
 import { ConsultationRichForm } from '@/components/consultation/consultation-form'
 import type { ConsultationFormData } from '@/components/consultation/consultation-form'
+import { IconCalendarWeek, IconChevronLeft, IconChevronRight, IconCircleCheck, IconClock, IconExternalLink, IconLoader2, IconVideo } from '@tabler/icons-react'
 
 interface CoreEvent {
   id: number
@@ -89,7 +80,7 @@ function LocationBadge({ location }: { location: 'zoom' | 'video_call' }) {
         ? 'bg-blue-50 text-blue-700'
         : 'bg-purple-50 text-purple-700',
     )}>
-      <Video className="h-3 w-3" />
+      <IconVideo className="h-3 w-3" />
       {location === 'zoom' ? 'Zoom' : 'Video Call'}
     </span>
   )
@@ -341,7 +332,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
           <h2 className="text-base font-semibold text-gray-900">Booking Confirmed</h2>
         </div>
         <div className="flex flex-col items-center gap-4 text-center px-6 py-10">
-          <CheckCircle2 className="h-10 w-10 text-green-500 shrink-0" />
+          <IconCircleCheck stroke={1.5} className="h-10 w-10 text-green-500 shrink-0" />
           <div className="space-y-1">
             <p className="font-semibold text-gray-900">{confirmation.event.title}</p>
             <p className="text-sm text-gray-600">
@@ -358,9 +349,9 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 transition-colors"
             >
-              <Video className="h-4 w-4" />
+              <IconVideo stroke={1.5} className="h-4 w-4" />
               Join Meeting
-              <ExternalLink className="h-3.5 w-3.5 opacity-70" />
+              <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 opacity-70" />
             </a>
           )}
 
@@ -392,7 +383,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
             onClick={resetToEvents}
             className="text-gray-600 hover:text-gray-600"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <IconChevronLeft stroke={1.5} className="h-4 w-4" />
           </button>
           <h2 className="text-base font-semibold text-gray-900">Sign in to book</h2>
         </div>
@@ -420,7 +411,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
             onClick={() => setStep('date-slot')}
             className="text-gray-600 hover:text-gray-600"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <IconChevronLeft stroke={1.5} className="h-4 w-4" />
           </button>
           <div>
             <h2 className="text-base font-semibold text-gray-900">Your Details</h2>
@@ -466,7 +457,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
             onClick={resetToEvents}
             className="text-gray-600 hover:text-gray-600"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <IconChevronLeft stroke={1.5} className="h-4 w-4" />
           </button>
           <div>
             <h2 className="text-base font-semibold text-gray-900">
@@ -497,7 +488,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
               disabled={weekOffset === 0}
               className="rounded p-1 text-gray-600 hover:text-gray-700 disabled:opacity-30"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <IconChevronLeft stroke={1.5} className="h-4 w-4" />
             </button>
             <span className="text-xs text-gray-600">
               {format(weekStart, 'd MMM')} – {format(weekDays[6], 'd MMM')}
@@ -507,7 +498,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
               onClick={() => setWeekOffset((o) => o + 1)}
               className="rounded p-1 text-gray-600 hover:text-gray-700"
             >
-              <ChevronRight className="h-4 w-4" />
+              <IconChevronRight stroke={1.5} className="h-4 w-4" />
             </button>
           </div>
 
@@ -547,7 +538,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
               )}
               {slotsLoading ? (
                 <div className="flex justify-center py-4">
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
+                  <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" />
                 </div>
               ) : slots.length === 0 ? (
                 <p className="text-center text-xs text-gray-600 py-3">
@@ -583,7 +574,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
             onClick={() => setStep('details')}
             className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
           >
-            <Calendar className="h-4 w-4" />
+            <IconCalendarWeek stroke={1.5} className="h-4 w-4" />
             Next — Your Details
           </button>
         </div>
@@ -606,7 +597,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
                 <LocationBadge location={event.location} />
               </div>
               <div className="flex items-center gap-2 text-xs text-gray-600">
-                <Clock className="h-3 w-3 shrink-0" />
+                <IconClock stroke={1.5} className="h-3 w-3 shrink-0" />
                 <span>{event.duration}</span>
                 {isPaidEvent(event.price) && (
                   <>
@@ -625,7 +616,7 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
               onClick={() => startBooking(event)}
               className="shrink-0 rounded-lg border border-gray-900 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white transition-colors disabled:opacity-50 inline-flex items-center gap-1.5"
             >
-              {checkingEventId === event.id && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+              {checkingEventId === event.id && <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" />}
               Book
             </button>
           </div>

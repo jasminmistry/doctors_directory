@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CalendarDays, ChevronRight, Loader2 } from 'lucide-react'
+import { IconCalendar, IconChevronRight, IconLoader2 } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { ScheduleEditor, DEFAULT_SCHEDULE, DAYS, type DaySchedule } from '@/components/portal/schedule-editor'
 
@@ -76,7 +76,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
         {step === 'welcome' && (
           <div className="p-8 text-center">
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-lg bg-gray-900">
-              <CalendarDays className="h-7 w-7 text-white" />
+              <IconCalendar stroke={1.5} className="h-7 w-7 text-white" />
             </div>
             <h2 className="text-xl font-medium text-gray-900">
               Welcome{entityName ? `, ${entityName}` : ''}!
@@ -94,8 +94,8 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
                   className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-700 transition-colors disabled:opacity-50"
                 >
                   {loadingSchedule
-                    ? <><Loader2 className="h-4 w-4 animate-spin" /> Loading your schedule…</>
-                    : <>{schedule !== DEFAULT_SCHEDULE ? 'Review & update schedule' : 'Set up schedule'}<ChevronRight className="h-4 w-4" /></>}
+                    ? <><IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" /> Loading your schedule…</>
+                    : <>{schedule !== DEFAULT_SCHEDULE ? 'Review & update schedule' : 'Set up schedule'}<IconChevronRight stroke={1.5} className="h-4 w-4" /></>}
                 </button>
               ) : (
                 <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
@@ -151,7 +151,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
                   disabled={saving}
                   className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 transition-colors disabled:opacity-50"
                 >
-                  {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  {saving && <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" />}
                   Save & continue
                 </button>
               </div>

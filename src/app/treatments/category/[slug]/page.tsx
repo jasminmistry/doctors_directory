@@ -16,10 +16,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PractitionerCard } from "@/components/practitioner-card";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 interface CategoryPageProps {
   params: {
@@ -83,7 +83,7 @@ export default function TreatmentCategoryPage({ params }: Readonly<CategoryPageP
               size="sm"
               className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Treatments
             </Button>
           </Link>

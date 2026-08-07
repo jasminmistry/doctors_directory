@@ -16,7 +16,7 @@ export default function UpgradeSuccessPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white rounded-lg border border-gray-200 shadow-sm p-8 text-center space-y-4">
         <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mx-auto">
-          <svg className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <svg className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>

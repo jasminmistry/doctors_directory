@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Locate, X } from "lucide-react";
+import { IconCurrentLocation, IconX } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { SearchDropdown } from "./search-dropdown";
 import { SearchButton } from "./search-button";
@@ -96,13 +96,13 @@ export function DesktopSearchView({
               onMouseDown={(e) => e.preventDefault()}
               onClick={clearQuery}
             >
-              <X className="h-4 w-4" />
+              <IconX stroke={1.5} className="h-4 w-4" />
             </button>
           )}
         </div>
 
         <div className="hidden sm:flex relative bg-white rounded-r-lg border border-[#e0e0e0]  px-4 py-3 items-center gap-2 w-44 flex-none">
-          <Locate className="w-5 h-5 text-gray-600" />
+          <IconCurrentLocation stroke={1.5} className="w-5 h-5 text-gray-600" />
           <Input
             placeholder="Location"
             value={localFilters.location}
@@ -126,7 +126,7 @@ export function DesktopSearchView({
               onMouseDown={(e) => e.preventDefault()}
               onClick={clearLocation}
             >
-              <X className="h-4 w-4" />
+              <IconX stroke={1.5} className="h-4 w-4" />
             </button>
           )}
         </div>

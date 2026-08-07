@@ -9,12 +9,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
 import {cityMap} from "@/lib/data"
 import ItemsGrid from "@/components/collectionGrid"
 import { CollectionsFilter } from "@/components/filters/collectionsFilterWrapper";
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { IconArrowNarrowLeft } from "@tabler/icons-react"
 
 const robots = getPractitionerDirectoryRobots();
 
@@ -34,7 +34,7 @@ export default function TreatmentByCityPage() {
           <div className="sticky top-0 z-10">
             <Link className="mb-3 inline-block" href="/" prefetch={false}>
               <Button variant="ghost" size="sm" className="gap-2 hover:cursor-pointer">
-                <ArrowLeft className="h-4 w-4" />
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
               </Button>
             </Link>

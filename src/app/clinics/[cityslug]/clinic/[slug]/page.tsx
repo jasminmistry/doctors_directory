@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PageViewTracker } from "@/components/tracking/page-view-tracker";
-import { Star, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/components/Clinic/profile-header";
 import { GoogleMapsEmbed } from "@/components/gmaps-embed";
@@ -46,6 +45,7 @@ import { isConsentzClinicSlug } from "@/lib/consentz-customers";
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
 import { getClaimState } from "@/lib/claim-utils";
 import { getPortalUser } from "@/lib/portal";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
   incoming: Record<string, ItemMeta>
@@ -268,7 +268,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
               size="sm"
               className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
             </Button>
           </Link>

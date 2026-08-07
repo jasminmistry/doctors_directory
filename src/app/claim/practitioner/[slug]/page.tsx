@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { prisma } from '@/lib/db'
 import { ClaimWizard } from '@/components/claim/claim-wizard'
 import { getConsentzAuthUrl } from '@/lib/auth'
 import { getClaimState, isOwnActiveClaim } from '@/lib/claim-utils'
+import { IconArrowNarrowLeft } from '@tabler/icons-react'
 
 function getConsentzLoginUrl(): string {
   try {
@@ -60,7 +60,7 @@ export default async function ClaimPractitionerPage({ params, searchParams }: Re
           href={`/practitioners/${practitioner.slug}`}
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-8"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
           Back to profile
         </Link>
 

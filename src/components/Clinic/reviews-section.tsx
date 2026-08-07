@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Star, ShieldCheck, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { InlineLogin } from '@/components/consultation/inline-login'
+import { IconChevronDown, IconChevronUp, IconMessage, IconShieldCheck, IconStar } from '@tabler/icons-react'
 
 export interface ReviewItem {
   id: string
@@ -34,7 +34,7 @@ function StarRow({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' }
   return (
     <div className="flex">
       {Array.from({ length: 5 }, (_, i) => (
-        <Star key={i} className={cn(cls, i < rating ? 'fill-black text-black' : 'text-gray-200')} />
+        <IconStar key={i} className={cn(cls, i < rating ? 'fill-black text-black' : 'text-gray-200')} />
       ))}
     </div>
   )
@@ -55,7 +55,7 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
             onClick={() => onChange(v)}
             className="focus:outline-none"
           >
-            <Star className={cn('h-7 w-7 transition-colors', (hover || value) >= v ? 'fill-black text-black' : 'text-gray-300')} />
+            <IconStar className={cn('h-7 w-7 transition-colors', (hover || value) >= v ? 'fill-black text-black' : 'text-gray-300')} />
           </button>
         )
       })}
@@ -197,9 +197,9 @@ export function ReviewsSection({ clinicSlug, reviews, googleReviewCount = 0, goo
             onClick={() => (formPhase === 'closed' ? openForm() : setFormPhase('closed'))}
             className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
           >
-            <MessageSquare className="h-4 w-4" />
+            <IconMessage stroke={1.5} className="h-4 w-4" />
             Leave a review
-            {formPhase !== 'closed' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            {formPhase !== 'closed' ? <IconChevronUp stroke={1.5} className="h-3.5 w-3.5" /> : <IconChevronDown stroke={1.5} className="h-3.5 w-3.5" />}
           </button>
         )}
       </div>
@@ -316,7 +316,7 @@ export function ReviewsSection({ clinicSlug, reviews, googleReviewCount = 0, goo
                       className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-medium text-blue-700"
                       title="This reviewer completed a booking through Consentz Directory"
                     >
-                      <ShieldCheck className="h-3 w-3" />
+                      <IconShieldCheck stroke={1.5} className="h-3 w-3" />
                       Verified patient
                     </span>
                   ) : review.source === 'platform' ? (

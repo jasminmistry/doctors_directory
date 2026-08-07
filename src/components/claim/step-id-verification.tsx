@@ -3,8 +3,8 @@
 import { useId, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { ShieldCheck, Upload, CheckCircle2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { IconCircleCheck, IconShieldCheck, IconUpload } from '@tabler/icons-react'
 
 const PROOF_TYPES = [
   { id: 'work_email', label: 'Work email screenshot' },
@@ -116,7 +116,7 @@ export function StepIdVerification({ entityType, entitySlug, claimerName, claime
   if (submitted) {
     return (
       <div className="flex flex-col items-center gap-4 py-8 text-center">
-        <CheckCircle2 className="h-12 w-12 text-emerald-600" />
+        <IconCircleCheck stroke={1.5} className="h-12 w-12" />
         <h2 className="text-xl font-semibold">Verification submitted</h2>
         <p className="text-sm text-muted-foreground max-w-xs">
           Our team will review your documents within 1–2 business days and update your profile badges.
@@ -128,7 +128,7 @@ export function StepIdVerification({ entityType, entitySlug, claimerName, claime
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       <div className="flex items-start gap-3">
-        <ShieldCheck className="h-6 w-6 mt-0.5 shrink-0 text-muted-foreground" />
+        <IconShieldCheck stroke={1.5} className="h-6 w-6 mt-0.5 shrink-0" />
         <div>
           <h2 className="text-xl font-semibold mb-1">Get ID Verified</h2>
           <p className="text-sm text-muted-foreground">
@@ -268,7 +268,7 @@ function FileDropZone({ file, accept, onChange }: Readonly<FileDropZoneProps>) {
         <p className="text-sm font-medium truncate max-w-full">{file.name}</p>
       ) : (
         <>
-          <Upload className="h-5 w-5 text-muted-foreground" />
+          <IconUpload stroke={1.5} className="h-5 w-5" />
           <p className="text-xs text-muted-foreground">Click to upload</p>
         </>
       )}

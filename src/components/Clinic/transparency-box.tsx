@@ -1,5 +1,5 @@
+import { IconCalendarCheck, IconClock, IconShieldCheck } from '@tabler/icons-react';
 import { format } from 'date-fns'
-import { CalendarCheck, Clock, ShieldCheck } from 'lucide-react'
 
 const CQC_LABELS: Record<string, { label: string; color: string }> = {
   outstanding:          { label: 'Outstanding',          color: 'text-green-700 bg-green-50' },
@@ -23,25 +23,25 @@ interface TransparencyBoxProps {
 export function TransparencyBox({ claimedAt, cqcStatus, avgReplyTime }: TransparencyBoxProps) {
   const rows = [
     claimedAt && {
-      icon: CalendarCheck,
+      icon: IconCalendarCheck,
       label: 'Member Since',
       value: format(new Date(claimedAt), 'MMMM yyyy'),
       extra: null,
     },
     cqcStatus && {
-      icon: ShieldCheck,
+      icon: IconShieldCheck,
       label: 'CQC Status',
       value: null,
       extra: CQC_LABELS[cqcStatus] ?? null,
     },
     avgReplyTime && {
-      icon: Clock,
+      icon: IconClock,
       label: 'Avg Reply Time',
       value: REPLY_LABELS[avgReplyTime] ?? avgReplyTime,
       extra: null,
     },
   ].filter(Boolean) as Array<{
-    icon: typeof CalendarCheck
+    icon: typeof IconCalendarCheck
     label: string
     value: string | null
     extra: { label: string; color: string } | null

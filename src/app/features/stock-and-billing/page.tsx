@@ -1,18 +1,4 @@
-import {
-  MessageSquare,
-  Brain,
-  Clock3,
-  ClipboardList,
-  HeartHandshake,
-  FileText,
-  Stethoscope,
-  ReceiptText,
-  BookMarked,
-  Boxes,
-  ClipboardPlus,
-  Warehouse,
-  TriangleAlert
-} from "lucide-react";
+import { IconBrain, IconClockHour4, IconMessage, IconClipboardList, IconHeartHandshake, IconFileText, IconStethoscope, IconReceipt, IconBookmark, IconPackages, IconClipboardPlus, IconBuildingWarehouse, IconAlertTriangle } from "@tabler/icons-react";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 export default function ClinicManagementSoftwarePage() {
   const bookDemoHref = b2bBookDemoHref();
@@ -29,31 +15,31 @@ export default function ClinicManagementSoftwarePage() {
   const featuresList = [
     {
       name: "Messaging",
-      icon: MessageSquare,
+      icon: IconMessage,
     },
     {
       name: "Memory Jog",
-      icon: Brain,
+      icon: IconBrain,
     },
     {
       name: "Waiting List",
-      icon: Clock3,
+      icon: IconClockHour4,
     },
     {
       name: "Questionnaire Builder",
-      icon: ClipboardList,
+      icon: IconClipboardList,
     },
     {
       name: "Engage your patients",
-      icon: HeartHandshake,
+      icon: IconHeartHandshake,
     },
     {
       name: "Treatment Notes",
-      icon: FileText,
+      icon: IconFileText,
     },
     {
       name: "Clinicians",
-      icon: Stethoscope,
+      icon: IconStethoscope,
     },
   ];
   
@@ -105,7 +91,7 @@ export default function ClinicManagementSoftwarePage() {
             return (
               <div className="text-center" key={feature.name}>
                 <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <Icon strokeWidth={1.5} className="w-8 h-8 text-primary" />
+                  <Icon stroke={1.5} className="w-8 h-8 text-primary" />
                 </div>
                 <p className="text-gray-700">{feature.name}</p>
               </div>
@@ -144,7 +130,7 @@ export default function ClinicManagementSoftwarePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <ReceiptText strokeWidth={1.5} className="mb-4" size={36}  />
+              <IconReceipt stroke={1.5} className="mb-4" size={36}  />
               <h3 className="text-xl md:text-lg font-medium mb-4"> 
                 Billing Patient Journey
               </h3>
@@ -154,7 +140,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <BookMarked strokeWidth={1.5} className="mb-4" size={36}  />
+              <IconBookmark stroke={1.5} className="mb-4" size={36}  />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Courses of Treatments
               </h3>
@@ -164,7 +150,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Boxes strokeWidth={1.5} className="mb-4" size={36}  />
+              <IconPackages stroke={1.5} className="mb-4" size={36}  />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Bundles
               </h3>
@@ -192,7 +178,7 @@ export default function ClinicManagementSoftwarePage() {
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
                 <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <ClipboardPlus strokeWidth={1.5} size={36}  />
+                  <IconClipboardPlus stroke={1.5} size={36}  />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Stock Level Reports</h3>
                 <p className="text-gray-700">Have you ever wanted to manage your stock levels of Botulinum Toxin? With Consentz you can see how much stock your clinicians are using and place the necessary orders.</p>
@@ -200,7 +186,7 @@ export default function ClinicManagementSoftwarePage() {
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
                 <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <Warehouse strokeWidth={1.5} size={36} />
+                  <IconBuildingWarehouse stroke={1.5} size={36} />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Stock Reduction</h3>
                 <p>Reduce stock numbers whenever you invoice an item, allow your Practitioner’s record usage when marking photograph, or manually enter an adjustment amount. Either way the history of all stock movements are recorded.</p>
@@ -208,7 +194,7 @@ export default function ClinicManagementSoftwarePage() {
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
                 <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <TriangleAlert strokeWidth={1.5} size={36} />
+                  <IconAlertTriangle stroke={1.5} size={36} />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Warnings</h3>
                 <p>Running low on stock? Dynamic reports and settings for minimum stock levels will inform you when you’re running out and need to reorder.</p>

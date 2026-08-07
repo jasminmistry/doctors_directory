@@ -17,7 +17,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { ArrowLeft } from "lucide-react";
+import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
 import { SearchEmptyState } from "@/components/search/search-empty-state";
 
@@ -183,7 +183,7 @@ export default function SearchPage({ forcedType }: Readonly<SearchPageProps>) {
                 size="sm"
                 className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <IconArrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
               </Button>
             </Link>

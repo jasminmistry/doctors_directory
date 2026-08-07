@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import PractitionerTabs from "@/components/Practitioner/PractitionerTabs";
 import { 
@@ -8,6 +7,7 @@ import {
   SidebarSkeleton, 
   ReviewsSkeleton 
 } from "@/components/loading-skeleton";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 export default async function Loading({ params }: { params: { slug: string } }) {
   return (
@@ -20,7 +20,7 @@ export default async function Loading({ params }: { params: { slug: string } }) 
               size="sm"
               className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
             </Button>
           </Link>

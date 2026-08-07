@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import ClinicTabs from "@/components/Clinic/clinicTabs";
 import { 
@@ -10,6 +9,7 @@ import {
   BreadcrumbSkeleton
 } from "@/components/loading-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 export default async function Loading({ params }: { params: { cityslug: string; slug: string } }) {
 
@@ -23,7 +23,7 @@ export default async function Loading({ params }: { params: { cityslug: string; 
               size="sm"
               className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
             </Button>
           </Link>
