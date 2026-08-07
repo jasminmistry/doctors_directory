@@ -17,17 +17,22 @@ interface PortalLayoutClientProps {
   children: ReactNode;
   entityType: "clinic" | "practitioner" | null;
   entityName: string;
+  entityImage?: string | null;
   plan?: string | null;
   hasCoreClinic?: boolean;
 }
+
+const DEFAULT_ENTITY_IMG = "/directory/images/default-dr-profile-1.webp";
 
 export function PortalLayoutClient({
   children,
   entityType,
   entityName,
+  entityImage,
   plan,
   hasCoreClinic = false,
 }: PortalLayoutClientProps) {
+  const [avatarSrc, setAvatarSrc] = useState(entityImage || DEFAULT_ENTITY_IMG);
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -503,9 +508,10 @@ export function PortalLayoutClient({
           <div className="hidden items-center justify-between gap-1 bg-white px-[10px] py-2 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:flex">
             <div className="shrink-0 flex items-center gap-2.5">
               <img
-                src="/directory/images/default-dr-profile-1.webp"
+                src={avatarSrc}
                 alt={entityName || "Clinic"}
                 className="h-9 w-9 shrink-0 rounded-full object-cover"
+                onError={() => setAvatarSrc(DEFAULT_ENTITY_IMG)}
               />
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">

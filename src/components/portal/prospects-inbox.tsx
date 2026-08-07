@@ -26,7 +26,7 @@ const PIPELINE_TABS: { value: PipelineStatus | 'all'; label: string }[] = [
 // "New" is a time window (recently submitted), independent of pipeline stage —
 // distinct from the "new" pipelineStatus value, which is a CRM triage stage
 // that only changes when staff manually update it via the status pill.
-const RECENT_LEAD_WINDOW_MS = 24 * 60 * 60 * 1000
+const RECENT_LEAD_WINDOW_MS = 48 * 60 * 60 * 1000
 
 function isRecentLead(createdAt: string): boolean {
   return Date.now() - new Date(createdAt).getTime() <= RECENT_LEAD_WINDOW_MS
