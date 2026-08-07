@@ -43,7 +43,7 @@ jobs:
           context: .
           push: true
           cache-from: type=gha,scope=staging
-          cache-to: type=gha,mode=max,scope=staging
+          cache-to: type=gha,mode=min,scope=staging
           build-args: |
             NEXT_PUBLIC_DIRECTORY_BASE_URL=${{ vars.STAGING_NEXT_PUBLIC_DIRECTORY_BASE_URL }}
             NEXT_PUBLIC_BASE_URL=${{ vars.STAGING_NEXT_PUBLIC_BASE_URL }}
