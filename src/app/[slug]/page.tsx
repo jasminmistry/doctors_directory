@@ -230,7 +230,7 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
         <main className="bg-(--primary-bg-color)">
           <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
             <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
             </Link>
             <Breadcrumb>
@@ -308,7 +308,7 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
       <main className="bg-(--primary-bg-color)">
         <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
           <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
-            <ArrowLeft className="h-4 w-4" />
+            <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
             Back to Directory
           </Link>
           <Breadcrumb>
