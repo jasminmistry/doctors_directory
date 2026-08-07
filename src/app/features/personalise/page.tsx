@@ -1,20 +1,4 @@
-import {
-  MessageSquare,
-  Brain,
-  Clock3,
-  ClipboardList,
-  HeartHandshake,
-  FileText,
-  Stethoscope,
-  FileUser,
-  UserPen,
-  Image,
-  NotebookPen,
-  Info,
-  BriefcaseMedical,
-  Database,
-  Hourglass
-} from "lucide-react";
+import { IconBrain, IconClockHour4, IconMessage, IconClipboardList, IconHeartHandshake, IconFileText, IconStethoscope, IconInfoCircle, IconNotebook, IconFile, IconUserEdit, IconPolaroid, IconReportMedical, IconDatabase, IconHourglassEmpty } from "@tabler/icons-react";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
 export default function ClinicManagementSoftwarePage() {
   const bookDemoHref = b2bBookDemoHref();
@@ -31,31 +15,31 @@ export default function ClinicManagementSoftwarePage() {
   const featuresList = [
     {
       name: "Messaging",
-      icon: MessageSquare,
+      icon: IconMessage,
     },
     {
       name: "Memory Jog",
-      icon: Brain,
+      icon: IconBrain,
     },
     {
       name: "Waiting List",
-      icon: Clock3,
+      icon: IconClockHour4,
     },
     {
       name: "Questionnaire Builder",
-      icon: ClipboardList,
+      icon: IconClipboardList,
     },
     {
       name: "Engage your patients",
-      icon: HeartHandshake,
+      icon: IconHeartHandshake,
     },
     {
       name: "Treatment Notes",
-      icon: FileText,
+      icon: IconFileText,
     },
     {
       name: "Clinicians",
-      icon: Stethoscope,
+      icon: IconStethoscope,
     },
   ];
   
@@ -107,7 +91,7 @@ export default function ClinicManagementSoftwarePage() {
             return (
               <div className="text-center" key={feature.name}>
                 <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <Icon strokeWidth={1.5} className="w-8 h-8 text-primary" />
+                  <Icon stroke={1.5} className="w-8 h-8 text-primary" />
                 </div>
                 <p className="text-gray-700">{feature.name}</p>
               </div>
@@ -146,7 +130,7 @@ export default function ClinicManagementSoftwarePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Image strokeWidth={1.5} className="mb-4" size={36} />
+              <IconPolaroid stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4"> Image & Logo</h3>
               <p className="text-gray-700">
                 Upload your company logo and personalise your background images to make your patients instantly feel they are being looked after by the best.
@@ -154,7 +138,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <UserPen strokeWidth={1.5} className="mb-4" size={36} />
+              <IconUserEdit stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Your Profiles
               </h3>
@@ -164,7 +148,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <FileUser strokeWidth={1.5} className="mb-4" size={36} />
+              <IconFile stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Patient Application
               </h3>
@@ -206,7 +190,7 @@ export default function ClinicManagementSoftwarePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Stethoscope strokeWidth={1.5} className="mb-4" size={36} />
+              <IconStethoscope stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Treatment
               </h3>
@@ -216,7 +200,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <NotebookPen strokeWidth={1.5} className="mb-4" size={36} />
+              <IconNotebook stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Pre-Set Notes
               </h3>
@@ -226,7 +210,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Info strokeWidth={1.5} className="mb-4" size={36} />
+              <IconInfoCircle stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Questionnaire Builder
               </h3>
@@ -254,7 +238,7 @@ videos and brochures for your use and a large number of medical consent forms fo
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
                 <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <BriefcaseMedical strokeWidth={1.5} size={36} />
+                  <IconReportMedical stroke={1.5} size={36} />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Patient Management Software</h3>
                 <p className="text-gray-700">Patient management software is a digital tool that simplifies and organizes clinic operations. Whether managing patient records, scheduling appointments, or automating billing, software takes the manual work out.</p>
@@ -262,7 +246,7 @@ videos and brochures for your use and a large number of medical consent forms fo
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
                 <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <Hourglass strokeWidth={1.5} size={36} />
+                  <IconHourglassEmpty stroke={1.5} size={36} />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Waiting List</h3>
                 <p>Build a waiting list of patients eager to see a particular clinician. Notify patients on the list as soon as an appointment is available with appointment reminder software. So the next time you get a cancellation – fill it without telephoning around.</p>
@@ -270,7 +254,7 @@ videos and brochures for your use and a large number of medical consent forms fo
 
               <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
                 <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <Database strokeWidth={1.5} size={36} />
+                  <IconDatabase stroke={1.5} size={36} />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Memory Jog</h3>
                 <p>Relying on your memory is not always best. Make non- medical notes about any patient issues or interests enabling richer and better informed conversations to occur.</p>

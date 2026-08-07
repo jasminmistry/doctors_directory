@@ -9,31 +9,10 @@ import {
 } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  LayoutDashboard,
-  Building2,
-  Users,
-  Package,
-  Stethoscope,
-  FlaskConical,
-  LogOut,
-  Globe,
-  Menu,
-  X,
-  ShieldCheck,
-  BadgeCheck,
-  Star,
-  BarChart3,
-  Globe2,
-  ExternalLink,
-  Sparkles,
-  Link2Off,
-  Mail,
-  Trash2,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HeaderIconLink } from "@/components/portal/header-icon-link";
 import { HeaderProfileMenu } from "@/components/portal/header-profile-menu";
+import { IconBuildingHospital, IconLayoutBoard, IconPackage, IconStethoscope, IconLinkOff, IconUsers, IconTrash, IconShieldCheck, IconStar, IconSparkles, IconMail, IconWorldLongitude, IconFlask, IconChartBar, IconLogout, IconWorld, IconMenu2, IconX, IconFlagCheck, IconExternalLink } from "@tabler/icons-react";
 
 const AdminCountsContext = createContext<{ refreshCounts: () => void }>({
   refreshCounts: () => {},
@@ -73,28 +52,28 @@ function HeaderCountBadge({ count }: { count: number }) {
 }
 
 const NAV = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/admin/clinics", label: "Clinics", icon: Building2 },
-  { href: "/admin/clinics/claim-invites", label: "Claim Invites", icon: Mail },
+  { href: "/admin", label: "Dashboard", icon: IconLayoutBoard, exact: true },
+  { href: "/admin/clinics", label: "Clinics", icon: IconBuildingHospital },
+  { href: "/admin/clinics/claim-invites", label: "Claim Invites", icon: IconMail },
   {
     href: "/admin/featured-profiles",
     label: "Featured Profiles",
-    icon: Sparkles,
+    icon: IconSparkles,
   },
-  { href: "/admin/practitioners", label: "Practitioners", icon: Users },
-  { href: "/admin/products", label: "Products", icon: Package },
-  { href: "/admin/treatments", label: "Treatments", icon: Stethoscope },
-  { href: "/admin/unlink-requests", label: "Unlink Requests", icon: Link2Off },
-  { href: "/admin/directory-removal-requests", label: "Removal Requests", icon: Trash2 },
-  { href: "/admin/claims", label: "Claims", icon: ShieldCheck },
-  { href: "/admin/verification", label: "ID Verification", icon: ShieldCheck },
-  { href: "/admin/reviews", label: "Reviews", icon: Star },
-  { href: "/admin/qa", label: "QA Report", icon: FlaskConical },
-  { href: "/admin/tracking", label: "Directory tracking", icon: BarChart3 },
+  { href: "/admin/practitioners", label: "Practitioners", icon: IconUsers },
+  { href: "/admin/products", label: "Products", icon: IconPackage },
+  { href: "/admin/treatments", label: "Treatments", icon: IconStethoscope },
+  { href: "/admin/unlink-requests", label: "Unlink Requests", icon: IconLinkOff },
+  { href: "/admin/directory-removal-requests", label: "Removal Requests", icon: IconTrash },
+  { href: "/admin/claims", label: "Claims", icon: IconShieldCheck },
+  { href: "/admin/verification", label: "ID Verification", icon: IconShieldCheck },
+  { href: "/admin/reviews", label: "Reviews", icon: IconStar },
+  { href: "/admin/qa", label: "QA Report", icon: IconFlask },
+  { href: "/admin/tracking", label: "Directory tracking", icon: IconChartBar },
   {
     href: "/admin/main-site-tracking",
     label: "Main site tracking",
-    icon: Globe2,
+    icon: IconWorldLongitude,
   },
 ] as const;
 
@@ -146,9 +125,9 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
             aria-expanded={isMobileNavOpen}
           >
             {isMobileNavOpen ? (
-              <X className="h-5 w-5" />
+              <IconX stroke={1.5} className="h-5 w-5" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <IconMenu2 stroke={1.5} className="h-5 w-5" />
             )}
           </button>
         </div>
@@ -228,16 +207,16 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                 onClick={() => setIsMobileNavOpen(false)}
                 className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
-                <Globe className="h-4 w-4 shrink-0" />
+                <IconWorld stroke={1.5} className="h-4 w-4 shrink-0" />
                 <span className="flex-1">View Directory</span>
-                <ExternalLink className="h-3 w-3 opacity-80" />
+                <IconExternalLink stroke={1.5} className="h-3 w-3 opacity-80" />
               </Link>
 
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors"
               >
-                <LogOut className="h-4 w-4 shrink-0" />
+                <IconLogout stroke={1.5} className="h-4 w-4 shrink-0" />
                 Sign out
               </button>
             </nav>
@@ -254,13 +233,13 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                 <HeaderIconLink
                   href="/admin/claims"
                   label="Claims"
-                  icon={ShieldCheck}
+                  icon={IconShieldCheck}
                   badge={<HeaderCountBadge count={counts.pendingClaims} />}
                 />
                 <HeaderIconLink
                   href="/admin/verification"
                   label="ID Verification"
-                  icon={BadgeCheck}
+                  icon={IconFlagCheck}
                   badge={
                     <HeaderCountBadge count={counts.pendingVerifications} />
                   }
@@ -268,7 +247,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                 <HeaderIconLink
                   href="/admin/unlink-requests"
                   label="Unlink Requests"
-                  icon={Link2Off}
+                  icon={IconLinkOff}
                   badge={
                     <HeaderCountBadge count={counts.pendingUnlinkRequests} />
                   }

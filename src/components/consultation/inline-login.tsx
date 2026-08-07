@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, Mail, ArrowRight } from 'lucide-react'
+import { IconArrowRight, IconLoader2, IconMail } from '@tabler/icons-react'
 
 interface InlineLoginProps {
   next: string
@@ -51,7 +51,7 @@ export function InlineLogin({ next }: InlineLoginProps) {
     return (
       <div className="flex flex-col items-center gap-4 px-6 py-10 text-center">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-50 border border-green-100 shadow-sm">
-          <Mail className="h-5 w-5 text-green-600" />
+          <IconMail stroke={1.5} className="h-5 w-5 text-green-600" />
         </div>
         <div className="space-y-1">
           <p className="text-sm font-semibold text-gray-900">Check your inbox</p>
@@ -63,7 +63,7 @@ export function InlineLogin({ next }: InlineLoginProps) {
         <button
           type="button"
           onClick={() => { setSent(false); setEmail('') }}
-          className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition-colors"
+          className="text-xs text-gray-600 hover:text-gray-600 underline underline-offset-2 transition-colors"
         >
           Use a different email
         </button>
@@ -75,7 +75,7 @@ export function InlineLogin({ next }: InlineLoginProps) {
     <div className="flex flex-col gap-4 px-5 py-5">
       <div className="text-center space-y-0.5">
         <p className="text-sm font-semibold text-gray-900">Sign in to continue</p>
-        <p className="text-xs text-gray-400">We&apos;ll save your details for next time</p>
+        <p className="text-xs text-gray-600">We&apos;ll save your details for next time</p>
       </div>
 
       {/* OAuth buttons */}
@@ -107,7 +107,7 @@ export function InlineLogin({ next }: InlineLoginProps) {
       {/* Divider */}
       <div className="flex items-center gap-3">
         <div className="flex-1 border-t border-gray-100" />
-        <span className="text-xs text-gray-400 font-medium">or</span>
+        <span className="text-xs text-gray-600 font-medium">or</span>
         <div className="flex-1 border-t border-gray-100" />
       </div>
 
@@ -121,7 +121,7 @@ export function InlineLogin({ next }: InlineLoginProps) {
             value={email}
             onChange={(e) => { setEmail(e.target.value); setError('') }}
             aria-invalid={!!error}
-            className={`w-full rounded-lg border bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none focus:ring-2 ${error ? 'border-red-400 focus:ring-red-100' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-100'}`}
+            className={`w-full rounded-lg border bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-600 transition-colors focus:outline-none focus:ring-2 ${error ? 'border-red-400 focus:ring-red-100' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-100'}`}
             placeholder="you@example.com"
           />
           {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
@@ -133,17 +133,18 @@ export function InlineLogin({ next }: InlineLoginProps) {
           className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" />
           ) : (
             <>
               Send magic link
-              <ArrowRight className="h-3.5 w-3.5 text-gray-400" />
+              <IconArrowRight stroke={1.5}
+               className="h-3.5 w-3.5 text-gray-600" />
             </>
           )}
         </button>
       </form>
 
-      <p className="text-center text-[11px] text-gray-400 leading-relaxed">
+      <p className="text-center text-[11px] text-gray-600 leading-relaxed">
         Free account &middot; No password needed
       </p>
     </div>

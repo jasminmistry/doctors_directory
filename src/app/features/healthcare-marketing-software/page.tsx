@@ -1,16 +1,5 @@
-import {
-  MessageSquare,
-  Brain,
-  Clock3,
-  ClipboardList,
-  HeartHandshake,
-  FileText,
-  Stethoscope,
-  LayoutTemplate,
-  Waypoints,
-  Star
- } from "lucide-react";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
+import { IconBrain, IconClockHour4, IconMessage, IconClipboardList, IconHeartHandshake, IconFileText, IconStethoscope, IconLayoutCollage, IconEaseInOutControlPoints, IconStar } from "@tabler/icons-react";
 export default function ClinicManagementSoftwarePage() {
   const bookDemoHref = b2bBookDemoHref();
   const BookDemoButton = () => (
@@ -26,31 +15,31 @@ export default function ClinicManagementSoftwarePage() {
   const featuresList = [
     {
       name: "Messaging",
-      icon: MessageSquare,
+      icon: IconMessage,
     },
     {
       name: "Memory Jog",
-      icon: Brain,
+      icon: IconBrain,
     },
     {
       name: "Waiting List",
-      icon: Clock3,
+      icon: IconClockHour4,
     },
     {
       name: "Questionnaire Builder",
-      icon: ClipboardList,
+      icon: IconClipboardList,
     },
     {
       name: "Engage your patients",
-      icon: HeartHandshake,
+      icon: IconHeartHandshake,
     },
     {
       name: "Treatment Notes",
-      icon: FileText,
+      icon: IconFileText,
     },
     {
       name: "Clinicians",
-      icon: Stethoscope,
+      icon: IconStethoscope,
     },
   ];
   
@@ -102,7 +91,7 @@ export default function ClinicManagementSoftwarePage() {
             return (
               <div className="text-center" key={feature.name}>
                 <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <Icon strokeWidth={1.5} className="w-8 h-8 text-primary" />
+                  <Icon stroke={1.5} className="w-8 h-8 text-primary" />
                 </div>
                 <p className="text-gray-700">{feature.name}</p>
               </div>
@@ -192,7 +181,7 @@ export default function ClinicManagementSoftwarePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Waypoints strokeWidth={1.5} className="mb-4" size={36}  />
+              <IconEaseInOutControlPoints stroke={1.5} className="mb-4" size={36}  />
               <h3 className="text-xl md:text-lg font-medium mb-4"> 
                 Pipeline
               </h3>
@@ -202,7 +191,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Star strokeWidth={1.5} className="mb-4" size={36}   />
+              <IconStar stroke={1.5} className="mb-4" size={36}   />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Gather Reviews
               </h3>
@@ -212,7 +201,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <LayoutTemplate strokeWidth={1.5} className="mb-4" size={36}  />
+              <IconLayoutCollage stroke={1.5} className="mb-4" size={36}  />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Segmentation
               </h3>

@@ -19,9 +19,9 @@ import {
   differenceInMinutes,
 } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
-import { ChevronLeft, ChevronRight, CalendarDays, List, RefreshCw, Plus, Pencil, Trash2, Loader2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { IconCalendarWeek, IconChevronLeft, IconChevronRight, IconTrash, IconPencil, IconPlus, IconRefresh, IconLoader2, IconX } from '@tabler/icons-react'
 
 /**
  * All booking times are stored as real UTC instants. Every render path converts
@@ -118,7 +118,7 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
             className="rounded-lg p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-700 transition-colors"
             aria-label="Previous"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <IconChevronLeft stroke={1.5} className="h-4 w-4" />
           </button>
           <span className="min-w-[140px] text-center text-sm font-semibold text-gray-800 sm:min-w-[180px]">{title}</span>
           <button
@@ -126,7 +126,7 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
             className="rounded-lg p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-700 transition-colors"
             aria-label="Next"
           >
-            <ChevronRight className="h-4 w-4" />
+            <IconChevronRight stroke={1.5} className="h-4 w-4" />
           </button>
           <Button
             variant="ghost"
@@ -144,7 +144,7 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
               size="sm"
               onClick={onNewBooking}
             >
-              <Plus className="h-3.5 w-3.5 sm:mr-1" />
+              <IconPlus stroke={1.5} className="h-3.5 w-3.5 sm:mr-1" />
               <span className="hidden sm:inline">New Appointment</span>
             </Button>
           )}
@@ -156,7 +156,7 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
               aria-label="Sync from Core"
               title="Sync from Consentz Core"
             >
-              <RefreshCw className={cn('h-4 w-4', refreshing && 'animate-spin')} />
+              <IconRefresh stroke={1.5} className={cn('h-4 w-4', refreshing && 'animate-spin')} />
             </button>
           )}
           <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs font-medium">
@@ -393,7 +393,7 @@ function ListViewWeek({
   if (grouped.length === 0) {
     return (
       <div className="flex flex-col items-center gap-2 py-16 text-center">
-        <CalendarDays className="h-8 w-8 text-gray-200" />
+        <IconCalendarWeek stroke={1.5} className="h-8 w-8" />
         <p className="text-sm text-gray-600">No bookings this week</p>
       </div>
     )
@@ -460,7 +460,7 @@ function DayOverflow({
         <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-5 py-4">
           <h3 className="text-sm font-semibold text-gray-900">{format(day, 'EEEE, d MMMM')}</h3>
           <button onClick={onClose} className="text-gray-600 hover:text-gray-600 transition-colors" aria-label="Close">
-            <X className="h-4 w-4" />
+            <IconX stroke={1.5} className="h-4 w-4" />
           </button>
         </div>
         <div className="max-h-80 overflow-y-auto divide-y divide-gray-100">
@@ -532,7 +532,7 @@ function BookingDetail({
               {booking.status.replace('_', ' ')}
             </span>
             <button onClick={onClose} className="ml-1 text-gray-600 hover:text-gray-600 transition-colors">
-              <X className="h-4 w-4" />
+              <IconX stroke={1.5} className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -575,7 +575,7 @@ function BookingDetail({
                 onClick={onEdit}
                 className="flex items-center gap-1.5 rounded-lg border border-[#e0e0e0]  bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                <Pencil className="h-3.5 w-3.5" />
+                <IconPencil stroke={1.5} className="h-3.5 w-3.5" />
                 Edit
               </button>
             )}
@@ -584,7 +584,7 @@ function BookingDetail({
                 onClick={() => setConfirming(true)}
                 className="flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors ml-auto"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <IconTrash stroke={1.5} className="h-3.5 w-3.5" />
                 Delete
               </button>
             )}
@@ -602,7 +602,7 @@ function BookingDetail({
                   onClick={() => { setDeleting(true); onDelete?.() }}
                   className="flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 transition-colors disabled:opacity-60"
                 >
-                  {deleting && <Loader2 className="h-3 w-3 animate-spin" />}
+                  {deleting && <IconLoader2 stroke={1.5} className="h-3 w-3 animate-spin" />}
                   Delete
                 </button>
               </div>

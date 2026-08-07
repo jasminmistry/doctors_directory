@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
-import { Loader2, PoundSterling, TrendingUp, CalendarDays, ReceiptText } from 'lucide-react'
+import { IconLoader2, IconCurrencyPound, IconTrendingUp, IconCalendar, IconReceipt } from '@tabler/icons-react'
 import { cn } from '@/lib/utils'
 
 import { commissionRate, commissionPct, clinicNetRate } from '@/lib/pricing'
@@ -83,7 +83,7 @@ export function PractitionerEarnings() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Earnings</h1>
+          <h1 className="text-3xl text-gray-900">Earnings</h1>
           <p className="mt-0.5 text-sm text-gray-600">
             Payments collected from patients who booked consultations through the directory.
           </p>
@@ -111,32 +111,32 @@ export function PractitionerEarnings() {
 
       {loading ? (
         <div className="flex justify-center py-16">
-          <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
+          <IconLoader2 stroke={1.5} className="h-6 w-6 animate-spin text-gray-600" />
         </div>
       ) : (
         <>
           {/* Summary cards — always show all-time stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <SummaryCard
-              icon={PoundSterling}
+              icon={IconCurrencyPound}
               label="Net earned"
               value={`£${fmt((summary?.total ?? 0) * (1 - feeRate))}`}
               sub={feeRate > 0 ? `after ${(feeRate * 100).toFixed(0)}% platform fee` : 'all time'}
             />
             <SummaryCard
-              icon={TrendingUp}
+              icon={IconTrendingUp}
               label="This month (net)"
               value={`£${fmt((summary?.thisMonth ?? 0) * (1 - feeRate))}`}
               sub="paid bookings"
             />
             <SummaryCard
-              icon={CalendarDays}
+              icon={IconCalendar}
               label="Last month (net)"
               value={`£${fmt((summary?.lastMonth ?? 0) * (1 - feeRate))}`}
               sub="paid bookings"
             />
             <SummaryCard
-              icon={ReceiptText}
+              icon={IconReceipt}
               label="Total bookings"
               value={String(summary?.bookingCount ?? 0)}
               sub="paid via directory"
@@ -146,7 +146,7 @@ export function PractitionerEarnings() {
           {/* Bookings table */}
           {bookings.length === 0 ? (
             <div className="bg-white rounded-lg border border-dashed border-gray-200 py-16 text-center">
-              <PoundSterling className="mx-auto h-8 w-8 text-gray-600 mb-3" />
+              <IconCurrencyPound stroke={1.5} className="mx-auto h-8 w-8 text-gray-600 mb-3" />
               <p className="text-sm font-medium text-gray-700">
                 {period === 'all' ? 'No paid bookings yet' : `No paid bookings for ${PERIOD_LABELS[period].toLowerCase()}`}
               </p>
@@ -306,7 +306,7 @@ function SummaryCard({
     <div className="rounded-lg border border-gray-200 bg-white px-4 py-4 space-y-2">
       <div className="flex items-center gap-2">
         <div className="flex">
-          <Icon className="h-6 w-6 text-black" />
+          <Icon stroke={1.5} className="h-6 w-6 text-black" />
         </div>
         <p className="text-xs text-gray-600">{label}</p>
       </div>

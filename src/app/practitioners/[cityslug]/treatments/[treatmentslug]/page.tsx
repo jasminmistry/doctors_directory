@@ -9,7 +9,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
 import { CityTreatmentPage } from "@/components/cityxTreatmentPage";
 import treatment_content from "@//../public/treatments.json";
 import ItemsGrid from "@/components/collectionGrid";
@@ -31,6 +30,7 @@ import {
 } from "@/lib/sitemap-data";
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { treatmentMatchesSlug } from "@/lib/treatment-match";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 type TreatmentSlug = keyof typeof treatment_content
 
@@ -166,7 +166,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
             <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
-                <ArrowLeft className="h-4 w-4" />
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
             </Link>
             <Breadcrumb>

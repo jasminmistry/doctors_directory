@@ -1,10 +1,10 @@
-import { MinusCircle, PlusCircle } from "lucide-react"
 import {
   HUB_FAQ_ANSWER_CLASS,
   HUB_FAQ_INTRO_CLASS,
   HUB_FAQ_QUESTION_CLASS,
   HUB_FAQ_TITLE_CLASS,
 } from "@/components/b2b-hub/hub-marketing-typography"
+import { IconCircleMinus, IconCirclePlus } from "@tabler/icons-react"
 
 export type HubFaqItem = {
   question: string
@@ -61,8 +61,8 @@ export function HubBuyerFaq({
             >
               <summary className="flex cursor-pointer list-none items-start gap-[9px] px-6 py-5 [&::-webkit-details-marker]:hidden">
                 <span className="mt-0.5 shrink-0 text-[#151C26]" aria-hidden>
-                  <PlusCircle className="size-[22px] group-open:hidden" strokeWidth={1.75} />
-                  <MinusCircle className="hidden size-[22px] group-open:block" strokeWidth={1.75} />
+                  <IconCirclePlus className="size-[22px] group-open:hidden" stroke={1.5} />
+                  <IconCircleMinus className="hidden size-[22px] group-open:block" stroke={1.75} />
                 </span>
                 <span className={HUB_FAQ_QUESTION_CLASS}>{item.question}</span>
               </summary>

@@ -1,22 +1,5 @@
-import {
-  MessageSquare,
-  Brain,
-  Clock3,
-  ClipboardList,
-  HeartHandshake,
-  FileText,
-  Stethoscope,
-  ArrowUpNarrowWide,
-  ChartLine,
-  DollarSign,
-  Trophy,
-  Target,
-  Sprout,
-  BookText,
-  Search,
-  Sun
-} from "lucide-react";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
+import { IconArrowNarrowUp, IconBrain, IconChartLine, IconCurrencyDollar, IconClipboard, IconClock, IconFileText, IconHeartHandshake, IconMessage, IconStethoscope, IconTrophy, IconRoute, IconTarget, IconBook, IconSearch, IconSunHigh } from "@tabler/icons-react";
 export default function ClinicManagementSoftwarePage() {
   const bookDemoHref = b2bBookDemoHref();
   const BookDemoButton = () => (
@@ -32,31 +15,31 @@ export default function ClinicManagementSoftwarePage() {
   const featuresList = [
     {
       name: "Messaging",
-      icon: MessageSquare,
+      icon: IconMessage,
     },
     {
       name: "Memory Jog",
-      icon: Brain,
+      icon: IconBrain,
     },
     {
       name: "Waiting List",
-      icon: Clock3,
+      icon: IconClock,
     },
     {
       name: "Questionnaire Builder",
-      icon: ClipboardList,
+      icon: IconClipboard,
     },
     {
       name: "Engage your patients",
-      icon: HeartHandshake,
+      icon: IconHeartHandshake,
     },
     {
       name: "Treatment Notes",
-      icon: FileText,
+      icon: IconFileText,
     },
     {
       name: "Clinicians",
-      icon: Stethoscope,
+      icon: IconStethoscope,
     },
   ];
   
@@ -108,7 +91,7 @@ export default function ClinicManagementSoftwarePage() {
             return (
               <div className="text-center" key={feature.name}>
                 <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <Icon strokeWidth={1.5} className="w-8 h-8 text-primary" />
+                  <Icon stroke={1.5} className="w-8 h-8 text-primary" />
                 </div>
                 <p className="text-gray-700">{feature.name}</p>
               </div>
@@ -146,7 +129,7 @@ export default function ClinicManagementSoftwarePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <ArrowUpNarrowWide strokeWidth={1.5} className="mb-4" size={36}  />
+              <IconArrowNarrowUp stroke={1.5} className="mb-4" size={36}  />
               <h3 className="text-xl md:text-lg font-medium mb-4">Filters & Variables</h3>
               <p className="text-gray-700">
                 Customisable options enable you to select the key variables you need to track, be it the number of specific treatments administered last month or the names of your best practitioners.
@@ -154,7 +137,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <ChartLine strokeWidth={1.5} className="mb-4" size={36} />
+              <IconChartLine stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Better Insight
               </h3>
@@ -164,7 +147,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <DollarSign strokeWidth={1.5} className="mb-4" size={36} />
+              <IconCurrencyDollar stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Show Me The Money
               </h3>
@@ -205,7 +188,7 @@ export default function ClinicManagementSoftwarePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Trophy strokeWidth={1.5} className="mb-4" size={36}   />
+              <IconTrophy stroke={1.5} className="mb-4" size={36}   />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Key Performance Indicators
               </h3>
@@ -215,7 +198,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Target strokeWidth={1.5} className="mb-4" size={36} />
+              <IconTarget stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">Comparisons & Targets</h3>
               <p className="text-gray-700">
                 Track how well you’re doing by comparing your data against last week, month or year. Motivate yourself and your team by setting goals and targets and track in real time.
@@ -223,7 +206,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Sprout strokeWidth={1.5} className="mb-4" size={36} />
+              <IconRoute stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">Growth & Efficiency</h3>
               <p className="text-gray-700">
                 A 1% gain here and a 1% gain there – soon you’ll see meaningful growth and efficiency. Transform your business with continuous marginal gains.
@@ -263,7 +246,7 @@ export default function ClinicManagementSoftwarePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <BookText strokeWidth={1.5} className="mb-4" size={36}  />
+              <IconBook stroke={1.5} className="mb-4" size={36}  />
               <h3 className="text-xl md:text-lg font-medium mb-4">Clear Explanations</h3>
               <p className="text-gray-700">
                 Every graph and data query has it’s own explanation page helping you discover what lies behind the numbers. Each page includes descriptions, trends and possible actions.
@@ -271,7 +254,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Search strokeWidth={1.5} className="mb-4" size={36} />
+              <IconSearch stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                 Easy to Search
               </h3>
@@ -281,7 +264,7 @@ export default function ClinicManagementSoftwarePage() {
             </div>
 
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-              <Sun strokeWidth={1.5} className="mb-4" size={36}  />
+              <IconSunHigh stroke={1.5} className="mb-4" size={36}  />
               <h3 className="text-xl md:text-lg font-medium mb-4">
                Advice from the Best
               </h3>

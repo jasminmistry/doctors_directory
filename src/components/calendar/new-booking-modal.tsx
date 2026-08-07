@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react'
 import { format, addMinutes } from 'date-fns'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
-import { X, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { IconLoader2, IconX } from '@tabler/icons-react'
 
 /**
  * `defaultDate` (from clicking an empty grid slot) is already a "zoned" Date —
@@ -155,7 +155,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 shrink-0">
           <h2 className="text-sm font-semibold text-gray-900">{isEdit ? 'Edit Appointment' : 'New Appointment'}</h2>
           <button onClick={onClose} className="text-gray-600 hover:text-gray-600 transition-colors">
-            <X className="h-4 w-4" />
+            <IconX stroke={1.5} className="h-4 w-4" />
           </button>
         </div>
 
@@ -271,7 +271,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
               disabled={saving}
               className='flex-1'
             >
-              {saving ? <><Loader2 className="h-4 w-4 animate-spin mr-1.5" />Saving…</> : isEdit ? 'Update Appointment' : 'Save Appointment'}
+              {saving ? <><IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin mr-1.5" />Saving…</> : isEdit ? 'Update Appointment' : 'Save Appointment'}
             </Button>
           </div>
         </form>

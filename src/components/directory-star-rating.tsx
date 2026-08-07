@@ -1,5 +1,5 @@
-import { Star } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { IconStar } from "@tabler/icons-react"
 
 type Props = {
   reviewCount: number
@@ -30,7 +30,7 @@ export function DirectoryStarRating({
     >
       <div className="flex items-center gap-0.5" aria-hidden="true">
         {Array.from({ length: 5 }, (_, index) => (
-          <Star key={index} className={starClassName} />
+          <IconStar stroke={1.5} key={index} className={starClassName} />
         ))}
       </div>
       <span>{label}</span>

@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { AlertTriangle, Link2Off, X, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
+import { IconAlertTriangle, IconLinkOff, IconLoader2, IconX } from '@tabler/icons-react'
 
 interface CoreUnlinkCardProps {
   slug: string
@@ -60,7 +60,7 @@ export function CoreUnlinkCard({ slug }: CoreUnlinkCardProps) {
     <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-5">
       <div className="flex items-start gap-3">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100">
-          <AlertTriangle className="h-4 w-4 text-amber-600" />
+          <IconAlertTriangle stroke={1.5} className="h-4 w-4 text-amber-600" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-amber-900">
@@ -80,7 +80,7 @@ export function CoreUnlinkCard({ slug }: CoreUnlinkCardProps) {
           disabled={!!loading}
           className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-50"
         >
-          {loading === 'unlink' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Link2Off className="h-3.5 w-3.5" />}
+          {loading === 'unlink' ? <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" /> : <IconLinkOff stroke={1.5} className="h-3.5 w-3.5" />}
           Approve &amp; unlink
         </button>
         <button
@@ -89,7 +89,7 @@ export function CoreUnlinkCard({ slug }: CoreUnlinkCardProps) {
           disabled={!!loading}
           className="inline-flex items-center gap-2 rounded-lg border border-amber-300 bg-white px-4 py-2 text-sm font-medium text-amber-800 hover:bg-amber-50 transition disabled:opacity-50"
         >
-          {loading === 'dismiss' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <X className="h-3.5 w-3.5" />}
+          {loading === 'dismiss' ? <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" /> : <IconX stroke={1.5} className="h-3.5 w-3.5" />}
           Dismiss request
         </button>
       </div>

@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import PractitionerTabs from "@/components/Product/ProductTabs";
 import { ProfileHeaderSkeleton, BreadcrumbSkeleton } from "@/components/loading-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 export default async function Loading({ params }: { params: { category: string; slug: string } }) {
   return (
@@ -11,7 +11,7 @@ export default async function Loading({ params }: { params: { category: string; 
       <div className="sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
           <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
           </Link>
           <BreadcrumbSkeleton

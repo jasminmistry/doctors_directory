@@ -14,12 +14,12 @@ import { getTreatmentImage, TreatmentMap } from "@/lib/data";
 import { TreatmentDetail } from "@/components/treatment-detail";
 import Script from "next/script";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ItemsGrid from "@/components/collectionGrid";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
 
 interface ProfilePageProps {
@@ -407,7 +407,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
           <div className="bg-card/50 backdrop-blur-sm sticky top-0 z-10">
             <div className="mx-auto max-w-7xl px-6 py-4">
               <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
-               <ArrowLeft className="h-4 w-4" />
+               <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
               </Link>
               <Breadcrumb>

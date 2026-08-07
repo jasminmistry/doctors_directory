@@ -1,7 +1,6 @@
 
 import { notFound, permanentRedirect, redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/components/Product/profile-header";
 import ClinicDetailsMarkdown from "@/components/Product/ProductDetailsMD";
@@ -20,6 +19,7 @@ import { Suspense } from "react";
 import { getProductBySlug } from "@/lib/data-access/products";
 import { isRedirectedCategorySlug, isRemovedProductSlug } from "@/lib/product-removals";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 const SimilarProducts = (await import("./SimilarProducts")).default;
 const UniqueTreatments = (await import("./UniqueTreatments")).default;
 const Locations = (await import("./Locations")).default;
@@ -60,7 +60,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       <div className="sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
           <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
           </Link>
           <Breadcrumb>

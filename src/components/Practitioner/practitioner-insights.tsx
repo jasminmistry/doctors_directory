@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { User, Heart, Award, Building } from "lucide-react"
+import { IconUser, IconHeart, IconAward, IconBuilding } from "@tabler/icons-react"
 import type { Practitioner, ReviewAnalysis } from "@/lib/types"
 
 interface PractitionerInsightsProps {
@@ -22,7 +22,7 @@ export function PractitionerInsights({ practitioner }: Readonly<PractitionerInsi
       <Card className="border-border/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5 text-accent" />
+            <IconUser stroke={1.5} className="h-5 w-5 text-accent" />
             Professional Profile
           </CardTitle>
         </CardHeader>
@@ -79,7 +79,7 @@ export function PractitionerInsights({ practitioner }: Readonly<PractitionerInsi
           <Card className="border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Award className="h-4 w-4 text-accent" />
+                <IconAward stroke={1.5} className="h-4 w-4 text-accent" />
                 Treatment Outcomes
               </CardTitle>
             </CardHeader>
@@ -100,7 +100,7 @@ export function PractitionerInsights({ practitioner }: Readonly<PractitionerInsi
           <Card className="border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Building className="h-4 w-4 text-accent" />
+                <IconBuilding stroke={1.5} className="h-4 w-4 text-accent" />
                 Clinic Environment
               </CardTitle>
             </CardHeader>
@@ -121,7 +121,7 @@ export function PractitionerInsights({ practitioner }: Readonly<PractitionerInsi
           <Card className="border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Heart className="h-4 w-4 text-accent" />
+                <IconHeart stroke={1.5} className="h-4 w-4 text-accent" />
                 Patient Loyalty
               </CardTitle>
             </CardHeader>
@@ -142,7 +142,7 @@ export function PractitionerInsights({ practitioner }: Readonly<PractitionerInsi
           <Card className="border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Award className="h-4 w-4 text-accent" />
+                <IconAward stroke={1.5} className="h-4 w-4 text-accent" />
                 Recommendations
               </CardTitle>
             </CardHeader>

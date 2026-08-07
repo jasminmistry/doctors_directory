@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 
 export function MoreItemsScroller({
   children,
@@ -62,7 +62,7 @@ export function MoreItemsScroller({
         className="absolute left-0 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full p-0 flex items-center justify-center bg-[#f4f4f4] border border-[#e0e0e0] text-[#1f1f1f] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors disabled:opacity-50"
         disabled={!canScrollLeft}
       >
-        <ChevronLeft className="h-5 w-5" />
+        <IconChevronLeft stroke={1.5} className="h-5 w-5" />
       </Button>
 
       <Button
@@ -70,7 +70,7 @@ export function MoreItemsScroller({
         className="absolute right-0 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full p-0 flex items-center justify-center bg-[#f4f4f4] border border-[#e0e0e0] text-[#1f1f1f] hover:bg-[#eeeeee] hover:border-[#d2d2d2] transition-colors disabled:opacity-50"
         disabled={!canScrollRight}
       >
-        <ChevronRight className="h-5 w-5" />
+        <IconChevronRight stroke={1.5} className="h-5 w-5" />
       </Button>
     </div>
   );

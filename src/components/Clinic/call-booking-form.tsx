@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { format, addDays, isSameDay } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
-import { ChevronLeft, ChevronRight, CheckCircle2, Loader2, Video, ExternalLink, Clock } from 'lucide-react'
 import { cn, formatTimezoneAbbr } from '@/lib/utils'
+import { IconChevronLeft, IconChevronRight, IconCircleCheck, IconExternalLink, IconLoader2, IconVideo } from '@tabler/icons-react'
 
 // Video call slot times are always shown in the clinic's own timezone, never
 // the visitor's browser timezone — every clinic in this directory is UK-based.
@@ -200,9 +200,9 @@ export function CallBookingForm({
     return (
       <div className={cn('flex flex-col items-center justify-center gap-4 text-center', compact ? 'py-8 px-5' : 'py-12 px-6')}>
         {isZoomWaiting ? (
-          <Clock className="h-10 w-10 text-black shrink-0" />
+          <IconLoader2 stroke={1.5} className="h-10 w-10 shrink-0" />
         ) : (
-          <CheckCircle2 className="h-10 w-10 text-green-500 shrink-0" />
+          <IconCircleCheck  stroke="1.5" className="h-10 w-10 text-green-500 shrink-0" />
         )}
         <div className="space-y-1">
           <p className="font-semibold text-gray-900 text-sm">Video call booked!</p>
@@ -215,7 +215,7 @@ export function CallBookingForm({
 
         {isZoomWaiting ? (
           <div className="flex flex-col items-center gap-2">
-            <Loader2 className="h-5 w-5 animate-spin text-black" />
+            <IconLoader2 stroke={1.5} className="h-5 w-5 animate-spin" />
             <p className="text-xs text-gray-600">Preparing your Zoom link — this usually takes under a minute…</p>
           </div>
         ) : (
@@ -225,9 +225,9 @@ export function CallBookingForm({
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 transition-colors"
           >
-            <Video className="h-4 w-4" />
+            <IconVideo stroke={1.5} className="h-4 w-4" />
             Join Video Call
-            <ExternalLink className="h-3.5 w-3.5 opacity-70" />
+            <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 opacity-70" />
           </a>
         )}
 
@@ -338,7 +338,7 @@ export function CallBookingForm({
             onClick={handleConfirm}
             className="flex-1 rounded-lg bg-gray-900 px-3 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors flex items-center justify-center gap-1.5"
           >
-            {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Video className="h-3.5 w-3.5" />}
+            {submitting ? <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" /> : <IconVideo stroke={1.5} className="h-3.5 w-3.5" />}
             {submitting ? 'Booking…' : 'Confirm Call'}
           </button>
         </div>
@@ -364,7 +364,7 @@ export function CallBookingForm({
           disabled={weekOffset === 0}
           className="rounded p-1 text-gray-600 hover:text-gray-700 disabled:opacity-30"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <IconChevronLeft stroke={1.5} className="h-4 w-4" />
         </button>
         <span className="text-xs text-gray-600">
           {format(weekStart, 'd MMM')} – {format(weekDays[6], 'd MMM')}
@@ -374,7 +374,7 @@ export function CallBookingForm({
           onClick={() => setWeekOffset((o) => o + 1)}
           className="rounded p-1 text-gray-600 hover:text-gray-700"
         >
-          <ChevronRight className="h-4 w-4" />
+          <IconChevronRight stroke={1.5} className="h-4 w-4" />
         </button>
       </div>
 
@@ -409,7 +409,7 @@ export function CallBookingForm({
         <div>
           {slotsLoading ? (
             <div className="flex justify-center py-4">
-              <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
+              <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin text-gray-600" />
             </div>
           ) : slots.length === 0 ? (
             <p className="text-center text-xs text-gray-600 py-3">No call slots available on this day</p>
@@ -446,7 +446,7 @@ export function CallBookingForm({
         onClick={() => setStep(2)}
         className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
       >
-        <Video className="h-4 w-4" />
+        <IconVideo stroke={1.5} className="h-4 w-4" />
         Next →
       </button>
     </div>

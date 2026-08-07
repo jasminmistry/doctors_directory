@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { X } from "lucide-react"
 import { toast } from "sonner"
 import type { VariantProps } from "class-variance-authority"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -13,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { trackCtaClick } from "@/lib/tracking/client"
 import type { DirectoryPageType } from "@/lib/tracking/types"
 import { useExclusiveFloatingPanel } from "@/lib/floating-panel-bus"
+import { IconX } from "@tabler/icons-react"
 
 interface RequestConsultationDialogProps {
   pageType: Extract<DirectoryPageType, "practitioner_page" | "clinic_page" | "collection_page">
@@ -237,7 +237,7 @@ export function RequestConsultationDialog({
             className="ml-2 shrink-0 rounded-lg p-1 text-gray-600 hover:text-gray-600 transition-colors"
             aria-label="Close"
           >
-            <X className="h-4 w-4" />
+            <IconX stroke={1.5} className="h-4 w-4" />
           </button>
         </div>
 

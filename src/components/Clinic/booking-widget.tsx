@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react'
 import { format, addDays, isSameDay } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 import { toast } from 'sonner'
-import { ChevronLeft, ChevronRight, CheckCircle2, Loader2, Video, ExternalLink, Calendar } from 'lucide-react'
 import { cn, formatTimezoneAbbr } from '@/lib/utils'
 import { ConsultationRichForm } from '@/components/consultation/consultation-form'
 import type { ConsultationFormData } from '@/components/consultation/consultation-form'
 import type { CoreSlot } from '@/lib/core-api'
+import { IconCalendarWeek, IconChevronLeft, IconChevronRight, IconCircleCheck, IconExternalLink, IconLoader2, IconVideo } from '@tabler/icons-react'
 
 interface BookingWidgetProps {
   slug: string
@@ -140,7 +140,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
           <h2 className="text-base font-semibold text-gray-900">Booking Confirmed</h2>
         </div>
         <div className="flex flex-col items-center gap-4 text-center px-6 py-10">
-          <CheckCircle2 className="h-10 w-10 text-green-500 shrink-0" />
+          <IconCircleCheck stroke={1.5} className="h-10 w-10 text-green-500 shrink-0" />
           <div className="space-y-1">
             <p className="font-semibold text-gray-900">Appointment with {confirmation.practitionerName}</p>
             <p className="text-sm text-gray-600">
@@ -156,9 +156,9 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 transition-colors"
             >
-              <Video className="h-4 w-4" />
+              <IconVideo stroke={1.5} className="h-4 w-4" />
               Join Meeting
-              <ExternalLink className="h-3.5 w-3.5 opacity-70" />
+              <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 opacity-70" />
             </a>
           )}
 
@@ -189,7 +189,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
             onClick={() => setStep('date-slot')}
             className="text-gray-600 hover:text-gray-600"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <IconChevronLeft stroke={1.5} className="h-4 w-4" />
           </button>
           <div>
             <h2 className="text-base font-semibold text-gray-900">Your Details</h2>
@@ -243,7 +243,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
             disabled={weekOffset === 0}
             className="rounded p-1 text-gray-600 hover:text-gray-700 disabled:opacity-30"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <IconChevronLeft stroke={1.5} className="h-4 w-4" />
           </button>
           <span className="text-xs text-gray-600">
             {format(weekStart, 'd MMM')} – {format(weekDays[6], 'd MMM')}
@@ -253,7 +253,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
             onClick={() => setWeekOffset(o => o + 1)}
             className="rounded p-1 text-gray-600 hover:text-gray-700"
           >
-            <ChevronRight className="h-4 w-4" />
+            <IconChevronRight stroke={1.5} className="h-4 w-4" />
           </button>
         </div>
 
@@ -293,7 +293,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
             )}
             {slotsLoading ? (
               <div className="flex justify-center py-4">
-                <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
+                <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" />
               </div>
             ) : slots.length === 0 ? (
               <p className="text-center text-xs text-gray-600 py-3">No availability on this day</p>
@@ -330,7 +330,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
             className="h-4 w-4 rounded border-[#e0e0e0] accent-gray-900"
           />
           <span className="flex items-center gap-1.5 text-xs text-gray-700">
-            <Video className="h-3.5 w-3.5 text-gray-600" />
+            <IconVideo stroke={1.5} className="h-3.5 w-3.5 text-gray-600" />
             Book as video call
           </span>
         </label>
@@ -341,7 +341,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
           onClick={() => setStep('details')}
           className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
         >
-          <Calendar className="h-4 w-4" />
+          <IconCalendarWeek stroke={1.5} className="h-4 w-4" />
           Next — Your Details
         </button>
       </div>

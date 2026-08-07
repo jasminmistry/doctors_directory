@@ -6,7 +6,7 @@ import { DEFAULT_PERSON, FallbackImage } from '@/components/ui/fallback-image'
 import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
-import { Trash2, X, EyeOff, Loader2, Users } from 'lucide-react'
+import { IconEyeOff, IconLoader2, IconTrash, IconUsers, IconX } from '@tabler/icons-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -74,16 +74,16 @@ export default function DirectoryRemovalRequestsPage() {
   return (
     <AdminLayout title="Removal Requests">
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-sm text-gray-400">
+        <div className="flex items-center justify-center py-16 text-sm text-gray-600">
           Loading…
         </div>
       ) : rows.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-600">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-            <Trash2 className="h-5 w-5 text-gray-400" />
+            <IconTrash stroke={1.5} className="h-5 w-5" />
           </div>
           <p className="text-sm font-medium">No pending removal requests</p>
-          <p className="text-xs text-gray-400">Clinics that ask to be removed from the directory will appear here.</p>
+          <p className="text-xs text-gray-600">Clinics that ask to be removed from the directory will appear here.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -110,7 +110,8 @@ export default function DirectoryRemovalRequestsPage() {
                         <p className="text-sm font-semibold text-gray-900">{displayName}</p>
                         {row.isHidden && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-                            <EyeOff className="h-3 w-3" /> Hidden
+                            <IconEyeOff stroke={1.5} className="h-3 w-3" /> 
+                            Hidden
                           </span>
                         )}
                       </div>
@@ -125,7 +126,7 @@ export default function DirectoryRemovalRequestsPage() {
                   {row.practitioners.length > 0 && (
                     <div className="mt-4 rounded-lg bg-gray-50 border border-gray-100 p-3">
                       <div className="flex items-center gap-1.5 mb-2">
-                        <Users className="h-3.5 w-3.5 text-gray-400" />
+                        <IconUsers stroke={1.5} className="h-3.5 w-3.5" />
                         <p className="text-xs font-medium text-gray-600">{row.practitioners.length} associated practitioner{row.practitioners.length !== 1 ? 's' : ''}</p>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -136,7 +137,7 @@ export default function DirectoryRemovalRequestsPage() {
                               : <div className="h-6 w-6 rounded-full bg-gray-200 shrink-0" />
                             }
                             <span className="text-xs text-gray-700">{p.displayName ?? p.slug}</span>
-                            {p.isHidden && <EyeOff className="h-3 w-3 text-gray-400" />}
+                            {p.isHidden && <IconEyeOff stroke={1.5} className="h-3 w-3" />}
                           </div>
                         ))}
                       </div>
@@ -151,7 +152,7 @@ export default function DirectoryRemovalRequestsPage() {
                       onClick={() => handleApprove(row.slug)}
                       disabled={isBusy}
                     >
-                      {busy[row.slug] === 'approve' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                      {busy[row.slug] === 'approve' ? <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" /> : <IconTrash stroke={1.5} className="h-3.5 w-3.5" />}
                       Approve &amp; remove listing
                     </Button>
 
@@ -161,7 +162,7 @@ export default function DirectoryRemovalRequestsPage() {
                       onClick={() => handleDismiss(row.slug)}
                       disabled={isBusy}
                     >
-                      {busy[row.slug] === 'dismiss' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <X className="h-3.5 w-3.5" />}
+                      {busy[row.slug] === 'dismiss' ? <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" /> : <IconX stroke={1.5} className="h-3.5 w-3.5" />}
                       Dismiss request
                     </Button>
                   </div>

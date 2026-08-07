@@ -21,7 +21,7 @@ export default async function AdminClinicCalendarPage({ params }: Props) {
     <div className="p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">{clinic.name ?? clinic.slug} — Calendar</h1>
+          <h1 className="text-3xl text-gray-900">{clinic.name ?? clinic.slug} — Calendar</h1>
           <p className="text-sm text-gray-600 mt-0.5">
             Plan: <span className="font-medium capitalize">{clinic.claimedPlan?.replace('_', ' ') ?? 'unclaimed'}</span>
             {clinic.claimedPlan !== 'subscription' && (

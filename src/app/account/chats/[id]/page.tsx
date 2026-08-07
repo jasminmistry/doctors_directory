@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Loader2, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { IconArrowNarrowLeft, IconLoader2, IconSend } from '@tabler/icons-react'
 
 interface Message {
   id: number
@@ -145,7 +145,7 @@ export default function ChatDetailPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
+        <IconLoader2 stroke={1.5} className="h-5 w-5 animate-spin" />
       </div>
     )
   }
@@ -154,7 +154,7 @@ export default function ChatDetailPage() {
     return (
       <div className="max-w-lg space-y-4">
         <Link href="/account/chats" className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900">
-          <ArrowLeft className="h-3.5 w-3.5" /> Back
+          <IconArrowNarrowLeft stroke={1.5} className="h-3.5 w-3.5" /> Back
         </Link>
         <p className="text-gray-600">Conversation not found.</p>
       </div>
@@ -172,7 +172,7 @@ export default function ChatDetailPage() {
       {/* Header */}
       <div className="shrink-0 flex items-center gap-3 mb-4">
         <Link href="/account/chats" className="text-gray-600 hover:text-gray-900">
-          <ArrowLeft className="h-4 w-4" />
+          <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
         </Link>
         <div>
           <p className="text-sm font-semibold text-gray-900">{session.clinic.name}</p>
@@ -236,7 +236,7 @@ export default function ChatDetailPage() {
             onClick={handleSend}
             aria-label="Send"
           >
-            {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            {sending ? <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" /> : <IconSend stroke={1.5} className="h-4 w-4" />}
           </Button>
         </div>
       )}

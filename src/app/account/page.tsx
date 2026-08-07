@@ -3,13 +3,10 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import {
-  CalendarDays, MessageSquare, UserCircle, ArrowRight,
-  Search, Video, Star, ChevronRight, HelpCircle,
-} from 'lucide-react'
 import { isFuture, addMinutes } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 import { capitalize, cn } from '@/lib/utils'
+import { IconCalendarWeek, IconUserCircle, IconArrowNarrowRight, IconMessage, IconSearch, IconVideo, IconStar, IconChevronRight, IconHelpCircle } from '@tabler/icons-react'
 
 // Bookings are always shown in the clinic's own timezone, never the visitor's
 // browser timezone — every clinic in this directory is UK-based.
@@ -51,34 +48,34 @@ function NextActions() {
           href="/search"
           className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 text-sm text-gray-700 hover:border-[#e0e0e0]  hover:bg-gray-50 transition-colors"
         >
-          <Search className="h-4 w-4 text-gray-600 shrink-0" />
+          <IconSearch stroke={1.5} className="h-4 w-4 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="font-medium">Find a clinic or practitioner</p>
             <p className="text-xs text-gray-600 mt-0.5">Search by treatment, location, or name</p>
           </div>
-          <ChevronRight className="h-4 w-4 text-gray-300 shrink-0" />
+          <IconChevronRight stroke={1.5} className="h-4 w-4 shrink-0" />
         </Link>
         <Link
           href="/account/bookings"
           className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 text-sm text-gray-700 hover:border-[#e0e0e0]  hover:bg-gray-50 transition-colors"
         >
-          <CalendarDays className="h-4 w-4 text-gray-600 shrink-0" />
+          <IconCalendarWeek stroke={1.5} className="h-4 w-4 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="font-medium">View my bookings</p>
             <p className="text-xs text-gray-600 mt-0.5">Upcoming appointments and history</p>
           </div>
-          <ChevronRight className="h-4 w-4 text-gray-300 shrink-0" />
+          <IconChevronRight stroke={1.5} className="h-4 w-4 shrink-0" />
         </Link>
         <Link
           href="/search"
           className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 text-sm text-gray-700 hover:border-[#e0e0e0]  hover:bg-gray-50 transition-colors"
         >
-          <MessageSquare className="h-4 w-4 text-gray-600 shrink-0" />
+          <IconMessage stroke={1.5} className="h-4 w-4 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="font-medium">Book a consultation</p>
             <p className="text-xs text-gray-600 mt-0.5">Find a clinic, open their profile, and start a chat</p>
           </div>
-          <ChevronRight className="h-4 w-4 text-gray-300 shrink-0" />
+          <IconChevronRight stroke={1.5} className="h-4 w-4 shrink-0" />
         </Link>
       </div>
     </div>
@@ -139,23 +136,23 @@ export default function AccountDashboardPage() {
           rel="noopener noreferrer"
           className="flex items-center gap-3 rounded-lg bg-green-600 hover:bg-green-700 transition-colors px-5 py-4 text-white"
         >
-          <Video className="h-5 w-5 shrink-0" />
+          <IconVideo stroke={1.5} className="h-5 w-5 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold">Your video call is ready to join</p>
             <p className="text-xs text-green-100 mt-0.5">
               {upcomingCall.clinic.name} · {upcomingCall.treatment ?? 'Consultation'}
             </p>
           </div>
-          <ChevronRight className="h-5 w-5 shrink-0 text-green-200" />
+          <IconChevronRight stroke={1.5} className="h-5 w-5 shrink-0" />
         </a>
       )}
 
       {/* Quick stats */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { icon: CalendarDays, label: 'Bookings', count: bookingTotal, href: '/account/bookings' },
-          { icon: MessageSquare, label: 'Consultations', count: sessionTotal, href: '/account/chats' },
-          { icon: UserCircle, label: 'Profile', count: null, href: '/account/profile' },
+          { icon: IconCalendarWeek, label: 'Bookings', count: bookingTotal, href: '/account/bookings' },
+          { icon: IconMessage, label: 'Consultations', count: sessionTotal, href: '/account/chats' },
+          { icon: IconUserCircle, label: 'Profile', count: null, href: '/account/profile' },
         ].map(({ icon: Icon, label, count, href }) => (
           <Link
             key={href}
@@ -175,7 +172,7 @@ export default function AccountDashboardPage() {
           href={`/account/bookings/${nextBooking.id}`}
           className="flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3.5 hover:bg-blue-100 transition-colors"
         >
-          <CalendarDays className="h-5 w-5 text-blue-600 shrink-0" />
+          <IconCalendarWeek stroke={1.5} className="h-5 w-5 text-blue-600 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-blue-900">
               Next: {nextBooking.clinic.name}
@@ -185,7 +182,7 @@ export default function AccountDashboardPage() {
               {formatInTimeZone(nextBooking.slotStart, CLINIC_TIMEZONE, 'd MMM yyyy, HH:mm')}
             </p>
           </div>
-          <ChevronRight className="h-4 w-4 text-blue-400 shrink-0" />
+          <IconChevronRight stroke={1.5} className="h-4 w-4 shrink-0" />
         </Link>
       )}
 
@@ -195,7 +192,7 @@ export default function AccountDashboardPage() {
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Recent Bookings</h2>
             <Link href="/account/bookings" className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-700">
-              View all <ArrowRight className="h-3 w-3" />
+              View all <IconArrowNarrowRight stroke={1.5} className="h-3 w-3" />
             </Link>
           </div>
           <div className="space-y-2">
@@ -230,7 +227,7 @@ export default function AccountDashboardPage() {
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Recent Consultations</h2>
             <Link href="/account/chats" className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-700">
-              View all <ArrowRight className="h-3 w-3" />
+              View all <IconArrowNarrowRight stroke={1.5} className="h-3 w-3" />
             </Link>
           </div>
           <div className="space-y-2">
@@ -262,7 +259,7 @@ export default function AccountDashboardPage() {
       {!hasActivity && (
         <div className="space-y-4">
           <div className="rounded-lg bg-white border border-gray-200 px-6 py-8 text-center">
-            <Star className="mx-auto h-8 w-8 text-gray-200 mb-3" />
+            <IconStar  stroke={1.5} className="mx-auto h-8 w-8 mb-3" />
             <p className="text-sm font-medium text-gray-700">Your account is ready</p>
             <p className="text-xs text-gray-600 mt-1 max-w-sm mx-auto">
               Search for a clinic or practitioner, open their profile, and click <strong className="text-gray-600">Chat</strong> to start a consultation. Bookings and consultations will appear here once you&apos;ve connected with a provider.
@@ -271,7 +268,7 @@ export default function AccountDashboardPage() {
           <NextActions />
           {/* Support guidance */}
           <div className="flex items-start gap-3 rounded-lg border border-gray-100 bg-gray-50 px-4 py-4">
-            <HelpCircle className="h-4 w-4 text-gray-600 shrink-0 mt-0.5" />
+            <IconHelpCircle stroke={1.5} className="h-4 w-4 shrink-0 mt-0.5" />
             <div className="text-xs text-gray-600 space-y-1">
               <p className="font-medium text-gray-700">Expected to see a consultation here?</p>
               <p>Chat sessions are created when you start a conversation from a clinic&apos;s profile page. If you started a chat but don&apos;t see it, it may have expired (sessions last 24 hours) or you may have been using a different email address. Try starting a new conversation from the clinic&apos;s profile.</p>
@@ -289,21 +286,21 @@ export default function AccountDashboardPage() {
               href="/search"
               className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
-              <Search className="h-3.5 w-3.5" />
+              <IconSearch stroke={1.5} className="h-3.5 w-3.5" />
               Find a clinic
             </Link>
             <Link
               href="/account/bookings"
               className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
-              <CalendarDays className="h-3.5 w-3.5" />
+              <IconCalendarWeek stroke={1.5} className="h-3.5 w-3.5" />
               My bookings
             </Link>
             <Link
               href="/account/chats"
               className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
-              <MessageSquare className="h-3.5 w-3.5" />
+              <IconMessage stroke={1.5} className="h-3.5 w-3.5" />
               My consultations
             </Link>
           </div>

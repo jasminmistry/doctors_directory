@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sliders, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SearchFilters } from "@/lib/types";
@@ -12,6 +11,7 @@ import { ProductFilters } from "@/components/filters/ProductFilters";
 import { useSearchStore } from "@/app/stores/datastore";
 import {usePathname, useRouter } from "next/navigation";
 import { trackSearchUsage } from "@/lib/tracking/client";
+import { IconAdjustments, IconX } from "@tabler/icons-react";
 interface AdvancedFiltersProps {
   pageType?: string
 }
@@ -394,7 +394,7 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
             className="w-full mt-4 bg-transparent rounded-full border-black border text-black hover:bg-transparent"
           >
             Filters
-            <Sliders className="h-4 w-4 ml-2" />
+            <IconAdjustments stroke={1.5} className="h-4 w-4 ml-2" />
           </Button>
         </div>
         <Card
@@ -414,7 +414,7 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
               className="inline-flex md:hidden p-2 text-gray-500 hover:text-gray-600"
               onClick={() => onToggle()}
             >
-              <X className="w-4 h-4" />
+              <IconX stroke={1.5} className="w-4 h-4" />
             </Button>
           </CardHeader>
 

@@ -1,7 +1,7 @@
 'use client'
 
-import { ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { IconExternalLink } from '@tabler/icons-react'
 
 interface Props {
   entityName: string
@@ -53,7 +53,7 @@ export function StepConsentzExists({
       <Button asChild className="w-full gap-2">
         <a href={consentzUrl}>
           Go to Consentz to link
-          <ExternalLink className="h-4 w-4" />
+          <IconExternalLink stroke={1.5} className="h-4 w-4" />
         </a>
       </Button>
 

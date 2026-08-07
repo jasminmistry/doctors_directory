@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Download } from 'lucide-react'
 import { toast } from 'sonner'
+import { IconDownload } from '@tabler/icons-react'
 
 interface VerificationRequest {
   id: number
@@ -193,7 +193,7 @@ export default function AdminVerificationPage() {
                           download
                           className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline shrink-0"
                         >
-                          <Download className="h-3.5 w-3.5" />
+                          <IconDownload stroke={1.5} className="h-3.5 w-3.5" />
                           Download
                         </a>
                       </div>

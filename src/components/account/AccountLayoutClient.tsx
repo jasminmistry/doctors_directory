@@ -4,17 +4,9 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import {
-  LayoutDashboard,
-  CalendarDays,
-  MessageSquare,
-  UserCircle,
-  LogOut,
-  Menu,
-  X,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AccountChatBadge } from "@/components/account/chat-badge";
+import { IconCalendarWeek, IconLayoutBoard, IconLogout, IconMenu2, IconMessage, IconUserCircle, IconX } from "@tabler/icons-react";
 
 interface PatientMe {
   id: number;
@@ -24,10 +16,10 @@ interface PatientMe {
 }
 
 const NAV_ITEMS = [
-  { href: "/account", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/account/bookings", label: "Bookings", icon: CalendarDays },
-  { href: "/account/chats", label: "Consultations", icon: MessageSquare },
-  { href: "/account/profile", label: "Profile", icon: UserCircle },
+  { href: "/account", label: "Dashboard", icon: IconLayoutBoard, exact: true },
+  { href: "/account/bookings", label: "Bookings", icon: IconCalendarWeek },
+  { href: "/account/chats", label: "Consultations", icon: IconMessage },
+  { href: "/account/profile", label: "Profile", icon: IconUserCircle },
 ];
 
 export function AccountLayoutClient({ children }: { children: ReactNode }) {
@@ -83,9 +75,9 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
           aria-expanded={isMobileNavOpen}
         >
           {isMobileNavOpen ? (
-            <X className="h-4 w-4" />
+            <IconX stroke={1.5} className="h-4 w-4" />
           ) : (
-            <Menu className="h-4 w-4" />
+            <IconMenu2 stroke={1.5} className="h-4 w-4" />
           )}
         </button>
       </div>
@@ -147,7 +139,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
               onClick={handleLogout}
               className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors"
             >
-              <LogOut className="h-4 w-4 shrink-0" />
+              <IconLogout stroke={1.5} className="h-4 w-4 shrink-0" />
               Sign out
             </button>
           </nav>
