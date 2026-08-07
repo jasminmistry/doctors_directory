@@ -131,7 +131,7 @@ export default function FeaturedProfilesPage() {
               placeholder="Search clinics to add…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-600"
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
             />
             {query && (
               <button type="button" onClick={() => setQuery('')} className="text-gray-600 hover:text-gray-600">

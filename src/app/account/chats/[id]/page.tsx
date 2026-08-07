@@ -222,7 +222,7 @@ export default function ChatDetailPage() {
       ) : (
         <div className="shrink-0 mt-3 flex items-center gap-2">
           <Input
-            className="flex-1 bg-white border-gray-200 text-gray-900 placeholder:text-gray-600"
+            className="flex-1 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
             placeholder="Type a message…"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}

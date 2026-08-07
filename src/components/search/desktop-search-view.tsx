@@ -78,7 +78,7 @@ export function DesktopSearchView({
               setLocalFilters((prev) => ({ ...prev, query: e.target.value }))
             }
             maxLength={255}
-            className="border-0 shadow-none p-0 pr-7 h-auto w-full text-base placeholder:text-gray-600 focus:outline-none focus:ring-0 focus:border-0 active:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0 active:ring-0"
+            className="border-0 shadow-none p-0 pr-7 h-auto w-full text-base placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-0 active:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0 active:ring-0"
             onFocus={() => { cancelClose(); setShowResults(true); }}
             onClick={() => { cancelClose(); setShowResults(true); }}
             onBlur={scheduleClose}
@@ -107,7 +107,7 @@ export function DesktopSearchView({
                 location: e.target.value,
               }))
             }
-            className="border-0 min-w-[80px] shadow-none p-0 pr-7 h-6 text-base placeholder:text-gray-600 focus:outline-none focus:ring-0 focus:border-0 active:outline-none active:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0"
+            className="border-0 min-w-[80px] shadow-none p-0 pr-7 h-6 text-base placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-0 active:outline-none active:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0"
             onKeyDown={(e) => e.key === "Enter"}
             onFocus={() => { cancelClose(); setShowResults(true); }}
             onBlur={scheduleClose}
