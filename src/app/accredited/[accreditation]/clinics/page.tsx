@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import {
@@ -18,6 +17,7 @@ import { PractitionerCard } from "@/components/practitioner-card";
 import { filterCqcAccreditedCities } from '@/lib/accredited-city-filter'
 import { toUrlSlug } from '@/lib/utils'
 import { toDirectoryCanonical } from "@/lib/seo";
+import { IconArrowNarrowLeft } from "@tabler/icons-react"
 function mapAccreditationToField(accreditation: string): keyof Clinic {
   const mapping: Record<string, keyof Clinic> = {
     cqc: 'isCQC',
@@ -83,7 +83,7 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
             <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
-                <ArrowLeft className="h-4 w-4" />
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
             </Link>
             <Breadcrumb>

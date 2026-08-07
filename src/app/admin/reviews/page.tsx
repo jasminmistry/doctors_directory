@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { AdminLayout } from '@/components/admin/AdminLayout'
-import { Star, ShieldCheck, Loader2, Trash2, CheckSquare, Square } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { IconLoader2, IconShieldCheck, IconSquare, IconSquareCheck, IconStar, IconTrash } from '@tabler/icons-react'
 
 interface Review {
   id: number
@@ -23,7 +23,7 @@ function Stars({ rating }: { rating: number }) {
   return (
     <div className="flex">
       {Array.from({ length: 5 }, (_, i) => (
-        <Star key={i} className={cn('h-3.5 w-3.5', i < rating ? 'fill-black text-black' : 'text-gray-200')} />
+        <IconStar key={i} stroke={1.5} className={cn('h-3.5 w-3.5', i < rating ? 'fill-black text-black' : 'text-gray-200')} />
       ))}
     </div>
   )
@@ -180,7 +180,7 @@ export default function AdminReviewsPage() {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-gray-600" /></div>
+        <div className="flex justify-center py-20"><IconLoader2 stroke={1.5} className="h-6 w-6 animate-spin text-black" /></div>
       ) : reviews.length === 0 ? (
         <p className="text-sm text-gray-600 py-8 text-center">No {tab} reviews.</p>
       ) : (
@@ -189,8 +189,8 @@ export default function AdminReviewsPage() {
           <div className="flex items-center gap-3 px-1">
             <button type="button" onClick={toggleAll} className="text-gray-600 hover:text-gray-700">
               {allSelected
-                ? <CheckSquare className="h-4 w-4 text-gray-700" />
-                : <Square className="h-4 w-4" />}
+                ? <IconSquareCheck stroke={1.5} className="h-4 w-4 text-black" />
+                : <IconSquare stroke={1.5} className="h-4 w-4" />}
             </button>
             <span className="text-xs text-gray-600">
               {allSelected ? 'Deselect all' : 'Select all'}
@@ -205,8 +205,8 @@ export default function AdminReviewsPage() {
                 {/* Checkbox */}
                 <button type="button" onClick={() => toggleOne(r.id)} className="mt-0.5 shrink-0 text-gray-600 hover:text-gray-700">
                   {selected.has(r.id)
-                    ? <CheckSquare className="h-4 w-4 text-gray-700" />
-                    : <Square className="h-4 w-4" />}
+                    ? <IconSquareCheck stroke={1.5} className="h-4 w-4 text-gray-700" />
+                    : <IconSquare stroke={1.5} className="h-4 w-4" />}
                 </button>
 
                 <div className="min-w-0 flex-1">
@@ -214,7 +214,8 @@ export default function AdminReviewsPage() {
                     <span className="font-medium text-sm text-gray-900">{r.patientName}</span>
                     {r.isVerifiedPatient && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-medium text-blue-700">
-                        <ShieldCheck className="h-3 w-3" />Verified Patient
+                        <IconShieldCheck stroke={1.5} className="h-3 w-3" />
+                        Verified Patient
                       </span>
                     )}
                     <a href={`/directory/admin/clinics/${r.clinic.slug}`}
@@ -225,7 +226,7 @@ export default function AdminReviewsPage() {
                       {formatDistanceToNow(new Date(r.createdAt), { addSuffix: true })}
                     </span>
                   </div>
-                  <Stars rating={r.rating} />
+                  <IconStar stroke={1.5} rating={r.rating} />
                   {r.treatment && <p className="mt-1 text-xs text-gray-600">{r.treatment}</p>}
                   <p className="mt-2 text-sm text-gray-700 leading-relaxed">{r.reviewText}</p>
                 </div>
@@ -267,7 +268,7 @@ export default function AdminReviewsPage() {
                   <button type="button" disabled={actioning === r.id}
                     onClick={() => deleteOne(r.id)}
                     className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 flex items-center gap-1.5 justify-center">
-                    <Trash2 className="h-3 w-3" />
+                    <IconTrash stroke={1.5} className="h-3 w-3" />
                     Delete
                   </button>
                 </div>

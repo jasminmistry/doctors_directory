@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowLeft} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { decodeUnicodeEscapes } from "@/lib/utils";
@@ -19,6 +18,7 @@ import { isRemovedBrandHub } from "@/lib/product-removals";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { toUrlSlug } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 interface ProfilePageProps {
   params: {
@@ -76,7 +76,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                 size="sm"
                 className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Brands
               </Button>
             </Link>
@@ -115,7 +115,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       <div className="sticky top-0 z-10">
         <div className="container mx-auto max-w-6xl px-4 py-4">
           <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
           </Link>
         </div>

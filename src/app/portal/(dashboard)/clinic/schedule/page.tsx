@@ -19,7 +19,7 @@ export default async function ClinicSchedulePage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-xl font-semibold text-gray-900">Schedule</h1>
+        <h1 className="text-3xl text-gray-900">Schedule</h1>
         <p className="mt-1 text-sm text-gray-600">
           Set your weekly opening hours. Patients can only book appointments on enabled days within these times.
         </p>

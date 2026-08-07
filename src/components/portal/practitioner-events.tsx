@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from '@/components/ui/button'
-import { Plus, Pencil, Trash2, Video, Loader2, X } from "lucide-react";
+import { IconPlus, IconPencil, IconTrash, IconVideo, IconLoader2, IconX } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
 export interface CoreEvent {
@@ -49,7 +49,7 @@ function LocationBadge({ location }: { location: Location }) {
           : "bg-purple-50 text-purple-700",
       )}
     >
-      <Video className="h-3 w-3" />
+      <IconVideo stroke={1.5} className="h-3 w-3" />
       {LOCATION_LABELS[location] ?? "Video"}
     </span>
   );
@@ -167,7 +167,7 @@ function EventModal({ event, onClose, onSaved }: EventModalProps) {
             onClick={onClose}
             className="text-gray-600 hover:text-gray-600"
           >
-            <X className="h-4 w-4" />
+            <IconX stroke={1.5} className="h-4 w-4" />
           </button>
         </div>
 
@@ -317,7 +317,7 @@ function EventModal({ event, onClose, onSaved }: EventModalProps) {
               disabled={saving}
               className="flex-1"
             >
-              {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+              {saving && <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" />}
               {saving ? "Saving…" : isEdit ? "Save Changes" : "Create Event"}
             </Button>
           </div>
@@ -387,7 +387,7 @@ function DeleteConfirm({ event, onClose, onDeleted }: DeleteConfirmProps) {
             onClick={handleDelete}
             className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
           >
-            {deleting && <Loader2 className="h-4 w-4 animate-spin" />}
+            {deleting && <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" />}
             {deleting ? "Deleting…" : "Delete"}
           </button>
         </div>
@@ -453,7 +453,7 @@ export function PractitionerEvents() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">My Events</h1>
+            <h1 className="text-3xl text-gray-900">My Events</h1>
             <p className="mt-0.5 text-sm text-gray-600">
               Manage consultation events visible to patients on your profile.
             </p>
@@ -464,7 +464,7 @@ export function PractitionerEvents() {
             size="lg"
             onClick={() => setModalEvent("new")}
           >
-            <Plus className="h-4 w-4" />
+            <IconPlus stroke={1.5} className="h-4 w-4" />
             Add Event
           </Button>
         </div>
@@ -472,11 +472,11 @@ export function PractitionerEvents() {
         {/* Content */}
         {loading ? (
           <div className="flex justify-center py-16">
-            <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
+            <IconLoader2 stroke={1.5} className="h-6 w-6 animate-spin text-gray-600" />
           </div>
         ) : events.length === 0 ? (
           <div className="bg-white rounded-lg border border-dashed border-gray-200 py-16 text-center">
-            <Video className="mx-auto h-8 w-8 text-gray-600 mb-3" />
+            <IconVideo stroke={1.5} className="mx-auto h-8 w-8 text-gray-600 mb-3" />
             <p className="text-sm font-medium text-gray-700">No events yet</p>
             <p className="text-xs text-gray-600 mt-1">
               Add your first consultation event to let patients book online.
@@ -488,7 +488,7 @@ export function PractitionerEvents() {
               onClick={() => setModalEvent("new")}
               className="mt-4 inline-flex"
             >
-              <Plus className="h-4 w-4" />
+              <IconPlus stroke={1.5} className="h-4 w-4" />
               Add your first event
             </Button>
           </div>
@@ -586,7 +586,7 @@ export function PractitionerEvents() {
                           aria-label="Edit event"
                           className="rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-700 transition-colors"
                         >
-                          <Pencil className="h-3.5 w-3.5" />
+                          <IconPencil stroke={1.5} className="h-3.5 w-3.5" />
                         </button>
                         <button
                           type="button"
@@ -594,7 +594,7 @@ export function PractitionerEvents() {
                           aria-label="Delete event"
                           className="rounded p-1.5 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <IconTrash stroke={1.5} className="h-3.5 w-3.5" />
                         </button>
                       </div>
                     </td>

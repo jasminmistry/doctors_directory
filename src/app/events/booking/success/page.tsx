@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Stripe from 'stripe'
-import { CheckCircle2, Video, Calendar, Mail } from 'lucide-react'
 import { formatTimezoneAbbr } from '@/lib/utils'
+import { IconCalendarWeek, IconCircleCheck, IconMail, IconVideo } from '@tabler/icons-react'
 
 // Always shown in the clinic's own timezone, never the visitor's browser
 // timezone — every clinic in this directory is UK-based.
@@ -64,7 +64,7 @@ export default async function EventBookingSuccessPage({
         {/* Header */}
         <div className="bg-green-50 px-6 py-8 text-center border-b border-green-100">
           <div className="flex items-center justify-center w-14 h-14 rounded-full bg-green-100 mx-auto mb-4">
-            <CheckCircle2 className="w-7 h-7 text-green-600" />
+            <IconCircleCheck stroke={1.5} className="w-7 h-7 text-green-600" />
           </div>
           <h1 className="text-xl font-medium text-gray-900">Booking Confirmed</h1>
           <p className="text-sm text-gray-600 mt-1">Payment received successfully</p>
@@ -73,7 +73,7 @@ export default async function EventBookingSuccessPage({
         {/* Details */}
         <div className="px-6 py-6 space-y-4">
           <div className="flex items-start gap-3">
-            <Video className="h-4 w-4 text-gray-600 mt-0.5 shrink-0" />
+            <IconVideo stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" />
             <div>
               <p className="text-xs text-gray-600">Event</p>
               <p className="text-sm font-semibold text-gray-900">{event_title}</p>
@@ -84,7 +84,7 @@ export default async function EventBookingSuccessPage({
           </div>
 
           <div className="flex items-start gap-3">
-            <Calendar className="h-4 w-4 text-gray-600 mt-0.5 shrink-0" />
+            <IconCalendarWeek stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" />
             <div>
               <p className="text-xs text-gray-600">Date &amp; Time</p>
               <p className="text-sm font-semibold text-gray-900">{formatSlotDate(slot_start)}</p>
@@ -92,7 +92,7 @@ export default async function EventBookingSuccessPage({
           </div>
 
           <div className="flex items-start gap-3">
-            <Mail className="h-4 w-4 text-gray-600 mt-0.5 shrink-0" />
+            <IconMail stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" />
             <div>
               <p className="text-xs text-gray-600">Confirmation sent to</p>
               <p className="text-sm font-semibold text-gray-900">{patient_email}</p>

@@ -19,21 +19,6 @@ import {
 import Image from "next/image"
 import Link from "next/link"
 import {
-  Building2,
-  ClipboardList,
-  FileImage,
-  FileStack,
-  FileText,
-  LayoutGrid,
-  Mail,
-  MessageSquare,
-  Send,
-  Shield,
-  Sparkles,
-  Stethoscope,
-  UserRound,
-} from "lucide-react"
-import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -48,6 +33,7 @@ import { practitionersHubNavLinks } from "@/lib/b2b-hub/practitioners-hub-nav-li
 import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry"
 import { segmentLabel } from "@/lib/b2b-hub/registry"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
+import { IconBuildingHospital, IconClipboardList, IconFileDescription, IconFileStack, IconFileText, IconLayoutGrid, IconMail, IconMessage, IconSend, IconShield, IconSparkles, IconStethoscope, IconUserCircle } from "@tabler/icons-react"
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com"
 const roleCards = [
@@ -60,7 +46,7 @@ const roleCards = [
       "Aftercare templates",
       "Patient rebooking workflows",
     ],
-    Icon: Stethoscope,
+    Icon: IconStethoscope,
   },
   {
     title: "Aesthetic Doctors",
@@ -71,7 +57,7 @@ const roleCards = [
       "Compliance evidence records",
       "Structured follow-up workflows",
     ],
-    Icon: ClipboardList,
+    Icon: IconClipboardList,
   },
   {
     title: "Independent Practitioners",
@@ -82,7 +68,7 @@ const roleCards = [
       "Before & after photo storage",
       "Follow-up reminders",
     ],
-    Icon: UserRound,
+    Icon: IconUserCircle,
   },
   {
     title: "Dermatology-Led Clinics",
@@ -93,7 +79,7 @@ const roleCards = [
       "CQC-ready documentation",
       "Multi-practitioner records",
     ],
-    Icon: Building2,
+    Icon: IconBuildingHospital,
   },
 ] as const
 
@@ -101,32 +87,32 @@ const painCards = [
   {
     title: "Consent Forms Spread Across Paper, PDFs, And Inboxes",
     desc: "No single source of truth for signed patient consent.",
-    Icon: FileStack,
+    Icon: IconFileStack,
   },
   {
     title: "Treatment Notes Written After Long Clinic Days",
     desc: "Records completed from memory, increasing risk of error.",
-    Icon: FileText,
+    Icon: IconFileText,
   },
   {
     title: "Follow-Ups Manually Chased Between Appointments",
     desc: "Reminders and reactivation handled through scattered messages.",
-    Icon: Send,
+    Icon: IconSend,
   },
   {
     title: "Before-And-After Photos Stored Separately",
     desc: "Images saved in camera rolls, not linked to patient records.",
-    Icon: FileImage,
+    Icon: IconFileDescription,
   },
   {
     title: "Patient Communication Split Across Multiple Tools",
     desc: "Messages across WhatsApp, email, and booking apps.",
-    Icon: MessageSquare,
+    Icon: IconMessage,
   },
   {
     title: "Compliance Evidence Hard To Organise When Needed",
     desc: "Consent, records, and audits spread across disconnected systems.",
-    Icon: Shield,
+    Icon: IconShield,
   },
 ] as const
 
@@ -134,42 +120,42 @@ const featureCards = [
   {
     title: "Patient Records",
     body: "Centralised patient profiles with full history, notes, and photo records.",
-    Icon: UserRound,
+    Icon: IconUserCircle,
   },
   {
     title: "Digital Consent Forms",
     body: "Treatment-specific consent generated, signed, and stored automatically.",
-    Icon: FileText,
+    Icon: IconFileText,
   },
   {
     title: "Treatment Notes",
     body: "Structured notes capturing products used, batch numbers, and areas treated.",
-    Icon: ClipboardList,
+    Icon: IconClipboardList,
   },
   {
     title: "Before & After Photos",
     body: "Before and after images stored directly within each patient's record.",
-    Icon: FileImage,
+    Icon: IconFileDescription,
   },
   {
     title: "Aftercare Templates",
     body: "Ready-to-send aftercare instructions for every treatment type.",
-    Icon: Mail,
+    Icon: IconMail,
   },
   {
     title: "Follow-Up Automations",
     body: "Automated reminders, review requests, and rebooking triggers.",
-    Icon: Sparkles,
+    Icon: IconSparkles,
   },
   {
     title: "Marketing Templates",
     body: "Clinic-ready carousels, reels, emails, and campaign templates.",
-    Icon: LayoutGrid,
+    Icon: IconLayoutGrid,
   },
   {
     title: "Compliance Documentation",
     body: "Organised records, consent history, and audit-ready documentation.",
-    Icon: Shield,
+    Icon: IconShield,
   },
 ] as const
 
@@ -418,7 +404,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   className="flex flex-col gap-4 rounded-lg border border-[#e6e0d8] bg-white p-8"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#e0f1ed]">
-                    <Icon className="h-6 w-6 text-[#106057]" strokeWidth={1.5} aria-hidden />
+                    <Icon className="h-6 w-6 text-[#106057]" stroke={1.5} aria-hidden />
                   </div>
                   <h3 className="text-[22px] font-medium leading-[30px] text-[#2e2e2e]">{title}</h3>
                   <p className="text-[15px] leading-6 text-[#928b82]">{body}</p>
@@ -458,7 +444,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   className="flex flex-col gap-3.5 rounded-[14px] border border-[#e6e0d8] bg-[#fcfbf9] p-7"
                 >
                   <div className="flex h-11 w-11 items-center justify-center rounded-[10px] border border-[#e6e0d8] bg-[#f2eee6]">
-                    <Icon className="h-5 w-5 text-[#2e2e2e]" strokeWidth={1.5} aria-hidden />
+                    <Icon className="h-5 w-5 text-[#2e2e2e]" stroke={1.5} aria-hidden />
                   </div>
                   <h3 className="text-[17px] font-semibold leading-[25px] text-[#2e2e2e]">{title}</h3>
                   <p className="text-sm leading-[22px] text-[#928b82]">{desc}</p>
@@ -527,7 +513,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   className="flex flex-col gap-3 rounded-[14px] border border-[#e6e0d8] bg-white p-6"
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#e0f1ed]">
-                    <Icon className="h-5 w-5 text-[#106057]" strokeWidth={1.5} aria-hidden />
+                    <Icon className="h-5 w-5 text-[#106057]" stroke={1.5} aria-hidden />
                   </div>
                   <h3 className="text-base font-semibold leading-6 text-[#2e2e2e]">{title}</h3>
                   <p className="text-[13px] leading-5 text-[#928b82]">{body}</p>
@@ -585,7 +571,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   className="flex flex-col gap-4 rounded-lg border border-[#e6e0d8] bg-white p-8"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#e0f1ed]">
-                    <FileText className="h-6 w-6 text-[#106057]" strokeWidth={1.5} aria-hidden />
+                    <IconFileText className="h-6 w-6 text-[#106057]" stroke={1.5} aria-hidden />
                   </div>
                   <h3 className="text-xl font-medium leading-7 text-[#2e2e2e]">{title}</h3>
                   <p className="text-[15px] leading-6 text-[#928b82]">{body}</p>

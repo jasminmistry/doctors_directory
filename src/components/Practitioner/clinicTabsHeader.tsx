@@ -2,7 +2,7 @@
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import  Link  from "next/link"
-import { Link as LinkIcon} from "lucide-react"
+import { IconLink as LinkIcon } from "@tabler/icons-react"
 import { Clinic } from "@/lib/types";
 interface ClinicTabsHeaderProps {
   k_value: Clinic;

@@ -24,7 +24,6 @@ import {
   HUB_SPLIT_HERO_VISUAL_TALL,
 } from "@/components/b2b-hub/hub-hero-layout-classes"
 import { cn } from "@/lib/utils";
-import { Droplets, MapPin, Syringe, Users } from "lucide-react";
 import {
   SoftwareHeroVisual,
 } from "@/components/b2b-hub/hub-pillar-detail-template";
@@ -60,6 +59,7 @@ import {
   buildCityHubFaqs,
   buildCityHubFaqJsonLdAnswers,
 } from "@/lib/b2b-hub/city-localised-faq";
+import { IconDroplet, IconMapPin, IconUsers, IconVaccine } from "@tabler/icons-react"
 
 const CITY_HUB = "/directory/images/city-hub";
 const CITY_MACBOOK_SRC = `${CITY_HUB}/city-macbook-group.png`;
@@ -299,7 +299,7 @@ export function HubCityScaledPage({
           </h2>
           <div className="mx-auto mt-10 grid max-w-[1142px] grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-2 py-7 text-center">
-              <MapPin className="h-12 w-12 mb-4 text-[#111111]" strokeWidth={1.25} aria-hidden />
+              <IconMapPin className="h-12 w-12 mb-4 text-[#111111]" stroke={1.5} aria-hidden />
               <p className="text-lg font-medium  text-[#111111]  ">
                 {stats.clinicCount}
               </p>
@@ -308,21 +308,21 @@ export function HubCityScaledPage({
               </p>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-2 py-7 text-center">
-              <Users className="h-12 w-12 mb-4 text-[#111111]" strokeWidth={1.25} aria-hidden />
+              <IconUsers className="h-12 w-12 mb-4 text-[#111111]" stroke={1.5} aria-hidden />
               <p className="text-lg font-medium  text-[#111111]  ">
                 {stats.practitionerCount}
               </p>
               <p className="text-base leading-snug sm:text-md">Practitioners</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-2 py-7 text-center">
-              <Syringe className="h-12 w-12 mb-4 text-[#111111]" strokeWidth={1.25} aria-hidden />
+              <IconVaccine className="h-12 w-12 mb-4 text-[#111111]" stroke={1.5} aria-hidden />
               <p className="text-lg font-medium  text-[#111111]  ">
                 {stats.topTreatment}
               </p>
               <p className="text-base leading-snug sm:text-md">Top Treatment</p>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-2 py-7 text-center">
-              <Droplets className="h-12 w-12 mb-4 text-[#111111]" strokeWidth={1.25} aria-hidden />
+              <IconDroplet className="h-12 w-12 mb-4 text-[#111111]" stroke={1.5} aria-hidden />
               <p className="text-lg font-medium  text-[#111111]  ">
                 {stats.secondTreatment}
               </p>

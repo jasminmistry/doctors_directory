@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Loader2, Inbox, CheckCircle, CreditCard } from 'lucide-react'
+import { IconLoader2, IconInbox, IconCircleCheck, IconCreditCard } from '@tabler/icons-react'
 import { LeadCard, type Lead, type PipelineStatus } from '@/components/portal/lead-card'
 import { cn } from '@/lib/utils'
 import { PPL_LEAD_PRICE } from '@/lib/pricing'
@@ -131,7 +131,7 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
   if (loading) {
     return (
       <div className="flex flex-col items-center gap-3 py-16">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
+        <IconLoader2 stroke={1.5} className="h-6 w-6 animate-spin text-gray-600" />
         {setupStatus === 'activating' && (
           <p className="text-sm text-gray-600">Activating your payment method…</p>
         )}
@@ -149,14 +149,14 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
     <div className="space-y-4">
       {setupStatus === 'unlocked' && (
         <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-          <CheckCircle className="h-4 w-4 shrink-0" />
+          <IconCircleCheck stroke={1.5} className="h-4 w-4 shrink-0" />
           Card saved and lead unlocked — patient details are now visible below.
         </div>
       )}
 
       {setupStatus === 'card_saved' && (
         <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-black">
-          <CreditCard className="h-4 w-4 shrink-0" />
+          <IconCreditCard stroke={1.5} className="h-4 w-4 shrink-0" />
           Card saved successfully. Click <strong>Unlock — £{PPL_LEAD_PRICE}</strong> on any lead below to reveal patient details.
         </div>
       )}
@@ -195,7 +195,7 @@ export function ProspectsInbox({ plan }: ProspectsInboxProps) {
 
       {visibleLeads.length === 0 ? (
         <div className="flex bg-white flex-col items-center gap-3 rounded-lg border border-dashed border-gray-200 py-16 text-center">
-          <Inbox className="h-8 w-8 text-gray-600" />
+          <IconInbox stroke={1.5} className="h-8 w-8 text-gray-600" />
           <div>
             {leads.length === 0 ? (
               <>

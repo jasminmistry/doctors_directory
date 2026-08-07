@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { formatInTimeZone } from 'date-fns-tz'
-import { CalendarDays, Loader2, Video } from 'lucide-react'
 import { capitalize, formatTimezoneAbbr } from '@/lib/utils'
+import { IconCalendarWeek, IconLoader2, IconVideo } from '@tabler/icons-react'
 
 // Bookings are always shown in the clinic's own timezone, never the visitor's
 // browser timezone — every clinic in this directory is UK-based.
@@ -35,7 +35,7 @@ export default function AccountBookingsPage() {
   if (loading) {
     return (
       <div className="flex h-40 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
+        <IconLoader2 stroke={1.5} className="h-5 w-5 animate-spin" />
       </div>
     )
   }
@@ -46,7 +46,7 @@ export default function AccountBookingsPage() {
 
       {bookings.length === 0 ? (
         <div className="rounded-lg bg-white border border-gray-200 px-6 py-10 text-center">
-          <CalendarDays className="h-8 w-8 text-gray-600 mx-auto mb-3" />
+          <IconCalendarWeek  stroke={1.5} className="h-8 w-8 mx-auto mb-3" />
           <p className="text-gray-600 text-sm">No bookings yet.</p>
         </div>
       ) : (
@@ -63,7 +63,7 @@ export default function AccountBookingsPage() {
                     <p className="text-sm font-semibold text-gray-900 truncate">{b.clinic.name}</p>
                     {b.videoCallMeetingId && (
                       <span className="flex items-center gap-1 text-[10px] bg-blue-100 text-black px-1.5 py-0.5 rounded-full shrink-0">
-                        <Video className="h-2.5 w-2.5" />
+                        <IconVideo stroke={1.5} className="h-2.5 w-2.5" />
                         Video
                       </span>
                     )}

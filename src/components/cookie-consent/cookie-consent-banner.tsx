@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Cookie, X } from "lucide-react"
 
 import { Switch } from "@/components/ui/switch"
 import {
@@ -9,6 +8,7 @@ import {
   readCookieConsent,
   writeCookieConsent,
 } from "@/lib/cookie-consent"
+import { IconCookie, IconX } from "@tabler/icons-react"
 
 const MARKETING_BASE_URL =
   process.env.NEXT_PUBLIC_MARKETING_BASE_URL || "https://www.consentz.com"
@@ -80,14 +80,14 @@ export function CookieConsentBanner() {
         aria-label="Close"
         className="absolute right-4 top-4 text-[var(--dune)] opacity-70 transition hover:opacity-100 cursor-pointer"
       >
-        <X className="size-4" />
+        <IconX stroke={1.5} className="size-4" />
       </button>
 
       {view === "banner" ? (
         <div className="flex flex-col gap-5">
           <div className="flex items-center gap-3">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--dune)]">
-              <Cookie className="size-5 text-[var(--primary-bg-color)]" />
+              <IconCookie stroke={1.5} className="size-5 text-[var(--primary-bg-color)]" />
             </span>
             <h2 className="font-playfair text-xl font-semibold text-[var(--dune)]">
               Manage Consent

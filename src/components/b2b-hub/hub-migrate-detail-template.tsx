@@ -24,7 +24,6 @@ import {
 } from "@/components/b2b-hub/hub-hero-layout-classes"
 
 import { cn } from "@/lib/utils";
-import { Check } from "lucide-react";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
 import {
   SoftwareHeroVisual,
@@ -46,6 +45,7 @@ import { COMPETITOR_LABEL } from "@/lib/b2b-hub/competitors";
 import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry";
 import { segmentLabel } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
+import { IconCheck } from "@tabler/icons-react"
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
@@ -310,7 +310,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
                     <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#E8E6E2]">
                       <div className="h-full w-full rounded-full bg-[#2eb073]" />
                     </div>
-                    <Check className="h-5 w-5 shrink-0 text-[#1a6e45]" strokeWidth={2.5} aria-hidden />
+                    <IconCheck className="h-5 w-5 shrink-0 text-[#1a6e45]" stroke={1.5} aria-hidden />
                   </div>
                 </div>
               ))}
@@ -357,7 +357,7 @@ export function HubMigrateDetailTemplate({ entry }: Props) {
           <div className="mx-auto grid max-w-[900px] grid-cols-1 gap-x-12 gap-y-3 sm:grid-cols-2">
             {everythingBrings.map((item) => (
               <div key={item} className="flex items-center gap-2.5 text-base font-medium text-[#1a1a1a]">
-                <Check className="h-5 w-5 shrink-0 text-[#1a6e45]" strokeWidth={2.5} aria-hidden />
+                <IconCheck className="h-5 w-5 shrink-0 text-[#1a6e45]" stroke={1.5} aria-hidden />
                 <span>{item}</span>
               </div>
             ))}

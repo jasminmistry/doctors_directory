@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Stethoscope, FileText, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { FormSection, Field } from './FormSection'
 import { JsonFieldEditor } from './JsonFieldEditor'
+import { IconArrowNarrowLeft, IconDeviceFloppy, IconFileText, IconStethoscope } from '@tabler/icons-react'
 
 type TreatmentData = {
   slug: string
@@ -144,21 +144,21 @@ export function TreatmentForm() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => router.push('/admin/treatments')}>
-            <ArrowLeft className="h-4 w-4" />
+            <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
           </Button>
           <div className="min-w-0">
             <p className="text-xs text-gray-600 font-medium">Treatments</p>
-            <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
+            <h2 className="text-3xl text-gray-900 truncate">{title}</h2>
           </div>
         </div>
         <Button size="sm" onClick={handleSave} disabled={saving} className="shrink-0">
-          <Save className="h-3.5 w-3.5 mr-1.5" />
+          <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
           {saving ? 'Saving…' : 'Save'}
         </Button>
       </div>
 
       {/* Basic Info */}
-      <FormSection title="Basic Info" icon={Stethoscope}>
+      <FormSection title="Basic Info" icon={IconStethoscope}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Name" required>
             <Input
@@ -203,7 +203,7 @@ export function TreatmentForm() {
       {/* Rich content fields */}
       <FormSection
         title="Rich Content"
-        icon={FileText}
+        icon={IconFileText}
         description="Each field is displayed as a section on the public treatment page. Use the visual editor or switch to Raw JSON for complex structures."
       >
         <div className="divide-y divide-gray-100">
@@ -224,7 +224,7 @@ export function TreatmentForm() {
 
       <div className="flex justify-end pt-2">
         <Button size="sm" onClick={handleSave} disabled={saving}>
-          <Save className="h-3.5 w-3.5 mr-1.5" />
+          <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
           {saving ? 'Saving…' : 'Save Treatment'}
         </Button>
       </div>

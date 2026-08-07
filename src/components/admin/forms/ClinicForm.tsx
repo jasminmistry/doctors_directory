@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Building2, ExternalLink, MapPin, Star, Share2, ShieldCheck, FileText, Save, Wand2, Sparkles, Link2 } from 'lucide-react'
+import { IconArrowNarrowLeft, IconBuildingHospital, IconExternalLink,  IconFileText, IconWand, IconSparkles, IconDeviceFloppy, IconShieldCheck, IconShare3, IconStar, IconLink, IconMapPin } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ImageUpload } from '@/components/admin/ImageUpload'
@@ -216,12 +216,12 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
         <div className="flex items-center gap-3 min-w-0">
           {!isPortal && (
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => router.push('/admin/clinics')}>
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} />
             </Button>
           )}
           <div className="min-w-0">
             {!isPortal && <p className="text-xs text-gray-600 font-medium">Clinics</p>}
-            <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
+            <h2 className="text-3xl text-gray-900 truncate">{title}</h2>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -236,20 +236,20 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
               rel="noopener noreferrer"
             >
               <Button variant="outline" size="lg">
-                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
                 Preview
               </Button>
             </a>
           )}
           <Button size="lg" onClick={handleSave} disabled={saving}>
-            <Save className="h-3.5 w-3.5 mr-1.5" />
+            <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
             {saving ? 'Saving…' : 'Save'}
           </Button>
         </div>
       </div>
 
       {/* Basic Info */}
-      <FormSection title="Basic Info" icon={Building2}>
+      <FormSection title="Basic Info" icon={IconBuildingHospital}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Clinic Name" required error={fieldErrors.name}>
             <div className="flex gap-2">
@@ -274,7 +274,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
                   title="Fill name from slug"
                   onClick={() => set('name', data.slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '))}
                 >
-                  <Wand2 className="h-3.5 w-3.5" />
+                  <IconWand stroke={1.5} className="h-3.5 w-3.5" />
                 </Button>
               )}
             </div>
@@ -305,7 +305,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       </FormSection>
 
       {/* Location & Contact */}
-      <FormSection title="Location & Contact" icon={MapPin}>
+      <FormSection title="Location & Contact" icon={IconMapPin}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Address" fullWidth>
             <Input value={data.gmapsAddress ?? ''} onChange={(e) => set('gmapsAddress', e.target.value || null)} placeholder="123 Harley Street, London" />
@@ -326,7 +326,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       </FormSection>
 
       {/* Reputation — rating/reviewCount are admin-managed; portal users only edit About */}
-      <FormSection title={isPortal ? 'About' : 'Reputation'} icon={Star}>
+      <FormSection title={isPortal ? 'About' : 'Reputation'} icon={IconStar}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {!isPortal && (
             <>
@@ -345,7 +345,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       </FormSection>
 
       {/* Profile Enhancements */}
-      <FormSection title="Profile" icon={Sparkles}>
+      <FormSection title="Profile" icon={IconSparkles}>
         <div className="grid grid-cols-1 gap-5">
           {!isPortal && (
             <Field label="Cover Photo" fullWidth>
@@ -383,7 +383,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       </FormSection>
 
       {/* Content */}
-      <FormSection title="Content" icon={FileText}>
+      <FormSection title="Content" icon={IconFileText}>
         <div className="grid grid-cols-1 gap-5">
           <Field label="Accreditations" hint="One accreditation per line">
             <Textarea value={data.accreditations ?? ''} onChange={(e) => set('accreditations', e.target.value || null)} placeholder={"CQC registered\nSave Face accredited\nJCCP member"} className="min-h-[80px]" />
@@ -398,7 +398,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       </FormSection>
 
       {/* Social Media */}
-      <FormSection title="Social Media" icon={Share2}>
+      <FormSection title="Social Media" icon={IconShare3}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {[
             { key: 'facebook' as const, label: 'Facebook', placeholder: 'https://facebook.com/…' },
@@ -416,7 +416,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       </FormSection>
 
       {/* Regulatory — admin-managed only */}
-      {!isPortal && <FormSection title="Integration" icon={Link2} description="Consentz Core CRM identifiers — set these to enable online booking and calendar sync">
+      {!isPortal && <FormSection title="Integration" icon={IconLink} description="Consentz Core CRM identifiers — set these to enable online booking and calendar sync">
         <Field label="Core Clinic ID" hint="Consentz Core clinic ID (integer). Enables real-time availability and online booking.">
           <Input
             type="number"
@@ -428,7 +428,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
         </Field>
       </FormSection>}
 
-      {!isPortal && <FormSection title="Regulatory Flags" icon={ShieldCheck} description="Certifications and regulatory body memberships">
+      {!isPortal && <FormSection title="Regulatory Flags" icon={IconShieldCheck} description="Certifications and regulatory body memberships">
         <div className="space-y-4">
           <div className="flex items-center gap-8">
             <label className="flex items-center gap-2 cursor-pointer">
@@ -462,7 +462,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       {/* Footer save */}
       <div className="flex justify-end pt-2">
         <Button size="lg" onClick={handleSave} disabled={saving}>
-          <Save className="h-3.5 w-3.5 mr-1.5" />
+          <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
           {saving ? 'Saving…' : 'Save Clinic'}
         </Button>
       </div>

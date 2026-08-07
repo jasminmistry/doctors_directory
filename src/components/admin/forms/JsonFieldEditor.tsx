@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, X, Code, Type, List, LayoutList } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
+import { IconCode, IconCursorText, IconList, IconListDetails, IconPlus, IconX } from '@tabler/icons-react'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -83,7 +83,7 @@ function ListEditor({
             onClick={() => remove(i)}
             className="text-gray-300 hover:text-red-400 transition-colors shrink-0"
           >
-            <X className="h-3.5 w-3.5" />
+            <IconX stroke={1.5} className="h-3.5 w-3.5" />
           </button>
         </div>
       ))}
@@ -97,7 +97,7 @@ function ListEditor({
           className="h-8 text-sm flex-1"
         />
         <Button type="button" variant="outline" size="sm" className="h-8 px-2 shrink-0" onClick={add}>
-          <Plus className="h-3.5 w-3.5" />
+          <IconPlus stroke={1.5} className="h-3.5 w-3.5" />
         </Button>
       </div>
     </div>
@@ -230,7 +230,7 @@ export function JsonFieldEditor({ value, onChange }: JsonFieldEditorProps) {
           : 'text-gray-600 hover:text-gray-600 hover:bg-gray-100',
       )}
     >
-      <Code className="h-3 w-3" />
+      <IconCode stroke={1.5} className="h-3 w-3" />
       {showRaw ? 'Visual' : 'Raw JSON'}
     </button>
   )
@@ -256,21 +256,21 @@ export function JsonFieldEditor({ value, onChange }: JsonFieldEditorProps) {
             className="h-7 text-xs gap-1.5"
             onClick={() => onChange('')}
           >
-            <Type className="h-3 w-3" /> Plain text
+            <IconCursorText stroke={1.5} className="h-3 w-3" /> Plain text
           </Button>
           <Button
             type="button" variant="outline" size="sm"
             className="h-7 text-xs gap-1.5"
             onClick={() => onChange([])}
           >
-            <List className="h-3 w-3" /> List of items
+            <IconList stroke={1.5} className="h-3 w-3" /> List of items
           </Button>
           <Button
             type="button" variant="outline" size="sm"
             className="h-7 text-xs gap-1.5"
             onClick={() => onChange({})}
           >
-            <LayoutList className="h-3 w-3" /> Key-value object
+            <IconListDetails stroke={1.5} className="h-3 w-3" /> Key-value object
           </Button>
         </div>
         <div className="flex justify-center mt-3">{modeToggle}</div>
@@ -288,7 +288,7 @@ export function JsonFieldEditor({ value, onChange }: JsonFieldEditorProps) {
             onClick={() => onChange([])}
             title="Switch to list"
           >
-            <List className="h-3 w-3" /> Switch to list
+            <IconList stroke={1.5} className="h-3 w-3" /> Switch to list
           </button>
           {modeToggle}
         </div>
@@ -308,7 +308,7 @@ export function JsonFieldEditor({ value, onChange }: JsonFieldEditorProps) {
             onClick={() => onChange(null)}
             title="Clear"
           >
-            <X className="h-3 w-3" /> Clear
+            <IconX stroke={1.5} className="h-3 w-3" /> Clear
           </button>
           {modeToggle}
         </div>

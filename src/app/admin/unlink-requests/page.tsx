@@ -6,7 +6,7 @@ import { DEFAULT_PERSON, FallbackImage } from '@/components/ui/fallback-image'
 import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
-import { Link2Off, X, EyeOff, Eye, Loader2, Users } from 'lucide-react'
+import { IconEye, IconEyeOff, IconLinkOff, IconLoader2, IconUsers, IconX } from '@tabler/icons-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -103,16 +103,16 @@ export default function UnlinkRequestsPage() {
   return (
     <AdminLayout title="Unlink Requests">
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-sm text-gray-400">
+        <div className="flex items-center justify-center py-16 text-sm text-gray-600">
           Loading…
         </div>
       ) : rows.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-600">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-            <Link2Off className="h-5 w-5 text-gray-400" />
+            <IconLinkOff stroke={1.5} className="h-5 w-5 text-gray-600" />
           </div>
           <p className="text-sm font-medium">No pending unlink requests</p>
-          <p className="text-xs text-gray-400">Clinics that request to disconnect from Consentz Core will appear here.</p>
+          <p className="text-xs text-gray-600">Clinics that request to disconnect from Consentz Core will appear here.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -139,7 +139,7 @@ export default function UnlinkRequestsPage() {
                         <p className="text-sm font-semibold text-gray-900">{displayName}</p>
                         {row.isHidden && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-                            <EyeOff className="h-3 w-3" /> Hidden
+                            <IconEyeOff stroke={1.5} className="h-3 w-3" /> Hidden
                           </span>
                         )}
                       </div>
@@ -155,7 +155,7 @@ export default function UnlinkRequestsPage() {
                   {row.practitioners.length > 0 && (
                     <div className="mt-4 rounded-lg bg-gray-50 border border-gray-100 p-3">
                       <div className="flex items-center gap-1.5 mb-2">
-                        <Users className="h-3.5 w-3.5 text-gray-400" />
+                        <IconUsers stroke={1.5} className="h-3.5 w-3.5 text-gray-600" />
                         <p className="text-xs font-medium text-gray-600">{row.practitioners.length} associated practitioner{row.practitioners.length !== 1 ? 's' : ''}</p>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -166,7 +166,7 @@ export default function UnlinkRequestsPage() {
                               : <div className="h-6 w-6 rounded-full bg-gray-200 shrink-0" />
                             }
                             <span className="text-xs text-gray-700">{p.displayName ?? p.slug}</span>
-                            {p.isHidden && <EyeOff className="h-3 w-3 text-gray-400" />}
+                            {p.isHidden && <IconEyeOff stroke={1.5} className="h-3 w-3" />}
                           </div>
                         ))}
                       </div>
@@ -181,7 +181,7 @@ export default function UnlinkRequestsPage() {
                       onClick={() => handleUnlink(row.slug)}
                       disabled={isBusy}
                     >
-                      {busy[row.slug] === 'unlink' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Link2Off className="h-3.5 w-3.5" />}
+                      {busy[row.slug] === 'unlink' ? <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" /> : <IconLinkOff stroke={1.5} className="h-3.5 w-3.5" />}
                       Approve &amp; unlink
                     </Button>
 
@@ -191,7 +191,7 @@ export default function UnlinkRequestsPage() {
                       onClick={() => handleDismiss(row.slug)}
                       disabled={isBusy}
                     >
-                      {busy[row.slug] === 'dismiss' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <X className="h-3.5 w-3.5" />}
+                      {busy[row.slug] === 'dismiss' ? <IconLoader2  className="h-3.5 w-3.5 animate-spin" /> : <IconX stroke={1.5} className="h-3.5 w-3.5" />}
                       Dismiss request
                     </Button>
 
@@ -202,7 +202,7 @@ export default function UnlinkRequestsPage() {
                         onClick={() => handleToggleHidden(row.slug, false)}
                         disabled={isBusy}
                       >
-                        {busy[row.slug] === 'hide' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Eye className="h-3.5 w-3.5" />}
+                        {busy[row.slug] === 'hide' ? <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" /> : <IconEye stroke={1.5} className="h-3.5 w-3.5" />}
                         Make visible
                       </Button>
                     ) : (
@@ -212,7 +212,7 @@ export default function UnlinkRequestsPage() {
                         onClick={() => handleToggleHidden(row.slug, true)}
                         disabled={isBusy}
                       >
-                        {busy[row.slug] === 'hide' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <EyeOff className="h-3.5 w-3.5" />}
+                        {busy[row.slug] === 'hide' ? <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" /> : <IconEyeOff stroke={1.5} className="h-3.5 w-3.5" />}
                         Hide clinic &amp; practitioners
                       </Button>
                     )}

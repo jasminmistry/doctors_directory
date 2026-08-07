@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, Mail, Phone, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { consentDisclaimer, consentCheckboxWording } from '@/lib/consent'
 import { cn } from '@/lib/utils'
+import { IconCalendar, IconLoader2, IconMail, IconPhone } from '@tabler/icons-react'
 
 export interface ConsultationFormData {
   firstName: string
@@ -63,7 +63,7 @@ function Field({ label, error, required, children }: FieldProps) {
     <div className="space-y-1.5">
       <label className="block text-xs font-medium text-gray-600">
         {label}
-        {required && <span className="ml-0.5 text-gray-400">*</span>}
+        {required && <span className="ml-0.5 text-gray-600">*</span>}
       </label>
       {children}
       {error && (
@@ -85,14 +85,14 @@ function IconInput({ icon, error, className, ...props }: IconInputProps) {
   return (
     <div className="relative">
       {icon && (
-        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-600">
           {icon}
         </span>
       )}
       <input
         {...props}
         className={cn(
-          'w-full rounded-lg border bg-white py-2.5 text-sm text-gray-900 placeholder:text-gray-400',
+          'w-full rounded-lg border bg-white py-2.5 text-sm text-gray-900 placeholder:text-gray-600',
           'transition-colors focus:outline-none focus:ring-2',
           icon ? 'pl-9 pr-3' : 'px-3',
           error
@@ -237,7 +237,7 @@ export function ConsultationRichForm({
       <Field label="Email address" error={emailError} required>
         <IconInput
           type="email"
-          icon={<Mail className="h-3.5 w-3.5" />}
+          icon={<IconMail stroke={1.5} className="h-3.5 w-3.5" />}
           placeholder="you@example.com"
           value={email}
           error={!!emailError}
@@ -251,7 +251,7 @@ export function ConsultationRichForm({
       <Field label="Phone number" error={phoneError} required>
         <IconInput
           type="tel"
-          icon={<Phone className="h-3.5 w-3.5" />}
+          icon={<IconPhone stroke={1.5} className="h-3.5 w-3.5" />}
           placeholder="07700 900000"
           value={phone}
           error={!!phoneError}
@@ -264,8 +264,8 @@ export function ConsultationRichForm({
       {/* Date of birth */}
       <Field label="Date of birth" error={dobError} required>
         <div className="relative">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            <Calendar className="h-3.5 w-3.5" />
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-600">
+            <IconCalendar stroke={1.5} className="h-3.5 w-3.5" />
           </span>
           <input
             type="date"
@@ -281,7 +281,7 @@ export function ConsultationRichForm({
             )}
           />
         </div>
-        <p className="text-[11px] text-gray-400">You must be 18 or over to request a consultation</p>
+        <p className="text-[11px] text-gray-600">You must be 18 or over to request a consultation</p>
       </Field>
 
       {/* Consent disclaimer + checkboxes */}
@@ -337,7 +337,7 @@ export function ConsultationRichForm({
         className="w-full h-10 mt-1 text-sm font-medium"
         disabled={!canSubmit}
       >
-        {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : submitLabel}
+        {submitting ? <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" /> : submitLabel}
       </Button>
     </form>
   )

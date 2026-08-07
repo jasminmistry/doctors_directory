@@ -2,16 +2,8 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  ThumbsUp,
-  DollarSign,
-  Star,
-  Clock,
-  Users,
-  Database,
-  Camera,
-} from "lucide-react";
 import { DEFAULT_PERSON, FallbackImage } from "@/components/ui/fallback-image";
+import { IconCamera, IconClock, IconDatabase, IconThumbUp, IconUsers } from "@tabler/icons-react";
 
 interface TreatmentDetailProps {
   treatment: {
@@ -398,31 +390,31 @@ export function TreatmentDetail({
             {/* Stats List - Mobile Vertical Layout */}
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <Database className="h-5 w-5 text-gray-600" />
+                <IconDatabase stroke={1.5} className="h-5 w-5" />
                 <span className="text-sm">{treatment.averageCost}</span>
                 <span className="text-sm">Average Cost</span>
               </div>
 
               <div className="flex items-center gap-3">
-                <ThumbsUp className="h-5 w-5 text-gray-600" />
+                <IconThumbUp stroke={1.5} className="h-5 w-5" />
                 <span className="text-sm">{treatment.satisfaction}%</span>
                 <span className="text-sm">Satisfaction</span>
               </div>
 
               <div className="flex items-center gap-3">
-                <Users className="h-5 w-5 text-gray-600" />
+                <IconUsers stroke={1.5} className="h-5 w-5" />
                 <span className="text-sm">{treatment.practitioners}</span>
                 <span className="text-sm">Practitioners</span>
               </div>
 
               <div className="flex items-center gap-3">
-                <Camera className="h-5 w-5 text-gray-600" />
+                <IconCamera stroke={1.5} className="h-5 w-5" />
                 <span className="text-sm">{treatment.reviews}</span>
                 <span className="text-sm">Google Reviews</span>
               </div>
 
               <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-gray-600" />
+                <IconClock stroke={1.5} className="h-5 w-5" />
                 <span className="text-sm">{treatment.downtime}</span>
                 <span className="text-sm">Downtime</span>
               </div>
@@ -485,7 +477,8 @@ export function TreatmentDetail({
                   aria-label={`${treatment.satisfaction} percent patient satisfaction rate`}
                   className="flex items-center gap-3"
                 >
-                  <ThumbsUp
+                  <IconThumbUp
+                    stroke={1.5}
                     className="h-6 w-6 text-black flex-shrink-0"
                     aria-hidden="true"
                   />
@@ -512,7 +505,8 @@ export function TreatmentDetail({
                   aria-label={`Average cost ${treatment.averageCost}`}
                   className="flex items-center gap-3"
                 >
-                  <Database
+                  <IconDatabase
+                    stroke={1.5}
                     className="h-6 w-6 text-black flex-shrink-0"
                     aria-hidden="true"
                   />
@@ -542,8 +536,9 @@ export function TreatmentDetail({
                   aria-label={`${treatment.reviews} reviews`}
                   className="flex items-center gap-3"
                 >
-                  <Camera
-                    className="h-6 w-6 text-black flex-shrink-0"
+                  <IconCamera
+                    stroke={1.5}
+                    className="h-6 w-6 flex-shrink-0"
                     aria-hidden="true"
                   />
                   <div>
@@ -565,7 +560,8 @@ export function TreatmentDetail({
                   aria-label={`${treatment.practitioners} practitioners available`}
                   className="flex items-center gap-3"
                 >
-                  <Users
+                  <IconUsers
+                    stroke={1.5}
                     className="h-6 w-6 text-black flex-shrink-0"
                     aria-hidden="true"
                   />
@@ -589,7 +585,8 @@ export function TreatmentDetail({
                   aria-label={`${treatment.downtime} downtime required`}
                   className="flex items-center gap-3"
                 >
-                  <Clock
+                  <IconClock
+                    stroke={1.5}
                     className="h-6 w-6 text-black flex-shrink-0"
                     aria-hidden="true"
                   />

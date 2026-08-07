@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { BarChart3, Eye, MousePointerClick, Users, TrendingUp, Search, Globe } from 'lucide-react'
+import { IconChartBarPopular, IconEye, IconHandFinger, IconSearch, IconTrendingUp, IconUsers, IconWorld } from '@tabler/icons-react'
 
 interface InternalMetrics {
   pageViews: number
@@ -120,7 +120,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
       {/* Header */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <BarChart3 className="h-5 w-5 text-gray-600" />
+          <IconChartBarPopular stroke={1.5} className="h-5 w-5 text-gray-600" />
           <h2 className="text-base font-semibold text-gray-900">Performance Metrics</h2>
         </div>
 
@@ -174,19 +174,19 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <StatCard
-                icon={Eye}
+                icon={IconEye}
                 label="Page Views"
                 value={data.internal.pageViews.toLocaleString()}
                 color="blue"
               />
               <StatCard
-                icon={MousePointerClick}
+                icon={IconHandFinger}
                 label="CTA / Contact Clicks"
                 value={data.internal.contactClicks.toLocaleString()}
                 color="violet"
               />
               <StatCard
-                icon={Users}
+                icon={IconUsers}
                 label="Leads Received"
                 value={data.internal.leadsReceived.toLocaleString()}
                 color="green"
@@ -222,19 +222,19 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
               <>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 mb-5">
                   <StatCard
-                    icon={Globe}
+                    icon={IconWorld}
                     label="Impressions (Google)"
                     value={data.gsc.impressions.toLocaleString()}
                     color="blue"
                   />
                   <StatCard
-                    icon={MousePointerClick}
+                    icon={IconHandFinger}
                     label="Clicks (Google)"
                     value={data.gsc.clicks.toLocaleString()}
                     color="violet"
                   />
                   <StatCard
-                    icon={TrendingUp}
+                    icon={IconTrendingUp}
                     label="Avg. Position"
                     value={data.gsc.avgPosition > 0 ? data.gsc.avgPosition.toFixed(1) : '—'}
                     sub="lower is better"
@@ -245,7 +245,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
                 {data.gsc.topKeywords.length > 0 && (
                   <div>
                     <div className="mb-2 flex items-center gap-2">
-                      <Search className="h-3.5 w-3.5 text-gray-600" />
+                      <IconSearch stroke={1.5} className="h-3.5 w-3.5" />
                       <p className="text-xs font-semibold uppercase tracking-widest text-gray-600">
                         Top Keywords
                       </p>

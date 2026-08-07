@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { ArrowLeft, Users, Briefcase } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -14,6 +13,7 @@ import {
 import { Clinic, Practitioner } from "@/lib/types"
 import { readJsonFileSync } from "@/lib/json-cache"
 import { toDirectoryCanonical } from "@/lib/seo"
+import { IconArrowNarrowLeft, IconBriefcase, IconUsers } from "@tabler/icons-react"
 const accreditations = ["CQC", "JCCP", "HIW", "HIS", "RQIA", "SaveFace"]
 
 function mapAccreditationToFieldClinic(accreditation: string): keyof Clinic {
@@ -69,7 +69,7 @@ export default async function AccreditedPage() {
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
             <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
-                <ArrowLeft className="h-4 w-4" />
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
             </Link>
             <Breadcrumb>
@@ -158,7 +158,7 @@ export default async function AccreditedPage() {
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-sm font-medium flex items-center gap-2">
-                        <Briefcase className="h-4 w-4" />
+                        <IconBriefcase stroke={1.5} className="h-4 w-4" />
                         {clinicCount} Clinic{clinicCount !== 1 ? "s" : ""}
                       </span>
                       <Link href={`/accredited/${accreditation}/clinics`}>
@@ -172,7 +172,7 @@ export default async function AccreditedPage() {
                     </div>
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-sm font-medium flex items-center gap-2">
-                        <Users className="h-4 w-4" />
+                        <IconUsers stroke={1.5} className="h-4 w-4" />
                         {practitionerCount} Practitioner
                         {practitionerCount !== 1 ? "s" : ""}
                       </span>

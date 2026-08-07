@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { MapPin } from "lucide-react";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -21,6 +20,7 @@ import { getClinicDisplayName } from "@/lib/clinic-display";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { OnlineDot } from "@/components/Clinic/online-dot";
+import { IconMapPin } from "@tabler/icons-react";
 type PractitionerOrClinic = Practitioner | Clinic | Product | string;
 interface PractitionerCardProps {
   practitioner: PractitionerOrClinic;
@@ -301,7 +301,8 @@ export function PractitionerCard({
 
             <div className="flex flex-1 flex-col px-3 pt-4">
               <div className="mb-4 flex min-h-[2.75rem] items-start gap-2 text-sm text-muted-foreground/80">
-                <MapPin
+                <IconMapPin
+                  stroke={1.5}
                   className="mt-0.5 h-4 w-4 shrink-0"
                   aria-hidden="true"
                 />

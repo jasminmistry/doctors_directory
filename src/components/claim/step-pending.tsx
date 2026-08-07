@@ -1,4 +1,4 @@
-import { ClockIcon } from 'lucide-react'
+import { IconClockHour4 } from '@tabler/icons-react'
 
 interface Props {
   entityName: string
@@ -11,7 +11,7 @@ export function StepPending({ entityName, entityType, mode = 'claim' }: Readonly
   return (
     <div className="flex flex-col items-center gap-6 text-center py-4">
       <div className="flex items-center justify-center w-16 h-16 rounded-full bg-muted">
-        <ClockIcon className="w-8 h-8 text-muted-foreground" />
+        <IconClockHour4 stroke={1.5} className="w-8 h-8" />
       </div>
 
       <div>

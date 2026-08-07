@@ -1,4 +1,4 @@
-import { ExternalLink } from 'lucide-react'
+import { IconExternalLink } from '@tabler/icons-react'
 
 interface Badge {
   label: string
@@ -42,7 +42,7 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
               className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 transition-colors"
             >
               {label}
-              <ExternalLink className="h-3 w-3 text-gray-600" />
+              <IconExternalLink stroke={1.5} className="h-3 w-3" />
             </a>
           ) : (
             <span

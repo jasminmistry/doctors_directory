@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from '@/lib/pricing'
+import { IconCheck } from '@tabler/icons-react'
 
 type Plan = 'free' | 'pay_per_lead' | 'subscription'
 
@@ -134,7 +134,7 @@ export function StepChoosePlan({ claimId, entitySlug, onPending }: Readonly<Prop
                   selected === plan.id ? 'border-foreground bg-foreground' : 'border-muted-foreground'
                 )}
               >
-                {selected === plan.id && <Check className="h-3 w-3 text-background" />}
+                {selected === plan.id && <IconCheck stroke={1.5} className="h-3 w-3 text-background" />}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2 mb-0.5">
@@ -146,7 +146,7 @@ export function StepChoosePlan({ claimId, entitySlug, onPending }: Readonly<Prop
                 <ul className="space-y-1">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Check className="h-3 w-3 shrink-0 text-emerald-600" />
+                      <IconCheck stroke={1.5} className="h-3 w-3 shrink-0 text-emerald-600" />
                       {f}
                     </li>
                   ))}

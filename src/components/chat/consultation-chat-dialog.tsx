@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Send, X, CalendarDays, Loader2, Video, RotateCcw } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,6 +16,7 @@ import { trackCtaClick } from '@/lib/tracking/client'
 import type { DirectoryPageType } from '@/lib/tracking/types'
 import { useExclusiveFloatingPanel } from '@/lib/floating-panel-bus'
 import { CHAT_MESSAGE_MAX_LENGTH } from '@/lib/consentz-chat'
+import { IconCalendarWeek, IconLoader2, IconRotateClockwise, IconSend, IconVideo, IconX } from '@tabler/icons-react'
 
 interface Message {
   id: number
@@ -531,7 +531,7 @@ export function ConsultationChatDialog({
                     className="flex items-center gap-1 text-[11px] text-gray-600 hover:text-gray-700 transition-colors"
                     title="Start a new conversation"
                   >
-                    <RotateCcw className="h-2.5 w-2.5" />
+                    <IconRotateClockwise stroke={1.5} className="h-2.5 w-2.5" />
                     New chat
                   </button>
                 )}
@@ -543,7 +543,7 @@ export function ConsultationChatDialog({
             className="ml-2 shrink-0 rounded-lg p-1 text-gray-600 hover:text-gray-600 transition-colors"
             aria-label="Close chat"
           >
-            <X className="h-4 w-4" />
+            <IconX stroke={1.5} className="h-4 w-4" />
           </button>
         </div>
 
@@ -551,7 +551,7 @@ export function ConsultationChatDialog({
         <div ref={messagesContainerRef} className="flex-1 overflow-y-auto min-h-0">
           {(checking || loadingHistory) && (
             <div className="flex h-full items-center justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
+              <IconLoader2 stroke={1.5} className="h-6 w-6 animate-spin" />
             </div>
           )}
 
@@ -654,7 +654,7 @@ export function ConsultationChatDialog({
                   <span
                     className={cn(
                       'pointer-events-none absolute right-1 bottom-1 text-[10px]',
-                      draft.length >= CHAT_MESSAGE_MAX_LENGTH ? 'text-red-500' : 'text-gray-400',
+                      draft.length >= CHAT_MESSAGE_MAX_LENGTH ? 'text-red-500' : 'text-gray-600',
                     )}
                   >
                     {draft.length}/{CHAT_MESSAGE_MAX_LENGTH}
@@ -669,9 +669,9 @@ export function ConsultationChatDialog({
                 aria-label="Send"
               >
                 {sending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" />
                 ) : (
-                  <Send className="h-4 w-4" />
+                  <IconSend stroke={1.5} className="h-4 w-4" />
                 )}
               </Button>
             </div>
@@ -684,7 +684,7 @@ export function ConsultationChatDialog({
                   className="w-full gap-1.5 text-xs"
                   onClick={() => setBookingOpen(true)}
                 >
-                  <CalendarDays className="h-3.5 w-3.5" />
+                  <IconCalendarWeek stroke={1.5} className="h-3.5 w-3.5" />
                   Book Visit
                 </Button>
                 <Button
@@ -693,7 +693,7 @@ export function ConsultationChatDialog({
                   className="w-full gap-1.5 text-xs"
                   onClick={() => setCallOpen(true)}
                 >
-                  <Video className="h-3.5 w-3.5" />
+                  <IconVideo stroke={1.5} className="h-3.5 w-3.5" />
                   Video Call
                 </Button>
               </div>
@@ -722,7 +722,7 @@ export function ConsultationChatDialog({
           <DialogContent className="max-w-sm p-0 max-h-[85vh] overflow-y-auto">
             <DialogHeader className="px-4 pt-4 pb-0">
               <DialogTitle className="text-sm flex items-center gap-2">
-                <Video className="h-4 w-4 text-gray-600" />
+                <IconVideo stroke={1.5} className="h-4 w-4" />
                 Book a Video Call
               </DialogTitle>
             </DialogHeader>

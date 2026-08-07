@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Link2, Link2Off, Loader2, AlertTriangle, CheckCircle2, Clock } from 'lucide-react'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
+import { IconAlertTriangle, IconCircleCheck, IconClock, IconLinkOff, IconLoader2 } from '@tabler/icons-react'
 
 interface CoreIntegrationPanelProps {
   hasCoreLink: boolean
@@ -57,7 +57,7 @@ export function CoreIntegrationPanel({ hasCoreLink, unlinkRequestedAt, onRefresh
         /* Pending request state */
         <div className="space-y-4">
           <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
-            <Clock className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+            <IconClock stroke={1.5} className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-amber-900">Unlink request pending review</p>
               <p className="text-xs text-amber-700 mt-0.5">
@@ -73,7 +73,7 @@ export function CoreIntegrationPanel({ hasCoreLink, unlinkRequestedAt, onRefresh
             disabled={loading}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition disabled:opacity-50"
           >
-            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+            {loading ? <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" /> : null}
             Cancel request
           </button>
         </div>
@@ -81,7 +81,7 @@ export function CoreIntegrationPanel({ hasCoreLink, unlinkRequestedAt, onRefresh
         /* Confirmation state */
         <div className="space-y-4">
           <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
-            <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+            <IconAlertTriangle stroke={1.5} className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-red-900">Are you sure?</p>
               <p className="text-xs text-red-700 mt-1">
@@ -104,7 +104,7 @@ export function CoreIntegrationPanel({ hasCoreLink, unlinkRequestedAt, onRefresh
               disabled={loading}
               className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-50"
             >
-              {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Link2Off className="h-3.5 w-3.5" />}
+              {loading ? <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" /> : <IconLinkOff stroke={1.5} className="h-3.5 w-3.5" />}
               Submit unlink request
             </button>
             <button
@@ -122,7 +122,7 @@ export function CoreIntegrationPanel({ hasCoreLink, unlinkRequestedAt, onRefresh
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100">
-              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              <IconCircleCheck stroke={1.5} className="h-4 w-4 text-emerald-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">Linked to Consentz Core</p>
@@ -134,7 +134,7 @@ export function CoreIntegrationPanel({ hasCoreLink, unlinkRequestedAt, onRefresh
             onClick={() => setShowConfirm(true)}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
           >
-            <Link2Off className="h-3.5 w-3.5" />
+            <IconLinkOff stroke={1.5} className="h-3.5 w-3.5" />
             Request unlink
           </button>
         </div>

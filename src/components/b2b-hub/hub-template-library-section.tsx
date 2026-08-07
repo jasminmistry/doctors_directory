@@ -2,7 +2,6 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Calendar, CloudDownload, Search } from "lucide-react"
 import { useMemo, useState } from "react"
 import {
   Pagination,
@@ -24,6 +23,7 @@ import {
   type HubTemplateLibraryItem,
 } from "@/lib/b2b-hub/hub-template-library-data"
 import type { TemplateCategory } from "@/lib/b2b-hub/templates-registry"
+import { IconCalendarWeek, IconCloudDownload, IconSearch } from "@tabler/icons-react"
 
 const FORMAT_TABS: { id: HubTemplateLibraryFormat; label: string }[] = [
   { id: "all", label: "All Formats" },
@@ -84,11 +84,11 @@ function TemplateLibraryCard({ item }: { item: HubTemplateLibraryItem }) {
             {item.author}
           </span>
           <span className="inline-flex items-center gap-1 rounded-full bg-white border border-[#e0e0e0] px-2 py-1 font-medium text-[#111111]">
-            <CloudDownload className="h-3.5 w-3.5" aria-hidden />
+            <IconCloudDownload stroke={1.5} className="h-3.5 w-3.5" aria-hidden />
             {item.downloads} downloads
           </span>
           <span className="inline-flex items-center gap-1">
-            <Calendar className="h-3.5 w-3.5" aria-hidden />
+            <IconCalendarWeek stroke={1.5} className="h-3.5 w-3.5" aria-hidden />
             {item.date}
           </span>
         </div>
@@ -201,7 +201,7 @@ export function HubTemplateLibrarySection({
             className="inline-flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-lg bg-[#1A1A1A] text-white transition-colors hover:bg-neutral-900 hover:cursor-pointer"
             aria-label="Search"
           >
-            <Search className="h-5 w-5" strokeWidth={2.5} />
+            <IconSearch stroke={1.5} className="h-5 w-5" />
           </button>
         </div>
 

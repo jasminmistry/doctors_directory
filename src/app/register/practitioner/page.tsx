@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, User, CheckCircle2 } from 'lucide-react'
 import { ClaimWizard } from '@/components/claim/claim-wizard'
 import { getConsentzAuthUrl } from '@/lib/auth'
 import { toDirectoryCanonical } from '@/lib/seo'
+import { IconArrowNarrowLeft, IconCircleCheck, IconUser } from '@tabler/icons-react'
 
 export const metadata: Metadata = {
   title: 'Register as a Practitioner — Consentz Directory',
@@ -39,13 +39,13 @@ export default function RegisterPractitionerPage({ searchParams }: Readonly<Prop
           href="/"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-8"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
           Back to directory
         </Link>
 
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-2">
-            <User className="h-5 w-5 text-muted-foreground" />
+            <IconUser stroke={1.5} className="h-5 w-5" />
             <span className="text-xs uppercase tracking-wide text-muted-foreground font-medium">For Practitioners</span>
           </div>
           <h1 className="text-2xl font-medium mb-3">Register as a practitioner</h1>
@@ -56,7 +56,7 @@ export default function RegisterPractitionerPage({ searchParams }: Readonly<Prop
           <ul className="mt-4 space-y-2">
             {BENEFITS.map((b) => (
               <li key={b} className="flex items-start gap-2 text-sm text-muted-foreground">
-                <CheckCircle2 className="h-4 w-4 text-black shrink-0 mt-0.5" />
+                <IconCircleCheck stroke={1.5} className="h-4 w-4 shrink-0 mt-0.5" />
                 {b}
               </li>
             ))}

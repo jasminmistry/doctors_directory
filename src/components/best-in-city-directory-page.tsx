@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Breadcrumb,
@@ -29,6 +28,7 @@ import {
   buildTreatmentCityConsumerContent,
   getTreatmentCityConsumerStats,
 } from '@/lib/treatment-city-consumer-content'
+import { IconArrowNarrowLeft } from '@tabler/icons-react'
 
 type Props = {
   entry: BestInCityEntry
@@ -85,7 +85,7 @@ export function BestInCityDirectoryPage({ entry }: Props) {
       <main className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
           <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
           </Link>
           <Breadcrumb>
