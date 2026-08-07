@@ -226,7 +226,7 @@ export default function AdminReviewsPage() {
                       {formatDistanceToNow(new Date(r.createdAt), { addSuffix: true })}
                     </span>
                   </div>
-                  <IconStar stroke={1.5} rating={r.rating} />
+                  <Stars rating={r.rating} />
                   {r.treatment && <p className="mt-1 text-xs text-gray-600">{r.treatment}</p>}
                   <p className="mt-2 text-sm text-gray-700 leading-relaxed">{r.reviewText}</p>
                 </div>

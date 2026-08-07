@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { cn } from '@/lib/utils'
 import { PPL_LEAD_PRICE } from '@/lib/pricing'
-import { IconBox, IconBuildingHospital, IconTrendingUp2, IconClock, IconCurrencyPound, IconStethoscope, IconUsers, IconLockOpen2, IconCalendarWeek, IconCirclePercentage, IconRotate, IconArrowNarrowUp, IconArrowNarrowDown, IconMinus, IconUserCheck, IconMail, IconBrandChrome, IconBrandApple, IconLinkOff } from '@tabler/icons-react'
+import { IconBox, IconBuildingHospital, IconTrendingUp2, IconClock, IconCurrencyPound, IconStethoscope, IconUsers, IconLockOpen2, IconCalendarWeek, IconCirclePercentage, IconRotate, IconArrowNarrowUp, IconArrowNarrowDown, IconMinus, IconUserCheck, IconMail, IconBrandChrome, IconBrandApple, IconLinkOff, IconTrash, IconMessage, IconBook } from '@tabler/icons-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -236,7 +236,7 @@ export default function AdminDashboard() {
         {stats && stats.pendingDirectoryRemovalRequests > 0 && (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-              <IconTrash2 stroke={1.5} className="h-4 w-4" />
+              <IconTrash stroke={1.5} className="h-4 w-4" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-amber-900">
@@ -462,7 +462,7 @@ export default function AdminDashboard() {
               {/* Top-line patient counts */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <EarningsTile
-                  icon={Users}
+                  icon={IconUsers}
                   iconBg="bg-indigo-50 text-indigo-600"
                   label="Registered patients"
                   primary={patientStats.patients.total.toLocaleString()}

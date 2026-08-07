@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { Icon, IconLock } from '@tabler/icons-react'
+import { IconLock } from '@tabler/icons-react'
+import type { Icon } from '@tabler/icons-react'
 import { cn } from '@/lib/utils'
 
 interface HeaderIconLinkProps {

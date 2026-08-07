@@ -1,5 +1,5 @@
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
-import { IconBrain, IconClipboard, IconClock, IconFileText, IconHeartHandshake, IconMessage, IconStethoscope } from "@tabler/icons-react";
+import { IconBrain, IconClipboard, IconClipboardPlus, IconClock, IconFileText, IconHeartHandshake, IconMapPin, IconMessage, IconStethoscope } from "@tabler/icons-react";
 
 export default function ClinicManagementSoftwarePage() {
     const bookDemoHref = b2bBookDemoHref();
