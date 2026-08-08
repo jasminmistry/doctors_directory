@@ -125,8 +125,8 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                   </Badge>
                 )}
               </div>
+              <ClinicLabels clinic={clinic} />
             </div>
-          </div>
 
             {/* Role / category */}
             <p className="text-sm font-semibold text-muted-foreground leading-tight">
@@ -146,11 +146,11 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                 </span>
               )}
             </div>
-
           </div>
         </div>
+      </div>
 
-        <div className="flex flex-col gap-1.5 md:hidden pt-1">
+      <div className="flex flex-col gap-1.5 md:hidden pt-1">
           <address className="not-italic text-sm leading-snug flex items-start gap-2">
             <IconMapPin stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
             <span>{clinic.gmapsAddress}</span>
