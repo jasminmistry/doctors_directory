@@ -46,7 +46,7 @@ export default function RegisterClinicPage({ searchParams }: Readonly<Props>) {
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-2">
             <IconBuildingHospital className="h-5 w-5" />
-            <span className="text-xs uppercase tracking-wide text-muted-foreground font-medium">For Clinics</span>
+            <span className="text-xs uppercase tracking-wide font-medium">For Clinics</span>
           </div>
           <h1 className="text-2xl font-medium mb-3">Register your clinic</h1>
           <p className="text-sm text-muted-foreground">

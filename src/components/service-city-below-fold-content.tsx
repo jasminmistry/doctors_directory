@@ -20,7 +20,7 @@ type Props = {
 
 export function ServiceCityBelowFoldContent({ content }: Props) {
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-12">
+    <div className="mx-auto max-w-7xl px-4 pb-12">
       {content.sections.map((section) => (
         <section key={section.title} className="mb-10">
           <h2 className="text-xl font-semibold text-foreground md:text-2xl">{section.title}</h2>

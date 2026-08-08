@@ -9,7 +9,7 @@ export default async function Loading({ params }: { params: { category: string; 
   return (
     <main className="min-h-screen bg-background">
       <div className="sticky top-0 z-10">
-        <div className="container mx-auto max-w-6xl px-4 py-4">
+        <div className="container mx-auto max-w-7xl px-4 py-4">
           <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
               <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
@@ -26,7 +26,7 @@ export default async function Loading({ params }: { params: { category: string; 
         </div>
       </div>
 
-      <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
+      <div className="container mx-auto max-w-7xl pt-0 md:px-4 py-20 space-y-8">
         <ProfileHeaderSkeleton />
 
         <div className="px-4 md:px-0">
