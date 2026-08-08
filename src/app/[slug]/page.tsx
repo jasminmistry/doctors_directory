@@ -162,7 +162,7 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
       <>
         <DirectoryJsonLd schemas={jsonLdSchemas} />
         <main className="bg-(--primary-bg-color)">
-          <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
+          <div className="mx-auto max-w-7xl px-4 py-6 md:py-10">
             <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
               <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
@@ -228,7 +228,7 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
       <>
         <DirectoryJsonLd schemas={jsonLdSchemas} />
         <main className="bg-(--primary-bg-color)">
-          <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
+          <div className="mx-auto max-w-7xl px-4 py-6 md:py-10">
             <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
               <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
@@ -259,7 +259,7 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
             </Link>
           </div>
 
-          <div className="mx-auto grid max-w-6xl gap-3 px-4 pb-12 md:grid-cols-2">
+          <div className="mx-auto grid max-w-7xl gap-3 px-4 pb-12 md:grid-cols-2">
             {products.map((product) => (
               <Card key={product.slug} className="border border-border bg-card">
                 <CardContent className="p-4">
@@ -306,7 +306,7 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
     <>
       <DirectoryJsonLd schemas={jsonLdSchemas} />
       <main className="bg-(--primary-bg-color)">
-        <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
+        <div className="mx-auto max-w-7xl px-4 py-6 md:py-10">
           <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
             <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
             Back to Directory
@@ -336,7 +336,7 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
           </Link>
         </div>
 
-        <div className="mx-auto grid max-w-6xl gap-3 px-4 pb-12 md:grid-cols-2">
+        <div className="mx-auto grid max-w-7xl gap-3 px-4 pb-12 md:grid-cols-2">
           {products.map((product) => (
             <Card key={product.slug} className="border border-border bg-card">
               <CardContent className="p-4">

@@ -91,7 +91,7 @@ export function NavigationHeader() {
           : "bg-transparent",
       )}
     >
-      <div className="container mx-auto max-w-6xl px-4">
+      <div className="container mx-auto max-w-7xl px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link

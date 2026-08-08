@@ -257,7 +257,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
       {/* Navigation */}
       <div className="bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto max-w-6xl px-4 py-4">
+        <div className="container mx-auto max-w-7xl px-4 py-4">
           <Link className="mb-3 inline-block" href="/" prefetch={false}>
             <Button
               variant="ghost"
@@ -290,7 +290,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
         </div>
       </div>
 
-      <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
+      <div className="container mx-auto max-w-7xl pt-0 md:px-4 py-20 space-y-8">
         <ProfileHeader
           clinic={clinic}
           clinicName={dbClinic.name ?? undefined}
