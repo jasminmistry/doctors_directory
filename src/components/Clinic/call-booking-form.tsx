@@ -5,6 +5,7 @@ import { format, addDays, isSameDay } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 import { cn, formatTimezoneAbbr } from '@/lib/utils'
 import { IconChevronLeft, IconChevronRight, IconCircleCheck, IconExternalLink, IconLoader2, IconVideo } from '@tabler/icons-react'
+import { Button } from '../ui/button'
 
 // Video call slot times are always shown in the clinic's own timezone, never
 // the visitor's browser timezone — every clinic in this directory is UK-based.
@@ -440,15 +441,17 @@ export function CallBookingForm({
         </div>
       )}
 
-      <button
+      <Button
         type="button"
+        variant="default"
+        size="lg"
         disabled={!selectedSlot}
         onClick={() => setStep(2)}
-        className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+        className="w-full"
       >
         <IconVideo stroke={1.5} className="h-4 w-4" />
         Next →
-      </button>
+      </Button>
     </div>
   )
 }
