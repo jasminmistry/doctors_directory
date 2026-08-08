@@ -75,14 +75,14 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
         <div className="flex flex-col gap-3 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0 min-w-0 flex-1 lg:max-w-3xl">
           <div className="flex flex-row items-start gap-4">
             <div className="flex flex-col items-center gap-2 shrink-0 md:items-start">
-              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-gray-200 md:h-40 md:w-40">
-                <img
-                  src={imgSrc}
-                  alt={practitionerName}
-                  className="object-cover w-full h-full rounded-full"
-                  onError={() => setImgSrc(DEFAULT_IMG)}
-                />
-              </div>
+              <div className="relative w-20 h-20 md:w-40 md:h-40 shrink-0 overflow-hidden rounded-full bg-gray-200">
+            <img
+              src={imgSrc}
+              alt={practitionerName}
+              className="object-cover w-full h-full rounded-full"
+              onError={() => setImgSrc(DEFAULT_IMG)}
+            />
+          </div>
               <div className="hidden md:block max-w-[10.5rem]">
                 <PrestigeProfileBadge
                   awardsBadgeLabel={clinic.awardsBadgeLabel}
@@ -146,6 +146,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                 </span>
               )}
             </div>
+
           </div>
         </div>
 

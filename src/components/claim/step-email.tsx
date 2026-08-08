@@ -487,7 +487,7 @@ export function StepDetails(props: Readonly<Props>) {
 
       {formError && <p className="text-sm text-destructive">{formError}</p>}
 
-      <Button type="submit" disabled={loading} className="w-full">
+      <Button size="lg" type="submit" disabled={loading} className="w-full">
         {loading ? 'Sending…' : 'Send verification code'}
       </Button>
     </form>

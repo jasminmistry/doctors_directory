@@ -46,7 +46,7 @@ export default function RegisterPractitionerPage({ searchParams }: Readonly<Prop
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-2">
             <IconUser stroke={1.5} className="h-5 w-5" />
-            <span className="text-xs uppercase tracking-wide text-muted-foreground font-medium">For Practitioners</span>
+            <span className="text-xs uppercase tracking-wide font-medium">For Practitioners</span>
           </div>
           <h1 className="text-2xl font-medium mb-3">Register as a practitioner</h1>
           <p className="text-sm text-muted-foreground">

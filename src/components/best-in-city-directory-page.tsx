@@ -83,7 +83,7 @@ export function BestInCityDirectoryPage({ entry }: Props) {
     <>
       <DirectoryJsonLd schemas={jsonLdSchemas} />
       <main className="bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
+        <div className="mx-auto max-w-7xl px-4 py-6 md:py-10">
           <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
               <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
@@ -134,7 +134,7 @@ export function BestInCityDirectoryPage({ entry }: Props) {
 
         <ServiceCityBelowFoldContent content={consumerContent} />
 
-        <div className="mx-auto max-w-6xl px-4 pb-12">
+        <div className="mx-auto max-w-7xl px-4 pb-12">
           <div className="flex flex-wrap gap-4 text-sm font-medium">
             <Link href={hubPath} className="text-foreground underline-offset-2 hover:underline">
               {entry.treatmentName} hub in {entry.locationLabel}

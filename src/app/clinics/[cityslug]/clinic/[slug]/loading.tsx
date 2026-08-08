@@ -16,7 +16,7 @@ export default async function Loading({ params }: { params: { cityslug: string; 
   return (
     <main className="min-h-screen bg-background">
       <div className="bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto max-w-6xl px-4 py-4">
+        <div className="container mx-auto max-w-7xl px-4 py-4">
           <Link className="mb-3 inline-block" href="/" prefetch={false}>
             <Button
               variant="ghost"
@@ -28,7 +28,7 @@ export default async function Loading({ params }: { params: { cityslug: string; 
             </Button>
           </Link>
         </div>
-        <div className="container mx-auto max-w-6xl px-4 py-2">
+        <div className="container mx-auto max-w-7xl px-4 py-2">
           <BreadcrumbSkeleton
             items={[
               { label: "Home", href: "/" },
@@ -38,7 +38,7 @@ export default async function Loading({ params }: { params: { cityslug: string; 
         </div>
       </div>
 
-      <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
+      <div className="container mx-auto max-w-7xl pt-0 md:px-4 py-20 space-y-8">
         <ProfileHeaderSkeleton />
 
         <div className="px-4 md:px-0">
