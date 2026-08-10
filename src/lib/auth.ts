@@ -4,6 +4,7 @@ export const COOKIE_TOKEN = 'consentz_token'
 export const COOKIE_REFRESH = 'consentz_refresh_token'
 export const COOKIE_USERNAME = 'consentz_username'
 export const COOKIE_ROLE = 'consentz_role'
+export const COOKIE_ACTIVE_CLINIC = 'consentz_active_clinic_id'
 export const COOKIE_PATH = '/directory'
 
 export const COOKIE_OPTS = {
