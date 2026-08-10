@@ -46,6 +46,8 @@ export default async function PortalLayout({ children }: { children: React.React
       entityImage={entityImage}
       plan={plan}
       hasCoreClinic={hasCoreClinic}
+      clinics={user.clinics}
+      activeClinicId={user.clinicId}
     >
       {children}
     </PortalLayoutClient>

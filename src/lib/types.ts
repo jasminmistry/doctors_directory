@@ -314,3 +314,11 @@ export interface Accreditation {
     answer: string;
   }>;
 }
+
+export interface PortalClinicSummary {
+  claimId: number;
+  clinicId: number;
+  slug: string;
+  name: string;
+  image: string | null;
+}

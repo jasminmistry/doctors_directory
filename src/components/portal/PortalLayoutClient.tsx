@@ -10,6 +10,8 @@ import { ChatBadge } from "@/components/portal/chat-badge";
 import { WelcomeWizard } from "@/components/portal/welcome-wizard";
 import { HeaderIconLink } from "@/components/portal/header-icon-link";
 import { HeaderProfileMenu } from "@/components/portal/header-profile-menu";
+import { ClinicSwitcher } from "@/components/portal/clinic-switcher";
+import type { PortalClinicSummary } from "@/lib/types";
 
 const PRESENCE_INTERVAL_MS = 2 * 60 * 1000; // 2 minutes
 
@@ -20,6 +22,8 @@ interface PortalLayoutClientProps {
   entityImage?: string | null;
   plan?: string | null;
   hasCoreClinic?: boolean;
+  clinics?: PortalClinicSummary[];
+  activeClinicId?: number | null;
 }
 
 const DEFAULT_ENTITY_IMG = "/directory/images/default-dr-profile-1.webp";
@@ -31,6 +35,8 @@ export function PortalLayoutClient({
   entityImage,
   plan,
   hasCoreClinic = false,
+  clinics,
+  activeClinicId,
 }: PortalLayoutClientProps) {
   const [avatarSrc, setAvatarSrc] = useState(entityImage || DEFAULT_ENTITY_IMG);
   const pathname = usePathname();
@@ -101,9 +107,19 @@ export function PortalLayoutClient({
     <div className="min-h-screen bg-[#fbfbfb]">
       {/* Mobile topbar */}
       <div className="sticky top-0 z-30 flex items-center justify-between bg-[var(--primary-bg-color)] px-4 py-3 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:hidden">
-        <span className="text-sm font-semibold text-gray-900 truncate">
-          {entityName || "My Portal"}
-        </span>
+        {entityType === "clinic" ? (
+          <ClinicSwitcher
+            activeClinicId={activeClinicId ?? 0}
+            activeName={entityName}
+            activeImage={avatarSrc}
+            clinics={clinics ?? []}
+            compact
+          />
+        ) : (
+          <span className="text-sm font-semibold text-gray-900 truncate">
+            {entityName || "My Portal"}
+          </span>
+        )}
         <div className="flex items-center gap-2">
           {entityType === "clinic" && (
             <>
@@ -506,23 +522,32 @@ export function PortalLayoutClient({
         {/* Main */}
         <div className="min-w-0 flex-1 flex flex-col">
           <div className="hidden items-center justify-between gap-1 bg-white px-[10px] py-2 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:flex">
-            <div className="shrink-0 flex items-center gap-2.5">
-              <img
-                src={avatarSrc}
-                alt={entityName || "Clinic"}
-                className="h-9 w-9 shrink-0 rounded-full object-cover"
-                onError={() => setAvatarSrc(DEFAULT_ENTITY_IMG)}
+            {entityType === "clinic" ? (
+              <ClinicSwitcher
+                activeClinicId={activeClinicId ?? 0}
+                activeName={entityName}
+                activeImage={avatarSrc}
+                clinics={clinics ?? []}
               />
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">
-                  Consentz Portal
-                </p>
+            ) : (
+              <div className="shrink-0 flex items-center gap-2.5">
+                <img
+                  src={avatarSrc}
+                  alt={entityName || "Clinic"}
+                  className="h-9 w-9 shrink-0 rounded-full object-cover"
+                  onError={() => setAvatarSrc(DEFAULT_ENTITY_IMG)}
+                />
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">
+                    Consentz Portal
+                  </p>
 
-                <p className="mt-1 text-sm font-medium text-gray-900 truncate">
-                  {entityName || "My Portal"}
-                </p>
+                  <p className="mt-1 text-sm font-medium text-gray-900 truncate">
+                    {entityName || "My Portal"}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
             <div className="flex gap-2">
   {entityType === "clinic" && (
     <>
