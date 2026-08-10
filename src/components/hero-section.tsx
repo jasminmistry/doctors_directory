@@ -25,7 +25,7 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
       image: "/directory//images/getapp.png",
       link: "https://www.getapp.com/healthcare-pharmaceuticals-software/a/consentz/",
       alt: "Getapp",
-      width: "w-[45px] md:w-[90px]",
+      width: "w-[45px] md:w-[75px]",
     },
     {
       image: "/directory/images/capterra.svg",
@@ -79,7 +79,7 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
           min-h-[calc(100vh-76px)]"
           aria-labelledby="hero-heading"
         >
-          <div className="flex-1 flex items-center flex-col justify-center w-full ">
+          <div className="flex-1 flex items-center flex-col justify-top w-full ">
             <span className="block font-semibold text-xs pt-4 mb-[-10px]">I AM A</span>
             <div className="flex justify-center pt-4 pb-3">
               <div className="inline-flex items-center bg-white border rounded-full p-1 gap-0.5">
@@ -112,14 +112,14 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
             <div className="md:pt-5 w-full ">
               {mode === "patient" ? (
                 <>
-                  <div className="max-w-7xl w-full mx-auto text-center md:text-left md:px-6 grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4 md:gap-8 items-center">
+                  <div className="max-w-7xl w-full mx-auto text-center md:text-left md:px-6 grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4 md:gap-8 items-start">
                     <div>
                         <h1
                           id="hero-heading"
                           className="text-3xl md:text-5xl mb-4 md:mb-6 text-[var(--mineshaft)] font-[var(--font-noto)]"
                           style={{ fontFamily: "var(--font-noto)" }}
                         >
-                          Find top-rated Aesthetics & Wellness Practitioners near
+                          Find elite Aesthetics & Wellness Practitioners near
                           you
                         </h1>
                         <p className="text-sm hidden md:block md:text-lg mb-6 md:mb-8">
@@ -134,16 +134,16 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
                         <div className="mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
                           <Link
                             href="/account/login"
-                            className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                            className="w-[80%] sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
                           >
-                            Join as a patient — it&apos;s free
+                            Join as a Patient - It&apos;s Free
                           </Link>
 
                           <Link
                             href="/register/clinic"
                             className="hidden md:inline-flex items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors"
                           >
-                            List your practice
+                            List your Practice
                           </Link>
 
                           <Link
@@ -155,7 +155,6 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
                         </div>
                     </div>
                     <div>
-
                       <figure className="flex justify-center">
                         <img
                           src="/directory/images/Consentz Aesthetic Clinic Directory.webp"
@@ -172,43 +171,40 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
                 </>
               ) : (
                 <>
-                  <div className="max-w-7xl w-full mx-auto text-center md:text-left md:px-6 grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4 md:gap-8 items-center">
+                  <div className="max-w-7xl w-full mx-auto text-center md:text-left md:px-6 grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4 md:gap-8 items-start">
 
                     <div>
-                      <div className="max-w-2xl m-auto">
+                      <div className="max-w-2xl">
                         <h1
                           id="hero-heading"
                           className="text-3xl md:text-5xl mb-6 text-[var(--mineshaft)] font-[var(--font-noto)]"
                           style={{ fontFamily: "var(--font-noto)" }}
                         >
-                          Grow your aesthetic practice with the UK&apos;s premier
-                          directory
+                          Get found. Get qualified enquiries. Get booked.
                         </h1>
-                        <p className="hidden md:block text-sm md:text-lg mb-8">
-                          Reach thousands of patients actively looking for
-                          treatments. Showcase your expertise, collect verified
-                          reviews, and fill your calendar.
+                        <p className="block text-sm md:text-lg mb-8">
+                          The patient-growth system for Aesthetic & Wellness practitioners.
                         </p>
                       </div>
 
-                      <div className="max-w-4xl m-auto md:px-5 mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
+                      <div className="max-w-4xl m-auto mt-5 flex flex-col sm:flex-row items-center justify-start gap-3">
                         <Link
                           href="/register/clinic"
-                          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                          className="w-[80%] sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
                         >
-                          List your practice
+                          List your Practice
                         </Link>
                         <a
                             href={bookDemoHref}
                             target="_blank"
                             rel="noopener noreferrer"
                             className=
-                                "inline-flex h-auto w-full md:w-auto items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors"
+                                "inline-flex h-auto w-[80%] md:w-auto items-center justify-center gap-2 rounded-lg border border-black px-5 py-2.5 text-sm font-semibold text-black hover:bg-black hover:text-white transition-colors"
                           >
                             Book Demo
                           </a>
                       </div>
-                        <div className="md:px-5 pt-6 flex flex-wrap justify-center lg:justify-start gap-6">
+                        <div className="hidden md:inline-flex pt-6 flex flex-wrap justify-center lg:justify-start gap-6">
                           {ratings.map((rating, index) => (
                             <a
                               key={index}
