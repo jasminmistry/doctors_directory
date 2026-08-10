@@ -154,6 +154,46 @@ export const getAllPractitionersForSearch = cache(async (): Promise<Practitioner
 })
 
 /**
+ * Practitioners in a given city, with primary clinic merged — for city-scoped
+ * "best ranked" blocks (cached). Filters at the DB level instead of pulling
+ * every practitioner nationally, unlike getAllPractitionersForSearch.
+ */
+export const getPractitionersByCity = cache(async (cityName: string): Promise<Practitioner[]> => {
+  const rows = await prisma.practitioner.findMany({
+    where: {
+      clinicAssociations: {
+        some: { clinic: { city: { name: cityName } } },
+      },
+    },
+    include: {
+      ranking: true,
+      treatments: {
+        select: {
+          treatment: { select: { name: true } },
+        },
+      },
+      clinicAssociations: {
+        orderBy: { clinicId: 'asc' },
+        take: 1,
+        include: {
+          clinic: { select: CLINIC_SELECT },
+        },
+      },
+    },
+    orderBy: { displayName: 'asc' },
+  })
+
+  return rows
+    .filter((p) => p.clinicAssociations.length > 0)
+    .filter(
+      (p) =>
+        !isRemovedPractitionerSlug(p.slug) &&
+        !hasTripleLetterSequence(p.displayName),
+    )
+    .map(convertDbPractitionerToOldType)
+})
+
+/**
  * Single practitioner by slug with full clinic data including hours (cached)
  */
 export const getPractitionerBySlug = cache(async (slug: string): Promise<Practitioner | null> => {

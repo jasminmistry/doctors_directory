@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Practitioner } from "@/lib/types"
 import { accreditations } from "@/lib/data"
-import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
+import { getPractitionersByCity } from "@/lib/data-access/practitioners"
 import { PractitionerCard } from "@/components/practitioner-card"
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots"
 import { toDirectoryCanonical } from "@/lib/seo"
@@ -52,20 +52,18 @@ interface AccreditedPractitionersPageProps {
 }
 
 export default async function AccreditedPractitionersPage({ params }: Readonly<AccreditedPractitionersPageProps>) {
-  const enrichedPractitioners = await getAllPractitionersForSearch()
-
   const { accreditation, cityslug } = params
   const accreditationField = mapAccreditationToField(accreditation)
 
-  const filteredPractitioners = enrichedPractitioners.filter(practitioner => {
+  const cityPractitioners = await getPractitionersByCity(cityslug.toLowerCase())
+
+  const filteredPractitioners = cityPractitioners.filter(practitioner => {
     if (!practitioner) return false
-    const cityMatch = practitioner.City?.toLowerCase() === cityslug.toLowerCase()
     const accreditationValue = practitioner[accreditationField]
     const accreditationMatch = accreditationValue === true || (Array.isArray(accreditationValue) && accreditationValue[0] === true)
-    return cityMatch && accreditationMatch
+    return accreditationMatch
   })
 
-  const cityPractitioners = enrichedPractitioners.filter(p => p?.City?.toLowerCase() === cityslug.toLowerCase())
   const displayPractitioners = filteredPractitioners.length ? filteredPractitioners : cityPractitioners
   const isFallback = filteredPractitioners.length === 0
 

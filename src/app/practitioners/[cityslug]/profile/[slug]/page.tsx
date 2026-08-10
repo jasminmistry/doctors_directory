@@ -20,7 +20,7 @@ import { ScoreInfoTooltip } from "@/components/score-info-tooltip";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { toDirectoryCanonical } from "@/lib/seo";
-import { getPractitionerBySlug, getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
+import { getPractitionerBySlug, getPractitionersByCity } from "@/lib/data-access/practitioners";
 import { getAllTreatmentNames } from "@/lib/data-access/treatments";
 import { isRemovedPractitionerSlug } from "@/lib/directory-removals";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
@@ -51,9 +51,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
     notFound();
   }
 
-  const [clinic, allPractitioners, uniqueTreatments] = await Promise.all([
+  const [clinic, uniqueTreatments] = await Promise.all([
     getPractitionerBySlug(slug),
-    getAllPractitionersForSearch(),
     getAllTreatmentNames(),
   ])
 
@@ -68,10 +67,10 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const practitioner = clinic
   const currentCity = practitioner.City?.toLowerCase()
 
+  const cityPractitioners = currentCity ? await getPractitionersByCity(currentCity) : []
+
   const rankedCityPractitioners = buildPractitionerRankedEntries(
-    allPractitioners
-      .filter((entry) => entry.practitioner_name !== clinic.practitioner_name)
-      .filter((entry) => entry.City?.toLowerCase() === currentCity),
+    cityPractitioners.filter((entry) => entry.practitioner_name !== clinic.practitioner_name),
     5
   )
 

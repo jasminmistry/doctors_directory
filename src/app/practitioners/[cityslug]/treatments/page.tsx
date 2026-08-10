@@ -22,7 +22,7 @@ import { locations } from "@/lib/data";
 import { capitalize } from "@/lib/utils";
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
-import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
+import { getPractitionersByCity } from "@/lib/data-access/practitioners";
 import { getAllProducts as getAllProductsFromDb } from "@/lib/data-access/products";
 
 interface PageProps {
@@ -47,29 +47,27 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function CityTreatmentsPage({ params }: PageProps) {
-  const [enrichedPractitioners, productsData] = await Promise.all([
-    getAllPractitionersForSearch(),
-    getAllProductsFromDb(),
-  ])
-
   const { cityslug } = params;
   const displayCityName = capitalize(cityslug);
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();
-  const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
-    (p) => p.City?.toLowerCase() === normalizedCitySlug
-  )!;
   const decodedCitySlug = decodeURIComponent(cityslug)
     .toLowerCase()
     .replace(/\s+/g, "");
 
+  const [cityPractitioners, productsData] = await Promise.all([
+    getPractitionersByCity(decodedCitySlug),
+    getAllProductsFromDb(),
+  ])
+
+  const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
+    (p) => p.City?.toLowerCase() === normalizedCitySlug
+  )!;
+
   const aestheticInjectableProducts = productsData.filter(p => p.category === "Aesthetic Injectables");
   const aestheticProductCategories = [...new Set(aestheticInjectableProducts.map(p => p.product_category.toLowerCase()))];
 
-  const filteredPractitioners = (enrichedPractitioners as Array<Clinic & { practitioner_name: string; practitioner_title: string }>).filter((practitioner) => {
-    const cityMatch = practitioner.City?.toLowerCase() === decodedCitySlug.toLowerCase();
-    const treatments = practitioner.Treatments ?? [];
-
-    const aestheticMatch = treatments.some((treatment: string) => {
+  const isAestheticMatch = (treatments: string[] | undefined) =>
+    (treatments ?? []).some((treatment: string) => {
       const treatmentLower = treatment.toLowerCase().replace(/\s+/g, "");
       return aestheticProductCategories.some(productCat =>
         treatmentLower.includes(productCat.replace(/\s+/g, "")) ||
@@ -77,8 +75,9 @@ export default async function CityTreatmentsPage({ params }: PageProps) {
       );
     });
 
-    return cityMatch && aestheticMatch;
-  });
+  const filteredPractitioners = (cityPractitioners as Array<Clinic & { practitioner_name: string; practitioner_title: string }>).filter(
+    (practitioner) => isAestheticMatch(practitioner.Treatments)
+  );
 
   const uniqueTreatments = [
     ...new Set(
@@ -88,21 +87,24 @@ export default async function CityTreatmentsPage({ params }: PageProps) {
     )
   ];
 
-  const defaultPractitioners = (enrichedPractitioners as Array<Clinic & { practitioner_name: string; practitioner_title: string }>).filter(p => p.City === "London" && p.Treatments?.some((t: string) => {
-    const treatmentLower = t.toLowerCase().replace(/\s+/g, "");
-    return aestheticProductCategories.some(productCat =>
-      treatmentLower.includes(productCat.replace(/\s+/g, "")) ||
-      productCat.replace(/\s+/g, "").includes(treatmentLower)
-    );
-  }));
+  let defaultTreatments: string[] = [];
+  if (uniqueTreatments.length === 0) {
+    const londonPractitioners = decodedCitySlug === "london"
+      ? cityPractitioners
+      : await getPractitionersByCity("london");
 
-  const defaultTreatments = [
-    ...new Set(
-      defaultPractitioners
-        .filter(c => Array.isArray(c.Treatments))
-        .flatMap(c => c.Treatments || []).filter((t): t is string => typeof t === "string")
-    )
-  ];
+    const defaultPractitioners = (londonPractitioners as Array<Clinic & { practitioner_name: string; practitioner_title: string }>).filter(
+      (practitioner) => isAestheticMatch(practitioner.Treatments)
+    );
+
+    defaultTreatments = [
+      ...new Set(
+        defaultPractitioners
+          .filter(c => Array.isArray(c.Treatments))
+          .flatMap(c => c.Treatments || []).filter((t): t is string => typeof t === "string")
+      )
+    ];
+  }
 
   if (!cityData) {
     notFound();
