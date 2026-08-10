@@ -317,7 +317,7 @@ export default function Header() {
               </button>
               <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <div className="px-4 py-2.5 border-b border-gray-100">
-                  <p className="text-xs text-gray-600 capitalize">
+                  <p className="text-xs text-black capitalize">
                     {portalUser.entityType} portal
                   </p>
                 </div>
@@ -433,41 +433,79 @@ export default function Header() {
             >
               HOME
             </button>
-            <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+            <div className="border-t border-gray-400 pt-3 flex flex-col gap-2">
+              <p className="text-left font-medium uppercase hover:text-black">
                 Features
               </p>
-              <Link
-                href="/features/clinic-management-software"
-                className="text-sm font-medium"
-                onClick={() => setMenuOpen(false)}
-              >
-                clinic-management-software
-              </Link>
+              
+                <Link
+                  href="/features/clinic-management-software"
+                  className="text-sm font-medium hover:text-black"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Clinic Management Software
+                </Link>
+                <Link
+                  href="/features/photos-records"
+                  className="text-sm font-medium hover:text-black"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Photos Records
+                </Link>
+                <Link
+                  href="/features/personalise"
+                  className="text-sm font-medium hover:text-black"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Personalise
+                </Link>
+                <Link
+                  href="/features/analytics"
+                  className="text-sm font-medium hover:text-black"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Analytics
+                </Link>
+                <Link
+                  href="/features/stock-and-billing"
+                  className="text-sm font-medium hover:text-black"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Stock And Billing
+                </Link> 
+                <Link
+                  href="/features/healthcare-marketing-software"
+                  className="text-sm font-medium hover:text-black"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Healthcare Marketing Software
+                </Link>
+                <Link
+                  href="/features/the-consentz-academy"
+                  className="text-sm font-medium hover:text-black"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  The Consentz Academy
+                </Link>
+                <a
+                  href={`${marketingBaseUrl}/hipaa-compliant-medical-spa-software/`}
+                  className="text-sm font-medium hover:text-black"
+                >
+                  HIPAA Compliant Medical Spa Software
+                </a>
+           
+            </div>
+            <div className="border-t border-gray-400 pt-3 flex flex-col gap-2 mt-4">
               <a
-                href={`${marketingBaseUrl}/hipaa-compliant-medical-spa-software/`}
-                className="text-sm font-medium hover:text-black"
+                href={`${marketingBaseUrl}/blog`}
+                className="text-left font-medium hover:text-black"
                 onClick={() => setMenuOpen(false)}
               >
-                HIPAA Compliant Medical Spa Software
+                BLOG
               </a>
             </div>
-            <a
-              href={`${marketingBaseUrl}/blog`}
-              className="text-left font-medium hover:text-black"
-              onClick={() => setMenuOpen(false)}
-            >
-              BLOG
-            </a>
-            <a
-              href={`${marketingBaseUrl}/faqs`}
-              className="text-left font-medium hover:text-black"
-              onClick={() => setMenuOpen(false)}
-            >
-              FAQS
-            </a>
-            <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+            <div className="border-t border-gray-400 pt-3 flex flex-col gap-2">
+              <p className="text-left font-medium uppercase hover:text-black">
                 List Your Practice
               </p>
               <Link
@@ -487,8 +525,8 @@ export default function Header() {
             </div>
           </nav>
           {patient ? (
-            <div className="mt-4 flex flex-col gap-2">
-              <span className="text-sm font-semibold text-gray-600">
+            <div className="border-t border-gray-400 pt-3 flex flex-col gap-2 mt-4">
+              <span className="text-sm font-semibold text-black">
                 {patient.firstName || patient.email}
               </span>
               <Link
@@ -524,11 +562,11 @@ export default function Header() {
               </button>
             </div>
           ) : portalUser ? (
-            <div className="mt-4 flex flex-col gap-2">
-              <span className="text-sm font-semibold text-gray-600">
+            <div className="border-t border-gray-400 pt-3 flex flex-col gap-2 mt-4">
+              <span className="text-left uppercase font-medium hover:text-black">
                 {portalUser.entityName}
               </span>
-              <span className="text-xs text-gray-600 capitalize">
+              <span className="text-sm font-medium hover:text-black capitalize">
                 {portalUser.entityType} portal
               </span>
               <Link
@@ -551,7 +589,7 @@ export default function Header() {
             </div>
           ) : (
             <div className="mt-4 border-t border-gray-100 pt-3 flex flex-col gap-2">
-              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+              <p className="text-left font-medium hover:text-black">
                 Log In
               </p>
               <Link
