@@ -70,6 +70,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
       <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-start">
         {/* Left: avatar + info */}
         <div className="flex flex-row flex-wrap items-start gap-4 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0">
+          
           {/* Avatar */}
           <div className="relative w-20 h-20 md:w-40 md:h-40 shrink-0 overflow-hidden rounded-full bg-gray-200">
             <img
@@ -134,6 +135,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                 </span>
               )}
             </div>
+
           </div>
         </div>
 

@@ -167,7 +167,7 @@ export function TreatmentCityHubPage({ entry }: Props) {
             </div>
           ) : null}
 
-          <div className="mx-auto max-w-6xl px-4 pb-12">
+          <div className="mx-auto max-w-7xl px-4 pb-12">
             <div className="flex flex-wrap gap-3 text-sm">
               <Link
                 href={standalonePath}

@@ -4,7 +4,7 @@ import { PractitionerCardSkeleton } from "@/components/loading-skeleton";
 export default function Loading() {
   return (
     <main className="bg-white">
-      <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
+      <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <Skeleton className="h-4 w-48 mb-2" />
           <Skeleton className="h-7 w-72 mb-4" />
