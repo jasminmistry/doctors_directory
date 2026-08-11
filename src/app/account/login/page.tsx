@@ -89,13 +89,14 @@ export default function AccountLoginPage() {
               <p className="text-sm text-slate-500">
                 We sent a sign-in link to <strong>{email}</strong>. Click the link to continue — it expires in 15 minutes.
               </p>
-              <button
+              <Button
+                variant="link"
+                size="sm"
                 type="button"
                 onClick={() => { setSent(false); setEmail('') }}
-                className="text-xs text-slate-400 hover:text-slate-600 underline"
               >
                 Use a different email
-              </button>
+              </Button>
             </div>
           ) : (
             <>

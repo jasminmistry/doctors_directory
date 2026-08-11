@@ -216,7 +216,7 @@ export function PractitionerCard({
     <>
       {(isPractitioner(practitioner) || isClinic(practitioner)) && (
         <article
-          className="relative flex h-full flex-col overflow-hidden rounded-md border border-[#C4C4C4] bg-white"
+          className="relative flex md:h-full flex-col my-3 md:my-0 overflow-hidden rounded-md border border-[#C4C4C4] bg-white"
           aria-labelledby={`${practitionerOrClinicAriaPrefix}-name-${practitioner.slug}`}
           data-testid="practitioner-card"
         >
@@ -473,7 +473,7 @@ export function PractitionerCard({
               </h2>
               <div className="flex items-start gap-4">
                 <div className="text-center flex-1 min-w-0 items-center flex flex-col">
-                  <div className="flex w-full flex-row items-start border-0 md:flex-col md:items-center">
+                  <div className="flex w-full flex-col items-center border-0 md:flex-col md:items-center">
                     <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden md:mb-3 mr-0">
                       <FallbackImage
                         src={treatmentImageSrc}
