@@ -60,7 +60,7 @@ export async function POST(
 
           if (clinic.coreClinicId && coreConversationId) {
             const [coreMessageId, created] = await Promise.all([
-              sendCoreMessage({ coreClinicId: clinic.coreClinicId, conversationId: coreConversationId, message: openingMessage }),
+              sendCoreMessage({ coreClinicId: clinic.coreClinicId, conversationId: coreConversationId, message: openingMessage, sender: 'visitor' }),
               prisma.chatMessage.create({
                 data: { sessionId: existing.id, sender: 'patient', content: openingMessage },
                 select: { id: true, sender: true, content: true, createdAt: true },

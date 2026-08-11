@@ -110,7 +110,7 @@ export async function POST(
     // Consentz-backed: send to Core + save locally
     if (coreClinicId && coreConversationId) {
       const [coreMessageId, message] = await Promise.all([
-        sendCoreMessage({ coreClinicId, conversationId: coreConversationId, message: body.data.content }),
+        sendCoreMessage({ coreClinicId, conversationId: coreConversationId, message: body.data.content, sender: 'visitor' }),
         prisma.chatMessage.create({
           data: { sessionId: session.id, sender: 'patient', content: body.data.content },
           select: { id: true, sender: true, content: true, createdAt: true },

@@ -90,6 +90,7 @@ export async function sendCoreMessage(payload: {
   coreClinicId: number
   conversationId: number
   message: string
+  sender: 'visitor' | 'clinic'
 }): Promise<number | null> {
   try {
     const res = await fetch(
@@ -98,7 +99,7 @@ export async function sendCoreMessage(payload: {
         method: 'POST',
         cache: 'no-store',
         headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': getAppId() },
-        body: JSON.stringify({ message: payload.message }),
+        body: JSON.stringify({ message: payload.message, sender: payload.sender }),
       },
     )
     if (!res.ok) {

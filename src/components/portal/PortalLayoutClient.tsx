@@ -321,10 +321,10 @@ export function PortalLayoutClient({
                           <ChatBadge />
                         </span>
                       </span>
-                      <span className="lg:hidden">Chat</span>
+                      <span className="lg:hidden">Consultation Chat</span>
                     </Link>
                     <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
-                      Chat
+                      Consultation Chat
                     </span>
                   </li>
 
@@ -565,7 +565,7 @@ export function PortalLayoutClient({
       />
       <HeaderIconLink
         href="/portal/clinic/chat"
-        label="Messages"
+        label="Consultation Chat"
         icon={IconMessage}
         badge={<ChatBadge mobile />}
       />
