@@ -230,17 +230,18 @@ const nextConfig = {
         ],
       },
       {
-        // Clinic/practitioner detail pages carry admin-moderated content (e.g. reviews)
-        // that must show up quickly after approval — much shorter shared-cache window.
+        // Clinic/practitioner detail pages carry admin-moderated content (e.g. reviews,
+        // CQC status, avg reply time) that must show up quickly after approval — much
+        // shorter shared-cache window than the site default.
         source: '/clinics/:cityslug/clinic/:slug*',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=30, stale-while-revalidate=300' },
+          { key: 'Cache-Control', value: 'public, s-maxage=5, stale-while-revalidate=60' },
         ],
       },
       {
         source: '/practitioners/:cityslug/profile/:slug*',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=30, stale-while-revalidate=300' },
+          { key: 'Cache-Control', value: 'public, s-maxage=5, stale-while-revalidate=60' },
         ],
       },
       {

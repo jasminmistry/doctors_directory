@@ -146,7 +146,7 @@ export async function POST(
     }
 
     if (coreClinicId && coreConversationId) {
-      sendCoreMessage({ coreClinicId, conversationId: coreConversationId, message: body.data.content })
+      sendCoreMessage({ coreClinicId, conversationId: coreConversationId, message: body.data.content, sender: 'clinic' })
         .then(async (coreMessageId) => {
           if (coreMessageId) {
             await prisma.chatMessage.update({

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SearchBar } from "@/components/search/search-bar";
@@ -22,6 +22,22 @@ export default function Header() {
     undefined,
   );
   const pathname = usePathname();
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!accountMenuOpen) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        accountMenuRef.current &&
+        !accountMenuRef.current.contains(event.target as Node)
+      ) {
+        setAccountMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [accountMenuOpen]);
 
   async function signOut() {
     setPatient(null);
@@ -246,9 +262,12 @@ export default function Header() {
             </div>
           </nav>
           {patient ? (
-            <div className="relative group">
+            <div className="relative" ref={accountMenuRef}>
               <button
                 type="button"
+                onClick={() => setAccountMenuOpen((o) => !o)}
+                aria-haspopup="true"
+                aria-expanded={accountMenuOpen}
                 className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1"
               >
                 {patient.firstName || patient.email}
@@ -266,38 +285,49 @@ export default function Header() {
                   />
                 </svg>
               </button>
-              <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <Link
-                  href="/account"
-                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg"
-                >
-                  My Account
-                </Link>
-                <Link
-                  href="/account/bookings"
-                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100"
-                >
-                  Bookings
-                </Link>
-                <Link
-                  href="/account/chats"
-                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100"
-                >
-                  Chats
-                </Link>
-                <button
-                  type="button"
-                  onClick={signOut}
-                  className="block w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600"
-                >
-                  Sign out
-                </button>
-              </div>
+              {accountMenuOpen && (
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg transition-all z-50">
+                  <Link
+                    href="/account"
+                    onClick={() => setAccountMenuOpen(false)}
+                    className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg"
+                  >
+                    My Account
+                  </Link>
+                  <Link
+                    href="/account/bookings"
+                    onClick={() => setAccountMenuOpen(false)}
+                    className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100"
+                  >
+                    Bookings
+                  </Link>
+                  <Link
+                    href="/account/chats"
+                    onClick={() => setAccountMenuOpen(false)}
+                    className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100"
+                  >
+                    Chats
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAccountMenuOpen(false);
+                      signOut();
+                    }}
+                    className="block w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              )}
             </div>
           ) : portalUser ? (
-            <div className="relative group">
+            <div className="relative" ref={accountMenuRef}>
               <button
                 type="button"
+                onClick={() => setAccountMenuOpen((o) => !o)}
+                aria-haspopup="true"
+                aria-expanded={accountMenuOpen}
                 className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black hover:text-white flex items-center gap-1"
               >
                 {portalUser.entityName}
@@ -315,31 +345,40 @@ export default function Header() {
                   />
                 </svg>
               </button>
-              <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <div className="px-4 py-2.5 border-b border-gray-100">
-                  <p className="text-xs text-black capitalize">
-                    {portalUser.entityType} portal
-                  </p>
+              {accountMenuOpen && (
+                <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg transition-all z-50">
+                  <div className="px-4 py-2.5 border-b border-gray-100">
+                    <p className="text-xs text-black capitalize">
+                      {portalUser.entityType} portal
+                    </p>
+                  </div>
+                  <Link
+                    href="/portal/clinic"
+                    onClick={() => setAccountMenuOpen(false)}
+                    className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg"
+                  >
+                    My Portal
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAccountMenuOpen(false);
+                      portalSignOut();
+                    }}
+                    className="block w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600"
+                  >
+                    Sign out
+                  </button>
                 </div>
-                <Link
-                  href="/portal/clinic"
-                  className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 rounded-t-lg"
-                >
-                  My Portal
-                </Link>
-                <button
-                  type="button"
-                  onClick={portalSignOut}
-                  className="block w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 border-t border-gray-100 rounded-b-lg text-red-600"
-                >
-                  Sign out
-                </button>
-              </div>
+              )}
             </div>
           ) : (
-            <div className="relative group">
+            <div className="relative" ref={accountMenuRef}>
               <button
                 type="button"
+                onClick={() => setAccountMenuOpen((o) => !o)}
+                aria-haspopup="true"
+                aria-expanded={accountMenuOpen}
                 className="font-medium rounded-lg border-1 py-2 px-5 border-black bg-transparent text-black hover:bg-black caplized hover:text-white flex items-center gap-1"
               >
                 Log In
@@ -357,20 +396,24 @@ export default function Header() {
                   />
                 </svg>
               </button>
-              <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <Link
-                  href="/account/login"
-                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg"
-                >
-                  Patient
-                </Link>
-                <Link
-                  href="/portal/login"
-                  className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100 rounded-b-lg"
-                >
-                  Clinic / Practitioner
-                </Link>
-              </div>
+              {accountMenuOpen && (
+                <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg transition-all z-50">
+                  <Link
+                    href="/account/login"
+                    onClick={() => setAccountMenuOpen(false)}
+                    className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 rounded-t-lg"
+                  >
+                    Patient
+                  </Link>
+                  <Link
+                    href="/portal/login"
+                    onClick={() => setAccountMenuOpen(false)}
+                    className="block px-4 py-3 text-sm font-normal hover:bg-gray-50 border-t border-gray-100 rounded-b-lg"
+                  >
+                    Clinic / Practitioner
+                  </Link>
+                </div>
+              )}
             </div>
           )}
         </div>
