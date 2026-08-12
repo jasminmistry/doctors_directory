@@ -85,18 +85,6 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
               <div className="inline-flex items-center bg-white border rounded-full p-1 gap-0.5">
                 <button
                   type="button"
-                  onClick={() => onModeChange("patient")}
-                  className={cn(
-                    "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200",
-                    mode === "patient"
-                      ? "bg-black text-white shadow-sm"
-                      : "text-gray-600 hover:text-black",
-                  )}
-                >
-                  Patient
-                </button>
-                <button
-                  type="button"
                   onClick={() => onModeChange("clinic")}
                   className={cn(
                     "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200",
@@ -106,6 +94,18 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
                   )}
                 >
                   Provider
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onModeChange("patient")}
+                  className={cn(
+                    "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200",
+                    mode === "patient"
+                      ? "bg-black text-white shadow-sm"
+                      : "text-gray-600 hover:text-black",
+                  )}
+                >
+                  Patient
                 </button>
               </div>
             </div>
