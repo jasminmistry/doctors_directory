@@ -123,8 +123,8 @@ export function DataTable<T extends Record<string, any>>({
             </Select>
           </div>
           {onAdd && (
-            <Button onClick={onAdd} size="sm" className="h-9">
-              <IconPlus stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
+            <Button onClick={onAdd} size="md">
+              <IconPlus stroke={1.5} />
               {addLabel}
             </Button>
           )}
@@ -178,7 +178,7 @@ export function DataTable<T extends Record<string, any>>({
                     className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60 transition-colors"
                   >
                     {columns.map(col => (
-                      <td key={String(col.key)} className="px-4 py-3 text-gray-700">
+                      <td key={String(col.key)} className="px-4 py-3 text-gray-700 whitespace-nowrap">
                         {col.render
                           ? col.render(item[col.key as string], item)
                           : <span className="block max-w-xs truncate">{String(item[col.key as string] ?? '—')}</span>

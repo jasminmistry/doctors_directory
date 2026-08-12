@@ -6,6 +6,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { IconLoader2, IconMail, IconSquare, IconSquareCheck } from '@tabler/icons-react'
+import { Button } from '@/components/ui/button'
 
 interface EligibleClinic {
   id: number
@@ -83,15 +84,15 @@ export default function AdminClaimInvitesPage() {
         <div className="mb-4 flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
           <span className="text-sm font-medium text-gray-700">{selected.size} selected</span>
           <div className="ml-auto">
-            <button
+            <Button
               type="button"
               disabled={sending}
               onClick={sendInvites}
-              className="flex items-center gap-1.5 rounded-lg bg-gray-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-700 disabled:opacity-50"
+              className="flex items-center gap-1.5 disabled:opacity-50"
             >
               {sending ? <IconLoader2 stroke={1.5} className="h-3 w-3 animate-spin" /> : <IconMail stroke={1.5} className="h-3 w-3" />}
               Send claim invite
-            </button>
+            </Button>
           </div>
         </div>
       )}

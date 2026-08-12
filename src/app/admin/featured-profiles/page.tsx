@@ -161,7 +161,7 @@ export default function FeaturedProfilesPage() {
                     </div>
                     {clinic.rating && (
                       <span className="flex items-center gap-1 text-xs text-amber-600 shrink-0">
-                        <IconStar stroke={1.5} className="h-3 w-3" />
+                        <IconStar stroke={1.5} className="h-4 w-4" />
                         {clinic.rating}
                       </span>
                     )}
@@ -200,7 +200,7 @@ export default function FeaturedProfilesPage() {
                 </div>
                 {entry.rating && (
                   <span className="flex items-center gap-1 text-xs text-amber-600 shrink-0">
-                    <IconStar stroke={1.5} className="h-3 w-3" />
+                    <IconStar stroke={1.5} className="h-4 w-4" />
                     {entry.rating}
                   </span>
                 )}
