@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { ScheduleEditor, DEFAULT_SCHEDULE, type DaySchedule } from '@/components/portal/schedule-editor'
+import { Button } from '@/components/ui/button'
 import { IconDeviceFloppy, IconLoader } from '@tabler/icons-react'
 
 interface Props {
@@ -62,15 +63,10 @@ export function AdminScheduleCard({ entityType, slug }: Props) {
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
         <h2 className="text-base font-semibold text-gray-900">Weekly Schedule</h2>
         {!noConsentzId && !loading && (
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-gray-700 transition-colors disabled:opacity-50"
-          >
-            {saving ? <IconLoader stroke={1.5} className="h-3 w-3 animate-spin" /> : <IconDeviceFloppy stroke={1.5} className="h-3 w-3" />}
-            {saving ? 'Saving…' : 'Save'}
-          </button>
+          <Button size="sm" onClick={handleSave} disabled={saving}>
+            {saving ? <IconLoader stroke={1.5} className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />}
+            {saving ? 'Saving…' : 'Save Schedule'}
+          </Button>
         )}
       </div>
 

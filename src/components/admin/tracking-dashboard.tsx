@@ -455,6 +455,7 @@ export function TrackingDashboard() {
               const sp = new URLSearchParams(searchParams.toString())
               sp.set("tab", "events")
               sp.set("page", "1")
+              sp.delete("q")
               pushUrl(sp)
             }}
           >
@@ -467,6 +468,7 @@ export function TrackingDashboard() {
               const sp = new URLSearchParams(searchParams.toString())
               sp.set("tab", "leads")
               sp.set("page", "1")
+              sp.delete("q")
               pushUrl(sp)
             }}
           >
@@ -479,6 +481,7 @@ export function TrackingDashboard() {
               const sp = new URLSearchParams(searchParams.toString())
               sp.set("tab", "signups")
               sp.set("page", "1")
+              sp.delete("q")
               pushUrl(sp)
             }}
           >

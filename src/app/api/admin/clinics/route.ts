@@ -23,6 +23,7 @@ export async function GET(request: Request) {
       select: {
         id: true, slug: true, name: true, image: true, rating: true, reviewCount: true,
         gmapsAddress: true, gmapsPhone: true, email: true, claimed: true, idVerified: true, claimedPlan: true,
+        coreClinicId: true,
         city: { select: { slug: true, name: true } },
       },
       orderBy: { name: 'asc' },
