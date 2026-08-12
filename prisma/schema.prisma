@@ -1018,6 +1018,7 @@ enum ConsentCheckbox {
   share
   privacy
   age
+  terms
 }
 
 // Append-only audit trail — one row per checkbox per submission. Never updated

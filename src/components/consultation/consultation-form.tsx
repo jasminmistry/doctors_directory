@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { consentDisclaimer, consentCheckboxWording } from '@/lib/consent'
+import { consentDisclaimer, consentCheckboxWording, TERMS_URL } from '@/lib/consent'
 import { cn } from '@/lib/utils'
 import { IconCalendar, IconLoader2, IconMail, IconPhone } from '@tabler/icons-react'
 
@@ -128,13 +128,14 @@ export function ConsultationRichForm({
   const [consentShare, setConsentShare] = useState(false)
   const [consentPrivacy, setConsentPrivacy] = useState(false)
   const [consentAge, setConsentAge] = useState(false)
+  const [consentTerms, setConsentTerms] = useState(false)
   const [consentError, setConsentError] = useState('')
 
   const consentWording = consentCheckboxWording(clinicName)
 
   const canSubmit =
     firstName.trim() && lastName.trim() && email.trim() && phone.trim() && dateOfBirth &&
-    consentShare && consentPrivacy && consentAge && !submitting
+    consentShare && consentPrivacy && consentAge && consentTerms && !submitting
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -183,8 +184,8 @@ export function ConsultationRichForm({
       hasError = true
     }
 
-    if (!consentShare || !consentPrivacy || !consentAge) {
-      setConsentError('Please confirm all three statements below to continue.')
+    if (!consentShare || !consentPrivacy || !consentAge || !consentTerms) {
+      setConsentError('Please confirm all four statements below to continue.')
       hasError = true
     }
 
@@ -323,6 +324,25 @@ export function ConsultationRichForm({
             className="mt-0.5"
           />
           <span>{consentWording.age}</span>
+        </label>
+        <label className="flex items-start gap-2 text-xs text-gray-600">
+          <Checkbox
+            checked={consentTerms}
+            onCheckedChange={(checked) => { setConsentTerms(checked === true); setConsentError('') }}
+            className="mt-0.5"
+          />
+          <span>
+            I have read and agree to the Consentz{' '}
+            <a
+              href={TERMS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-gray-900"
+            >
+              Terms &amp; Conditions
+            </a>
+            .
+          </span>
         </label>
         {consentError && (
           <p className="flex items-center gap-1 text-xs text-red-500">
