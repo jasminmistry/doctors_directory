@@ -220,7 +220,9 @@ export function StepDetails(props: Readonly<Props>) {
 
       {entityType === 'clinic' && (
         <div className="flex flex-col gap-2">
-          <Label htmlFor="clinic-name-input">Clinic name</Label>
+          <Label htmlFor="clinic-name-input">
+            Clinic name <span className="text-destructive">*</span>
+          </Label>
           <Input
             id="clinic-name-input"
             type="text"
@@ -236,7 +238,9 @@ export function StepDetails(props: Readonly<Props>) {
       )}
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="claimer-name">Your full name</Label>
+        <Label htmlFor="claimer-name">
+          Your full name <span className="text-destructive">*</span>
+        </Label>
         <Input
           id="claimer-name"
           type="text"
@@ -254,7 +258,9 @@ export function StepDetails(props: Readonly<Props>) {
       {entityType === 'practitioner' && (
         <>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="profession">Profession</Label>
+            <Label htmlFor="profession">
+              Profession <span className="text-destructive">*</span>
+            </Label>
             <Input
               id="profession"
               type="text"
@@ -289,7 +295,7 @@ export function StepDetails(props: Readonly<Props>) {
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="claimer-email">
-          {entityType === 'clinic' ? 'Business email' : 'Email address'}
+          {entityType === 'clinic' ? 'Business email' : 'Email address'} <span className="text-destructive">*</span>
         </Label>
         <Input
           id="claimer-email"
@@ -315,7 +321,9 @@ export function StepDetails(props: Readonly<Props>) {
       {entityType === 'clinic' && (
         <>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="clinic-phone">Phone number</Label>
+            <Label htmlFor="clinic-phone">
+              Phone number <span className="text-destructive">*</span>
+            </Label>
             <Input
               id="clinic-phone"
               type="tel"
@@ -333,7 +341,9 @@ export function StepDetails(props: Readonly<Props>) {
           {isRegister && (
             <>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="clinic-address">Address</Label>
+                <Label htmlFor="clinic-address">
+                  Address <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="clinic-address"
                   type="text"
@@ -348,7 +358,9 @@ export function StepDetails(props: Readonly<Props>) {
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label htmlFor="clinic-city">City</Label>
+                <Label htmlFor="clinic-city">
+                  City <span className="text-destructive">*</span>
+                </Label>
                 <CityCombobox
                   id="clinic-city"
                   value={city}

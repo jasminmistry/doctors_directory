@@ -59,6 +59,16 @@ const columns = [
       : <span className="text-gray-300 text-xs">—</span>,
   },
   {
+    key: 'coreClinicId',
+    label: 'Core',
+    render: (value: number | null, item: any) => {
+      if (!item.claimed) return <span className="text-gray-300 text-xs">—</span>
+      return value
+        ? <span className="inline-flex items-center gap-1 rounded-full bg-teal-100 px-2 py-0.5 text-xs font-medium text-teal-700">Linked</span>
+        : <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Not linked</span>
+    },
+  },
+  {
     key: 'rating',
     label: 'Rating',
     render: (value: number) => value ? <span className="text-amber-600 font-medium">{value}</span> : <span className="text-gray-300">—</span>,
@@ -70,6 +80,7 @@ export default function ClinicsList() {
   const [loading, setLoading] = useState(true)
   const [filterClaimed, setFilterClaimed] = useState<'all' | 'claimed' | 'unclaimed'>('all')
   const [filterVerified, setFilterVerified] = useState<'all' | 'verified' | 'unverified'>('all')
+  const [filterCore, setFilterCore] = useState<'all' | 'linked' | 'unlinked'>('all')
   const router = useRouter()
 
   useEffect(() => {
@@ -92,9 +103,11 @@ export default function ClinicsList() {
       if (filterClaimed === 'unclaimed' && c.claimed) return false
       if (filterVerified === 'verified' && !c.idVerified) return false
       if (filterVerified === 'unverified' && c.idVerified) return false
+      if (filterCore === 'linked' && !c.coreClinicId) return false
+      if (filterCore === 'unlinked' && c.coreClinicId) return false
       return true
     })
-  }, [clinics, filterClaimed, filterVerified])
+  }, [clinics, filterClaimed, filterVerified, filterCore])
 
   const filterControls = (
     <>
@@ -120,9 +133,20 @@ export default function ClinicsList() {
         </SelectContent>
       </Select>
 
-      {(filterClaimed !== 'all' || filterVerified !== 'all') && (
+      <Select value={filterCore} onValueChange={(v) => setFilterCore(v as typeof filterCore)}>
+        <SelectTrigger className="h-9 w-44 text-sm">
+          <SelectValue placeholder="Core link" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Any Core link</SelectItem>
+          <SelectItem value="linked">Linked to Core</SelectItem>
+          <SelectItem value="unlinked">Not linked to Core</SelectItem>
+        </SelectContent>
+      </Select>
+
+      {(filterClaimed !== 'all' || filterVerified !== 'all' || filterCore !== 'all') && (
         <button
-          onClick={() => { setFilterClaimed('all'); setFilterVerified('all') }}
+          onClick={() => { setFilterClaimed('all'); setFilterVerified('all'); setFilterCore('all') }}
           className="text-xs text-gray-600 underline hover:text-gray-700"
         >
           Clear
