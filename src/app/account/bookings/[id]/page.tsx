@@ -202,14 +202,15 @@ function CancelButton({ booking, onCancelled }: { booking: Booking; onCancelled:
   }
 
   return (
-    <button
+    <Button
+      variant="outline"
       type="button"
       onClick={() => setConfirming(true)}
-      className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors"
+      className="flex w-full items-center gap-2.5"
     >
       <IconX stroke={1.5} className="h-4 w-4 shrink-0" />
       Cancel booking
-    </button>
+    </Button>
   )
 }
 
@@ -431,11 +432,13 @@ export default function BookingDetailPage() {
 
           {/* Message clinic */}
           {booking.clinic.slug && !isCancelled && (
-            <button
+            <Button
+              variant="outline"
+              size="lg"
               type="button"
               onClick={handleMessageClinic}
               disabled={messagingClinic}
-              className="flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-60"
+              className="flex w-full items-center gap-2.5 disabled:opacity-60"
             >
               {messagingClinic ? (
                 <IconLoader2 stroke={1.5} className="h-4 w-4 shrink-0 animate-spin" />
@@ -443,7 +446,7 @@ export default function BookingDetailPage() {
                 <IconMessageCircle stroke={1.5} className="h-4 w-4 shrink-0" />
               )}
               Message clinic
-            </button>
+            </Button>
           )}
 
           {/* Add to calendar — upcoming only */}

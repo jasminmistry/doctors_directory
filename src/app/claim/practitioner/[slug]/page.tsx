@@ -58,7 +58,7 @@ export default async function ClaimPractitionerPage({ params, searchParams }: Re
       <div className="max-w-2xl mx-auto px-4 py-8">
         <Link
           href={`/practitioners/${practitioner.slug}`}
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-8"
+          className="inline-flex items-center gap-1 text-sm text-black hover:text-foreground mb-8"
         >
           <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
           Back to profile

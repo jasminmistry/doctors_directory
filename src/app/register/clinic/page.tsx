@@ -37,7 +37,7 @@ export default function RegisterClinicPage({ searchParams }: Readonly<Props>) {
       <div className="max-w-2xl mx-auto px-4 py-10">
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-8"
+          className="inline-flex items-center gap-1 text-sm text-black hover:text-foreground mb-8"
         >
           <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
           Back to directory

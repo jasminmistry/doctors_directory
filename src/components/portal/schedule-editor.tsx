@@ -36,7 +36,7 @@ export function ScheduleEditor({ value, onChange, disabled }: Props) {
         <div
           key={day.day}
           className={cn(
-            'flex items-center gap-3 rounded-lg border px-4 py-3 transition-colors',
+            'flex items-center gap-3 rounded-lg border px-4 py-3 transition-colors flex-col md:flex-row',
             day.enabled ? 'border-gray-200 bg-white' : 'border-gray-100 bg-gray-50',
           )}
         >
@@ -66,7 +66,7 @@ export function ScheduleEditor({ value, onChange, disabled }: Props) {
           </span>
 
           {day.enabled ? (
-            <div className="ml-auto flex items-center gap-2">
+            <div className="md:ml-auto flex items-center gap-2">
               <input
                 type="time"
                 value={day.startTime}

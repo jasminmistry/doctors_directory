@@ -464,6 +464,7 @@ export function ConsultationChatDialog({
       <div className="relative flex w-full">
         <Button
           type="button"
+          size="lg"
           onClick={handleOpen}
           className={cn('w-full', buttonClassName)}
           data-no-auto-track="true"
