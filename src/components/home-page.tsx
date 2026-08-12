@@ -924,7 +924,7 @@ export default function HomePage({
 }: {
   featuredSection?: ReactNode;
 }) {
-  const [mode, setMode] = useState<HomeAudienceMode>("patient");
+  const [mode, setMode] = useState<HomeAudienceMode>("clinic");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const bookDemoHref = b2bBookDemoHref();
   const activeFaq = mode === "patient" ? faqData : providerFaqData;
