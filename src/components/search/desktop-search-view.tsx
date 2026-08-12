@@ -87,7 +87,7 @@ export function DesktopSearchView({
             <button
               type="button"
               aria-label="Clear search query"
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 transition-colors hover:bg-neutral-800"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 transition-colors hover:text-gray-900"
               onMouseDown={(e) => e.preventDefault()}
               onClick={clearQuery}
             >
@@ -117,7 +117,7 @@ export function DesktopSearchView({
             <button
               type="button"
               aria-label="Clear location"
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 transition-colors hover:bg-neutral-800"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 transition-colors hover:text-gray-900"
               onMouseDown={(e) => e.preventDefault()}
               onClick={clearLocation}
             >

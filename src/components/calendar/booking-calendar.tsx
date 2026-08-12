@@ -274,10 +274,9 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
   )
 }
 
-// ── Week grid (hourly rows 07:00–21:00) ────────────────────────────────────
-const HOUR_START = 7
-const HOUR_END = 21
-const HOURS = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i)
+// ── Week grid (hourly rows, defaults to 07:00–21:00 but expands to fit bookings) ──
+const DEFAULT_HOUR_START = 7
+const DEFAULT_HOUR_END = 21
 const GRID_HEIGHT = 48 // px per hour
 
 function WeekView({
@@ -295,13 +294,31 @@ function WeekView({
   onSelect: (b: CalendarBooking) => void
   onSlotClick?: (date: Date) => void
 }) {
+  const dayBookingsByDay = days.map((day) => bookings.filter((b) => isSameDay(zoned(b.slotStart, clinicTimezone), day)))
+
+  // Expand the visible hour range so bookings outside the default window aren't
+  // positioned off the top/bottom of the grid (where they'd render invisibly).
+  let hourStart = DEFAULT_HOUR_START
+  let hourEnd = DEFAULT_HOUR_END
+  for (const dayBookings of dayBookingsByDay) {
+    for (const b of dayBookings) {
+      const start = zoned(b.slotStart, clinicTimezone)
+      const end = zoned(b.slotEnd, clinicTimezone)
+      hourStart = Math.min(hourStart, start.getHours())
+      hourEnd = Math.max(hourEnd, end.getMinutes() > 0 ? end.getHours() + 1 : end.getHours())
+    }
+  }
+  hourStart = Math.max(0, hourStart)
+  hourEnd = Math.min(24, hourEnd)
+  const hours = Array.from({ length: hourEnd - hourStart }, (_, i) => hourStart + i)
+
   return (
     <div className="overflow-auto max-h-[640px]">
       <div className="flex">
         {/* Time gutter */}
         <div className="w-12 shrink-0 border-r border-gray-100">
           <div className="h-8 border-b border-gray-100" /> {/* header spacer */}
-          {HOURS.map((h) => (
+          {hours.map((h) => (
             <div key={h} className="flex items-start justify-end pr-2" style={{ height: GRID_HEIGHT }}>
               <span className="text-[10px] text-gray-600 -translate-y-2">{String(h).padStart(2, '0')}:00</span>
             </div>
@@ -309,8 +326,8 @@ function WeekView({
         </div>
 
         {/* Day columns */}
-        {days.map((day) => {
-          const dayBookings = bookings.filter((b) => isSameDay(zoned(b.slotStart, clinicTimezone), day))
+        {days.map((day, dayIndex) => {
+          const dayBookings = dayBookingsByDay[dayIndex]
           return (
             <div key={day.toISOString()} className="flex-1 min-w-0 border-r border-gray-100 last:border-r-0">
               {/* Day header */}
@@ -327,7 +344,7 @@ function WeekView({
 
               {/* Hour cells */}
               <div className="relative">
-                {HOURS.map((h) => (
+                {hours.map((h) => (
                   <div
                     key={h}
                     className={cn('border-b border-gray-50', onSlotClick && 'cursor-pointer hover:bg-blue-50/40 transition-colors')}
@@ -340,7 +357,7 @@ function WeekView({
                 {dayBookings.map((b) => {
                   const start = zoned(b.slotStart, clinicTimezone)
                   const end = zoned(b.slotEnd, clinicTimezone)
-                  const topMinutes = (start.getHours() - HOUR_START) * 60 + start.getMinutes()
+                  const topMinutes = (start.getHours() - hourStart) * 60 + start.getMinutes()
                   const durationMinutes = Math.max(differenceInMinutes(end, start), 15)
                   const top = (topMinutes / 60) * GRID_HEIGHT
                   const height = Math.max((durationMinutes / 60) * GRID_HEIGHT, 20)
