@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { sendCoreMessage, pollCoreMessages, CHAT_MESSAGE_MAX_LENGTH } from '@/lib/consentz-chat'
+import { sendCoreMessage, pollCoreMessages, CHAT_MESSAGE_MAX_LENGTH, type NormalizedMessage } from '@/lib/consentz-chat'
 import { z } from 'zod'
 
 const bodySchema = z.object({
@@ -17,6 +17,48 @@ function markPatientRead(sessionId: number, patientLastReadAt: Date | null, late
   prisma.chatSession
     .update({ where: { id: sessionId }, data: { patientLastReadAt: latestCreatedAt } })
     .catch((err) => console.error('[chat/messages GET] failed to mark read:', err))
+}
+
+// The patient's own messages are shown immediately from the POST response
+// (local DB write), before Core has necessarily recorded its own copy. Once
+// polling switches to Core as the source of truth, Core's copy of that same
+// message has no createdAt boundary that reliably excludes it — the opening
+// message in particular is pushed to Core fire-and-forget with no message id
+// returned to link back (see session/route.ts), so it resurfaces on the first
+// poll. Reconcile by content against not-yet-linked local patient messages,
+// linking coreMessageId so this only needs to run once per message.
+async function dedupeCorePatientEchoes(
+  sessionId: number,
+  coreMessages: NormalizedMessage[],
+): Promise<NormalizedMessage[]> {
+  if (!coreMessages.some((m) => m.sender === 'patient')) return coreMessages
+
+  const unlinked = await prisma.chatMessage.findMany({
+    where: { sessionId, sender: 'patient', coreMessageId: null },
+    select: { id: true, content: true },
+  })
+  if (unlinked.length === 0) return coreMessages
+
+  const claimed = new Set<number>()
+  const result: NormalizedMessage[] = []
+
+  for (const m of coreMessages) {
+    if (m.sender !== 'patient') {
+      result.push(m)
+      continue
+    }
+    const match = unlinked.find((lm) => !claimed.has(lm.id) && lm.content === m.content)
+    if (!match) {
+      result.push(m)
+      continue
+    }
+    claimed.add(match.id)
+    await prisma.chatMessage
+      .update({ where: { id: match.id }, data: { coreMessageId: String(m.id) } })
+      .catch((err) => console.error('[chat/messages GET] failed to link echoed message:', err))
+  }
+
+  return result
 }
 
 async function resolveSession(slug: string, sessionId: string, visitorToken: string) {
@@ -53,7 +95,8 @@ export async function GET(
     if (coreClinicId && coreConversationId) {
       const sinceIso = req.nextUrl.searchParams.get('since')
       const after = sinceIso ? Math.floor(new Date(sinceIso).getTime() / 1000) : undefined
-      const messages = await pollCoreMessages({ coreClinicId, conversationId: coreConversationId, after })
+      const coreMessages = await pollCoreMessages({ coreClinicId, conversationId: coreConversationId, after })
+      const messages = await dedupeCorePatientEchoes(session.id, coreMessages)
       const latest = messages[messages.length - 1]
       if (latest) markPatientRead(session.id, session.patientLastReadAt, new Date(latest.createdAt))
       return NextResponse.json({ messages })
