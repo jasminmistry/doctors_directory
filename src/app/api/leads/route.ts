@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
     if (patientId) {
       const wording = consentCheckboxWording(clinic.name ?? clinicSlug)
       await prisma.patientConsent.createMany({
-        data: (['share', 'privacy', 'age'] as const).map((checkbox) => ({
+        data: (['share', 'privacy', 'age', 'terms'] as const).map((checkbox) => ({
           patientId,
           checkbox,
           ticked: true,
