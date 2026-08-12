@@ -213,7 +213,7 @@ export function PortalLayoutClient({
             </div>
             <ul className="space-y-0.5">
               {baseNav.map(({ href, label, icon: Icon }) => {
-                const active = pathname === href;
+                const active = pathname === href || pathname === `${href}/`;
                 return (
                   <li
                     key={href}
