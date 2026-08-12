@@ -30,6 +30,19 @@ export function getApplicationId(): string {
 }
 
 /**
+ * Consentz has no role that maps to "directory admin team member" — ROLE_SUPER_CLINIC_ADMIN
+ * is a per-clinic owner role shared by hundreds of real clinics, not a platform-admin role.
+ * So directory admin access is gated by an explicit username allowlist instead.
+ */
+export function isAdminUsername(username: string): boolean {
+  const allowlist = (process.env.ADMIN_USERNAMES || '')
+    .split(',')
+    .map((u) => u.trim().toLowerCase())
+    .filter(Boolean)
+  return allowlist.includes(username.trim().toLowerCase())
+}
+
+/**
  * Central fetch wrapper for every Consentz API call.
  * Automatically injects Content-Type, X-APPLICATION-ID, and (when provided) X-SESSION-TOKEN.
  * Callers pass a path relative to CONSENTZ_AUTH_API_URL, e.g. "/login".

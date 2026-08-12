@@ -231,12 +231,12 @@ export default function ChatDetailPage() {
           />
           <Button
             size="icon"
-            className="shrink-0 bg-black text-white hover:bg-neutral-800"
+            className="shrink-0 text-white hover:bg-neutral-800"
             disabled={!draft.trim() || sending}
             onClick={handleSend}
             aria-label="Send"
           >
-            {sending ? <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" /> : <IconSend stroke={1.5} className="h-4 w-4" />}
+            {sending ? <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" /> : <IconSend stroke={1.5} className="h-4 w-4 text-white" />}
           </Button>
         </div>
       )}

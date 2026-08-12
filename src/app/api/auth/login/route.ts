@@ -7,6 +7,7 @@ import {
   COOKIE_OPTS,
   consentzApi,
   extractTokens,
+  isAdminUsername,
 } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
@@ -37,11 +38,19 @@ export async function POST(request: Request) {
 
     const { token, refreshToken } = extractTokens(data)
 
-    const claim = await prisma.claimRequest.findFirst({
-      where: { consentzUsername: username },
-      select: { id: true },
-    })
-    const role = claim ? 'portal' : 'admin'
+    const isAdmin = isAdminUsername(username)
+    const claim = isAdmin
+      ? null
+      : await prisma.claimRequest.findFirst({
+          where: { consentzUsername: username },
+          select: { id: true },
+        })
+
+    if (!isAdmin && !claim) {
+      return NextResponse.json({ error: 'You do not have access to this application' }, { status: 403 })
+    }
+
+    const role = isAdmin ? 'admin' : 'portal'
 
     const response = NextResponse.json({ success: true, role })
     response.cookies.set(COOKIE_TOKEN, token, COOKIE_OPTS)
