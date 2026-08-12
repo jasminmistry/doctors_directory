@@ -17,7 +17,7 @@ export function AdminScheduleCard({ entityType, slug }: Props) {
   const [saving, setSaving] = useState(false)
   const [noConsentzId, setNoConsentzId] = useState(false)
 
-  const apiBase = `/directory/api/admin/${entityType === 'clinic' ? 'clinics' : 'practitioners'}/${slug}/schedule`
+  const apiBase = `/directory/api/admin/${entityType === 'clinic' ? 'clinics' : 'practitioners'}/${slug}/schedule/`
 
   useEffect(() => {
     if (!slug) return
