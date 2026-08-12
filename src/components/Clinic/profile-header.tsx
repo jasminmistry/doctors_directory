@@ -118,7 +118,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
             </div>
 
             {/* Role / category */}
-            <p className="text-sm font-semibold text-muted-foreground leading-tight">
+            <p className="text-sm font-semibold text-muted-foreground leading-tight capitalize">
               {roleTitle}
             </p>
 

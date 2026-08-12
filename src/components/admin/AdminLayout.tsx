@@ -226,7 +226,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
           <div className="min-w-0 flex-1 flex flex-col bg-white">
             <div
               role="banner"
-              className="sticky top-0 z-10 hidden items-center justify-between bg-[var(--primary-bg-color)] px-6 py-3.5 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:flex"
+              className="sticky top-0 z-10 hidden items-center justify-between bg-[var(--primary-bg-color)] px-6 py-3 shadow-[0_0_2px_0_rgba(0,0,0,0.2)] lg:flex"
             >
               <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
               <div className="flex items-center gap-1">

@@ -131,10 +131,10 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
                           <SearchBar />
                         </div>
 
-                        <div className="mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
+                        <div className="mt-5 flex flex-col md:flex-row items-center justify-start  gap-3">
                           <Link
                             href="/account/login"
-                            className="w-[80%] sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                            className="w-[80%] md:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
                           >
                             Join as a Patient - It&apos;s Free
                           </Link>
@@ -182,7 +182,7 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
                         >
                           Get found. Get qualified enquiries. Get booked.
                         </h1>
-                        <p className="block text-sm md:text-lg mb-8">
+                        <p className="block text-sm md:text-lg mb-4 md:mb-8">
                           The patient-growth system for Aesthetic & Wellness practitioners.
                         </p>
                       </div>
@@ -190,7 +190,7 @@ export function HeroSection({ mode, onModeChange }: HeroSectionProps) {
                       <div className="max-w-4xl m-auto mt-5 flex flex-col sm:flex-row items-center justify-start gap-3">
                         <Link
                           href="/register/clinic"
-                          className="w-[80%] sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                          className="w-[80%] md:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
                         >
                           List your Practice
                         </Link>

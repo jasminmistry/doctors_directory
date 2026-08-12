@@ -145,15 +145,15 @@ export function MobileSearchView({
                   onBlur={() => setTimeout(() => setActiveDropdown(null), 350)}
                 />
                 {localFilters.location && (
-                  <button
+                  <Button
                     type="button"
                     aria-label="Clear location"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 transition-colors hover:text-gray-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={clearLocation}
                   >
                     <IconX stroke={1.5} className="h-4 w-4" />
-                  </button>
+                  </Button>
                 )}
               </div>
               {activeDropdown === 'location' && (
@@ -171,8 +171,10 @@ export function MobileSearchView({
               )}
             </div>
             <Button
+              variant="default"
+              size="lg"
+              className="w-full"
               onClick={()=>{handleSearch(); handlePageChange?.(1)}}
-              className="w-full h-12 bg-black hover:bg-black text-white rounded-lg flex items-center justify-center"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -183,12 +185,14 @@ export function MobileSearchView({
             </Button>
 
            
-            <button
+            <Button
+              variant="ghost"
+              size="lg"
               onClick={() => setIsExpanded(false)}
-              className="text-sm text-gray-600 hover:text-gray-700 mx-auto block"
+              className="mx-auto block"
             >
               Collapse
-            </button>
+            </Button>
           </div>
         </div>
       )}

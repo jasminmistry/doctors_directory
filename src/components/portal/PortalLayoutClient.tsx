@@ -116,7 +116,7 @@ export function PortalLayoutClient({
             compact
           />
         ) : (
-          <span className="text-sm font-semibold text-gray-900 truncate">
+          <span className="text-sm max-w-[100px] md:max-w-auto font-semibold text-gray-900 truncate">
             {entityName || "My Portal"}
           </span>
         )}
@@ -165,7 +165,7 @@ export function PortalLayoutClient({
         {/* Sidebar */}
         <aside
           className={cn(
-            "inset-y-0 left-0 z-30 flex w-64 flex-col bg-white border-r border-gray-200 transition-transform duration-200 rounded-none lg:sticky lg:top-0 lg:h-[100svh] lg:w-[56px] lg:translate-x-0",
+            "inset-y-0 left-0 z-30 flex fixed overflow-y-auto w-64 flex-col bg-white border-r border-gray-200 transition-transform duration-200 rounded-none p-3 lg:p-0 lg:sticky lg:overflow-visible lg:top-0 lg:h-[100svh] lg:w-[56px] lg:translate-x-0",
             isMobileNavOpen ? "translate-x-0" : "-translate-x-full",
           )}
         >
@@ -577,7 +577,7 @@ export function PortalLayoutClient({
   />
 </div>
           </div>
-          <div className="flex-1 p-10 flex flex-col">
+          <div className="flex-1 p-0 my-4 md:p-10 md:my-0 flex flex-col">
             <main className="flex-1 px-4 pt-0 pb-0">{children}</main>
           </div>
         </div>
