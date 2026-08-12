@@ -30,6 +30,12 @@ function coreHeaders(token: string | undefined) {
   }
 }
 
+// Core stores location as an int (0 = Consentz Video Call, 1 = Zoom) but serializes
+// it back as a string on read — translate the string back to int on write.
+function toCoreBody(data: z.infer<typeof createSchema>) {
+  return { ...data, location: data.location === 'zoom' ? 1 : 0 }
+}
+
 async function getClaimConsentzUserId(user: Awaited<ReturnType<typeof getPortalUser>>) {
   if (!user) return null
   const where =
@@ -122,7 +128,7 @@ export async function POST(req: NextRequest) {
     const res = await fetch(eventsUrl(claim.consentzUserId), {
       method: 'POST',
       headers: coreHeaders(token),
-      body: JSON.stringify(parsed.data),
+      body: JSON.stringify(toCoreBody(parsed.data)),
       cache: 'no-store',
     })
     const data = await res.json()
