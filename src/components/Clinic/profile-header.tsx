@@ -12,6 +12,7 @@ import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dial
 import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 import { IconMapPin, IconPhone, IconShieldCheck } from "@tabler/icons-react";
+import { capitalize } from "@/lib/utils";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
@@ -39,7 +40,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
-  const roleTitle = clinic.category;
+  const roleTitle = clinic.category ? capitalize(clinic.category) : clinic.category;
   const DEFAULT_IMG = "/directory/images/default-dr-profile-1.webp";
   // Profile photos are temporarily disabled site-wide — always show the default placeholder.
   const [imgSrc, setImgSrc] = useState(DEFAULT_IMG);
@@ -118,7 +119,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
             </div>
 
             {/* Role / category */}
-            <p className="text-sm font-semibold text-muted-foreground leading-tight capitalize">
+            <p className="text-sm font-semibold text-muted-foreground leading-tight">
               {roleTitle}
             </p>
 
