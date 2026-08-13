@@ -33,6 +33,8 @@ const CLINIC_PORTAL_SELECT = {
   instagram: true,
   youtube: true,
   linkedin: true,
+  cqcStatus: true,
+  avgReplyTime: true,
 }
 
 export async function GET() {

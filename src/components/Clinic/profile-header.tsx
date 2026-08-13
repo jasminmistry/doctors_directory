@@ -14,6 +14,7 @@ import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { IconMapPin, IconPhone, IconShieldCheck } from "@tabler/icons-react";
+import { capitalize } from "@/lib/utils";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
@@ -40,7 +41,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
   const practitionerName =
     clinicName?.trim() ||
     getClinicDisplayName(clinic);
-  const roleTitle = clinic.category;
+  const roleTitle = clinic.category ? capitalize(clinic.category) : clinic.category;
   const DEFAULT_IMG = "/directory/images/default-dr-profile-1.webp";
   const initialImg =
     clinic.claimed && clinic.image && clinic.image.trim()
@@ -129,7 +130,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
             </div>
 
             {/* Role / category */}
-            <p className="text-sm font-semibold text-muted-foreground leading-tight capitalize">
+            <p className="text-sm font-semibold text-muted-foreground leading-tight">
               {roleTitle}
             </p>
 

@@ -19,6 +19,7 @@ import { usePathname, useSearchParams } from "next/navigation"
 import { IconLink as LinkIcon } from "@tabler/icons-react"
 import { OnlineDot } from "@/components/Clinic/online-dot";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
+import { capitalize } from "@/lib/utils";
 interface ProfileHeaderProps {
   clinic: Practitioner;
   k_value: any;
@@ -126,7 +127,9 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
 
               <div className="flex flex-row gap-2 mb-3 items-center">
                 <p className="text-muted-foreground mb-2 font-semibold text-balance leading-tight">
-                  {clinic.practitioner_title}
+                  {clinic.practitioner_title
+                    ? capitalize(clinic.practitioner_title)
+                    : clinic.practitioner_title}
                 </p>
               </div>
 
