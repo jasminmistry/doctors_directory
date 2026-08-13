@@ -63,6 +63,10 @@ export function ChatInbox() {
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const prevMsgCountRef = useRef(0)
+  // Synchronous guard — `sending` state is only safe to check-then-set across
+  // renders, not within the same tick, so a fast double Enter/click could
+  // otherwise send the same reply twice before the disabled state commits.
+  const sendingRef = useRef(false)
 
   // Pin the inbox to the actual remaining viewport space (measured, not guessed)
   // and lock page-level scroll while it's mounted — otherwise, whenever the
@@ -161,7 +165,8 @@ export function ChatInbox() {
   }, [activeId, fetchMessages])
 
   async function handleSend() {
-    if (!draft.trim() || !activeId || sending) return
+    if (!draft.trim() || !activeId || sendingRef.current) return
+    sendingRef.current = true
     const content = draft.trim()
     setDraft('')
     setSending(true)
@@ -183,6 +188,7 @@ export function ChatInbox() {
       toast.error(err instanceof Error ? err.message : 'Failed to send message.')
       setDraft(content)
     } finally {
+      sendingRef.current = false
       setSending(false)
     }
   }

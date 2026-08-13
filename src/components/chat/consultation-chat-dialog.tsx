@@ -129,6 +129,12 @@ export function ConsultationChatDialog({
   const lastCreatedAt = useRef<string | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const prevMsgCountRef = useRef(0)
+  // Synchronous re-entrancy guards — React state (startingChat/sending) is only
+  // safe to check-then-set across renders, not within the same tick. A second
+  // trigger firing before the first render commits (e.g. a fast double Enter/
+  // click) would otherwise read stale state and send the same message twice.
+  const startingChatRef = useRef(false)
+  const sendingRef = useRef(false)
 
   // Restore session from localStorage on mount — but only for the patient it was
   // saved under. localStorage is keyed by clinic slug alone, so on a shared device
@@ -206,7 +212,13 @@ export function ConsultationChatDialog({
       if (!res.ok) return
       const data: { messages: Message[] } = await res.json()
       if (data.messages.length > 0) {
-        setMessages((prev) => [...prev, ...data.messages])
+        // A poll in flight when a send resolves can race the optimistic append in
+        // sendMessage() and refetch the same row — drop anything already shown.
+        setMessages((prev) => {
+          const seen = new Set(prev.map((m) => m.id))
+          const fresh = data.messages.filter((m) => !seen.has(m.id))
+          return fresh.length > 0 ? [...prev, ...fresh] : prev
+        })
         lastCreatedAt.current = data.messages[data.messages.length - 1].createdAt
       }
     } catch {
@@ -339,6 +351,8 @@ export function ConsultationChatDialog({
   }
 
   async function handleStartChat(data: ConsultationFormData) {
+    if (startingChatRef.current) return
+    startingChatRef.current = true
     setStartingChat(true)
     try {
       const patientName = `${data.firstName} ${data.lastName}`.trim()
@@ -375,6 +389,7 @@ export function ConsultationChatDialog({
     } catch {
       toast.error('Could not start chat. Please try again.')
     } finally {
+      startingChatRef.current = false
       setStartingChat(false)
     }
   }
@@ -423,7 +438,8 @@ export function ConsultationChatDialog({
   }
 
   async function handleSend() {
-    if (!draft.trim() || !sessionId || !visitorToken || sending) return
+    if (!draft.trim() || !sessionId || !visitorToken || sendingRef.current) return
+    sendingRef.current = true
     const content = draft.trim()
     setDraft('')
     setSending(true)
@@ -433,6 +449,7 @@ export function ConsultationChatDialog({
       toast.error(err instanceof Error ? err.message : 'Failed to send message.')
       setDraft(content)
     } finally {
+      sendingRef.current = false
       setSending(false)
     }
   }

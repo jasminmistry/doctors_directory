@@ -20,43 +20,71 @@ function markPatientRead(sessionId: number, patientLastReadAt: Date | null, late
     .catch((err) => console.error('[chat/messages GET] failed to mark read:', err))
 }
 
-// The patient's own messages are shown immediately from the POST response
-// (local DB write), before Core has necessarily recorded its own copy. Once
-// polling switches to Core as the source of truth, Core's copy of that same
-// message has no createdAt boundary that reliably excludes it — the opening
-// message in particular is pushed to Core fire-and-forget with no message id
-// returned to link back (see session/route.ts), so it resurfaces on the first
-// poll. Reconcile by content against not-yet-linked local patient messages,
-// linking coreMessageId so this only needs to run once per message.
-async function dedupeCorePatientEchoes(
+// Consentz Core's inbox GET endpoint does not reliably echo back who actually
+// sent a message — clinic replies pushed with sender: 'clinic' come back
+// labelled "visitor" just like patient messages, which would otherwise show
+// clinic replies under "You" on the patient's side. Our own DB is the
+// authoritative record of who sent what, since every message that goes
+// through this app (patient widget or clinic portal) is written locally
+// before or alongside the Core push. This reconciles Core's response against
+// that local record instead of trusting Core's sender field.
+async function reconcileCoreMessages(
   sessionId: number,
   coreMessages: NormalizedMessage[],
 ): Promise<NormalizedMessage[]> {
-  if (!coreMessages.some((m) => m.sender === 'patient')) return coreMessages
+  if (coreMessages.length === 0) return coreMessages
 
-  const unlinked = await prisma.chatMessage.findMany({
+  const coreIds = coreMessages.map((m) => String(m.id))
+  const linked = await prisma.chatMessage.findMany({
+    where: { sessionId, coreMessageId: { in: coreIds } },
+    select: { coreMessageId: true, sender: true },
+  })
+  const linkedSenderByCoreId = new Map(linked.map((l) => [l.coreMessageId as string, l.sender]))
+
+  // The opening message is pushed to Core fire-and-forget with no message id
+  // returned to link back (see session/route.ts), so it resurfaces on the
+  // first poll unlinked. Match it by content against not-yet-linked local
+  // patient messages so it isn't mistaken for a new clinic-originated one below.
+  const unlinkedPatient = await prisma.chatMessage.findMany({
     where: { sessionId, sender: 'patient', coreMessageId: null },
     select: { id: true, content: true },
   })
-  if (unlinked.length === 0) return coreMessages
-
   const claimed = new Set<number>()
-  const result: NormalizedMessage[] = []
 
+  const result: NormalizedMessage[] = []
   for (const m of coreMessages) {
-    if (m.sender !== 'patient') {
-      result.push(m)
+    const linkedSender = linkedSenderByCoreId.get(String(m.id))
+    if (linkedSender) {
+      result.push({ ...m, sender: linkedSender as 'patient' | 'clinic' })
       continue
     }
-    const match = unlinked.find((lm) => !claimed.has(lm.id) && lm.content === m.content)
-    if (!match) {
-      result.push(m)
+
+    const echoMatch = unlinkedPatient.find((lm) => !claimed.has(lm.id) && lm.content === m.content)
+    if (echoMatch) {
+      claimed.add(echoMatch.id)
+      await prisma.chatMessage
+        .update({ where: { id: echoMatch.id }, data: { coreMessageId: String(m.id) } })
+        .catch((err) => console.error('[chat/messages GET] failed to link echoed message:', err))
       continue
     }
-    claimed.add(match.id)
+
+    // Genuinely new to us. The patient has no way to post into this
+    // conversation except through this widget — which always writes locally
+    // first — so anything arriving here unlinked must be a clinic reply sent
+    // from Core's own inbox UI. Persist it so it also appears in the clinic's
+    // own portal inbox (which reads local messages only) and isn't reprocessed.
     await prisma.chatMessage
-      .update({ where: { id: match.id }, data: { coreMessageId: String(m.id) } })
-      .catch((err) => console.error('[chat/messages GET] failed to link echoed message:', err))
+      .create({
+        data: {
+          sessionId,
+          sender: 'clinic',
+          content: m.content,
+          coreMessageId: String(m.id),
+          createdAt: new Date(m.createdAt),
+        },
+      })
+      .catch((err) => console.error('[chat/messages GET] failed to persist Core-originated message:', err))
+    result.push({ ...m, sender: 'clinic' })
   }
 
   return result
@@ -107,7 +135,7 @@ export async function GET(
       const sinceIso = req.nextUrl.searchParams.get('since')
       const after = sinceIso ? Math.floor(new Date(sinceIso).getTime() / 1000) : undefined
       const coreMessages = await pollCoreMessages({ coreClinicId, conversationId: coreConversationId, after })
-      const messages = await dedupeCorePatientEchoes(session.id, coreMessages)
+      const messages = await reconcileCoreMessages(session.id, coreMessages)
       const latest = messages[messages.length - 1]
       if (latest) markPatientRead(session.id, session.patientLastReadAt, new Date(latest.createdAt))
       return NextResponse.json({ messages })
