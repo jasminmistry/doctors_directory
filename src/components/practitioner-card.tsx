@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Practitioner, Clinic, Product } from "@/lib/types";
 import {
+  capitalize,
   decodeUnicodeEscapes,
   fixMojibake,
   isAward,
@@ -273,20 +274,18 @@ export function PractitionerCard({
               <div className="mb-2 flex min-h-[1.25rem] w-full items-center justify-center px-1">
                 {"practitioner_name" in practitioner && practitioner.practitioner_title ? (
                   <p className="line-clamp-1 text-sm font-semibold leading-tight text-muted-foreground">
-                    {practitioner.practitioner_title
-                      .split(",")[0]
-                      .split(" ")
-                      .slice(0, 4)
-                      .map(
-                        (word: string) =>
-                          word.charAt(0).toUpperCase() + word.slice(1),
-                      )
-                      .join(" ")}
+                    {capitalize(
+                      practitioner.practitioner_title
+                        .split(",")[0]
+                        .split(" ")
+                        .slice(0, 4)
+                        .join(" "),
+                    )}
                   </p>
                 ) : null}
                 {!("practitioner_name" in practitioner) && practitioner.category ? (
                   <p className="line-clamp-1 text-sm font-semibold leading-tight text-muted-foreground">
-                    {practitioner.category.trim()}
+                    {capitalize(practitioner.category.trim())}
                   </p>
                 ) : null}
               </div>
