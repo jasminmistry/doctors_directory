@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { sendCoreMessage, pollCoreMessages, CHAT_MESSAGE_MAX_LENGTH, type NormalizedMessage } from '@/lib/consentz-chat'
+import { getPatientClaims } from '@/lib/patient-auth'
 import { z } from 'zod'
 
 const bodySchema = z.object({
@@ -68,11 +69,21 @@ async function resolveSession(slug: string, sessionId: string, visitorToken: str
     where: { id, visitorToken, clinic: { slug }, status: 'active' },
     select: {
       id: true,
+      patientId: true,
       coreConversationId: true,
       patientLastReadAt: true,
       clinic: { select: { coreClinicId: true } },
     },
   })
+}
+
+// A session created while logged in belongs to that patient only — a visitorToken
+// alone (e.g. a stale one restored from another account's localStorage on a shared
+// device) must not be enough to read someone else's conversation. Sessions with no
+// patientId predate patient accounts and stay token-only for backward compatibility.
+function isOwnedByRequester(session: { patientId: number | null }, req: NextRequest): boolean {
+  if (session.patientId === null) return true
+  return getPatientClaims(req)?.id === session.patientId
 }
 
 export async function GET(
@@ -82,7 +93,7 @@ export async function GET(
   try {
     const visitorToken = req.nextUrl.searchParams.get('visitorToken') ?? ''
     const session = await resolveSession(params.slug, params.sessionId, visitorToken)
-    if (!session) {
+    if (!session || !isOwnedByRequester(session, req)) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 
@@ -141,7 +152,7 @@ export async function POST(
     }
 
     const session = await resolveSession(params.slug, params.sessionId, body.data.visitorToken)
-    if (!session) {
+    if (!session || !isOwnedByRequester(session, req)) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 

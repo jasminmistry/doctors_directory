@@ -29,6 +29,7 @@ interface StoredSession {
   sessionId: number
   visitorToken: string
   savedAt: number
+  patientEmail: string
 }
 
 interface PatientMe {
@@ -71,8 +72,11 @@ function readStoredSession(slug: string): StoredSession | null {
   }
 }
 
-function writeStoredSession(slug: string, sessionId: number, visitorToken: string) {
-  localStorage.setItem(sessionKey(slug), JSON.stringify({ sessionId, visitorToken, savedAt: Date.now() }))
+function writeStoredSession(slug: string, sessionId: number, visitorToken: string, patientEmail: string) {
+  localStorage.setItem(
+    sessionKey(slug),
+    JSON.stringify({ sessionId, visitorToken, savedAt: Date.now(), patientEmail }),
+  )
 }
 
 function clearStoredSession(slug: string) {
@@ -126,14 +130,32 @@ export function ConsultationChatDialog({
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const prevMsgCountRef = useRef(0)
 
-  // Restore session from localStorage on mount
+  // Restore session from localStorage on mount — but only for the patient it was
+  // saved under. localStorage is keyed by clinic slug alone, so on a shared device
+  // a second patient logging in would otherwise inherit the first patient's session
+  // and see their message history.
   useEffect(() => {
     const stored = readStoredSession(clinicSlug)
     if (!stored) return
-    setSessionId(stored.sessionId)
-    setVisitorToken(stored.visitorToken)
-    setPhase('chat')
-    setIsRestored(true)
+
+    let cancelled = false
+    async function restore() {
+      const patient = await fetchAndSetPatient()
+      if (cancelled) return
+      if (!patient || patient.email !== stored!.patientEmail) {
+        clearStoredSession(clinicSlug)
+        return
+      }
+      setSessionId(stored!.sessionId)
+      setVisitorToken(stored!.visitorToken)
+      setPhase('chat')
+      setIsRestored(true)
+    }
+    void restore()
+    return () => {
+      cancelled = true
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clinicSlug])
 
   // Auto-open when returning from magic link / OAuth with ?consult=open
@@ -339,7 +361,7 @@ export function ConsultationChatDialog({
       setVisitorToken(result.visitorToken)
       setChatFormData(data)
       setIsRestored(false)
-      writeStoredSession(clinicSlug, result.sessionId, result.visitorToken)
+      writeStoredSession(clinicSlug, result.sessionId, result.visitorToken, data.email)
 
       setPhase('chat')
       // The session endpoint already stored this message — reflect it locally instead of

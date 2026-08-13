@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { getPatientClaims } from '@/lib/patient-auth'
 
 export async function GET(
   req: NextRequest,
@@ -12,9 +13,12 @@ export async function GET(
 
     const session = await prisma.chatSession.findFirst({
       where: { id, visitorToken, clinic: { slug: params.slug } },
-      select: { patientLastReadAt: true },
+      select: { patientId: true, patientLastReadAt: true },
     })
-    if (!session) return NextResponse.json({ unread: 0 })
+    // A session created while logged in belongs to that patient only — see messages/route.ts.
+    if (!session || (session.patientId !== null && session.patientId !== getPatientClaims(req)?.id)) {
+      return NextResponse.json({ unread: 0 })
+    }
 
     const unread = await prisma.chatMessage.count({
       where: {
