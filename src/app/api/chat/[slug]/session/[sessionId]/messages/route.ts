@@ -31,6 +31,7 @@ function markPatientRead(sessionId: number, patientLastReadAt: Date | null, late
 async function reconcileCoreMessages(
   sessionId: number,
   coreMessages: NormalizedMessage[],
+  isIncrementalPoll: boolean,
 ): Promise<NormalizedMessage[]> {
   if (coreMessages.length === 0) return coreMessages
 
@@ -57,12 +58,20 @@ async function reconcileCoreMessages(
     if (linkedSender) {
       // Patient messages are linked synchronously in the POST handler, before
       // the response (carrying the local DB id) reaches the client. If this
-      // same message resurfaces on the very next poll — Core's created_at can
-      // land on or after the "since" boundary we just advanced past — pushing
-      // it here (keyed by Core's id, not the local id the client already
-      // rendered) would show up as a second bubble. The patient has already
-      // seen it optimistically, so drop it.
-      if (linkedSender === 'patient') continue
+      // same message resurfaces on the very next incremental poll — Core's
+      // created_at can land on or after the "since" boundary we just advanced
+      // past — pushing it here (keyed by Core's id, not the local id the
+      // client already rendered) would show up as a second bubble. The
+      // patient has already seen it optimistically, so drop it — but only
+      // for incremental polls. A full history load (no "since", e.g. on
+      // reopening the panel) replaces the client's entire message list, so
+      // dropping it here would delete the patient's own message instead of
+      // deduping it.
+      if (linkedSender === 'patient') {
+        if (isIncrementalPoll) continue
+        result.push({ ...m, sender: 'patient' })
+        continue
+      }
       result.push({ ...m, sender: linkedSender as 'clinic' })
       continue
     }
@@ -143,7 +152,7 @@ export async function GET(
       const sinceIso = req.nextUrl.searchParams.get('since')
       const after = sinceIso ? Math.floor(new Date(sinceIso).getTime() / 1000) : undefined
       const coreMessages = await pollCoreMessages({ coreClinicId, conversationId: coreConversationId, after })
-      const messages = await reconcileCoreMessages(session.id, coreMessages)
+      const messages = await reconcileCoreMessages(session.id, coreMessages, sinceIso !== null)
       const latest = messages[messages.length - 1]
       if (latest) markPatientRead(session.id, session.patientLastReadAt, new Date(latest.createdAt))
       return NextResponse.json({ messages })

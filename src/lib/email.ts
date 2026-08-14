@@ -1,18 +1,30 @@
 import nodemailer from 'nodemailer'
 import { PPL_LEAD_PRICE } from './pricing'
 
+let cachedTransport: nodemailer.Transporter | null = null
+
 function createTransport() {
+  if (cachedTransport) return cachedTransport
+
   const host = process.env.SMTP_HOST ?? 'localhost'
   const port = parseInt(process.env.SMTP_PORT ?? '1025', 10)
   const user = process.env.SMTP_USER
   const pass = process.env.SMTP_PASS
 
-  return nodemailer.createTransport({
+  cachedTransport = nodemailer.createTransport({
     host,
     port,
     secure: port === 465,
     auth: user && pass ? { user, pass } : undefined,
+    // Pooled + rate-limited so bulk sends (e.g. claim-invite campaigns) reuse
+    // connections instead of paying a fresh TLS/SMTP handshake per email.
+    pool: true,
+    maxConnections: 3,
+    maxMessages: 100,
+    rateDelta: 1000,
+    rateLimit: 3,
   })
+  return cachedTransport
 }
 
 const FROM = process.env.EMAIL_FROM ?? 'Consentz Directory <noreply@consentz.com>'

@@ -47,23 +47,32 @@ export async function POST(req: Request) {
   })
   const skipped = parsed.data.clinicIds.length - clinics.length
 
-  let sent = 0
-  let failed = 0
+  // Dispatched concurrently — the pooled/rate-limited SMTP transport (src/lib/email.ts)
+  // throttles actual delivery, so this no longer pays a full serial round-trip per
+  // clinic (which was slow enough to blow past the request timeout on large "select all" batches).
+  const results = await Promise.allSettled(
+    clinics.map(async (clinic) => {
+      const claimUrl = `${BASE_URL}/directory/claim/${clinic.slug}`
+      const unsubscribeUrl = `${BASE_URL}/directory/api/unsubscribe?token=${signUnsubscribeToken(clinic.id, 'unsubscribe')}`
+      const removeUrl = `${BASE_URL}/directory/api/unsubscribe?token=${signUnsubscribeToken(clinic.id, 'remove')}`
 
-  for (const clinic of clinics) {
-    const claimUrl = `${BASE_URL}/directory/claim/${clinic.slug}`
-    const unsubscribeUrl = `${BASE_URL}/directory/api/unsubscribe?token=${signUnsubscribeToken(clinic.id, 'unsubscribe')}`
-    const removeUrl = `${BASE_URL}/directory/api/unsubscribe?token=${signUnsubscribeToken(clinic.id, 'remove')}`
-
-    try {
       await sendClaimInviteEmail({ to: clinic.email!, clinicName: clinic.name!, claimUrl, unsubscribeUrl, removeUrl })
       await prisma.clinic.update({ where: { id: clinic.id }, data: { campaignEmailedAt: new Date() } })
-      sent++
-    } catch (err) {
-      failed++
-      console.error(`[admin/clinics/claim-invites] send failed for clinic ${clinic.id}:`, err)
-    }
-  }
+    }),
+  )
 
-  return NextResponse.json({ sent, failed, skipped })
+  let sent = 0
+  let failed = 0
+  const sentIds: number[] = []
+  results.forEach((result, i) => {
+    if (result.status === 'fulfilled') {
+      sent++
+      sentIds.push(clinics[i].id)
+    } else {
+      failed++
+      console.error(`[admin/clinics/claim-invites] send failed for clinic ${clinics[i].id}:`, result.reason)
+    }
+  })
+
+  return NextResponse.json({ sent, failed, skipped, sentIds })
 }
