@@ -88,7 +88,7 @@ const featuresList = [
                 Easy calendar scheduling To Manage Your Clinicians
               </h2>
               <p className="text-gray-700">With the Consentz calendar system you can create a new appointment for a new patient in the about the same time it takes for an afternoon yawn. Consentz allows for easy viewing of all the clinicians, rooms, and equipment. The full functionality of the calendar is available via the iPad or desktop, whilst staff or outside support can use the diary anywhere.</p>  
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <a
                     href={bookDemoHref}
                     target="_blank"

@@ -58,7 +58,7 @@ export default function ClinicManagementSoftwarePage() {
 
               <div className="max-w-4xl m-auto mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
                 <a
-                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-center text-white hover:bg-neutral-800 transition-colors"
                   href="/directory/account/login/"
                 >
                   Join as a patient — it's free
@@ -110,7 +110,7 @@ export default function ClinicManagementSoftwarePage() {
               <p className="text-gray-700">
                 Create beautiful, informative emails to convert prospects and retain your existing patients. The simple to use drag and drop interface can get you up and running in minutes. Add your branding, expand the knowledge shared with your clients and add actionable links to contact forms or telephone numbers. It’s easy to present yourself and your business.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function ClinicManagementSoftwarePage() {
               <p className="text-gray-700">
                 How often is a lead received and not followed up at all? Maybe one or two emails are sent? Or a telephone message is left, but then the prospect is forgotten…Build a fully automated medical and aesthetic marketing campaigns and schedule actions of sending emails/SMS over days and weeks. Your prospect never forgets you and when they’re ready to book they do it with you and not a competitor. Your patients can recieve an information rich campaign on new treatments over weeks. With a varierty of triggers, such as a new interest, you can leave active campaigns runnning in the background, so once set you won’t even have to lift a finger. 
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
@@ -161,7 +161,7 @@ export default function ClinicManagementSoftwarePage() {
               <p className="text-gray-700">
                 With Consentz marketing tools you’ll be able to see at a glance your current list of enquiries and their stage of engagement, easily assign a follow up to a memeber of staff, drag and drop enquiries as they move through stages to a sale and send emails & SMS from a single panel. Converting prospects has never been easier.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
