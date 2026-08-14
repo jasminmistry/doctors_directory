@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import crypto from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { COOKIE_TOKEN, COOKIE_USERNAME, COOKIE_ROLE, COOKIE_REFRESH, COOKIE_OPTS } from '@/lib/auth'
+import { COOKIE_TOKEN, COOKIE_USERNAME, COOKIE_ROLE, COOKIE_REFRESH, COOKIE_ACTIVE_CLINIC, COOKIE_OPTS } from '@/lib/auth'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
 
@@ -121,6 +121,12 @@ export async function GET(req: NextRequest) {
 
   response.cookies.set(COOKIE_USERNAME, payload.consentzUsername, COOKIE_OPTS)
   response.cookies.set(COOKIE_ROLE, 'portal', COOKIE_OPTS)
+  // Land on the clinic this SSO link actually came from, not whichever of the user's
+  // clinics getPortalUser() would otherwise default to (most recently approved) —
+  // matters once a Consentz login manages more than one linked clinic.
+  if (claim.entityType === 'clinic' && claim.clinicId) {
+    response.cookies.set(COOKIE_ACTIVE_CLINIC, String(claim.clinicId), COOKIE_OPTS)
+  }
   if (payload.consentzSessionToken) {
     response.cookies.set(COOKIE_TOKEN, payload.consentzSessionToken, COOKIE_OPTS)
   }
