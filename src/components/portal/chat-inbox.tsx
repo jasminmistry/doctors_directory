@@ -28,11 +28,14 @@ interface ChatSession {
 }
 
 const POLL_INTERVAL_MS = 3_000
-// Matches the portal layout's bottom padding (p-10 on the main content
-// wrapper in PortalLayoutClient) so the pane stops short of the viewport
-// edge instead of covering it — window.innerHeight alone doesn't know
-// about that padding.
-const LAYOUT_BOTTOM_GAP = 40
+// Matches the portal layout's bottom spacing on the main content wrapper in
+// PortalLayoutClient (`my-4` = 16px below md, `md:p-10` = 40px from md up)
+// so the pane stops short of the viewport edge instead of covering it —
+// window.innerHeight alone doesn't know about that spacing, and using the
+// desktop value on mobile wastes space that could go to the pane.
+const LAYOUT_BOTTOM_GAP_MOBILE = 16
+const LAYOUT_BOTTOM_GAP_DESKTOP = 40
+const MD_BREAKPOINT = 768
 
 function StatusBadge({ status }: { status?: 'active' | 'closed' }) {
   if (!status) return null
@@ -78,7 +81,8 @@ export function ChatInbox() {
       const el = containerRef.current
       if (!el) return
       const top = el.getBoundingClientRect().top
-      setPaneHeight(window.innerHeight - top - LAYOUT_BOTTOM_GAP)
+      const gap = window.innerWidth >= MD_BREAKPOINT ? LAYOUT_BOTTOM_GAP_DESKTOP : LAYOUT_BOTTOM_GAP_MOBILE
+      setPaneHeight(window.innerHeight - top - gap)
     }
     recalc()
     window.addEventListener('resize', recalc)
@@ -90,7 +94,7 @@ export function ChatInbox() {
       window.removeEventListener('resize', recalc)
       document.documentElement.style.overflow = prevOverflow
     }
-  }, [])
+  }, [loading])
 
   // Reset scroll tracking when switching conversations
   useEffect(() => {
@@ -208,7 +212,7 @@ export function ChatInbox() {
       {/* Session list — full width on mobile until a conversation is opened, fixed-width sidebar from md up */}
       <div
         className={cn(
-          'w-full md:w-72 shrink-0 flex-col border-r border-gray-200',
+          'w-full md:w-72 shrink-0 flex-col min-h-0 border-r border-gray-200',
           activeId ? 'hidden md:flex' : 'flex',
         )}
       >
@@ -217,7 +221,7 @@ export function ChatInbox() {
           <h2 className="text-sm font-semibold text-gray-900">Conversations</h2>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 min-h-0 overflow-y-auto">
           {loading && (
             <div className="flex justify-center pt-8">
               <IconLoader2  stroke={1.5} className="h-5 w-5 animate-spin text-gray-600" />
@@ -275,7 +279,7 @@ export function ChatInbox() {
       </div>
 
       {/* Message pane — hidden on mobile until a conversation is opened, always visible from md up */}
-      <div className={cn('flex-1 flex-col min-w-0', activeId ? 'flex' : 'hidden md:flex')}>
+      <div className={cn('flex-1 flex-col min-w-0 min-h-0', activeId ? 'flex' : 'hidden md:flex')}>
         {!activeId && (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center px-8">
             <IconMessage stroke={1.5} className="h-10 w-10" />
@@ -312,7 +316,7 @@ export function ChatInbox() {
             <div
               ref={messagesContainerRef}
               className={cn(
-                'flex-1 overflow-y-auto flex flex-col gap-2 px-5 py-4',
+                'flex-1 min-h-0 overflow-y-auto flex flex-col gap-2 px-5 py-4',
                 messages.length === 0 && 'items-center justify-center',
               )}
             >

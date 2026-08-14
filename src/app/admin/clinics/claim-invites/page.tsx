@@ -17,11 +17,22 @@ interface EligibleClinic {
   campaignEmailedAt: string | null
 }
 
+interface SendProgress {
+  chunksDone: number
+  chunksTotal: number
+  sent: number
+  failed: number
+  skipped: number
+}
+
+const CHUNK_SIZE = 50
+
 export default function AdminClaimInvitesPage() {
   const [clinics, setClinics] = useState<EligibleClinic[]>([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [sending, setSending] = useState(false)
+  const [progress, setProgress] = useState<SendProgress | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -50,24 +61,46 @@ export default function AdminClaimInvitesPage() {
     if (!clinicIds.length) return
     if (!window.confirm(`Send the claim-invite email to ${clinicIds.length} clinic${clinicIds.length !== 1 ? 's' : ''}?`)) return
 
+    const chunks: number[][] = []
+    for (let i = 0; i < clinicIds.length; i += CHUNK_SIZE) chunks.push(clinicIds.slice(i, i + CHUNK_SIZE))
+
     setSending(true)
-    try {
-      const res = await fetch('/directory/api/admin/clinics/claim-invites/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clinicIds }),
-      })
-      if (!res.ok) { toast.error('Send failed'); return }
-      const { sent, failed, skipped } = await res.json()
-      toast.success(`Sent ${sent} claim invite${sent !== 1 ? 's' : ''}${failed ? `, ${failed} failed` : ''}${skipped ? `, ${skipped} skipped (no longer eligible)` : ''}`)
-      const now = new Date().toISOString()
-      setClinics((prev) => prev.map((c) => (selected.has(c.id) ? { ...c, campaignEmailedAt: now } : c)))
-      setSelected(new Set())
-    } catch {
-      toast.error('Send failed')
-    } finally {
-      setSending(false)
+    setProgress({ chunksDone: 0, chunksTotal: chunks.length, sent: 0, failed: 0, skipped: 0 })
+
+    const totals = { sent: 0, failed: 0, skipped: 0 }
+
+    for (const chunk of chunks) {
+      try {
+        const res = await fetch('/directory/api/admin/clinics/claim-invites/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clinicIds: chunk }),
+        })
+        if (!res.ok) {
+          totals.failed += chunk.length
+        } else {
+          const { sent, failed, skipped, sentIds } = await res.json()
+          totals.sent += sent
+          totals.failed += failed
+          totals.skipped += skipped
+          const sentSet = new Set<number>(sentIds)
+          const now = new Date().toISOString()
+          setClinics((prev) => prev.map((c) => (sentSet.has(c.id) ? { ...c, campaignEmailedAt: now } : c)))
+        }
+      } catch {
+        totals.failed += chunk.length
+      }
+      setProgress((prev) => (prev ? { ...prev, chunksDone: prev.chunksDone + 1, ...totals } : prev))
     }
+
+    toast.success(
+      `Sent ${totals.sent} claim invite${totals.sent !== 1 ? 's' : ''}` +
+        `${totals.failed ? `, ${totals.failed} failed` : ''}` +
+        `${totals.skipped ? `, ${totals.skipped} skipped (no longer eligible)` : ''}`,
+    )
+    setSelected(new Set())
+    setSending(false)
+    setProgress(null)
   }
 
   const allSelected = clinics.length > 0 && selected.size === clinics.length
@@ -81,19 +114,37 @@ export default function AdminClaimInvitesPage() {
       </p>
 
       {someSelected && (
-        <div className="mb-4 flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
-          <span className="text-sm font-medium text-gray-700">{selected.size} selected</span>
-          <div className="ml-auto">
-            <Button
-              type="button"
-              disabled={sending}
-              onClick={sendInvites}
-              className="flex items-center gap-1.5 disabled:opacity-50"
-            >
-              {sending ? <IconLoader2 stroke={1.5} className="h-3 w-3 animate-spin" /> : <IconMail stroke={1.5} className="h-3 w-3" />}
-              Send claim invite
-            </Button>
+        <div className="mb-4 rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-gray-700">{selected.size} selected</span>
+            <div className="ml-auto">
+              <Button
+                type="button"
+                disabled={sending}
+                onClick={sendInvites}
+                className="flex items-center gap-1.5 disabled:opacity-50"
+              >
+                {sending ? <IconLoader2 stroke={1.5} className="h-3 w-3 animate-spin" /> : <IconMail stroke={1.5} className="h-3 w-3" />}
+                Send claim invite
+              </Button>
+            </div>
           </div>
+
+          {progress && (
+            <div className="mt-3">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                <div
+                  className="h-full rounded-full bg-gray-700 transition-all duration-300"
+                  style={{ width: `${(progress.chunksDone / progress.chunksTotal) * 100}%` }}
+                />
+              </div>
+              <p className="mt-1.5 text-xs text-gray-600">
+                {progress.chunksDone}/{progress.chunksTotal} batches &middot; {progress.sent} sent
+                {progress.failed ? `, ${progress.failed} failed` : ''}
+                {progress.skipped ? `, ${progress.skipped} skipped` : ''}
+              </p>
+            </div>
+          )}
         </div>
       )}
 
@@ -104,7 +155,7 @@ export default function AdminClaimInvitesPage() {
       ) : (
         <div className="space-y-3">
           <div className="flex items-center gap-3 px-1">
-            <button type="button" onClick={toggleAll} className="text-gray-600 hover:text-gray-700">
+            <button type="button" disabled={sending} onClick={toggleAll} className="text-gray-600 hover:text-gray-700 disabled:opacity-50">
               {allSelected ? <IconSquareCheck stroke={1.5} className="h-4 w-4 text-gray-700" /> : <IconSquare stroke={1.5} className="h-4 w-4" />}
             </button>
             <span className="text-xs text-gray-600">{allSelected ? 'Deselect all' : 'Select all'}</span>
@@ -115,9 +166,10 @@ export default function AdminClaimInvitesPage() {
             <button
               key={c.id}
               type="button"
+              disabled={sending}
               onClick={() => toggleOne(c.id)}
               className={cn(
-                'w-full rounded-lg border bg-white p-4 text-left transition-colors flex items-start gap-3',
+                'w-full rounded-lg border bg-white p-4 text-left transition-colors flex items-start gap-3 disabled:opacity-50',
                 selected.has(c.id) ? 'border-gray-400 bg-gray-50' : 'border-gray-200 hover:bg-gray-50',
               )}
             >

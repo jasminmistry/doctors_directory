@@ -93,7 +93,17 @@ export async function PUT(request: Request) {
 
     const validation = clinicEditSchema.safeParse(editable)
     if (!validation.success) {
-      return NextResponse.json({ error: 'Invalid data', details: validation.error.errors }, { status: 400 })
+      const fieldErrors: Record<string, string> = {}
+      for (const issue of validation.error.errors) {
+        const key = issue.path[0]
+        if (typeof key === 'string' && !fieldErrors[key]) {
+          fieldErrors[key] = issue.message
+        }
+      }
+      return NextResponse.json(
+        { error: 'Please fix the highlighted fields', fieldErrors },
+        { status: 400 }
+      )
     }
 
     const clinic = await prisma.clinic.update({
@@ -106,6 +116,9 @@ export async function PUT(request: Request) {
     return NextResponse.json({ ...rest, citySlug: city?.slug ?? null })
   } catch (error) {
     console.error('[portal] Failed to update clinic:', error)
+    if ((error as any).code === 'P2000') {
+      return NextResponse.json({ error: 'One of the fields is too long' }, { status: 400 })
+    }
     return NextResponse.json({ error: 'Failed to update clinic' }, { status: 500 })
   }
 }
