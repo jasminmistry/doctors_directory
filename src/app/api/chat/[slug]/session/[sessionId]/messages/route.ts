@@ -55,7 +55,15 @@ async function reconcileCoreMessages(
   for (const m of coreMessages) {
     const linkedSender = linkedSenderByCoreId.get(String(m.id))
     if (linkedSender) {
-      result.push({ ...m, sender: linkedSender as 'patient' | 'clinic' })
+      // Patient messages are linked synchronously in the POST handler, before
+      // the response (carrying the local DB id) reaches the client. If this
+      // same message resurfaces on the very next poll — Core's created_at can
+      // land on or after the "since" boundary we just advanced past — pushing
+      // it here (keyed by Core's id, not the local id the client already
+      // rendered) would show up as a second bubble. The patient has already
+      // seen it optimistically, so drop it.
+      if (linkedSender === 'patient') continue
+      result.push({ ...m, sender: linkedSender as 'clinic' })
       continue
     }
 
