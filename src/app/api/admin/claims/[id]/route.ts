@@ -112,6 +112,7 @@ async function provisionConsentzAccount(
         lastName,
         email: claim.claimerEmail,
         password: tempPassword,
+        role: 'ROLE_CLINIC_ADMIN',
       }, token)
     )
     consentzUserId = consentzPractitioner.id

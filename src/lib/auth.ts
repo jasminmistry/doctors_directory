@@ -156,6 +156,7 @@ export async function registerConsentzPractitioner(
     lastName: string
     email: string
     password: string
+    role: 'ROLE_PRACTITIONER' | 'ROLE_CLINIC_ADMIN'
   },
   sessionToken?: string,
 ): Promise<{ id: number; username: string; email: string }> {
