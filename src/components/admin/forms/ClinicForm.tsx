@@ -51,6 +51,7 @@ type ClinicData = {
   cqcStatus: 'not_applicable' | 'good' | 'requires_improvement' | 'outstanding' | null
   avgReplyTime: 'within_24hrs' | 'within_48hrs' | 'more_than_48hrs' | null
   coreClinicId: number | null
+  consentzUsername: string | null
 }
 
 const EMPTY: ClinicData = {
@@ -60,7 +61,7 @@ const EMPTY: ClinicData = {
   xTwitter: null, instagram: null, youtube: null, linkedin: null,
   isSaveFace: false, isDoctor: false, isJccp: false, jccpUrl: null, isCqc: false, cqcUrl: null,
   isHiw: false, hiwUrl: null, isHis: false, hisUrl: null, isRqia: false, rqiaUrl: null,
-  coverImage: null, cqcStatus: null, avgReplyTime: null, coreClinicId: null,
+  coverImage: null, cqcStatus: null, avgReplyTime: null, coreClinicId: null, consentzUsername: null,
 }
 
 // Converts stored Python-list / JSON-array strings to newline-separated display text
@@ -428,6 +429,14 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
             onChange={(e) => set('coreClinicId', e.target.value ? parseInt(e.target.value, 10) : null)}
             placeholder="e.g. 42"
             className="h-8 text-sm max-w-[180px]"
+          />
+        </Field>
+        <Field label="Consentz Username" hint="Consentz login that owns this clinic's portal. Required for SSO from Consentz to work — leave blank to skip username verification (any admin on this Consentz clinic will be able to sign in).">
+          <Input
+            value={data.consentzUsername ?? ''}
+            onChange={(e) => set('consentzUsername', e.target.value || null)}
+            placeholder="e.g. jasmin.jasmin_5"
+            className="h-8 text-sm max-w-[240px]"
           />
         </Field>
       </FormSection>}
