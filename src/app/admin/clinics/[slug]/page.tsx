@@ -20,7 +20,7 @@ export default function ClinicEditor() {
       {slug && slug !== 'new' && (
         <div className="mb-4 flex justify-end">
           <Link
-            href={`/directory/admin/clinics/${slug}/calendar`}
+            href={`/admin/clinics/${slug}/calendar`}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
           >
             <IconCalendarWeek stroke={1.5} className="h-4 w-4" />

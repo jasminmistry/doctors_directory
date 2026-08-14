@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
 import { prisma } from '@/lib/db'
 import { invalidateSearchCache } from '@/lib/search-cache'
+import { consentzUsernameSchema, syncConsentzLinkClaim } from '@/lib/admin/consentz-link'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
     else if (!/^[a-z0-9-]+$/.test(slug)) fieldErrors.slug = 'Slug must be kebab-case'
     if (!name) fieldErrors.name = 'Clinic name is required'
 
-    const { slug: _s, name: _n, citySlug: _c, ...rest } = body
+    const { slug: _s, name: _n, citySlug: _c, consentzUsername: rawConsentzUsername, ...rest } = body
     const validation = clinicEditSchema.safeParse(rest)
     if (!validation.success) {
       for (const issue of validation.error.errors) {
@@ -66,12 +67,16 @@ export async function POST(request: Request) {
       }
     }
 
+    const usernameValidation = consentzUsernameSchema.safeParse(rawConsentzUsername)
+    if (!usernameValidation.success) fieldErrors.consentzUsername = 'Invalid Consentz username'
+
     if (Object.keys(fieldErrors).length > 0) {
       return NextResponse.json(
         { error: 'Please fix the highlighted fields', fieldErrors },
         { status: 400 }
       )
     }
+    const consentzUsername = usernameValidation.success ? (usernameValidation.data?.trim() || null) : null
 
     const clinic = await prisma.clinic.create({
       data: {
@@ -80,8 +85,14 @@ export async function POST(request: Request) {
         ...omitNullish((validation.success ? validation.data : {}) as Record<string, unknown>),
       } as any,
     })
+
+    if (clinic.coreClinicId) {
+      await syncConsentzLinkClaim(clinic, clinic.coreClinicId, consentzUsername)
+        .catch((err) => console.error('[admin/clinics] Failed to sync Consentz link claim:', err))
+    }
+
     await invalidateSearchCache()
-    return NextResponse.json({ ...clinic, rating: clinic.rating ? Number(clinic.rating) : null }, { status: 201 })
+    return NextResponse.json({ ...clinic, rating: clinic.rating ? Number(clinic.rating) : null, consentzUsername }, { status: 201 })
   } catch (error) {
     console.error('Failed to create clinic:', error)
     if ((error as any).code === 'P2002') {

@@ -312,20 +312,55 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       {/* Location & Contact */}
       <FormSection title="Location & Contact" icon={IconMapPin}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <Field label="Address" fullWidth>
-            <Input value={data.gmapsAddress ?? ''} onChange={(e) => set('gmapsAddress', e.target.value || null)} placeholder="123 Harley Street, London" />
+          <Field label="Address" fullWidth error={fieldErrors.gmapsAddress}>
+            <Input
+              value={data.gmapsAddress ?? ''}
+              onChange={(e) => set('gmapsAddress', e.target.value || null)}
+              placeholder="123 Harley Street, London"
+              maxLength={500}
+              className={cn(fieldErrors.gmapsAddress && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.gmapsAddress)}
+            />
           </Field>
-          <Field label="Phone">
-            <Input value={data.gmapsPhone ?? ''} onChange={(e) => set('gmapsPhone', e.target.value || null)} placeholder="+44 20 0000 0000" />
+          <Field label="Phone" error={fieldErrors.gmapsPhone}>
+            <Input
+              value={data.gmapsPhone ?? ''}
+              onChange={(e) => set('gmapsPhone', e.target.value || null)}
+              placeholder="+44 20 0000 0000"
+              maxLength={200}
+              className={cn(fieldErrors.gmapsPhone && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.gmapsPhone)}
+            />
           </Field>
-          <Field label="Google Maps URL">
-            <Input value={data.gmapsUrl ?? ''} onChange={(e) => set('gmapsUrl', e.target.value || null)} placeholder="https://maps.google.com/…" />
+          <Field label="Google Maps URL" error={fieldErrors.gmapsUrl}>
+            <Input
+              value={data.gmapsUrl ?? ''}
+              onChange={(e) => set('gmapsUrl', e.target.value || null)}
+              placeholder="https://maps.google.com/…"
+              className={cn(fieldErrors.gmapsUrl && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.gmapsUrl)}
+            />
           </Field>
-          <Field label="Website">
-            <Input value={data.website ?? ''} onChange={(e) => set('website', e.target.value || null)} placeholder="https://…" />
+          <Field label="Website" error={fieldErrors.website}>
+            <Input
+              value={data.website ?? ''}
+              onChange={(e) => set('website', e.target.value || null)}
+              placeholder="https://…"
+              maxLength={500}
+              className={cn(fieldErrors.website && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.website)}
+            />
           </Field>
-          <Field label="Email">
-            <Input type="email" value={data.email ?? ''} onChange={(e) => set('email', e.target.value || null)} placeholder="info@clinic.com" />
+          <Field label="Email" error={fieldErrors.email}>
+            <Input
+              type="email"
+              value={data.email ?? ''}
+              onChange={(e) => set('email', e.target.value || null)}
+              placeholder="info@clinic.com"
+              maxLength={255}
+              className={cn(fieldErrors.email && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.email)}
+            />
           </Field>
         </div>
       </FormSection>

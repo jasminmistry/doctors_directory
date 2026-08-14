@@ -63,7 +63,7 @@ function Field({ label, error, required, children }: FieldProps) {
     <div className="space-y-1.5">
       <label className="block text-xs font-medium text-gray-600">
         {label}
-        {required && <span className="ml-0.5 text-gray-600">*</span>}
+        {required && <span className="ml-0.5 text-red-500">*</span>}
       </label>
       {children}
       {error && (
