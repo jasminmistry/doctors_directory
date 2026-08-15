@@ -64,7 +64,7 @@ export default function ClinicManagementSoftwarePage() {
 
               <div className="max-w-4xl m-auto mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
                 <a
-                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white text-center hover:bg-neutral-800 transition-colors"
                   href="/directory/account/login/"
                 >
                   Join as a patient — it's free
@@ -125,7 +125,7 @@ export default function ClinicManagementSoftwarePage() {
                 with an intuitive and comprehensive photography feature set that
                 you and your patients will love.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
@@ -187,7 +187,7 @@ export default function ClinicManagementSoftwarePage() {
                 structured and documented consultation, whether you’re feeling
                 fresh or tired at the end of a long day.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
@@ -259,7 +259,7 @@ export default function ClinicManagementSoftwarePage() {
                 for forms and pens. The signed consent forms can then be shared
                 directly with the patient for total clarity.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
@@ -320,7 +320,7 @@ export default function ClinicManagementSoftwarePage() {
                 create pre-populated consultation notes for each treatment
                 saving you from rewriting the same text over and over again.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>

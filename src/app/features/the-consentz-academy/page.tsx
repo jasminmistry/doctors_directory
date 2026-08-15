@@ -58,7 +58,7 @@ export default function ClinicManagementSoftwarePage() {
 
               <div className="max-w-4xl m-auto mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
                 <a
-                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-center text-white hover:bg-neutral-800 transition-colors"
                   href="/directory/account/login/"
                 >
                   Join as a patient — it's free
@@ -110,7 +110,7 @@ export default function ClinicManagementSoftwarePage() {
               <p className="text-gray-700">
                 The Academy complements the Dashboard, answering any questions you may have. Designed to be your business partner, it’s a resource that fully supports your business ambitions. The Academy is written in a clear, concise and jargon free style, so understanding your data has never been easier.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
@@ -172,7 +172,7 @@ export default function ClinicManagementSoftwarePage() {
               <p className="text-gray-700">
                 Solve common issues quickly, with the Academy there to serve you, from how to set up new treatments to sharing photos with patients. Fast access to the information allows you to spend less time on a help line and more time with your patients.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
