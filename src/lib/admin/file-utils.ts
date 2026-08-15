@@ -5,8 +5,9 @@ import { jsonCache } from '@/lib/json-cache'
 
 const DATA_DIR = path.join(process.cwd(), 'public')
 
-// Cache for async readJsonFile calls (admin API routes)
-const fileCache = new NodeCache({ stdTTL: 3600, useClones: false })
+// Cache for async readJsonFile calls (admin API routes).
+// No TTL — invalidated explicitly by writeJsonFile below on admin writes.
+const fileCache = new NodeCache({ stdTTL: 0, useClones: false })
 
 export async function readJsonFile(filename: string): Promise<any> {
   const cached = fileCache.get(filename)
