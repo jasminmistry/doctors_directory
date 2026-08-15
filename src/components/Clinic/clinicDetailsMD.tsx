@@ -67,7 +67,7 @@ export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
         {sanitizeDisplayText(clinic.about_section) || "Not publicly listed"}
       </Section>
 
-      <div className="border-t border-gray-300 my-6"></div>
+      <div className="border-t border-[#e0e0e0]  my-6"></div>
 
       {/* Treatments */}
       {clinic?.Treatments!.length > 0 && (
@@ -89,7 +89,7 @@ export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
               
             )}
         </div>
-        <div className="border-t border-gray-300 my-6"></div>
+        <div className="border-t border-[#e0e0e0]  my-6"></div>
       </Section>
     )}
 
@@ -114,7 +114,7 @@ export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
           </ul>
       ) 
       }
-      <div className="border-t border-gray-300 my-6"></div>
+      <div className="border-t border-[#e0e0e0]  my-6"></div>
       </Section>
       )
     }
@@ -150,7 +150,7 @@ export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
         ) : (
           clinic.Insurace || "Not listed"
         )}
-        <div className="border-t border-gray-300 my-6"></div>
+        <div className="border-t border-[#e0e0e0]  my-6"></div>
       </Section>
       
       )

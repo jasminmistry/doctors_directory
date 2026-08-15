@@ -1,8 +1,10 @@
 import { prisma } from '@/lib/db'
 import { Prisma } from '@prisma/client'
 import { cache } from 'react'
+import NodeCache from 'node-cache'
 import type { Practitioner, RankingMeta, ItemMeta } from '@/lib/types'
 import { isRemovedPractitionerSlug, hasTripleLetterSequence } from '@/lib/directory-removals'
+import { getCache, setCache } from '@/lib/redis-cache'
 
 const DAY_LABELS: Record<string, string> = {
   MONDAY: 'Monday',
@@ -120,11 +122,19 @@ const CLINIC_SELECT = {
   },
 }
 
-/**
- * All practitioners with primary clinic merged — for search, city pages, sitemaps (cached)
- */
-export const getAllPractitionersForSearch = cache(async (): Promise<Practitioner[]> => {
+// Serialized payload regularly exceeds Next's 2MB unstable_cache item limit, so this
+// uses the same NodeCache + Redis tiered pattern as src/lib/search-cache.ts instead.
+const PRACTITIONERS_SEARCH_CACHE_KEY = 'practitioners-for-search:v1'
+const PRACTITIONERS_SEARCH_TTL_SECONDS = 300
+
+const practitionersSearchMemoryCache = new NodeCache({
+  stdTTL: PRACTITIONERS_SEARCH_TTL_SECONDS,
+  useClones: false,
+})
+
+async function fetchAllPractitionersForSearch(): Promise<Practitioner[]> {
   const rows = await prisma.practitioner.findMany({
+    where: { isHidden: false },
     include: {
       ranking: true,
       treatments: {
@@ -151,6 +161,25 @@ export const getAllPractitionersForSearch = cache(async (): Promise<Practitioner
         !hasTripleLetterSequence(p.displayName),
     )
     .map(convertDbPractitionerToOldType)
+}
+
+/**
+ * All practitioners with primary clinic merged — for search, city pages, sitemaps (cached)
+ */
+export const getAllPractitionersForSearch = cache(async (): Promise<Practitioner[]> => {
+  const local = practitionersSearchMemoryCache.get<Practitioner[]>(PRACTITIONERS_SEARCH_CACHE_KEY)
+  if (local !== undefined) return local
+
+  const remote = await getCache<Practitioner[]>(PRACTITIONERS_SEARCH_CACHE_KEY)
+  if (remote !== null) {
+    practitionersSearchMemoryCache.set(PRACTITIONERS_SEARCH_CACHE_KEY, remote)
+    return remote
+  }
+
+  const fresh = await fetchAllPractitionersForSearch()
+  practitionersSearchMemoryCache.set(PRACTITIONERS_SEARCH_CACHE_KEY, fresh)
+  await setCache(PRACTITIONERS_SEARCH_CACHE_KEY, fresh, PRACTITIONERS_SEARCH_TTL_SECONDS)
+  return fresh
 })
 
 /**
@@ -199,8 +228,8 @@ export const getPractitionersByCity = cache(async (cityName: string): Promise<Pr
 export const getPractitionerBySlug = cache(async (slug: string): Promise<Practitioner | null> => {
   if (isRemovedPractitionerSlug(slug)) return null
 
-  const p = await prisma.practitioner.findUnique({
-    where: { slug },
+  const p = await prisma.practitioner.findFirst({
+    where: { slug, isHidden: false },
     include: {
       ranking: true,
       treatments: {
@@ -230,4 +259,8 @@ export const getPractitionerBySlug = cache(async (slug: string): Promise<Practit
 
 export async function updatePractitioner(slug: string, data: Prisma.PractitionerUpdateInput) {
   return await prisma.practitioner.update({ where: { slug }, data })
+}
+
+export async function createPractitioner(data: Prisma.PractitionerCreateInput) {
+  return await prisma.practitioner.create({ data })
 }

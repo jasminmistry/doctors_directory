@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import {
@@ -18,6 +17,7 @@ import { PractitionerCard } from "@/components/practitioner-card";
 import { filterCqcAccreditedCities } from '@/lib/accredited-city-filter'
 import { toUrlSlug } from '@/lib/utils'
 import { toDirectoryCanonical } from "@/lib/seo";
+import { IconArrowNarrowLeft } from "@tabler/icons-react"
 function mapAccreditationToField(accreditation: string): keyof Clinic {
   const mapping: Record<string, keyof Clinic> = {
     cqc: 'isCQC',
@@ -82,15 +82,9 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
       <div className="mx-auto max-w-7xl md:px-4 pb-4 pt-4 md:pb-7">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
-            <Link className="mb-3 inline-block" href="/" prefetch={false}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-              >
-                <ArrowLeft className="h-4 w-4" />
+            <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
-              </Button>
             </Link>
             <Breadcrumb>
               <BreadcrumbList>
@@ -132,7 +126,7 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
               href={`/accredited/${accreditation}/clinics/${toUrlSlug(city)}`}
               className="block"
             >
-              <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg ">
+              <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer ">
                 <CardHeader className="pb-4">
                   <h3 className="mb-2 flex font-semibold text-md md:text-lg transition-colors text-balance group-hover:text-black">
                     {city}

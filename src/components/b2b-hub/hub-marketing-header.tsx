@@ -35,7 +35,7 @@ export function HubMarketingHeader() {
         </nav>
         <a
           href={bookDemoHref}
-          className="shrink-0 inline-flex items-center justify-center rounded-md border-2 border-neutral-900 px-6 py-[13px] text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-900 hover:text-white"
+          className="shrink-0 inline-flex items-center justify-center rounded-lg border-2 border-neutral-900 px-6 py-[13px] text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-900 hover:text-white"
         >
           BOOK DEMO
         </a>

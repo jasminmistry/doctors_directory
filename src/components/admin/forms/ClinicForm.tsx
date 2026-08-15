@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Building2, ExternalLink, MapPin, Star, Share2, ShieldCheck, FileText, Save, Wand2, Sparkles, Link2 } from 'lucide-react'
+import { IconArrowNarrowLeft, IconBuildingHospital, IconExternalLink,  IconFileText, IconWand, IconSparkles, IconDeviceFloppy, IconShieldCheck, IconShare3, IconStar, IconLink, IconMapPin } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ImageUpload } from '@/components/admin/ImageUpload'
@@ -51,6 +51,7 @@ type ClinicData = {
   cqcStatus: 'not_applicable' | 'good' | 'requires_improvement' | 'outstanding' | null
   avgReplyTime: 'within_24hrs' | 'within_48hrs' | 'more_than_48hrs' | null
   coreClinicId: number | null
+  consentzUsername: string | null
 }
 
 const EMPTY: ClinicData = {
@@ -58,9 +59,9 @@ const EMPTY: ClinicData = {
   category: null, rating: null, reviewCount: null, aboutSection: null, accreditations: null,
   awards: null, affiliations: null, website: null, email: null, facebook: null, twitter: null,
   xTwitter: null, instagram: null, youtube: null, linkedin: null,
-  isSaveFace: false, isDoctor: false, isJccp: null, jccpUrl: null, isCqc: null, cqcUrl: null,
-  isHiw: null, hiwUrl: null, isHis: null, hisUrl: null, isRqia: null, rqiaUrl: null,
-  coverImage: null, cqcStatus: null, avgReplyTime: null, coreClinicId: null,
+  isSaveFace: false, isDoctor: false, isJccp: false, jccpUrl: null, isCqc: false, cqcUrl: null,
+  isHiw: false, hiwUrl: null, isHis: false, hisUrl: null, isRqia: false, rqiaUrl: null,
+  coverImage: null, cqcStatus: null, avgReplyTime: null, coreClinicId: null, consentzUsername: null,
 }
 
 // Converts stored Python-list / JSON-array strings to newline-separated display text
@@ -130,7 +131,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       setLoading(false)
       return
     }
-    fetch(`/directory/api/admin/clinics/${slug}`)
+    fetch(`/directory/api/admin/clinics/${slug}/`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json() })
       .then((d) => {
         if (!d.name) {
@@ -176,7 +177,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       affiliations: formatListForSave(rest.affiliations),
     }
     const body = isNew ? { slug: data.slug.trim(), ...serialised } : serialised
-    const url = saveUrl ?? (isNew ? '/directory/api/admin/clinics' : `/directory/api/admin/clinics/${slug}`)
+    const url = saveUrl ?? (isNew ? '/directory/api/admin/clinics/' : `/directory/api/admin/clinics/${slug}/`)
     try {
       const res = await fetch(url, {
         method: isNew ? 'POST' : 'PUT',
@@ -216,12 +217,12 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
         <div className="flex items-center gap-3 min-w-0">
           {!isPortal && (
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => router.push('/admin/clinics')}>
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} />
             </Button>
           )}
           <div className="min-w-0">
-            {!isPortal && <p className="text-xs text-gray-400 font-medium">Clinics</p>}
-            <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
+            {!isPortal && <p className="text-xs text-gray-600 font-medium">Clinics</p>}
+            <h2 className="text-3xl text-gray-900 truncate">{title}</h2>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -235,21 +236,21 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button variant="outline" size="sm">
-                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+              <Button variant="outline" size="lg">
+                <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
                 Preview
               </Button>
             </a>
           )}
-          <Button size="sm" onClick={handleSave} disabled={saving}>
-            <Save className="h-3.5 w-3.5 mr-1.5" />
+          <Button size="lg" onClick={handleSave} disabled={saving}>
+            <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
             {saving ? 'Saving…' : 'Save'}
           </Button>
         </div>
       </div>
 
       {/* Basic Info */}
-      <FormSection title="Basic Info" icon={Building2}>
+      <FormSection title="Basic Info" icon={IconBuildingHospital}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Clinic Name" required error={fieldErrors.name}>
             <div className="flex gap-2">
@@ -274,7 +275,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
                   title="Fill name from slug"
                   onClick={() => set('name', data.slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '))}
                 >
-                  <Wand2 className="h-3.5 w-3.5" />
+                  <IconWand stroke={1.5} className="h-3.5 w-3.5" />
                 </Button>
               )}
             </div>
@@ -291,42 +292,81 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
             </Field>
           ) : (
             <div className="flex flex-col justify-end">
-              <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
-              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
+              <span className="text-xs text-gray-600 mb-1.5 font-medium">Slug</span>
+              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{data.slug}</code>
             </div>
           ))}
           <Field label="Category">
             <Input value={data.category ?? ''} onChange={(e) => set('category', e.target.value || null)} placeholder="e.g. Aesthetics" />
           </Field>
           <Field label="Image" fullWidth>
-            <ImageUpload value={data.image ?? null} onChange={(url) => set('image', url)} />
+            <ImageUpload
+              value={data.image ?? null}
+              onChange={(url) => set('image', url)}
+              endpoint={isPortal ? '/directory/api/portal/upload/' : '/directory/api/admin/upload/'}
+            />
           </Field>
         </div>
       </FormSection>
 
       {/* Location & Contact */}
-      <FormSection title="Location & Contact" icon={MapPin}>
+      <FormSection title="Location & Contact" icon={IconMapPin}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <Field label="Address" fullWidth>
-            <Input value={data.gmapsAddress ?? ''} onChange={(e) => set('gmapsAddress', e.target.value || null)} placeholder="123 Harley Street, London" />
+          <Field label="Address" fullWidth error={fieldErrors.gmapsAddress}>
+            <Input
+              value={data.gmapsAddress ?? ''}
+              onChange={(e) => set('gmapsAddress', e.target.value || null)}
+              placeholder="123 Harley Street, London"
+              maxLength={500}
+              className={cn(fieldErrors.gmapsAddress && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.gmapsAddress)}
+            />
           </Field>
-          <Field label="Phone">
-            <Input value={data.gmapsPhone ?? ''} onChange={(e) => set('gmapsPhone', e.target.value || null)} placeholder="+44 20 0000 0000" />
+          <Field label="Phone" error={fieldErrors.gmapsPhone}>
+            <Input
+              value={data.gmapsPhone ?? ''}
+              onChange={(e) => set('gmapsPhone', e.target.value || null)}
+              placeholder="+44 20 0000 0000"
+              maxLength={200}
+              className={cn(fieldErrors.gmapsPhone && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.gmapsPhone)}
+            />
           </Field>
-          <Field label="Google Maps URL">
-            <Input value={data.gmapsUrl ?? ''} onChange={(e) => set('gmapsUrl', e.target.value || null)} placeholder="https://maps.google.com/…" />
+          <Field label="Google Maps URL" error={fieldErrors.gmapsUrl}>
+            <Input
+              value={data.gmapsUrl ?? ''}
+              onChange={(e) => set('gmapsUrl', e.target.value || null)}
+              placeholder="https://maps.google.com/…"
+              className={cn(fieldErrors.gmapsUrl && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.gmapsUrl)}
+            />
           </Field>
-          <Field label="Website">
-            <Input value={data.website ?? ''} onChange={(e) => set('website', e.target.value || null)} placeholder="https://…" />
+          <Field label="Website" error={fieldErrors.website}>
+            <Input
+              value={data.website ?? ''}
+              onChange={(e) => set('website', e.target.value || null)}
+              placeholder="https://…"
+              maxLength={500}
+              className={cn(fieldErrors.website && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.website)}
+            />
           </Field>
-          <Field label="Email">
-            <Input type="email" value={data.email ?? ''} onChange={(e) => set('email', e.target.value || null)} placeholder="info@clinic.com" />
+          <Field label="Email" error={fieldErrors.email}>
+            <Input
+              type="email"
+              value={data.email ?? ''}
+              onChange={(e) => set('email', e.target.value || null)}
+              placeholder="info@clinic.com"
+              maxLength={255}
+              className={cn(fieldErrors.email && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.email)}
+            />
           </Field>
         </div>
       </FormSection>
 
       {/* Reputation — rating/reviewCount are admin-managed; portal users only edit About */}
-      <FormSection title={isPortal ? 'About' : 'Reputation'} icon={Star}>
+      <FormSection title={isPortal ? 'About' : 'Reputation'} icon={IconStar}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {!isPortal && (
             <>
@@ -345,17 +385,19 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       </FormSection>
 
       {/* Profile Enhancements */}
-      <FormSection title="Profile" icon={Sparkles}>
+      <FormSection title="Profile" icon={IconSparkles}>
         <div className="grid grid-cols-1 gap-5">
-          <Field label="Cover Photo URL" fullWidth>
-            <Input value={data.coverImage ?? ''} onChange={(e) => set('coverImage', e.target.value || null)} placeholder="https://…" />
-          </Field>
+          {!isPortal && (
+            <Field label="Cover Photo" fullWidth>
+              <ImageUpload value={data.coverImage ?? null} onChange={(url) => set('coverImage', url)} />
+            </Field>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Field label="CQC Status">
               <select
                 value={data.cqcStatus ?? ''}
                 onChange={(e) => set('cqcStatus', (e.target.value || null) as ClinicData['cqcStatus'])}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value="">Not set</option>
                 <option value="not_applicable">N/A</option>
@@ -368,7 +410,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
               <select
                 value={data.avgReplyTime ?? ''}
                 onChange={(e) => set('avgReplyTime', (e.target.value || null) as ClinicData['avgReplyTime'])}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value="">Not set</option>
                 <option value="within_24hrs">Within 24 hours</option>
@@ -381,7 +423,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       </FormSection>
 
       {/* Content */}
-      <FormSection title="Content" icon={FileText}>
+      <FormSection title="Content" icon={IconFileText}>
         <div className="grid grid-cols-1 gap-5">
           <Field label="Accreditations" hint="One accreditation per line">
             <Textarea value={data.accreditations ?? ''} onChange={(e) => set('accreditations', e.target.value || null)} placeholder={"CQC registered\nSave Face accredited\nJCCP member"} className="min-h-[80px]" />
@@ -396,7 +438,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       </FormSection>
 
       {/* Social Media */}
-      <FormSection title="Social Media" icon={Share2}>
+      <FormSection title="Social Media" icon={IconShare3}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {[
             { key: 'facebook' as const, label: 'Facebook', placeholder: 'https://facebook.com/…' },
@@ -414,7 +456,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
       </FormSection>
 
       {/* Regulatory — admin-managed only */}
-      {!isPortal && <FormSection title="Integration" icon={Link2} description="Consentz Core CRM identifiers — set these to enable online booking and calendar sync">
+      {!isPortal && <FormSection title="Integration" icon={IconLink} description="Consentz Core CRM identifiers — set these to enable online booking and calendar sync">
         <Field label="Core Clinic ID" hint="Consentz Core clinic ID (integer). Enables real-time availability and online booking.">
           <Input
             type="number"
@@ -424,9 +466,17 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
             className="h-8 text-sm max-w-[180px]"
           />
         </Field>
+        <Field label="Consentz Username" hint="Consentz login that owns this clinic's portal. Required for SSO from Consentz to work — leave blank to skip username verification (any admin on this Consentz clinic will be able to sign in).">
+          <Input
+            value={data.consentzUsername ?? ''}
+            onChange={(e) => set('consentzUsername', e.target.value || null)}
+            placeholder="e.g. jasmin.jasmin_5"
+            className="h-8 text-sm max-w-[240px]"
+          />
+        </Field>
       </FormSection>}
 
-      {!isPortal && <FormSection title="Regulatory Flags" icon={ShieldCheck} description="Certifications and regulatory body memberships">
+      {!isPortal && <FormSection title="Regulatory Flags" icon={IconShieldCheck} description="Certifications and regulatory body memberships">
         <div className="space-y-4">
           <div className="flex items-center gap-8">
             <label className="flex items-center gap-2 cursor-pointer">
@@ -459,8 +509,8 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
 
       {/* Footer save */}
       <div className="flex justify-end pt-2">
-        <Button size="sm" onClick={handleSave} disabled={saving}>
-          <Save className="h-3.5 w-3.5 mr-1.5" />
+        <Button size="lg" onClick={handleSave} disabled={saving}>
+          <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
           {saving ? 'Saving…' : 'Save Clinic'}
         </Button>
       </div>
@@ -479,7 +529,7 @@ function LoadingSkeleton() {
         </div>
       </div>
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div key={i} className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
           <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
           <div className="grid grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((j) => (

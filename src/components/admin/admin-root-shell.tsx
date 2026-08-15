@@ -8,6 +8,7 @@ import Header from '@/components/header'
 import { Footer } from '@/components/footer'
 import { ScrollToTop } from '@/components/scroll-to-top'
 import { CtaClickTracker } from '@/components/tracking/cta-click-tracker'
+import { CookieConsentBanner } from '@/components/cookie-consent/cookie-consent-banner'
 
 function stripDirectoryBasePath(pathname: string) {
   if (pathname === '/directory' || pathname.startsWith('/directory/')) {
@@ -17,9 +18,9 @@ function stripDirectoryBasePath(pathname: string) {
   return pathname || '/'
 }
 
-function isUnderAdminConsole(pathname: string) {
+function isBareShellRoute(pathname: string) {
   const p = stripDirectoryBasePath(pathname)
-  return /^\/admin(?:\/|$)/.test(p)
+  return /^\/(admin|portal)(?:\/|$)/.test(p)
 }
 
 export function AdminRootShell({
@@ -28,7 +29,7 @@ export function AdminRootShell({
   children: ReactNode
 }>) {
   const pathname = usePathname() ?? ''
-  const plainAdmin = isUnderAdminConsole(pathname)
+  const plainAdmin = isBareShellRoute(pathname)
 
   if (plainAdmin) {
     return (
@@ -48,6 +49,7 @@ export function AdminRootShell({
       <Toaster position="top-right" richColors className="site-toaster" />
       <ScrollToTop />
       <CtaClickTracker />
+      <CookieConsentBanner />
       <Analytics />
     </div>
   )

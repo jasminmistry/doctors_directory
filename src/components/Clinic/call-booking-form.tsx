@@ -2,8 +2,14 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { format, addDays, isSameDay } from 'date-fns'
-import { ChevronLeft, ChevronRight, CheckCircle2, Loader2, Video, ExternalLink, Clock } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { formatInTimeZone } from 'date-fns-tz'
+import { cn, formatTimezoneAbbr } from '@/lib/utils'
+import { IconChevronLeft, IconChevronRight, IconCircleCheck, IconExternalLink, IconLoader2, IconVideo } from '@tabler/icons-react'
+import { Button } from '../ui/button'
+
+// Video call slot times are always shown in the clinic's own timezone, never
+// the visitor's browser timezone — every clinic in this directory is UK-based.
+const CLINIC_TIMEZONE = 'Europe/London'
 
 interface CallSlot {
   practitioner_id: number
@@ -32,8 +38,19 @@ interface CallBookingFormProps {
 }
 
 type Step = 1 | 2 | 3
+type FieldErrors = Record<string, string>
 
 const WEEK_SIZE = 7
+const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function isValidUkPhone(value: string): boolean {
+  return UK_PHONE_RE.test(value.trim().replace(/\s/g, ''))
+}
+
+function isValidEmail(value: string): boolean {
+  return EMAIL_RE.test(value.trim())
+}
 
 function dateKey(d: Date) {
   return format(d, 'yyyy-MM-dd')
@@ -65,6 +82,7 @@ export function CallBookingForm({
 
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [result, setResult] = useState<BookingResult | null>(null)
   const [joinUrl, setJoinUrl] = useState<string | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -79,7 +97,7 @@ export function CallBookingForm({
     setSlotsLoading(true)
     setSlots([])
     setSelectedSlot(null)
-    fetch(`/directory/api/call/${clinicSlug}/slots?date=${dateKey(selectedDate)}`)
+    fetch(`/directory/api/call/${clinicSlug}/slots/?date=${dateKey(selectedDate)}`)
       .then((r) => r.json())
       .then((d) => setSlots(d.slots ?? []))
       .catch(() => setSlots([]))
@@ -91,7 +109,7 @@ export function CallBookingForm({
     if (!result || result.call_type !== 'zoom' || result.join_url_ready) return
     pollRef.current = setInterval(async () => {
       try {
-        const r = await fetch(`/directory/api/call/${clinicSlug}/meeting/${result.meeting_id}`)
+        const r = await fetch(`/directory/api/call/${clinicSlug}/meeting/${result.meeting_id}/`)
         if (!r.ok) return
         const d: BookingResult = await r.json()
         if (d.join_url_ready && d.join_url) {
@@ -105,12 +123,39 @@ export function CallBookingForm({
     return () => { if (pollRef.current) clearInterval(pollRef.current) }
   }, [result, clinicSlug])
 
+  function getFieldErrors(): FieldErrors {
+    const errors: FieldErrors = {}
+    if (!firstName.trim()) errors.firstName = 'First name is required.'
+    if (!lastName.trim()) errors.lastName = 'Last name is required.'
+    if (!email.trim()) errors.email = 'Email address is required.'
+    else if (!isValidEmail(email)) errors.email = 'Please enter a valid email address.'
+    if (phone.trim() && !isValidUkPhone(phone)) errors.phone = 'Please enter a valid UK phone number.'
+    return errors
+  }
+
+  function mapServerErrorToField(message: string): FieldErrors | null {
+    const lower = message.toLowerCase()
+    if (lower.includes('first name')) return { firstName: message }
+    if (lower.includes('last name')) return { lastName: message }
+    if (lower.includes('email')) return { email: message }
+    if (lower.includes('phone')) return { phone: message }
+    return null
+  }
+
   async function handleConfirm() {
     if (!selectedDate || !selectedSlot) return
-    setSubmitting(true)
     setError(null)
+
+    const errors = getFieldErrors()
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
+      return
+    }
+    setFieldErrors({})
+
+    setSubmitting(true)
     try {
-      const res = await fetch(`/directory/api/call/${clinicSlug}`, {
+      const res = await fetch(`/directory/api/call/${clinicSlug}/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -125,7 +170,13 @@ export function CallBookingForm({
       })
       const data: BookingResult = await res.json()
       if (!res.ok) {
-        setError((data as unknown as { error?: string }).error ?? 'Booking failed — please try again')
+        const message = (data as unknown as { error?: string }).error ?? 'Booking failed — please try again'
+        const mapped = mapServerErrorToField(message)
+        if (mapped) {
+          setFieldErrors(mapped)
+        } else {
+          setError(message)
+        }
         return
       }
       setResult(data)
@@ -144,29 +195,29 @@ export function CallBookingForm({
 
   // ── Step 3: success ─────────────────────────────────────────────────────────
   if (step === 3 && result) {
-    const startDt = new Date(result.slot_start)
     const readyUrl = joinUrl ?? (result.join_url_ready ? result.join_url : null)
     const isZoomWaiting = result.call_type === 'zoom' && !readyUrl
 
     return (
       <div className={cn('flex flex-col items-center justify-center gap-4 text-center', compact ? 'py-8 px-5' : 'py-12 px-6')}>
         {isZoomWaiting ? (
-          <Clock className="h-10 w-10 text-black shrink-0" />
+          <IconLoader2 stroke={1.5} className="h-10 w-10 shrink-0" />
         ) : (
-          <CheckCircle2 className="h-10 w-10 text-green-500 shrink-0" />
+          <IconCircleCheck  stroke="1.5" className="h-10 w-10 text-green-500 shrink-0" />
         )}
         <div className="space-y-1">
           <p className="font-semibold text-gray-900 text-sm">Video call booked!</p>
-          <p className="text-xs text-gray-500">
-            {format(startDt, "EEE d MMM 'at' HH:mm")} with{' '}
+          <p className="text-xs text-gray-600">
+            {formatInTimeZone(result.slot_start, CLINIC_TIMEZONE, "EEE d MMM 'at' HH:mm")}{' '}
+            ({formatTimezoneAbbr(CLINIC_TIMEZONE, new Date(result.slot_start))}) with{' '}
             <span className="font-medium">{result.practitioner.name}</span>
           </p>
         </div>
 
         {isZoomWaiting ? (
           <div className="flex flex-col items-center gap-2">
-            <Loader2 className="h-5 w-5 animate-spin text-black" />
-            <p className="text-xs text-gray-500">Preparing your Zoom link — this usually takes under a minute…</p>
+            <IconLoader2 stroke={1.5} className="h-5 w-5 animate-spin" />
+            <p className="text-xs text-gray-600">Preparing your Zoom link — this usually takes under a minute…</p>
           </div>
         ) : (
           <a
@@ -175,13 +226,13 @@ export function CallBookingForm({
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 transition-colors"
           >
-            <Video className="h-4 w-4" />
+            <IconVideo stroke={1.5} className="h-4 w-4" />
             Join Video Call
-            <ExternalLink className="h-3.5 w-3.5 opacity-70" />
+            <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 opacity-70" />
           </a>
         )}
 
-        <p className="text-[10px] text-gray-400">
+        <p className="text-[10px] text-gray-600">
           {isZoomWaiting
             ? 'Your join link will appear here once the host has set up the call.'
             : 'Save this link — you\'ll need it at the scheduled time.'}
@@ -199,6 +250,7 @@ export function CallBookingForm({
         {/* Slot recap */}
         <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-600">
           <span className="font-medium">{selectedSlot?.start} – {selectedSlot?.end}</span>
+          {' '}({formatTimezoneAbbr(CLINIC_TIMEZONE, selectedDate ?? undefined)})
           {' · '}{selectedDayLabel}
           {' · '}{selectedSlot?.practitioner}
         </div>
@@ -206,35 +258,69 @@ export function CallBookingForm({
         <div className="space-y-2">
           <label className={labelCls}>Your details</label>
           <div className="grid grid-cols-2 gap-2">
-            <input
-              type="text"
-              placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
-            />
-            <input
-              type="text"
-              placeholder="Last name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
-            />
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-600">
+                First name<span className="ml-0.5 text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="First name"
+                value={firstName}
+                onChange={(e) => { setFirstName(e.target.value); setFieldErrors((p) => ({ ...p, firstName: '' })) }}
+                className={cn(
+                  'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
+                  fieldErrors.firstName ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
+                )}
+              />
+              {fieldErrors.firstName && <p className="mt-1 text-xs text-red-600">{fieldErrors.firstName}</p>}
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-600">
+                Last name<span className="ml-0.5 text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Last name"
+                value={lastName}
+                onChange={(e) => { setLastName(e.target.value); setFieldErrors((p) => ({ ...p, lastName: '' })) }}
+                className={cn(
+                  'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
+                  fieldErrors.lastName ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
+                )}
+              />
+              {fieldErrors.lastName && <p className="mt-1 text-xs text-red-600">{fieldErrors.lastName}</p>}
+            </div>
           </div>
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
-          />
-          <input
-            type="tel"
-            placeholder="Phone (optional)"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
-          />
+          <div>
+            <label className="mb-1 block text-xs font-medium text-gray-600">
+              Email address<span className="ml-0.5 text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: '' })) }}
+              className={cn(
+                'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
+                fieldErrors.email ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
+              )}
+            />
+            {fieldErrors.email && <p className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>}
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-gray-600">Phone (optional)</label>
+            <input
+              type="tel"
+              placeholder="Phone"
+              value={phone}
+              onChange={(e) => { setPhone(e.target.value); setFieldErrors((p) => ({ ...p, phone: '' })) }}
+              className={cn(
+                'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none',
+                fieldErrors.phone ? 'border-red-400' : 'border-gray-200 focus:border-gray-400',
+              )}
+            />
+            {fieldErrors.phone && <p className="mt-1 text-xs text-red-600">{fieldErrors.phone}</p>}
+          </div>
         </div>
 
         {error && <p className="text-xs text-red-600">{error}</p>}
@@ -253,7 +339,7 @@ export function CallBookingForm({
             onClick={handleConfirm}
             className="flex-1 rounded-lg bg-gray-900 px-3 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors flex items-center justify-center gap-1.5"
           >
-            {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Video className="h-3.5 w-3.5" />}
+            {submitting ? <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" /> : <IconVideo stroke={1.5} className="h-3.5 w-3.5" />}
             {submitting ? 'Booking…' : 'Confirm Call'}
           </button>
         </div>
@@ -265,7 +351,7 @@ export function CallBookingForm({
   return (
     <div className={cn('space-y-4', pad)}>
       {/* Step indicator */}
-      <div className="flex items-center gap-1 text-[10px] text-gray-400">
+      <div className="flex items-center gap-1 text-[10px] text-gray-600">
         <span className="font-medium text-gray-900">1. Date &amp; Time</span>
         <span>›</span>
         <span className="font-medium">2. Your Details</span>
@@ -277,19 +363,19 @@ export function CallBookingForm({
           type="button"
           onClick={() => setWeekOffset((o) => Math.max(0, o - 1))}
           disabled={weekOffset === 0}
-          className="rounded p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30"
+          className="rounded p-1 text-gray-600 hover:text-gray-700 disabled:opacity-30"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <IconChevronLeft stroke={1.5} className="h-4 w-4" />
         </button>
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-gray-600">
           {format(weekStart, 'd MMM')} – {format(weekDays[6], 'd MMM')}
         </span>
         <button
           type="button"
           onClick={() => setWeekOffset((o) => o + 1)}
-          className="rounded p-1 text-gray-400 hover:text-gray-700"
+          className="rounded p-1 text-gray-600 hover:text-gray-700"
         >
-          <ChevronRight className="h-4 w-4" />
+          <IconChevronRight stroke={1.5} className="h-4 w-4" />
         </button>
       </div>
 
@@ -324,10 +410,10 @@ export function CallBookingForm({
         <div>
           {slotsLoading ? (
             <div className="flex justify-center py-4">
-              <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+              <IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin text-gray-600" />
             </div>
           ) : slots.length === 0 ? (
-            <p className="text-center text-xs text-gray-400 py-3">No call slots available on this day</p>
+            <p className="text-center text-xs text-gray-600 py-3">No call slots available on this day</p>
           ) : (
             <div className="grid grid-cols-2 gap-1.5">
               {slots.map((slot, i) => (
@@ -345,7 +431,7 @@ export function CallBookingForm({
                   )}
                 >
                   <div className="font-medium">{slot.start} – {slot.end}</div>
-                  <div className={cn('text-[10px] truncate', selectedSlot?.start === slot.start ? 'opacity-70' : 'text-gray-400')}>
+                  <div className={cn('text-[10px] truncate', selectedSlot?.start === slot.start ? 'opacity-70' : 'text-gray-600')}>
                     {slot.practitioner}
                   </div>
                 </button>
@@ -355,15 +441,17 @@ export function CallBookingForm({
         </div>
       )}
 
-      <button
+      <Button
         type="button"
+        variant="default"
+        size="lg"
         disabled={!selectedSlot}
         onClick={() => setStep(2)}
-        className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+        className="w-full"
       >
-        <Video className="h-4 w-4" />
+        <IconVideo stroke={1.5} className="h-4 w-4" />
         Next →
-      </button>
+      </Button>
     </div>
   )
 }

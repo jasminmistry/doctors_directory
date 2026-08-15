@@ -5,7 +5,30 @@ import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 import { selectPlanSchema } from '@/lib/schemas/claim.schema'
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+function resolveDirectoryBaseUrl(): string {
+  const candidates = [
+    process.env.NEXT_PUBLIC_DIRECTORY_BASE_URL,
+    process.env.DIRECTORY_BASE_URL,
+    process.env.NEXT_PUBLIC_BASE_URL,
+  ]
+
+  for (const candidate of candidates) {
+    const trimmed = candidate?.trim()
+    if (!trimmed) continue
+
+    const normalized = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+
+    try {
+      return new URL(normalized).origin
+    } catch {
+      continue
+    }
+  }
+
+  return 'http://localhost:3000'
+}
+
+const DIRECTORY_BASE_URL = resolveDirectoryBaseUrl()
 
 const SUBSCRIPTION_CONFIG = {
   name: 'Verified Subscription',
@@ -39,10 +62,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email must be verified before selecting a plan' }, { status: 400 })
     }
 
-    const entitySlug =
-      claim.entityType === 'practitioner'
-        ? `practitioner/${claim.practitionerSlug}`
-        : claim.clinicSlug
+    // New registrations have no existing slug to return to — resume on the
+    // register page instead of /claim/[slug].
+    const basePath = claim.isNewRegistration
+      ? `/directory/register/${claim.entityType}`
+      : `/directory/claim/${
+          claim.entityType === 'practitioner' ? `practitioner/${claim.practitionerSlug}` : claim.clinicSlug
+        }`
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-04-22.dahlia' })
 
@@ -52,18 +78,18 @@ export async function POST(req: NextRequest) {
         where: { id: claimId },
         data: { selectedPlan: 'free', status: 'pending_approval' },
       })
-      return NextResponse.json({ redirect: `/directory/claim/${entitySlug}?claimId=${claimId}&step=pending` })
+      return NextResponse.json({ redirect: `${basePath}?claimId=${claimId}&step=pending` })
     }
 
-    // PPL — SetupIntent to capture card with no upfront charge (£15 charged per-lead unlock)
+    // PPL — SetupIntent to capture card with no upfront charge (PPL_LEAD_PRICE charged per-lead unlock)
     if (plan === 'pay_per_lead') {
       const session = await stripe.checkout.sessions.create({
         mode: 'setup',
         payment_method_types: ['card'],
         customer_email: claim.claimerEmail,
         metadata: { claimId: String(claimId), plan },
-        success_url: `${BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${BASE_URL}/directory/claim/${entitySlug}?claimId=${claimId}&step=plan`,
+        success_url: `${DIRECTORY_BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${DIRECTORY_BASE_URL}${basePath}?claimId=${claimId}&step=plan`,
       })
       await prisma.claimRequest.update({
         where: { id: claimId },
@@ -94,8 +120,8 @@ export async function POST(req: NextRequest) {
         customer_email: claim.claimerEmail,
         metadata: { claimId: String(claimId), plan },
         subscription_data: { metadata: { claimId: String(claimId), plan } },
-        success_url: `${BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${BASE_URL}/directory/claim/${entitySlug}?claimId=${claimId}&step=plan`,
+        success_url: `${DIRECTORY_BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${DIRECTORY_BASE_URL}${basePath}?claimId=${claimId}&step=plan`,
       })
       await prisma.claimRequest.update({
         where: { id: claimId },

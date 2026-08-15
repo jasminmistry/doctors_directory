@@ -3,6 +3,10 @@
 import { useMemo, useRef } from "react";
 import { search_categories, locations } from "@/lib/data";
 
+function toTitleCase(str: string) {
+  return str.replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+}
+
 interface SearchDropdownProps {
   isMobile: boolean;
   activeDropdown: 'type' | 'category' | 'location' | null;
@@ -34,21 +38,23 @@ export function SearchDropdown({
   if (!isMobile && !showResults && !activeDropdown) return null;
 
   const dropdownClasses = isMobile
-    ? "absolute top-full left-0 w-full bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 mt-1"
-    : "absolute top-full left-0 w-full bg-white rounded-lg shadow-lg border border-gray-200 p-6 z-50 mt-1";
+    ? "absolute top-full left-0 w-full bg-white rounded-lg border border-gray-200 p-4 z-50 mt-1"
+    : "flex w-full bg-white rounded-lg border border-gray-200 p-6";
 
   const clsgrd = "gap-4";
   const gridClasses = isMobile
     ? "w-full"
     : `grid grid-cols-3 w-full ${clsgrd}`;
 
-  const filteredCategories = search_categories.filter((category: string) =>
-    category.toLowerCase().includes(localFilters.query.toLowerCase())
-  ).length > 0
-    ? search_categories.filter((category: string) =>
-        category.toLowerCase().includes(localFilters.query.toLowerCase())
-      )
-    : search_categories;
+  const categoryQuery = (localFilters.query || "").trim().toLowerCase();
+  const categoryMatches = categoryQuery.length === 0
+    ? search_categories
+    : search_categories.filter((category: string) =>
+        category.toLowerCase().includes(categoryQuery)
+      );
+  const filteredCategories = (categoryMatches.length > 0 ? categoryMatches : search_categories)
+    .slice()
+    .sort((a: string, b: string) => a.localeCompare(b));
 
   const locationQuery = (localFilters.location || "").trim().toLowerCase();
   const filteredLocations = locations.filter(
@@ -76,13 +82,25 @@ export function SearchDropdown({
   }, [filteredLocations]);
 
   const handleTypeClick = (opt: string) => {
-    setLocalFilters((prev) => ({ ...prev, type: opt }));
+    setLocalFilters((prev) => ({
+      ...prev,
+      type: opt,
+      // category/location/rating/services/accreditation are overloaded per type
+      // (e.g. "location" means City for Clinic/Practitioner but distributor for
+      // Product) — stale values from the previous type would otherwise leak
+      // into the new type's filters and get miscounted as active.
+      category: "",
+      location: "",
+      rating: 0,
+      services: [],
+      accreditation: "",
+    }));
     setActiveDropdown(null);
     setShowResults(false);
   };
 
   const handleCategoryClick = (specialty: string) => {
-    setLocalFilters((prev) => ({ ...prev, query: specialty }));
+    setLocalFilters((prev) => ({ ...prev, query: toTitleCase(specialty) }));
     setActiveDropdown(null);
     setShowResults(false);
   };
@@ -145,7 +163,7 @@ export function SearchDropdown({
                   onClick={() => handleCategoryClick(specialty)}
                   className="hover:bg-gray-50 hover:text-black active:bg-gray-100 text-left text-sm font-medium w-full flex items-center gap-3 p-2 rounded"
                 >
-                  {specialty}
+                  {toTitleCase(specialty)}
                 </button>
               ))}
             </div>
@@ -174,7 +192,7 @@ export function SearchDropdown({
                     </button>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500 p-2">No results found.</p>
+                  <p className="text-sm text-gray-600 p-2">No results found.</p>
                 )}
               </div>
               <div className="flex flex-col justify-between h-full sticky top-0">
@@ -187,7 +205,7 @@ export function SearchDropdown({
                       type="button"
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={(e) => handleLocationLetterJump(letter, e)}
-                      className="w-4 flex-1 rounded text-[10px] font-semibold leading-none transition-colors flex items-center justify-center border border-gray-200 text-gray-500 hover:border-gray-400 hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-25 disabled:hover:border-gray-200 disabled:hover:bg-transparent disabled:hover:text-gray-500"
+                      className="w-4 flex-1 rounded text-[10px] font-semibold leading-none transition-colors flex items-center justify-center border border-gray-200 text-gray-600 hover:border-gray-400 hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-25 disabled:hover:border-gray-200 disabled:hover:bg-transparent disabled:hover:text-gray-600"
                       aria-label={`Jump to locations starting with ${letter}`}
                       disabled={!isAvailable}
                       title={`${letter}${!isAvailable ? ' (no results)' : ''}`}

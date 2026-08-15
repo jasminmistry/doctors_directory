@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
+import { invalidateSearchCache } from '@/lib/search-cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -103,6 +105,8 @@ export async function PUT(request: Request) {
       data: validation.data,
       select: PRACTITIONER_PORTAL_SELECT,
     })
+    await invalidateSearchCache()
+    revalidatePath('/portal/practitioner')
     return NextResponse.json(practitioner)
   } catch (error) {
     console.error('[portal] Failed to update practitioner:', error)

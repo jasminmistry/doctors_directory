@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowLeft} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { decodeUnicodeEscapes } from "@/lib/utils";
@@ -19,6 +18,7 @@ import { isRemovedBrandHub } from "@/lib/product-removals";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { toUrlSlug } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 interface ProfilePageProps {
   params: {
@@ -67,25 +67,25 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
   if (similarProducts.length === 0) {
     return (
-      <main className="min-h-screen bg-(--primary-bg-color)">
+      <main className="min-h-screen bg-[#fbfbfb]">
         <div className="sticky top-0 z-10">
-          <div className="container mx-auto max-w-6xl px-4 py-4">
+          <div className="container mx-auto max-w-7xl px-4 py-4">
             <Link href="/products/brands" prefetch={false}>
               <Button
                 variant="ghost"
                 size="sm"
                 className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Brands
               </Button>
             </Link>
           </div>
         </div>
-        <div className="container mx-auto max-w-6xl px-4 py-16 space-y-8">
+        <div className="container mx-auto max-w-7xl px-4 py-16 space-y-8">
           <div className="text-center space-y-3">
-            <h1 className="text-2xl font-bold text-foreground">Brand not found</h1>
-            <p className="text-gray-500 text-sm">
+            <h1 className="text-2xl font-medium text-foreground">Brand not found</h1>
+            <p className="text-gray-600 text-sm">
               We couldn&apos;t find any products for &ldquo;{brand}&rdquo;. Browse our top product brands below.
             </p>
           </div>
@@ -96,7 +96,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                 <li key={b}>
                   <Link
                     href={`/products/brands/${toUrlSlug(b)}`}
-                    className="inline-block px-3 py-1.5 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:bg-black hover:text-white hover:border-black transition-colors"
+                    className="inline-block px-3 py-1.5 rounded-full border border-[#e0e0e0]  bg-white text-sm text-gray-700 hover:bg-black hover:text-white hover:border-black transition-colors"
                   >
                     {b}
                   </Link>
@@ -110,22 +110,16 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   }
 
   return (
-    <main className="min-h-screen bg-(--primary-bg-color)">
+    <main className="min-h-screen bg-[#fbfbfb]">
       {/* Navigation */}
       <div className="sticky top-0 z-10">
-        <div className="container mx-auto max-w-6xl px-4 py-4">
-          <Link href="/" prefetch={false}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-            >
-              <ArrowLeft className="h-4 w-4" />
+        <div className="container mx-auto max-w-7xl px-4 py-4">
+          <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
-            </Button>
           </Link>
         </div>
-        <div className="container mx-auto max-w-6xl px-4 py-2">
+        <div className="container mx-auto max-w-7xl px-4 py-2">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -148,7 +142,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
         </div>
       </div>
 
-      <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
+      <div className="container mx-auto max-w-7xl pt-0 md:px-4 py-20 space-y-8">
         {/* Profile Header */}
 
         <h3 className="text-lg font-semibold text-foreground mb-2">{`${brand}`}</h3>
@@ -163,7 +157,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                 href={`/products/brands/${toUrlSlug(brand)}/${practitioner.slug}`}
                 className="block"
               >
-                <Card className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
+                <Card className="group bg-white transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
                   <CardHeader className="pb-2 px-2">
                     <h2
                       id={`product-name-${practitioner.slug}`}
@@ -218,7 +212,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                             <li key={i}>
                               <Badge
                                 variant="outline"
-                                className="text-[11px] font-normal text-gray-500"
+                                className="text-[11px] font-normal text-gray-600"
                               >
                                 {value.price}
                               </Badge>
@@ -229,7 +223,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                           <li>
                             <Badge
                               variant="outline"
-                              className="text-[11px] font-normal text-gray-500"
+                              className="text-[11px] font-normal text-gray-600"
                             >
                               + {practitioner.all_prices.length - 3} more
                             </Badge>

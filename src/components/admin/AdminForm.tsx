@@ -162,7 +162,7 @@ export default function AdminForm({ entityType, apiBasePath, redirectPath }: Adm
       setLoading(false)
       return
     }
-    fetch(`/directory/api/admin/${entityType}/${slug}`)
+    fetch(`/directory/api/admin/${entityType}/${slug}/`)
       .then((res) => {
         if (!res.ok) throw new Error('Not found')
         return res.json()
@@ -178,8 +178,8 @@ export default function AdminForm({ entityType, apiBasePath, redirectPath }: Adm
   async function handleSubmit() {
     setSaving(true)
     const url = isNew
-      ? `/directory/api/admin/${entityType}`
-      : `${apiBasePath}/${slug}`
+      ? `/directory/api/admin/${entityType}/`
+      : `${apiBasePath}/${slug}/`
     const method = isNew ? 'POST' : 'PUT'
 
     try {
@@ -242,10 +242,10 @@ export default function AdminForm({ entityType, apiBasePath, redirectPath }: Adm
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         {slugValue && (
           <div className="mb-5 pb-5 border-b border-gray-100">
-            <Label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Slug</Label>
+            <Label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Slug</Label>
             <p className="mt-1 text-sm font-mono text-gray-600 bg-gray-50 rounded px-2 py-1.5 border border-gray-200">{slugValue}</p>
           </div>
         )}
@@ -268,7 +268,7 @@ export default function AdminForm({ entityType, apiBasePath, redirectPath }: Adm
             </div>
           ))}
           {visibleEntries.length === 0 && !isNew && (
-            <p className="md:col-span-2 text-sm text-gray-400">No editable fields found.</p>
+            <p className="md:col-span-2 text-sm text-gray-600">No editable fields found.</p>
           )}
         </div>
       </div>

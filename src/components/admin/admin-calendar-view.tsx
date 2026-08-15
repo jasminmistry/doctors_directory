@@ -1,15 +1,16 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Loader2 } from 'lucide-react'
 import { BookingCalendar, type CalendarBooking } from '@/components/calendar/booking-calendar'
 import { NewBookingModal, type NewBookingData } from '@/components/calendar/new-booking-modal'
+import { IconLoader2 } from '@tabler/icons-react'
 
 interface AdminCalendarViewProps {
   slug: string
+  clinicTimezone: string
 }
 
-export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
+export function AdminCalendarView({ slug, clinicTimezone }: AdminCalendarViewProps) {
   const [bookings, setBookings] = useState<CalendarBooking[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -21,7 +22,7 @@ export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
   const fetchBookings = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true)
     try {
-      const res = await fetch(`/directory/api/admin/clinics/${slug}/bookings`, { cache: 'no-store' })
+      const res = await fetch(`/directory/api/admin/clinics/${slug}/bookings/`, { cache: 'no-store' })
       if (!res.ok) {
         const data = await res.json()
         setError(data.error ?? 'Failed to load bookings')
@@ -40,7 +41,7 @@ export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
   useEffect(() => { fetchBookings() }, [fetchBookings])
 
   async function handleCreateBooking(data: NewBookingData) {
-    const res = await fetch(`/directory/api/admin/clinics/${slug}/bookings`, {
+    const res = await fetch(`/directory/api/admin/clinics/${slug}/bookings/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -54,7 +55,7 @@ export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
 
   async function handleEditBooking(data: NewBookingData) {
     if (!editingBooking) return
-    const res = await fetch(`/directory/api/admin/clinics/${slug}/bookings/${editingBooking.id}`, {
+    const res = await fetch(`/directory/api/admin/clinics/${slug}/bookings/${editingBooking.id}/`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -67,7 +68,7 @@ export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
   }
 
   async function handleDeleteBooking(booking: CalendarBooking) {
-    const res = await fetch(`/directory/api/admin/clinics/${slug}/bookings/${booking.id}`, { method: 'DELETE' })
+    const res = await fetch(`/directory/api/admin/clinics/${slug}/bookings/${booking.id}/`, { method: 'DELETE' })
     if (!res.ok) return
     setBookings((prev) => prev.filter((b) => b.id !== booking.id))
   }
@@ -75,14 +76,14 @@ export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
   if (loading) {
     return (
       <div className="flex justify-center py-24">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+        <IconLoader2 stroke={1.5} className="h-6 w-6 animate-spin" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+      <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
     )
   }
 
@@ -90,6 +91,7 @@ export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
     <>
       <BookingCalendar
         bookings={bookings}
+        clinicTimezone={clinicTimezone}
         onRefresh={() => fetchBookings(true)}
         refreshing={refreshing}
         showSyncBadge
@@ -103,12 +105,14 @@ export function AdminCalendarView({ slug }: AdminCalendarViewProps) {
           onClose={() => setShowNewModal(false)}
           onSave={handleCreateBooking}
           defaultDate={newBookingDate}
+          clinicTimezone={clinicTimezone}
         />
       )}
       {editingBooking && (
         <NewBookingModal
           onClose={() => setEditingBooking(null)}
           onSave={handleEditBooking}
+          clinicTimezone={clinicTimezone}
           initialData={{
             id: editingBooking.id,
             patientName: editingBooking.patientName,

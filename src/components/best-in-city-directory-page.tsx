@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Breadcrumb,
@@ -29,6 +28,7 @@ import {
   buildTreatmentCityConsumerContent,
   getTreatmentCityConsumerStats,
 } from '@/lib/treatment-city-consumer-content'
+import { IconArrowNarrowLeft } from '@tabler/icons-react'
 
 type Props = {
   entry: BestInCityEntry
@@ -83,12 +83,10 @@ export function BestInCityDirectoryPage({ entry }: Props) {
     <>
       <DirectoryJsonLd schemas={jsonLdSchemas} />
       <main className="bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-          <Link href="/" prefetch={false} className="mb-2 inline-block">
-            <Button variant="ghost" size="sm" className="gap-2 hover:bg-white hover:text-black">
-              <ArrowLeft className="h-4 w-4" />
+        <div className="mx-auto max-w-7xl px-4 py-6 md:py-10">
+          <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
-            </Button>
           </Link>
           <Breadcrumb>
             <BreadcrumbList>
@@ -136,7 +134,7 @@ export function BestInCityDirectoryPage({ entry }: Props) {
 
         <ServiceCityBelowFoldContent content={consumerContent} />
 
-        <div className="mx-auto max-w-6xl px-4 pb-12">
+        <div className="mx-auto max-w-7xl px-4 pb-12">
           <div className="flex flex-wrap gap-4 text-sm font-medium">
             <Link href={hubPath} className="text-foreground underline-offset-2 hover:underline">
               {entry.treatmentName} hub in {entry.locationLabel}

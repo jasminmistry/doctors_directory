@@ -1,21 +1,22 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { PractitionerForm } from '@/components/admin/forms/PractitionerForm'
+import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from '@/lib/pricing'
 
 export const dynamic = 'force-dynamic'
 
 const PLAN_LABELS: Record<string, string> = {
   free: 'Free',
-  pay_per_lead: 'Pay-Per-Lead £15/mo',
-  subscription: 'Subscription £99/mo',
+  pay_per_lead: `Pay-Per-Lead £${PPL_LEAD_PRICE}/mo`,
+  subscription: `Subscription £${SUBSCRIPTION_MONTHLY_PRICE}/mo`,
 }
 
 const PLAN_ORDER: Record<string, number> = { free: 0, pay_per_lead: 1, subscription: 2 }
 
 const UPGRADEABLE_PLANS: { key: string; label: string; description: string }[] = [
-  { key: 'pay_per_lead', label: 'Pay-Per-Lead — £15/mo', description: 'Priority listing + Verified badge' },
-  { key: 'subscription', label: 'Subscription — £99/mo', description: 'Unlimited leads at £0 each' },
+  { key: 'pay_per_lead', label: `Pay-Per-Lead — £${PPL_LEAD_PRICE}/mo`, description: 'Priority listing + Verified badge' },
+  { key: 'subscription', label: `Subscription — £${SUBSCRIPTION_MONTHLY_PRICE}/mo`, description: 'Unlimited leads at £0 each' },
 ]
 
 interface SubscriptionInfo {
@@ -26,32 +27,31 @@ interface SubscriptionInfo {
 
 export default function PortalPractitionerPage() {
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
-  const [profileUrl, setProfileUrl] = useState<string | null>(null)
   const [upgrading, setUpgrading] = useState<string | null>(null)
   const [idVerified, setIdVerified] = useState<boolean | null>(null)
   const [entitySlug, setEntitySlug] = useState<string | null>(null)
   const [verificationChecked, setVerificationChecked] = useState(false)
 
-  useEffect(() => {
-    fetch('/directory/api/portal/practitioner')
+  const fetchPractitionerData = useCallback(() => {
+    setVerificationChecked(false)
+    fetch('/directory/api/portal/practitioner/')
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
         if (!data) return
         setSubscription(data.subscription ?? null)
         setIdVerified(data.idVerified ?? false)
         setEntitySlug(data.slug ?? null)
-        if (data.citySlug && data.slug) {
-          setProfileUrl(`/${data.citySlug}/practitioner/${data.slug}/`)
-        }
       })
       .catch(() => {})
       .finally(() => setVerificationChecked(true))
   }, [])
 
+  useEffect(() => { fetchPractitionerData() }, [fetchPractitionerData])
+
   async function handleUpgrade(plan: string) {
     setUpgrading(plan)
     try {
-      const res = await fetch('/directory/api/portal/upgrade', {
+      const res = await fetch('/directory/api/portal/upgrade/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plan }),
@@ -69,20 +69,20 @@ export default function PortalPractitionerPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+    <div className="px-4 py-8 space-y-6">
       {/* Subscription card */}
       {subscription && (
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Subscription</h2>
+        <div className="rounded-lg border border-gray-200 bg-white p-5">
+          <h2 className="text-sm font-semibold text-black uppercase tracking-wide mb-4">Subscription</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div>
-              <p className="text-xs text-gray-400 mb-0.5">Plan</p>
+              <p className="text-xs text-gray-600 mb-0.5">Plan</p>
               <p className="font-semibold text-gray-900">
                 {PLAN_LABELS[subscription.plan ?? ''] ?? subscription.plan ?? '—'}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-400 mb-0.5">Status</p>
+              <p className="text-xs text-gray-600 mb-0.5">Status</p>
               <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
                 Active
@@ -90,7 +90,7 @@ export default function PortalPractitionerPage() {
             </div>
             {subscription.approvedAt && (
               <div>
-                <p className="text-xs text-gray-400 mb-0.5">Member since</p>
+                <p className="text-xs text-gray-600 mb-0.5">Member since</p>
                 <p className="text-sm text-gray-700">
                   {new Date(subscription.approvedAt).toLocaleDateString('en-GB', {
                     day: '2-digit', month: 'short', year: 'numeric',
@@ -100,8 +100,8 @@ export default function PortalPractitionerPage() {
             )}
             {subscription.stripeSubscriptionId && (
               <div className="col-span-2 sm:col-span-3">
-                <p className="text-xs text-gray-400 mb-0.5">Subscription ID</p>
-                <p className="text-xs text-gray-500 font-mono">{subscription.stripeSubscriptionId}</p>
+                <p className="text-xs text-gray-600 mb-0.5">Subscription ID</p>
+                <p className="text-xs text-gray-600 font-mono">{subscription.stripeSubscriptionId}</p>
               </div>
             )}
           </div>
@@ -113,7 +113,7 @@ export default function PortalPractitionerPage() {
             if (!options.length) return null
             return (
               <div className="mt-5 pt-4 border-t border-gray-100">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Upgrade plan</p>
+                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Upgrade plan</p>
                 <div className="flex flex-col sm:flex-row gap-2">
                   {options.map((opt) => (
                     <button
@@ -125,7 +125,7 @@ export default function PortalPractitionerPage() {
                       <p className="text-sm font-semibold text-gray-900">
                         {upgrading === opt.key ? 'Redirecting…' : opt.label}
                       </p>
-                      <p className="text-xs text-gray-400 mt-0.5">{opt.description}</p>
+                      <p className="text-xs text-gray-600 mt-0.5">{opt.description}</p>
                     </button>
                   ))}
                 </div>
@@ -137,8 +137,8 @@ export default function PortalPractitionerPage() {
 
       {/* ID Verification */}
       {idVerified === false && entitySlug && (
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Identity Verification</h2>
+        <div className="rounded-lg border border-[#e4dccf] bg-[#f2eee5] p-6">
+          <h2 className="text-xs font-medium text-[#000000] uppercase tracking-[0.2em] mb-3">Identity Verification</h2>
           <p className="text-sm text-gray-600 mb-4">
             Verify your identity to display an &ldquo;ID Verified&rdquo; badge on your profile, building trust with potential patients.
           </p>
@@ -154,12 +154,11 @@ export default function PortalPractitionerPage() {
       {/* Profile editor — only mount once verification status is known */}
       {verificationChecked && (
         <PractitionerForm
-          fetchUrl="/directory/api/portal/practitioner"
-          saveUrl="/directory/api/portal/practitioner"
+          fetchUrl="/directory/api/portal/practitioner/"
+          saveUrl="/directory/api/portal/practitioner/"
           mode="portal"
           disabled={idVerified !== true}
-          onSaved={() => {}}
-          previewHref={profileUrl ?? undefined}
+          onSaved={fetchPractitionerData}
         />
       )}
     </div>

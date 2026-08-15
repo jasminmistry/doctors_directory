@@ -4,6 +4,7 @@ export const COOKIE_TOKEN = 'consentz_token'
 export const COOKIE_REFRESH = 'consentz_refresh_token'
 export const COOKIE_USERNAME = 'consentz_username'
 export const COOKIE_ROLE = 'consentz_role'
+export const COOKIE_ACTIVE_CLINIC = 'consentz_active_clinic_id'
 export const COOKIE_PATH = '/directory'
 
 export const COOKIE_OPTS = {
@@ -11,6 +12,7 @@ export const COOKIE_OPTS = {
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'lax' as const,
   path: COOKIE_PATH,
+  maxAge: 7 * 24 * 60 * 60, // 7 days
 }
 
 export function getConsentzAuthUrl(): string {
@@ -19,8 +21,25 @@ export function getConsentzAuthUrl(): string {
   return url.replace(/\/$/, '')
 }
 
+export function getConsentzV1Url(): string {
+  return `${new URL(getConsentzAuthUrl()).origin}/api/v1`
+}
+
 export function getApplicationId(): string {
   return process.env.CONSENTZ_APPLICATION_ID || 'admin'
+}
+
+/**
+ * Consentz has no role that maps to "directory admin team member" — ROLE_SUPER_CLINIC_ADMIN
+ * is a per-clinic owner role shared by hundreds of real clinics, not a platform-admin role.
+ * So directory admin access is gated by an explicit username allowlist instead.
+ */
+export function isAdminUsername(username: string): boolean {
+  const allowlist = (process.env.ADMIN_USERNAMES || '')
+    .split(',')
+    .map((u) => u.trim().toLowerCase())
+    .filter(Boolean)
+  return allowlist.includes(username.trim().toLowerCase())
 }
 
 /**
@@ -42,6 +61,7 @@ export async function consentzApi(
 
   return fetch(`${base}${path}`, {
     method,
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'X-APPLICATION-ID': getApplicationId(),
@@ -54,7 +74,7 @@ export async function consentzApi(
 
 /** Legacy alias kept for callers that pass a full URL — wraps fetch unchanged. */
 export function consentzFetch(url: string, init: RequestInit): Promise<Response> {
-  return fetch(url, init)
+  return fetch(url, { ...init, cache: 'no-store' })
 }
 
 export function extractTokens(data: Record<string, unknown>) {
@@ -136,6 +156,7 @@ export async function registerConsentzPractitioner(
     lastName: string
     email: string
     password: string
+    role: 'ROLE_PRACTITIONER' | 'ROLE_CLINIC_ADMIN'
   },
   sessionToken?: string,
 ): Promise<{ id: number; username: string; email: string }> {

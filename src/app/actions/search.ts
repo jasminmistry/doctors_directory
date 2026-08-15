@@ -227,7 +227,7 @@ export async function searchPractitioners(
         if (!hasMatchingType) return false
       }
 
-      if (filters.location) {
+      if (filters.location?.trim()) {
         const treatmentAreaMapping = {
           "face": ["Anti Wrinkle Treatment", "Botox", "Fillers", "Chemical Peel", "Cheek Enhancement", "Chin Enhancement", "Lips", "Marionettes", "Tear Trough Treatment"],
           "body": ["CoolSculpting", "Liposuction", "Breast Augmentation", "Aqualyx", "Lymphatic Drainage"],
@@ -236,7 +236,7 @@ export async function searchPractitioners(
           "lips": ["Lips", "Fillers"],
         }
 
-        const area = filters.location.toLowerCase()
+        const area = filters.location.trim().toLowerCase()
         const mappedTreatments = treatmentAreaMapping[area as keyof typeof treatmentAreaMapping] || []
         const hasMatchingArea = mappedTreatments.some((mappedTreatment) =>
           treatment.toLowerCase().includes(mappedTreatment.toLowerCase()) ||
@@ -269,8 +269,8 @@ export async function searchPractitioners(
         if (!practitioner?.practitioner_qualifications?.toLowerCase().includes(filters.category.toLowerCase())) return false  
       }
 
-      if (filters.location) {
-        const location = filters.location.toLowerCase()
+      if (filters.location?.trim()) {
+        const location = filters.location.trim().toLowerCase()
         if (!practitioner?.gmapsAddress.toLowerCase().includes(location)) return false
       }
 
@@ -282,6 +282,17 @@ export async function searchPractitioners(
 
       if (filters.rating > 0) {
         if (practitioner!.rating < filters.rating) return false
+      }
+
+      if (filters.accreditation && filters.accreditation !== "all") {
+        const accreditation = filters.accreditation.toLowerCase()
+        const searchableText = [
+          practitioner?.practitioner_name,
+          practitioner?.practitioner_qualifications?.toLowerCase(),
+          practitioner?.category,
+          practitioner?.practitioner_awards?.toLowerCase(),
+        ].join(" ").toLowerCase()
+        if (!searchableText.includes(accreditation)) return false
       }
 
       return true

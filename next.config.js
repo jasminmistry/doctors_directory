@@ -230,8 +230,36 @@ const nextConfig = {
         ],
       },
       {
-        // HTML pages only — exclude API routes which set their own Cache-Control
-        source: '/((?!api/).*)',
+        // Clinic/practitioner detail pages carry admin-moderated content (e.g. reviews,
+        // CQC status, avg reply time) that must show up quickly after approval — much
+        // shorter shared-cache window than the site default.
+        source: '/clinics/:cityslug/clinic/:slug*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=5, stale-while-revalidate=60' },
+        ],
+      },
+      {
+        source: '/practitioners/:cityslug/profile/:slug*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=5, stale-while-revalidate=60' },
+        ],
+      },
+      {
+        // Cookie-gated, per-session pages must never be cached by a shared cache —
+        // otherwise one user's rendered HTML (e.g. clinic name in the portal header)
+        // can be served to the next session that hits the same URL.
+        source: '/(portal|admin|account|verify)/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'private, no-store, must-revalidate' },
+        ],
+      },
+      {
+        // HTML pages only — exclude API routes, authenticated routes above, and the
+        // shorter-cached detail pages above, since Next.js applies every matching rule
+        // rather than stopping at the first match (an unscoped catch-all here would
+        // append a second, longer-lived Cache-Control header to clinic/practitioner
+        // pages and defeat their 30s freshness window).
+        source: '/((?!api/|portal/|admin/|account/|verify/|clinics/[^/]+/clinic/|practitioners/[^/]+/profile/).*)',
         headers: [
           { key: 'Cache-Control', value: 'public, s-maxage=300, stale-while-revalidate=86400' },
         ],

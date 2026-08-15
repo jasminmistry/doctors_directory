@@ -14,6 +14,7 @@ const columns = [
     key: 'image',
     label: 'Image',
     sortable: false,
+    searchable: false,
     render: (value: string, item: any) => {
       const src = String(item.imageUrl ?? item.image ?? value ?? '').replaceAll('"', '').trim()
       return src
@@ -28,7 +29,7 @@ const columns = [
     label: 'Description',
     sortable: false,
     render: (value: string) =>
-      value ? <span className="block max-w-xs truncate text-gray-500">{value}</span> : <span className="text-gray-300">—</span>,
+      value ? <span className="block max-w-xs truncate text-gray-600">{value}</span> : <span className="text-gray-300">—</span>,
   },
 ]
 
@@ -39,7 +40,7 @@ export default function TreatmentsList() {
   const { confirm, dialog } = useConfirmDialog()
 
   useEffect(() => {
-    fetch('/directory/api/admin/treatments')
+    fetch('/directory/api/admin/treatments/')
       .then((r) => r.json())
       .then((data) => { setTreatments(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))

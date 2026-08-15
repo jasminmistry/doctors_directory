@@ -31,3 +31,10 @@ test-results
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Runtime-mutable uploads (symlinked to a volume at container start — never bake into image)
+public/images/uploads
+
+# Stray local/scratch files
+*.tmp.js
+*-tmp-*.ts

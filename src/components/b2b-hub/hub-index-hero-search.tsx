@@ -1,12 +1,12 @@
 "use client"
 
-import { Search } from "lucide-react"
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import {
   HUB_INDEX_HERO_TITLE_CLASS_DEFAULT,
   HUB_INDEX_HERO_VIEWPORT_CLASS,
 } from "@/lib/b2b-hub/hub-index-hero-layout"
 import { cn } from "@/lib/utils"
+import { IconSearch } from "@tabler/icons-react"
 
 export {
   HUB_INDEX_HERO_TITLE_CLASS_DEFAULT,
@@ -43,7 +43,7 @@ export function HubIndexHeroSearch({
   return (
     <section
       className={cn(
-        "border-b border-[#E5E7EB] bg-[var(--primary-bg-color)]",
+        "border-b border-[#e0e0e0] bg-[var(--primary-bg-color)]",
         fillViewport && HUB_INDEX_HERO_VIEWPORT_CLASS
       )}
     >
@@ -82,15 +82,15 @@ export function HubIndexHeroSearch({
                   value={query}
                   onChange={(e) => onQueryChange(e.target.value)}
                   placeholder={searchPlaceholder}
-                  className="flex-1 rounded-lg border border-neutral-200 bg-white px-4 py-3.5 text-neutral-900 placeholder:text-neutral-400 shadow-sm outline-none focus:ring-2 focus:ring-neutral-900/10"
+                  className="flex-1 rounded-lg border border-neutral-200 bg-white px-4 py-3.5 text-neutral-900 placeholder:text-neutral-400 outline-none focus:ring-1 focus:ring-black translation-focus"
                   autoComplete="off"
                 />
                 <button
                   type="button"
                   aria-label="Search"
-                  className="inline-flex h-[52px] w-full shrink-0 items-center justify-center rounded-lg bg-black text-white hover:bg-neutral-800 transition-colors sm:w-14"
+                  className="inline-flex h-[52px] w-full shrink-0 items-center justify-center rounded-lg bg-black text-white hover:bg-neutral-800 hover:cursor-pointer transition-colors sm:w-14"
                 >
-                  <Search className="h-5 w-5" strokeWidth={2} />
+                  <IconSearch className="h-5 w-5" stroke={1.5} />
                 </button>
               </div>
             ) : null}

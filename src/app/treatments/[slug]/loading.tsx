@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { 
   TreatmentHeroSkeleton, 
@@ -8,6 +7,7 @@ import {
   BreadcrumbSkeleton
 } from "@/components/loading-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 export default async function Loading({ params }: { params: { slug: string } }) {
   return (
@@ -15,20 +15,14 @@ export default async function Loading({ params }: { params: { slug: string } }) 
       <div className="bg-white">
         <div className="bg-card/50 backdrop-blur-sm sticky top-0 z-10">
           <div className="container mx-auto max-w-7xl px-4 py-4">
-            <Link className="mb-2 inline-block" href="/" prefetch={false}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-              >
-                <ArrowLeft className="h-4 w-4" />
+            <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
-              </Button>
             </Link>
             <BreadcrumbSkeleton
               items={[
                 { label: "Home", href: "/" },
-                { label: "Treatments", href: "/directory/treatments" },
+                { label: "Treatments", href: "/treatments" },
                 { isLoading: true, skeletonWidth: "w-20" },
                 { isLoading: true, skeletonWidth: "w-32" },
               ]}

@@ -71,7 +71,7 @@ const getEnhancedTreatment = (treatment: any) => {
 //               {Array.isArray(product.all_prices) &&
 //                 product.all_prices.map((value: any, index: number) => (
 //                   <li key={index}>
-//                     <Badge variant="outline" className="text-[11px] font-normal text-gray-500">
+//                     <Badge variant="outline" className="text-[11px] font-normal text-gray-600">
 //                       {value.price}
 //                     </Badge>
 //                   </li>
@@ -197,7 +197,7 @@ const getEnhancedTreatment = (treatment: any) => {
 //           title={`Learn about ${treatmentValue} treatments and find qualified specialists`}
 //           className="flex grow h-full"
 //         >
-//           <Card className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5  w-100">
+//           <Card className="group bg-white transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5  w-100">
 //             <CardContent className="p-4 sm:p-0 sm:flex sm:items-center sm:justify-center sm:pt-0">
 //               <div className="flex items-center gap-4 sm:flex-col sm:gap-5">
 //                 <div className="flex-shrink-0">
@@ -273,7 +273,7 @@ const getEnhancedTreatment = (treatment: any) => {
 //                 </div>
 //                 <div className="flex items-start md:items-center flex-col pl-4 md:pl-0 w-[calc(100%-80px)] md:w-full">
 //                   {practitioner.practitioner_title && (
-//                     <p className="text-xs text-gray-500 mb-1">
+//                     <p className="text-xs text-gray-600 mb-1">
 //                       {practitioner.practitioner_title
 //                         .split("/")[0]
 //                         .split("(")[0]

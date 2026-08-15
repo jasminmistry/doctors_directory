@@ -26,7 +26,11 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid meeting ID' }, { status: 400 })
     }
 
-    const res = await fetch(`${getCoreLiteBase()}/call-booking/${meetingId}`)
+    const appId = process.env.CONSENTZ_APPLICATION_ID ?? 'admin'
+    const res = await fetch(`${getCoreLiteBase()}/clinics/${clinic.coreClinicId}/call-booking/${meetingId}`, {
+      cache: 'no-store',
+      headers: { 'X-APPLICATION-ID': appId },
+    })
     const data = await res.json()
 
     if (!res.ok) {

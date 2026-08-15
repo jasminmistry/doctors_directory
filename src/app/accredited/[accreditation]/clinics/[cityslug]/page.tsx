@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Breadcrumb,
@@ -9,6 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { IconArrowNarrowLeft } from "@tabler/icons-react"
 import { Clinic } from "@/lib/types"
 import { readJsonFileSync } from "@/lib/json-cache"
 import { PractitionerCard } from "@/components/practitioner-card"
@@ -62,18 +62,12 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
 
   return (
     <main className="bg-white">
-      <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
+      <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
-            <Link className="mb-3 inline-block" href="/" prefetch={false}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-              >
-                <ArrowLeft className="h-4 w-4" />
+            <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
-              </Button>
             </Link>
             <Breadcrumb>
               <BreadcrumbList>

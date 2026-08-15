@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Breadcrumb,
@@ -31,6 +30,7 @@ import {
   getServiceCityEntries,
   type ServiceCityEntry,
 } from '@/lib/directory-seo-pages'
+import { IconArrowNarrowLeft } from '@tabler/icons-react'
 
 type Props = {
   entry: ServiceCityEntry
@@ -85,12 +85,10 @@ export function ServiceCityDirectoryPage({ entry }: Props) {
     <>
       <DirectoryJsonLd schemas={jsonLdSchemas} />
       <main className="bg-(--primary-bg-color)">
-        <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
-          <Link href="/" prefetch={false} className="mb-2 inline-block">
-            <Button variant="ghost" size="sm" className="gap-2 hover:bg-white hover:text-black">
-              <ArrowLeft className="h-4 w-4" />
+        <div className="mx-auto max-w-7xl px-4 py-6 md:py-10">
+          <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
-            </Button>
           </Link>
           <Breadcrumb>
             <BreadcrumbList>
@@ -129,7 +127,7 @@ export function ServiceCityDirectoryPage({ entry }: Props) {
 
         <ServiceCityBelowFoldContent content={consumerContent} />
 
-        <div className="mx-auto max-w-6xl px-4 pb-12">
+        <div className="mx-auto max-w-7xl px-4 pb-12">
           <div className="flex flex-wrap gap-3 text-sm">
             <Link
               href={practitionersCityPath}

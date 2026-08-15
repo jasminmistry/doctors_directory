@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { IconAlertCircle } from '@tabler/icons-react'
 
 const ERROR_MESSAGES: Record<string, string> = {
   missing_token: 'The verification link is missing a token.',
@@ -27,7 +27,7 @@ export default function ClaimVerifyPage({ searchParams }: Readonly<Props>) {
       <div className="max-w-sm w-full text-center">
         <div className="flex justify-center mb-4">
           <div className="flex items-center justify-center w-14 h-14 rounded-full bg-destructive/10">
-            <AlertCircle className="w-7 h-7 text-destructive" />
+            <IconAlertCircle stroke={1.5} className="w-7 h-7 text-destructive" />
           </div>
         </div>
         <h1 className="text-lg font-semibold mb-2">Verification failed</h1>

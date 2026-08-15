@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/components/Product/profile-header";
 import ClinicDetailsMarkdown from "@/components/Product/ProductDetailsMD";
@@ -22,6 +21,7 @@ import { locations } from "@/lib/data";
 import { getAllClinicsForSearch } from "@/lib/data-access/clinics";
 import { getAllTreatmentNames } from "@/lib/data-access/treatments";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 
 interface ProfilePageProps {
@@ -50,22 +50,16 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   const similarProducts = brandProducts.filter((p) => p.slug !== slug);
 
   return (
-    <main className="min-h-screen bg-(--primary-bg-color)">
+    <main className="min-h-screen bg-[#fbfbfb]">
       {/* Navigation */}
       <div className="sticky top-0 z-10">
-        <div className="container mx-auto max-w-6xl px-4 py-4">
-          <Link href="/" prefetch={false}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-            >
-              <ArrowLeft className="h-4 w-4" />
+        <div className="container mx-auto max-w-7xl px-4 py-4">
+          <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
-            </Button>
           </Link>
         </div>
-        <div className="container mx-auto max-w-6xl px-4 py-2">
+        <div className="container mx-auto max-w-7xl px-4 py-2">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -92,7 +86,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
         </div>
       </div>
 
-      <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
+      <div className="container mx-auto max-w-7xl pt-0 md:px-4 py-20 space-y-8">
         {/* Profile Header */}
         <ProfileHeader clinic={clinic} />
 

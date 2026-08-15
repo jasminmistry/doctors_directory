@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Locate, X } from "lucide-react";
+import { IconCurrentLocation, IconX } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { SearchDropdown } from "./search-dropdown";
 import { SearchButton } from "./search-button";
@@ -59,7 +59,7 @@ export function DesktopSearchView({
       <div className="flex flex-row items-center mb-2">
         <div className="relative">
           <button
-            className="flex-1 bg-white border border-r-0 border-gray-300 px-4 py-3 rounded-l-lg"
+            className="flex-none bg-white border border-r-0 border-[#e0e0e0]  px-4 py-3 rounded-l-lg"
             onClick={() => { cancelClose(); setShowResults(!showResults); }}
             onBlur={scheduleClose}
           >
@@ -72,14 +72,15 @@ export function DesktopSearchView({
           </button>
         </div>
 
-        <div className="relative flex-1 bg-white border rounded-r-lg sm:rounded-r-none border-gray-300 px-4 py-3">
+        <div className="relative flex-1 bg-white border rounded-r-lg sm:rounded-r-none border-[#e0e0e0]  px-4 py-3">
           <Input
-            placeholder="I'm searching for"
+            placeholder="Treatment, clinic or practitioner"
             value={localFilters.query}
             onChange={(e) =>
               setLocalFilters((prev) => ({ ...prev, query: e.target.value }))
             }
-            className="border-0 shadow-none p-0 pr-7 h-auto w-full text-base placeholder:text-gray-500 focus:outline-none focus:ring-0 focus:border-0 active:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0 active:ring-0"
+            maxLength={255}
+            className="border-0 shadow-none p-0 pr-7 h-auto w-full text-base placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-0 active:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0 active:ring-0"
             onFocus={() => { cancelClose(); setShowResults(true); }}
             onClick={() => { cancelClose(); setShowResults(true); }}
             onBlur={scheduleClose}
@@ -88,17 +89,17 @@ export function DesktopSearchView({
             <button
               type="button"
               aria-label="Clear search query"
-              className="absolute right-4 top-1/2 -translate-y-1/2 rounded p-0.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 transition-colors hover:text-gray-900"
               onMouseDown={(e) => e.preventDefault()}
               onClick={clearQuery}
             >
-              <X className="h-4 w-4" />
+              <IconX stroke={1.5} className="h-4 w-4" />
             </button>
           )}
         </div>
 
-        <div className="hidden sm:flex relative bg-white rounded-r-lg border border-gray-300 px-4 py-3 items-center gap-2">
-          <Locate className="w-5 h-5 text-gray-600" />
+        <div className="hidden sm:flex relative bg-white rounded-r-lg border border-[#e0e0e0]  px-4 py-3 items-center gap-2 w-44 flex-none">
+          <IconCurrentLocation stroke={1.5} className="w-5 h-5 text-gray-600" />
           <Input
             placeholder="Location"
             value={localFilters.location}
@@ -108,7 +109,7 @@ export function DesktopSearchView({
                 location: e.target.value,
               }))
             }
-            className="border-0 min-w-[80px] shadow-none p-0 pr-7 h-6 text-base placeholder:text-gray-500 focus:outline-none focus:ring-0 focus:border-0 active:outline-none active:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0"
+            className="border-0 min-w-[80px] shadow-none p-0 pr-7 h-6 text-base placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-0 active:outline-none active:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:border-0"
             onKeyDown={(e) => e.key === "Enter"}
             onFocus={() => { cancelClose(); setShowResults(true); }}
             onBlur={scheduleClose}
@@ -118,11 +119,11 @@ export function DesktopSearchView({
             <button
               type="button"
               aria-label="Clear location"
-              className="absolute right-4 top-1/2 -translate-y-1/2 rounded p-0.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 transition-colors hover:text-gray-900"
               onMouseDown={(e) => e.preventDefault()}
               onClick={clearLocation}
             >
-              <X className="h-4 w-4" />
+              <IconX stroke={1.5} className="h-4 w-4" />
             </button>
           )}
         </div>

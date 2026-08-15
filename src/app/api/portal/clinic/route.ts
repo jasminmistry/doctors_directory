@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
+import { invalidateSearchCache } from '@/lib/search-cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,6 +13,10 @@ const CLINIC_PORTAL_SELECT = {
   city: { select: { slug: true } },
   idVerified: true,
   claimedPlan: true,
+  stripeSubscriptionStatus: true,
+  subscriptionCancelAt: true,
+  coreClinicId: true,
+  coreUnlinkRequestedAt: true,
   image: true,
   gmapsUrl: true,
   gmapsAddress: true,
@@ -28,6 +34,8 @@ const CLINIC_PORTAL_SELECT = {
   instagram: true,
   youtube: true,
   linkedin: true,
+  cqcStatus: true,
+  avgReplyTime: true,
 }
 
 export async function GET() {
@@ -54,6 +62,8 @@ export async function GET() {
         plan: clinic.claimedPlan ?? null,
         stripeSubscriptionId: claim?.stripeSubscriptionId ?? null,
         approvedAt: claim?.approvedAt ?? null,
+        stripeStatus: clinic.stripeSubscriptionStatus ?? null,
+        cancelAt: clinic.subscriptionCancelAt ?? null,
       },
     })
   } catch (error) {
@@ -84,7 +94,17 @@ export async function PUT(request: Request) {
 
     const validation = clinicEditSchema.safeParse(editable)
     if (!validation.success) {
-      return NextResponse.json({ error: 'Invalid data', details: validation.error.errors }, { status: 400 })
+      const fieldErrors: Record<string, string> = {}
+      for (const issue of validation.error.errors) {
+        const key = issue.path[0]
+        if (typeof key === 'string' && !fieldErrors[key]) {
+          fieldErrors[key] = issue.message
+        }
+      }
+      return NextResponse.json(
+        { error: 'Please fix the highlighted fields', fieldErrors },
+        { status: 400 }
+      )
     }
 
     const clinic = await prisma.clinic.update({
@@ -92,10 +112,15 @@ export async function PUT(request: Request) {
       data: validation.data as any,
       select: CLINIC_PORTAL_SELECT,
     })
+    await invalidateSearchCache()
+    revalidatePath('/portal/clinic')
     const { city, ...rest } = clinic
     return NextResponse.json({ ...rest, citySlug: city?.slug ?? null })
   } catch (error) {
     console.error('[portal] Failed to update clinic:', error)
+    if ((error as any).code === 'P2000') {
+      return NextResponse.json({ error: 'One of the fields is too long' }, { status: 400 })
+    }
     return NextResponse.json({ error: 'Failed to update clinic' }, { status: 500 })
   }
 }

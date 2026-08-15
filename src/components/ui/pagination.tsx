@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
+import { IconChevronLeft, IconChevronRight, IconDots } from "@tabler/icons-react"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -72,7 +72,7 @@ function PaginationPrevious({
       aria-label="Go to previous page"
       data-slot="pagination-link"
       className={cn(
-        "inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium",
+        "inline-flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium",
         "border border-border bg-background text-foreground",
         "hover:bg-primary hover:text-primary-foreground hover:border-primary",
         "cursor-pointer disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-40 transition-colors",
@@ -80,7 +80,7 @@ function PaginationPrevious({
       )}
       {...props}
     >
-      <ChevronLeft className="size-4" />
+      <IconChevronLeft stroke={1.5} className="size-4" />
       <span className="hidden sm:block">Previous</span>
     </button>
   )
@@ -95,7 +95,7 @@ function PaginationNext({
       aria-label="Go to next page"
       data-slot="pagination-link"
       className={cn(
-        "inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium",
+        "inline-flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium",
         "border border-border bg-background text-foreground",
         "hover:bg-primary hover:text-primary-foreground hover:border-primary",
         "cursor-pointer disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-40 transition-colors",
@@ -104,7 +104,7 @@ function PaginationNext({
       {...props}
     >
       <span className="hidden sm:block">Next</span>
-      <ChevronRight className="size-4" />
+      <IconChevronRight stroke={1.5} className="size-4" />
     </button>
   )
 }
@@ -120,7 +120,7 @@ function PaginationEllipsis({
       className={cn("flex size-9 items-center justify-center", className)}
       {...props}
     >
-      <MoreHorizontal className="size-4" />
+      <IconDots stroke={1.5} className="size-4" />
       <span className="sr-only">More pages</span>
     </span>
   )

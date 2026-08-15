@@ -35,3 +35,19 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     return NextResponse.json({ error: 'Failed to update review' }, { status: 500 })
   }
 }
+
+export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+  const id = parseInt(params.id, 10)
+  if (isNaN(id)) return NextResponse.json({ error: 'Invalid ID' }, { status: 400 })
+
+  try {
+    await prisma.platformReview.delete({ where: { id } })
+    return NextResponse.json({ success: true })
+  } catch (err: unknown) {
+    if ((err as { code?: string }).code === 'P2025') {
+      return NextResponse.json({ error: 'Review not found' }, { status: 404 })
+    }
+    console.error('[admin/reviews] delete error:', err)
+    return NextResponse.json({ error: 'Failed to delete review' }, { status: 500 })
+  }
+}

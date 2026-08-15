@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MoreItems } from "@/components/MoreItems";
 import { PractitionerCard } from "@/components/practitioner-card";
+import { useSearchStore } from "@/app/stores/datastore";
 import { locations } from "@/lib/data";
 import type { Clinic, Practitioner, Product } from "@/lib/types";
 
@@ -85,6 +89,8 @@ export function SearchEmptyState({
   resultType,
   discoveryData,
 }: Readonly<SearchEmptyStateProps>) {
+  const router = useRouter();
+  const setFilters = useSearchStore((state) => state.setFilters);
   const hasQuery = query.trim().length > 0;
   const isProductSearch = resultType === "Product";
   const isTreatmentSearch = resultType === "Treatments";
@@ -94,21 +100,31 @@ export function SearchEmptyState({
       ? "treatment pages"
       : resultType.toLowerCase();
 
+  const handleResetSearch = () => {
+    setFilters((prev) => ({
+      ...prev,
+      query: "",
+      category: "",
+      location: "",
+      rating: 0,
+      services: [],
+    }));
+    router.push("/search");
+  };
+
   return (
     <div className="col-span-1 md:col-span-9 space-y-8">
       <Card className="bg-white border-dashed">
         <CardHeader className="space-y-3">
           <h2 className="text-xl font-semibold">No exact {primaryLabel} matches yet</h2>
-          <p className="text-sm text-muted-foreground max-w-3xl">
+          <p className="text-sm text-muted-foreground max-w-3xl break-words">
             {hasQuery
               ? `We could not find an exact match for "${query}". Instead of leaving this page empty, here are the strongest nearby discovery paths in the directory.`
               : `We could not find results for the current filters. Instead of leaving this page empty, here are the strongest discovery paths in the directory.`}
           </p>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
-          <Link href="/search" prefetch={false}>
-            <Button variant="outline">Reset search</Button>
-          </Link>
+          <Button variant="outline" onClick={handleResetSearch}>Reset search</Button>
           <Link href="/treatments" prefetch={false}>
             <Button variant="outline">Browse treatments</Button>
           </Link>

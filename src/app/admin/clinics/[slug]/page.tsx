@@ -4,7 +4,10 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { ClinicForm } from '@/components/admin/forms/ClinicForm'
-import { CalendarDays } from 'lucide-react'
+import { AdminScheduleCard } from '@/components/admin/AdminScheduleCard'
+import { EntityMetricsPanel } from '@/components/admin/entity-metrics-panel'
+import { CoreUnlinkCard } from '@/components/admin/CoreUnlinkCard'
+import { IconCalendarWeek } from '@tabler/icons-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,15 +20,28 @@ export default function ClinicEditor() {
       {slug && slug !== 'new' && (
         <div className="mb-4 flex justify-end">
           <Link
-            href={`/directory/admin/clinics/${slug}/calendar`}
+            href={`/admin/clinics/${slug}/calendar`}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
           >
-            <CalendarDays className="h-4 w-4 text-gray-500" />
+            <IconCalendarWeek stroke={1.5} className="h-4 w-4" />
             View Calendar
           </Link>
         </div>
       )}
       <ClinicForm />
+      {slug && slug !== 'new' && (
+        <div className="mt-8">
+          <EntityMetricsPanel entityType="clinic" slug={slug} />
+        </div>
+      )}
+      {slug && slug !== 'new' && (
+        <div className="mt-8">
+          <AdminScheduleCard entityType="clinic" slug={slug} />
+        </div>
+      )}
+      {slug && slug !== 'new' && (
+        <CoreUnlinkCard slug={slug} />
+      )}
     </AdminLayout>
   )
 }

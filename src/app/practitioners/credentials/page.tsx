@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowLeft, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { Practitioner } from "@/lib/types";
@@ -17,6 +16,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
+import { IconArrowNarrowLeft, IconUsers } from "@tabler/icons-react";
 
 export const dynamic = 'force-dynamic'
 
@@ -28,19 +28,13 @@ export default async function ProfilePage() {
   const recognitionsWithImages = getAccreditationImages(accreditationsJson);
 
   return (
-    <main className="bg-(--primary-bg-color)">
-      <div className="mx-auto max-w-6xl md:px-4 py-4 md:py-12">
+    <main className="bg-white">
+      <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12">
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0 md:pt-0 md:border-0 border-b border-[#C4C4C4]">
           <div className="sticky top-0 z-10">
-            <Link className="mb-2 inline-block" href="/" prefetch={false}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-              >
-                <ArrowLeft className="h-4 w-4" />
+            <Link className="mb-4 inline-flex items-center gap-3 text-sm hover:underline" href="/" prefetch={false}>
+                <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
                 Back to Directory
-              </Button>
             </Link>
             <Breadcrumb>
               <BreadcrumbList>
@@ -108,7 +102,7 @@ export default async function ProfilePage() {
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-sm font-medium flex items-center gap-2">
-                        <Users className="h-4 w-4" />
+                        <IconUsers stroke={1.5} className="h-4 w-4" />
                         {practitionerCount} Practitioner{practitionerCount !== 1 ? 's' : ''}
                       </span>
                       <Link href={`/practitioners/credentials/${encodeURIComponent(credential.name.toLowerCase())}`}>

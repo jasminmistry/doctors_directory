@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, ExternalLink, Package, FileText, FlaskConical, ShieldCheck, Save, Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormSection, Field } from './FormSection'
+import { IconArrowNarrowLeft, IconBox, IconDeviceFloppy, IconExternalLink, IconFileText, IconFlask, IconPlus, IconShieldCheck, IconX } from '@tabler/icons-react'
 
 type ProductData = {
   slug: string
@@ -87,16 +87,16 @@ function TagListField({
           className="h-8 text-sm"
         />
         <Button type="button" variant="outline" size="sm" className="h-8 px-2 shrink-0" onClick={add}>
-          <Plus className="h-3.5 w-3.5" />
+          <IconPlus stroke={1.5} className="h-3.5 w-3.5" />
         </Button>
       </div>
       {items.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {items.map((item, i) => (
-            <span key={i} className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md">
+            <span key={i} className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-lg">
               {item}
-              <button onClick={() => remove(i)} className="text-gray-400 hover:text-gray-600 ml-0.5">
-                <X className="h-2.5 w-2.5" />
+              <button onClick={() => remove(i)} className="text-gray-600 hover:text-gray-600 ml-0.5">
+                <IconX stroke={1.5} className="h-2.5 w-2.5" />
               </button>
             </span>
           ))}
@@ -121,7 +121,7 @@ export function ProductForm() {
       setLoading(false)
       return
     }
-    fetch(`/directory/api/admin/products/${slug}`)
+    fetch(`/directory/api/admin/products/${slug}/`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json() })
       .then((d) => { setData(d); setLoading(false) })
       .catch(() => router.push('/admin/products'))
@@ -138,7 +138,7 @@ export function ProductForm() {
     setSaving(true)
     const { slug: _s, ...rest } = data
     const body = isNew ? { slug: data.slug.trim(), ...rest } : rest
-    const url = isNew ? '/directory/api/admin/products' : `/directory/api/admin/products/${slug}`
+    const url = isNew ? '/directory/api/admin/products/' : `/directory/api/admin/products/${slug}/`
     try {
       const res = await fetch(url, {
         method: isNew ? 'POST' : 'PUT',
@@ -169,11 +169,11 @@ export function ProductForm() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => router.push('/admin/products')}>
-            <ArrowLeft className="h-4 w-4" />
+            <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
           </Button>
           <div className="min-w-0">
-            <p className="text-xs text-gray-400 font-medium">Products</p>
-            <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
+            <p className="text-xs text-gray-600 font-medium">Products</p>
+            <h2 className="text-3xl text-gray-900 truncate">{title}</h2>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -184,20 +184,20 @@ export function ProductForm() {
               rel="noopener noreferrer"
             >
               <Button variant="outline" size="sm">
-                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
                 Preview
               </Button>
             </a>
           )}
           <Button size="sm" onClick={handleSave} disabled={saving}>
-            <Save className="h-3.5 w-3.5 mr-1.5" />
+            <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
             {saving ? 'Saving…' : 'Save'}
           </Button>
         </div>
       </div>
 
       {/* Basic Info */}
-      <FormSection title="Basic Info" icon={Package}>
+      <FormSection title="Basic Info" icon={IconBox}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Product Name" required>
             <Input
@@ -222,8 +222,8 @@ export function ProductForm() {
             </Field>
           ) : (
             <div className="flex flex-col justify-end">
-              <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
-              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
+              <span className="text-xs text-gray-600 mb-1.5 font-medium">Slug</span>
+              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{data.slug}</code>
             </div>
           )}
           <Field label="Brand">
@@ -258,7 +258,7 @@ export function ProductForm() {
       </FormSection>
 
       {/* Description */}
-      <FormSection title="Description" icon={FileText}>
+      <FormSection title="Description" icon={IconFileText}>
         <div className="space-y-5">
           <Field label="Description">
             <Textarea value={data.description ?? ''} onChange={(e) => set('description', e.target.value || null)} placeholder="Product description…" className="min-h-[120px]" />
@@ -273,7 +273,7 @@ export function ProductForm() {
       </FormSection>
 
       {/* Clinical */}
-      <FormSection title="Clinical Info" icon={FlaskConical}>
+      <FormSection title="Clinical Info" icon={IconFlask}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Treatment Duration">
             <Input value={data.treatmentDuration ?? ''} onChange={(e) => set('treatmentDuration', e.target.value || null)} placeholder="e.g. 30–60 minutes" />
@@ -300,7 +300,7 @@ export function ProductForm() {
       </FormSection>
 
       {/* Regulatory */}
-      <FormSection title="Regulatory" icon={ShieldCheck}>
+      <FormSection title="Regulatory" icon={IconShieldCheck}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="MHRA Approved">
             <Input value={data.mhraApproved ?? ''} onChange={(e) => set('mhraApproved', e.target.value || null)} placeholder="Yes / No / Pending" />
@@ -322,7 +322,7 @@ export function ProductForm() {
 
       <div className="flex justify-end pt-2">
         <Button size="sm" onClick={handleSave} disabled={saving}>
-          <Save className="h-3.5 w-3.5 mr-1.5" />
+          <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
           {saving ? 'Saving…' : 'Save Product'}
         </Button>
       </div>
@@ -341,7 +341,7 @@ function LoadingSkeleton() {
         </div>
       </div>
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div key={i} className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
           <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
           <div className="grid grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((j) => <div key={j} className="h-9 bg-gray-100 rounded animate-pulse" />)}

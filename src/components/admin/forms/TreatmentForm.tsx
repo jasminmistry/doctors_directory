@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Stethoscope, FileText, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { FormSection, Field } from './FormSection'
 import { JsonFieldEditor } from './JsonFieldEditor'
+import { IconArrowNarrowLeft, IconDeviceFloppy, IconFileText, IconStethoscope } from '@tabler/icons-react'
 
 type TreatmentData = {
   slug: string
@@ -73,7 +73,7 @@ export function TreatmentForm() {
       setLoading(false)
       return
     }
-    fetch(`/directory/api/admin/treatments/${slug}`)
+    fetch(`/directory/api/admin/treatments/${slug}/`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json() })
       .then((d) => { setData(d); setLoading(false) })
       .catch(() => router.push('/admin/treatments'))
@@ -89,8 +89,8 @@ export function TreatmentForm() {
 
     setSaving(true)
     const url = isNew
-      ? '/directory/api/admin/treatments'
-      : `/directory/api/admin/treatments/${slug}`
+      ? '/directory/api/admin/treatments/'
+      : `/directory/api/admin/treatments/${slug}/`
 
     const body: Record<string, unknown> = {
       name: data.name,
@@ -144,21 +144,21 @@ export function TreatmentForm() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => router.push('/admin/treatments')}>
-            <ArrowLeft className="h-4 w-4" />
+            <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
           </Button>
           <div className="min-w-0">
-            <p className="text-xs text-gray-400 font-medium">Treatments</p>
-            <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
+            <p className="text-xs text-gray-600 font-medium">Treatments</p>
+            <h2 className="text-3xl text-gray-900 truncate">{title}</h2>
           </div>
         </div>
         <Button size="sm" onClick={handleSave} disabled={saving} className="shrink-0">
-          <Save className="h-3.5 w-3.5 mr-1.5" />
+          <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
           {saving ? 'Saving…' : 'Save'}
         </Button>
       </div>
 
       {/* Basic Info */}
-      <FormSection title="Basic Info" icon={Stethoscope}>
+      <FormSection title="Basic Info" icon={IconStethoscope}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Name" required>
             <Input
@@ -184,8 +184,8 @@ export function TreatmentForm() {
             </Field>
           ) : (
             <div className="flex flex-col justify-end">
-              <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
-              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
+              <span className="text-xs text-gray-600 mb-1.5 font-medium">Slug</span>
+              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{data.slug}</code>
             </div>
           )}
 
@@ -203,7 +203,7 @@ export function TreatmentForm() {
       {/* Rich content fields */}
       <FormSection
         title="Rich Content"
-        icon={FileText}
+        icon={IconFileText}
         description="Each field is displayed as a section on the public treatment page. Use the visual editor or switch to Raw JSON for complex structures."
       >
         <div className="divide-y divide-gray-100">
@@ -211,7 +211,7 @@ export function TreatmentForm() {
             <div key={key} className="py-5 first:pt-0 last:pb-0">
               <div className="mb-2">
                 <p className="text-sm font-medium text-gray-700">{label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{hint}</p>
+                <p className="text-xs text-gray-600 mt-0.5">{hint}</p>
               </div>
               <JsonFieldEditor
                 value={data[key]}
@@ -224,7 +224,7 @@ export function TreatmentForm() {
 
       <div className="flex justify-end pt-2">
         <Button size="sm" onClick={handleSave} disabled={saving}>
-          <Save className="h-3.5 w-3.5 mr-1.5" />
+          <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
           {saving ? 'Saving…' : 'Save Treatment'}
         </Button>
       </div>
@@ -242,7 +242,7 @@ function LoadingSkeleton() {
           <div className="h-4 w-40 bg-gray-100 rounded animate-pulse" />
         </div>
       </div>
-      <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+      <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
         <div className="h-4 w-20 bg-gray-100 rounded animate-pulse" />
         <div className="grid grid-cols-2 gap-4">
           <div className="h-9 bg-gray-100 rounded animate-pulse" />
@@ -250,7 +250,7 @@ function LoadingSkeleton() {
           <div className="col-span-2 h-20 bg-gray-100 rounded animate-pulse" />
         </div>
       </div>
-      <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+      <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
         <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="space-y-2 py-4 border-t border-gray-100 first:border-0 first:pt-0">

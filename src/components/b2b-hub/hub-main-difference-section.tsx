@@ -29,7 +29,7 @@ function CompetitorBrandMark({ name }: { name: string }) {
   const initial = name.trim().charAt(0).toUpperCase() || "?"
   return (
     <div
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#e8e4dc] text-sm font-bold text-[#111111]"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e8e4dc] text-sm font-medium text-[#111111]"
       aria-hidden
     >
       {initial}
@@ -47,14 +47,14 @@ function DifferenceCard({
   bullets: readonly string[]
 }) {
   return (
-    <div className="flex w-full flex-col gap-4 rounded-2xl border border-[#e6e0d8] bg-[#f5f3ee] p-6 sm:gap-5 sm:p-8 md:p-9">
+    <div className="flex w-full flex-col gap-4 rounded-lg border border-[#e6e0d8] bg-[#f5f3ee] p-6 sm:gap-5 sm:p-8 md:p-9">
       <div className="flex items-center justify-center gap-3 lg:justify-start">
         {variant === "consentz" ? (
           <ConsentzBrandLogo />
         ) : (
           <>
             <CompetitorBrandMark name={brand} />
-            <h3 className="text-lg font-bold text-[#111111] sm:text-xl md:text-[22px]">{brand}</h3>
+            <h3 className="text-lg font-medium text-[#111111] sm:text-xl md:text-[22px]">{brand}</h3>
           </>
         )}
       </div>

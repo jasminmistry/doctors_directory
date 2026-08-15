@@ -1,7 +1,6 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
-import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { AdminLayout } from "@/components/admin/AdminLayout"
 import { Button } from "@/components/ui/button"
@@ -187,15 +186,6 @@ export function MainSiteTrackingDashboard() {
   return (
     <AdminLayout title="Main site tracking">
       <div className="space-y-6 overflow-x-hidden">
-        <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-4">
-          <Link href="/admin/tracking" className="text-sm underline">
-            Directory tracking
-          </Link>
-          <Link href="/admin" className="ml-auto text-sm underline">
-            Admin home
-          </Link>
-        </div>
-
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-gray-600">Overview window:</span>
           <Button
@@ -278,19 +268,19 @@ export function MainSiteTrackingDashboard() {
 
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Total clicks</div>
+            <div className="text-xs uppercase text-gray-600">Total clicks</div>
             <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.totalClicks ?? 0}</div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Form actions</div>
+            <div className="text-xs uppercase text-gray-600">Form actions</div>
             <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.formActions ?? 0}</div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Leads</div>
+            <div className="text-xs uppercase text-gray-600">Leads</div>
             <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.totalLeads ?? 0}</div>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="text-xs uppercase text-gray-500">Login actions</div>
+            <div className="text-xs uppercase text-gray-600">Login actions</div>
             <div className="mt-2 text-2xl font-semibold">{overviewLoading ? "…" : overview?.loginActions ?? 0}</div>
           </div>
         </div>
@@ -315,7 +305,7 @@ export function MainSiteTrackingDashboard() {
                   </div>
                 ))}
                 {!overviewLoading && (items as MainSiteOverviewItem[]).length === 0 && (
-                  <div className="text-sm text-gray-500">No data</div>
+                  <div className="text-sm text-gray-600">No data</div>
                 )}
               </div>
             </div>
@@ -351,7 +341,7 @@ export function MainSiteTrackingDashboard() {
         </div>
 
         {error && (
-          <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
         )}
 
         <div className="text-sm text-gray-600">
@@ -397,7 +387,7 @@ export function MainSiteTrackingDashboard() {
               ))}
               {!loading && rows.length === 0 && (
                 <tr>
-                  <td className="px-3 py-6 text-center text-gray-500" colSpan={10}>
+                  <td className="px-3 py-6 text-center text-gray-600" colSpan={10}>
                     No rows match these filters.
                   </td>
                 </tr>

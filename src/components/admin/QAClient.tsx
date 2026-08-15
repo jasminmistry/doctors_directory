@@ -1,10 +1,9 @@
 "use client"
-import { AdminLayout } from '@/components/admin/AdminLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { CheckCircle, XCircle, Clock, FileText, AlertTriangle, Droplet } from 'lucide-react'
+import { IconCircleCheck, IconClock, IconFileText, IconXboxX } from '@tabler/icons-react'
 
 
 const testDetails = {
@@ -321,8 +320,7 @@ export default function QATestReport({report}: {report: TestReport}) {
 console.log(failedTestMessages)
 
   return (
-    <AdminLayout title="QA Test Report">
-      <div className="space-y-6">
+    <div className="space-y-6">
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -342,21 +340,21 @@ console.log(failedTestMessages)
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Total Tests</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Total Tests</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{report.numTotalTests}</div>
+                  <div className="text-3xl font-medium">{report.numTotalTests}</div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Passed</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Passed</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <div className="text-3xl font-bold text-green-600">{report.numPassedTests}</div>
+                    <IconCircleCheck stroke={1.5} className="w-5 h-5 text-green-600" />
+                    <div className="text-3xl font-medium text-green-600">{report.numPassedTests}</div>
                   </div>
                   <Badge variant="outline" className="mt-2 text-green-600 border-green-600">
                     {((report.numPassedTests / report.numTotalTests) * 100).toFixed(1)}% pass rate
@@ -366,12 +364,12 @@ console.log(failedTestMessages)
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Failed</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Failed</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <XCircle className="w-5 h-5 text-red-600" />
-                    <div className="text-3xl font-bold text-red-600">{report.numFailedTests}</div>
+                    <IconXboxX stroke={1.5} className="w-5 h-5" />
+                    <div className="text-3xl font-medium text-red-600">{report.numFailedTests}</div>
                   </div>
                   <Badge variant="destructive" className="mt-2">
                     {((report.numFailedTests / report.numTotalTests) * 100).toFixed(1)}% failure rate
@@ -381,11 +379,11 @@ console.log(failedTestMessages)
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Test Suites</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Test Suites</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{report.numTotalTestSuites}</div>
-                  <div className="text-sm text-gray-500 mt-1">
+                  <div className="text-3xl font-medium">{report.numTotalTestSuites}</div>
+                  <div className="text-sm text-gray-600 mt-1">
                     {report.numPassedTestSuites} passed, {report.numFailedTestSuites} failed
                   </div>
                 </CardContent>
@@ -393,16 +391,16 @@ console.log(failedTestMessages)
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Test Run Time</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Test Run Time</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-gray-600" />
-                    <div className="text-3xl font-bold">
+                    <IconClock stroke={1.5} className="w-5 h-5" />
+                    <div className="text-3xl font-medium">
                       {formatDuration(report.testResults.reduce((acc, suite) => acc + (suite.endTime - suite.startTime), 0))}
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500 mt-1">
+                  <div className="text-sm text-gray-600 mt-1">
                     {formatTimestamp(report.startTime)}
                   </div>
                 </CardContent>
@@ -410,17 +408,17 @@ console.log(failedTestMessages)
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-gray-500">Overall Status</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-600">Overall Status</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {report.success ? (
                     <Badge variant="default" className="text-sm">
-                      <CheckCircle className="w-4 h-4 mr-1" />
+                      <IconCircleCheck stroke={1.5} className="w-4 h-4 mr-1" />
                       Passed
                     </Badge>
                   ) : (
                     <Badge variant="destructive" className="text-sm">
-                      <XCircle className="w-4 h-4 mr-1" />
+                      <IconXboxX stroke={1.5} className="w-4 h-4 mr-1" />
                       Failed
                     </Badge>
                   )}
@@ -431,7 +429,7 @@ console.log(failedTestMessages)
             <Card className="flex flex-col space-y-4 p-4">
               <CardHeader>
                 <header className="space-y-4">
-                      <h1 className="text-4xl font-bold text-slate-800 tracking-tight">
+                      <h1 className="text-4xl font-medium text-slate-800 tracking-tight">
                         The Workflow 
                       </h1>
                       <p className="text-lg text-slate-600 leading-relaxed">
@@ -449,7 +447,7 @@ console.log(failedTestMessages)
                     
 
 
-                    <section className="bg-white shadow-lg rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-lg p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         1. One Test = One Page Render
                       </h2>
@@ -477,7 +475,7 @@ console.log(failedTestMessages)
                     </section>
 
 
-                    <section className="bg-white shadow-lg rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-lg p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         2. A Failed Test Does Not Always Mean the Page Is Broken
                       </h2>
@@ -510,7 +508,7 @@ console.log(failedTestMessages)
                     </section>
 
 
-                    <section className="bg-white shadow-lg rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-lg p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         3. The Testing Mindset & Workflow
                       </h2>
@@ -560,7 +558,7 @@ console.log(failedTestMessages)
                     </section>
 
 
-                    <section className="bg-white shadow-lg rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-lg p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">
                         4. Expanding the Horizon
                       </h2>
@@ -571,7 +569,7 @@ console.log(failedTestMessages)
 
                       <div className="grid md:grid-cols-2 gap-6">
 
-                        <div className="bg-slate-100 rounded-xl p-6">
+                        <div className="bg-slate-100 rounded-lg p-6">
                           <h3 className="font-semibold text-slate-800 mb-3">Data Quality Testing</h3>
                           <ul className="list-disc pl-6 space-y-1 text-slate-700">
                             <li>Minimum content length checks</li>
@@ -580,7 +578,7 @@ console.log(failedTestMessages)
                           </ul>
                         </div>
 
-                        <div className="bg-slate-100 rounded-xl p-6">
+                        <div className="bg-slate-100 rounded-lg p-6">
                           <h3 className="font-semibold text-slate-800 mb-3">UX & Structural Testing</h3>
                           <ul className="list-disc pl-6 space-y-1 text-slate-700">
                             <li>Required section presence</li>
@@ -589,7 +587,7 @@ console.log(failedTestMessages)
                           </ul>
                         </div>
 
-                        <div className="bg-slate-100 rounded-xl p-6">
+                        <div className="bg-slate-100 rounded-lg p-6">
                           <h3 className="font-semibold text-slate-800 mb-3">Regression Prevention</h3>
                           <ul className="list-disc pl-6 space-y-1 text-slate-700">
                             <li>Ensure future updates don’t break existing pages</li>
@@ -598,7 +596,7 @@ console.log(failedTestMessages)
                           </ul>
                         </div>
 
-                        <div className="bg-slate-100 rounded-xl p-6">
+                        <div className="bg-slate-100 rounded-lg p-6">
                           <h3 className="font-semibold text-slate-800 mb-3">Team Alignment</h3>
                           <ul className="list-disc pl-6 space-y-1 text-slate-700">
                             <li>Clear, readable failure messages</li>
@@ -616,7 +614,7 @@ console.log(failedTestMessages)
                       </div>
                       
                     </section>
-                    <section className="bg-white shadow-lg rounded-2xl p-8 space-y-6">
+                    <section className="bg-white rounded-lg p-8 space-y-6">
                       <h2 className="text-2xl font-semibold text-slate-800">CMS</h2>
                       <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded">
                       <li className="text-indigo-900 font-medium">/directory/admin/clinics</li>
@@ -647,7 +645,7 @@ console.log(failedTestMessages)
                 
                 <AccordionItem value={suite[0]}>
                   <AccordionTrigger className="hover:no-underline">
-                    <div className="flex items-start text-lg font-bold">
+                    <div className="flex items-start text-lg font-medium">
                     {`${suite[0]}`}</div></AccordionTrigger>
 
                  <AccordionContent>
@@ -673,16 +671,16 @@ console.log(failedTestMessages)
           </TabsContent>
 
           <TabsContent value="failed" className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-900">
+            <h3 className="text-3xl text-gray-900">
               Unique Error Codes:
-              <pre className="bg-slate-900 text-slate-100 text-sm p-4 rounded-xl overflow-x-auto"><code>{Array.from(failedTestMessages).join('\n')}</code></pre>
+              <pre className="bg-slate-900 text-slate-100 text-sm p-4 rounded-lg overflow-x-auto"><code>{Array.from(failedTestMessages).join('\n')}</code></pre>
             </h3>
             {failedTests.length === 0 ? (
               <Card>
                 <CardContent className="py-12 text-center">
-                  <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900">All Tests Passed!</h3>
-                  <p className="text-gray-500 mt-2">No failed tests to display.</p>
+                  <IconCircleCheck stroke={1.5} className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                  <h3 className="text-3xl text-gray-900">All Tests Passed!</h3>
+                  <p className="text-gray-600 mt-2">No failed tests to display.</p>
                 </CardContent>
               </Card>
             ) : (
@@ -690,18 +688,18 @@ console.log(failedTestMessages)
                 <Card key={index} className="border-red-200">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-red-900">
-                      <XCircle className="w-5 h-5" />
+                      <IconXboxX stroke={1.5} className="w-5 h-5" />
                       {test.fullName}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Clock className="w-4 h-4" />
+                        <IconClock stroke={1.5} className="w-4 h-4" />
                         Duration: {formatDuration(test.duration)}
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <FileText className="w-4 h-4" />
+                        <IconFileText stroke={1.5} className="w-4 h-4" />
                         {extractFileName(report.testResults.find(s => s.assertionResults.includes(test))?.name || '')}
                       </div>
                       <div className="mt-4">
@@ -728,9 +726,9 @@ console.log(failedTestMessages)
                     <AccordionTrigger className="hover:no-underline">
                       <div className="flex items-center gap-3 flex-1">
                         {suitePassed ? (
-                          <CheckCircle className="w-5 h-5 text-green-600" />
+                          <IconCircleCheck stroke={1.5} className="w-5 h-5" />
                         ) : (
-                          <XCircle className="w-5 h-5 text-red-600" />
+                          <IconXboxX stroke={1.5} className="w-5 h-5" />
                         )}
                         <span className="font-medium">{extractFileName(suite.name)}</span>
                         <Badge variant={suitePassed ? "default" : "destructive"} className="ml-auto">
@@ -739,8 +737,8 @@ console.log(failedTestMessages)
                         <Badge variant="outline">
                           {suite.assertionResults.length} tests
                         </Badge>
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
-                          <Clock className="w-4 h-4" />
+                        <div className="flex items-center gap-1 text-sm text-gray-600">
+                          <IconClock stroke={1.5} className="w-4 h-4" />
                           {formatDuration(suiteDuration)}
                         </div>
                       </div>
@@ -761,9 +759,9 @@ console.log(failedTestMessages)
                           >
                             <div className="flex items-start gap-2">
                               {test.status === 'failed' ? (
-                                <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                                <IconXboxX stroke={1.5} className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                               ) : (
-                                <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                                <IconCircleCheck stroke={1.5} className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                               )}
                               <div className="flex-1 min-w-0">
                                 <div className="font-medium text-gray-900">{test.title}</div>
@@ -792,7 +790,6 @@ console.log(failedTestMessages)
             </Accordion>
           </TabsContent>
         </Tabs>
-      </div>
-    </AdminLayout>
+    </div>
   )
 }

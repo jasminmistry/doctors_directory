@@ -1,4 +1,4 @@
-import { ExternalLink } from 'lucide-react'
+import { IconExternalLink } from '@tabler/icons-react'
 
 interface Badge {
   label: string
@@ -29,7 +29,7 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
   if (badges.length === 0) return null
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+    <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
       <h3 className="text-sm font-semibold text-gray-900">Accreditations &amp; Certifications</h3>
       <div className="flex flex-wrap gap-2">
         {badges.map(({ label, url }) =>
@@ -42,7 +42,7 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
               className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 transition-colors"
             >
               {label}
-              <ExternalLink className="h-3 w-3 text-gray-400" />
+              <IconExternalLink stroke={1.5} className="h-3 w-3" />
             </a>
           ) : (
             <span
@@ -54,7 +54,7 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
           )
         )}
       </div>
-      <p className="text-xs text-gray-400 leading-relaxed">
+      <p className="text-xs text-gray-600 leading-relaxed">
         Self-reported by the clinic. Confirm directly with the relevant regulatory body.
       </p>
     </div>

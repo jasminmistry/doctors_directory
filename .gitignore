@@ -44,6 +44,8 @@ next-env.d.ts
 
 .vscode/settings.json
 uploads/
+*.sql
+!prisma/migrations/**/*.sql
 !uploads/images/
 !uploads/images/.gitkeep
 !public/images/uploads/

@@ -3,17 +3,24 @@
 import { useRef, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Upload, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { IconUpload, IconX } from '@tabler/icons-react'
 
 interface Props {
   value: string | null
   onChange: (url: string | null) => void
   shape?: 'square' | 'circle'
   className?: string
+  endpoint?: string
 }
 
-export function ImageUpload({ value, onChange, shape = 'square', className }: Readonly<Props>) {
+export function ImageUpload({
+  value,
+  onChange,
+  shape = 'square',
+  className,
+  endpoint = '/directory/api/admin/upload/',
+}: Readonly<Props>) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -24,7 +31,7 @@ export function ImageUpload({ value, onChange, shape = 'square', className }: Re
     try {
       const form = new FormData()
       form.append('file', file)
-      const res = await fetch('/directory/api/admin/upload', { method: 'POST', body: form })
+      const res = await fetch(endpoint, { method: 'POST', body: form })
       const data = await res.json()
       if (!res.ok) {
         setError(data.error ?? 'Upload failed')
@@ -68,22 +75,22 @@ export function ImageUpload({ value, onChange, shape = 'square', className }: Re
             <button
               type="button"
               onClick={() => onChange(null)}
-              className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-gray-700 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
+              className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-gray-700 flex items-center justify-center hover:bg-red-600 hover:cursor-pointer transition-colors"
               aria-label="Remove image"
             >
-              <X className="h-2.5 w-2.5" />
+              <IconX stroke={1.5} className="h-2.5 w-2.5 stroke-white" />
             </button>
           </div>
         ) : (
           <div
             className={cn(
-              'shrink-0 w-12 h-12 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400',
+              'shrink-0 w-12 h-12 border-2 border-dashed border-[#e0e0e0]  flex items-center justify-center text-gray-600',
               shape === 'circle' ? 'rounded-full' : 'rounded-lg'
             )}
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
           >
-            <Upload className="h-4 w-4" />
+            <IconUpload stroke={1.5} className="h-4 w-4" />
           </div>
         )}
 

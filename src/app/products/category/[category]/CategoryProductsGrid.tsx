@@ -69,7 +69,7 @@ export function CategoryProductsGrid({ products, category }: Readonly<CategoryPr
               href={`/products/category/${categorySlug}/${practitioner.slug}`}
               className="block"
             >
-              <Card className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
+              <Card className="group bg-white transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
                 <CardHeader className="pb-2 px-2">
                   <h2 id={`product-name-${practitioner.slug}`} className="sr-only">
                     {decodeUnicodeEscapes(practitioner.product_name)}
@@ -109,14 +109,14 @@ export function CategoryProductsGrid({ products, category }: Readonly<CategoryPr
                     <ul className="flex flex-wrap md:items-center md:justify-center gap-1 text-center" aria-label="Product prices">
                       {practitioner?.all_prices?.slice(0, 3).map((value: any, i: number) => (
                         <li key={i}>
-                          <Badge variant="outline" className="text-[11px] font-normal text-gray-500">
+                          <Badge variant="outline" className="text-[11px] font-normal text-gray-600">
                             {value.price}
                           </Badge>
                         </li>
                       ))}
                       {(practitioner?.all_prices?.length ?? 0) > 3 && (
                         <li>
-                          <Badge variant="outline" className="text-[11px] font-normal text-gray-500">
+                          <Badge variant="outline" className="text-[11px] font-normal text-gray-600">
                             + {practitioner.all_prices.length - 3} more
                           </Badge>
                         </li>

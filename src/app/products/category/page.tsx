@@ -3,15 +3,14 @@ import Link from "next/link";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { Product } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
-import { Star, MapPin } from "lucide-react";
 import { readJsonFileSync } from "@/lib/json-cache";
 import { product_categories } from "@/lib/data";
 import { decodeUnicodeEscapes, toUrlSlug } from "@/lib/utils";
 import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft} from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { toDirectoryCanonical } from "@/lib/seo";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 export const metadata = {
   alternates: {
@@ -26,22 +25,16 @@ export default async function ProfilePage() {
 
 
   return (
-    <main className="min-h-screen bg-(--primary-bg-color)">
+    <main className="min-h-screen bg-[#fbfbfb]">
       {/* Navigation */}
       <div className="sticky top-0 z-10">
-        <div className="container mx-auto max-w-6xl px-4 py-4">
-          <Link href="/" prefetch={false}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
-            >
-              <ArrowLeft className="h-4 w-4" />
+        <div className="container mx-auto max-w-7xl px-4 py-4">
+          <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
-            </Button>
           </Link>
         </div>
-        <div className="container mx-auto max-w-6xl px-4 py-2">
+        <div className="container mx-auto max-w-7xl px-4 py-2">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -64,7 +57,7 @@ export default async function ProfilePage() {
         </div>
       </div>
 
-      <div className="container mx-auto max-w-6xl pt-0 md:px-4 py-20 space-y-8">
+      <div className="container mx-auto max-w-7xl pt-0 md:px-4 py-20 space-y-8">
         {/* Profile Header */}
 
         <h3 className="text-lg font-semibold text-foreground mb-2">
@@ -78,7 +71,7 @@ export default async function ProfilePage() {
             return (
               <div key={brand} style={{ animationDelay: `${index * 50}ms` }}>
                 <Link href={`/products/category/${toUrlSlug(brand)}`} className="block">
-                  <Card className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
+                  <Card className="group bg-white transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
                     <CardHeader className="pb-2 px-2">
                       <h2 id={`brand-${brand}`} className="text-center">
                         {brand}

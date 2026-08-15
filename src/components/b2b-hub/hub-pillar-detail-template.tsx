@@ -8,14 +8,6 @@ import {
 } from "@/components/b2b-hub/hub-cta-buttons"
 import Image from "next/image";
 import Link from "next/link";
-import {
-  CalendarDays,
-  FileWarning,
-  Layers,
-  Mail,
-  Table2,
-  UserRound,
-} from "lucide-react";
 import { HubComparisonTable } from "@/components/b2b-hub/hub-comparison-table";
 import { HubBuyerFaq } from "@/components/b2b-hub/hub-buyer-faq";
 import { HubDetailHeroShell } from "@/components/b2b-hub/hub-detail-hero-shell";
@@ -45,6 +37,7 @@ import { HUB_BLOG_LINKS, HUB_CQC_GUIDE_LINKS } from "@/lib/b2b-hub/hub-blog-link
 import type { HubEntry, HubSegment } from "@/lib/b2b-hub/registry";
 import { segmentLabel } from "@/lib/b2b-hub/registry";
 import { toDisplayTitle } from "@/lib/b2b-hub/text";
+import { IconCalendarWeek, IconFileAlert, IconLayersUnion, IconMail, IconTable, IconUserCircle } from "@tabler/icons-react";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com";
@@ -82,54 +75,54 @@ export { hubBuyerHubTestimonials } from "@/lib/b2b-hub/hub-testimonials";
 
 const softwarePainPoints = [
   {
-    Icon: FileWarning,
+    Icon: IconFileAlert,
     text: "Paper consent forms get lost — creating direct CQC risk",
   },
   {
-    Icon: UserRound,
+    Icon: IconUserCircle,
     text: "Patients aren’t reactivated after treatment",
   },
   {
-    Icon: Table2,
+    Icon: IconTable,
     text: "CQC evidence scattered across spreadsheets",
   },
   {
-    Icon: CalendarDays,
+    Icon: IconCalendarWeek,
     text: "Booking software doesn’t handle compliance requirements",
   },
   {
-    Icon: Mail,
+    Icon: IconMail,
     text: "No automated follow-up or aftercare workflows",
   },
   {
-    Icon: Layers,
+    Icon: IconLayersUnion,
     text: "Clinic data siloed across too many disconnected tools",
   },
 ] as const;
 
 const cqcPainPoints = [
   {
-    Icon: FileWarning,
+    Icon: IconFileAlert,
     text: "Evidence lives across drives, paper, and tools — not one consistent audit trail",
   },
   {
-    Icon: UserRound,
+    Icon: IconUserCircle,
     text: "Training and competency proof is hard to evidence consistently across teams",
   },
   {
-    Icon: Table2,
+    Icon: IconTable,
     text: "Inspectors ask for samples that take days to locate when records are siloed",
   },
   {
-    Icon: CalendarDays,
+    Icon: IconCalendarWeek,
     text: "Inspection readiness becomes a sprint instead of continuous operational practice",
   },
   {
-    Icon: Mail,
+    Icon: IconMail,
     text: "Governance updates do not reach front-desk workflows in a traceable way",
   },
   {
-    Icon: Layers,
+    Icon: IconLayersUnion,
     text: "Policies exist on paper while day-to-day practice is difficult to demonstrate",
   },
 ] as const;
@@ -267,12 +260,12 @@ const cqcReadinessScores = [
 
 function CqcDashboardBrowserMock() {
   return (
-    <div className="overflow-hidden rounded-xl border border-[#E2DDD7] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
+    <div className="overflow-hidden rounded-lg border border-[#e0e0e0] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
       <div className="flex items-center gap-3 bg-[#19191c] px-5 py-4">
         <span className="h-3 w-3 shrink-0 rounded-full bg-[#ff5f56]" />
         <span className="h-3 w-3 shrink-0 rounded-full bg-[#ffbd2e]" />
         <span className="h-3 w-3 shrink-0 rounded-full bg-[#27c93f]" />
-        <div className="ml-2 min-w-0 flex-1 rounded-md bg-[#232327] px-4 py-2">
+        <div className="ml-2 min-w-0 flex-1 rounded-lg bg-[#232327] px-4 py-2">
           <p className="truncate text-[15px] text-[#9b9b9b]">
             CQC Evidence Dashboard — Consentz
           </p>
@@ -284,10 +277,10 @@ function CqcDashboardBrowserMock() {
           {cqcReadinessScores.map((row) => (
             <div
               key={row.label}
-              className="flex flex-col rounded-xl border border-[#E2DDD7] bg-white p-5"
+              className="flex flex-col rounded-lg border border-[#e0e0e0] bg-white p-5"
             >
               <p
-                className={`text-[34px] font-bold leading-none tracking-[-0.68px] ${row.pctColor}`}
+                className={`text-[34px] font-medium leading-none tracking-[-0.68px] ${row.pctColor}`}
               >
                 {row.pct}
               </p>
@@ -309,9 +302,9 @@ function CqcEvidenceChecklist() {
       {cqcEvidenceChecklist.map((label) => (
         <div
           key={label}
-          className="flex items-center gap-3 rounded-xl border border-transparent bg-[#eef7f2] px-[18px] py-[14px]"
+          className="flex items-center gap-3 rounded-lg border border-transparent bg-[#eef7f2] px-[18px] py-[14px]"
         >
-          <span className="shrink-0 text-sm font-bold text-[#1a6e45]">✓</span>
+          <span className="shrink-0 text-sm font-medium text-[#1a6e45]">✓</span>
           <p className="text-base font-medium text-[#1a1a1a] md:text-[20px]">{label}</p>
         </div>
       ))}
@@ -327,7 +320,7 @@ function HubRelatedLinksGrid({ related }: { related: HubEntry[] }) {
           <Link
             key={`${r.segment}-${r.slug}`}
             href={`/business/${r.segment}/${r.slug}/`}
-            className="flex min-h-[93px] items-center justify-center rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
+            className="flex min-h-[93px] items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] hover:border-neutral-400 hover:bg-white transition-colors"
           >
             {toDisplayTitle(r.title)}
           </Link>
@@ -421,13 +414,13 @@ export function HubPillarDetailTemplate({
       <HubContentStart>
         {pillar === "cqc" ? (
           <section className="mb-16">
-            <h2 className="text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+            <h2 className="text-center text-[30px] font-medium tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
               CQC Evidence Dashboard
             </h2>
             <div className="mx-auto mt-10 max-w-[920px]">
               <CqcDashboardBrowserMock />
             </div>
-            <h2 className="mb-10 mt-16 text-center text-[30px] font-bold tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+            <h2 className="mb-10 mt-16 text-center text-[30px] font-medium tracking-[-0.02em] text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
               What the CQC dashboard covers
             </h2>
             <CqcEvidenceChecklist />
@@ -435,7 +428,7 @@ export function HubPillarDetailTemplate({
         ) : null}
         <section className="mb-12">
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 md:p-8 shadow-sm">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 md:p-8 shadow-sm">
               <h2 className="text-lg font-semibold text-[#111111] mb-3">
                 Operational Reality
               </h2>
@@ -445,7 +438,7 @@ export function HubPillarDetailTemplate({
                 confidence, and fragile patient communication.
               </p>
             </div>
-            <div className="rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] p-6 md:p-8 shadow-sm">
+            <div className="rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] p-6 md:p-8 shadow-sm">
               <h2 className="text-lg font-semibold text-[#111111] mb-3">
                 What Changes With Consentz
               </h2>
@@ -459,14 +452,14 @@ export function HubPillarDetailTemplate({
         </section>
 
         <section className="mb-12">
-          <h2 className="text-center text-3xl md:text-4xl font-bold text-[#111111] tracking-[-0.02em] mb-8 md:mb-10">
+          <h2 className="text-center text-3xl md:text-4xl font-medium text-[#111111] tracking-[-0.02em] mb-8 md:mb-10">
             {problemSectionTitle}
           </h2>
           <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 md:grid-cols-2">
             {activePainPoints.map(({ Icon, text }) => (
               <div
                 key={text}
-                className="flex min-h-[88px] items-center gap-6 rounded-xl border border-[#DEDBDB] bg-[#FAFAFA] py-[15px] pl-6 pr-4"
+                className="flex min-h-[88px] items-center gap-6 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] py-[15px] pl-6 pr-4"
               >
                 <Icon
                   className="h-12 w-12 shrink-0 text-[#1A1A1A]"
@@ -490,7 +483,7 @@ export function HubPillarDetailTemplate({
         </section>
 
         <div className="text-center max-w-[900px] mx-auto mb-6">
-          <h2 className="text-4xl font-bold text-[#111111] tracking-[-0.02em] mb-4">
+          <h2 className="text-4xl font-medium text-[#111111] tracking-[-0.02em] mb-4">
             How Consentz Helps
           </h2>
           <p className="text-xl md:text-2xl text-[#1A1A1A] leading-[1.6] font-normal">
@@ -516,7 +509,7 @@ export function HubPillarDetailTemplate({
               <div className="mt-6 flex w-full justify-center px-4">
                 <a
                   href={b2bBookDemoHref()}
-                  className="inline-flex items-center justify-center rounded-[12px] bg-[#1A1A1A] px-6 py-2.5 text-base font-semibold text-white shadow-md hover:bg-neutral-900 transition-colors sm:px-7 sm:py-3 sm:text-lg"
+                  className="inline-flex items-center justify-center rounded-lg bg-[#1A1A1A] px-6 py-2.5 text-base font-semibold text-white shadow-md hover:bg-neutral-900 transition-colors sm:px-7 sm:py-3 sm:text-lg"
                 >
                   Book a Demo
                 </a>
@@ -530,7 +523,7 @@ export function HubPillarDetailTemplate({
           <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-16 py-10 md:py-12")}>
             <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
               <div className="flex flex-col items-stretch gap-6 lg:flex-row lg:items-start lg:justify-center lg:gap-5">
-                <div className="relative w-full overflow-hidden rounded-[12px] border-4 border-[#1a1a1a] shadow-[0_2px_8px_rgba(105,71,71,0.25)] lg:min-w-0 lg:flex-[1.2]">
+                <div className="relative w-full overflow-hidden rounded-lg border-4 border-[#1a1a1a] shadow-[0_2px_8px_rgba(105,71,71,0.25)] lg:min-w-0 lg:flex-[1.2]">
                   <Image
                     src={CQC_MID_DOMAINS}
                     alt=""
@@ -568,7 +561,7 @@ export function HubPillarDetailTemplate({
         {pillar === "cqc" ? (
           <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-16 py-10 md:py-12")}>
             <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
-              <div className="mx-auto max-w-[920px] overflow-hidden rounded-xl border-4 border-[#1a1a1a] shadow-[0_8px_28px_rgba(0,0,0,0.08)]">
+              <div className="mx-auto max-w-[920px] overflow-hidden rounded-lg border-4 border-[#1a1a1a] shadow-[0_8px_28px_rgba(0,0,0,0.08)]">
                 <Image
                   src={CQC_MID_HEATMAP}
                   alt=""
@@ -624,10 +617,10 @@ export function HubPillarDetailTemplate({
 
 
         <section className="mb-16 mx-auto max-w-[1280px] px-4 text-center md:text-left">
-          <h2 className="mb-3 text-3xl font-bold text-[#111111] md:text-4xl">
+          <h2 className="mb-3 text-3xl font-medium text-[#111111] md:text-4xl">
             {pillar === "cqc" ? "CQC guidance on the Buyer Hub" : "Our Latest Blogs"}
           </h2>
-          <p className="text-xl text-[#1A1A1A] leading-snug mb-10 max-w-[1280px]">
+          <p className="text-xl text-gray-600 leading-snug mb-10 max-w-[1280px]">
             {pillar === "cqc"
               ? "Deep dives on evidence, inspection readiness, and how to run compliance as part of day-to-day operations."
               : "Explore insights and tips to help you manage and grow your aesthetics clinic efficiently. Stay informed with our latest articles."}

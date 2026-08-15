@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Download } from 'lucide-react'
 import { toast } from 'sonner'
+import { IconDownload } from '@tabler/icons-react'
 
 interface VerificationRequest {
   id: number
@@ -49,7 +49,7 @@ export default function AdminVerificationPage() {
   function fetchRequests(status?: string) {
     setLoading(true)
     const qs = status && status !== 'all' ? `?status=${status}` : ''
-    fetch(`/directory/api/admin/verification${qs}`)
+    fetch(`/directory/api/admin/verification/${qs}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => { setRequests(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -61,16 +61,16 @@ export default function AdminVerificationPage() {
     if (!selected) return
     setSubmitting(true)
     try {
-      const res = await fetch(`/directory/api/admin/verification/${selected.id}`, {
+      const res = await fetch(`/directory/api/admin/verification/${selected.id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action, adminNotes }),
       })
       if (!res.ok) throw new Error()
       toast.success(action === 'approve' ? 'ID verified — profile updated' : 'Request rejected')
+      setRequests((prev) => prev.filter((r) => r.id !== selected.id))
       setSelected(null)
       setAdminNotes('')
-      fetchRequests(filter)
     } catch {
       toast.error('Failed to update verification request')
     } finally {
@@ -88,7 +88,7 @@ export default function AdminVerificationPage() {
   return (
     <AdminLayout title="ID Verification">
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">ID Verification Requests</h1>
+        <h1 className="text-2xl font-medium">ID Verification Requests</h1>
 
         <div className="flex gap-2">
           {filterTabs.map((tab) => (
@@ -96,7 +96,7 @@ export default function AdminVerificationPage() {
               key={tab.value}
               onClick={() => setFilter(tab.value)}
               className={[
-                'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+                'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                 filter === tab.value
                   ? 'bg-foreground text-background'
                   : 'bg-muted text-muted-foreground hover:text-foreground',
@@ -193,7 +193,7 @@ export default function AdminVerificationPage() {
                           download
                           className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline shrink-0"
                         >
-                          <Download className="h-3.5 w-3.5" />
+                          <IconDownload stroke={1.5} className="h-3.5 w-3.5" />
                           Download
                         </a>
                       </div>
@@ -201,7 +201,7 @@ export default function AdminVerificationPage() {
                         <img
                           src={fileUrl}
                           alt={doc.label}
-                          className="max-h-64 max-w-full rounded-md border object-contain bg-white"
+                          className="max-h-64 max-w-full rounded-lg border object-contain bg-white"
                         />
                       )}
                       {!isImage && (

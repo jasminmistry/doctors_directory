@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from '@/lib/pricing'
+import { IconCheck } from '@tabler/icons-react'
 
 type Plan = 'free' | 'pay_per_lead' | 'subscription'
 
@@ -40,7 +41,7 @@ const PLANS: {
   {
     id: 'subscription',
     name: 'Verified Subscription',
-    price: '£99',
+    price: `£${SUBSCRIPTION_MONTHLY_PRICE}`,
     priceNote: '/mo',
     description: 'Priority visibility with unlimited instant leads.',
     badge: 'Recommended',
@@ -55,7 +56,7 @@ const PLANS: {
   {
     id: 'pay_per_lead',
     name: 'Pay-Per-Lead',
-    price: '£15',
+    price: `£${PPL_LEAD_PRICE}`,
     priceNote: '/lead',
     description: 'Pay only for the leads you receive.',
     features: [
@@ -79,7 +80,7 @@ export function StepChoosePlan({ claimId, entitySlug, onPending }: Readonly<Prop
     setLoading(true)
 
     try {
-      const res = await fetch('/directory/api/claim/select-plan', {
+      const res = await fetch('/directory/api/claim/select-plan/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ claimId, plan: selected }),
@@ -117,7 +118,7 @@ export function StepChoosePlan({ claimId, entitySlug, onPending }: Readonly<Prop
             type="button"
             onClick={() => setSelected(plan.id)}
             className={cn(
-              'relative text-left rounded-xl border-2 p-4 transition-all cursor-pointer',
+              'relative text-left rounded-lg border-2 p-4 transition-all cursor-pointer',
               selected === plan.id
                 ? 'border-foreground bg-muted/50'
                 : 'border-border hover:border-muted-foreground/50'
@@ -133,7 +134,7 @@ export function StepChoosePlan({ claimId, entitySlug, onPending }: Readonly<Prop
                   selected === plan.id ? 'border-foreground bg-foreground' : 'border-muted-foreground'
                 )}
               >
-                {selected === plan.id && <Check className="h-3 w-3 text-background" />}
+                {selected === plan.id && <IconCheck stroke={1.5} className="h-3 w-3 text-background" />}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2 mb-0.5">
@@ -145,7 +146,7 @@ export function StepChoosePlan({ claimId, entitySlug, onPending }: Readonly<Prop
                 <ul className="space-y-1">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Check className="h-3 w-3 shrink-0 text-emerald-600" />
+                      <IconCheck stroke={1.5} className="h-3 w-3 shrink-0 text-emerald-600" />
                       {f}
                     </li>
                   ))}

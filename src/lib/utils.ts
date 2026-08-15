@@ -6,6 +6,20 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/**
+ * Booking slot times are always shown in the clinic's own timezone (never the
+ * visitor's browser timezone) — this renders the short abbreviation, e.g.
+ * "Europe/London" -> "GMT" or "BST" depending on the date shown.
+ */
+export function formatTimezoneAbbr(timezone: string, date: Date = new Date()): string {
+  try {
+    const parts = new Intl.DateTimeFormat('en-GB', { timeZone: timezone, timeZoneName: 'short' }).formatToParts(date)
+    return parts.find(p => p.type === 'timeZoneName')?.value ?? timezone
+  } catch {
+    return timezone
+  }
+}
+
 function credentialToSlug(name: string): string {
   return name
     .toLowerCase()
@@ -92,6 +106,16 @@ export function decodeUnicodeEscapes(str: string) {
   return str.replace(/\\u([0-9a-fA-F]{4})/g, (_, code) =>
     String.fromCodePoint(Number.parseInt(code, 16))
   );
+}
+
+export function calculateAge(dateOfBirth: Date): number {
+  const today = new Date()
+  let age = today.getFullYear() - dateOfBirth.getFullYear()
+  const monthDiff = today.getMonth() - dateOfBirth.getMonth()
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dateOfBirth.getDate())) {
+    age--
+  }
+  return age
 }
 
 export function cleanRouteSlug(slug: string) {

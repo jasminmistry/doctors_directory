@@ -16,7 +16,7 @@ export function ClinicOnlineStatus({ clinicSlug, refreshMs = 120_000 }: ClinicOn
 
     async function check() {
       try {
-        const res = await fetch(`/directory/api/chat/${clinicSlug}/status`)
+        const res = await fetch(`/directory/api/chat/${clinicSlug}/status/`)
         const data: { online: boolean } = await res.json()
         if (!cancelled) setOnline(data.online)
       } catch {
@@ -45,7 +45,7 @@ export function ClinicOnlineStatus({ clinicSlug, refreshMs = 120_000 }: ClinicOn
   }
 
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
+    <span className="inline-flex items-center gap-1.5 text-xs text-gray-600">
       <span className="h-2 w-2 rounded-full bg-gray-300" />
       Currently offline
     </span>

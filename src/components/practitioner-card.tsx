@@ -1,12 +1,12 @@
 "use client";
 import Link from "next/link";
-import { MapPin } from "lucide-react";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Practitioner, Clinic, Product } from "@/lib/types";
 import {
+  capitalize,
   decodeUnicodeEscapes,
   fixMojibake,
   isAward,
@@ -14,12 +14,14 @@ import {
 } from "@/lib/utils";
 import ClinicLabels from "./Clinic/clinicLabels";
 import { FallbackImage, DEFAULT_PRODUCT } from "@/components/ui/fallback-image";
-import { locations, TreatmentMap } from "@/lib/data";
+import { getTreatmentImage, locations } from "@/lib/data";
 import { Button } from "./ui/button";
 import { isClinic, isPractitioner, isProduct, toUrlSlug } from "@/lib/utils";
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { OnlineDot } from "@/components/Clinic/online-dot";
+import { IconMapPin } from "@tabler/icons-react";
 type PractitionerOrClinic = Practitioner | Clinic | Product | string;
 interface PractitionerCardProps {
   practitioner: PractitionerOrClinic;
@@ -168,7 +170,7 @@ function getTreatmentHref(
 }
 
 function getTreatmentImageSrc(treatmentName: string): string {
-  return TreatmentMap[treatmentName] || "/directory/images/default-dr-profile-1.webp";
+  return getTreatmentImage(treatmentName) || "/directory/images/default-dr-profile-1.webp";
 }
 
 function getAwardHref(
@@ -215,7 +217,7 @@ export function PractitionerCard({
     <>
       {(isPractitioner(practitioner) || isClinic(practitioner)) && (
         <article
-          className="relative flex h-full flex-col overflow-hidden rounded-md border border-[#C4C4C4] bg-white"
+          className="relative flex md:h-full flex-col my-3 md:my-0 overflow-hidden rounded-md border border-[#C4C4C4] bg-white"
           aria-labelledby={`${practitionerOrClinicAriaPrefix}-name-${practitioner.slug}`}
           data-testid="practitioner-card"
         >
@@ -242,7 +244,7 @@ export function PractitionerCard({
                 </div>
               </div>
 
-              <div className="flex min-h-[2.75rem] w-full items-center justify-center px-1">
+              <div className="flex min-h-[2.75rem] w-full items-center justify-center gap-1 px-1">
                 <span className="line-clamp-2 text-center text-base font-semibold leading-snug text-primary">
                   {isClinic(practitioner)
                     ? practitionerName
@@ -255,35 +257,35 @@ export function PractitionerCard({
                         )
                         .join(" ")}
                 </span>
+                {(isClinic(practitioner) || isPractitioner(practitioner)) && (
+                  <div className="flex shrink-0 items-center gap-1">
+                    <VerifiedBadge
+                      idVerified={(practitioner as any).idVerified}
+                      manualVerified={(practitioner as any).manualVerified}
+                      verified={(practitioner as any).verified}
+                    />
+                    {practitioner.slug && (
+                      <OnlineDot slug={practitioner.slug} />
+                    )}
+                  </div>
+                )}
               </div>
-
-              {(isClinic(practitioner) || isPractitioner(practitioner)) && (
-                <div className="mb-1 flex min-h-[1.25rem] justify-center">
-                  <VerifiedBadge
-                    idVerified={(practitioner as any).idVerified}
-                    manualVerified={(practitioner as any).manualVerified}
-                    verified={(practitioner as any).verified}
-                  />
-                </div>
-              )}
 
               <div className="mb-2 flex min-h-[1.25rem] w-full items-center justify-center px-1">
                 {"practitioner_name" in practitioner && practitioner.practitioner_title ? (
                   <p className="line-clamp-1 text-sm font-semibold leading-tight text-muted-foreground">
-                    {practitioner.practitioner_title
-                      .split(",")[0]
-                      .split(" ")
-                      .slice(0, 4)
-                      .map(
-                        (word: string) =>
-                          word.charAt(0).toUpperCase() + word.slice(1),
-                      )
-                      .join(" ")}
+                    {capitalize(
+                      practitioner.practitioner_title
+                        .split(",")[0]
+                        .split(" ")
+                        .slice(0, 4)
+                        .join(" "),
+                    )}
                   </p>
                 ) : null}
                 {!("practitioner_name" in practitioner) && practitioner.category ? (
                   <p className="line-clamp-1 text-sm font-semibold leading-tight text-muted-foreground">
-                    {practitioner.category.trim()}
+                    {capitalize(practitioner.category.trim())}
                   </p>
                 ) : null}
               </div>
@@ -298,7 +300,8 @@ export function PractitionerCard({
 
             <div className="flex flex-1 flex-col px-3 pt-4">
               <div className="mb-4 flex min-h-[2.75rem] items-start gap-2 text-sm text-muted-foreground/80">
-                <MapPin
+                <IconMapPin
+                  stroke={1.5}
                   className="mt-0.5 h-4 w-4 shrink-0"
                   aria-hidden="true"
                 />
@@ -429,7 +432,7 @@ export function PractitionerCard({
                         <li key={index}>
                           <Badge
                             variant="outline"
-                            className="text-[11px] font-normal text-gray-500"
+                            className="text-[11px] font-normal text-gray-600"
                           >
                             {value.price}
                           </Badge>
@@ -439,7 +442,7 @@ export function PractitionerCard({
                     <li>
                       <Badge
                         variant="outline"
-                        className="text-[11px] font-normal text-gray-500"
+                        className="text-[11px] font-normal text-gray-600"
                       >
                         {practitioner.all_prices.length - 2} more
                       </Badge>
@@ -454,7 +457,7 @@ export function PractitionerCard({
       {typeof practitioner === "string" && !isCity(practitioner) && (
         <Card
           asChild
-          className="gap-0 h-full relative px-4 md:px-0 shadow-none md:border-0 duration-300 cursor-pointer"
+          className="gap-0 h-full relative px-4 rounded-none md:rounded-lg md:px-0 md:border duration-300 shadow-none cursor-pointer"
           aria-labelledby={`treatment-name-${practitioner}`}
           data-testid="practitioner-card"
         >
@@ -469,7 +472,7 @@ export function PractitionerCard({
               </h2>
               <div className="flex items-start gap-4">
                 <div className="text-center flex-1 min-w-0 items-center flex flex-col">
-                  <div className="flex w-full flex-row items-start border-0 md:flex-col md:items-center">
+                  <div className="flex w-full flex-col items-center border-0 md:flex-col md:items-center">
                     <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden md:mb-3 mr-0">
                       <FallbackImage
                         src={treatmentImageSrc}
@@ -478,7 +481,7 @@ export function PractitionerCard({
                       />
                     </div>
 
-                    <div className="mb-3 md:mb-0 flex text-left md:text-center md:align-items-center md:justify-center font-semibold text-md md:text-lg transition-colors text-balance">
+                    <div className="mb-3 md:mb-0 flex text-left md:text-center md:align-items-center md:justify-center font-normal text-sm transition-colors text-balance">
                       {treatmentName}
                     </div>
                   </div>
@@ -491,11 +494,11 @@ export function PractitionerCard({
       {isCity(practitioner) === true && (
         <Card
           asChild
-          className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-sm "
+          className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer  "
         >
           <Link href={cityHref}>
             <div className="mt-2 flex flex-col items-center gap-2">
-              <span className="font-bold">{practitioner}</span>
+              <span className="font-normal text-sm">{practitioner}</span>
             </div>
           </Link>
         </Card>
@@ -514,7 +517,7 @@ export function PractitionerCard({
           href={awardHref}
           className="block"
         >
-          <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer hover:shadow-lg ">
+          <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer ">
             <CardHeader className=" h-55 pb-4 px-2">
               <div className="flex justify-center mb-4">
                 <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg bg-gray-300">

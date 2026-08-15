@@ -16,10 +16,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PractitionerCard } from "@/components/practitioner-card";
 import { toDirectoryCanonical } from "@/lib/seo";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 interface CategoryPageProps {
   params: {
@@ -74,42 +74,40 @@ export default function TreatmentCategoryPage({ params }: Readonly<CategoryPageP
   const treatments = getCategoryTreatments(categoryLabel);
 
   return (
-    <main className="min-h-screen bg-(--primary-bg-color)">
-      <div className="bg-(--primary-bg-color) backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto max-w-6xl px-0 py-2">
+    <main className="min-h-screen bg-[#fbfbfb]">
+      <div className="bg-white backdrop-blur-sm sticky top-0 z-10">
+        <div className="container mx-auto max-w-7xl px-0 py-2">
           <Link href="/treatments" prefetch={false}>
             <Button
               variant="ghost"
               size="sm"
               className="gap-2 hover:cursor-pointer hover:bg-white hover:text-black"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Treatments
             </Button>
           </Link>
+        
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/treatments">Treatments</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{categoryLabel}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto py-2 border-[#C4C4C4] px-2 md:px-0">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/treatments">Treatments</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{categoryLabel}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
-
-      <section className="pt-2 py-10 md:px-4 bg-white md:bg-(--primary-bg-color)">
-        <div className="container mx-auto max-w-6xl space-y-8">
+      <section className="pt-2 py-10 md:px-4 bg-white">
+        <div className="container mx-auto max-w-7xl space-y-8">
           <div className="m-0 md:mb-4">
             <h1 className="text-2xl md:text-3xl font-semibold text-foreground">{categoryLabel}</h1>
             <p className="mt-2 text-sm md:text-base text-muted-foreground">

@@ -181,7 +181,8 @@ export interface SearchFilters {
   location: string
   rating: number
   services: string[]
-  
+  accreditation: string
+
 }
 export interface Product {
   // Identification
@@ -306,4 +307,12 @@ export interface Accreditation {
     question: string;
     answer: string;
   }>;
+}
+
+export interface PortalClinicSummary {
+  claimId: number;
+  clinicId: number;
+  slug: string;
+  name: string;
+  image: string | null;
 }

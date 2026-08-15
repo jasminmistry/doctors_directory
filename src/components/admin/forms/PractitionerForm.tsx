@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, Award, ExternalLink, Plus, Save, User, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Badge } from '@/components/ui/badge'
+import { ClinicCombobox } from './clinic-combobox'
 import { FormSection, Field } from './FormSection'
 import { cn } from '@/lib/utils'
+import { IconArrowNarrowLeft, IconAward, IconDeviceFloppy, IconExternalLink, IconPlus, IconUser, IconX } from '@tabler/icons-react'
 
 type PractitionerData = {
   slug: string
@@ -22,11 +23,13 @@ type PractitionerData = {
   roles: string[]
   media: string[]
   experience: string[]
+  citySlug: string | null
+  clinicId: number | null
 }
 
 const EMPTY: PractitionerData = {
   slug: '', displayName: null, title: null, specialty: null, imageUrl: null,
-  qualifications: [], awards: [], roles: [], media: [], experience: [],
+  qualifications: [], awards: [], roles: [], media: [], experience: [], citySlug: null, clinicId: null,
 }
 
 function toStringArray(value: unknown): string[] {
@@ -79,7 +82,7 @@ function StringArrayField({
                 className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 focus:outline-none"
                 aria-label={`Remove ${item}`}
               >
-                <X className="h-3 w-3" />
+                <IconX stroke={1.5} className="h-3 w-3" />
               </button>
             </Badge>
           ))}
@@ -102,7 +105,7 @@ function StringArrayField({
           onClick={add}
           disabled={!draft.trim()}
         >
-          <Plus className="h-3.5 w-3.5" />
+          <IconPlus stroke={1.5} className="h-3.5 w-3.5" />
         </Button>
       </div>
     </div>
@@ -128,6 +131,10 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [isNew, setIsNew] = useState(false)
+  // Display label for the currently selected clinic, seeded from the practitioner
+  // record's own clinicName/cityName — avoids fetching every clinic just to resolve
+  // one id back to a name (see ClinicCombobox).
+  const [clinicLabel, setClinicLabel] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const router = useRouter()
   const params = useParams()
@@ -150,7 +157,10 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
             roles: toStringArray(d.roles),
             media: toStringArray(d.media),
             experience: toStringArray(d.experience),
+            citySlug: d.citySlug ?? null,
+            clinicId: d.clinicId ?? null,
           })
+          setClinicLabel(d.cityName ? `${d.cityName} — ${d.clinicName ?? ''}`.trim() : (d.clinicName ?? null))
           setLoading(false)
         })
         .catch(() => setLoading(false))
@@ -161,7 +171,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
       setLoading(false)
       return
     }
-    fetch(`/directory/api/admin/practitioners/${slug}`)
+    fetch(`/directory/api/admin/practitioners/${slug}/`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json() })
       .then((d) => {
         setData({
@@ -175,7 +185,10 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
           roles: toStringArray(d.roles),
           media: toStringArray(d.media),
           experience: toStringArray(d.experience),
+          citySlug: d.citySlug ?? null,
+          clinicId: d.clinicId ?? null,
         })
+        setClinicLabel(d.cityName ? `${d.cityName} — ${d.clinicName ?? ''}`.trim() : (d.clinicName ?? null))
         setLoading(false)
       })
       .catch(() => router.push('/admin/practitioners'))
@@ -192,6 +205,9 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
   }
 
   async function handleSave() {
+    if (!data.displayName?.trim()) { toast.error('Name is required'); return }
+    if (isNew && !data.slug.trim()) { toast.error('Slug is required'); return }
+    if (!isPortal && !data.clinicId) { toast.error('City is required'); return }
     const nextErrors: Record<string, string> = {}
     if (!data.displayName?.trim()) nextErrors.displayName = 'Display name is required'
     if (isNew && !data.slug.trim()) nextErrors.slug = 'Slug is required'
@@ -209,7 +225,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
     setSaving(true)
     const { slug: _s, ...rest } = data
     const body = isNew ? { slug: data.slug.trim(), ...rest } : rest
-    const url = saveUrl ?? (isNew ? '/directory/api/admin/practitioners' : `/directory/api/admin/practitioners/${slug}`)
+    const url = saveUrl ?? (isNew ? '/directory/api/admin/practitioners/' : `/directory/api/admin/practitioners/${slug}/`)
     try {
       const res = await fetch(url, {
         method: isNew ? 'POST' : 'PUT',
@@ -249,36 +265,41 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
         <div className="flex items-center gap-3 min-w-0">
           {!isPortal && (
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => router.push('/admin/practitioners')}>
-              <ArrowLeft className="h-4 w-4" />
+              <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
             </Button>
           )}
           <div className="min-w-0">
-            {!isPortal && <p className="text-xs text-gray-400 font-medium">Practitioners</p>}
-            <h2 className="text-base font-semibold text-gray-900 truncate">{title}</h2>
+            {!isPortal && <p className="text-xs text-gray-600 font-medium">Practitioners</p>}
+            <h2 className="text-3xl text-gray-900 truncate">{title}</h2>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          {!isNew && data.slug && (
+          {!isNew && data.slug && (previewHref || data.citySlug ? (
             <a
-              href={previewHref ?? `/directory/search?type=Practitioner&q=${encodeURIComponent(data.displayName || data.slug)}`}
+              href={previewHref ?? `/directory/practitioners/${data.citySlug}/profile/${data.slug}`}
               target="_blank"
               rel="noopener noreferrer"
             >
               <Button variant="outline" size="sm">
-                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
                 Preview
               </Button>
             </a>
-          )}
+          ) : (
+            <Button variant="outline" size="sm" disabled title="Set a city before previewing">
+              <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
+              Preview
+            </Button>
+          ))}
           <Button size="sm" onClick={handleSave} disabled={saving}>
-            <Save className="h-3.5 w-3.5 mr-1.5" />
+            <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
             {saving ? 'Saving…' : 'Save'}
           </Button>
         </div>
       </div>
 
       {/* Profile */}
-      <FormSection title="Profile" icon={User}>
+      <FormSection title="Profile" icon={IconUser}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Display Name" required error={fieldErrors.displayName}>
             <Input
@@ -306,24 +327,40 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
             </Field>
           ) : (
             <div className="flex flex-col justify-end">
-              <span className="text-xs text-gray-400 mb-1.5 font-medium">Slug</span>
-              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-md border border-gray-200 font-mono">{data.slug}</code>
+              <span className="text-xs text-gray-600 mb-1.5 font-medium">Slug</span>
+              <code className="text-sm bg-gray-50 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{data.slug}</code>
             </div>
           ))}
+          {!isPortal && (
+            <Field
+              label="City"
+              required
+              hint="Determines the practitioner's public profile URL"
+              error={fieldErrors.clinicId}
+            >
+              <ClinicCombobox
+                onChange={(clinicId) => set('clinicId', clinicId)}
+                initialLabel={clinicLabel}
+                invalid={Boolean(fieldErrors.clinicId)}
+              />
+            </Field>
+          )}
           <Field label="Title">
             <Input value={data.title ?? ''} onChange={(e) => set('title', e.target.value || null)} placeholder="e.g. Consultant Dermatologist" />
           </Field>
           <Field label="Specialty">
             <Input value={data.specialty ?? ''} onChange={(e) => set('specialty', e.target.value || null)} placeholder="e.g. Aesthetic Medicine" />
           </Field>
-          <Field label="Image" fullWidth>
-            <ImageUpload value={data.imageUrl ?? null} onChange={(url) => set('imageUrl', url)} shape="circle" />
-          </Field>
+          {!isPortal && (
+            <Field label="Image" fullWidth>
+              <ImageUpload value={data.imageUrl ?? null} onChange={(url) => set('imageUrl', url)} shape="circle" />
+            </Field>
+          )}
         </div>
       </FormSection>
 
       {/* Credentials */}
-      <FormSection title="Credentials" icon={Award}>
+      <FormSection title="Credentials" icon={IconAward}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field label="Qualifications" hint='e.g. MBBS, FRCS'>
             <StringArrayField
@@ -371,7 +408,7 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
 
       <div className="flex justify-end pt-2">
         <Button size="sm" onClick={handleSave} disabled={saving}>
-          <Save className="h-3.5 w-3.5 mr-1.5" />
+          <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
           {saving ? 'Saving…' : 'Save Practitioner'}
         </Button>
       </div>
@@ -390,7 +427,7 @@ function LoadingSkeleton() {
         </div>
       </div>
       {[1, 2].map((i) => (
-        <div key={i} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div key={i} className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
           <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
           <div className="grid grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((j) => (

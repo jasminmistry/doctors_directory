@@ -58,22 +58,28 @@ export function useSearchLogic() {
 
   const handleSearch = async () => {
     setIsLoading(true);
+    const trimmedFilters = {
+      ...localFilters,
+      query: localFilters.query?.trim() ?? localFilters.query,
+      location: localFilters.location?.trim() ?? localFilters.location,
+    };
     void trackSearchUsage({
-      query: localFilters.query,
-      type: localFilters.type,
-      category: localFilters.category,
-      location: localFilters.location,
+      query: trimmedFilters.query,
+      type: trimmedFilters.type,
+      category: trimmedFilters.category,
+      location: trimmedFilters.location,
     });
-    setFilters(localFilters);
+    setFilters(trimmedFilters);
+    setLocalFilters(trimmedFilters);
     setShowResults(false);
     setIsExpanded(false);
     startTransition(() => {
       if (pathname.includes("/treatments")) {
         router.push("/treatments?" + new URLSearchParams({
-          query: localFilters.query || "",
-          type: localFilters.type || "",
-          category: localFilters.category || "",
-          location: localFilters.location || "",
+          query: trimmedFilters.query || "",
+          type: trimmedFilters.type || "",
+          category: trimmedFilters.category || "",
+          location: trimmedFilters.location || "",
         }).toString());
       } else {
         router.push("/search");

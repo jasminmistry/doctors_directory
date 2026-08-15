@@ -185,8 +185,8 @@ export default function HtmlSitemapPage() {
   return (
     <main className="bg-white min-h-screen">
       <div className="mx-auto max-w-5xl px-4 py-8 md:py-14">
-        <h1 className="text-2xl md:text-3xl font-bold mb-2">HTML Sitemap</h1>
-        <p className="text-sm text-muted-foreground mb-6">
+        <h1 className="text-2xl md:text-3xl font-medium mb-2">HTML Sitemap</h1>
+        <p className="text-sm text-muted-foreground mb-10">
           A complete index of all sections and pages on the Healthcare Directory.
         </p>
 
@@ -242,7 +242,7 @@ export default function HtmlSitemapPage() {
             {directoryXmlSitemaps.map(({ file, label }) => (
               <li key={file} className="flex items-baseline gap-2">
                 <Link href={`/${file}`} className="text-sm text-black hover:underline">{label}</Link>
-                <span className="text-xs text-gray-400 font-mono">{file}</span>
+                <span className="text-xs text-gray-600 font-mono">{file}</span>
               </li>
             ))}
           </ul>
@@ -253,7 +253,7 @@ export default function HtmlSitemapPage() {
             {B2B_XML_SITEMAPS.map(({ file, label }) => (
               <li key={file} className="flex items-baseline gap-2">
                 <Link href={`/${file}`} className="text-sm text-black hover:underline">{label}</Link>
-                <span className="text-xs text-gray-400 font-mono">{file}</span>
+                <span className="text-xs text-gray-600 font-mono">{file}</span>
               </li>
             ))}
           </ul>
@@ -312,7 +312,7 @@ export default function HtmlSitemapPage() {
             <AlphabetNav letters={b2bCityLetters} prefix="bh-" />
             {b2bCityLetters.map((letter) => (
               <div key={letter} id={`bh-${letter}`} className="mb-6 scroll-mt-4">
-                <h4 className="text-sm font-semibold text-gray-500 mb-3 border-b border-gray-100 pb-0.5">
+                <h4 className="text-sm font-semibold text-gray-600 mb-3 border-b border-gray-100 pb-0.5">
                   {letter}
                 </h4>
                 <div className="space-y-4">
@@ -344,7 +344,7 @@ export default function HtmlSitemapPage() {
             <AlphabetNav letters={b2bTreatmentLetters} prefix="bt-" />
             {b2bTreatmentLetters.map((letter) => (
               <div key={letter} id={`bt-${letter}`} className="mb-5 scroll-mt-4">
-                <h4 className="text-sm font-semibold text-gray-500 mb-2 border-b border-gray-100 pb-0.5">
+                <h4 className="text-sm font-semibold text-gray-600 mb-2 border-b border-gray-100 pb-0.5">
                   {letter}
                 </h4>
                 <div className="flex flex-wrap gap-x-5 gap-y-1.5">
@@ -503,7 +503,7 @@ export default function HtmlSitemapPage() {
             <AlphabetNav letters={clinicLetters} prefix="cc-" />
             {clinicLetters.map(letter => (
               <div key={letter} id={`cc-${letter}`} className="mb-5 scroll-mt-4">
-                <h4 className="text-sm font-semibold text-gray-500 mb-2 border-b border-gray-100 pb-0.5">{letter}</h4>
+                <h4 className="text-sm font-semibold text-gray-600 mb-2 border-b border-gray-100 pb-0.5">{letter}</h4>
                 <div className="flex flex-wrap gap-x-5 gap-y-1.5">
                   {(clinicCitiesByLetter.get(letter) ?? []).map(city => (
                     <Link
@@ -524,7 +524,7 @@ export default function HtmlSitemapPage() {
             <AlphabetNav letters={practLetters} prefix="pc-" />
             {practLetters.map(letter => (
               <div key={letter} id={`pc-${letter}`} className="mb-5 scroll-mt-4">
-                <h4 className="text-sm font-semibold text-gray-500 mb-2 border-b border-gray-100 pb-0.5">{letter}</h4>
+                <h4 className="text-sm font-semibold text-gray-600 mb-2 border-b border-gray-100 pb-0.5">{letter}</h4>
                 <div className="flex flex-wrap gap-x-5 gap-y-1.5">
                   {(practCitiesByLetter.get(letter) ?? []).map(city => (
                     <Link
@@ -618,7 +618,7 @@ export default function HtmlSitemapPage() {
               <AlphabetNav letters={brandLetters} prefix="br-" />
               {brandLetters.map(letter => (
                 <div key={letter} id={`br-${letter}`} className="mb-4 scroll-mt-4">
-                  <h4 className="text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">{letter}</h4>
+                  <h4 className="text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">{letter}</h4>
                   <div className="flex flex-wrap gap-x-4 gap-y-1">
                     {(brandsByLetter.get(letter) ?? []).map(brand => (
                       <Link key={brand} href={`/products/brands/${toUrlSlug(brand)}`} className="text-xs text-black hover:underline">
@@ -647,8 +647,8 @@ function SitemapSection({
   id?: string
 }) {
   return (
-    <section id={id} className="mb-14 scroll-mt-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-5 pb-2 border-b-2 border-gray-300">{title}</h2>
+    <section className="mb-14">
+      <h2 className="text-xl font-medium text-gray-900 mb-5 pb-2 border-b-2 border-[#e0e0e0] ">{title}</h2>
       {children}
     </section>
   )

@@ -1,9 +1,9 @@
 "use client";
 
-import { ChevronDown, Locate, X } from "lucide-react";
+import { IconChevronDown, IconCurrentLocation, IconX } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Search } from "lucide-react";
+import { IconLoader2, IconSearch } from "@tabler/icons-react";
 import { SearchDropdown } from "./search-dropdown";
 import { SearchButton } from "./search-button";
 
@@ -54,19 +54,19 @@ export function MobileSearchView({
     <div className="w-full block md:hidden">
       {!isExpanded ? (
         <button
-          className="w-full flex items-center bg-white border border-gray-300 rounded-lg px-4 py-3 cursor-pointer hover:shadow-md transition-shadow"
+          className="w-full flex items-center bg-white border border-[#e0e0e0]  rounded-lg px-4 py-3 cursor-pointer hover:shadow-md transition-shadow"
           onClick={() => setIsExpanded(true)}
         >
-          <Search className="w-5 h-5 text-gray-400 mr-3" />
-          <span className="text-gray-500 flex-1">{getDynamicPlaceholderText()}</span>
-          <ChevronDown className="w-5 h-5 text-gray-400" />
+          <IconSearch stroke={1.5} className="w-5 h-5 text-gray-600 mr-3" />
+          <span className="text-gray-600 flex-1">{getDynamicPlaceholderText()}</span>
+          <IconChevronDown stroke={1.5} className="w-5 h-5 text-gray-600" />
         </button>
       ) : (
-        <div className="rounded-lg p-4 shadow-lg z-50">
+        <div className="rounded-lg p-4 z-50">
           <div className="space-y-4">
             <div className="relative">
               <button
-                className="w-full bg-white border border-gray-300 px-4 py-3 rounded-lg text-left"
+                className="w-full bg-white border border-[#e0e0e0]  px-4 py-3 rounded-lg text-left"
                 onClick={() => setActiveDropdown(activeDropdown === 'type' ? null : 'type')}
                 onBlur={() => setTimeout(() => setActiveDropdown(null), 350)}
               >
@@ -100,7 +100,8 @@ export function MobileSearchView({
                 onChange={(e) =>
                   setLocalFilters((prev) => ({ ...prev, query: e.target.value }))
                 }
-                className="w-full bg-white border border-gray-300 px-4 py-3 pr-10 rounded-lg h-12"
+                maxLength={255}
+                className="w-full bg-white border border-[#e0e0e0]  px-4 py-3 pr-10 rounded-lg h-12"
                 onFocus={() => setActiveDropdown('category')}
                 onClick={() => setActiveDropdown('category')}
                 onBlur={() => setTimeout(() => setActiveDropdown(null), 350)}
@@ -109,11 +110,11 @@ export function MobileSearchView({
                 <button
                   type="button"
                   aria-label="Clear search query"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-0.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 transition-colors hover:text-gray-700"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={clearQuery}
                 >
-                  <X className="h-4 w-4" />
+                  <IconX stroke={1.5} className="h-4 w-4" />
                 </button>
               )}
               {activeDropdown === 'category' && (
@@ -133,28 +134,28 @@ export function MobileSearchView({
 
             <div className="relative">
               <div className="relative">
-                <Locate className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <IconCurrentLocation stroke={1.5} className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" />
                 <Input
                   placeholder="Location"
                   value={localFilters.location}
                   onChange={(e) =>
                     setLocalFilters((prev) => ({ ...prev, location: e.target.value }))
                   }
-                  className="w-full bg-white border border-gray-300 px-4 py-3 rounded-lg pl-10 pr-10 h-12"
+                  className="w-full bg-white border border-[#e0e0e0]  px-4 py-3 rounded-lg pl-10 pr-10 h-12"
                   onFocus={() => setActiveDropdown('location')}
                   onClick={() => setActiveDropdown('location')}
                   onBlur={() => setTimeout(() => setActiveDropdown(null), 350)}
                 />
                 {localFilters.location && (
-                  <button
+                  <Button
                     type="button"
                     aria-label="Clear location"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-0.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={clearLocation}
                   >
-                    <X className="h-4 w-4" />
-                  </button>
+                    <IconX stroke={1.5} className="h-4 w-4" />
+                  </Button>
                 )}
               </div>
               {activeDropdown === 'location' && (
@@ -172,24 +173,28 @@ export function MobileSearchView({
               )}
             </div>
             <Button
+              variant="default"
+              size="lg"
+              className="w-full"
               onClick={()=>{handleSearch(); handlePageChange?.(1)}}
-              className="w-full h-12 bg-black hover:bg-black text-white rounded-lg flex items-center justify-center"
               disabled={isLoading}
             >
               {isLoading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <IconLoader2 stroke={1.5} className="h-5 w-5 animate-spin" />
               ) : (
-                <Search className="h-5 w-5" />
+                <IconSearch stroke={1.5} className="h-5 w-5" />
               )}
             </Button>
 
            
-            <button
+            <Button
+              variant="ghost"
+              size="lg"
               onClick={() => setIsExpanded(false)}
-              className="text-sm text-gray-500 hover:text-gray-700 mx-auto block"
+              className="mx-auto block"
             >
               Collapse
-            </button>
+            </Button>
           </div>
         </div>
       )}

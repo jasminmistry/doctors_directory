@@ -4,6 +4,11 @@
  * Auth: none — all endpoints are public.
  */
 
+// Shared between patient + clinic chat send routes (Zod schemas) and the
+// message inputs on both sides, so the client-enforced limit never drifts
+// from what the server actually accepts.
+export const CHAT_MESSAGE_MAX_LENGTH = 2000
+
 export interface NormalizedMessage {
   id: number
   sender: 'patient' | 'clinic'
@@ -22,6 +27,10 @@ function getChatBase(): string {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
   if (!authUrl) throw new Error('CONSENTZ_AUTH_API_URL is not configured')
   return `${new URL(authUrl).origin}/api/core-lite`
+}
+
+function getAppId(): string {
+  return process.env.CONSENTZ_APPLICATION_ID ?? 'admin'
 }
 
 function normalize(m: ConsentzMessage): NormalizedMessage {
@@ -50,7 +59,8 @@ export async function startCoreConversation(payload: {
       `${getChatBase()}/clinics/${payload.coreClinicId}/inbox/start`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': getAppId() },
         body: JSON.stringify({
           first_name: payload.firstName,
           last_name: payload.lastName,
@@ -80,14 +90,16 @@ export async function sendCoreMessage(payload: {
   coreClinicId: number
   conversationId: number
   message: string
+  sender: 'visitor' | 'clinic'
 }): Promise<number | null> {
   try {
     const res = await fetch(
       `${getChatBase()}/clinics/${payload.coreClinicId}/inbox/${payload.conversationId}/messages`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: payload.message }),
+        cache: 'no-store',
+        headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': getAppId() },
+        body: JSON.stringify({ message: payload.message, sender: payload.sender }),
       },
     )
     if (!res.ok) {
@@ -118,7 +130,10 @@ export async function pollCoreMessages(payload: {
     )
     if (payload.after) url.searchParams.set('after', String(payload.after))
 
-    const res = await fetch(url.toString(), { headers: { 'Content-Type': 'application/json' } })
+    const res = await fetch(url.toString(), {
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', 'X-APPLICATION-ID': getAppId() },
+    })
     if (!res.ok) {
       console.error('[consentz-chat] poll messages failed', res.status)
       return []

@@ -6,15 +6,13 @@ import { Button } from '@/components/ui/button'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
-import {
-  Search, Plus, Pencil, Trash2, CheckCircle,
-  ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight,
-} from 'lucide-react'
+import { IconChevronDown, IconChevronLeft, IconChevronRight, IconChevronUp, IconCircleCheck, IconPencil, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react'
 
 export interface Column<T> {
   key: keyof T | string
   label: string
   sortable?: boolean
+  searchable?: boolean
   render?: (value: any, item: T) => React.ReactNode
 }
 
@@ -27,15 +25,16 @@ interface DataTableProps<T extends Record<string, any>> {
   onApprove?: (item: T) => void
   loading?: boolean
   addLabel?: string
+  filters?: React.ReactNode
 }
 
 const PAGE_SIZES = [10, 25, 50, 100]
 
 function SortIcon({ active, dir }: { active: boolean; dir: 'asc' | 'desc' }) {
-  if (!active) return <ChevronsUpDown className="h-3 w-3 opacity-30" />
+  if (!active) return <IconChevronDown stroke={1.5} className="h-3 w-3 opacity-30" />
   return active && dir === 'asc'
-    ? <ChevronUp className="h-3 w-3 text-gray-700" />
-    : <ChevronDown className="h-3 w-3 text-gray-700" />
+    ? <IconChevronUp stroke={1.5} className="h-3 w-3" />
+    : <IconChevronDown stroke={1.5} className="h-3 w-3" />
 }
 
 function getPages(current: number, total: number): (number | '…')[] {
@@ -46,7 +45,7 @@ function getPages(current: number, total: number): (number | '…')[] {
 }
 
 export function DataTable<T extends Record<string, any>>({
-  data, columns, onEdit, onDelete, onAdd, onApprove, loading, addLabel = 'Add New',
+  data, columns, onEdit, onDelete, onAdd, onApprove, loading, addLabel = 'Add New', filters,
 }: Readonly<DataTableProps<T>>) {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -60,13 +59,22 @@ export function DataTable<T extends Record<string, any>>({
     setPage(1)
   }
 
+  const nonSearchableKeys = useMemo(
+    () => new Set(columns.filter(c => c.searchable === false).map(c => String(c.key))),
+    [columns]
+  )
+
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase()
+    const q = search.trim().toLowerCase().replace(/\s+/g, '')
     if (!q) return data
     return data.filter(item =>
-      Object.values(item).some(v => String(v ?? '').toLowerCase().includes(q))
+      Object.entries(item).some(
+        ([key, v]) =>
+          !nonSearchableKeys.has(key) &&
+          String(v ?? '').toLowerCase().replace(/\s+/g, '').includes(q)
+      )
     )
-  }, [data, search])
+  }, [data, search, nonSearchableKeys])
 
   const sorted = useMemo(() => {
     if (!sortKey) return filtered
@@ -88,17 +96,20 @@ export function DataTable<T extends Record<string, any>>({
     <div className="space-y-3">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="relative w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-          <Input
-            placeholder="Search…"
-            value={search}
-            onChange={e => { setSearch(e.target.value); setPage(1) }}
-            className="pl-9 h-9 text-sm"
-          />
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative w-64">
+            <IconSearch stroke={1.5} className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5" />
+            <Input
+              placeholder="Search…"
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1) }}
+              className="pl-9 h-9 text-sm"
+            />
+          </div>
+          {filters}
         </div>
         <div className="flex items-center gap-2 ml-auto">
-          <div className="flex items-center gap-1.5 text-sm text-gray-500">
+          <div className="flex items-center gap-1.5 text-sm text-gray-600">
             <span>Rows</span>
             <Select value={String(pageSize)} onValueChange={v => { setPageSize(Number(v)); setPage(1) }}>
               <SelectTrigger className="h-9 w-20 min-w-20 text-sm">
@@ -112,8 +123,8 @@ export function DataTable<T extends Record<string, any>>({
             </Select>
           </div>
           {onAdd && (
-            <Button onClick={onAdd} size="sm" className="h-9">
-              <Plus className="h-3.5 w-3.5 mr-1.5" />
+            <Button onClick={onAdd} size="md">
+              <IconPlus stroke={1.5} />
               {addLabel}
             </Button>
           )}
@@ -121,7 +132,7 @@ export function DataTable<T extends Record<string, any>>({
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -156,7 +167,7 @@ export function DataTable<T extends Record<string, any>>({
                 ))
               ) : pageData.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length + 1} className="py-16 text-center text-gray-400 text-sm">
+                  <td colSpan={columns.length + 1} className="py-16 text-center text-gray-600 text-sm">
                     {search ? 'No results match your search.' : 'No records yet.'}
                   </td>
                 </tr>
@@ -167,7 +178,7 @@ export function DataTable<T extends Record<string, any>>({
                     className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60 transition-colors"
                   >
                     {columns.map(col => (
-                      <td key={String(col.key)} className="px-4 py-3 text-gray-700">
+                      <td key={String(col.key)} className="px-4 py-3 text-gray-700 whitespace-nowrap">
                         {col.render
                           ? col.render(item[col.key as string], item)
                           : <span className="block max-w-xs truncate">{String(item[col.key as string] ?? '—')}</span>
@@ -182,13 +193,13 @@ export function DataTable<T extends Record<string, any>>({
                             className="h-8 text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                             onClick={() => onApprove(item)}
                           >
-                            <CheckCircle className="h-3.5 w-3.5 mr-1" />
+                            <IconCircleCheck stroke={1.5} className="h-3.5 w-3.5 mr-1" />
                             Approve
                           </Button>
                         )}
                         {onEdit && (
                           <Button variant="ghost" size="sm" className="h-8" onClick={() => onEdit(item)}>
-                            <Pencil className="h-3.5 w-3.5 mr-1" />
+                            <IconPencil stroke={1.5} className="h-3.5 w-3.5 mr-1" />
                             Edit
                           </Button>
                         )}
@@ -198,7 +209,7 @@ export function DataTable<T extends Record<string, any>>({
                             className="h-8 w-8 p-0 text-red-400 hover:text-red-600 hover:bg-red-50"
                             onClick={() => onDelete(item)}
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <IconTrash stroke={1.5} className="h-3.5 w-3.5" />
                           </Button>
                         )}
                       </div>
@@ -211,7 +222,7 @@ export function DataTable<T extends Record<string, any>>({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50/50 text-xs text-gray-500">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50/50 text-xs text-gray-600">
           <span>
             {sorted.length === 0 ? 'No records' : `Showing ${from}–${to} of ${sorted.length.toLocaleString()}`}
           </span>
@@ -223,7 +234,7 @@ export function DataTable<T extends Record<string, any>>({
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={curPage === 1}
               >
-                <ChevronLeft className="h-3.5 w-3.5" />
+                <IconChevronLeft stroke={1.5} className="h-3.5 w-3.5" />
               </Button>
               {getPages(curPage, totalPages).map((p, i) =>
                 p === '…' ? (
@@ -246,7 +257,7 @@ export function DataTable<T extends Record<string, any>>({
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={curPage === totalPages}
               >
-                <ChevronRight className="h-3.5 w-3.5" />
+                <IconChevronRight stroke={1.5} className="h-3.5 w-3.5" />
               </Button>
             </div>
           )}

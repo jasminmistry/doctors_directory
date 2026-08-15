@@ -1,171 +1,177 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { DirectoryStarRating } from "@/components/directory-star-rating"
+import Link from "next/link";
+import { DirectoryStarRating } from "@/components/directory-star-rating";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { FallbackImage } from "@/components/ui/fallback-image"
-import { VerifiedBadge } from "@/components/ui/verified-badge"
-import type { RankedEntry } from "@/lib/best-ranked"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { FallbackImage } from "@/components/ui/fallback-image";
+import { VerifiedBadge } from "@/components/ui/verified-badge";
+import type { RankedEntry } from "@/lib/best-ranked";
 
 interface BestRankedBlockProps {
-  title: string
-  entries: RankedEntry[]
+  title: string;
+  entries: RankedEntry[];
 }
 
 type CardLabel =
-  | "🥇 Best Overall"
-  | "💰 Best Value"
-  | "🏆 Premium Choice"
-  | "⭐ Most Reviewed"
+  | "Best Overall"
+  | "Best Value"
+  | "Premium Choice"
+  | "Most Reviewed";
 
 const labelPriority: CardLabel[] = [
-  "🥇 Best Overall",
-  "💰 Best Value",
-  "🏆 Premium Choice",
-  "⭐ Most Reviewed",
-]
+  "Best Overall",
+  "Best Value",
+  "Premium Choice",
+  "Most Reviewed",
+];
 
 const badgeClassByLabel: Record<CardLabel, string> = {
-  "🥇 Best Overall": "bg-amber-100 text-amber-900 border-amber-200",
-  "💰 Best Value": "bg-emerald-100 text-emerald-800 border-emerald-200",
-  "🏆 Premium Choice": "bg-indigo-100 text-indigo-800 border-indigo-200",
-  "⭐ Most Reviewed": "bg-sky-100 text-sky-800 border-sky-200",
-}
+  "Best Overall": "bg-amber-100 text-amber-900 border-amber-200",
+  "Best Value": "bg-emerald-100 text-emerald-800 border-emerald-200",
+  "Premium Choice": "bg-indigo-100 text-indigo-800 border-indigo-200",
+  "Most Reviewed": "bg-sky-100 text-sky-800 border-sky-200",
+};
 
 const pickIndex = (
   entries: RankedEntry[],
   selector: (entry: RankedEntry) => number,
   used: Set<number>,
-  mode: "max" | "min"
+  mode: "max" | "min",
 ): number | null => {
-  let chosen: number | null = null
+  let chosen: number | null = null;
 
   for (let index = 0; index < entries.length; index += 1) {
     if (used.has(index)) {
-      continue
+      continue;
     }
 
     if (chosen === null) {
-      chosen = index
-      continue
+      chosen = index;
+      continue;
     }
 
-    const current = selector(entries[index])
-    const best = selector(entries[chosen])
+    const current = selector(entries[index]);
+    const best = selector(entries[chosen]);
 
     if (mode === "max" ? current > best : current < best) {
-      chosen = index
+      chosen = index;
     }
   }
 
-  return chosen
-}
+  return chosen;
+};
 
 const pickPriceIndex = (
   entries: RankedEntry[],
   used: Set<number>,
   mode: "max" | "min",
-  allPrices: number[]
+  allPrices: number[],
 ): number | null => {
   // Only assign a price label if there is meaningful price spread (>10% difference)
-  if (allPrices.length < 2) return null
-  const minP = Math.min(...allPrices)
-  const maxP = Math.max(...allPrices)
-  if (maxP - minP < minP * 0.1) return null
+  if (allPrices.length < 2) return null;
+  const minP = Math.min(...allPrices);
+  const maxP = Math.max(...allPrices);
+  if (maxP - minP < minP * 0.1) return null;
 
-  let chosen: number | null = null
+  let chosen: number | null = null;
 
   for (let index = 0; index < entries.length; index += 1) {
     if (used.has(index)) {
-      continue
+      continue;
     }
 
-    const price = entries[index].averagePrice
+    const price = entries[index].averagePrice;
     if (price === null) {
-      continue
+      continue;
     }
 
     if (chosen === null) {
-      chosen = index
-      continue
+      chosen = index;
+      continue;
     }
 
-    const bestPrice = entries[chosen].averagePrice
+    const bestPrice = entries[chosen].averagePrice;
     if (bestPrice === null) {
-      chosen = index
-      continue
+      chosen = index;
+      continue;
     }
 
     if (mode === "max" ? price > bestPrice : price < bestPrice) {
-      chosen = index
+      chosen = index;
     }
   }
 
-  return chosen
-}
+  return chosen;
+};
 
 const buildCardLabels = (entries: RankedEntry[]): CardLabel[] => {
-  const labelsByIndex = new Map<number, CardLabel>()
-  const used = new Set<number>()
+  const labelsByIndex = new Map<number, CardLabel>();
+  const used = new Set<number>();
 
   const assign = (index: number | null, label: CardLabel) => {
     if (index === null || used.has(index)) {
-      return
+      return;
     }
 
-    labelsByIndex.set(index, label)
-    used.add(index)
-  }
+    labelsByIndex.set(index, label);
+    used.add(index);
+  };
 
   const allPrices = entries
     .map((e) => e.averagePrice)
-    .filter((p): p is number => p !== null)
+    .filter((p): p is number => p !== null);
 
-  assign(pickIndex(entries, (entry) => entry.scoreValue, used, "max"), "🥇 Best Overall")
-  assign(pickPriceIndex(entries, used, "min", allPrices), "💰 Best Value")
-  assign(pickPriceIndex(entries, used, "max", allPrices), "🏆 Premium Choice")
+  assign(
+    pickIndex(entries, (entry) => entry.scoreValue, used, "max"),
+    "Best Overall",
+  );
+  assign(pickPriceIndex(entries, used, "min", allPrices), "Best Value");
+  assign(pickPriceIndex(entries, used, "max", allPrices), "Premium Choice");
   assign(
     pickIndex(entries, (entry) => entry.reviewCount, used, "max"),
-    "⭐ Most Reviewed"
-  )
+    "Most Reviewed",
+  );
 
-  const remainingLabels = [...labelPriority]
+  const remainingLabels = [...labelPriority];
   for (const label of labelsByIndex.values()) {
-    const idx = remainingLabels.indexOf(label)
+    const idx = remainingLabels.indexOf(label);
     if (idx >= 0) {
-      remainingLabels.splice(idx, 1)
+      remainingLabels.splice(idx, 1);
     }
   }
 
   for (let index = 0; index < entries.length; index += 1) {
     if (labelsByIndex.has(index)) {
-      continue
+      continue;
     }
 
-    const nextLabel = remainingLabels.shift() ?? "🥇 Best Overall"
-    labelsByIndex.set(index, nextLabel)
+    const nextLabel = remainingLabels.shift() ?? "Best Overall";
+    labelsByIndex.set(index, nextLabel);
   }
 
-  return entries.map((_, index) => labelsByIndex.get(index) ?? "🥇 Best Overall")
-}
+  return entries.map((_, index) => labelsByIndex.get(index) ?? "Best Overall");
+};
 
-export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProps>) {
+export function BestRankedBlock({
+  title,
+  entries,
+}: Readonly<BestRankedBlockProps>) {
   if (entries.length === 0) {
-    return null
+    return null;
   }
 
-  const cardLabels = buildCardLabels(entries)
+  const cardLabels = buildCardLabels(entries);
 
   return (
     <section aria-label={title}>
       <h2 className="mb-3 text-lg font-semibold text-foreground">{title}</h2>
-      <div className="grid grid-cols-2 items-stretch gap-3 md:grid-cols-4">
+      <div className="grid grid-cols-1 items-stretch gap-3 md:grid-cols-4">
         {entries.map((entry, index) => (
           <article
             key={`${entry.href}-${index}`}
-            className="relative flex h-full flex-col overflow-hidden rounded-md border border-[#C4C4C4] bg-white"
+            className="relative flex flex-col bg-white border border-[#C4C4C4] rounded-lg"
           >
             {/* Image + rank badge + name + score + price */}
             <div className="flex flex-col items-center px-3 pt-4 pb-2 text-center">
@@ -179,7 +185,10 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
                 />
                 {(entry.idVerified || entry.verified) && (
                   <span className="absolute bottom-0 right-0">
-                    <VerifiedBadge idVerified={entry.idVerified} verified={entry.verified} />
+                    <VerifiedBadge
+                      idVerified={entry.idVerified}
+                      verified={entry.verified}
+                    />
                   </span>
                 )}
               </div>
@@ -197,24 +206,55 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
                 {entry.reviewCount > 0 ? (
                   <DirectoryStarRating
                     reviewCount={entry.reviewCount}
-                    starClassName="h-3.5 w-3.5 fill-amber-500 text-amber-500"
+                    starClassName="h-3.5 w-3.5 fill-black text-black"
                     className="mt-2 flex-col items-center gap-1 text-xs"
                   />
                 ) : null}
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">Treatments starting from</p>
-              <p className="min-h-[1.25rem] text-sm font-bold text-foreground">{entry.displayPrice}</p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Treatments starting from
+              </p>
+              <p className="min-h-[1.25rem] text-sm font-bold text-foreground">
+                {entry.displayPrice}
+              </p>
             </div>
 
             {/* Value badge + View Profile button */}
             <div className="px-3 pb-3 mt-auto flex flex-col gap-2">
               <div className="flex justify-center">
-                <Badge variant="outline" className={`text-xs ${badgeClassByLabel[cardLabels[index]]}`}>
+                <Badge
+                  variant="outline"
+                  className={`text-xs ${badgeClassByLabel[cardLabels[index]]}`}
+                >
                   {cardLabels[index]}
                 </Badge>
               </div>
               <Link href={entry.href} prefetch={false}>
-                <Button className="w-full flex border rounded-lg px-4 py-2 bg-black text-white hover:bg-white hover:text-black cursor-pointer justify-center text-sm">
+                <Button
+                  variant="default"
+                  size="lg"
+                  className="
+                    whitespace-nowrap
+                    disabled:pointer-events-none
+                    disabled:opacity-50
+                    [&_svg]:pointer-events-none
+                    [&_svg:not([class*='size-'])]:size-4
+                    shrink-0
+                    [&_svg]:shrink-0
+                    aria-invalid:ring-destructive/20
+                    dark:aria-invalid:ring-destructive/40
+                    aria-invalid:border-destructive
+                    has-[>svg]:px-3
+                    mb-0
+                    w-full
+                    mt-4
+                    inline-flex
+                    items-center
+                    justify-center
+                    gap-2
+                    capitalize
+                  "
+                >
                   View Profile
                 </Button>
               </Link>
@@ -223,5 +263,5 @@ export function BestRankedBlock({ title, entries }: Readonly<BestRankedBlockProp
         ))}
       </div>
     </section>
-  )
+  );
 }

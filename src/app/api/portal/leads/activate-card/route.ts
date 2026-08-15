@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
+import { PPL_LEAD_PRICE_PENCE } from '@/lib/pricing'
 
 // Called on return from Stripe setup. The customer was already created and stored
 // before the user went to Stripe, so we just need to find the payment method and charge.
@@ -48,7 +49,7 @@ export async function GET(req: NextRequest) {
     })
     if (lead) {
       const intent = await stripe.paymentIntents.create({
-        amount: 1500,
+        amount: PPL_LEAD_PRICE_PENCE,
         currency: 'gbp',
         customer: clinic.stripeCustomerId,
         payment_method: pm.id,

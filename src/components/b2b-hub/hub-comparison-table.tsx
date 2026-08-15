@@ -1,4 +1,4 @@
-import { AlertTriangle, Check, X } from "lucide-react"
+import { IconAlertTriangle, IconCheck, IconX } from "@tabler/icons-react";
 
 type Typical = { type: "not" | "warn" | "basic"; label: string }
 
@@ -114,14 +114,14 @@ function TypicalCell({
   if (typical.type === "not") {
     return (
       <span className={`inline-flex items-center gap-2 ${textCls}`}>
-        <X className={`${iconCls} text-[#CB3333]`} strokeWidth={2.5} aria-hidden />
+        <IconX className={`${iconCls} text-[#CB3333]`} stroke={1.5} aria-hidden />
         <span>{typical.label}</span>
       </span>
     )
   }
   return (
     <span className={`inline-flex items-center gap-2 ${textCls}`}>
-      <AlertTriangle className={`${iconCls} text-[#CA7F18]`} strokeWidth={2.5} aria-hidden />
+      <IconAlertTriangle className={`${iconCls} text-[#CA7F18]`} stroke={1.5} aria-hidden />
       <span>{typical.label}</span>
     </span>
   )
@@ -131,14 +131,14 @@ function NativePill({ large }: { large?: boolean }) {
   if (large) {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-[#DBFCE7] px-2.5 py-1 text-[#1E904C] font-semibold text-sm">
-        <Check className="h-4 w-4 shrink-0" strokeWidth={2.5} aria-hidden />
+        <IconCheck className="h-4 w-4 shrink-0" stroke={1.5} aria-hidden />
         Native
       </span>
     )
   }
   return (
     <span className="inline-flex items-center gap-2 text-emerald-700 font-medium">
-      <Check className="h-4 w-4 shrink-0" strokeWidth={2.5} aria-hidden />
+      <IconCheck className="h-4 w-4 shrink-0" stroke={1.5} aria-hidden />
       Native
     </span>
   )
@@ -166,8 +166,8 @@ export function HubComparisonTable({
     ? "px-3 py-3 text-sm font-semibold sm:px-4 sm:py-3"
     : "px-3 py-3 text-sm font-semibold sm:px-4 sm:py-4"
   const tdBase = large
-    ? "px-3 py-3 border-b border-[#E5E7EB] text-sm sm:px-4"
-    : "px-3 py-3 border-b border-[#E5E7EB] text-sm sm:px-4 sm:py-4"
+    ? "px-3 py-3 border-b border-[#e0e0e0] text-sm sm:px-4"
+    : "px-3 py-3 border-b border-[#e0e0e0] text-sm sm:px-4 sm:py-4"
   const featureTd = large
     ? `${tdBase} font-medium text-[#1A1A1A]`
     : `${tdBase} font-semibold text-neutral-900`
@@ -176,7 +176,7 @@ export function HubComparisonTable({
 
   return (
     <section className="mb-12 w-full min-w-0">
-      <div className="w-full min-w-0 overflow-x-auto rounded-xl border border-[#E5E7EB] bg-white">
+      <div className="w-full min-w-0 overflow-x-auto rounded-lg border border-[#e0e0e0] bg-white">
         <table
           className={`w-full border-collapse text-left text-sm ${large ? "table-fixed" : ""} ${tableMinW}`}
         >

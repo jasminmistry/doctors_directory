@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, X } from 'lucide-react'
+import { IconPlus, IconX } from '@tabler/icons-react'
 
 interface ArrayEditorProps {
   items: string[]
@@ -45,7 +45,7 @@ export function ArrayEditor({ items, onChange, placeholder }: Readonly<ArrayEdit
             size="sm"
             onClick={() => removeItem(index)}
           >
-            <X className="h-4 w-4" />
+            <IconX stroke={1.5} className="h-4 w-4" />
           </Button>
         </div>
       ))}
@@ -57,7 +57,7 @@ export function ArrayEditor({ items, onChange, placeholder }: Readonly<ArrayEdit
           placeholder="Add new item..."
         />
         <Button onClick={addItem}>
-          <Plus className="h-4 w-4 mr-2" />
+          <IconPlus stroke={1.5} className="h-4 w-4 mr-2" />
           Add
         </Button>
       </div>
