@@ -58,7 +58,7 @@ export default function ClinicManagementSoftwarePage() {
 
               <div className="max-w-4xl m-auto mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
                 <a
-                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-center text-white hover:bg-neutral-800 transition-colors"
                   href="/directory/account/login/"
                 >
                   Join as a patient — it's free
@@ -117,7 +117,7 @@ export default function ClinicManagementSoftwarePage() {
               <p className="text-gray-700">
                 The Reporting section allows you to select and view multiple reports, graphs and tables that measure the health of your clinic. These are dynamic medical reports, which can be customized to your needs and are updated in real-time, so you can see at a glance how well your business is doing.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
@@ -169,7 +169,7 @@ export default function ClinicManagementSoftwarePage() {
               <p className="text-gray-700">
                 With Consentz you can quickly get a full picture of how your clinic is performing and then dig deeper into your data to gain more insight. By uncovering trends on, for example, patient retention, cross selling and patient concerns you will be able to grow your clinic faster and more efficiently.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
@@ -234,7 +234,7 @@ export default function ClinicManagementSoftwarePage() {
                 Always have fully documented consultations. With Consentz, create pre-populated consultation notes for each treatment saving you from rewriting the same text over and over again.
                 When you see information on your clinic do you ever think I don’t understand this, or so what? Too many clinicians understanding the meaning behind the numbers and interpreting them can be daunting. This is where the Consentz Academy reporting and analytics sotfware comes in, giving clear analysis on all graphs, and also providing advice and ideas on what you could do improve your business.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>

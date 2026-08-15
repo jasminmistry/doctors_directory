@@ -58,7 +58,7 @@ export default function ClinicManagementSoftwarePage() {
 
               <div className="max-w-4xl m-auto mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
                 <a
-                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white text-center hover:bg-neutral-800 transition-colors"
                   href="/directory/account/login/"
                 >
                   Join as a patient — it's free
@@ -110,7 +110,7 @@ export default function ClinicManagementSoftwarePage() {
               <p className="text-gray-700">
                 The Consentz experience allows you to customise your colours, images and profiles, creating the best impression of your clinic for your patients.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
@@ -177,7 +177,7 @@ export default function ClinicManagementSoftwarePage() {
               <p className="text-gray-700">
                 Change access levels, patient PIN numbers, build questionnaires, select reports, manage stock batch numbers – Consentz gives you complete control of the experience you want your patients and staff to enjoy.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>

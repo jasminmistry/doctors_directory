@@ -87,7 +87,7 @@ export function CookieConsentBanner() {
         <div className="flex flex-col gap-5">
           <div className="flex items-center gap-3">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--dune)]">
-              <IconCookie stroke={1.5} className="size-5 text-[var(--primary-bg-color)]" />
+              <IconCookie stroke={1.5} className="size-5 stroke-white" />
             </span>
             <h2 className="font-playfair text-xl font-semibold text-[var(--dune)]">
               Manage Consent

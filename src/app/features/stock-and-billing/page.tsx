@@ -58,7 +58,7 @@ export default function ClinicManagementSoftwarePage() {
 
               <div className="max-w-4xl m-auto mt-5 flex flex-col sm:flex-row items-center justify-start  gap-3">
                 <a
-                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors"
+                  className=" w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-center text-white hover:bg-neutral-800 transition-colors"
                   href="/directory/account/login/"
                 >
                   Join as a patient — it's free
@@ -110,7 +110,7 @@ export default function ClinicManagementSoftwarePage() {
               <p className="text-gray-700">
                 Passing pieces of paper to your practice manager to charge the patient? With Consentz Stock and Billing management software you can start the billing process on your iPad and any office member can complete the invoice from their desktop. So if your patient sees something they like, you can just add it to the bill.
               </p>
-              <div className="flex pt-5">
+              <div className="flex justify-center md:justify-start pt-5">
                 <BookDemoButton />
               </div>
             </div>
