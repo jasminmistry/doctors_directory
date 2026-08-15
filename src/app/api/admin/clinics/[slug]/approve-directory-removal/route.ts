@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { invalidateSearchCache } from '@/lib/search-cache'
 
 export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
@@ -30,6 +31,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
         : []),
     ])
 
+    await invalidateSearchCache()
     return NextResponse.json({ ok: true, practitionersAffected: practitionerIds.length })
   } catch (error) {
     console.error('Failed to approve directory removal:', error)
