@@ -43,7 +43,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV NODE_OPTIONS=--max-old-space-size=1024
 
-RUN npm install -g pm2 && apk add --no-cache curl
+RUN npm install -g pm2 && npm cache clean --force && apk add --no-cache curl
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
