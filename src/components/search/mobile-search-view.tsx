@@ -41,11 +41,13 @@ export function MobileSearchView({
   const clearQuery = () => {
     setLocalFilters((prev) => ({ ...prev, query: "" }));
     setActiveDropdown(null);
+    setShowResults(false);
   };
 
   const clearLocation = () => {
     setLocalFilters((prev) => ({ ...prev, location: "" }));
     setActiveDropdown(null);
+    setShowResults(false);
   };
 
   return (
