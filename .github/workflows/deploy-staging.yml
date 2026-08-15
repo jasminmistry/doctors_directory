@@ -127,5 +127,8 @@ jobs:
 
             echo "Deployment completed successfully"
 
-            docker system prune -af
+            # Only reclaim dangling/old layers — keep the previous image's layers
+            # cached so the next `docker compose pull` fetches diffs, not the full image.
+            docker image prune -af --filter "until=24h"
+            docker container prune -f
             echo "Docker cleanup completed"
