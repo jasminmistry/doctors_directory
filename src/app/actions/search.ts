@@ -2,7 +2,7 @@
 import { cache } from "react";
 import { Clinic, Practitioner, Product, SearchFilters } from "@/lib/types"
 import { getAllClinicsForSearch, searchClinicsForListing, type SearchClinic } from "@/lib/data-access/clinics"
-import { getAllTreatmentNames } from "@/lib/data-access/treatments"
+import { getAllTreatmentNames, getAllTreatments } from "@/lib/data-access/treatments"
 import { getAllProducts as getAllProductsFromDb, searchProductsForListing } from "@/lib/data-access/products"
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import { modalities } from "@/lib/data"
@@ -130,9 +130,13 @@ export const loadData = cache(async (): Promise<LoadDataResult> => {
   return result;
 });
 
-
-
-
+export const getTreatmentSearchOptions = cache(async () => {
+  const treatments = await getAllTreatments()
+  return treatments.map((treatment) => ({
+    name: treatment.name,
+    slug: treatment.slug,
+  }))
+})
 
 
 const ITEMS_PER_PAGE = 9

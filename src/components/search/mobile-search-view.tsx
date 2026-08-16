@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { IconLoader2, IconSearch } from "@tabler/icons-react";
 import { SearchDropdown } from "./search-dropdown";
 import { SearchButton } from "./search-button";
+import type { TreatmentSearchOption } from "@/lib/uk-treatment-search";
 
 interface MobileSearchViewProps {
   isExpanded: boolean;
@@ -21,6 +22,7 @@ interface MobileSearchViewProps {
   handleSearch: () => void;
   isLoading: boolean;
   handlePageChange?: (page: number) => void;
+  treatmentSearchOptions: TreatmentSearchOption[];
 }
 
 export function MobileSearchView({
@@ -37,6 +39,7 @@ export function MobileSearchView({
   handleSearch,
   isLoading,
   handlePageChange,
+  treatmentSearchOptions,
 }: MobileSearchViewProps) {
   const clearQuery = () => {
     setLocalFilters((prev) => ({ ...prev, query: "" }));
@@ -89,6 +92,7 @@ export function MobileSearchView({
                   setLocalFilters={setLocalFilters}
                   setActiveDropdown={setActiveDropdown}
                   setShowResults={setShowResults}
+                  treatmentSearchOptions={treatmentSearchOptions}
                 />
               )}
             </div>
@@ -128,6 +132,7 @@ export function MobileSearchView({
                   setLocalFilters={setLocalFilters}
                   setActiveDropdown={setActiveDropdown}
                   setShowResults={setShowResults}
+                  treatmentSearchOptions={treatmentSearchOptions}
                 />
               )}
             </div>
@@ -169,6 +174,7 @@ export function MobileSearchView({
                   setLocalFilters={setLocalFilters}
                   setActiveDropdown={setActiveDropdown}
                   setShowResults={setShowResults}
+                  treatmentSearchOptions={treatmentSearchOptions}
                 />
               )}
             </div>

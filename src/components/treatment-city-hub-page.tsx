@@ -36,7 +36,10 @@ import {
   type TreatmentCityHubEntry,
 } from '@/lib/treatment-city-hub'
 import { toUrlSlug } from '@/lib/utils'
+import { CityHubListingsLoader } from '@/components/treatment/city-hub-listings-loader'
+import { CityHubListingsSkeleton } from '@/components/treatment/city-hub-listings-section'
 import { IconArrowNarrowLeft } from '@tabler/icons-react'
+import { Suspense } from 'react'
 
 type Props = {
   entry: TreatmentCityHubEntry
@@ -197,6 +200,13 @@ export function TreatmentCityHubPage({ entry }: Props) {
               ) : null}
             </div>
           </div>
+
+          <Suspense fallback={<CityHubListingsSkeleton />}>
+            <CityHubListingsLoader
+              citySlug={entry.locationSlug}
+              cityName={entry.locationLabel}
+            />
+          </Suspense>
 
           <DirectoryPageClosingSections />
         </div>
