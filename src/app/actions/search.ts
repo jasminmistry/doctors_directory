@@ -2,7 +2,7 @@
 import { cache } from "react";
 import { Clinic, Practitioner, Product, SearchFilters } from "@/lib/types"
 import { getAllClinicsForSearch, searchClinicsForListing, type SearchClinic } from "@/lib/data-access/clinics"
-import { getAllTreatmentNames, getAllTreatments } from "@/lib/data-access/treatments"
+import { getAllTreatmentNames, getAllTreatmentOptions } from "@/lib/data-access/treatments"
 import { getAllProducts as getAllProductsFromDb, searchProductsForListing } from "@/lib/data-access/products"
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import { modalities } from "@/lib/data"
@@ -79,21 +79,8 @@ type LoadDataResult = {
   treatments: string[]
 }
 
-export const loadData = cache(async (): Promise<LoadDataResult> => {
-  const cached = await getCachedSearchData<LoadDataResult>()
-  if (cached) return cached
-
-  const [clinicsDataFromDb, practitionersFromDb, productsData, allTreatments] = await Promise.all([
-    getAllClinicsForSearch(),
-    getAllPractitionersForSearch(),
-    getAllProductsFromDb(),
-    getAllTreatmentNames(),
-  ])
-  const treatments = allTreatments.filter((t) => modalitiesSet.has(t.toLowerCase()));
-
-  const clinics = clinicsDataFromDb.map(convertDbClinicToOldFormat);
-
-  const practitioners: SearchPractitioner[] = practitionersFromDb.map((p) => ({
+function mapPractitionersForSearch(practitionersFromDb: Practitioner[]): SearchPractitioner[] {
+  return practitionersFromDb.map((p) => ({
     slug: p.slug,
     image: p.image || '',
     rating: typeof p.rating === 'number' ? p.rating : 0,
@@ -114,7 +101,33 @@ export const loadData = cache(async (): Promise<LoadDataResult> => {
     practitioner_qualifications: p.practitioner_qualifications,
     practitioner_awards: p.practitioner_awards,
   }))
+}
 
+// Treatment names used by search's Treatments tab — modality-filtered subset of
+// getAllTreatmentNames(). Kept separate from loadData() so the Treatments tab doesn't
+// have to pull clinics/practitioners/products just to filter this string array.
+const getTreatmentsForSearch = cache(async (): Promise<string[]> => {
+  const allTreatments = await getAllTreatmentNames()
+  return allTreatments.filter((t) => modalitiesSet.has(t.toLowerCase()))
+})
+
+// Bundled dataset used by getSearchDiscoveryData(), which genuinely needs clinics,
+// practitioners, and products together to build cross-type suggestions. searchPractitioners()
+// no longer routes through this for Treatments/Practitioner — see getTreatmentsForSearch()
+// and the direct getAllPractitionersForSearch() call below.
+export const loadData = cache(async (): Promise<LoadDataResult> => {
+  const cached = await getCachedSearchData<LoadDataResult>()
+  if (cached) return cached
+
+  const [clinicsDataFromDb, practitionersFromDb, productsData, treatments] = await Promise.all([
+    getAllClinicsForSearch(),
+    getAllPractitionersForSearch(),
+    getAllProductsFromDb(),
+    getTreatmentsForSearch(),
+  ])
+
+  const clinics = clinicsDataFromDb.map(convertDbClinicToOldFormat);
+  const practitioners = mapPractitionersForSearch(practitionersFromDb);
 
   const products = productsData.map(
     (
@@ -136,11 +149,7 @@ export const loadData = cache(async (): Promise<LoadDataResult> => {
 });
 
 export const getTreatmentSearchOptions = cache(async () => {
-  const treatments = await getAllTreatments()
-  return treatments.map((treatment) => ({
-    name: treatment.name,
-    slug: treatment.slug,
-  }))
+  return await getAllTreatmentOptions()
 })
 
 
@@ -191,11 +200,10 @@ export async function searchPractitioners(
     return paginatedResult(rows, totalCount, page)
   }
 
-  const { practitioners, treatments } = await loadData();
-
   let filtered: any[] = []
 
   if (filters.type === "Treatments") {
+    const treatments = await getTreatmentsForSearch()
     filtered = ( treatments).filter((treatment: string) => {
       if (filters.query) {
         const queryWords = filters.query.toLowerCase().split(/\s+/).filter(word => word.length > 0)
@@ -258,6 +266,8 @@ export async function searchPractitioners(
       return true
     })
   } else if (filters.type === 'Practitioner') {
+    const practitionersFromDb = await getAllPractitionersForSearch()
+    const practitioners = mapPractitionersForSearch(practitionersFromDb)
     filtered = ( practitioners).filter((practitioner) => {
       if (filters.query) {
         

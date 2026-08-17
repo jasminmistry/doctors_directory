@@ -4,7 +4,7 @@ import { cache } from 'react'
 import NodeCache from 'node-cache'
 import type { Practitioner, RankingMeta, ItemMeta } from '@/lib/types'
 import { isRemovedPractitionerSlug, hasTripleLetterSequence } from '@/lib/directory-removals'
-import { getCache, setCache } from '@/lib/redis-cache'
+import { getCache, setCache, delCache } from '@/lib/redis-cache'
 
 const DAY_LABELS: Record<string, string> = {
   MONDAY: 'Monday',
@@ -124,13 +124,23 @@ const CLINIC_SELECT = {
 
 // Serialized payload regularly exceeds Next's 2MB unstable_cache item limit, so this
 // uses the same NodeCache + Redis tiered pattern as src/lib/search-cache.ts instead.
+// TTL raised from 5min to 8hr — this cache is a common source of slow practitioner
+// searches on a cache miss, since it rebuilds by fetching + transforming every
+// practitioner nationally with nested clinic/treatment joins. Freshness after
+// admin/portal edits is handled explicitly via invalidatePractitionersSearchCache(),
+// not by a short TTL, so a long TTL here is safe.
 const PRACTITIONERS_SEARCH_CACHE_KEY = 'practitioners-for-search:v1'
-const PRACTITIONERS_SEARCH_TTL_SECONDS = 300
+const PRACTITIONERS_SEARCH_TTL_SECONDS = 8 * 60 * 60
 
 const practitionersSearchMemoryCache = new NodeCache({
   stdTTL: PRACTITIONERS_SEARCH_TTL_SECONDS,
   useClones: false,
 })
+
+export async function invalidatePractitionersSearchCache(): Promise<void> {
+  practitionersSearchMemoryCache.del(PRACTITIONERS_SEARCH_CACHE_KEY)
+  await delCache(PRACTITIONERS_SEARCH_CACHE_KEY)
+}
 
 async function fetchAllPractitionersForSearch(): Promise<Practitioner[]> {
   const rows = await prisma.practitioner.findMany({

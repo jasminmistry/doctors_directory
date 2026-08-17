@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { invalidateSearchCache } from '@/lib/search-cache'
+import { invalidatePractitionersSearchCache } from '@/lib/data-access/practitioners'
 
 export const dynamic = 'force-dynamic'
 
@@ -76,6 +77,7 @@ export async function POST(request: Request) {
       },
     })
     await invalidateSearchCache()
+    await invalidatePractitionersSearchCache()
     return NextResponse.json(record, { status: 201 })
   } catch (error) {
     console.error('Failed to create practitioner:', error)
