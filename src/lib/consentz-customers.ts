@@ -31,7 +31,38 @@ export function isDirectoryTestListing(
   );
 }
 
+export function associatedClinicSlugList(
+  value?: string | string[] | null,
+): string[] {
+  if (!value) return [];
+  if (Array.isArray(value)) {
+    return value.filter((slug): slug is string => typeof slug === "string");
+  }
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((slug): slug is string => typeof slug === "string");
+    }
+  } catch {
+    return [];
+  }
+  return [];
+}
+
 export function isConsentzClinic(clinic: Pick<Clinic, "slug" | "isConsentz">): boolean {
   if (isDirectoryTestListing(clinic.slug)) return false;
   return Boolean(clinic.isConsentz) || isConsentzClinicSlug(clinic.slug);
+}
+
+export function isConsentzLinked(entity: {
+  slug?: string | null;
+  isConsentz?: boolean;
+  practitioner_name?: string | null;
+  Associated_Clinics?: string | string[] | null;
+}): boolean {
+  if (isDirectoryTestListing(entity.slug, entity.practitioner_name)) return false;
+  if (Boolean(entity.isConsentz) || isConsentzClinicSlug(entity.slug)) return true;
+  return associatedClinicSlugList(entity.Associated_Clinics).some((slug) =>
+    isConsentzClinicSlug(slug),
+  );
 }

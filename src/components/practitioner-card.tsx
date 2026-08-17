@@ -19,7 +19,7 @@ import { getTreatmentImage, locations } from "@/lib/data";
 import { Button } from "./ui/button";
 import { isClinic, isPractitioner, isProduct, toUrlSlug } from "@/lib/utils";
 import { getClinicDisplayName } from "@/lib/clinic-display";
-import { isConsentzClinic } from "@/lib/consentz-customers";
+import { isConsentzLinked } from "@/lib/consentz-customers";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { OnlineDot } from "@/components/Clinic/online-dot";
@@ -244,7 +244,7 @@ export function PractitionerCard({
                     height={120}
                   />
                 </div>
-                {isClinic(practitioner) && isConsentzClinic(practitioner) && (
+                {isConsentzLinked(practitioner as Clinic) && (
                   <img
                     src="/directory/consentz-customer-badge.jpg"
                     alt="Consentz Customer"
@@ -284,10 +284,13 @@ export function PractitionerCard({
                 )}
               </div>
 
-              {isClinic(practitioner) && (
+              {(isClinic(practitioner) || isPractitioner(practitioner)) && (
                 <PrestigeSearchPill
-                  awardsBadgeLabel={practitioner.awardsBadgeLabel}
-                  tatlerBadgeLabel={practitioner.tatlerBadgeLabel}
+                  awardsBadgeLabel={isClinic(practitioner) ? practitioner.awardsBadgeLabel : undefined}
+                  tatlerBadgeLabel={isClinic(practitioner) ? practitioner.tatlerBadgeLabel : undefined}
+                  consentzLabel={
+                    isConsentzLinked(practitioner as Clinic) ? "Consentz Customer" : null
+                  }
                 />
               )}
 

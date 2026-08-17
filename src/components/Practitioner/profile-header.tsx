@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Practitioner } from "@/lib/types";
 import SocialMediaIcons from "../Clinic/clinicSocialMedia";
 import ClinicLabels from "./clinicLabels";
+import { PrestigeProfileBadge } from "@/components/Clinic/prestige-profile-badge";
 import ClinicTabsHeader from "./clinicTabsHeader";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link"
@@ -20,6 +21,7 @@ import { IconLink as LinkIcon } from "@tabler/icons-react"
 import { OnlineDot } from "@/components/Clinic/online-dot";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 import { capitalize } from "@/lib/utils";
+import { isConsentzLinked } from "@/lib/consentz-customers";
 interface ProfileHeaderProps {
   clinic: Practitioner;
   k_value: any;
@@ -85,12 +87,28 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
       <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-center">
         <div className="flex flex-col md:flex-col md:mb-4 md:px-4 md:px-0 lg:mb-0 items-start gap-4 border-b border-[#C4C4C4] md:border-0">
           <div className="flex flex-row flex-wrap items-start md:items-center">
-            <div className="w-[80px] h-[80px] md:w-[160px] md:h-[160px] flex items-center justify-center overflow-hidden rounded-full bg-grey-300 mr-4">
-              <img
-                src={imgSrc}
-                alt={practitionerName}
-                className="object-cover rounded-full min-w-full min-h-full"
-                onError={() => setImgSrc(DEFAULT_IMG)}
+            <div className="mr-4 flex flex-col items-center gap-2 shrink-0">
+              <div className="relative h-[80px] w-[80px] md:h-[160px] md:w-[160px] shrink-0">
+                <div className="h-full w-full overflow-hidden rounded-full bg-grey-300">
+                  <img
+                    src={imgSrc}
+                    alt={practitionerName}
+                    className="object-cover rounded-full min-w-full min-h-full"
+                    onError={() => setImgSrc(DEFAULT_IMG)}
+                  />
+                </div>
+                {isConsentzLinked(k_value) && (
+                  <img
+                    src="/directory/consentz-customer-badge.jpg"
+                    alt="Consentz Customer"
+                    title="Consentz Customer"
+                    className="absolute -right-1 -top-1 z-20 h-7 w-7 rounded-full border-2 border-white object-cover shadow-sm md:-right-1.5 md:-top-1.5 md:h-10 md:w-10"
+                  />
+                )}
+              </div>
+              <PrestigeProfileBadge
+                consentzLabel={isConsentzLinked(k_value) ? "Consentz Customer" : null}
+                size="md"
               />
             </div>
 

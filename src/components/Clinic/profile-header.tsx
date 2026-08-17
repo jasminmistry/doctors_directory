@@ -101,6 +101,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
             <PrestigeProfileBadge
               awardsBadgeLabel={clinic.awardsBadgeLabel}
               tatlerBadgeLabel={clinic.tatlerBadgeLabel}
+              consentzLabel={isConsentz ? "Consentz Customer" : null}
               size="md"
             />
           </div>

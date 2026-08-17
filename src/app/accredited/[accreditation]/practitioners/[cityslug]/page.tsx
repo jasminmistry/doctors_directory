@@ -14,12 +14,14 @@ import { notFound } from "next/navigation"
 import {
   clinicCityMatchesSlug,
   getAccreditationDisplayName,
+  getConsentzAccreditedPractitioners,
   isKnownAccreditation,
   isPrestigeAccreditation,
   normalizeAccreditationSlug,
   practitionerMatchesAccreditation,
 } from "@/lib/accreditation-directory"
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots"
+import { capitalize } from "@/lib/utils"
 import { IconArrowNarrowLeft } from "@tabler/icons-react"
 
 export const dynamic = "force-dynamic"
@@ -40,7 +42,10 @@ export default async function AccreditedPractitionersPage({
     notFound()
   }
 
-  const enrichedPractitioners = await getAllPractitionersForSearch()
+  const enrichedPractitioners =
+    accreditation === "consentz"
+      ? getConsentzAccreditedPractitioners()
+      : await getAllPractitionersForSearch()
   const filteredPractitioners = enrichedPractitioners.filter((practitioner) => {
     if (!practitioner) return false
     return (
@@ -61,6 +66,7 @@ export default async function AccreditedPractitionersPage({
     : cityPractitioners
   const isFallback = filteredPractitioners.length === 0
   const accreditationName = getAccreditationDisplayName(accreditation)
+  const cityDisplayName = capitalize(cityslug)
 
   return (
     <main className="bg-white">
@@ -90,7 +96,7 @@ export default async function AccreditedPractitionersPage({
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{cityslug}</BreadcrumbPage>
+                  <BreadcrumbPage>{cityDisplayName}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -99,11 +105,11 @@ export default async function AccreditedPractitionersPage({
 
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">
-            {accreditationName} Practitioners in {cityslug}
+            {accreditationName} Practitioners in {cityDisplayName}
           </h1>
           {isFallback && (
             <p className="text-sm text-amber-700 mb-4">
-              No exact {accreditationName} matches in this city yet. Showing other practitioners in {cityslug}.
+              No exact {accreditationName} matches in this city yet. Showing other practitioners in {cityDisplayName}.
             </p>
           )}
         </div>

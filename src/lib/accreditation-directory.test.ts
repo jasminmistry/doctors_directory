@@ -3,8 +3,10 @@ import {
   clinicCityMatchesSlug,
   clinicMatchesAccreditation,
   filterClinicsByAccreditation,
+  getConsentzAccreditedPractitioners,
+  practitionerMatchesAccreditation,
 } from '@/lib/accreditation-directory'
-import { isDirectoryTestListing } from '@/lib/consentz-customers'
+import { isConsentzLinked, isDirectoryTestListing } from '@/lib/consentz-customers'
 import { readJsonFileSync } from '@/lib/json-cache'
 
 function clinic(partial: Partial<Clinic> & Pick<Clinic, 'slug'>): Clinic {
@@ -89,5 +91,34 @@ describe('Consentz accredited matching', () => {
     expect(consentzClinics).toHaveLength(42)
     expect(londonCount).toBe(21)
     expect(aberdareCount).toBe(0)
+  })
+
+  test('accredited practitioners come from Excel-linked clinics, not claimed QA rows', () => {
+    const practitioners = getConsentzAccreditedPractitioners()
+    const cities = [...new Set(practitioners.map((entry) => entry.City).filter(Boolean))]
+    expect(practitioners.length).toBeGreaterThan(0)
+    expect(cities).not.toContain('Aberdare')
+    expect(
+      practitioners.every((entry) => practitionerMatchesAccreditation(entry, 'consentz')),
+    ).toBe(true)
+    expect(
+      practitioners.some((entry) => /qa test|test user|qa clinic/i.test(entry.practitioner_name ?? '')),
+    ).toBe(false)
+  })
+
+  test('Consentz linked helper matches associated clinic slugs', () => {
+    expect(isConsentzLinked({ slug: '111-harley-st' })).toBe(true)
+    expect(
+      isConsentzLinked({
+        practitioner_name: 'dr-vasos-vrachimi',
+        Associated_Clinics: '["dr-vas"]',
+      }),
+    ).toBe(true)
+    expect(
+      isConsentzLinked({
+        practitioner_name: 'qa-test-17-july',
+        Associated_Clinics: '["dr-vas"]',
+      }),
+    ).toBe(false)
   })
 })

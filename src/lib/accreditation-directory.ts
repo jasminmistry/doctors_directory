@@ -1,12 +1,14 @@
 import {
+  associatedClinicSlugList,
   getConsentzCustomerSlugs,
   isConsentzClinic,
   isDirectoryTestListing,
 } from '@/lib/consentz-customers'
-import type { Clinic } from '@/lib/types'
+import type { Clinic, Practitioner } from '@/lib/types'
 import prestigeData from '@/lib/data/prestige-accreditations.json'
 import { getPrestigeAccreditation } from '@/lib/prestige-accreditations'
 import type { PrestigeAccreditation } from '@/lib/prestige-accreditations'
+import { readJsonFileSync } from '@/lib/json-cache'
 import { toUrlSlug } from '@/lib/utils'
 
 export const REGULATORY_ACCREDITATION_SLUGS = [
@@ -153,17 +155,7 @@ export function getMatchingClinicSlugs(accreditation: string): Set<string> | nul
 export function associatedClinicSlugs(value: {
   Associated_Clinics?: string | string[] | null
 }): string[] {
-  if (!value.Associated_Clinics) return []
-  if (Array.isArray(value.Associated_Clinics)) {
-    return value.Associated_Clinics.filter((slug): slug is string => typeof slug === 'string')
-  }
-  try {
-    const parsed = JSON.parse(value.Associated_Clinics)
-    if (Array.isArray(parsed)) return parsed.filter((slug): slug is string => typeof slug === 'string')
-  } catch {
-    return []
-  }
-  return []
+  return associatedClinicSlugList(value.Associated_Clinics)
 }
 
 export function practitionerMatchesAccreditation(
@@ -187,4 +179,36 @@ export function practitionerMatchesAccreditation(
   }
 
   return clinicMatchesAccreditation(practitioner as Clinic, slug)
+}
+
+export function getConsentzAccreditedPractitioners(): Practitioner[] {
+  const clinics = readJsonFileSync('clinics_processed_new_data.json') as Clinic[]
+  const practitioners = readJsonFileSync('derms_processed_new_5403.json') as Practitioner[]
+  const clinicBySlug = new Map(
+    clinics
+      .filter((clinic) => clinic.slug)
+      .map((clinic) => [clinic.slug!.toLowerCase(), clinic]),
+  )
+
+  return practitioners.flatMap((practitioner) => {
+    if (isDirectoryTestListing(practitioner.slug, practitioner.practitioner_name)) {
+      return []
+    }
+    const clinic = associatedClinicSlugs(practitioner)
+      .map((clinicSlug) => clinicBySlug.get(clinicSlug.toLowerCase()))
+      .find((entry) => entry && isConsentzClinic(entry))
+    if (!clinic) return []
+
+    return [
+      {
+        ...clinic,
+        ...practitioner,
+        City: clinic.City,
+        gmapsAddress: practitioner.gmapsAddress || clinic.gmapsAddress,
+        Treatments: practitioner.Treatments?.length ? practitioner.Treatments : clinic.Treatments,
+        isConsentz: true,
+        slug: practitioner.slug || clinic.slug,
+      },
+    ]
+  })
 }

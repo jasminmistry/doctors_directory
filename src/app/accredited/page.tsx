@@ -15,6 +15,7 @@ import { toDirectoryCanonical } from "@/lib/seo"
 import {
   clinicMatchesAccreditation,
   getAccreditationDisplayName,
+  getConsentzAccreditedPractitioners,
   practitionerMatchesAccreditation,
   PRESTIGE_ACCREDITATION_SLUGS,
   REGULATORY_ACCREDITATION_SLUGS,
@@ -37,6 +38,7 @@ export default async function AccreditedPage() {
     .map((c) => applyPrestigeToClinic(c))
 
   const practitioners = await getAllPractitionersForSearch()
+  const consentzPractitioners = getConsentzAccreditedPractitioners()
 
   return (
     <main className="bg-white">
@@ -77,10 +79,13 @@ export default async function AccreditedPage() {
             const clinicCount = clinics.filter((c) =>
               clinicMatchesAccreditation(c, accreditation),
             ).length
-            const practitionerCount = practitioners.filter((p) => {
-              if (!p) return false
-              return practitionerMatchesAccreditation(p, accreditation)
-            }).length
+            const practitionerCount =
+              accreditation === "consentz"
+                ? consentzPractitioners.length
+                : practitioners.filter((p) => {
+                    if (!p) return false
+                    return practitionerMatchesAccreditation(p, accreditation)
+                  }).length
 
             return (
               <Card
