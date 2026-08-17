@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
+import { getPractitionersByCity } from "@/lib/data-access/practitioners"
 import { PractitionerCard } from "@/components/practitioner-card"
 import { toDirectoryCanonical } from "@/lib/seo"
 import { notFound } from "next/navigation"
@@ -55,13 +55,13 @@ export default async function AccreditedPractitionersPage({
     notFound()
   }
 
-  const enrichedPractitioners = await getAllPractitionersForSearch()
+  const cityPractitioners = await getPractitionersByCity(cityslug.toLowerCase())
   const prestigeClinicSlugs =
     accreditation === "aesthetics-awards" || accreditation === "tatler"
       ? getPrestigeMatchingClinicSlugs(accreditation)
       : null
 
-  const matchesAccreditation = (practitioner: NonNullable<(typeof enrichedPractitioners)[number]>) => {
+  const matchesAccreditation = (practitioner: NonNullable<(typeof cityPractitioners)[number]>) => {
     if (isRegulatoryAccreditation(accreditation)) {
       const fieldMap: Record<string, string> = {
         cqc: "isCQC",
@@ -82,15 +82,11 @@ export default async function AccreditedPractitionersPage({
     return false
   }
 
-  const filteredPractitioners = enrichedPractitioners.filter((practitioner) => {
+  const filteredPractitioners = cityPractitioners.filter((practitioner) => {
     if (!practitioner) return false
-    const cityMatch = practitioner.City?.toLowerCase() === cityslug.toLowerCase()
-    return cityMatch && matchesAccreditation(practitioner)
+    return matchesAccreditation(practitioner)
   })
 
-  const cityPractitioners = enrichedPractitioners.filter(
-    (p) => p?.City?.toLowerCase() === cityslug.toLowerCase(),
-  )
   const displayPractitioners = filteredPractitioners.length ? filteredPractitioners : cityPractitioners
   const isFallback = filteredPractitioners.length === 0
   const accreditationName = getAccreditationDisplayName(accreditation)
