@@ -6,7 +6,7 @@ const REMOVED_CLINIC_SLUGS = new Set([
   "melissa-aesthetics-clinic-sunderland-medical-aesthetics",
 ])
 
-const REMOVED_PRACTITIONER_SLUGS = new Set(["dr-dan-dhunna", "gina-lourens"])
+export const REMOVED_PRACTITIONER_SLUGS = new Set(["dr-dan-dhunna", "gina-lourens"])
 
 const TRIPLE_LETTER_RE = /(.)\1\1/i
 

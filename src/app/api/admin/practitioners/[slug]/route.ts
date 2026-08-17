@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { invalidateSearchCache } from '@/lib/search-cache'
+import { invalidatePractitionersSearchCache } from '@/lib/data-access/practitioners'
 
 export const dynamic = 'force-dynamic'
 
@@ -123,6 +124,7 @@ export async function PUT(
       select: PRACTITIONER_EDIT_SELECT,
     })
     await invalidateSearchCache()
+    await invalidatePractitionersSearchCache()
     return NextResponse.json(flattenPractitioner(practitioner))
   } catch (error) {
     console.error('Failed to update practitioner:', error)
@@ -140,6 +142,7 @@ export async function DELETE(
   try {
     await prisma.practitioner.delete({ where: { slug: params.slug } })
     await invalidateSearchCache()
+    await invalidatePractitionersSearchCache()
     return NextResponse.json({ success: true })
   } catch (error: any) {
     if (error?.code === 'P2025') {

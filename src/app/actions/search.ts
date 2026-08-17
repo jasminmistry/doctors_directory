@@ -2,9 +2,9 @@
 import { cache } from "react";
 import { Clinic, Practitioner, Product, SearchFilters } from "@/lib/types"
 import { getAllClinicsForSearch, searchClinicsForListing, type SearchClinic } from "@/lib/data-access/clinics"
-import { getAllTreatmentNames, getAllTreatments } from "@/lib/data-access/treatments"
+import { getAllTreatmentNames, getAllTreatmentOptions } from "@/lib/data-access/treatments"
 import { getAllProducts as getAllProductsFromDb, searchProductsForListing } from "@/lib/data-access/products"
-import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
+import { getAllPractitionersForSearch, searchPractitionersForListing } from "@/lib/data-access/practitioners"
 import { modalities } from "@/lib/data"
 import { getCachedSearchData, setCachedSearchData } from "@/lib/search-cache"
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations"
@@ -79,21 +79,8 @@ type LoadDataResult = {
   treatments: string[]
 }
 
-export const loadData = cache(async (): Promise<LoadDataResult> => {
-  const cached = await getCachedSearchData<LoadDataResult>()
-  if (cached) return cached
-
-  const [clinicsDataFromDb, practitionersFromDb, productsData, allTreatments] = await Promise.all([
-    getAllClinicsForSearch(),
-    getAllPractitionersForSearch(),
-    getAllProductsFromDb(),
-    getAllTreatmentNames(),
-  ])
-  const treatments = allTreatments.filter((t) => modalitiesSet.has(t.toLowerCase()));
-
-  const clinics = clinicsDataFromDb.map(convertDbClinicToOldFormat);
-
-  const practitioners: SearchPractitioner[] = practitionersFromDb.map((p) => ({
+function mapPractitionersForSearch(practitionersFromDb: Practitioner[]): SearchPractitioner[] {
+  return practitionersFromDb.map((p) => ({
     slug: p.slug,
     image: p.image || '',
     rating: typeof p.rating === 'number' ? p.rating : 0,
@@ -114,7 +101,33 @@ export const loadData = cache(async (): Promise<LoadDataResult> => {
     practitioner_qualifications: p.practitioner_qualifications,
     practitioner_awards: p.practitioner_awards,
   }))
+}
 
+// Treatment names used by search's Treatments tab — modality-filtered subset of
+// getAllTreatmentNames(). Kept separate from loadData() so the Treatments tab doesn't
+// have to pull clinics/practitioners/products just to filter this string array.
+const getTreatmentsForSearch = cache(async (): Promise<string[]> => {
+  const allTreatments = await getAllTreatmentNames()
+  return allTreatments.filter((t) => modalitiesSet.has(t.toLowerCase()))
+})
+
+// Bundled dataset used by getSearchDiscoveryData(), which genuinely needs clinics,
+// practitioners, and products together to build cross-type suggestions. searchPractitioners()
+// no longer routes through this for Treatments/Practitioner — see getTreatmentsForSearch()
+// and the direct getAllPractitionersForSearch() call below.
+export const loadData = cache(async (): Promise<LoadDataResult> => {
+  const cached = await getCachedSearchData<LoadDataResult>()
+  if (cached) return cached
+
+  const [clinicsDataFromDb, practitionersFromDb, productsData, treatments] = await Promise.all([
+    getAllClinicsForSearch(),
+    getAllPractitionersForSearch(),
+    getAllProductsFromDb(),
+    getTreatmentsForSearch(),
+  ])
+
+  const clinics = clinicsDataFromDb.map(convertDbClinicToOldFormat);
+  const practitioners = mapPractitionersForSearch(practitionersFromDb);
 
   const products = productsData.map(
     (
@@ -136,11 +149,7 @@ export const loadData = cache(async (): Promise<LoadDataResult> => {
 });
 
 export const getTreatmentSearchOptions = cache(async () => {
-  const treatments = await getAllTreatments()
-  return treatments.map((treatment) => ({
-    name: treatment.name,
-    slug: treatment.slug,
-  }))
+  return await getAllTreatmentOptions()
 })
 
 
@@ -162,9 +171,10 @@ export async function searchPractitioners(
 ) {
   const skip = (page - 1) * ITEMS_PER_PAGE
 
-  // Clinic and Product are filtered/paginated directly in MySQL (indexed WHERE + LIMIT) instead
-  // of fetching the entire table and filtering in JS — see searchClinicsForListing /
-  // searchProductsForListing for the DB-side equivalent of the filter logic below.
+  // Clinic, Product and Practitioner are filtered/paginated directly in MySQL (indexed WHERE +
+  // LIMIT) instead of fetching the entire table and filtering in JS — see searchClinicsForListing /
+  // searchProductsForListing / searchPractitionersForListing for the DB-side equivalent of the
+  // filter logic below (Treatments stays JS-side: only ~90 rows, not worth pushing down).
   if (filters.type === "Clinic") {
     const { clinics: rows, totalCount } = await searchClinicsForListing({
       query: filters.query,
@@ -191,11 +201,25 @@ export async function searchPractitioners(
     return paginatedResult(rows, totalCount, page)
   }
 
-  const { practitioners, treatments } = await loadData();
+  if (filters.type === "Practitioner") {
+    const { practitioners: rows, totalCount } = await searchPractitionersForListing({
+      query: filters.query,
+      category: filters.category,
+      location: filters.location,
+      services: filters.services,
+      rating: filters.rating,
+      accreditation: filters.accreditation,
+      sortBy,
+      skip,
+      take: ITEMS_PER_PAGE,
+    })
+    return paginatedResult(mapPractitionersForSearch(rows), totalCount, page)
+  }
 
   let filtered: any[] = []
 
   if (filters.type === "Treatments") {
+    const treatments = await getTreatmentsForSearch()
     filtered = ( treatments).filter((treatment: string) => {
       if (filters.query) {
         const queryWords = filters.query.toLowerCase().split(/\s+/).filter(word => word.length > 0)
@@ -253,55 +277,6 @@ export async function searchPractitioners(
         ) || treatment.toLowerCase().includes(area)
 
         if (!hasMatchingArea) return false
-      }
-
-      return true
-    })
-  } else if (filters.type === 'Practitioner') {
-    filtered = ( practitioners).filter((practitioner) => {
-      if (filters.query) {
-        
-        const queryWords = filters.query.toLowerCase().split(/\s+/).filter(word => word.length > 0)
-        const searchableText = [
-          practitioner?.practitioner_name,
-          practitioner?.practitioner_qualifications?.toLowerCase(),
-          practitioner?.category,
-          practitioner?.gmapsAddress,
-          practitioner?.practitioner_awards?.toLowerCase(),
-          ...(practitioner?.Treatments || []),
-        ].join(" ").toLowerCase()
-        const hasAllWords = queryWords.every(word => searchableText.includes(word))
-        if (!hasAllWords) return false
-      }
-
-      if (filters.category && filters.category !== "All Categories") {
-        if (!practitioner?.practitioner_qualifications?.toLowerCase().includes(filters.category.toLowerCase())) return false  
-      }
-
-      if (filters.location?.trim()) {
-        const location = filters.location.trim().toLowerCase()
-        if (!practitioner?.gmapsAddress.toLowerCase().includes(location)) return false
-      }
-
-      if (filters.services.length > 0) {
-        const service = filters.services[0]
-        if(!practitioner?.practitioner_title?.toLowerCase().includes(service.toLowerCase())) return false
-        
-      }
-
-      if (filters.rating > 0) {
-        if (practitioner!.rating < filters.rating) return false
-      }
-
-      if (filters.accreditation && filters.accreditation !== "all") {
-        const accreditation = filters.accreditation.toLowerCase()
-        const searchableText = [
-          practitioner?.practitioner_name,
-          practitioner?.practitioner_qualifications?.toLowerCase(),
-          practitioner?.category,
-          practitioner?.practitioner_awards?.toLowerCase(),
-        ].join(" ").toLowerCase()
-        if (!searchableText.includes(accreditation)) return false
       }
 
       return true

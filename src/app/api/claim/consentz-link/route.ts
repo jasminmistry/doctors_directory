@@ -179,22 +179,24 @@ export async function POST(req: NextRequest) {
         await tx.clinic.update({
           where: { id: claim.clinicId },
           data: {
-            claimed:      true,
-            claimedAt:    new Date(),
-            claimedPlan:  'free',
-            coreClinicId: consentzClinicId,
-            verified:     false,
+            claimed:              true,
+            claimedAt:            new Date(),
+            claimedPlan:          'free',
+            coreClinicId:         consentzClinicId,
+            coreRegistrationType: 'existing_link',
+            verified:             false,
           },
         })
       } else if (claim.entityType === 'practitioner' && claim.practitionerId) {
         await tx.practitioner.update({
           where: { id: claim.practitionerId },
           data: {
-            claimed:      true,
-            claimedAt:    new Date(),
-            claimedPlan:  'free',
-            coreClinicId: consentzClinicId,
-            verified:     false,
+            claimed:              true,
+            claimedAt:            new Date(),
+            claimedPlan:          'free',
+            coreClinicId:         consentzClinicId,
+            coreRegistrationType: 'existing_link',
+            verified:             false,
           },
         })
       }

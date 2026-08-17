@@ -47,6 +47,14 @@ enum ClaimPlan {
   subscription
 }
 
+// How the Core clinic/user was provisioned: a brand-new Core account created by the
+// directory's approve flow (registerConsentzClinic/registerConsentzPractitioner), vs an
+// already-existing Core account the claimant linked via the consentz-link SSO flow.
+enum CoreRegistrationType {
+  new_registration
+  existing_link
+}
+
 enum VerificationStatus {
   pending
   approved
@@ -250,6 +258,7 @@ model Clinic {
 
   // Consentz Core — populated at claim approval; used for calendar + booking API calls
   coreClinicId          Int?      @unique
+  coreRegistrationType  CoreRegistrationType?
   coreUnlinkRequestedAt DateTime?
 
   // Stripe — stored after PPL SetupIntent completes so we can charge per-lead unlock
@@ -433,7 +442,8 @@ model Practitioner {
   isHidden       Boolean    @default(false)
 
   // Consentz Core — set when claimed via Consentz link; used for calendar + booking API calls
-  coreClinicId Int?
+  coreClinicId         Int?
+  coreRegistrationType CoreRegistrationType?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
