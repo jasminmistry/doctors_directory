@@ -5,11 +5,13 @@ import { isConsentzClinic } from "@/lib/consentz-customers";
 type ClinicLabelsProps = {
   clinic: Clinic
   size?: "sm" | "md"
+  showConsentz?: boolean
 }
 
-export default function ClinicLabels({ clinic, size = "md" }: Readonly<ClinicLabelsProps>) {
+export default function ClinicLabels({ clinic, size = "md", showConsentz = true }: Readonly<ClinicLabelsProps>) {
+  const isConsentz = showConsentz && isConsentzClinic(clinic)
   const labels =
-    isConsentzClinic(clinic) ||
+    isConsentz ||
     clinic.isCQC?.[0] ||
     clinic.isHIW?.[0] ||
     clinic.isHIS?.[0] ||
@@ -24,7 +26,7 @@ export default function ClinicLabels({ clinic, size = "md" }: Readonly<ClinicLab
 
   return (
     <div className={cn("flex items-center", size === "sm" ? "gap-0.5" : "gap-2")}>
-      {isConsentzClinic(clinic) && (
+      {isConsentz && (
         <img src="/directory/consentz-customer-badge.jpg" alt="Consentz Customer" title="Consentz Customer" className={iconClass} />
       )}
       {clinic.isCQC?.[0] && (

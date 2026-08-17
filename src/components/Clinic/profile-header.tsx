@@ -15,6 +15,7 @@ import { RequestConsultationDialog } from "@/components/tracking/request-consult
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { IconMapPin, IconPhone, IconShieldCheck } from "@tabler/icons-react";
 import { capitalize } from "@/lib/utils";
+import { isConsentzClinic } from "@/lib/consentz-customers";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
@@ -48,6 +49,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
       ? clinic.image
       : DEFAULT_IMG;
   const [imgSrc, setImgSrc] = useState(initialImg);
+  const isConsentz = isConsentzClinic(clinic);
 
   return (
     <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-lg px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t md:border md:border-(--alto) bg-white md:bg-(--primary-bg-color)">
@@ -76,14 +78,24 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
         <div className="flex flex-col gap-3 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0 min-w-0 flex-1 lg:max-w-3xl">
           <div className="flex flex-row items-start gap-4">
             <div className="flex flex-col items-center gap-2 shrink-0 md:items-start">
-              <div className="relative w-20 h-20 md:w-40 md:h-40 shrink-0 overflow-hidden rounded-full bg-gray-200">
-            <img
-              src={imgSrc}
-              alt={practitionerName}
-              className="object-cover w-full h-full rounded-full"
-              onError={() => setImgSrc(DEFAULT_IMG)}
-            />
-          </div>
+              <div className="relative w-20 h-20 md:w-40 md:h-40 shrink-0">
+                <div className="h-full w-full overflow-hidden rounded-full bg-gray-200">
+                  <img
+                    src={imgSrc}
+                    alt={practitionerName}
+                    className="object-cover w-full h-full rounded-full"
+                    onError={() => setImgSrc(DEFAULT_IMG)}
+                  />
+                </div>
+                {isConsentz && (
+                  <img
+                    src="/directory/consentz-customer-badge.jpg"
+                    alt="Consentz Customer"
+                    title="Consentz Customer"
+                    className="absolute -right-1 -top-1 z-20 h-7 w-7 rounded-full border-2 border-white object-cover shadow-sm md:-right-1.5 md:-top-1.5 md:h-10 md:w-10"
+                  />
+                )}
+              </div>
               <div className="hidden md:block max-w-[10.5rem]">
                 <PrestigeProfileBadge
                   awardsBadgeLabel={clinic.awardsBadgeLabel}
@@ -126,7 +138,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                   </Badge>
                 )}
               </div>
-              <ClinicLabels clinic={clinic} />
+              <ClinicLabels clinic={clinic} showConsentz={false} />
             </div>
 
             {/* Role / category */}
