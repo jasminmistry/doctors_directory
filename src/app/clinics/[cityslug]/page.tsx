@@ -34,6 +34,7 @@ import {
 } from "@/lib/directory-json-ld";
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
+import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -96,9 +97,11 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   if (normalizedCitySlug === "4qr") {
     notFound();
   }
-  const cityClinics: Clinic[] = clinics.filter(
-    (p) => p.City?.toLowerCase() === normalizedCitySlug && !isRemovedClinicSlug(p.slug)
-  );
+  const cityClinics: Clinic[] = clinics
+    .filter(
+      (p) => p.City?.toLowerCase() === normalizedCitySlug && !isRemovedClinicSlug(p.slug)
+    )
+    .map((clinic) => applyPrestigeToClinic(clinic));
   const cityData = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );
