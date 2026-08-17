@@ -3,9 +3,6 @@
 const nextConfig = {
   reactStrictMode: true,
   staticPageGenerationTimeout: 600,
-  experimental: {
-    trustProxyHeaders: true,
-  },
     images: {
       
       formats: ["image/avif", "image/webp"], // enable AVIF + WebP

@@ -5,6 +5,7 @@ import Redis from 'ioredis'
 const redisUrl = process.env.REDIS_URL
 
 let _redis: Redis | null = null
+let _connecting: Promise<void> | null = null
 
 function getRedis(): Redis | null {
   if (!redisUrl) return null
@@ -18,12 +19,26 @@ function getRedis(): Redis | null {
     _redis.on('error', (err) => {
       console.warn('[redis-cache] error:', err.message)
     })
+    // lazyConnect only opens the socket on first command, but sendCommand() checks
+    // writability synchronously — so the command that triggers the connect always
+    // fires before the socket is ready and gets rejected outright (enableOfflineQueue
+    // is false). Kick off + await the connect explicitly before issuing any command.
+    _connecting = _redis.connect().catch((err) => {
+      console.warn('[redis-cache] connect failed:', err.message)
+    })
   }
   return _redis
 }
 
-export async function getCache<T = any>(key: string): Promise<T | null> {
+async function getReadyRedis(): Promise<Redis | null> {
   const client = getRedis()
+  if (!client) return null
+  await _connecting
+  return client
+}
+
+export async function getCache<T = any>(key: string): Promise<T | null> {
+  const client = await getReadyRedis()
   if (!client) return null
   try {
     const data = await client.get(key)
@@ -35,7 +50,7 @@ export async function getCache<T = any>(key: string): Promise<T | null> {
 }
 
 export async function setCache(key: string, value: any, ttlSeconds = 3600): Promise<void> {
-  const client = getRedis()
+  const client = await getReadyRedis()
   if (!client) return
   try {
     await client.set(key, JSON.stringify(value), 'EX', ttlSeconds)
@@ -45,7 +60,7 @@ export async function setCache(key: string, value: any, ttlSeconds = 3600): Prom
 }
 
 export async function delCache(key: string): Promise<void> {
-  const client = getRedis()
+  const client = await getReadyRedis()
   if (!client) return
   try {
     await client.del(key)

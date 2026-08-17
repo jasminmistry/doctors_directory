@@ -10,8 +10,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { SearchBar } from "@/components/search/search-bar"
-import { toDirectoryCanonical } from "@/lib/seo"
-import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import {
   getAccreditationDisplayName,
   getPrestigeMatchingClinicSlugs,
@@ -22,6 +20,8 @@ import {
 } from "@/lib/accreditation-directory"
 import { Clinic, Practitioner } from "@/lib/types"
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
+import { toDirectoryCanonical } from "@/lib/seo";
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
 import { IconArrowNarrowLeft } from "@tabler/icons-react"
 
 export const dynamic = "force-dynamic"

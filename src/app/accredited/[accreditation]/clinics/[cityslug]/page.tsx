@@ -8,8 +8,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import type { Clinic } from "@/lib/types"
 import { IconArrowNarrowLeft } from "@tabler/icons-react"
+import { Clinic } from "@/lib/types"
 import { readJsonFileSync } from "@/lib/json-cache"
 import { PractitionerCard } from "@/components/practitioner-card"
 import { isAllowedCqcAccreditedCity } from "@/lib/accredited-city-filter"

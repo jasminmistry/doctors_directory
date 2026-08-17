@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
 import { invalidateSearchCache } from '@/lib/search-cache'
+import { invalidatePractitionersSearchCache } from '@/lib/data-access/practitioners'
 
 export const dynamic = 'force-dynamic'
 
@@ -106,6 +107,7 @@ export async function PUT(request: Request) {
       select: PRACTITIONER_PORTAL_SELECT,
     })
     await invalidateSearchCache()
+    await invalidatePractitionersSearchCache()
     revalidatePath('/portal/practitioner')
     return NextResponse.json(practitioner)
   } catch (error) {

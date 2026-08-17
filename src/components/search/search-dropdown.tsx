@@ -42,7 +42,7 @@ export function SearchDropdown({
 
   const dropdownClasses = isMobile
     ? "absolute top-full left-0 w-full bg-white rounded-lg border border-gray-200 p-4 z-50 mt-1"
-    : "absolute top-full left-0 w-full bg-white rounded-lg border border-gray-200 p-6 z-50 mt-1";
+    : "flex w-full bg-white rounded-lg border border-gray-200 p-6";
 
   const clsgrd = "gap-4";
   const gridClasses = isMobile
@@ -60,7 +60,7 @@ export function SearchDropdown({
     .sort((a: string, b: string) => a.localeCompare(b));
 
   const isTreatmentSearch = localFilters.type === "Treatments";
-  const treatmentQuery = localFilters.query.trim().toLowerCase();
+  const treatmentQuery = (localFilters.query || "").trim().toLowerCase();
   const filteredTreatments = treatmentSearchOptions.filter((treatment) => {
     if (!treatmentQuery) return true;
     return (

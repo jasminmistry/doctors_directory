@@ -13,6 +13,10 @@ let prisma: PrismaClient
 
 if (process.env.DATABASE_URL) {
   const { hostname, port, username, password, pathname } = new URL(process.env.DATABASE_URL)
+  // Each PM2 cluster worker gets its own pool (workers don't share connections), and the
+  // mariadb driver eagerly opens `connectionLimit` connections at startup (minimumIdle
+  // defaults to connectionLimit) rather than growing lazily under load. Keep this low —
+  // total connections = PM2 instances × connectionLimit, must stay under MySQL max_connections.
   const adapter = new PrismaMariaDb({
     host: hostname,
     port: parseInt(port) || 3306,
@@ -20,6 +24,7 @@ if (process.env.DATABASE_URL) {
     password: decodeURIComponent(password),
     database: pathname.slice(1),
     allowPublicKeyRetrieval: true,
+    connectionLimit: 5,
   })
 
   const stale = globalForPrisma.prismaSchemaVersion !== SCHEMA_VERSION

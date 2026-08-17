@@ -27,6 +27,7 @@ const REDIS_KEY_PREFIX = 'prewarm:json:';
 const REDIS_TTL_SECONDS = 7200; // 2 h — well beyond the 1-h NodeCache TTL
 
 let redisClient = null;
+let redisConnecting = null;
 if (REDIS_URL) {
   try {
     const Redis = require('ioredis');
@@ -38,6 +39,13 @@ if (REDIS_URL) {
     });
     redisClient.on('error', (err) => {
       console.warn('[prewarm] Redis error:', err.message);
+    });
+    // lazyConnect only opens the socket on first command, but sendCommand() checks
+    // writability synchronously — so the very first command always fires before the
+    // socket is ready and gets rejected outright (enableOfflineQueue is false).
+    // Kick off + await the connect explicitly before issuing any get/set below.
+    redisConnecting = redisClient.connect().catch((err) => {
+      console.warn('[prewarm] Redis connect failed:', err.message);
     });
   } catch (err) {
     console.warn('[prewarm] ioredis not available:', err.message);
@@ -52,6 +60,8 @@ const startDelay = instanceId * 2000; // 2 s gap between each worker
 const isPrimary = instanceId === 0;
 
 async function prewarmJsonCache() {
+  if (redisClient) await redisConnecting;
+
   const results = await Promise.allSettled(
     JSON_FILES_TO_PREWARM.map(async (filename) => {
       let parsed = null;

@@ -20,7 +20,6 @@ export function SearchBar({handlePageChange}: Readonly<SearchBarProps>) {
 
   const {
     isSearchPage,
-    filters,
     isLoading,
     showResults,
     setShowResults,
