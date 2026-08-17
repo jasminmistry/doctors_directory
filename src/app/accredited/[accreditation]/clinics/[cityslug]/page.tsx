@@ -23,6 +23,7 @@ import {
   normalizeAccreditationSlug,
 } from "@/lib/accreditation-directory"
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations"
+import { capitalize } from "@/lib/utils"
 
 export const dynamic = "force-dynamic"
 
@@ -62,6 +63,7 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
   const displayClinics = filteredClinics.length ? filteredClinics : cityClinics
   const isFallback = filteredClinics.length === 0
   const accreditationName = getAccreditationDisplayName(accreditation)
+  const cityDisplayName = capitalize(cityslug)
 
   return (
     <main className="bg-white">
@@ -91,7 +93,7 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{cityslug}</BreadcrumbPage>
+                  <BreadcrumbPage>{cityDisplayName}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -100,11 +102,11 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
 
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">
-            {accreditationName} Clinics in {cityslug}
+            {accreditationName} Clinics in {cityDisplayName}
           </h1>
           {isFallback && (
             <p className="text-sm text-amber-700 mb-4">
-              No exact {accreditationName} matches in this city yet. Showing other clinics in {cityslug}.
+              No exact {accreditationName} matches in this city yet. Showing other clinics in {cityDisplayName}.
             </p>
           )}
         </div>
