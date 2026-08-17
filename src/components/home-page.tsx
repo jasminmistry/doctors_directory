@@ -1165,7 +1165,7 @@ export default function HomePage({
 
       {featuredSection}
 
-      <section className="py-15 md:py-20">
+      <section className="py-2 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-xl md:text-3xl font-medium text-center mb-6 md:mb-16">
             Building trust and clarity in healthcare
@@ -1215,37 +1215,38 @@ export default function HomePage({
             </h2>
             <p className="text-center mb-8">Consentz is recognized by leading industry authorities, ensuring our software meets the highest standards for clinic management, patient safety, and data security. Trust in our commitment to quality and excellence.</p>
 
-            <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-4">
-
+            <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
               <div className="mb-2 bg-white w-full max-w-md text-center">
                 <img
                   src="/directory/images/iso.png"
                   alt="Practitioner Banner"
-                  className="w-[130px] inline-block"
+                  className="w-[90px] sm:w-[110px] lg:w-[130px] inline-block"
                 />
               </div>
+
               <div className="mb-2 bg-white w-full max-w-md text-center">
                 <img
                   src="/directory/images/qui.png"
                   alt="Practitioner Banner"
-                  className="w-[130px] inline-block"
+                  className="w-[90px] sm:w-[110px] lg:w-[130px] inline-block"
                 />
               </div>
+
               <div className="mb-2 bg-white w-full max-w-md text-center">
                 <img
                   src="/directory/images/amazon.png"
                   alt="Practitioner Banner"
-                  className="w-[130px] inline-block"
+                  className="w-[90px] sm:w-[110px] lg:w-[130px] inline-block"
                 />
               </div>
+
               <div className="mb-2 bg-white w-full max-w-md text-center">
                 <img
                   src="/directory/images/hipaa.png"
                   alt="Practitioner Banner"
-                  className="w-[130px] inline-block"
+                  className="w-[90px] sm:w-[110px] lg:w-[130px] inline-block"
                 />
               </div>
-              
             </div>
           </div>
       </section>
@@ -1309,23 +1310,28 @@ export default function HomePage({
               <img
                 src="/directory/images/seo.png"
                 alt="Healthcare dashboard on laptop"
-                className="max-w-full"
+                className="max-w-full max-md:max-w-[305px] max-md:mr-[-50px] max-md:mt-[15px]"
               />
             </div>
           </div>
           <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
-            <div className="flex justify-center">
+            <div className="flex justify-center order-2 md:order-1">
               <img
                 src="/directory/images/cpm.png"
                 alt=""
-                className="max-w-full"
+                className="max-w-full max-md:max-w-[305px] max-md:mr-[-50px] max-md:mt-[15px]"
               />
             </div>
-            <div className="max-w-lg mx-auto">
+
+            <div className="max-w-lg mx-auto order-1 md:order-2">
               <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-7">
-                 Create Powerful Marketing Pipelines and Campaigns
+                Create Powerful Marketing Pipelines and Campaigns
               </h2>
-              <p>Bring new patients through the door with our unique Facebook and Google ads module and our automated email campaign builder customized for Aesthetics practices.</p>             
+              <p>
+                Bring new patients through the door with our unique Facebook and Google
+                ads module and our automated email campaign builder customized for
+                Aesthetics practices.
+              </p>
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-4 items-center">
@@ -1340,14 +1346,14 @@ export default function HomePage({
               <img
                 src="/directory/images/eps.png"
                 alt=""
-                className="max-w-full"
+                className="max-w-full max-md:max-w-[305px] max-md:mr-[-50px] max-md:mt-[15px]"
               />
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-white-10 py-6 md:py-10">
+      <section className="bg-white-10 py-6 mx-2 md:py-10">
         <div className="max-w-7xl mx-auto flex items-center px-6 h-[400px] rounded-lg" 
             style={{
               backgroundImage: 'url("/directory/images/elite.png")',
@@ -1418,10 +1424,10 @@ export default function HomePage({
       <section className="bg-[var(--dune)] py-20 text-white">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-medium mb-2">
+            <h2 className="text-2xl text-center md:text-left md:text-4xl font-medium mb-2">
               Ready to Get Started?
             </h2>
-            <p className="text-gray-300">
+            <p className="text-gray-300 text-center md:text-left">
               Join over 250+ clinics already growing with Consentz
             </p>
           </div>
@@ -1501,7 +1507,7 @@ export default function HomePage({
         </div>
       </section>
       <section
-        className="max-w-4xl mx-auto pt-4 pb-20 px-6"
+        className="max-w-4xl mx-auto pt-4 pb-7 md:pb-20 px-6"
         aria-labelledby="faq-heading"
       >
         <h2
@@ -1535,7 +1541,7 @@ export default function HomePage({
                   <span className="text-2xl font-normal text-center w-7 h-7 rounded-full leading-6 text-black transition-all select-none bg-black text-white absolute left-0">
                     {isOpen ? "−" : "+"}
                   </span>
-                  <span className="font-medium">{item.q}</span>
+                  <span className="text-base md:text-lg font-medium">{item.q}</span>
                 </summary>
 
                 <div className="mt-4">
