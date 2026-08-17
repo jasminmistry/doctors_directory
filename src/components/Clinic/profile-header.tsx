@@ -79,7 +79,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
         <div className="flex flex-row flex-wrap items-start gap-4 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0">
           
           {/* Avatar */}
-          <div className="flex flex-col items-center gap-2 shrink-0 md:items-start">
+          <div className="flex flex-col items-center gap-2 shrink-0 pr-2 md:items-start md:pr-3">
             <div className="relative h-20 w-20 md:h-40 md:w-40 shrink-0">
               <div className="h-full w-full overflow-hidden rounded-full bg-gray-200">
                 <img
@@ -94,7 +94,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                   src="/directory/consentz-customer-badge.jpg"
                   alt="Consentz Customer"
                   title="Consentz Customer"
-                  className="absolute -right-1 -top-1 z-20 h-7 w-7 rounded-full border-2 border-white object-cover shadow-sm md:-right-1.5 md:-top-1.5 md:h-10 md:w-10"
+                  className="absolute top-0 right-0 z-20 h-6 w-6 translate-x-1/4 -translate-y-1/4 rounded-full border-2 border-white object-cover shadow-sm md:h-10 md:w-10"
                 />
               )}
             </div>
