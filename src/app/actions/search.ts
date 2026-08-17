@@ -4,7 +4,7 @@ import { Clinic, Practitioner, Product, SearchFilters } from "@/lib/types"
 import { getAllClinicsForSearch, searchClinicsForListing, type SearchClinic } from "@/lib/data-access/clinics"
 import { getAllTreatmentNames, getAllTreatmentOptions } from "@/lib/data-access/treatments"
 import { getAllProducts as getAllProductsFromDb, searchProductsForListing } from "@/lib/data-access/products"
-import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
+import { getAllPractitionersForSearch, searchPractitionersForListing } from "@/lib/data-access/practitioners"
 import { modalities } from "@/lib/data"
 import { getCachedSearchData, setCachedSearchData } from "@/lib/search-cache"
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations"
@@ -171,9 +171,10 @@ export async function searchPractitioners(
 ) {
   const skip = (page - 1) * ITEMS_PER_PAGE
 
-  // Clinic and Product are filtered/paginated directly in MySQL (indexed WHERE + LIMIT) instead
-  // of fetching the entire table and filtering in JS — see searchClinicsForListing /
-  // searchProductsForListing for the DB-side equivalent of the filter logic below.
+  // Clinic, Product and Practitioner are filtered/paginated directly in MySQL (indexed WHERE +
+  // LIMIT) instead of fetching the entire table and filtering in JS — see searchClinicsForListing /
+  // searchProductsForListing / searchPractitionersForListing for the DB-side equivalent of the
+  // filter logic below (Treatments stays JS-side: only ~90 rows, not worth pushing down).
   if (filters.type === "Clinic") {
     const { clinics: rows, totalCount } = await searchClinicsForListing({
       query: filters.query,
@@ -198,6 +199,21 @@ export async function searchPractitioners(
       take: ITEMS_PER_PAGE,
     })
     return paginatedResult(rows, totalCount, page)
+  }
+
+  if (filters.type === "Practitioner") {
+    const { practitioners: rows, totalCount } = await searchPractitionersForListing({
+      query: filters.query,
+      category: filters.category,
+      location: filters.location,
+      services: filters.services,
+      rating: filters.rating,
+      accreditation: filters.accreditation,
+      sortBy,
+      skip,
+      take: ITEMS_PER_PAGE,
+    })
+    return paginatedResult(mapPractitionersForSearch(rows), totalCount, page)
   }
 
   let filtered: any[] = []
@@ -261,57 +277,6 @@ export async function searchPractitioners(
         ) || treatment.toLowerCase().includes(area)
 
         if (!hasMatchingArea) return false
-      }
-
-      return true
-    })
-  } else if (filters.type === 'Practitioner') {
-    const practitionersFromDb = await getAllPractitionersForSearch()
-    const practitioners = mapPractitionersForSearch(practitionersFromDb)
-    filtered = ( practitioners).filter((practitioner) => {
-      if (filters.query) {
-        
-        const queryWords = filters.query.toLowerCase().split(/\s+/).filter(word => word.length > 0)
-        const searchableText = [
-          practitioner?.practitioner_name,
-          practitioner?.practitioner_qualifications?.toLowerCase(),
-          practitioner?.category,
-          practitioner?.gmapsAddress,
-          practitioner?.practitioner_awards?.toLowerCase(),
-          ...(practitioner?.Treatments || []),
-        ].join(" ").toLowerCase()
-        const hasAllWords = queryWords.every(word => searchableText.includes(word))
-        if (!hasAllWords) return false
-      }
-
-      if (filters.category && filters.category !== "All Categories") {
-        if (!practitioner?.practitioner_qualifications?.toLowerCase().includes(filters.category.toLowerCase())) return false  
-      }
-
-      if (filters.location?.trim()) {
-        const location = filters.location.trim().toLowerCase()
-        if (!practitioner?.gmapsAddress.toLowerCase().includes(location)) return false
-      }
-
-      if (filters.services.length > 0) {
-        const service = filters.services[0]
-        if(!practitioner?.practitioner_title?.toLowerCase().includes(service.toLowerCase())) return false
-        
-      }
-
-      if (filters.rating > 0) {
-        if (practitioner!.rating < filters.rating) return false
-      }
-
-      if (filters.accreditation && filters.accreditation !== "all") {
-        const accreditation = filters.accreditation.toLowerCase()
-        const searchableText = [
-          practitioner?.practitioner_name,
-          practitioner?.practitioner_qualifications?.toLowerCase(),
-          practitioner?.category,
-          practitioner?.practitioner_awards?.toLowerCase(),
-        ].join(" ").toLowerCase()
-        if (!searchableText.includes(accreditation)) return false
       }
 
       return true
