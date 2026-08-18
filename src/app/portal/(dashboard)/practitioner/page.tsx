@@ -2,15 +2,10 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { PractitionerForm } from '@/components/admin/forms/PractitionerForm'
+import { CommercialPanel, type SubscriptionInfo } from '@/components/portal/CommercialPanel'
 import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from '@/lib/pricing'
 
 export const dynamic = 'force-dynamic'
-
-const PLAN_LABELS: Record<string, string> = {
-  free: 'Free',
-  pay_per_lead: `Pay-Per-Lead £${PPL_LEAD_PRICE}/mo`,
-  subscription: `Subscription £${SUBSCRIPTION_MONTHLY_PRICE}/mo`,
-}
 
 const PLAN_ORDER: Record<string, number> = { free: 0, pay_per_lead: 1, subscription: 2 }
 
@@ -18,12 +13,6 @@ const UPGRADEABLE_PLANS: { key: string; label: string; description: string }[] =
   { key: 'pay_per_lead', label: `Pay-Per-Lead — £${PPL_LEAD_PRICE}/mo`, description: 'Priority listing + Verified badge' },
   { key: 'subscription', label: `Subscription — £${SUBSCRIPTION_MONTHLY_PRICE}/mo`, description: 'Unlimited leads at £0 each' },
 ]
-
-interface SubscriptionInfo {
-  plan: string | null
-  stripeSubscriptionId: string | null
-  approvedAt: string | null
-}
 
 export default function PortalPractitionerPage() {
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
@@ -70,70 +59,37 @@ export default function PortalPractitionerPage() {
 
   return (
     <div className="px-4 py-8 space-y-6">
-      {/* Subscription card */}
+      {/* Commercial panel */}
       {subscription && (
-        <div className="rounded-lg border border-gray-200 bg-white p-5">
-          <h2 className="text-sm font-semibold text-black uppercase tracking-wide mb-4">Subscription</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <div>
-              <p className="text-xs text-gray-600 mb-0.5">Plan</p>
-              <p className="font-semibold text-gray-900">
-                {PLAN_LABELS[subscription.plan ?? ''] ?? subscription.plan ?? '—'}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-600 mb-0.5">Status</p>
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
-                Active
-              </span>
-            </div>
-            {subscription.approvedAt && (
-              <div>
-                <p className="text-xs text-gray-600 mb-0.5">Member since</p>
-                <p className="text-sm text-gray-700">
-                  {new Date(subscription.approvedAt).toLocaleDateString('en-GB', {
-                    day: '2-digit', month: 'short', year: 'numeric',
-                  })}
-                </p>
-              </div>
-            )}
-            {subscription.stripeSubscriptionId && (
-              <div className="col-span-2 sm:col-span-3">
-                <p className="text-xs text-gray-600 mb-0.5">Subscription ID</p>
-                <p className="text-xs text-gray-600 font-mono">{subscription.stripeSubscriptionId}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Upgrade options */}
-          {(() => {
-            const currentRank = PLAN_ORDER[subscription.plan ?? 'free'] ?? 0
-            const options = UPGRADEABLE_PLANS.filter((p) => PLAN_ORDER[p.key] > currentRank)
-            if (!options.length) return null
-            return (
-              <div className="mt-5 pt-4 border-t border-gray-100">
-                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Upgrade plan</p>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  {options.map((opt) => (
-                    <button
-                      key={opt.key}
-                      onClick={() => handleUpgrade(opt.key)}
-                      disabled={upgrading === opt.key}
-                      className="flex-1 rounded-lg border border-gray-200 px-4 py-3 text-left hover:border-gray-400 hover:bg-gray-50 transition-colors disabled:opacity-50"
-                    >
-                      <p className="text-sm font-semibold text-gray-900">
-                        {upgrading === opt.key ? 'Redirecting…' : opt.label}
-                      </p>
-                      <p className="text-xs text-gray-600 mt-0.5">{opt.description}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )
-          })()}
-        </div>
+        <CommercialPanel subscription={subscription} entityType="practitioner" onChanged={fetchPractitionerData} />
       )}
+
+      {/* Upgrade options */}
+      {subscription && subscription.stripeStatus !== 'cancel_at_period_end' && (() => {
+        const currentRank = PLAN_ORDER[subscription.plan ?? 'free'] ?? 0
+        const options = UPGRADEABLE_PLANS.filter((p) => PLAN_ORDER[p.key] > currentRank)
+        if (!options.length) return null
+        return (
+          <div className="rounded-lg border border-gray-200 bg-white p-5">
+            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Upgrade plan</p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              {options.map((opt) => (
+                <button
+                  key={opt.key}
+                  onClick={() => handleUpgrade(opt.key)}
+                  disabled={upgrading === opt.key}
+                  className="flex-1 rounded-lg border border-gray-200 px-4 py-3 text-left hover:border-gray-400 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  <p className="text-sm font-semibold text-gray-900">
+                    {upgrading === opt.key ? 'Redirecting…' : opt.label}
+                  </p>
+                  <p className="text-xs text-gray-600 mt-0.5">{opt.description}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )
+      })()}
 
       {/* ID Verification */}
       {idVerified === false && entitySlug && (
