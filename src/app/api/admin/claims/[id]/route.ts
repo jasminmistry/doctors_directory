@@ -377,16 +377,6 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         return NextResponse.json({ success: true })
       }
 
-      // Consentz-linked claims already have an account — skip provisioning but still notify
-      if (claim.consentzUserId) {
-        await sendClaimApprovedEmail({
-          to: claim.claimerEmail,
-          clinicName: entityName,
-          plan: PLAN_LABELS[claim.selectedPlan ?? 'free'] ?? 'Free',
-        }).catch(err => console.error('[claim] sendClaimApprovedEmail (consentz-linked) failed:', err))
-        return NextResponse.json({ success: true })
-      }
-
       const tokens = await provisionConsentzAccount(claim, entityName, authToken, storedRefreshToken)
       const res = NextResponse.json({ success: true })
       applyFreshTokens(res, tokens)

@@ -11,6 +11,7 @@ const PLAN_LABELS: Record<string, string> = {
 export default function UpgradeSuccessPage() {
   const params = useSearchParams()
   const plan = params.get('plan') ?? ''
+  const entityType = params.get('entityType') === 'practitioner' ? 'practitioner' : 'clinic'
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -25,7 +26,7 @@ export default function UpgradeSuccessPage() {
           You're now on the <strong>{PLAN_LABELS[plan] ?? plan}</strong> plan. Your profile has been updated.
         </p>
         <Link
-          href="/portal/practitioner"
+          href={`/portal/${entityType}`}
           className="inline-block mt-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-neutral-800"
         >
           Back to dashboard
