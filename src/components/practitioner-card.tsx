@@ -286,8 +286,8 @@ export function PractitionerCard({
 
               {(isClinic(practitioner) || isPractitioner(practitioner)) && (
                 <PrestigeSearchPill
-                  awardsBadgeLabel={isClinic(practitioner) ? practitioner.awardsBadgeLabel : undefined}
-                  tatlerBadgeLabel={isClinic(practitioner) ? practitioner.tatlerBadgeLabel : undefined}
+                  awardsBadgeLabel={practitioner.awardsBadgeLabel}
+                  tatlerBadgeLabel={practitioner.tatlerBadgeLabel}
                   consentzLabel={
                     isConsentzLinked(practitioner as Clinic) ? "Consentz Customer" : null
                   }

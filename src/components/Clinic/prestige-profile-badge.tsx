@@ -43,10 +43,7 @@ export function PrestigeProfileBadge({
         <span
           key={item.key}
           className={cn(
-            'inline-flex w-fit max-w-full items-center gap-1 rounded-full font-semibold leading-snug',
-            item.kind === 'consentz'
-              ? 'bg-amber-50 text-amber-900 ring-1 ring-amber-200'
-              : 'bg-amber-500 text-white shadow-sm',
+            'inline-flex w-fit max-w-full items-center gap-1 rounded-full bg-amber-50 font-semibold leading-snug text-amber-900 ring-1 ring-amber-200',
             size === 'sm'
               ? 'px-2 py-0.5 text-[10px]'
               : 'px-2.5 py-1 text-xs md:text-sm',

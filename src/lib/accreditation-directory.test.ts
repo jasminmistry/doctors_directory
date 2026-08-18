@@ -3,9 +3,11 @@ import {
   clinicCityMatchesSlug,
   clinicMatchesAccreditation,
   filterClinicsByAccreditation,
+  getAccreditedPractitioners,
   getConsentzAccreditedPractitioners,
   practitionerMatchesAccreditation,
 } from '@/lib/accreditation-directory'
+import { applyPrestigeToClinic } from '@/lib/prestige-accreditations'
 import { isConsentzLinked, isDirectoryTestListing } from '@/lib/consentz-customers'
 import { readJsonFileSync } from '@/lib/json-cache'
 
@@ -104,6 +106,36 @@ describe('Consentz accredited matching', () => {
     expect(
       practitioners.some((entry) => /qa test|test user|qa clinic/i.test(entry.practitioner_name ?? '')),
     ).toBe(false)
+  })
+
+  test('Tatler accredited clinics include The Wellness Atelier with prestige labels', () => {
+    const clinics = (readJsonFileSync('clinics_processed_new_data.json') as Clinic[]).map(
+      (entry) => applyPrestigeToClinic(entry),
+    )
+    const tatlerClinics = filterClinicsByAccreditation(clinics, 'tatler')
+    const awardsClinics = filterClinicsByAccreditation(clinics, 'aesthetics-awards')
+    const wellness = tatlerClinics.find((entry) => entry.slug === 'the-wellness-atelier')
+
+    expect(wellness).toBeDefined()
+    expect(wellness?.tatlerBadgeLabel).toBe('Tatler Guide 2025')
+    expect(wellness?.awardsBadgeLabel).toBe('Aesthetics Awards Winner 2025')
+    expect(awardsClinics.some((entry) => entry.slug === 'the-wellness-atelier')).toBe(true)
+    expect(
+      tatlerClinics.every((entry) => !clinicCityMatchesSlug(entry.City, 'aberdare')),
+    ).toBe(true)
+  })
+
+  test('accredited prestige practitioners have cities and prestige labels', () => {
+    const tatlerPractitioners = getAccreditedPractitioners('tatler')
+    const awardsPractitioners = getAccreditedPractitioners('aesthetics-awards')
+
+    expect(tatlerPractitioners.length).toBeGreaterThan(0)
+    expect(awardsPractitioners.length).toBeGreaterThan(0)
+    expect(tatlerPractitioners.every((entry) => Boolean(entry.City))).toBe(true)
+    expect(tatlerPractitioners.every((entry) => Boolean(entry.tatlerBadgeLabel))).toBe(true)
+    expect(awardsPractitioners.every((entry) => Boolean(entry.awardsBadgeLabel))).toBe(true)
+    expect(tatlerPractitioners.every((entry) => entry.City !== 'Aberdare')).toBe(true)
+    expect(awardsPractitioners.every((entry) => entry.City !== 'Aberdare')).toBe(true)
   })
 
   test('Consentz linked helper matches associated clinic slugs', () => {

@@ -338,6 +338,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   rqiaUrl={clinic.isRQIA ? clinic.isRQIA[1] : null}
                   aestheticsAwards={clinic.aestheticsAwards}
                   tatlerGuideYears={clinic.tatlerGuideYears}
+                  awardsBadgeLabel={clinic.awardsBadgeLabel}
+                  tatlerBadgeLabel={clinic.tatlerBadgeLabel}
                 />
                 <TransparencyBox
                   claimedAt={dbClinic.claimedAt}

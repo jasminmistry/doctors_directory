@@ -107,6 +107,8 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
                 )}
               </div>
               <PrestigeProfileBadge
+                awardsBadgeLabel={clinic.awardsBadgeLabel ?? k_value.awardsBadgeLabel}
+                tatlerBadgeLabel={clinic.tatlerBadgeLabel ?? k_value.tatlerBadgeLabel}
                 consentzLabel={isConsentzLinked(k_value) ? "Consentz Customer" : null}
                 size="md"
               />

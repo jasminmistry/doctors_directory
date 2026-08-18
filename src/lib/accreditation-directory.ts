@@ -6,8 +6,11 @@ import {
 } from '@/lib/consentz-customers'
 import type { Clinic, Practitioner } from '@/lib/types'
 import prestigeData from '@/lib/data/prestige-accreditations.json'
-import { getPrestigeAccreditation } from '@/lib/prestige-accreditations'
-import type { PrestigeAccreditation } from '@/lib/prestige-accreditations'
+import {
+  applyPrestigeToClinic,
+  getPrestigeAccreditation,
+  type PrestigeAccreditation,
+} from '@/lib/prestige-accreditations'
 import { readJsonFileSync } from '@/lib/json-cache'
 import { toUrlSlug } from '@/lib/utils'
 
@@ -181,7 +184,10 @@ export function practitionerMatchesAccreditation(
   return clinicMatchesAccreditation(practitioner as Clinic, slug)
 }
 
-export function getConsentzAccreditedPractitioners(): Practitioner[] {
+export function getAccreditedPractitioners(accreditation: string): Practitioner[] {
+  const matchingClinicSlugs = getMatchingClinicSlugs(accreditation)
+  if (!matchingClinicSlugs) return []
+
   const clinics = readJsonFileSync('clinics_processed_new_data.json') as Clinic[]
   const practitioners = readJsonFileSync('derms_processed_new_5403.json') as Practitioner[]
   const clinicBySlug = new Map(
@@ -196,19 +202,28 @@ export function getConsentzAccreditedPractitioners(): Practitioner[] {
     }
     const clinic = associatedClinicSlugs(practitioner)
       .map((clinicSlug) => clinicBySlug.get(clinicSlug.toLowerCase()))
-      .find((entry) => entry && isConsentzClinic(entry))
+      .find((entry) => entry?.slug && matchingClinicSlugs.has(entry.slug.toLowerCase()))
     if (!clinic) return []
 
+    const prestigeClinic = applyPrestigeToClinic(clinic)
     return [
       {
-        ...clinic,
+        ...prestigeClinic,
         ...practitioner,
         City: clinic.City,
         gmapsAddress: practitioner.gmapsAddress || clinic.gmapsAddress,
         Treatments: practitioner.Treatments?.length ? practitioner.Treatments : clinic.Treatments,
-        isConsentz: true,
+        isConsentz: isConsentzClinic(clinic),
+        awardsBadgeLabel: prestigeClinic.awardsBadgeLabel,
+        tatlerBadgeLabel: prestigeClinic.tatlerBadgeLabel,
+        aestheticsAwards: prestigeClinic.aestheticsAwards,
+        tatlerGuideYears: prestigeClinic.tatlerGuideYears,
         slug: practitioner.slug || clinic.slug,
       },
     ]
   })
+}
+
+export function getConsentzAccreditedPractitioners(): Practitioner[] {
+  return getAccreditedPractitioners('consentz')
 }

@@ -15,7 +15,8 @@ import { toDirectoryCanonical } from "@/lib/seo"
 import {
   clinicMatchesAccreditation,
   getAccreditationDisplayName,
-  getConsentzAccreditedPractitioners,
+  getAccreditedPractitioners,
+  isPrestigeAccreditation,
   practitionerMatchesAccreditation,
   PRESTIGE_ACCREDITATION_SLUGS,
   REGULATORY_ACCREDITATION_SLUGS,
@@ -38,7 +39,9 @@ export default async function AccreditedPage() {
     .map((c) => applyPrestigeToClinic(c))
 
   const practitioners = await getAllPractitionersForSearch()
-  const consentzPractitioners = getConsentzAccreditedPractitioners()
+  const prestigePractitionerCounts = Object.fromEntries(
+    PRESTIGE_ACCREDITATION_SLUGS.map((slug) => [slug, getAccreditedPractitioners(slug).length]),
+  ) as Record<(typeof PRESTIGE_ACCREDITATION_SLUGS)[number], number>
 
   return (
     <main className="bg-white">
@@ -79,13 +82,12 @@ export default async function AccreditedPage() {
             const clinicCount = clinics.filter((c) =>
               clinicMatchesAccreditation(c, accreditation),
             ).length
-            const practitionerCount =
-              accreditation === "consentz"
-                ? consentzPractitioners.length
-                : practitioners.filter((p) => {
-                    if (!p) return false
-                    return practitionerMatchesAccreditation(p, accreditation)
-                  }).length
+            const practitionerCount = isPrestigeAccreditation(accreditation)
+              ? prestigePractitionerCounts[accreditation]
+              : practitioners.filter((p) => {
+                  if (!p) return false
+                  return practitionerMatchesAccreditation(p, accreditation)
+                }).length
 
             return (
               <Card

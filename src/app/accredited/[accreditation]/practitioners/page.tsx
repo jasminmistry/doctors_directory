@@ -15,7 +15,7 @@ import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import {
   clinicCityMatchesSlug,
   getAccreditationDisplayName,
-  getConsentzAccreditedPractitioners,
+  getAccreditedPractitioners,
   isKnownAccreditation,
   isPrestigeAccreditation,
   normalizeAccreditationSlug,
@@ -41,10 +41,9 @@ export default async function AccreditedPractitionersPage({
     notFound()
   }
 
-  const enrichedPractitioners =
-    accreditation === "consentz"
-      ? getConsentzAccreditedPractitioners()
-      : await getAllPractitionersForSearch()
+  const enrichedPractitioners = isPrestigeAccreditation(accreditation)
+    ? getAccreditedPractitioners(accreditation)
+    : await getAllPractitionersForSearch()
   const filteredPractitioners = enrichedPractitioners.filter((practitioner) => {
     if (!practitioner) return false
     return practitionerMatchesAccreditation(practitioner, accreditation)

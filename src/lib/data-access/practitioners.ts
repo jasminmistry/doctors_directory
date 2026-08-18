@@ -5,6 +5,7 @@ import NodeCache from 'node-cache'
 import type { Practitioner, RankingMeta, ItemMeta } from '@/lib/types'
 import { isRemovedPractitionerSlug, hasTripleLetterSequence } from '@/lib/directory-removals'
 import { isConsentzClinicSlug } from '@/lib/consentz-customers'
+import { applyPrestigeFromSlugs } from '@/lib/prestige-accreditations'
 import { getCache, setCache } from '@/lib/redis-cache'
 
 const DAY_LABELS: Record<string, string> = {
@@ -67,7 +68,7 @@ export function convertDbPractitionerToOldType(p: any): Practitioner {
       }
     : {}
 
-  return {
+  const converted: Practitioner = {
     ...clinicFields,
     practitioner_name: p.slug,
     practitioner_title: p.title ?? undefined,
@@ -97,6 +98,8 @@ export function convertDbPractitionerToOldType(p: any): Practitioner {
     idVerified: p.idVerified ?? false,
     manualVerified: p.manualVerified ?? false,
   }
+
+  return applyPrestigeFromSlugs(converted, [primaryClinic?.slug, ...allClinicSlugs])
 }
 
 const CLINIC_SELECT = {
