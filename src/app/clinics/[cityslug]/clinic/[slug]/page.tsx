@@ -41,11 +41,12 @@ import { buildMedicalClinicJsonLd } from "@/lib/directory-json-ld";
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { isRemovedClinicSlug } from "@/lib/directory-removals";
 import { DirectoryStarRating } from "@/components/directory-star-rating";
-import { isConsentzClinicSlug } from "@/lib/consentz-customers";
-import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
 import { getClaimState } from "@/lib/claim-utils";
 import { getPortalUser } from "@/lib/portal";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
+import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
+import { isConsentzClinicSlug } from "@/lib/consentz-customers";
+
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
   incoming: Record<string, ItemMeta>
@@ -249,7 +250,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   );
   const rankingSubtitle =
     clinic?.ranking?.subtitle_text ?? `${overallScore}/100 in ${clinic?.City ?? displayCityName}`;
-  const clinicDisplayName = getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name });
+  const clinicDisplayName = getClinicDisplayName({ slug: clinic.slug, url: clinic.url });
   const medicalClinicSchema = buildMedicalClinicJsonLd(clinic, clinicDisplayName);
 
   return (
@@ -287,7 +288,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{clinicDisplayName}</BreadcrumbPage>
+              <BreadcrumbPage>{capitalize(clinic.slug!)}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           </Breadcrumb>
@@ -297,7 +298,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
       <div className="container mx-auto max-w-7xl pt-0 md:px-4 py-20 space-y-8">
         <ProfileHeader
           clinic={clinic}
-          clinicName={clinicDisplayName}
+          clinicName={dbClinic.name ?? undefined}
           hasCoreCalendar={dbClinic.coreClinicId !== null && dbClinic.claimedPlan !== 'free'}
           claimState={claimState}
           goToProfileHref={goToProfileHref}
@@ -338,6 +339,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   rqiaUrl={clinic.isRQIA ? clinic.isRQIA[1] : null}
                   aestheticsAwards={clinic.aestheticsAwards}
                   tatlerGuideYears={clinic.tatlerGuideYears}
+                  awardsBadgeLabel={clinic.awardsBadgeLabel}
+                  tatlerBadgeLabel={clinic.tatlerBadgeLabel}
                 />
                 <TransparencyBox
                   claimedAt={dbClinic.claimedAt}
@@ -489,15 +492,17 @@ export async function generateMetadata({ params }: ProfilePageProps) {
 
   const dbClinic = await getClinicBySlug(params.slug);
 
-  if (!dbClinic || dbClinic.isHidden) {
-    notFound();
+  if (!dbClinic) {
+    return {
+      title: "Clinic Not Found",
+      alternates: {
+        canonical: canonicalUrl,
+      },
+    };
   }
 
   const clinic = convertDbClinicToOldType(dbClinic);
-  const clinicDisplayName =
-    dbClinic.name?.trim() ||
-    getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name }) ||
-    capitalize(clinic.slug!);
+  const clinicDisplayName = capitalize(clinic.slug!);
   const city = capitalize(params.cityslug);
   const topTreatments = Array.isArray(clinic.Treatments) ? clinic.Treatments.slice(0, 3).map((t: string) => capitalize(t)) : [];
   const treatmentSuffix = topTreatments.length >= 3
@@ -516,16 +521,14 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     alternates: {
       canonical: canonicalUrl,
     },
-    // No openGraph/twitter images — Slack/social link previews should not
-    // show clinic photos as rich "thumbnail" unfurls (Toby feedback).
     openGraph: {
       title,
       description,
       url: canonicalUrl,
-      type: 'website',
+      type: "website",
     },
     twitter: {
-      card: 'summary',
+      card: "summary",
       title,
       description,
     },

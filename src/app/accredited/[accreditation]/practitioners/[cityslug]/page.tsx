@@ -7,18 +7,21 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { getPractitionersByCity } from "@/lib/data-access/practitioners"
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
 import { PractitionerCard } from "@/components/practitioner-card"
 import { toDirectoryCanonical } from "@/lib/seo"
 import { notFound } from "next/navigation"
 import {
+  clinicCityMatchesSlug,
   getAccreditationDisplayName,
-  getPrestigeMatchingClinicSlugs,
+  getAccreditedPractitioners,
   isKnownAccreditation,
-  isRegulatoryAccreditation,
+  isPrestigeAccreditation,
   normalizeAccreditationSlug,
+  practitionerMatchesAccreditation,
 } from "@/lib/accreditation-directory"
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots"
+import { capitalize } from "@/lib/utils"
 import { IconArrowNarrowLeft } from "@tabler/icons-react"
 
 export const dynamic = "force-dynamic"
@@ -30,22 +33,6 @@ interface AccreditedPractitionersPageProps {
   }
 }
 
-function practitionerHasRegulatoryFlag(practitioner: Record<string, unknown>, field: string): boolean {
-  const value = practitioner[field]
-  return value === true || (Array.isArray(value) && value[0] === true)
-}
-
-function associatedClinicSlugs(practitioner: { Associated_Clinics?: string | null }): string[] {
-  if (!practitioner.Associated_Clinics) return []
-  try {
-    const parsed = JSON.parse(practitioner.Associated_Clinics)
-    if (Array.isArray(parsed)) return parsed.filter((s): s is string => typeof s === "string")
-  } catch {
-    return []
-  }
-  return []
-}
-
 export default async function AccreditedPractitionersPage({
   params,
 }: Readonly<AccreditedPractitionersPageProps>) {
@@ -55,41 +42,30 @@ export default async function AccreditedPractitionersPage({
     notFound()
   }
 
-  const cityPractitioners = await getPractitionersByCity(cityslug.toLowerCase())
-  const prestigeClinicSlugs =
-    accreditation === "aesthetics-awards" || accreditation === "tatler"
-      ? getPrestigeMatchingClinicSlugs(accreditation)
-      : null
-
-  const matchesAccreditation = (practitioner: NonNullable<(typeof cityPractitioners)[number]>) => {
-    if (isRegulatoryAccreditation(accreditation)) {
-      const fieldMap: Record<string, string> = {
-        cqc: "isCQC",
-        jccp: "isJCCP",
-        hiw: "isHIW",
-        his: "isHIS",
-        rqia: "isRQIA",
-        saveface: "isSaveFace",
-      }
-      return practitionerHasRegulatoryFlag(practitioner as any, fieldMap[accreditation])
-    }
-    if (prestigeClinicSlugs) {
-      return associatedClinicSlugs(practitioner as any).some((slug) => prestigeClinicSlugs.has(slug))
-    }
-    if (accreditation === "consentz") {
-      return Boolean((practitioner as any).claimed)
-    }
-    return false
-  }
-
-  const filteredPractitioners = cityPractitioners.filter((practitioner) => {
+  const enrichedPractitioners = isPrestigeAccreditation(accreditation)
+    ? getAccreditedPractitioners(accreditation)
+    : await getAllPractitionersForSearch()
+  const filteredPractitioners = enrichedPractitioners.filter((practitioner) => {
     if (!practitioner) return false
-    return matchesAccreditation(practitioner)
+    return (
+      clinicCityMatchesSlug(practitioner.City, cityslug) &&
+      practitionerMatchesAccreditation(practitioner, accreditation)
+    )
   })
 
-  const displayPractitioners = filteredPractitioners.length ? filteredPractitioners : cityPractitioners
+  if (isPrestigeAccreditation(accreditation) && filteredPractitioners.length === 0) {
+    notFound()
+  }
+
+  const cityPractitioners = enrichedPractitioners.filter((p) =>
+    clinicCityMatchesSlug(p?.City, cityslug),
+  )
+  const displayPractitioners = filteredPractitioners.length
+    ? filteredPractitioners
+    : cityPractitioners
   const isFallback = filteredPractitioners.length === 0
   const accreditationName = getAccreditationDisplayName(accreditation)
+  const cityDisplayName = capitalize(cityslug)
 
   return (
     <main className="bg-white">
@@ -119,7 +95,7 @@ export default async function AccreditedPractitionersPage({
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{cityslug}</BreadcrumbPage>
+                  <BreadcrumbPage>{cityDisplayName}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -128,11 +104,11 @@ export default async function AccreditedPractitionersPage({
 
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">
-            {accreditationName} Practitioners in {cityslug}
+            {accreditationName} Practitioners in {cityDisplayName}
           </h1>
           {isFallback && (
             <p className="text-sm text-amber-700 mb-4">
-              No exact {accreditationName} matches in this city yet. Showing other practitioners in {cityslug}.
+              No exact {accreditationName} matches in this city yet. Showing other practitioners in {cityDisplayName}.
             </p>
           )}
         </div>

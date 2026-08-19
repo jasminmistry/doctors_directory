@@ -1,7 +1,18 @@
-import type { Clinic } from '@/lib/types'
+import {
+  associatedClinicSlugList,
+  getConsentzCustomerSlugs,
+  isConsentzClinic,
+  isDirectoryTestListing,
+} from '@/lib/consentz-customers'
+import type { Clinic, Practitioner } from '@/lib/types'
 import prestigeData from '@/lib/data/prestige-accreditations.json'
-import { getPrestigeAccreditation } from '@/lib/prestige-accreditations'
-import type { PrestigeAccreditation } from '@/lib/prestige-accreditations'
+import {
+  applyPrestigeToClinic,
+  getPrestigeAccreditation,
+  type PrestigeAccreditation,
+} from '@/lib/prestige-accreditations'
+import { readJsonFileSync } from '@/lib/json-cache'
+import { toUrlSlug } from '@/lib/utils'
 
 export const REGULATORY_ACCREDITATION_SLUGS = [
   'cqc',
@@ -100,7 +111,8 @@ export function clinicMatchesAccreditation(clinic: Clinic, accreditation: string
   }
 
   if (slug === 'consentz') {
-    return clinic.claimed === true
+    if (isDirectoryTestListing(clinic.slug)) return false
+    return isConsentzClinic(clinic)
   }
 
   return false
@@ -108,6 +120,11 @@ export function clinicMatchesAccreditation(clinic: Clinic, accreditation: string
 
 export function filterClinicsByAccreditation(clinics: Clinic[], accreditation: string): Clinic[] {
   return clinics.filter((clinic) => clinicMatchesAccreditation(clinic, accreditation))
+}
+
+export function clinicCityMatchesSlug(city: string | undefined | null, cityslug: string): boolean {
+  if (!city) return false
+  return toUrlSlug(city) === toUrlSlug(cityslug)
 }
 
 export function getPrestigeMatchingClinicSlugs(
@@ -122,6 +139,91 @@ export function getPrestigeMatchingClinicSlugs(
           : Boolean(entry.tatlerYears?.length),
       )
       .map((entry) => entry.slug)
-      .filter(Boolean),
+      .filter(Boolean)
+      .map((entrySlug) => entrySlug.toLowerCase()),
   )
+}
+
+export function getMatchingClinicSlugs(accreditation: string): Set<string> | null {
+  const slug = normalizeAccreditationSlug(accreditation)
+  if (slug === 'consentz') {
+    return new Set(getConsentzCustomerSlugs())
+  }
+  if (slug === 'tatler' || slug === 'aesthetics-awards') {
+    return getPrestigeMatchingClinicSlugs(slug)
+  }
+  return null
+}
+
+export function associatedClinicSlugs(value: {
+  Associated_Clinics?: string | string[] | null
+}): string[] {
+  return associatedClinicSlugList(value.Associated_Clinics)
+}
+
+export function practitionerMatchesAccreditation(
+  practitioner: {
+    slug?: string | null
+    practitioner_name?: string | null
+    Associated_Clinics?: string | string[] | null
+  } & Partial<Clinic>,
+  accreditation: string,
+): boolean {
+  const slug = normalizeAccreditationSlug(accreditation)
+  if (isDirectoryTestListing(practitioner.slug, practitioner.practitioner_name)) {
+    return false
+  }
+
+  const matchingClinicSlugs = getMatchingClinicSlugs(slug)
+  if (matchingClinicSlugs) {
+    return associatedClinicSlugs(practitioner).some((clinicSlug) =>
+      matchingClinicSlugs.has(clinicSlug.toLowerCase()),
+    )
+  }
+
+  return clinicMatchesAccreditation(practitioner as Clinic, slug)
+}
+
+export function getAccreditedPractitioners(accreditation: string): Practitioner[] {
+  const matchingClinicSlugs = getMatchingClinicSlugs(accreditation)
+  if (!matchingClinicSlugs) return []
+
+  const clinics = readJsonFileSync('clinics_processed_new_data.json') as Clinic[]
+  const practitioners = readJsonFileSync('derms_processed_new_5403.json') as Practitioner[]
+  const clinicBySlug = new Map(
+    clinics
+      .filter((clinic) => clinic.slug)
+      .map((clinic) => [clinic.slug!.toLowerCase(), clinic]),
+  )
+
+  return practitioners.flatMap((practitioner) => {
+    if (isDirectoryTestListing(practitioner.slug, practitioner.practitioner_name)) {
+      return []
+    }
+    const clinic = associatedClinicSlugs(practitioner)
+      .map((clinicSlug) => clinicBySlug.get(clinicSlug.toLowerCase()))
+      .find((entry) => entry?.slug && matchingClinicSlugs.has(entry.slug.toLowerCase()))
+    if (!clinic) return []
+
+    const prestigeClinic = applyPrestigeToClinic(clinic)
+    return [
+      {
+        ...prestigeClinic,
+        ...practitioner,
+        City: clinic.City,
+        gmapsAddress: practitioner.gmapsAddress || clinic.gmapsAddress,
+        Treatments: practitioner.Treatments?.length ? practitioner.Treatments : clinic.Treatments,
+        isConsentz: isConsentzClinic(clinic),
+        awardsBadgeLabel: prestigeClinic.awardsBadgeLabel,
+        tatlerBadgeLabel: prestigeClinic.tatlerBadgeLabel,
+        aestheticsAwards: prestigeClinic.aestheticsAwards,
+        tatlerGuideYears: prestigeClinic.tatlerGuideYears,
+        slug: practitioner.slug || clinic.slug,
+      },
+    ]
+  })
+}
+
+export function getConsentzAccreditedPractitioners(): Practitioner[] {
+  return getAccreditedPractitioners('consentz')
 }

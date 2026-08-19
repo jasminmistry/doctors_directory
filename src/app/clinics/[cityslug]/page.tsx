@@ -33,9 +33,10 @@ import {
   clinicItemListFromClinics,
 } from "@/lib/directory-json-ld";
 import { getClinicDisplayName } from "@/lib/clinic-display";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 import { isConsentzClinicSlug } from "@/lib/consentz-customers";
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
-import { IconArrowNarrowLeft } from "@tabler/icons-react";
+
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -155,11 +156,11 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     buildItemListJsonLd(
       `Clinics in ${displayCityName}`,
       clinicItemListFromClinics(cityClinics, (clinic) =>
-        getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name })
+        getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
       )
     ),
     ...buildMedicalClinicListJsonLd(cityClinics, (clinic) =>
-      getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name })
+      getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
     ),
   ]
 

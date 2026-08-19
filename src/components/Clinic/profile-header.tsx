@@ -12,7 +12,6 @@ import { OnlineDot } from "@/components/Clinic/online-dot";
 import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dialog";
 import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
-import { getClinicDisplayName } from "@/lib/clinic-display";
 import { IconMapPin, IconPhone, IconShieldCheck } from "@tabler/icons-react";
 import { capitalize } from "@/lib/utils";
 import { isConsentzClinic } from "@/lib/consentz-customers";
@@ -39,9 +38,10 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
   };
   const consultationHref =
     normalizeExternalUrl(clinic.website) ?? normalizeExternalUrl(clinic.url);
-  const practitionerName =
-    clinicName?.trim() ||
-    getClinicDisplayName(clinic);
+  const practitionerName = clinic.slug!
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
   const roleTitle = clinic.category ? capitalize(clinic.category) : clinic.category;
   const DEFAULT_IMG = "/directory/images/default-dr-profile-1.webp";
   const initialImg =
@@ -74,36 +74,37 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
         </Link>
       )}
 
-      <div className="px-4 md:px-0 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-        <div className="flex flex-col gap-3 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0 min-w-0 flex-1 lg:max-w-3xl">
-          <div className="flex flex-row items-start gap-4">
-            <div className="flex flex-col items-center gap-2 shrink-0 md:items-start">
-              <div className="relative w-20 h-20 md:w-40 md:h-40 shrink-0">
-                <div className="h-full w-full overflow-hidden rounded-full bg-gray-200">
-                  <img
-                    src={imgSrc}
-                    alt={practitionerName}
-                    className="object-cover w-full h-full rounded-full"
-                    onError={() => setImgSrc(DEFAULT_IMG)}
-                  />
-                </div>
-                {isConsentz && (
-                  <img
-                    src="/directory/consentz-customer-badge.jpg"
-                    alt="Consentz Customer"
-                    title="Consentz Customer"
-                    className="absolute -right-1 -top-1 z-20 h-7 w-7 rounded-full border-2 border-white object-cover shadow-sm md:-right-1.5 md:-top-1.5 md:h-10 md:w-10"
-                  />
-                )}
-              </div>
-              <div className="hidden md:block max-w-[10.5rem]">
-                <PrestigeProfileBadge
-                  awardsBadgeLabel={clinic.awardsBadgeLabel}
-                  tatlerBadgeLabel={clinic.tatlerBadgeLabel}
-                  size="md"
+      <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-start">
+        {/* Left: avatar + info */}
+        <div className="flex flex-row flex-wrap items-start gap-4 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0">
+          
+          {/* Avatar */}
+          <div className="flex flex-col items-center gap-2 shrink-0 md:items-start">
+            <div className="relative h-20 w-20 md:h-40 md:w-40 shrink-0">
+              <div className="h-full w-full overflow-hidden rounded-full bg-gray-200">
+                <img
+                  src={imgSrc}
+                  alt={practitionerName}
+                  className="object-cover w-full h-full rounded-full"
+                  onError={() => setImgSrc(DEFAULT_IMG)}
                 />
               </div>
+              {isConsentz && (
+                <img
+                  src="/directory/consentz-customer-badge.jpg"
+                  alt="Consentz Customer"
+                  title="Consentz Customer"
+                  className="absolute -right-1 -top-1 z-20 h-7 w-7 rounded-full border-2 border-white object-cover shadow-sm md:-right-1.5 md:-top-1.5 md:h-10 md:w-10"
+                />
+              )}
             </div>
+            <PrestigeProfileBadge
+              awardsBadgeLabel={clinic.awardsBadgeLabel}
+              tatlerBadgeLabel={clinic.tatlerBadgeLabel}
+              consentzLabel={isConsentz ? "Consentz Customer" : null}
+              size="md"
+            />
+          </div>
 
           {/* Text info — uniform gap between every row */}
           <div className="flex flex-col gap-2 min-w-0 flex-1">
@@ -159,11 +160,12 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                 </span>
               )}
             </div>
+
           </div>
         </div>
-      </div>
 
-      <div className="flex flex-col gap-1.5 md:hidden pt-1">
+        {/* Address + phone — mobile only */}
+        <div className="flex flex-col gap-1.5 md:hidden pt-1">
           <address className="not-italic text-sm leading-snug flex items-start gap-2">
             <IconMapPin stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
             <span>{clinic.gmapsAddress}</span>
@@ -176,7 +178,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
           )}
         </div>
 
-        <div className="flex flex-col gap-3 justify-center w-full lg:w-64 lg:shrink-0">
+        <div className="flex flex-col gap-3 justify-center">
           {clinic.claimed && (
             <ClinicOnlineStatus clinicSlug={clinic.slug ?? ''} />
           )}

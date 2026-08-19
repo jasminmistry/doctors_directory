@@ -16,10 +16,16 @@ interface AccreditationBadgesProps {
   isRqia?: boolean | null; rqiaUrl?: string | null
   aestheticsAwards?: Array<{ year: number; result: string; category: string }>
   tatlerGuideYears?: number[]
+  awardsBadgeLabel?: string | null
+  tatlerBadgeLabel?: string | null
 }
 
 const pillClass =
   'inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700'
+const consentzPillClass =
+  'inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900 ring-1 ring-amber-200'
+const prestigePillClass =
+  'inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900 ring-1 ring-amber-200'
 
 export function AccreditationBadges(props: AccreditationBadgesProps) {
   const badges: Badge[] = [
@@ -35,7 +41,11 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
 
   const awards = props.aestheticsAwards ?? []
   const tatlerYears = props.tatlerGuideYears ?? []
-  const hasPrestige = awards.length > 0 || tatlerYears.length > 0
+  const prestigePills = [
+    props.awardsBadgeLabel,
+    props.tatlerBadgeLabel,
+  ].filter((label): label is string => Boolean(label))
+  const hasPrestige = awards.length > 0 || tatlerYears.length > 0 || prestigePills.length > 0
 
   if (badges.length === 0 && !hasPrestige) return null
 
@@ -56,12 +66,31 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
                 {label}
                 <IconExternalLink stroke={1.5} className="h-3 w-3 text-gray-400" />
               </a>
+            ) : label === 'Consentz Customer' ? (
+              <span key={label} className={consentzPillClass}>
+                <img
+                  src="/directory/consentz-customer-badge.jpg"
+                  alt=""
+                  className="h-4 w-4 rounded-full object-cover"
+                />
+                {label}
+              </span>
             ) : (
               <span key={label} className={pillClass}>
                 {label}
               </span>
             )
           )}
+        </div>
+      )}
+      {prestigePills.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {prestigePills.map((label) => (
+            <span key={label} className={prestigePillClass}>
+              <span aria-hidden>🏆</span>
+              {label}
+            </span>
+          ))}
         </div>
       )}
       {awards.length > 0 && (

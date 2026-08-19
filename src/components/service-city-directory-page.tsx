@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,6 +9,8 @@ import {
 } from '@/components/ui/breadcrumb'
 import ItemsGrid from '@/components/collectionGrid'
 import { BestRankedBlock } from '@/components/best-ranked-block'
+import { DirectoryPageClosingSections } from '@/components/directory-page-closing-sections'
+import { DirectoryPatientHubHero } from '@/components/directory-patient-hub-hero'
 import { ServiceCityBelowFoldContent } from '@/components/service-city-below-fold-content'
 import { DirectoryJsonLd } from '@/components/directory-json-ld'
 import { buildClinicRankedEntries } from '@/lib/best-ranked'
@@ -84,86 +85,94 @@ export function ServiceCityDirectoryPage({ entry }: Props) {
   return (
     <>
       <DirectoryJsonLd schemas={jsonLdSchemas} />
-      <main className="bg-(--primary-bg-color)">
-        <div className="mx-auto max-w-7xl px-4 py-6 md:py-10">
-          <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
+      <main>
+        <div className="flex min-h-[calc(100vh-76px)] flex-col bg-[var(--primary-bg-color)]">
+          <div className="mx-auto w-full max-w-7xl px-6 pt-6">
+            <Link
+              href="/"
+              prefetch={false}
+              className="mb-4 inline-flex items-center gap-3 text-sm hover:underline"
+            >
               <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
-          </Link>
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/">Home</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{entry.serviceLabel}</BreadcrumbPage>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{entry.locationLabel}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-          <h1 className="mt-4 text-2xl font-semibold text-foreground md:text-3xl">
-            {entry.serviceLabel} in {entry.locationLabel}
-          </h1>
-          <p className="mt-3 max-w-3xl text-sm text-muted-foreground md:text-base">
-            Browse {entry.clinicCount} verified {entry.serviceLabel.toLowerCase()} listings in{' '}
-            {entry.locationLabel}. Compare reviews, services and clinic profiles in one place.
-          </p>
-        </div>
+            </Link>
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{entry.serviceLabel}</BreadcrumbPage>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{entry.locationLabel}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
 
-        <div className="mx-auto max-w-7xl px-4 pb-6">
-          <BestRankedBlock
-            title={`Top ${entry.serviceLabel} in ${entry.locationLabel}`}
-            entries={ranked}
+          <DirectoryPatientHubHero
+            title={`${entry.serviceLabel} in ${entry.locationLabel}`}
+            subtitle={`Browse ${entry.clinicCount} verified ${entry.serviceLabel.toLowerCase()} listings in ${entry.locationLabel}. Compare reviews, services and clinic profiles in one place.`}
           />
         </div>
 
-        <div className="mx-auto max-w-7xl px-4 pb-12">
-          <ItemsGrid items={clinics} />
-        </div>
-
-        <ServiceCityBelowFoldContent content={consumerContent} />
-
-        <div className="mx-auto max-w-7xl px-4 pb-12">
-          <div className="flex flex-wrap gap-3 text-sm">
-            <Link
-              href={practitionersCityPath}
-              className="font-medium text-foreground underline-offset-2 hover:underline"
-            >
-              Practitioners in {entry.locationLabel}
-            </Link>
-            <Link
-              href={clinicsCityPath}
-              className="font-medium text-foreground underline-offset-2 hover:underline"
-            >
-              Clinics in {entry.locationLabel}
-            </Link>
+        <div className="bg-white">
+          <div className="mx-auto max-w-7xl px-4 py-10 pb-6">
+            <BestRankedBlock
+              title={`Top ${entry.serviceLabel} in ${entry.locationLabel}`}
+              entries={ranked}
+            />
           </div>
-          {relatedServiceLinks.length > 0 ? (
-            <nav
-              className="mt-6"
-              aria-label={`Other clinic categories in ${entry.locationLabel}`}
-            >
-              <p className="text-sm font-semibold text-foreground">
-                Browse other categories in {entry.locationLabel}
-              </p>
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {relatedServiceLinks.map((link) => (
-                  <li key={`${link.serviceSlug}-${link.locationSlug}`}>
-                    <Link
-                      href={`/${link.serviceSlug}/${link.locationSlug}/`}
-                      className="inline-block rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted"
-                    >
-                      {link.serviceLabel}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ) : null}
+
+          <div className="mx-auto max-w-7xl px-4 pb-12">
+            <ItemsGrid items={clinics} />
+          </div>
+
+          <ServiceCityBelowFoldContent content={consumerContent} />
+
+          <div className="mx-auto max-w-7xl px-4 pb-12">
+            <div className="flex flex-wrap gap-3 text-sm">
+              <Link
+                href={practitionersCityPath}
+                className="font-medium text-foreground underline-offset-2 hover:underline"
+              >
+                Practitioners in {entry.locationLabel}
+              </Link>
+              <Link
+                href={clinicsCityPath}
+                className="font-medium text-foreground underline-offset-2 hover:underline"
+              >
+                Clinics in {entry.locationLabel}
+              </Link>
+            </div>
+            {relatedServiceLinks.length > 0 ? (
+              <nav
+                className="mt-6"
+                aria-label={`Other clinic categories in ${entry.locationLabel}`}
+              >
+                <p className="text-sm font-semibold text-foreground">
+                  Browse other categories in {entry.locationLabel}
+                </p>
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {relatedServiceLinks.map((link) => (
+                    <li key={`${link.serviceSlug}-${link.locationSlug}`}>
+                      <Link
+                        href={`/${link.serviceSlug}/${link.locationSlug}/`}
+                        className="inline-block rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted"
+                      >
+                        {link.serviceLabel}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ) : null}
+          </div>
+
+          <DirectoryPageClosingSections />
         </div>
       </main>
     </>

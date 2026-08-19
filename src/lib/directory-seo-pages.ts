@@ -58,7 +58,9 @@ const clinicMatchesServiceAndLocation = (
   toUrlSlug(clinic.category ?? '') === serviceSlug &&
   toUrlSlug(clinic.City ?? '') === locationSlug
 
-export const getServiceCityEntries = (): ServiceCityEntry[] => {
+let cachedServiceCityEntries: ServiceCityEntry[] | null = null
+
+const buildServiceCityEntries = (): ServiceCityEntry[] => {
   const clinics = getClinics()
   const counts = new Map<
     string,
@@ -96,6 +98,13 @@ export const getServiceCityEntries = (): ServiceCityEntry[] => {
       }
       return left.serviceSlug.localeCompare(right.serviceSlug)
     })
+}
+
+export const getServiceCityEntries = (): ServiceCityEntry[] => {
+  if (!cachedServiceCityEntries) {
+    cachedServiceCityEntries = buildServiceCityEntries()
+  }
+  return cachedServiceCityEntries
 }
 
 export const getServiceCityEntry = (

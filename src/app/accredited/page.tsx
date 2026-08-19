@@ -15,15 +15,15 @@ import { toDirectoryCanonical } from "@/lib/seo"
 import {
   clinicMatchesAccreditation,
   getAccreditationDisplayName,
-  getPrestigeMatchingClinicSlugs,
+  getAccreditedPractitioners,
+  isPrestigeAccreditation,
+  practitionerMatchesAccreditation,
   PRESTIGE_ACCREDITATION_SLUGS,
   REGULATORY_ACCREDITATION_SLUGS,
 } from "@/lib/accreditation-directory"
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations"
 import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
-import { prisma } from "@/lib/db"
 import { IconArrowNarrowLeft, IconBriefcase, IconUsers } from "@tabler/icons-react"
-const accreditations = ["CQC", "JCCP", "HIW", "HIS", "RQIA", "SaveFace"]
 
 export const dynamic = "force-dynamic"
 
@@ -32,30 +32,16 @@ const ACCREDITATION_SLUGS = [
   ...PRESTIGE_ACCREDITATION_SLUGS,
 ] as const
 
-function associatedClinicSlugs(practitioner: { Associated_Clinics?: string | null }): string[] {
-  if (!practitioner.Associated_Clinics) return []
-  try {
-    const parsed = JSON.parse(practitioner.Associated_Clinics)
-    if (Array.isArray(parsed)) return parsed.filter((s): s is string => typeof s === "string")
-  } catch {
-    return []
-  }
-  return []
-}
-
 export default async function AccreditedPage() {
   const clinicsData: Clinic[] = readJsonFileSync("clinics_processed_new_data.json")
   const clinics = clinicsData
     .filter((c) => c.slug !== undefined)
     .map((c) => applyPrestigeToClinic(c))
 
-  const claimedCount = process.env.DATABASE_URL
-    ? await prisma.clinic.count({
-        where: { claimed: true, isHidden: false },
-      })
-    : 0
-
   const practitioners = await getAllPractitionersForSearch()
+  const prestigePractitionerCounts = Object.fromEntries(
+    PRESTIGE_ACCREDITATION_SLUGS.map((slug) => [slug, getAccreditedPractitioners(slug).length]),
+  ) as Record<(typeof PRESTIGE_ACCREDITATION_SLUGS)[number], number>
 
   return (
     <main className="bg-white">
@@ -93,24 +79,15 @@ export default async function AccreditedPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 md:px-0">
           {ACCREDITATION_SLUGS.map((accreditation) => {
             const label = getAccreditationDisplayName(accreditation)
-            const prestigeSlugs =
-              accreditation === "aesthetics-awards" || accreditation === "tatler"
-                ? getPrestigeMatchingClinicSlugs(accreditation)
-                : null
-
-            const clinicCount =
-              accreditation === "consentz"
-                ? claimedCount
-                : clinics.filter((c) => clinicMatchesAccreditation(c, accreditation)).length
-
-            const practitionerCount = practitioners.filter((p) => {
-              if (!p) return false
-              if (accreditation === "consentz") return Boolean((p as any).claimed)
-              if (prestigeSlugs) {
-                return associatedClinicSlugs(p as any).some((slug) => prestigeSlugs.has(slug))
-              }
-              return clinicMatchesAccreditation(p as any, accreditation)
-            }).length
+            const clinicCount = clinics.filter((c) =>
+              clinicMatchesAccreditation(c, accreditation),
+            ).length
+            const practitionerCount = isPrestigeAccreditation(accreditation)
+              ? prestigePractitionerCounts[accreditation]
+              : practitioners.filter((p) => {
+                  if (!p) return false
+                  return practitionerMatchesAccreditation(p, accreditation)
+                }).length
 
             return (
               <Card

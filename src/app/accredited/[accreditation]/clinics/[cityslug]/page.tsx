@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,136 +7,31 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import type { Clinic } from "@/lib/types"
 import { IconArrowNarrowLeft } from "@tabler/icons-react"
-import { Clinic } from "@/lib/types"
 import { readJsonFileSync } from "@/lib/json-cache"
 import { PractitionerCard } from "@/components/practitioner-card"
 import { isAllowedCqcAccreditedCity } from "@/lib/accredited-city-filter"
 import { toDirectoryCanonical } from "@/lib/seo"
 import { notFound } from "next/navigation"
 import {
+  clinicCityMatchesSlug,
   clinicMatchesAccreditation,
   getAccreditationDisplayName,
   isKnownAccreditation,
+  isPrestigeAccreditation,
   normalizeAccreditationSlug,
 } from "@/lib/accreditation-directory"
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations"
-import { prisma } from "@/lib/db"
+import { capitalize } from "@/lib/utils"
 
 export const dynamic = "force-dynamic"
-
-function emptyClinic(partial: Partial<Clinic> & Pick<Clinic, "slug" | "City">): Clinic {
-  return {
-    slug: partial.slug,
-    image: partial.image ?? "",
-    url: partial.url,
-    rating: partial.rating ?? 0,
-    reviewCount: partial.reviewCount ?? 0,
-    category: partial.category ?? "",
-    gmapsAddress: partial.gmapsAddress ?? "",
-    gmapsPhone: partial.gmapsPhone ?? "",
-    City: partial.City,
-    facebook: partial.facebook ?? "",
-    twitter: partial.twitter ?? "",
-    Linkedin: partial.Linkedin ?? "",
-    instagram: partial.instagram ?? "",
-    youtube: partial.youtube ?? "",
-    website: partial.website ?? "",
-    email: partial.email ?? "",
-    isSaveFace: partial.isSaveFace ?? false,
-    isDoctor: partial.isDoctor ?? false,
-    isJCCP: partial.isJCCP ?? null,
-    isCQC: partial.isCQC ?? null,
-    isHIW: partial.isHIW ?? null,
-    isHIS: partial.isHIS ?? null,
-    isRQIA: partial.isRQIA ?? null,
-    about_section: partial.about_section ?? "",
-    accreditations: partial.accreditations ?? "",
-    awards: partial.awards ?? "",
-    affiliations: partial.affiliations ?? "",
-    hours: partial.hours ?? "",
-    Practitioners: partial.Practitioners ?? "",
-    Insurace: partial.Insurace ?? "",
-    Payments: partial.Payments ?? "",
-    Fees: partial.Fees ?? "",
-    x_twitter: partial.x_twitter ?? "",
-    Treatments: partial.Treatments,
-    claimed: partial.claimed,
-    awardsBadgeLabel: partial.awardsBadgeLabel,
-    tatlerBadgeLabel: partial.tatlerBadgeLabel,
-    aestheticsAwards: partial.aestheticsAwards,
-    tatlerGuideYears: partial.tatlerGuideYears,
-    verified: partial.verified,
-    domainVerified: partial.domainVerified,
-    gbpMatch: partial.gbpMatch,
-    gbpVerified: partial.gbpVerified,
-    idVerified: partial.idVerified,
-    manualVerified: partial.manualVerified,
-  }
-}
 
 interface AccreditedClinicsPageProps {
   params: {
     accreditation: string
     cityslug: string
   }
-}
-
-async function loadConsentzClaimedClinicsForCity(cityslug: string): Promise<Clinic[]> {
-  if (!process.env.DATABASE_URL) return []
-
-  const rows = await prisma.clinic.findMany({
-    where: {
-      claimed: true,
-      isHidden: false,
-    },
-    select: {
-      slug: true,
-      name: true,
-      image: true,
-      rating: true,
-      reviewCount: true,
-      category: true,
-      gmapsAddress: true,
-      gmapsPhone: true,
-      website: true,
-      claimed: true,
-      isSaveFace: true,
-      isDoctor: true,
-      isJccp: true,
-      isCqc: true,
-      isHiw: true,
-      isHis: true,
-      isRqia: true,
-      city: { select: { name: true } },
-    },
-  })
-
-  return rows
-    .filter((row) => row.city?.name?.toLowerCase() === cityslug.toLowerCase())
-    .map((row) =>
-      applyPrestigeToClinic(
-        emptyClinic({
-          slug: row.slug,
-          image: row.image || "",
-          rating: row.rating ? Number(row.rating) : 0,
-          reviewCount: row.reviewCount || 0,
-          category: row.category || "",
-          gmapsAddress: row.gmapsAddress || "",
-          gmapsPhone: row.gmapsPhone || "",
-          website: row.website || "",
-          City: row.city?.name || "",
-          claimed: true,
-          isSaveFace: row.isSaveFace,
-          isDoctor: row.isDoctor,
-          isJCCP: row.isJccp ? [true, ""] : null,
-          isCQC: row.isCqc ? [true, ""] : null,
-          isHIW: row.isHiw ? [true, ""] : null,
-          isHIS: row.isHis ? [true, ""] : null,
-          isRQIA: row.isRqia ? [true, ""] : null,
-        }),
-      ),
-    )
 }
 
 export default async function AccreditedClinicsPage({ params }: Readonly<AccreditedClinicsPageProps>) {
@@ -150,22 +44,26 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
     notFound()
   }
 
-  const clinics: Clinic[] =
-    accreditation === "consentz"
-      ? await loadConsentzClaimedClinicsForCity(cityslug)
-      : readJsonFileSync("clinics_processed_new_data.json").map((clinic: Clinic) =>
-          applyPrestigeToClinic(clinic),
-        )
+  const clinics: Clinic[] = readJsonFileSync("clinics_processed_new_data.json").map(
+    (clinic: Clinic) => applyPrestigeToClinic(clinic),
+  )
 
   const filteredClinics = clinics.filter((clinic) => {
-    const cityMatch = clinic.City?.toLowerCase() === cityslug.toLowerCase()
-    return cityMatch && clinicMatchesAccreditation(clinic, accreditation)
+    return (
+      clinicCityMatchesSlug(clinic.City, cityslug) &&
+      clinicMatchesAccreditation(clinic, accreditation)
+    )
   })
 
-  const cityClinics = clinics.filter((c) => c.City?.toLowerCase() === cityslug.toLowerCase())
+  if (isPrestigeAccreditation(accreditation) && filteredClinics.length === 0) {
+    notFound()
+  }
+
+  const cityClinics = clinics.filter((c) => clinicCityMatchesSlug(c.City, cityslug))
   const displayClinics = filteredClinics.length ? filteredClinics : cityClinics
   const isFallback = filteredClinics.length === 0
   const accreditationName = getAccreditationDisplayName(accreditation)
+  const cityDisplayName = capitalize(cityslug)
 
   return (
     <main className="bg-white">
@@ -195,7 +93,7 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{cityslug}</BreadcrumbPage>
+                  <BreadcrumbPage>{cityDisplayName}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -204,11 +102,11 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
 
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">
-            {accreditationName} Clinics in {cityslug}
+            {accreditationName} Clinics in {cityDisplayName}
           </h1>
           {isFallback && (
             <p className="text-sm text-amber-700 mb-4">
-              No exact {accreditationName} matches in this city yet. Showing other clinics in {cityslug}.
+              No exact {accreditationName} matches in this city yet. Showing other clinics in {cityDisplayName}.
             </p>
           )}
         </div>
