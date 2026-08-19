@@ -163,7 +163,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
           {/* Patient details */}
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-wider text-gray-600">Patient</p>
-            <Field label="Name *" error={fieldErrors.patientName}>
+            <Field label="Name" required error={fieldErrors.patientName}>
               <input
                 type="text"
                 value={form.patientName}
@@ -282,10 +282,13 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
 
 const inputCls = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({ label, required, error, children }: { label: string; required?: boolean; error?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="mb-1 block text-xs font-medium text-gray-600">{label}</label>
+      <label className="mb-1 block text-xs font-medium text-gray-600">
+        {label}
+        {required && <span className="ml-0.5 text-red-500">*</span>}
+      </label>
       {children}
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>

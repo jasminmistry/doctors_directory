@@ -50,11 +50,13 @@ export async function POST(request: Request) {
 
     const slug = typeof body.slug === 'string' ? body.slug.trim() : ''
     const name = typeof body.name === 'string' ? body.name.trim() : ''
+    const citySlug = typeof body.citySlug === 'string' ? body.citySlug.trim() : ''
 
     const fieldErrors: Record<string, string> = {}
     if (!slug) fieldErrors.slug = 'Slug is required'
     else if (!/^[a-z0-9-]+$/.test(slug)) fieldErrors.slug = 'Slug must be kebab-case'
     if (!name) fieldErrors.name = 'Clinic name is required'
+    if (!citySlug) fieldErrors.citySlug = 'City is required'
 
     const { slug: _s, name: _n, citySlug: _c, consentzUsername: rawConsentzUsername, ...rest } = body
     const validation = clinicEditSchema.safeParse(rest)
@@ -70,6 +72,9 @@ export async function POST(request: Request) {
     const usernameValidation = consentzUsernameSchema.safeParse(rawConsentzUsername)
     if (!usernameValidation.success) fieldErrors.consentzUsername = 'Invalid Consentz username'
 
+    const city = citySlug ? await prisma.city.findUnique({ where: { slug: citySlug }, select: { id: true } }) : null
+    if (citySlug && !city) fieldErrors.citySlug = 'Unknown city'
+
     if (Object.keys(fieldErrors).length > 0) {
       return NextResponse.json(
         { error: 'Please fix the highlighted fields', fieldErrors },
@@ -82,6 +87,7 @@ export async function POST(request: Request) {
       data: {
         slug,
         name,
+        cityId: city!.id,
         ...omitNullish((validation.success ? validation.data : {}) as Record<string, unknown>),
       } as any,
     })
