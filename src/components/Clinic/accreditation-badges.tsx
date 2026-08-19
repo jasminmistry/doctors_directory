@@ -22,14 +22,11 @@ interface AccreditationBadgesProps {
 
 const pillClass =
   'inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-700'
-const consentzPillClass =
-  'inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900 ring-1 ring-amber-200'
 const prestigePillClass =
   'inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900 ring-1 ring-amber-200'
 
 export function AccreditationBadges(props: AccreditationBadgesProps) {
   const badges: Badge[] = [
-    props.isConsentz && { label: 'Consentz Customer' },
     props.isSaveFace && { label: 'Save Face' },
     props.isDoctor   && { label: 'Registered Doctor' },
     props.isJccp     && { label: 'JCCP',  url: props.jccpUrl },
@@ -66,15 +63,6 @@ export function AccreditationBadges(props: AccreditationBadgesProps) {
                 {label}
                 <IconExternalLink stroke={1.5} className="h-3 w-3 text-gray-400" />
               </a>
-            ) : label === 'Consentz Customer' ? (
-              <span key={label} className={consentzPillClass}>
-                <img
-                  src="/directory/consentz-customer-badge.jpg"
-                  alt=""
-                  className="h-4 w-4 rounded-full object-cover"
-                />
-                {label}
-              </span>
             ) : (
               <span key={label} className={pillClass}>
                 {label}
