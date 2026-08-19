@@ -47,8 +47,7 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
 
   async function handleLogout() {
     await fetch("/directory/api/patient/auth/logout/", { method: "POST" });
-    router.push("/account/login");
-    router.refresh();
+    window.location.replace("/directory/account/login");
   }
 
   const displayName = patient
@@ -112,7 +111,9 @@ export function AccountLayoutClient({ children }: { children: ReactNode }) {
           {/* Nav */}
           <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
             {NAV_ITEMS.map(({ href, label, icon: Icon, exact }) => {
-              const active = exact ? bare === href : bare.startsWith(href);
+              const active = exact
+                ? bare === href || bare === `${href}/`
+                : bare.startsWith(href);
 
               return (
                 <Link

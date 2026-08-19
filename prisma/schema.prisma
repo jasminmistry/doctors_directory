@@ -47,6 +47,14 @@ enum ClaimPlan {
   subscription
 }
 
+// How the Core clinic/user was provisioned: a brand-new Core account created by the
+// directory's approve flow (registerConsentzClinic/registerConsentzPractitioner), vs an
+// already-existing Core account the claimant linked via the consentz-link SSO flow.
+enum CoreRegistrationType {
+  new_registration
+  existing_link
+}
+
 enum VerificationStatus {
   pending
   approved
@@ -250,13 +258,15 @@ model Clinic {
 
   // Consentz Core — populated at claim approval; used for calendar + booking API calls
   coreClinicId          Int?      @unique
+  coreRegistrationType  CoreRegistrationType?
   coreUnlinkRequestedAt DateTime?
 
   // Stripe — stored after PPL SetupIntent completes so we can charge per-lead unlock
-  stripeCustomerId         String?   @db.VarChar(255)
+  stripeCustomerId         String?    @db.VarChar(255)
   // Subscription lifecycle — kept in sync by webhook handlers
-  stripeSubscriptionStatus String?   @db.VarChar(50) // active | past_due | unpaid | canceled | cancel_at_period_end
+  stripeSubscriptionStatus String?    @db.VarChar(50) // active | past_due | unpaid | canceled | cancel_at_period_end
   subscriptionCancelAt     DateTime? // set when cancel_at_period_end=true; cleared when restored
+  downgradeToPlan          ClaimPlan? // pending downgrade target; applied by webhook when subscription actually ends
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -432,8 +442,16 @@ model Practitioner {
   manualVerified Boolean    @default(false)
   isHidden       Boolean    @default(false)
 
+  // Stripe — stored after PPL SetupIntent completes / subscription created via portal upgrade
+  stripeCustomerId         String?    @db.VarChar(255)
+  // Subscription lifecycle — kept in sync by webhook handlers
+  stripeSubscriptionStatus String?    @db.VarChar(50) // active | past_due | unpaid | canceled | cancel_at_period_end
+  subscriptionCancelAt     DateTime? // set when cancel_at_period_end=true; cleared when restored
+  downgradeToPlan          ClaimPlan? // pending downgrade target; applied by webhook when subscription actually ends
+
   // Consentz Core — set when claimed via Consentz link; used for calendar + booking API calls
-  coreClinicId Int?
+  coreClinicId         Int?
+  coreRegistrationType CoreRegistrationType?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

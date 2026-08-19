@@ -81,6 +81,13 @@ export async function POST(req: NextRequest) {
 
     const { clinicSlug, firstName, lastName, email, phone, treatment, dateOfBirth, location, source } = parsed.data
 
+    // A logged-in patient's email is never taken from the client-submitted form — that
+    // field is only a display prefill in the UI. The verified email on the signed
+    // session cookie is what's stored and what the clinic is told to contact, so a
+    // patient can't associate a lead with an email address they don't own.
+    const claims = getPatientClaims(req)
+    const patientEmail = claims?.email ?? email
+
     const cleanPhone = phone ? phone.replace(/\s/g, '') : ''
     if (phone && !UK_PHONE_RE.test(cleanPhone)) {
       return NextResponse.json({ error: 'Please enter a valid UK phone number.' }, { status: 400 })
@@ -90,7 +97,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'You must be 18 or over to use this service.' }, { status: 400 })
     }
 
-    if (!(await domainHasMailServer(email))) {
+    if (!(await domainHasMailServer(patientEmail))) {
       return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
 
@@ -108,7 +115,6 @@ export async function POST(req: NextRequest) {
     const isGhostLead = !clinic.claimed
 
     // Resolve patient from session — link lead and autosave profile fields
-    const claims = getPatientClaims(req)
     let patientId: number | undefined
 
     if (claims) {
@@ -132,7 +138,7 @@ export async function POST(req: NextRequest) {
         clinicId: clinic.id,
         patientName,
         patientPhone: cleanPhone,
-        patientEmail: email,
+        patientEmail,
         treatment,
         location,
         isGhostLead,
@@ -182,7 +188,7 @@ export async function POST(req: NextRequest) {
           to: clinic.email,
           clinicName: clinic.name ?? clinicSlug,
           patientName,
-          contact: email,
+          contact: patientEmail,
           treatment,
           location,
           portalUrl,

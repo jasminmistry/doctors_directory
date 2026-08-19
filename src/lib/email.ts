@@ -223,6 +223,90 @@ ${BASE_URL}/directory/portal/login
   })
 }
 
+const PLAN_LABEL: Record<string, string> = {
+  free: 'Free',
+  pay_per_lead: 'Pay Per Lead',
+  subscription: 'Subscription',
+}
+
+export async function sendPlanChangeEmail({
+  to,
+  entityName,
+  action,
+  fromPlan,
+  toPlan,
+  effectiveDate,
+}: {
+  to: string
+  entityName: string
+  action: 'scheduled_cancel' | 'immediate_downgrade' | 'resumed'
+  fromPlan: string
+  toPlan: string | null
+  effectiveDate: Date | null
+}) {
+  const transport = createTransport()
+  const fromLabel = PLAN_LABEL[fromPlan] ?? fromPlan
+  const toLabel = toPlan ? (PLAN_LABEL[toPlan] ?? toPlan) : null
+  const effectiveDateLabel = effectiveDate
+    ? effectiveDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    : null
+
+  let subject: string
+  let heading: string
+  let bodyText: string
+  let bodyHtml: string
+
+  if (action === 'scheduled_cancel') {
+    subject = `Your plan change for ${entityName} is scheduled`
+    heading = 'Plan change scheduled'
+    bodyText = `Your ${fromLabel} plan will change to ${toLabel} on ${effectiveDateLabel}. You'll keep full access to your current plan until then.`
+    bodyHtml = `<p>Your <strong>${fromLabel}</strong> plan for <strong>${entityName}</strong> will change to <strong>${toLabel}</strong> on <strong>${effectiveDateLabel}</strong>.</p><p>You'll keep full access to your current plan until then.</p>`
+  } else if (action === 'immediate_downgrade') {
+    subject = `${entityName} has been moved to the ${toLabel} plan`
+    heading = 'Plan changed'
+    bodyText = `Your plan for ${entityName} has changed from ${fromLabel} to ${toLabel}, effective immediately.`
+    bodyHtml = `<p>Your plan for <strong>${entityName}</strong> has changed from <strong>${fromLabel}</strong> to <strong>${toLabel}</strong>, effective immediately.</p>`
+  } else {
+    subject = `Your ${entityName} subscription cancellation was undone`
+    heading = 'Cancellation undone'
+    bodyText = `Your scheduled cancellation for ${entityName} has been reversed. You'll stay on the ${fromLabel} plan and continue to be billed as normal.`
+    bodyHtml = `<p>Your scheduled cancellation for <strong>${entityName}</strong> has been reversed. You'll stay on the <strong>${fromLabel}</strong> plan and continue to be billed as normal.</p>`
+  }
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject,
+    text: `
+Hi,
+
+${bodyText}
+
+View your plan in your portal:
+${BASE_URL}/directory/portal/login
+
+— The Consentz Team
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
+  <h2 style="margin-bottom:8px;">${heading}</h2>
+  ${bodyHtml}
+  <a href="${BASE_URL}/directory/portal/login"
+     style="display:inline-block;margin:24px 0;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
+    Go to Dashboard
+  </a>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">— The Consentz Team</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
 export async function sendPplLeadTeaserEmail({
   to,
   clinicName,

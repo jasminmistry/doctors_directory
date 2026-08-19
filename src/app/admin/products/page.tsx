@@ -56,7 +56,7 @@ export default function ProductsList() {
             confirmLabel: 'Delete product',
           })
           if (!ok) return
-          await fetch(`/directory/api/admin/products/${p.slug}`, { method: 'DELETE' })
+          await fetch(`/directory/api/admin/products/${p.slug}/`, { method: 'DELETE' })
           setProducts((prev) => prev.filter((r) => r.slug !== p.slug))
         }}
         onAdd={() => router.push('/admin/products/new')}

@@ -144,7 +144,7 @@ export async function searchClinicsForListing(params: {
   skip: number
   take: number
 }): Promise<{ clinics: SearchClinic[]; totalCount: number }> {
-  const and: Prisma.ClinicWhereInput[] = []
+  const and: Prisma.ClinicWhereInput[] = [{ isHidden: false }]
 
   if (params.query) {
     const words = params.query.toLowerCase().split(/\s+/).filter((word) => word.length > 0)

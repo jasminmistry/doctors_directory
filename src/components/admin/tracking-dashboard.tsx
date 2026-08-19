@@ -638,7 +638,9 @@ export function TrackingDashboard() {
                         {String(row.entity_slug)}
                       </td>
                       <td className="px-3 py-2">{String(row.claimer_name)}</td>
-                      <td className="px-3 py-2">{String(row.claimer_email)}</td>
+                      <td className="px-3 py-2 max-w-[220px] truncate" title={String(row.claimer_email)}>
+                        {String(row.claimer_email)}
+                      </td>
                       <td className="px-3 py-2">{String(row.plan_label)}</td>
                     </>
                   ) : (

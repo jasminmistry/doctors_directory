@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Section } from "../ui/section";
 import { sanitizeDisplayText, toUrlSlug } from "@/lib/utils";
+import { getClinicDisplayName } from "@/lib/clinic-display";
 
 export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
   const countOccurrences = (str: string, substr: string) => {
@@ -63,7 +64,7 @@ export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
   return (
     <div className="">
       {/* ABOUT */}
-      <Section title={`About ${clinic.slug!.split("-").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}`} id="about" data-testid='about'>
+      <Section title={`About ${getClinicDisplayName(clinic)}`} id="about" data-testid='about'>
         {sanitizeDisplayText(clinic.about_section) || "Not publicly listed"}
       </Section>
 

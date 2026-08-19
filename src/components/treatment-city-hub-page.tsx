@@ -75,7 +75,7 @@ export function TreatmentCityHubPage({ entry }: Props) {
     consumerStats
   )
   const listItems = clinicItemListFromClinics(clinics, (clinic) =>
-    getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
+    getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name })
   )
 
   const serviceName = `${entry.treatmentName} in ${entry.locationLabel}`
@@ -96,7 +96,7 @@ export function TreatmentCityHubPage({ entry }: Props) {
     buildItemListJsonLd(serviceName, listItems),
     buildFaqPageJsonLd(consumerContent.faqItems),
     ...buildMedicalClinicListJsonLd(clinics, (clinic) =>
-      getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
+      getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name })
     ),
   ]
 

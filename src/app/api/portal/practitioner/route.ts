@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
 import { invalidateSearchCache } from '@/lib/search-cache'
+import { invalidatePractitionersSearchCache } from '@/lib/data-access/practitioners'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,6 +34,9 @@ const PRACTITIONER_PORTAL_SELECT = {
   idVerified: true,
   claimedPlan: true,
   claimedAt: true,
+  stripeSubscriptionStatus: true,
+  subscriptionCancelAt: true,
+  downgradeToPlan: true,
   clinicAssociations: {
     take: 1,
     include: {
@@ -70,9 +74,12 @@ export async function GET() {
       ...rest,
       citySlug,
       subscription: {
-        plan: claim?.selectedPlan ?? practitioner.claimedPlan ?? null,
+        plan: practitioner.claimedPlan ?? claim?.selectedPlan ?? null,
         stripeSubscriptionId: claim?.stripeSubscriptionId ?? null,
         approvedAt: claim?.approvedAt ?? practitioner.claimedAt ?? null,
+        stripeStatus: practitioner.stripeSubscriptionStatus ?? null,
+        cancelAt: practitioner.subscriptionCancelAt ?? null,
+        downgradeToPlan: practitioner.downgradeToPlan ?? null,
       },
     })
   } catch (error) {
@@ -106,6 +113,7 @@ export async function PUT(request: Request) {
       select: PRACTITIONER_PORTAL_SELECT,
     })
     await invalidateSearchCache()
+    await invalidatePractitionersSearchCache()
     revalidatePath('/portal/practitioner')
     return NextResponse.json(practitioner)
   } catch (error) {

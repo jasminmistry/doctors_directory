@@ -46,6 +46,7 @@ import { getPortalUser } from "@/lib/portal";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
 import { isConsentzClinicSlug } from "@/lib/consentz-customers";
+
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
   incoming: Record<string, ItemMeta>

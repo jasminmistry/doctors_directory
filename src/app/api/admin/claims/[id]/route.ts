@@ -15,7 +15,7 @@ import {
 import { PLAN_LABELS } from '@/lib/claim-utils'
 import { invalidateSearchCache } from '@/lib/search-cache'
 import { createClinic } from '@/lib/data-access/clinics'
-import { createPractitioner } from '@/lib/data-access/practitioners'
+import { createPractitioner, invalidatePractitionersSearchCache } from '@/lib/data-access/practitioners'
 import { findOrCreateCityByName } from '@/lib/data-access/cities'
 import { cleanRouteSlug } from '@/lib/utils'
 
@@ -50,6 +50,7 @@ async function provisionConsentzAccount(
     id: number
     entityType: 'clinic' | 'practitioner'
     clinicId: number | null
+    practitionerId: number | null
     claimerName: string
     claimerEmail: string
     claimerPhone: string | null
@@ -126,8 +127,13 @@ async function provisionConsentzAccount(
     if (claim.entityType === 'clinic' && claim.clinicId && consentzClinicId) {
       await prisma.clinic.update({
         where: { id: claim.clinicId },
-        data: { coreClinicId: consentzClinicId },
+        data: { coreClinicId: consentzClinicId, coreRegistrationType: 'new_registration' },
       }).catch(err => console.error('[claim] Failed to copy coreClinicId to clinic:', err))
+    } else if (claim.entityType === 'practitioner' && claim.practitionerId && consentzClinicId) {
+      await prisma.practitioner.update({
+        where: { id: claim.practitionerId },
+        data: { coreClinicId: consentzClinicId, coreRegistrationType: 'new_registration' },
+      }).catch(err => console.error('[claim] Failed to copy coreClinicId to practitioner:', err))
     }
   } catch (err) {
     console.error('[claim] Consentz account provisioning failed — claimId=%d:', claim.id, err)
@@ -358,6 +364,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
           }),
         ])
         await invalidateSearchCache()
+        await invalidatePractitionersSearchCache()
       }
 
       // Consentz-linked claims already have an account — skip provisioning but still notify
@@ -386,10 +393,11 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         await prisma.clinic.update({
           where: { id: claim.clinicId },
           data: {
-            claimed:     false,
-            claimedAt:   null,
-            claimedPlan: null,
-            coreClinicId: null,
+            claimed:              false,
+            claimedAt:            null,
+            claimedPlan:          null,
+            coreClinicId:         null,
+            coreRegistrationType: null,
           },
         }).catch(err => console.error('[claim] Failed to reset clinic on Consentz-link rejection:', err))
       }

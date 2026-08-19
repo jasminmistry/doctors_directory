@@ -214,6 +214,8 @@ export function PractitionerForm({ fetchUrl, saveUrl, mode, disabled, onSaved, p
     else if (isNew && !/^[a-z0-9-]+$/.test(data.slug.trim())) {
       nextErrors.slug = 'Slug must be kebab-case'
     }
+    if (!isPortal && !data.clinicId) nextErrors.clinicId = 'City is required'
+
 
     if (Object.keys(nextErrors).length > 0) {
       setFieldErrors(nextErrors)

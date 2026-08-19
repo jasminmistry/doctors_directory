@@ -39,6 +39,7 @@ export interface City {
 }
 export interface Clinic {
   slug: string | undefined
+  name?: string
   image: string
   url: string | undefined
   rating: number

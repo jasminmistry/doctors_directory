@@ -15,6 +15,14 @@ export const COOKIE_OPTS = {
   maxAge: 7 * 24 * 60 * 60, // 7 days
 }
 
+export function clearPortalCookies(res: { cookies: { set: (name: string, value: string, opts: { path: string; maxAge: number }) => void } }): void {
+  res.cookies.set(COOKIE_TOKEN, '', { path: COOKIE_PATH, maxAge: 0 })
+  res.cookies.set(COOKIE_REFRESH, '', { path: COOKIE_PATH, maxAge: 0 })
+  res.cookies.set(COOKIE_USERNAME, '', { path: COOKIE_PATH, maxAge: 0 })
+  res.cookies.set(COOKIE_ROLE, '', { path: COOKIE_PATH, maxAge: 0 })
+  res.cookies.set(COOKIE_ACTIVE_CLINIC, '', { path: COOKIE_PATH, maxAge: 0 })
+}
+
 export function getConsentzAuthUrl(): string {
   const url = process.env.CONSENTZ_AUTH_API_URL
   if (!url) throw new Error('CONSENTZ_AUTH_API_URL is not configured')
