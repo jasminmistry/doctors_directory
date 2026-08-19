@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { ClinicForm } from "@/components/admin/forms/ClinicForm";
 import { CoreIntegrationPanel } from "@/components/portal/CoreIntegrationPanel";
 import { CommercialPanel, type SubscriptionInfo } from "@/components/portal/CommercialPanel";
+import { DangerZonePanel } from "@/components/portal/danger-zone-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,7 @@ export default function PortalClinicPage() {
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
   const [hasCoreLink, setHasCoreLink] = useState(false);
   const [coreUnlinkRequestedAt, setCoreUnlinkRequestedAt] = useState<string | null>(null);
+  const [entityName, setEntityName] = useState<string | null>(null);
 
   const fetchClinicData = useCallback(() => {
     setVerificationChecked(false);
@@ -23,6 +25,7 @@ export default function PortalClinicPage() {
         if (!data) return;
         setIdVerified(data.idVerified ?? false);
         setEntitySlug(data.slug ?? null);
+        setEntityName(data.name ?? data.slug ?? null);
         setSubscription(data.subscription ?? null);
         setHasCoreLink(!!data.coreClinicId);
         setCoreUnlinkRequestedAt(data.coreUnlinkRequestedAt ?? null);
@@ -76,6 +79,9 @@ export default function PortalClinicPage() {
         unlinkRequestedAt={coreUnlinkRequestedAt}
         onRefresh={fetchClinicData}
       />
+
+      {/* Danger zone */}
+      {entityName && <DangerZonePanel entityType="clinic" entityName={entityName} plan={subscription?.plan} />}
     </div>
   );
 }

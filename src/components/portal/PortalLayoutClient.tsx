@@ -574,6 +574,7 @@ export function PortalLayoutClient({
   <HeaderProfileMenu
     name={entityName || "My Portal"}
     onLogout={handleLogout}
+    entityType={entityType ?? undefined}
   />
 </div>
           </div>
