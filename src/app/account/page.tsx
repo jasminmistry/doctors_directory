@@ -123,7 +123,7 @@ export default function AccountDashboardPage() {
     <div className="mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-medium text-gray-900">
-          {isNew ? 'Welcome' : 'Welcome back'}{patient?.firstName ? `, ${patient.firstName}` : ''}
+          {'Welcome'}{patient?.firstName ? `, ${patient.firstName}` : ''}
         </h1>
         <p className="text-sm text-gray-600 mt-1">{patient?.email ?? ''}</p>
       </div>

@@ -468,6 +468,7 @@ export function ConsultationChatDialog({
     setChatFormData(null)
     setOfflineSent(false)
     setIsRestored(false)
+    setDraft('')
     lastCreatedAt.current = null
     if (pollRef.current) clearInterval(pollRef.current)
 
@@ -617,6 +618,7 @@ export function ConsultationChatDialog({
                 submitLabel="Send request"
                 submitting={offlineSubmitting}
                 onSubmit={handleOfflineSubmit}
+                emailLocked={Boolean(patientMe)}
               />
             )
           )}
@@ -636,6 +638,7 @@ export function ConsultationChatDialog({
               submitLabel="Start Chat"
               submitting={startingChat}
               onSubmit={handleStartChat}
+              emailLocked={Boolean(patientMe)}
             />
           )}
 

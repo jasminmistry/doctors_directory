@@ -10,18 +10,25 @@ import type { City, Clinic, Product } from '@/lib/types'
 const MIN_LISTINGS_PER_PAGE = 3
 const MIN_STANDALONE_PRODUCTS = 3
 
+// Every top-level directory under src/app that has no page.tsx of its own at
+// that exact path (only deeper subpages, e.g. features/analytics) — a bare
+// request to one of these falls through to this catch-all route, so it must
+// be rejected before any data lookup runs.
 const RESERVED_SINGLE_SEGMENT_SLUGS = new Set([
   'admin',
   'api',
   'business',
   'claim',
   'clinics',
+  'events',
+  'features',
   'portal',
   'practitioners',
   'products',
   'register',
   'search',
   'sitemap',
+  'stores',
   'treatments',
   'verify',
   'accredited',
@@ -161,7 +168,18 @@ export const getStandaloneProductItems = (productCategory: string): Product[] =>
     )
     .sort((left, right) => left.product_name.localeCompare(right.product_name))
 
+// Rebuilding this list scans every treatment against every clinic and every
+// product category against every product — expensive, and with no
+// generateStaticParams on the [slug] route, a notFound() render for an
+// unmatched slug isn't cached by Next.js. Without this memoization, every
+// crawler request to a bogus single-segment path reruns the full scan.
+let cachedStandaloneDirectoryEntries: StandalonePageEntry[] | null = null
+
 export const getStandaloneDirectoryEntries = (): StandalonePageEntry[] => {
+  if (cachedStandaloneDirectoryEntries) {
+    return cachedStandaloneDirectoryEntries
+  }
+
   const treatments: StandalonePageEntry[] = getTreatmentNames()
     .flatMap((name) => {
       const baseSlug = toUrlSlug(name)
@@ -217,8 +235,13 @@ export const getStandaloneDirectoryEntries = (): StandalonePageEntry[] => {
       uniqueBySlug.set(entry.slug, entry)
     }
   }
-  return [...uniqueBySlug.values()]
+  cachedStandaloneDirectoryEntries = [...uniqueBySlug.values()]
+  return cachedStandaloneDirectoryEntries
 }
 
-export const getStandaloneDirectoryEntry = (slug: string): StandalonePageEntry | null =>
-  getStandaloneDirectoryEntries().find((entry) => entry.slug === slug) ?? null
+export const getStandaloneDirectoryEntry = (slug: string): StandalonePageEntry | null => {
+  if (RESERVED_SINGLE_SEGMENT_SLUGS.has(slug)) {
+    return null
+  }
+  return getStandaloneDirectoryEntries().find((entry) => entry.slug === slug) ?? null
+}

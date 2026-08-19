@@ -10,6 +10,7 @@ import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormSection, Field } from './FormSection'
+import { CityCombobox } from './city-combobox'
 import { cn } from '@/lib/utils'
 
 type ClinicData = {
@@ -109,6 +110,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [isNew, setIsNew] = useState(false)
+  const [cityLabel, setCityLabel] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const router = useRouter()
   const params = useParams()
@@ -138,6 +140,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
           d.name = d.slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
         }
         setData({ ...d, accreditations: parseStoredList(d.accreditations), awards: parseStoredList(d.awards), affiliations: parseStoredList(d.affiliations) })
+        setCityLabel(d.cityName ?? null)
         setLoading(false)
       })
       .catch(() => router.push('/admin/clinics'))
@@ -163,6 +166,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
     if (data.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
       nextErrors.email = 'Please enter a valid email address'
     }
+    if (!isPortal && !data.citySlug?.trim()) nextErrors.citySlug = 'City is required'
 
     if (Object.keys(nextErrors).length > 0) {
       setFieldErrors(nextErrors)
@@ -172,7 +176,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
 
     setFieldErrors({})
     setSaving(true)
-    const { slug: _s, citySlug: _citySlug, ...rest } = data
+    const { slug: _s, ...rest } = data
     const serialised = {
       ...rest,
       accreditations: formatListForSave(rest.accreditations),
@@ -325,6 +329,15 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
               aria-invalid={Boolean(fieldErrors.gmapsAddress)}
             />
           </Field>
+          {!isPortal && (
+            <Field label="City" required error={fieldErrors.citySlug}>
+              <CityCombobox
+                onChange={(citySlug) => set('citySlug', citySlug)}
+                initialLabel={cityLabel}
+                invalid={Boolean(fieldErrors.citySlug)}
+              />
+            </Field>
+          )}
           <Field label="Phone" error={fieldErrors.gmapsPhone}>
             <Input
               value={data.gmapsPhone ?? ''}

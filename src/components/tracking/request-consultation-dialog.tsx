@@ -255,6 +255,7 @@ export function RequestConsultationDialog({
               submitLabel={submitLabel}
               submitting={isSubmitting}
               onSubmit={handleSubmit}
+              emailLocked={Boolean(patientMe)}
             />
           )}
 

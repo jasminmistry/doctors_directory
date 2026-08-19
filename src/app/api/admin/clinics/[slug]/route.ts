@@ -11,7 +11,7 @@ const CLINIC_EDIT_SELECT = {
   id: true,
   slug: true,
   name: true,
-  city: { select: { slug: true } },
+  city: { select: { slug: true, name: true } },
   image: true,
   gmapsUrl: true,
   gmapsAddress: true,
@@ -64,7 +64,7 @@ export async function GET(
     }
     const { city, id: _id, ...rest } = clinic
     const consentzUsername = await getLinkedConsentzUsername(clinic.coreClinicId)
-    return NextResponse.json({ ...rest, citySlug: city?.slug ?? null, rating: rest.rating ? Number(rest.rating) : null, consentzUsername })
+    return NextResponse.json({ ...rest, citySlug: city?.slug ?? null, cityName: city?.name ?? null, rating: rest.rating ? Number(rest.rating) : null, consentzUsername })
   } catch (error) {
     console.error('Failed to read clinic:', error)
     return NextResponse.json({ error: 'Failed to read clinic' }, { status: 500 })
@@ -77,23 +77,33 @@ export async function PUT(
 ) {
   try {
     const body = await request.json()
-    // Strip the slug and consentzUsername from body — neither is a Clinic column
-    // (comes from form but we use URL param / sync it onto ClaimRequest separately below)
-    const { slug: _slug, consentzUsername: rawConsentzUsername, ...rest } = body
+    // Strip the slug, citySlug and consentzUsername from body — none is a Clinic
+    // column directly (slug comes from the URL param, citySlug resolves to cityId
+    // below, consentzUsername is synced onto ClaimRequest separately below)
+    const { slug: _slug, consentzUsername: rawConsentzUsername, citySlug: rawCitySlug, ...rest } = body
     const validation = clinicEditSchema.safeParse(rest)
+    const fieldErrors: Record<string, string> = {}
     if (!validation.success) {
-      const fieldErrors: Record<string, string> = {}
       for (const issue of validation.error.errors) {
         const key = issue.path[0]
         if (typeof key === 'string' && !fieldErrors[key]) {
           fieldErrors[key] = issue.message
         }
       }
+    }
+
+    const citySlug = typeof rawCitySlug === 'string' ? rawCitySlug.trim() : ''
+    if (!citySlug) fieldErrors.citySlug = 'City is required'
+    const cityRecord = citySlug ? await prisma.city.findUnique({ where: { slug: citySlug }, select: { id: true } }) : null
+    if (citySlug && !cityRecord) fieldErrors.citySlug = 'Unknown city'
+
+    if (Object.keys(fieldErrors).length > 0) {
       return NextResponse.json(
         { error: 'Please fix the highlighted fields', fieldErrors },
         { status: 400 }
       )
     }
+
     const usernameValidation = consentzUsernameSchema.safeParse(rawConsentzUsername)
     if (!usernameValidation.success) {
       return NextResponse.json({ error: 'Invalid Consentz username' }, { status: 400 })
@@ -102,7 +112,7 @@ export async function PUT(
 
     const clinic = await prisma.clinic.update({
       where: { slug: params.slug },
-      data: validation.data as any,
+      data: { ...(validation.data as any), cityId: cityRecord!.id },
       select: CLINIC_EDIT_SELECT,
     })
 
@@ -112,8 +122,8 @@ export async function PUT(
     }
 
     await invalidateSearchCache()
-    const { id: _id, ...clinicRest } = clinic
-    return NextResponse.json({ ...clinicRest, rating: clinic.rating ? Number(clinic.rating) : null, consentzUsername })
+    const { id: _id, city, ...clinicRest } = clinic
+    return NextResponse.json({ ...clinicRest, citySlug: city?.slug ?? null, cityName: city?.name ?? null, rating: clinic.rating ? Number(clinic.rating) : null, consentzUsername })
   } catch (error) {
     console.error('Failed to update clinic:', error)
     if ((error as any).code === 'P2025') {

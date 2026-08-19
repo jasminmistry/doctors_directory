@@ -64,7 +64,8 @@ export default function Header() {
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => setPortalUser(data))
       .catch(() => setPortalUser(null));
-  }, [pathname]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (menuOpen) {
