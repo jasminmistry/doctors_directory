@@ -97,18 +97,24 @@ export async function PUT(
     const cityRecord = citySlug ? await prisma.city.findUnique({ where: { slug: citySlug }, select: { id: true } }) : null
     if (citySlug && !cityRecord) fieldErrors.citySlug = 'Unknown city'
 
+    const usernameValidation = consentzUsernameSchema.safeParse(rawConsentzUsername)
+    if (!usernameValidation.success) fieldErrors.consentzUsername = 'Invalid Consentz username'
+    const consentzUsername = usernameValidation.success ? (usernameValidation.data?.trim() || null) : null
+    // consentzUsername is only ever persisted (onto a linked ClaimRequest, see
+    // syncConsentzLinkClaim below) when a Core Clinic ID is present — without it the
+    // sync silently no-ops, so a typed username would vanish with no feedback. Reject
+    // the save instead so the admin knows to fill in Core Clinic ID first.
+    const coreClinicId = validation.success ? (validation.data.coreClinicId ?? null) : null
+    if (consentzUsername && !coreClinicId) {
+      fieldErrors.consentzUsername = 'Set a Core Clinic ID first — the username is linked to it and won\'t be saved without one'
+    }
+
     if (Object.keys(fieldErrors).length > 0) {
       return NextResponse.json(
         { error: 'Please fix the highlighted fields', fieldErrors },
         { status: 400 }
       )
     }
-
-    const usernameValidation = consentzUsernameSchema.safeParse(rawConsentzUsername)
-    if (!usernameValidation.success) {
-      return NextResponse.json({ error: 'Invalid Consentz username' }, { status: 400 })
-    }
-    const consentzUsername = usernameValidation.data?.trim() || null
 
     const clinic = await prisma.clinic.update({
       where: { slug: params.slug },

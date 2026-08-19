@@ -479,12 +479,13 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
             className="h-8 text-sm max-w-[180px]"
           />
         </Field>
-        <Field label="Consentz Username" hint="Consentz login that owns this clinic's portal. Required for SSO from Consentz to work — leave blank to skip username verification (any admin on this Consentz clinic will be able to sign in).">
+        <Field label="Consentz Username" hint="Consentz login that owns this clinic's portal. Requires Core Clinic ID to be set first. Required for SSO from Consentz to work — leave blank to skip username verification (any admin on this Consentz clinic will be able to sign in)." error={fieldErrors.consentzUsername}>
           <Input
             value={data.consentzUsername ?? ''}
             onChange={(e) => set('consentzUsername', e.target.value || null)}
             placeholder="e.g. jasmin.jasmin_5"
-            className="h-8 text-sm max-w-[240px]"
+            className={cn('h-8 text-sm max-w-[240px]', fieldErrors.consentzUsername && 'border-red-500 focus-visible:ring-red-500')}
+            aria-invalid={Boolean(fieldErrors.consentzUsername)}
           />
         </Field>
       </FormSection>}
