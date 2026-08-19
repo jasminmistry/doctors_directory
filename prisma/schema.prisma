@@ -39,6 +39,7 @@ enum ClaimStatus {
   approved
   rejected
   awaiting_consentz_link
+  deleted
 }
 
 enum ClaimPlan {
@@ -251,6 +252,11 @@ model Clinic {
   campaignEmailedAt           DateTime?
   directoryRemovalRequestedAt DateTime?
 
+  // Self-serve GDPR account deletion — set when the claimer requests deletion from
+  // the portal. Listing is hidden immediately; a daily sweep hard-purges (reverts to
+  // unclaimed + anonymises the claim) once this timestamp has passed.
+  scheduledDeletionAt DateTime?
+
   // Profile enhancements
   coverImage   String?       @db.Text
   cqcStatus    CqcStatus?
@@ -444,6 +450,9 @@ model Practitioner {
   // Consentz Core — set when claimed via Consentz link; used for calendar + booking API calls
   coreClinicId         Int?
   coreRegistrationType CoreRegistrationType?
+
+  // Self-serve GDPR account deletion — same lifecycle as Clinic.scheduledDeletionAt
+  scheduledDeletionAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

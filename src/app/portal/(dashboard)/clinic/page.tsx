@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { format, addMonths } from "date-fns";
 import { ClinicForm } from "@/components/admin/forms/ClinicForm";
 import { CoreIntegrationPanel } from "@/components/portal/CoreIntegrationPanel";
+import { DangerZonePanel } from "@/components/portal/danger-zone-panel";
 import { cn } from "@/lib/utils";
 import { commissionPct, clinicNetRate, PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from "@/lib/pricing";
 import { IconAlertCircle, IconCircleCheck, IconClockHour4, IconCreditCard, IconCurrencyPound, IconInfoCircle, IconRotate, IconXboxX } from "@tabler/icons-react";
@@ -236,6 +237,7 @@ export default function PortalClinicPage() {
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
   const [hasCoreLink, setHasCoreLink] = useState(false);
   const [coreUnlinkRequestedAt, setCoreUnlinkRequestedAt] = useState<string | null>(null);
+  const [entityName, setEntityName] = useState<string | null>(null);
 
   const fetchClinicData = useCallback(() => {
     setVerificationChecked(false);
@@ -245,6 +247,7 @@ export default function PortalClinicPage() {
         if (!data) return;
         setIdVerified(data.idVerified ?? false);
         setEntitySlug(data.slug ?? null);
+        setEntityName(data.name ?? data.slug ?? null);
         setSubscription(data.subscription ?? null);
         setHasCoreLink(!!data.coreClinicId);
         setCoreUnlinkRequestedAt(data.coreUnlinkRequestedAt ?? null);
@@ -296,6 +299,9 @@ export default function PortalClinicPage() {
         unlinkRequestedAt={coreUnlinkRequestedAt}
         onRefresh={fetchClinicData}
       />
+
+      {/* Danger zone */}
+      {entityName && <DangerZonePanel entityType="clinic" entityName={entityName} plan={subscription?.plan} />}
     </div>
   );
 }
