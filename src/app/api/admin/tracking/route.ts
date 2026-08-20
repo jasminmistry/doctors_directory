@@ -4,7 +4,10 @@ import { getTrackingOverview, listTrackingRows, type TrackingTab } from "@/lib/t
 export const dynamic = 'force-dynamic'
 
 function parseTab(value: string | null): TrackingTab {
-  return value === "leads" ? "leads" : value === "signups" ? "signups" : "events"
+  if (value === "leads") return "leads"
+  if (value === "signups") return "signups"
+  if (value === "campaign") return "campaign"
+  return "events"
 }
 
 function parseIntParam(value: string | null, fallback: number, max: number): number {

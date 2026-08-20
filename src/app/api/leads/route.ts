@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { getPatientClaims } from '@/lib/patient-auth'
 import { domainHasMailServer } from '@/lib/email-domain-check'
 import { sendGhostLeadHook, sendLeadNotificationEmail, sendPplLeadTeaserEmail } from '@/lib/email'
+import { signEmailTrackingToken } from '@/lib/email-open-tracking'
 import { getClaimState } from '@/lib/claim-utils'
 import { CONSENT_FORM_VERSION, consentCheckboxWording } from '@/lib/consent'
 
@@ -161,6 +162,12 @@ export async function POST(req: NextRequest) {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+    const trackingPixelUrl = `${baseUrl}/directory/api/track/email-open/${signEmailTrackingToken('lead', lead.id)}/`
+    const recordEmailSent = () =>
+      prisma.consultationLead.update({
+        where: { id: lead.id },
+        data: { notificationEmailTo: clinic.email, notificationEmailSentAt: new Date() },
+      })
 
     if (isGhostLead) {
       if (clinic.email) {
@@ -178,7 +185,10 @@ export async function POST(req: NextRequest) {
             location: location ?? '',
             pendingCount,
             claimUrl: `${baseUrl}/directory/claim/${clinicSlug}`,
-          }).catch((err) => console.error('[leads] ghost hook email error:', err))
+            trackingPixelUrl,
+          })
+            .then(recordEmailSent)
+            .catch((err) => console.error('[leads] ghost hook email error:', err))
         }
       }
     } else if (clinic.email) {
@@ -192,7 +202,10 @@ export async function POST(req: NextRequest) {
           treatment,
           location,
           portalUrl,
-        }).catch((err) => console.error('[leads] notification email error:', err))
+          trackingPixelUrl,
+        })
+          .then(recordEmailSent)
+          .catch((err) => console.error('[leads] notification email error:', err))
       } else {
         sendPplLeadTeaserEmail({
           to: clinic.email,
@@ -200,7 +213,10 @@ export async function POST(req: NextRequest) {
           treatment,
           location,
           portalUrl,
-        }).catch((err) => console.error('[leads] ppl teaser email error:', err))
+          trackingPixelUrl,
+        })
+          .then(recordEmailSent)
+          .catch((err) => console.error('[leads] ppl teaser email error:', err))
       }
     }
 

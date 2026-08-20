@@ -249,6 +249,7 @@ model Clinic {
   // Cold-outreach campaign — claim-invite emails to unclaimed clinics
   campaignOptedOut            Boolean   @default(false)
   campaignEmailedAt           DateTime?
+  campaignEmailReadAt         DateTime? // when the claim-invite open-tracking pixel was first hit
   directoryRemovalRequestedAt DateTime?
 
   // Profile enhancements
@@ -800,6 +801,11 @@ model ConsultationLead {
   // Ghost lead — clinic was unclaimed when lead was submitted
   isGhostLead     Boolean   @default(false)
   ghostNotifiedAt DateTime? // when FOMO email was sent to clinic's public contact
+
+  // Clinic notification email — sent when a lead comes in (ghost hook, PPL teaser, or full notification)
+  notificationEmailTo     String?   @db.VarChar(255) // recipient the notification email was sent to
+  notificationEmailSentAt DateTime? // when the notification email successfully sent
+  notificationEmailReadAt DateTime? // when the open-tracking pixel was first hit
 
   // Pipeline CRM fields
   pipelineStatus LeadStatus @default(new)

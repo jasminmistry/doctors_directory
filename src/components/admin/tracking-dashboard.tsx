@@ -3,10 +3,25 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import {
+  ArrowRight,
+  Building2,
+  CheckCircle2,
+  FileQuestion,
+  LayoutGrid,
+  Link2,
+  Mail,
+  MessageSquareText,
+  Search,
+  Share2,
+  UserRound,
+  XCircle,
+} from "lucide-react"
 import { AdminLayout } from "@/components/admin/AdminLayout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import type { TrackingTab } from "@/lib/tracking/dashboard-queries"
 
 declare global {
@@ -62,6 +77,7 @@ function apiBase(): string {
 function parseTab(value: string | null): TrackingTab {
   if (value === "leads") return "leads"
   if (value === "signups") return "signups"
+  if (value === "campaign") return "campaign"
   return "events"
 }
 
@@ -69,6 +85,115 @@ function parseOverviewWindow(value: string | null): OverviewWindow {
   if (value === "30") return "30"
   if (value === "all") return "all"
   return "7"
+}
+
+function formatShortTime(iso: string): string {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return String(iso)
+  const now = new Date()
+  const sameDay =
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate()
+  const time = date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
+  if (sameDay) return time
+  const day = date.toLocaleDateString(undefined, { day: "2-digit", month: "2-digit" })
+  return `${day} ${time}`
+}
+
+const PAGE_TYPE_ICON: Record<string, { icon: typeof UserRound; label: string }> = {
+  practitioner_page: { icon: UserRound, label: "practitioner_page" },
+  clinic_page: { icon: Building2, label: "clinic_page" },
+  collection_page: { icon: LayoutGrid, label: "collection_page" },
+}
+
+function TypeIcon({ pageType }: { pageType: string }) {
+  const entry = PAGE_TYPE_ICON[pageType] ?? { icon: FileQuestion, label: pageType || "other" }
+  const Icon = entry.icon
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Icon className="size-4 text-gray-600" aria-label={entry.label} />
+      </TooltipTrigger>
+      <TooltipContent>{entry.label}</TooltipContent>
+    </Tooltip>
+  )
+}
+
+function referrerIcon(referrer: string): typeof Search {
+  const value = (referrer || "").toLowerCase()
+  if (!value || value === "direct") return ArrowRight
+  if (value === "consultation_form") return MessageSquareText
+  if (/google|bing|search/.test(value)) return Search
+  if (/facebook|instagram|twitter|x\.com/.test(value)) return Share2
+  return Link2
+}
+
+function ReferrerIcon({ referrer }: { referrer: string }) {
+  const Icon = referrerIcon(referrer)
+  const label = referrer && referrer.trim().length > 0 ? referrer : "direct"
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Icon className="size-4 text-gray-600" aria-label={label} />
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
+  )
+}
+
+function EntityTypeIcon({ entityType }: { entityType: string }) {
+  const Icon = entityType === "practitioner" ? UserRound : Building2
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Icon className="size-4 text-gray-600" aria-label={entityType} />
+      </TooltipTrigger>
+      <TooltipContent className="capitalize">{entityType}</TooltipContent>
+    </Tooltip>
+  )
+}
+
+function EmailSentCell({ sentAt }: { sentAt: unknown }) {
+  const iso = typeof sentAt === "string" ? sentAt : null
+  if (!iso) {
+    return (
+      <span className="inline-flex items-center gap-1 text-gray-400">
+        <XCircle className="size-4" />
+        Not sent
+      </span>
+    )
+  }
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="inline-flex items-center gap-1 text-emerald-700">
+          <CheckCircle2 className="size-4" />
+          {formatShortTime(iso)}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>{new Date(iso).toLocaleString()}</TooltipContent>
+    </Tooltip>
+  )
+}
+
+function EmailReadCell({ readAt, sentAt }: { readAt: unknown; sentAt: unknown }) {
+  const readIso = typeof readAt === "string" ? readAt : null
+  const sentIso = typeof sentAt === "string" ? sentAt : null
+  if (!readIso) {
+    return <span className="text-gray-400">{sentIso ? "Unread" : "—"}</span>
+  }
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="inline-flex items-center gap-1 text-emerald-700">
+          <Mail className="size-4" />
+          {formatShortTime(readIso)}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>{new Date(readIso).toLocaleString()}</TooltipContent>
+    </Tooltip>
+  )
 }
 
 export function TrackingDashboard() {
@@ -487,6 +612,19 @@ export function TrackingDashboard() {
           >
             Sign-ups
           </Button>
+          <Button
+            type="button"
+            variant={tab === "campaign" ? "default" : "outline"}
+            onClick={() => {
+              const sp = new URLSearchParams(searchParams.toString())
+              sp.set("tab", "campaign")
+              sp.set("page", "1")
+              sp.delete("q")
+              pushUrl(sp)
+            }}
+          >
+            Campaign emails
+          </Button>
           <Link href="/admin" className="ml-auto self-center text-sm underline">
             Admin home
           </Link>
@@ -500,12 +638,14 @@ export function TrackingDashboard() {
             placeholder={
               tab === "signups"
                 ? "Search (clinic, practitioner, claimer, email...)"
+                : tab === "campaign"
+                ? "Search (clinic name, slug, email...)"
                 : "Search (URL, CTA label, referrer, target...)"
             }
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
-          {tab !== "signups" && (
+          {tab !== "signups" && tab !== "campaign" && (
             <>
               <Select value={pageType || "all"} onValueChange={(value) => setPageType(value === "all" ? "" : value)}>
                 <SelectTrigger className="h-9 w-full text-sm">
@@ -552,45 +692,55 @@ export function TrackingDashboard() {
           {loading ? "Loading…" : `${total} row(s) · page ${page} / ${totalPages}`}
         </div>
 
+        <TooltipProvider>
         <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
           <table className="min-w-full text-left text-sm">
             <thead className="bg-gray-100 text-xs uppercase text-gray-600">
               <tr>
                 {tab === "events" ? (
                   <>
-                    <th className="px-3 py-2">Time</th>
+                    <th className="px-2 py-2">Time</th>
                     <th className="px-3 py-2">Page</th>
-                    <th className="px-3 py-2">Type</th>
-                    <th className="px-3 py-2">Referrer</th>
+                    <th className="px-2 py-2">Type</th>
+                    <th className="px-2 py-2">Referrer</th>
                     <th className="px-3 py-2">Country</th>
-                    <th className="px-3 py-2">Device</th>
                     <th className="px-3 py-2">CTA</th>
                     <th className="px-3 py-2">Search terms</th>
                     <th className="px-3 py-2">Target</th>
                   </>
                 ) : tab === "signups" ? (
                   <>
-                    <th className="px-3 py-2">Approved</th>
-                    <th className="px-3 py-2">Type</th>
+                    <th className="px-2 py-2">Approved</th>
+                    <th className="px-2 py-2">Type</th>
                     <th className="px-3 py-2">Clinic / Practitioner</th>
                     <th className="px-3 py-2">Slug</th>
                     <th className="px-3 py-2">Claimer</th>
                     <th className="px-3 py-2">Email</th>
                     <th className="px-3 py-2">Plan</th>
                   </>
+                ) : tab === "campaign" ? (
+                  <>
+                    <th className="px-3 py-2">Clinic</th>
+                    <th className="px-3 py-2">City</th>
+                    <th className="px-3 py-2">Email sent</th>
+                    <th className="px-3 py-2">Email read</th>
+                    <th className="px-3 py-2">Recipient</th>
+                  </>
                 ) : (
                   <>
-                    <th className="px-3 py-2">Time</th>
+                    <th className="px-2 py-2">Time</th>
                     <th className="px-3 py-2">Page</th>
-                    <th className="px-3 py-2">Type</th>
-                    <th className="px-3 py-2">Referrer</th>
+                    <th className="px-2 py-2">Type</th>
+                    <th className="px-2 py-2">Referrer</th>
                     <th className="px-3 py-2">Country</th>
-                    <th className="px-3 py-2">Device</th>
                     <th className="px-3 py-2">Name</th>
                     <th className="px-3 py-2">Contact</th>
                     <th className="px-3 py-2">Treatment</th>
                     <th className="px-3 py-2">Location</th>
                     <th className="px-3 py-2">Budget</th>
+                    <th className="px-3 py-2">Email sent</th>
+                    <th className="px-3 py-2">Email read</th>
+                    <th className="px-3 py-2">Recipient</th>
                   </>
                 )}
               </tr>
@@ -600,16 +750,27 @@ export function TrackingDashboard() {
                 <tr key={String(row.id)} className="border-t border-gray-100">
                   {tab === "events" ? (
                     <>
-                      <td className="px-3 py-2 whitespace-nowrap">{String(row.timestamp)}</td>
-                      <td className="px-3 py-2 max-w-[220px] truncate" title={String(row.page_url)}>
-                        {String(row.page_url)}
+                      <td className="px-2 py-2 whitespace-nowrap" title={new Date(String(row.timestamp)).toLocaleString()}>
+                        {formatShortTime(String(row.timestamp))}
                       </td>
-                      <td className="px-3 py-2">{String(row.page_type)}</td>
-                      <td className="px-3 py-2 max-w-[180px] truncate" title={String(row.referrer)}>
-                        {String(row.referrer)}
+                      <td className="px-3 py-2 max-w-[220px] truncate">
+                        <a
+                          href={String(row.page_url)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-700 underline decoration-dotted hover:decoration-solid"
+                          title={String(row.page_url)}
+                        >
+                          {String(row.page_url)}
+                        </a>
+                      </td>
+                      <td className="px-2 py-2">
+                        <TypeIcon pageType={String(row.page_type)} />
+                      </td>
+                      <td className="px-2 py-2">
+                        <ReferrerIcon referrer={String(row.referrer)} />
                       </td>
                       <td className="px-3 py-2">{String(row.country)}</td>
-                      <td className="px-3 py-2">{String(row.device_type)}</td>
                       <td className="px-3 py-2">{String(row.cta_label)}</td>
                       <td className="px-3 py-2 max-w-[220px] truncate" title={String(
                         [row.search_query, row.search_category, row.search_location]
@@ -629,10 +790,24 @@ export function TrackingDashboard() {
                     </>
                   ) : tab === "signups" ? (
                     <>
-                      <td className="px-3 py-2 whitespace-nowrap">{String(row.timestamp)}</td>
-                      <td className="px-3 py-2 capitalize">{String(row.entity_type)}</td>
-                      <td className="px-3 py-2 max-w-[220px] truncate" title={String(row.entity_name)}>
-                        {String(row.entity_name)}
+                      <td className="px-2 py-2 whitespace-nowrap" title={new Date(String(row.timestamp)).toLocaleString()}>
+                        {formatShortTime(String(row.timestamp))}
+                      </td>
+                      <td className="px-2 py-2">
+                        <EntityTypeIcon entityType={String(row.entity_type)} />
+                      </td>
+                      <td className="px-3 py-2 max-w-[220px] truncate">
+                        {row.entity_slug && row.entity_slug !== "—" ? (
+                          <Link
+                            href={`/admin/${row.entity_type === "practitioner" ? "practitioners" : "clinics"}/${row.entity_slug}`}
+                            className="text-blue-700 underline decoration-dotted hover:decoration-solid"
+                            title={String(row.entity_name)}
+                          >
+                            {String(row.entity_name)}
+                          </Link>
+                        ) : (
+                          <span title={String(row.entity_name)}>{String(row.entity_name)}</span>
+                        )}
                       </td>
                       <td className="px-3 py-2 max-w-[180px] truncate" title={String(row.entity_slug)}>
                         {String(row.entity_slug)}
@@ -643,23 +818,65 @@ export function TrackingDashboard() {
                       </td>
                       <td className="px-3 py-2">{String(row.plan_label)}</td>
                     </>
+                  ) : tab === "campaign" ? (
+                    <>
+                      <td className="px-3 py-2 max-w-[220px] truncate">
+                        <Link
+                          href={`/admin/clinics/${row.clinic_slug}`}
+                          className="text-blue-700 underline decoration-dotted hover:decoration-solid"
+                          title={String(row.clinic_slug)}
+                        >
+                          {String(row.clinic_name)}
+                        </Link>
+                      </td>
+                      <td className="px-3 py-2">{row.city ? String(row.city) : "—"}</td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <EmailSentCell sentAt={row.email_sent_at} />
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <EmailReadCell readAt={row.email_read_at} sentAt={row.email_sent_at} />
+                      </td>
+                      <td className="px-3 py-2 max-w-[220px] truncate" title={row.email_recipient ? String(row.email_recipient) : ""}>
+                        {row.email_recipient ? String(row.email_recipient) : "—"}
+                      </td>
+                    </>
                   ) : (
                     <>
-                      <td className="px-3 py-2 whitespace-nowrap">{String(row.timestamp)}</td>
-                      <td className="px-3 py-2 max-w-[200px] truncate" title={String(row.page_url)}>
-                        {String(row.page_url)}
+                      <td className="px-2 py-2 whitespace-nowrap" title={new Date(String(row.timestamp)).toLocaleString()}>
+                        {formatShortTime(String(row.timestamp))}
                       </td>
-                      <td className="px-3 py-2">{String(row.page_type)}</td>
-                      <td className="px-3 py-2 max-w-[160px] truncate" title={String(row.referrer)}>
-                        {String(row.referrer)}
+                      <td className="px-3 py-2 max-w-[200px] truncate">
+                        <a
+                          href={String(row.page_url)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-700 underline decoration-dotted hover:decoration-solid"
+                          title={String(row.page_url)}
+                        >
+                          {String(row.page_url)}
+                        </a>
+                      </td>
+                      <td className="px-2 py-2">
+                        <TypeIcon pageType={String(row.page_type)} />
+                      </td>
+                      <td className="px-2 py-2">
+                        <ReferrerIcon referrer={String(row.referrer)} />
                       </td>
                       <td className="px-3 py-2">{String(row.country)}</td>
-                      <td className="px-3 py-2">{String(row.device_type)}</td>
                       <td className="px-3 py-2">{String(row.name)}</td>
                       <td className="px-3 py-2">{String(row.contact)}</td>
                       <td className="px-3 py-2">{row.treatment ? String(row.treatment) : "—"}</td>
                       <td className="px-3 py-2">{row.location ? String(row.location) : "—"}</td>
                       <td className="px-3 py-2">{row.budget ? String(row.budget) : "—"}</td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <EmailSentCell sentAt={row.email_sent_at} />
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <EmailReadCell readAt={row.email_read_at} sentAt={row.email_sent_at} />
+                      </td>
+                      <td className="px-3 py-2 max-w-[180px] truncate" title={row.email_recipient ? String(row.email_recipient) : ""}>
+                        {row.email_recipient ? String(row.email_recipient) : "—"}
+                      </td>
                     </>
                   )}
                 </tr>
@@ -668,7 +885,7 @@ export function TrackingDashboard() {
                 <tr>
                   <td
                     className="px-3 py-6 text-center text-gray-600"
-                    colSpan={tab === "events" ? 9 : tab === "signups" ? 7 : 11}
+                    colSpan={tab === "events" ? 8 : tab === "signups" ? 7 : tab === "campaign" ? 5 : 13}
                   >
                     No rows match these filters.
                   </td>
@@ -677,6 +894,7 @@ export function TrackingDashboard() {
             </tbody>
           </table>
         </div>
+        </TooltipProvider>
 
         <div className="flex gap-2">
           <Button type="button" variant="outline" disabled={page <= 1} onClick={() => goPage(page - 1)}>
