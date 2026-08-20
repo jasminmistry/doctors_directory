@@ -2,11 +2,17 @@
 
 import { HubLogoStrip } from "@/components/b2b-hub/hub-logo-strip"
 import {
+  HUB_CTA_PRIMARY_HERO_CLASS,
+  HUB_CTA_SECONDARY_HERO_CLASS,
+} from "@/components/b2b-hub/hub-cta-buttons"
+import {
   HUB_INDEX_HERO_TITLE_CLASS_DEFAULT,
   HUB_INDEX_HERO_VIEWPORT_CLASS,
 } from "@/lib/b2b-hub/hub-index-hero-layout"
+import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import { cn } from "@/lib/utils"
 import { IconSearch } from "@tabler/icons-react"
+import Link from "next/link"
 
 export {
   HUB_INDEX_HERO_TITLE_CLASS_DEFAULT,
@@ -59,12 +65,12 @@ export function HubIndexHeroSearch({
             !showSearch && "min-h-[min(100%,28rem)] sm:min-h-[min(100%,32rem)]"
           )}
         >
-          <div className="min-w-0 text-center md:text-left">
+          <div className="min-w-0 text-left">
             <h1 className={heroTitleClassName}>{heroTitle}</h1>
             {heroSubtitle ? (
               <p
                 className={cn(
-                  "mx-auto max-w-3xl text-base leading-relaxed text-neutral-600 md:mx-0 md:text-lg",
+                  "max-w-3xl text-base leading-relaxed text-neutral-600 md:text-lg",
                   showSearch ? "mb-8 md:mb-10" : "mb-0"
                 )}
               >
@@ -72,26 +78,58 @@ export function HubIndexHeroSearch({
               </p>
             ) : null}
             {showSearch ? (
-              <div className="mx-auto flex max-w-3xl flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center md:mx-0 md:justify-start">
-                <label className="sr-only" htmlFor={inputId}>
-                  Search
-                </label>
-                <input
-                  id={inputId}
-                  type="search"
-                  value={query}
-                  onChange={(e) => onQueryChange(e.target.value)}
-                  placeholder={searchPlaceholder}
-                  className="flex-1 rounded-lg border border-neutral-200 bg-white px-4 py-3.5 text-neutral-900 placeholder:text-neutral-400 outline-none focus:ring-1 focus:ring-black translation-focus"
-                  autoComplete="off"
-                />
-                <button
-                  type="button"
-                  aria-label="Search"
-                  className="inline-flex h-[52px] w-full shrink-0 items-center justify-center rounded-lg bg-black text-white hover:bg-neutral-800 hover:cursor-pointer transition-colors sm:w-14"
-                >
-                  <IconSearch className="h-5 w-5" stroke={1.5} />
-                </button>
+              <div className="w-full max-w-xl">
+                <div className="flex items-stretch overflow-hidden rounded-lg border border-neutral-200 bg-white">
+                  <label className="sr-only" htmlFor={inputId}>
+                    Search
+                  </label>
+                  <span className="flex items-center pl-3 text-neutral-400">
+                    <IconSearch className="h-5 w-5" stroke={1.5} />
+                  </span>
+                  <input
+                    id={inputId}
+                    type="search"
+                    value={query}
+                    onChange={(e) => onQueryChange(e.target.value)}
+                    placeholder={searchPlaceholder}
+                    className="min-w-0 flex-1 bg-white px-3 py-3 text-neutral-900 placeholder:text-neutral-400 outline-none"
+                    autoComplete="off"
+                  />
+                  <button
+                    type="button"
+                    aria-label="Search"
+                    className="inline-flex w-12 shrink-0 items-center justify-center bg-black text-white hover:bg-neutral-800"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.35-4.35" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="mt-5 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-start">
+                  <Link href="/register/clinic" className={`inline-flex ${HUB_CTA_PRIMARY_HERO_CLASS}`}>
+                    List your Practice
+                  </Link>
+                  <a
+                    href={b2bBookDemoHref()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex ${HUB_CTA_SECONDARY_HERO_CLASS}`}
+                  >
+                    Book Demo
+                  </a>
+                </div>
               </div>
             ) : null}
           </div>
