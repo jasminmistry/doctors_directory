@@ -110,8 +110,12 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
 
     const errors: FieldErrors = {}
     if (!form.patientName.trim()) errors.patientName = 'Patient name is required.'
-    if (form.patientEmail.trim() && !isValidEmail(form.patientEmail)) errors.patientEmail = 'Please enter a valid email address.'
-    if (form.patientPhone.trim() && !isValidUkPhone(form.patientPhone)) errors.patientPhone = 'Please enter a valid UK phone number.'
+    if (!form.patientEmail.trim()) errors.patientEmail = 'Email is required.'
+    else if (!isValidEmail(form.patientEmail)) errors.patientEmail = 'Please enter a valid email address.'
+    if (!form.patientPhone.trim()) errors.patientPhone = 'Phone number is required.'
+    else if (!isValidUkPhone(form.patientPhone)) errors.patientPhone = 'Please enter a valid UK phone number.'
+    if (!form.date) errors.date = 'Date is required.'
+    if (!form.startTime) errors.startTime = 'Start time is required.'
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors)
       return
@@ -163,7 +167,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
           {/* Patient details */}
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-wider text-gray-600">Patient</p>
-            <Field label="Name *" error={fieldErrors.patientName}>
+            <Field label="Name" required error={fieldErrors.patientName}>
               <input
                 type="text"
                 value={form.patientName}
@@ -173,7 +177,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
               />
             </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Phone" error={fieldErrors.patientPhone}>
+              <Field label="Phone" required error={fieldErrors.patientPhone}>
                 <input
                   type="tel"
                   value={form.patientPhone}
@@ -182,7 +186,7 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
                   className={cn(inputCls, fieldErrors.patientPhone && 'border-red-400')}
                 />
               </Field>
-              <Field label="Email" error={fieldErrors.patientEmail}>
+              <Field label="Email" required error={fieldErrors.patientEmail}>
                 <input
                   type="email"
                   value={form.patientEmail}
@@ -208,21 +212,21 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
                 className={inputCls}
               />
             </Field>
-            <Field label="Date">
+            <Field label="Date" required error={fieldErrors.date}>
               <input
                 type="date"
                 value={form.date}
                 onChange={(e) => set('date', e.target.value)}
-                className={inputCls}
+                className={cn(inputCls, fieldErrors.date && 'border-red-400')}
               />
             </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Start time">
+              <Field label="Start time" required error={fieldErrors.startTime}>
                 <input
                   type="time"
                   value={form.startTime}
                   onChange={(e) => set('startTime', e.target.value)}
-                  className={inputCls}
+                  className={cn(inputCls, fieldErrors.startTime && 'border-red-400')}
                 />
               </Field>
               <Field label="End time">
@@ -282,10 +286,13 @@ export function NewBookingModal({ onClose, onSave, defaultDate, initialData, cli
 
 const inputCls = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({ label, required, error, children }: { label: string; required?: boolean; error?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="mb-1 block text-xs font-medium text-gray-600">{label}</label>
+      <label className="mb-1 block text-xs font-medium text-gray-600">
+        {label}
+        {required && <span className="ml-0.5 text-red-500">*</span>}
+      </label>
       {children}
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>

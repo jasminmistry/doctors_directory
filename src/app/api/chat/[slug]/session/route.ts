@@ -38,7 +38,14 @@ export async function POST(
 
     // Link to the logged-in patient (the widget requires login) so it shows up under
     // their account's chat history — otherwise /api/patient/chats can never find it.
-    const patientId = getPatientClaims(req)?.id ?? null
+    const claims = getPatientClaims(req)
+    const patientId = claims?.id ?? null
+
+    // A logged-in patient's email is never taken from the client-submitted form —
+    // that field is only a display prefill in the UI. The verified email on the
+    // signed session cookie is what's stored and what Core sends replies to, so a
+    // patient can't associate a chat/lead with an email address they don't own.
+    const patientEmail = claims?.email ?? body.data.patientEmail
 
     // Continue an existing active conversation instead of spawning a duplicate — the
     // widget only knows about its own localStorage pointer, which expires after 24h or
@@ -94,7 +101,7 @@ export async function POST(
         visitorToken,
         patientId,
         patientName: body.data.patientName,
-        patientEmail: body.data.patientEmail,
+        patientEmail,
         patientPhone: body.data.patientPhone,
       },
     })
@@ -107,7 +114,7 @@ export async function POST(
         clinicId: clinic.id,
         patientName: body.data.patientName,
         patientPhone: body.data.patientPhone ?? '',
-        patientEmail: body.data.patientEmail,
+        patientEmail,
         ...(patientId ? { patientId } : {}),
       },
     }).catch((err) => {
@@ -144,7 +151,7 @@ export async function POST(
 
     // Push to Consentz Core — paid plans with coreClinicId only
     const isFree = !clinic.claimedPlan || clinic.claimedPlan === 'free'
-    const shouldSyncToCore = !isFree && clinic.coreClinicId && body.data.patientEmail
+    const shouldSyncToCore = !isFree && clinic.coreClinicId && patientEmail
 
     console.log(`[chat/session] slug=${params.slug} coreClinicId=${clinic.coreClinicId ?? 'null'} plan=${clinic.claimedPlan ?? 'none'} syncToCore=${!!shouldSyncToCore}`)
 
@@ -156,7 +163,7 @@ export async function POST(
         coreClinicId: clinic.coreClinicId!,
         firstName,
         lastName,
-        email: body.data.patientEmail!,
+        email: patientEmail!,
         phone: body.data.patientPhone,
         message: coreMessage,
       })

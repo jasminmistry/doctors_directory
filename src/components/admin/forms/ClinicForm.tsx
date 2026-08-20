@@ -10,6 +10,7 @@ import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormSection, Field } from './FormSection'
+import { CityCombobox } from './city-combobox'
 import { cn } from '@/lib/utils'
 
 type ClinicData = {
@@ -109,6 +110,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [isNew, setIsNew] = useState(false)
+  const [cityLabel, setCityLabel] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const router = useRouter()
   const params = useParams()
@@ -138,6 +140,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
           d.name = d.slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
         }
         setData({ ...d, accreditations: parseStoredList(d.accreditations), awards: parseStoredList(d.awards), affiliations: parseStoredList(d.affiliations) })
+        setCityLabel(d.cityName ?? null)
         setLoading(false)
       })
       .catch(() => router.push('/admin/clinics'))
@@ -160,6 +163,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
     else if (isNew && !/^[a-z0-9-]+$/.test(data.slug.trim())) {
       nextErrors.slug = 'Slug must be kebab-case'
     }
+    if (!isPortal && !data.citySlug?.trim()) nextErrors.citySlug = 'City is required'
 
     if (Object.keys(nextErrors).length > 0) {
       setFieldErrors(nextErrors)
@@ -169,7 +173,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
 
     setFieldErrors({})
     setSaving(true)
-    const { slug: _s, citySlug: _citySlug, ...rest } = data
+    const { slug: _s, ...rest } = data
     const serialised = {
       ...rest,
       accreditations: formatListForSave(rest.accreditations),
@@ -322,6 +326,15 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
               aria-invalid={Boolean(fieldErrors.gmapsAddress)}
             />
           </Field>
+          {!isPortal && (
+            <Field label="City" required error={fieldErrors.citySlug}>
+              <CityCombobox
+                onChange={(citySlug) => set('citySlug', citySlug)}
+                initialLabel={cityLabel}
+                invalid={Boolean(fieldErrors.citySlug)}
+              />
+            </Field>
+          )}
           <Field label="Phone" error={fieldErrors.gmapsPhone}>
             <Input
               value={data.gmapsPhone ?? ''}
@@ -466,12 +479,13 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
             className="h-8 text-sm max-w-[180px]"
           />
         </Field>
-        <Field label="Consentz Username" hint="Consentz login that owns this clinic's portal. Required for SSO from Consentz to work — leave blank to skip username verification (any admin on this Consentz clinic will be able to sign in).">
+        <Field label="Consentz Username" hint="Consentz login that owns this clinic's portal. Requires Core Clinic ID to be set first. Required for SSO from Consentz to work — leave blank to skip username verification (any admin on this Consentz clinic will be able to sign in)." error={fieldErrors.consentzUsername}>
           <Input
             value={data.consentzUsername ?? ''}
             onChange={(e) => set('consentzUsername', e.target.value || null)}
             placeholder="e.g. jasmin.jasmin_5"
-            className="h-8 text-sm max-w-[240px]"
+            className={cn('h-8 text-sm max-w-[240px]', fieldErrors.consentzUsername && 'border-red-500 focus-visible:ring-red-500')}
+            aria-invalid={Boolean(fieldErrors.consentzUsername)}
           />
         </Field>
       </FormSection>}

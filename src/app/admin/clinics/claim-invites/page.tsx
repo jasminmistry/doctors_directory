@@ -181,7 +181,7 @@ export default function AdminClaimInvitesPage() {
                   <span className="font-medium text-sm text-gray-900">{c.name}</span>
                   {c.cityName && <span className="text-xs text-gray-600">{c.cityName}</span>}
                 </span>
-                <span className="block text-xs text-gray-600 mt-0.5">{c.email}</span>
+                <span className="block truncate text-xs text-gray-600 mt-0.5" title={c.email}>{c.email}</span>
                 {c.campaignEmailedAt && (
                   <span className="block text-[11px] text-amber-600 mt-1">
                     Last emailed {formatDistanceToNow(new Date(c.campaignEmailedAt), { addSuffix: true })}

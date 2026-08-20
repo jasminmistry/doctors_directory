@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { consentDisclaimer, consentCheckboxWording, TERMS_URL } from '@/lib/consent'
 import { cn } from '@/lib/utils'
-import { IconCalendar, IconLoader2, IconMail, IconPhone } from '@tabler/icons-react'
+import { IconCalendar, IconLoader2, IconLock, IconMail, IconPhone } from '@tabler/icons-react'
 
 export interface ConsultationFormData {
   firstName: string
@@ -22,6 +22,8 @@ interface ConsultationRichFormProps {
   submitLabel: string
   submitting: boolean
   onSubmit: (data: ConsultationFormData) => void
+  /** True once the patient is logged in — locks the email field to their verified account email. */
+  emailLocked?: boolean
 }
 
 const PRIVACY_POLICY_URL =
@@ -112,6 +114,7 @@ export function ConsultationRichForm({
   submitLabel,
   submitting,
   onSubmit,
+  emailLocked,
 }: ConsultationRichFormProps) {
   const [firstName, setFirstName] = useState(defaultValues?.firstName ?? '')
   const [lastName, setLastName] = useState(defaultValues?.lastName ?? '')
@@ -238,15 +241,26 @@ export function ConsultationRichForm({
       <Field label="Email address" error={emailError} required>
         <IconInput
           type="email"
-          icon={<IconMail stroke={1.5} className="h-3.5 w-3.5" />}
+          icon={
+            emailLocked
+              ? <IconLock stroke={1.5} className="h-3.5 w-3.5" />
+              : <IconMail stroke={1.5} className="h-3.5 w-3.5" />
+          }
           placeholder="you@example.com"
           value={email}
           error={!!emailError}
-          onChange={(e) => { setEmail(e.target.value); setEmailError('') }}
+          onChange={(e) => { if (!emailLocked) { setEmail(e.target.value); setEmailError('') } }}
+          readOnly={emailLocked}
           autoComplete="email"
           maxLength={255}
+          className={emailLocked ? 'bg-gray-50 text-gray-600' : undefined}
         />
       </Field>
+      {emailLocked && (
+        <p className="-mt-2.5 text-[11px] text-gray-500">
+          This is the email on your account and can&apos;t be changed here.
+        </p>
+      )}
 
       {/* Phone */}
       <Field label="Phone number" error={phoneError} required>
