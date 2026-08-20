@@ -1,6 +1,6 @@
 "use client";
 
-import { IconLoader2, IconSearch } from "@tabler/icons-react";
+import { IconLoader2 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 
 interface SearchButtonProps {
@@ -14,12 +14,27 @@ export function SearchButton({ isLoading, onClick }: SearchButtonProps) {
       <Button
         onClick={onClick}
         size="lg"
-        className="ml-4 h-12 w-12 sm:h-12.5 sm:w-12 rounded-full hover:cursor-pointer rounded-lg text-white hover:bg-neutral-800 transition-colors flex items-center justify-center flex-shrink-0"
+        className="ml-4 h-12 w-12 sm:h-12.5 sm:w-12 rounded-lg bg-black !text-white hover:cursor-pointer hover:bg-neutral-800 transition-colors flex items-center justify-center flex-shrink-0"
       >
         {isLoading ? (
-          <IconLoader2 stroke={1.5} className="h-6 w-6 animate-spin" />
+          <IconLoader2 stroke={1.5} className="h-6 w-6 animate-spin !text-white" color="white" />
         ) : (
-          <IconSearch stroke={1.5} className="h-6 w-6" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+            className="h-6 w-6"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
         )}
       </Button>
     </div>

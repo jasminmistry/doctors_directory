@@ -244,6 +244,9 @@ export function PractitionerCard({
                     height={120}
                   />
                 </div>
+                <div className="absolute -left-1 -top-1 z-20 md:-left-1.5 md:-top-1.5">
+                  <ClinicLabels clinic={practitioner as Clinic} size="overlay" showConsentz={false} />
+                </div>
                 {isConsentzLinked(practitioner as Clinic) && (
                   <img
                     src="/directory/consentz-customer-badge.jpg"
@@ -252,9 +255,6 @@ export function PractitionerCard({
                     className="absolute -right-1 -top-1 z-20 h-7 w-7 rounded-full border-2 border-white object-cover shadow-sm md:-right-1.5 md:-top-1.5 md:h-9 md:w-9"
                   />
                 )}
-                <div className="pointer-events-none absolute -left-0.5 -top-0.5 z-10 flex max-w-[4.5rem] flex-wrap justify-start gap-0.5 md:-left-1 md:-top-1">
-                  <ClinicLabels clinic={practitioner as Clinic} size="sm" showConsentz={false} />
-                </div>
               </div>
 
               <div className="flex min-h-[2.75rem] w-full items-center justify-center gap-1 px-1">
@@ -288,9 +288,6 @@ export function PractitionerCard({
                 <PrestigeSearchPill
                   awardsBadgeLabel={practitioner.awardsBadgeLabel}
                   tatlerBadgeLabel={practitioner.tatlerBadgeLabel}
-                  consentzLabel={
-                    isConsentzLinked(practitioner as Clinic) ? "Consentz Customer" : null
-                  }
                 />
               )}
 
