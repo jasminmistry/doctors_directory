@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { persistEvent, resolveCountry, resolveDeviceType } from "@/lib/tracking/server"
+import { lookupCountryFromRequest } from "@/lib/geo-ip"
 
 const bodySchema = z.object({
   timestamp: z.string().datetime(),
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     const headers = request.headers
     const country = resolveCountry(
-      headers.get("x-vercel-ip-country") || headers.get("cf-ipcountry")
+      headers.get("x-vercel-ip-country") || headers.get("cf-ipcountry") || lookupCountryFromRequest(headers)
     )
     const deviceType = resolveDeviceType(headers.get("user-agent"))
 
