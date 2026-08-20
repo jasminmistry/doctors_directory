@@ -15,6 +15,7 @@ interface EligibleClinic {
   email: string
   cityName: string | null
   campaignEmailedAt: string | null
+  campaignEmailReadAt: string | null
 }
 
 interface SendProgress {
@@ -185,6 +186,11 @@ export default function AdminClaimInvitesPage() {
                 {c.campaignEmailedAt && (
                   <span className="block text-[11px] text-amber-600 mt-1">
                     Last emailed {formatDistanceToNow(new Date(c.campaignEmailedAt), { addSuffix: true })}
+                  </span>
+                )}
+                {c.campaignEmailReadAt && (
+                  <span className="block text-[11px] text-green-600 mt-0.5">
+                    Opened {formatDistanceToNow(new Date(c.campaignEmailReadAt), { addSuffix: true })}
                   </span>
                 )}
               </span>
