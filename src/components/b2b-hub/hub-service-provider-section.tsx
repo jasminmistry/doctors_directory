@@ -2,7 +2,7 @@ import { HUB_CTA_PRIMARY_CLASS } from "@/components/b2b-hub/hub-cta-buttons"
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo"
 import { HUB_BLEED_FROM_CONTAINER } from "@/components/b2b-hub/hub-hero-layout-classes"
 import { cn } from "@/lib/utils"
-import { ServiceProviderCollage } from "@/components/b2b-hub/hub-pillar-detail-template"
+import { ServiceProviderCollage } from "@/components/b2b-hub/hub-service-provider-collage"
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.consentz.com"

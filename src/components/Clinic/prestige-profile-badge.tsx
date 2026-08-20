@@ -35,7 +35,7 @@ export function PrestigeProfileBadge({
     <div
       className={cn(
         'flex flex-col gap-1',
-        size === 'sm' ? 'items-center' : 'items-start',
+        size === 'sm' ? 'items-center' : 'items-start md:items-start',
         className,
       )}
     >

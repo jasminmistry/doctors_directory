@@ -4,7 +4,7 @@ import { isConsentzClinic } from "@/lib/consentz-customers";
 
 type ClinicLabelsProps = {
   clinic: Clinic
-  size?: "sm" | "md"
+  size?: "sm" | "md" | "overlay" | "overlay-md"
   showConsentz?: boolean
 }
 
@@ -18,14 +18,19 @@ export default function ClinicLabels({ clinic, size = "md", showConsentz = true 
     clinic.isJCCP?.[0] ||
     clinic.isRQIA?.[0] ||
     clinic.isSaveFace
-  const iconClass = size === "sm"
-    ? "h-5 w-5 rounded-full object-cover ring-1 ring-white shadow-sm"
-    : "h-8 w-8 md:h-9 md:w-9 rounded-full object-cover"
+  const iconClass =
+    size === "overlay"
+      ? "h-7 w-7 rounded-full border-2 border-white object-cover shadow-sm md:h-9 md:w-9"
+      : size === "overlay-md"
+        ? "h-7 w-7 rounded-full border-2 border-white object-cover shadow-sm md:h-10 md:w-10"
+        : size === "sm"
+          ? "h-5 w-5 rounded-full object-cover ring-1 ring-white shadow-sm"
+          : "h-8 w-8 md:h-9 md:w-9 rounded-full object-cover"
 
   if (!labels) return null
 
   return (
-    <div className={cn("flex items-center", size === "sm" ? "gap-0.5" : "gap-2")}>
+    <div className={cn("flex items-center", size === "sm" || size.startsWith("overlay") ? "gap-0.5" : "gap-2")}>
       {isConsentz && (
         <img src="/directory/consentz-customer-badge.jpg" alt="Consentz Customer" title="Consentz Customer" className={iconClass} />
       )}
