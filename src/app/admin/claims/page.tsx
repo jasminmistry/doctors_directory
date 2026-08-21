@@ -338,9 +338,9 @@ export default function AdminClaimsPage() {
                   <span className="text-muted-foreground">Claimer</span>
                   <p className="font-medium">{reviewClaim.claimerName}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <span className="text-muted-foreground">Email</span>
-                  <p className="font-medium">{reviewClaim.claimerEmail}</p>
+                  <p className="font-medium break-all">{reviewClaim.claimerEmail}</p>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Plan</span>

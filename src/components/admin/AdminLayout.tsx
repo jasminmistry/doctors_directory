@@ -12,7 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { HeaderIconLink } from "@/components/portal/header-icon-link";
 import { HeaderProfileMenu } from "@/components/portal/header-profile-menu";
-import { IconBuildingHospital, IconLayoutBoard, IconPackage, IconStethoscope, IconLinkOff, IconUsers, IconTrash, IconShieldCheck, IconStar, IconSparkles, IconMail, IconWorldLongitude, IconFlask, IconChartBar, IconLogout, IconWorld, IconMenu2, IconX, IconFlagCheck, IconExternalLink } from "@tabler/icons-react";
+import { IconBuildingHospital, IconLayoutBoard, IconPackage, IconStethoscope, IconLinkOff, IconUsers, IconTrash, IconShieldCheck, IconStar, IconSparkles, IconMail, IconWorldLongitude, IconFlask, IconChartBar, IconLogout, IconWorld, IconMenu2, IconX, IconFlagCheck, IconExternalLink, IconClipboardList, IconUserCircle } from "@tabler/icons-react";
 
 const AdminCountsContext = createContext<{ refreshCounts: () => void }>({
   refreshCounts: () => {},
@@ -67,6 +67,8 @@ const NAV = [
   { href: "/admin/directory-removal-requests", label: "Removal Requests", icon: IconTrash },
   { href: "/admin/claims", label: "Claims", icon: IconShieldCheck },
   { href: "/admin/verification", label: "ID Verification", icon: IconShieldCheck },
+  { href: "/admin/leads", label: "Leads", icon: IconClipboardList },
+  { href: "/admin/patients", label: "Patients", icon: IconUserCircle },
   { href: "/admin/reviews", label: "Reviews", icon: IconStar },
   { href: "/admin/qa", label: "QA Report", icon: IconFlask },
   { href: "/admin/tracking", label: "Directory tracking", icon: IconChartBar },

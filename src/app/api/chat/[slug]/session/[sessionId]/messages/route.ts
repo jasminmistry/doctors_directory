@@ -85,23 +85,27 @@ async function reconcileCoreMessages(
       continue
     }
 
-    // Genuinely new to us. The patient has no way to post into this
-    // conversation except through this widget — which always writes locally
-    // first — so anything arriving here unlinked must be a clinic reply sent
-    // from Core's own inbox UI. Persist it so it also appears in the clinic's
-    // own portal inbox (which reads local messages only) and isn't reprocessed.
+    // Genuinely new to us — Core originated it, whether that's a clinic staff
+    // reply typed straight into Core's own inbox UI or a system notification
+    // (e.g. "Video call booked") Core posts on the visitor's behalf when they
+    // complete a booking. The "echo" unreliability noted above only affects
+    // messages *we* pushed (Core mislabels our own clinic pushes as visitor
+    // on replay); it doesn't apply to messages Core authored itself, so its
+    // sender tag here is authoritative — trust m.sender rather than assuming
+    // clinic. Persist it so it also appears in the clinic's own portal inbox
+    // (which reads local messages only) and isn't reprocessed.
     await prisma.chatMessage
       .create({
         data: {
           sessionId,
-          sender: 'clinic',
+          sender: m.sender,
           content: m.content,
           coreMessageId: String(m.id),
           createdAt: new Date(m.createdAt),
         },
       })
       .catch((err) => console.error('[chat/messages GET] failed to persist Core-originated message:', err))
-    result.push({ ...m, sender: 'clinic' })
+    result.push(m)
   }
 
   return result

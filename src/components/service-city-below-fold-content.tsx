@@ -1,5 +1,4 @@
 import { HubBuyerFaq } from '@/components/b2b-hub/hub-buyer-faq'
-import { HUB_FAQ_SECTION_TITLE_CLASS } from '@/components/b2b-hub/hub-marketing-typography'
 
 type BelowFoldSection = {
   title: string
@@ -17,6 +16,9 @@ type Props = {
     faqItems: BelowFoldFaqItem[]
   }
 }
+
+const FAQ_TITLE_CLASS =
+  'text-left text-xl font-semibold leading-tight text-foreground md:text-2xl'
 
 export function ServiceCityBelowFoldContent({ content }: Props) {
   return (
@@ -40,7 +42,7 @@ export function ServiceCityBelowFoldContent({ content }: Props) {
         intro=""
         items={content.faqItems}
         className="px-0 pb-0"
-        titleClassName={HUB_FAQ_SECTION_TITLE_CLASS}
+        titleClassName={FAQ_TITLE_CLASS}
         introClassName="hidden"
       />
     </div>

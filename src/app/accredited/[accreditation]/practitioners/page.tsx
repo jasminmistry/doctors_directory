@@ -7,41 +7,25 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Clinic, Practitioner } from "@/lib/types"
-import { SearchBar } from "@/components/search/search-bar";
-import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
-import { toDirectoryCanonical } from "@/lib/seo";
-import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners";
+import { SearchBar } from "@/components/search/search-bar"
+import { toDirectoryCanonical } from "@/lib/seo"
+import { getAllPractitionersForSearch } from "@/lib/data-access/practitioners"
+import {
+  clinicCityMatchesSlug,
+  getAccreditationDisplayName,
+  getAccreditedPractitioners,
+  isKnownAccreditation,
+  isPrestigeAccreditation,
+  normalizeAccreditationSlug,
+  practitionerMatchesAccreditation,
+} from "@/lib/accreditation-directory"
+import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots"
+import { toUrlSlug } from "@/lib/utils"
 import { IconArrowNarrowLeft } from "@tabler/icons-react"
 
-function mapAccreditationToFieldPractitioner(accreditation: string): keyof Practitioner {
-  const mapping: Record<string, keyof Practitioner> = {
-    cqc: 'isCQC',
-    jccp: 'isJCCP',
-    hiw: 'isHIW',
-    his: 'isHIS',
-    rqia: 'isRQIA',
-    saveface: 'isSaveFace',
-  }
-  const field = mapping[accreditation.toLowerCase()]
-  if (!field) throw new Error(`Invalid accreditation: ${accreditation}`)
-  return field
-}
-
-function getAccreditationName(accreditation: string): string {
-  const mapping: Record<string, string> = {
-    cqc: 'Care Quality Commission (CQC)',
-    jccp: 'Joint Council for Cosmetic Practitioners (JCCP)',
-    hiw: 'Health Inspectorate Wales (HIW)',
-    his: 'Healthcare Improvement Scotland (HIS)',
-    rqia: 'Regulation and Quality Improvement Authority (RQIA)',
-    saveface: 'Save Face',
-  }
-  return mapping[accreditation.toLowerCase()] || accreditation
-}
+export const dynamic = "force-dynamic"
 
 interface AccreditedPractitionersPageProps {
   params: {
@@ -49,40 +33,30 @@ interface AccreditedPractitionersPageProps {
   }
 }
 
-export default async function AccreditedPractitionersPage({ params }: Readonly<AccreditedPractitionersPageProps>) {
-  const enrichedPractitioners = await getAllPractitionersForSearch()
-
-  const { accreditation } = params
-  const accreditationField = mapAccreditationToFieldPractitioner(accreditation)
-
-  const filteredPractitioners = enrichedPractitioners.filter(practitioner => {
-    const accreditationValue = (practitioner as any)[accreditationField]
-    let flag = false
-    if (accreditationValue === true) {
-      
-        
-        flag = true
-
-    }
-    else {
-      if (accreditationValue && Array.isArray(accreditationValue) && accreditationValue[0] === true) {
-        flag = true
-        
-      }
-    }
-    return flag
-   
-  })
-
-  if (!filteredPractitioners.length) {
+export default async function AccreditedPractitionersPage({
+  params,
+}: Readonly<AccreditedPractitionersPageProps>) {
+  const accreditation = normalizeAccreditationSlug(params.accreditation)
+  if (!isKnownAccreditation(accreditation)) {
     notFound()
   }
 
-  const cities = [...new Set(filteredPractitioners.map(p => p!.City).filter((c): c is string => Boolean(c)))].sort((a, b) => a.localeCompare(b))
-  const accreditationName = getAccreditationName(accreditation)
-  const accreditationSlug =
-  accreditationName.split("(")[1]?.replace(")", "") ?? accreditationName;
+  const enrichedPractitioners = isPrestigeAccreditation(accreditation)
+    ? getAccreditedPractitioners(accreditation)
+    : await getAllPractitionersForSearch()
+  const filteredPractitioners = enrichedPractitioners.filter((practitioner) => {
+    if (!practitioner) return false
+    return practitionerMatchesAccreditation(practitioner, accreditation)
+  })
 
+  const cities = [
+    ...new Set(
+      filteredPractitioners
+        .map((p) => p!.City)
+        .filter((c): c is string => Boolean(c)),
+    ),
+  ].sort((a, b) => a.localeCompare(b))
+  const accreditationName = getAccreditationDisplayName(accreditation)
 
   return (
     <main className="bg-white">
@@ -107,10 +81,8 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink
-                    href={`/accredited/${accreditationSlug}/practitioners`}
-                  >
-                    {accreditationSlug}
+                  <BreadcrumbLink href={`/accredited/${accreditation}/practitioners`}>
+                    {accreditationName}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -124,59 +96,80 @@ export default async function AccreditedPractitionersPage({ params }: Readonly<A
           </h1>
           <p className="text-sm text-gray-600 mb-6">
             Browse cities with {accreditationName} accredited practitioners.
+            {isPrestigeAccreditation(accreditation) && (
+              <>
+                {" "}
+                Prefer clinic listings?{" "}
+                <Link
+                  href={`/accredited/${accreditation}/clinics`}
+                  className="underline text-foreground"
+                >
+                  View {accreditationName} accredited clinics
+                </Link>
+                .
+              </>
+            )}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4 md:px-0">
-          {cities.map((city) => (
-            <Link
-              key={city}
-              href={`/accredited/${accreditation}/practitioners/${city.toLowerCase()}`}
-              className="block"
-            >
-              <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer ">
-                <CardHeader className="pb-4">
-                  <h3 className="mb-2 flex font-semibold text-md md:text-lg transition-colors text-balance group-hover:text-black">
-                    {city}
-                  </h3>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-gray-600 mb-4">
-                    {
-                      filteredPractitioners.filter((p) => p!.City === city)
-                        .length
-                    }{" "}
-                    practitioner
-                    {filteredPractitioners.filter((p) => p!.City === city)
-                      .length !== 1
-                      ? "s"
-                      : ""}{" "}
-                    found
-                  </p>
-                  <Button className="w-full bg-black text-white hover:bg-white hover:text-black">
-                    View Practitioners
-                  </Button>
-                </CardContent>
-              </Card>
+        {cities.length === 0 ? (
+          <p className="px-4 md:px-0 text-sm text-gray-600">
+            Practitioners for this accreditation will appear here as profiles are linked and verified.{" "}
+            <Link href={`/accredited/${accreditation}/clinics`} className="underline text-foreground">
+              Browse {accreditationName} clinics
             </Link>
-          ))}
-        </div>
+            .
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4 md:px-0">
+            {cities.map((city) => {
+              const cityCount = filteredPractitioners.filter((p) =>
+                clinicCityMatchesSlug(p!.City, city),
+              ).length
+              return (
+                <Link
+                  key={city}
+                  href={`/accredited/${accreditation}/practitioners/${toUrlSlug(city)}`}
+                  className="block"
+                >
+                  <Card className="gap-0 relative shadow-none group transition-all duration-300 border-b border-t-0 border-[#C4C4C4] md:border md:border-(--alto) cursor-pointer ">
+                    <CardHeader className="pb-4">
+                      <h3 className="mb-2 flex font-semibold text-md md:text-lg transition-colors text-balance group-hover:text-black">
+                        {city}
+                      </h3>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <p className="text-sm text-gray-600 mb-4">
+                        {cityCount} practitioner{cityCount !== 1 ? "s" : ""} found
+                      </p>
+                      <Button className="w-full bg-black text-white hover:bg-white hover:text-black">
+                        View Practitioners
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Link>
+              )
+            })}
+          </div>
+        )}
       </div>
     </main>
-  );
+  )
 }
 
 export async function generateMetadata({ params }: AccreditedPractitionersPageProps) {
-  const { accreditation } = params
-  const accreditationName = getAccreditationName(accreditation)
-  const canonicalAccreditation = decodeURIComponent(accreditation).toLowerCase()
+  const accreditation = normalizeAccreditationSlug(params.accreditation)
+  if (!isKnownAccreditation(accreditation)) {
+    notFound()
+  }
+  const accreditationName = getAccreditationDisplayName(accreditation)
   const robots = getPractitionerDirectoryRobots()
 
   return {
     title: `${accreditationName} Accredited Practitioners`,
     description: `Find ${accreditationName} accredited practitioners across all cities. Compare ratings, reviews, and book appointments.`,
     alternates: {
-      canonical: toDirectoryCanonical(`/accredited/${canonicalAccreditation}/practitioners`),
+      canonical: toDirectoryCanonical(`/accredited/${accreditation}/practitioners`),
     },
     openGraph: {
       title: `${accreditationName} Accredited Practitioners`,

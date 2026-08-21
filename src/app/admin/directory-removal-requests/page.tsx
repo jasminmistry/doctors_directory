@@ -115,7 +115,7 @@ export default function DirectoryRemovalRequestsPage() {
                           </span>
                         )}
                       </div>
-                      {row.email && <p className="text-xs text-gray-600 mt-0.5">{row.email}</p>}
+                      {row.email && <p className="truncate text-xs text-gray-600 mt-0.5" title={row.email}>{row.email}</p>}
                       <div className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-gray-600">
                         <span>Requested: <span className="font-medium text-gray-700">{format(new Date(row.directoryRemovalRequestedAt), 'd MMM yyyy, HH:mm')}</span></span>
                       </div>

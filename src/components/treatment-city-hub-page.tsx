@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,10 +7,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { HubIndexSearchCards } from '@/components/b2b-hub/hub-index-search-cards'
 import { BestRankedBlock } from '@/components/best-ranked-block'
 import { CityPricingContext } from '@/components/city-pricing-context'
+import { DirectoryCorridorCards } from '@/components/directory-corridor-cards'
 import { DirectoryPageClosingSections } from '@/components/directory-page-closing-sections'
+import { DirectoryPatientHubHero } from '@/components/directory-patient-hub-hero'
 import { DirectoryJsonLd } from '@/components/directory-json-ld'
 import { ServiceCityBelowFoldContent } from '@/components/service-city-below-fold-content'
 import { buildClinicRankedEntries } from '@/lib/best-ranked'
@@ -36,10 +36,12 @@ import {
   type TreatmentCityHubEntry,
 } from '@/lib/treatment-city-hub'
 import { toUrlSlug } from '@/lib/utils'
-import { CityHubListingsLoader } from '@/components/treatment/city-hub-listings-loader'
-import { CityHubListingsSkeleton } from '@/components/treatment/city-hub-listings-section'
+import { CityHubListingsSection } from '@/components/treatment/city-hub-listings-section'
+import {
+  getCityClinicsFromJson,
+  getCityPractitionersFromJson,
+} from '@/lib/data-access/city-listings'
 import { IconArrowNarrowLeft } from '@tabler/icons-react'
-import { Suspense } from 'react'
 
 type Props = {
   entry: TreatmentCityHubEntry
@@ -120,8 +122,8 @@ export function TreatmentCityHubPage({ entry }: Props) {
     <>
       <DirectoryJsonLd schemas={jsonLdSchemas} />
       <main>
-        <div className="bg-[var(--primary-bg-color)]">
-          <div className="mx-auto max-w-7xl px-4 pt-6">
+        <div className="flex min-h-[calc(100vh-76px)] flex-col bg-[var(--primary-bg-color)]">
+          <div className="mx-auto w-full max-w-7xl px-6 pt-6">
             <Link href="/" prefetch={false} className="mb-4 inline-flex items-center gap-3 text-sm hover:underline">
               <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />
               Back to Directory
@@ -143,16 +145,14 @@ export function TreatmentCityHubPage({ entry }: Props) {
             </Breadcrumb>
           </div>
 
-          <HubIndexSearchCards
-            heroTitle={`${entry.treatmentName} in ${entry.locationLabel}`}
-            heroSubtitle={`Your starting point for ${entry.treatmentName.toLowerCase()} in ${entry.locationLabel}. Choose practitioners or clinics below, then compare verified profiles before you book.`}
-            searchPlaceholder={`Search ${entry.treatmentName} options`}
-            entries={corridorCards}
-            heroInputId={`treatment-hub-search-${entry.treatmentSlug}-${entry.locationSlug}`}
+          <DirectoryPatientHubHero
+            title={`${entry.treatmentName} in ${entry.locationLabel}`}
+            subtitle={`Your starting point for ${entry.treatmentName.toLowerCase()} in ${entry.locationLabel}. Compare verified clinics and practitioners, then book with confidence.`}
           />
         </div>
 
         <div className="bg-white">
+          <DirectoryCorridorCards entries={corridorCards} />
           <ServiceCityBelowFoldContent content={consumerContent} />
 
           {ranked.length > 0 ? (
@@ -201,12 +201,11 @@ export function TreatmentCityHubPage({ entry }: Props) {
             </div>
           </div>
 
-          <Suspense fallback={<CityHubListingsSkeleton />}>
-            <CityHubListingsLoader
-              citySlug={entry.locationSlug}
-              cityName={entry.locationLabel}
-            />
-          </Suspense>
+          <CityHubListingsSection
+            cityName={entry.locationLabel}
+            clinics={getCityClinicsFromJson(entry.locationSlug)}
+            practitioners={getCityPractitionersFromJson(entry.locationSlug)}
+          />
 
           <DirectoryPageClosingSections />
         </div>

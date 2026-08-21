@@ -50,11 +50,13 @@ export async function POST(request: Request) {
 
     const slug = typeof body.slug === 'string' ? body.slug.trim() : ''
     const name = typeof body.name === 'string' ? body.name.trim() : ''
+    const citySlug = typeof body.citySlug === 'string' ? body.citySlug.trim() : ''
 
     const fieldErrors: Record<string, string> = {}
     if (!slug) fieldErrors.slug = 'Slug is required'
     else if (!/^[a-z0-9-]+$/.test(slug)) fieldErrors.slug = 'Slug must be kebab-case'
     if (!name) fieldErrors.name = 'Clinic name is required'
+    if (!citySlug) fieldErrors.citySlug = 'City is required'
 
     const { slug: _s, name: _n, citySlug: _c, consentzUsername: rawConsentzUsername, ...rest } = body
     const validation = clinicEditSchema.safeParse(rest)
@@ -69,6 +71,18 @@ export async function POST(request: Request) {
 
     const usernameValidation = consentzUsernameSchema.safeParse(rawConsentzUsername)
     if (!usernameValidation.success) fieldErrors.consentzUsername = 'Invalid Consentz username'
+    const consentzUsername = usernameValidation.success ? (usernameValidation.data?.trim() || null) : null
+    // consentzUsername is only ever persisted (onto a linked ClaimRequest, see
+    // syncConsentzLinkClaim below) when a Core Clinic ID is present — without it the
+    // sync silently no-ops, so a typed username would vanish with no feedback. Reject
+    // the save instead so the admin knows to fill in Core Clinic ID first.
+    const coreClinicId = validation.success ? (validation.data.coreClinicId ?? null) : null
+    if (consentzUsername && !coreClinicId) {
+      fieldErrors.consentzUsername = 'Set a Core Clinic ID first — the username is linked to it and won\'t be saved without one'
+    }
+
+    const city = citySlug ? await prisma.city.findUnique({ where: { slug: citySlug }, select: { id: true } }) : null
+    if (citySlug && !city) fieldErrors.citySlug = 'Unknown city'
 
     if (Object.keys(fieldErrors).length > 0) {
       return NextResponse.json(
@@ -76,12 +90,12 @@ export async function POST(request: Request) {
         { status: 400 }
       )
     }
-    const consentzUsername = usernameValidation.success ? (usernameValidation.data?.trim() || null) : null
 
     const clinic = await prisma.clinic.create({
       data: {
         slug,
         name,
+        cityId: city!.id,
         ...omitNullish((validation.success ? validation.data : {}) as Record<string, unknown>),
       } as any,
     })

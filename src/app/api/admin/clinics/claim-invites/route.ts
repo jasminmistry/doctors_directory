@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { sendClaimInviteEmail } from '@/lib/email'
 import { signUnsubscribeToken } from '@/lib/campaign-unsubscribe'
+import { signEmailTrackingToken } from '@/lib/email-open-tracking'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,7 +21,7 @@ export async function GET() {
   const clinics = await prisma.clinic.findMany({
     where: ELIGIBLE_WHERE,
     select: {
-      id: true, slug: true, name: true, email: true, campaignEmailedAt: true,
+      id: true, slug: true, name: true, email: true, campaignEmailedAt: true, campaignEmailReadAt: true,
       city: { select: { name: true } },
     },
     orderBy: { name: 'asc' },
@@ -55,8 +56,9 @@ export async function POST(req: Request) {
       const claimUrl = `${BASE_URL}/directory/claim/${clinic.slug}`
       const unsubscribeUrl = `${BASE_URL}/directory/api/unsubscribe?token=${signUnsubscribeToken(clinic.id, 'unsubscribe')}`
       const removeUrl = `${BASE_URL}/directory/api/unsubscribe?token=${signUnsubscribeToken(clinic.id, 'remove')}`
+      const trackingPixelUrl = `${BASE_URL}/directory/api/track/email-open/${signEmailTrackingToken('campaign', clinic.id)}/`
 
-      await sendClaimInviteEmail({ to: clinic.email!, clinicName: clinic.name!, claimUrl, unsubscribeUrl, removeUrl })
+      await sendClaimInviteEmail({ to: clinic.email!, clinicName: clinic.name!, claimUrl, unsubscribeUrl, removeUrl, trackingPixelUrl })
       await prisma.clinic.update({ where: { id: clinic.id }, data: { campaignEmailedAt: new Date() } })
     }),
   )
