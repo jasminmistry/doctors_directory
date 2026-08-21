@@ -67,6 +67,19 @@ const PLAN_META: Record<
 
 const PLAN_ORDER: Record<string, number> = { free: 0, pay_per_lead: 1, subscription: 2 };
 
+const UPGRADE_TARGETS: { key: "pay_per_lead" | "subscription"; label: string; description: string }[] = [
+  {
+    key: "pay_per_lead",
+    label: `Pay Per Lead — £${PPL_LEAD_PRICE}/lead`,
+    description: "Calendar, full Core chat sync — pay only when you unlock a lead",
+  },
+  {
+    key: "subscription",
+    label: `Subscription — £${SUBSCRIPTION_MONTHLY_PRICE}/mo`,
+    description: "Everything unlocked, no per-lead charge",
+  },
+];
+
 export interface SubscriptionInfo {
   plan: string | null;
   stripeSubscriptionId: string | null;
@@ -186,6 +199,8 @@ export function CommercialPanel({ subscription, entityType, onChanged }: Readonl
   const [dialogOpen, setDialogOpen] = useState(false);
   const [resuming, setResuming] = useState(false);
   const [resumeError, setResumeError] = useState<string | null>(null);
+  const [upgrading, setUpgrading] = useState<string | null>(null);
+  const [upgradeError, setUpgradeError] = useState<string | null>(null);
 
   const meta = PLAN_META[subscription.plan ?? "free"] ?? PLAN_META.free;
   const renewalDate = subscription.approvedAt
@@ -212,6 +227,35 @@ export function CommercialPanel({ subscription, entityType, onChanged }: Readonl
       setResuming(false);
     }
   }
+
+  async function handleUpgrade(plan: string) {
+    setUpgrading(plan);
+    setUpgradeError(null);
+    try {
+      const res = await fetch("/directory/api/portal/upgrade/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setUpgradeError(typeof data.error === "string" ? data.error : "Upgrade failed. Please try again.");
+        return;
+      }
+      if (data.redirect) {
+        window.location.href = data.redirect;
+      } else if (data.upgraded) {
+        onChanged();
+      }
+    } catch {
+      setUpgradeError("Network error. Please check your connection and try again.");
+    } finally {
+      setUpgrading(null);
+    }
+  }
+
+  const currentRank = PLAN_ORDER[subscription.plan ?? "free"] ?? 0;
+  const upgradeOptions = UPGRADE_TARGETS.filter((o) => PLAN_ORDER[o.key] > currentRank);
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 space-y-5">
@@ -271,6 +315,30 @@ export function CommercialPanel({ subscription, entityType, onChanged }: Readonl
                 Resubscribe →
               </a>
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Upgrade options — always shown alongside downgrade so users can move either direction */}
+      {upgradeOptions.length > 0 && (
+        <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Upgrade plan</p>
+          {upgradeError && <p className="text-sm text-destructive mb-2">{upgradeError}</p>}
+          <div className="flex flex-col sm:flex-row gap-2">
+            {upgradeOptions.map((opt) => (
+              <button
+                key={opt.key}
+                type="button"
+                onClick={() => handleUpgrade(opt.key)}
+                disabled={upgrading === opt.key}
+                className="flex-1 rounded-lg border border-gray-200 px-4 py-3 text-left hover:border-gray-400 hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                <p className="text-sm font-semibold text-gray-900">
+                  {upgrading === opt.key ? "Redirecting…" : opt.label}
+                </p>
+                <p className="text-xs text-gray-600 mt-0.5">{opt.description}</p>
+              </button>
+            ))}
           </div>
         </div>
       )}
@@ -355,10 +423,7 @@ export function CommercialPanel({ subscription, entityType, onChanged }: Readonl
           <IconInfoCircle className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
           <p className="text-sm text-blue-800">
             Upgrade to Pay Per Lead or Subscription to unlock patient contact details, calendar bookings,
-            and Core sync.{" "}
-            <a href={`/directory/portal/${entityType === "clinic" ? "upgrade" : "practitioner"}`} className="font-semibold underline hover:no-underline">
-              View upgrade options →
-            </a>
+            and Core sync.
           </p>
         </div>
       )}
