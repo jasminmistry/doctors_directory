@@ -13,6 +13,12 @@ const nextConfig = {
   },
   basePath: '/directory',
   trailingSlash: true,
+  // geoip-lite reads its .dat files via fs relative to __dirname — webpack bundling
+  // for route handlers moves the code without copying those binary data files, so it
+  // must stay external and be require()'d from node_modules at runtime instead.
+  experimental: {
+    serverComponentsExternalPackages: ['geoip-lite'],
+  },
   async redirects() {
     // Bare-path redirects (basePath: false) catch old indexed / external URLs
     // that are missing the /directory prefix and send them to the correct location.
