@@ -89,6 +89,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
     pendingUnlinkRequests: 0,
     pendingDirectoryRemovalRequests: 0,
   });
+  const [consentzSessionStale, setConsentzSessionStale] = useState(false);
 
   function refreshCounts() {
     fetch("/directory/api/admin/pending-counts/")
@@ -102,6 +103,31 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
   useEffect(() => {
     refreshCounts();
   }, [pathname]);
+
+  // Consentz session tokens for admin accounts expire after 1 hour of inactivity.
+  // Most admin pages never touch Consentz with the admin's own token at all
+  // (only claim approval/reprovisioning does today), so on an ordinary admin
+  // session that token quietly goes stale in the background — and if the admin
+  // closes the tab and comes back the next day, the directory's own login cookie
+  // (7-day) still lets them straight back in even though Consentz's token died
+  // hours ago. Check once on load (catches the "stale overnight" case) and keep
+  // pinging on an interval well inside the 1hr TTL (catches a long single
+  // session) so a dead token is surfaced up front instead of discovered mid-action.
+  useEffect(() => {
+    const KEEPALIVE_INTERVAL_MS = 15 * 60 * 1000;
+    async function checkConsentzSession() {
+      try {
+        const res = await fetch("/directory/api/admin/consentz-keepalive/", { method: "POST" });
+        const data = await res.json().catch(() => ({}));
+        setConsentzSessionStale(!data.ok);
+      } catch {
+        // Network hiccup, not necessarily a stale session — don't warn on this alone.
+      }
+    }
+    checkConsentzSession();
+    const interval = setInterval(checkConsentzSession, KEEPALIVE_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, []);
 
   async function handleLogout() {
     await fetch("/directory/api/auth/logout/", { method: "POST" });
@@ -257,7 +283,23 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                 <HeaderProfileMenu name="Admin Console" onLogout={handleLogout} />
               </div>
             </div>
-            <main className="flex-1 p-4 sm:p-6">{children}</main>
+            <main className="flex-1 p-4 sm:p-6">
+              {consentzSessionStale && (
+                <div className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                  <span>
+                    Your Consentz session has expired. Any action that talks to Consentz (approving/reprovisioning claims, etc.) will fail until you sign in again.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="shrink-0 rounded-md border border-amber-400 bg-white px-3 py-1.5 text-xs font-medium text-amber-900 hover:bg-amber-100"
+                  >
+                    Log out &amp; sign in again
+                  </button>
+                </div>
+              )}
+              {children}
+            </main>
           </div>
         </div>
       </div>
