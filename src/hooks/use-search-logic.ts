@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useSearchStore } from "@/app/stores/datastore";
 import { trackSearchUsage } from "@/lib/tracking/client";
 import {
-  resolveUkTreatmentSearchHref,
+  resolveDirectorySearchHref,
   type TreatmentSearchOption,
 } from "@/lib/uk-treatment-search";
 
@@ -71,17 +71,21 @@ export function useSearchLogic(treatmentSearchOptions: TreatmentSearchOption[] =
     setShowResults(false);
     setIsExpanded(false);
 
-    if (trimmedFilters.type === "Treatments") {
-      const treatmentHref = resolveUkTreatmentSearchHref(
-        trimmedFilters.query || "",
-        trimmedFilters.location || "",
-        treatmentSearchOptions
-      );
-      if (treatmentHref) {
-        router.push(treatmentHref);
-        setIsLoading(false);
-        return;
-      }
+    const categoryHref = resolveDirectorySearchHref(
+      {
+        type: trimmedFilters.type || "",
+        query: trimmedFilters.query || "",
+        location: trimmedFilters.location || "",
+      },
+      treatmentSearchOptions
+    );
+
+    if (categoryHref) {
+      setFilters(trimmedFilters);
+      setLocalFilters(trimmedFilters);
+      router.push(categoryHref);
+      setIsLoading(false);
+      return;
     }
 
     setFilters(trimmedFilters);
