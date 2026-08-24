@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { AdminRootShell } from "@/components/admin/admin-root-shell";
 import { ConsentScripts } from "@/components/cookie-consent/consent-scripts";
+import { SearchAtlasScript } from "@/components/search-atlas-script";
 import { readCookieConsentFromRequest } from "@/lib/cookie-consent-server";
 
 import "./globals.css";
@@ -34,6 +35,7 @@ export default async function RootLayout({
     <html lang="en" className="root">
       <head>
         <ConsentScripts initialConsent={initialConsent} />
+        <SearchAtlasScript />
       </head>
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} font-base`}

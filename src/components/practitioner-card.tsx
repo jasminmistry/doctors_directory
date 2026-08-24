@@ -348,46 +348,48 @@ export function PractitionerCard({
             </div>
 
             <div className="min-h-[3.5rem] px-3 pb-4">
-              <ul
-                className="flex flex-wrap gap-1"
-                aria-label="Treatments offered"
-              >
-                {practitioner.Treatments &&
-                  practitioner.Treatments.sort((a, b) => a.length - b.length)
-                    .slice(0, 2)
-                    .map((modality, index) => (
-                      <li key={index}>
+              {practitioner.claimed && (
+                <ul
+                  className="flex flex-wrap gap-1"
+                  aria-label="Treatments offered"
+                >
+                  {practitioner.Treatments &&
+                    practitioner.Treatments.sort((a, b) => a.length - b.length)
+                      .slice(0, 2)
+                      .map((modality, index) => (
+                        <li key={index}>
+                          <Badge variant="outline" className="text-xs">
+                            <Link
+                              href={`/treatments/${toUrlSlug(modality)}`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {modality
+                                .split(" ")
+                                .map(
+                                  (word) =>
+                                    word.charAt(0).toUpperCase() +
+                                    word.slice(1),
+                                )
+                                .join(" ")}
+                            </Link>
+                          </Badge>
+                        </li>
+                      ))}
+                  {practitioner.Treatments &&
+                    practitioner.Treatments.length > 2 && (
+                      <li>
                         <Badge variant="outline" className="text-xs">
                           <Link
-                            href={`/treatments/${toUrlSlug(modality)}`}
+                            href={`/treatments`}
                             onClick={(e) => e.stopPropagation()}
                           >
-                            {modality
-                              .split(" ")
-                              .map(
-                                (word) =>
-                                  word.charAt(0).toUpperCase() +
-                                  word.slice(1),
-                              )
-                              .join(" ")}
+                            +{practitioner.Treatments.length - 2} more
                           </Link>
                         </Badge>
                       </li>
-                    ))}
-                {practitioner.Treatments &&
-                  practitioner.Treatments.length > 2 && (
-                    <li>
-                      <Badge variant="outline" className="text-xs">
-                        <Link
-                          href={`/treatments`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          +{practitioner.Treatments.length - 2} more
-                        </Link>
-                      </Badge>
-                    </li>
-                  )}
-              </ul>
+                    )}
+                </ul>
+              )}
             </div>
           </div>
         </article>

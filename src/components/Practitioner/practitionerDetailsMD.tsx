@@ -33,27 +33,31 @@ export default function PractitionerDetailsSections({
           "Not publicly listed"
         )}
       </Section>
-      <div className="border-t border-[#e0e0e0]  my-6"></div>
-      {/* Treatments */}
-      <Section title="Treatments" id="treatmetnts">
-        <div className="flex flex-wrap gap-1">
-          {clinic.Treatments &&
-            clinic.Treatments?.map(
-              (modality, index) => 
-                { 
-                  const treatments = modality.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
-                  
-                  return (
-                  
-                <Link key={modality} href={`/treatments/${treatments}`}>
-                  <Badge variant="outline" className="text-md bg-gray-100 border-0">
-                    {treatments}
-                  </Badge>
-                </Link> )}
-              
-            )}
-        </div>
-      </Section>
+      {/* Treatments — hidden for unclaimed practitioners; unverified treatment lists can be inaccurate */}
+      {clinic.claimed && (
+        <>
+          <div className="border-t border-[#e0e0e0]  my-6"></div>
+          <Section title="Treatments" id="treatmetnts">
+            <div className="flex flex-wrap gap-1">
+              {clinic.Treatments &&
+                clinic.Treatments?.map(
+                  (modality, index) =>
+                    {
+                      const treatments = modality.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+
+                      return (
+
+                    <Link key={modality} href={`/treatments/${treatments}`}>
+                      <Badge variant="outline" className="text-md bg-gray-100 border-0">
+                        {treatments}
+                      </Badge>
+                    </Link> )}
+
+                )}
+            </div>
+          </Section>
+        </>
+      )}
       <div className="border-t border-[#e0e0e0]  my-6"></div>
       {/* Qualifications */}
       <Section title="Qualifications" id="qualifications" data-testid='qualifications'>
