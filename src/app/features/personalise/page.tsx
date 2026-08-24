@@ -45,7 +45,7 @@ export default function ClinicManagementSoftwarePage() {
   
   return (
     <main>
-      <section className="bg-white-10 py-6 md:py-10 bg-[var(--primary-bg-color)]">
+      <section className="bg-white-10 py-2 md:py-10 bg-[var(--primary-bg-color)]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
             <div className="max-w-lg mx-auto">
@@ -76,31 +76,38 @@ export default function ClinicManagementSoftwarePage() {
               <img
                 src="/directory/images/persb.png"
                 alt="Healthcare dashboard on laptop"
-                className="max-w-full mr-[-30px] mt-4 md:mr-0 md:mt-0"
+                className="max-w-full mr-[-25px] mt-4 md:mr-0 md:mt-0"
               />
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-white-50 py-15 md:py-20">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-8 align-items-center">
-          {featuresList.map((feature) => {
-            const Icon = feature.icon;
+      <section className="bg-white-50 py-10 md:py-20">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-8 items-center justify-items-center">
+        {featuresList.map((feature, index) => {
+          const Icon = feature.icon;
 
-            return (
-              <div className="text-center" key={feature.name}>
-                <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <Icon stroke={1.5} className="w-8 h-8 text-primary" />
-                </div>
-                <p className="text-gray-700">{feature.name}</p>
+          return (
+            <div
+              className={`text-center ${
+                index === featuresList.length - 1
+                  ? "col-span-2 md:col-span-3 lg:col-span-1 justify-self-center"
+                  : ""
+              }`}
+              key={feature.name}
+            >
+              <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
+                <Icon stroke={1.5} className="w-8 h-8 text-primary" />
               </div>
-            );
-          })}
-        </div>
-      </section>
+              <p className="text-gray-700">{feature.name}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
 
-      <section className="bg-white-10 py-6 md:py-10">
+      <section className="bg-white-10 py-2 md:py-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
             <div className="max-w-lg mx-auto">
@@ -126,10 +133,10 @@ export default function ClinicManagementSoftwarePage() {
         </div>
       </section>
 
-      <section className="bg-white-10 py-6 md:py-10">
+      <section className="bg-white-10 py-2 md:py-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+            <div className="mb-4 bg-white md:text-left border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
               <IconPolaroid stroke={1.5} className="mb-4" size={36} />
               <h3 className="text-xl md:text-lg font-medium mb-4"> Image & Logo</h3>
               <p className="text-gray-700">
@@ -160,14 +167,14 @@ export default function ClinicManagementSoftwarePage() {
         </div>
       </section>
         
-      <section className="bg-white-10 py-6 md:py-10">
+      <section className="bg-white-10 py-2 md:py-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
             <div className="flex justify-center">
               <img
                 src="/directory/images/cb.png"
                 alt="Healthcare dashboard on laptop"
-                className="max-w-full mr-[-30px] mt-4 md:mr-0 md:mt-0"
+                className="max-w-full mr-[-40px] mt-4 md:mr-0 md:mt-0"
               />
             </div>
             <div className="max-w-lg mx-auto">
@@ -186,7 +193,7 @@ export default function ClinicManagementSoftwarePage() {
         </div>
       </section>
 
-      <section className="bg-white-10 py-6 md:py-10">
+      <section className="bg-white-10 py-2 md:py-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
@@ -223,7 +230,7 @@ export default function ClinicManagementSoftwarePage() {
         </div>
       </section>
 
-      <section className="bg-white-10 py-6 md:py-10">
+      <section className="bg-white-10 py-2 md:py-10">
         <div className="max-w-7xl m-auto px-3">
             <h2
               id="provider-steps-heading"
@@ -236,24 +243,24 @@ videos and brochures for your use and a large number of medical consent forms fo
 
             <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
 
-              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
+              <div className="mb-4 bg-white text-center md:text-left border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <div className="flex m-auto md:m-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
                   <IconReportMedical stroke={1.5} size={36} />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Patient Management Software</h3>
                 <p className="text-gray-700">Patient management software is a digital tool that simplifies and organizes clinic operations. Whether managing patient records, scheduling appointments, or automating billing, software takes the manual work out.</p>
               </div>
 
-              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
+              <div className="mb-4 text-center md:text-left bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <div className="flex mb-4 m-auto md:m-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
                   <IconHourglassEmpty stroke={1.5} size={36} />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Waiting List</h3>
                 <p>Build a waiting list of patients eager to see a particular clinician. Notify patients on the list as soon as an appointment is available with appointment reminder software. So the next time you get a cancellation – fill it without telephoning around.</p>
               </div>
 
-              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
+              <div className="mb-4 text-center md:text-left bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <div className="flex mb-4 m-auto md:m-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
                   <IconDatabase stroke={1.5} size={36} />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Memory Jog</h3>
