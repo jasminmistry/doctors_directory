@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
+import { invalidateSearchCache } from '@/lib/search-cache'
 
 function getStripe(): Stripe {
   return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-04-22.dahlia' })
@@ -155,6 +156,7 @@ export async function requestClinicDeletion(clinicId: number) {
     where: { id: clinicId },
     data: { isHidden: true, scheduledDeletionAt },
   })
+  await invalidateSearchCache()
   return scheduledDeletionAt
 }
 
@@ -167,6 +169,7 @@ export async function requestPractitionerDeletion(practitionerId: number) {
     where: { id: practitionerId },
     data: { isHidden: true, scheduledDeletionAt },
   })
+  await invalidateSearchCache()
   return scheduledDeletionAt
 }
 
@@ -185,6 +188,7 @@ export async function cancelScheduledDeletion(entityType: DeletionEntityType, en
       data: { isHidden: false, scheduledDeletionAt: null },
     })
   }
+  await invalidateSearchCache()
 }
 
 /** Hard-purges a clinic past its grace period: reverts to unclaimed + anonymises the claim. Leads/bookings/chats are untouched — they belong to a different data subject (the patient). */
