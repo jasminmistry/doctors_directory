@@ -167,7 +167,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                 const Icon = item.icon;
                 const active =
                   "exact" in item && item.exact
-                    ? pathname === item.href
+                    ? pathname === item.href || pathname === `${item.href}/`
                     : item.href === bestPrefixMatch;
 
                 const topCount =
