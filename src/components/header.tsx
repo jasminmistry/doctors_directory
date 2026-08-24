@@ -5,6 +5,26 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SearchBar } from "@/components/search/search-bar";
 import { b2bBookDemoHref } from "@/lib/b2b-hub/seo";
+import { isReservedSlugCityFirstSegment } from "@/lib/reserved-directory-slugs";
+
+// Marketing and account areas that live on two-segment paths but are not city hubs.
+const NON_HUB_FIRST_SEGMENTS = new Set([
+  "account",
+  "blog",
+  "features",
+  "sitemap",
+]);
+
+/**
+ * Treatment-city and category-city hub pages render the patient search inside
+ * their own hero, so the header must not stack a second search bar above it.
+ */
+function isCityHubPath(path: string): boolean {
+  const segments = path.split("/").filter(Boolean);
+  if (segments.length !== 2) return false;
+  const [first] = segments;
+  return !isReservedSlugCityFirstSegment(first) && !NON_HUB_FIRST_SEGMENTS.has(first);
+}
 
 type PatientInfo = { firstName: string; lastName: string; email: string };
 type PortalInfo = {
@@ -111,6 +131,7 @@ export default function Header() {
   normalizedPath !== "/products" &&
   normalizedPath !== "/treatments" &&
   !normalizedPath.startsWith("/accredited") &&
+  !isCityHubPath(pathWithoutDirectoryBase) &&
   !isBusinessHub;
 
   return (

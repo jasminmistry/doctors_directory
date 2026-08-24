@@ -132,7 +132,7 @@ export default function PortalLoginPage() {
                 htmlFor="username"
                 className="mb-1.5 block text-base font-medium text-black mb-2"
               >
-                Username
+                Username<span className="ml-0.5 text-red-500">*</span>
               </label>
               <input
                 id="username"
@@ -151,7 +151,7 @@ export default function PortalLoginPage() {
                 htmlFor="password"
                 className="mb-1.5 block text-base font-medium text-black mb-2"
               >
-                Password
+                Password<span className="ml-0.5 text-red-500">*</span>
               </label>
               <input
                 id="password"

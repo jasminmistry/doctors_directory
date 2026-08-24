@@ -19,6 +19,7 @@ import { getTreatmentImage, locations } from "@/lib/data";
 import { Button } from "./ui/button";
 import { isClinic, isPractitioner, isProduct, toUrlSlug } from "@/lib/utils";
 import { getClinicDisplayName } from "@/lib/clinic-display";
+import { isConsentzLinked } from "@/lib/consentz-customers";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { OnlineDot } from "@/components/Clinic/online-dot";
@@ -221,7 +222,7 @@ export function PractitionerCard({
     <>
       {(isPractitioner(practitioner) || isClinic(practitioner)) && (
         <article
-          className="relative flex md:h-full flex-col my-3 md:my-0 overflow-hidden rounded-md border border-[#C4C4C4] bg-white"
+          className="relative flex md:h-full flex-col my-3 md:my-0 overflow-visible rounded-md border border-[#C4C4C4] bg-white"
           aria-labelledby={`${practitionerOrClinicAriaPrefix}-name-${practitioner.slug}`}
           data-testid="practitioner-card"
         >
@@ -232,7 +233,7 @@ export function PractitionerCard({
             {practitionerName}
           </h2>
           <div className="flex h-full flex-col">
-            <div className="flex flex-col items-center px-3 pt-4 text-center">
+            <div className="flex flex-col items-center px-3 pt-5 text-center">
               <div className="relative mb-3 h-20 w-20 shrink-0 md:h-[120px] md:w-[120px]">
                 <div className="h-full w-full overflow-hidden rounded-full bg-gray-200">
                   <FallbackImage
@@ -243,9 +244,17 @@ export function PractitionerCard({
                     height={120}
                   />
                 </div>
-                <div className="pointer-events-none absolute -right-0.5 -top-0.5 z-10 md:-right-1 md:-top-1">
-                  <ClinicLabels clinic={practitioner as Clinic} size="sm" />
+                <div className="absolute -left-1 -top-1 z-20 md:-left-1.5 md:-top-1.5">
+                  <ClinicLabels clinic={practitioner as Clinic} size="overlay" showConsentz={false} />
                 </div>
+                {isConsentzLinked(practitioner as Clinic) && (
+                  <img
+                    src="/directory/consentz-customer-badge.jpg"
+                    alt="Consentz Customer"
+                    title="Consentz Customer"
+                    className="absolute -right-1 -top-1 z-20 h-7 w-7 rounded-full border-2 border-white object-cover shadow-sm md:-right-1.5 md:-top-1.5 md:h-9 md:w-9"
+                  />
+                )}
               </div>
 
               <div className="flex min-h-[2.75rem] w-full items-center justify-center gap-1 px-1">
@@ -275,7 +284,7 @@ export function PractitionerCard({
                 )}
               </div>
 
-              {isClinic(practitioner) && (
+              {(isClinic(practitioner) || isPractitioner(practitioner)) && (
                 <PrestigeSearchPill
                   awardsBadgeLabel={practitioner.awardsBadgeLabel}
                   tatlerBadgeLabel={practitioner.tatlerBadgeLabel}
@@ -339,46 +348,48 @@ export function PractitionerCard({
             </div>
 
             <div className="min-h-[3.5rem] px-3 pb-4">
-              <ul
-                className="flex flex-wrap gap-1"
-                aria-label="Treatments offered"
-              >
-                {practitioner.Treatments &&
-                  practitioner.Treatments.sort((a, b) => a.length - b.length)
-                    .slice(0, 2)
-                    .map((modality, index) => (
-                      <li key={index}>
+              {practitioner.claimed && (
+                <ul
+                  className="flex flex-wrap gap-1"
+                  aria-label="Treatments offered"
+                >
+                  {practitioner.Treatments &&
+                    practitioner.Treatments.sort((a, b) => a.length - b.length)
+                      .slice(0, 2)
+                      .map((modality, index) => (
+                        <li key={index}>
+                          <Badge variant="outline" className="text-xs">
+                            <Link
+                              href={`/treatments/${toUrlSlug(modality)}`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {modality
+                                .split(" ")
+                                .map(
+                                  (word) =>
+                                    word.charAt(0).toUpperCase() +
+                                    word.slice(1),
+                                )
+                                .join(" ")}
+                            </Link>
+                          </Badge>
+                        </li>
+                      ))}
+                  {practitioner.Treatments &&
+                    practitioner.Treatments.length > 2 && (
+                      <li>
                         <Badge variant="outline" className="text-xs">
                           <Link
-                            href={`/treatments/${toUrlSlug(modality)}`}
+                            href={`/treatments`}
                             onClick={(e) => e.stopPropagation()}
                           >
-                            {modality
-                              .split(" ")
-                              .map(
-                                (word) =>
-                                  word.charAt(0).toUpperCase() +
-                                  word.slice(1),
-                              )
-                              .join(" ")}
+                            +{practitioner.Treatments.length - 2} more
                           </Link>
                         </Badge>
                       </li>
-                    ))}
-                {practitioner.Treatments &&
-                  practitioner.Treatments.length > 2 && (
-                    <li>
-                      <Badge variant="outline" className="text-xs">
-                        <Link
-                          href={`/treatments`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          +{practitioner.Treatments.length - 2} more
-                        </Link>
-                      </Badge>
-                    </li>
-                  )}
-              </ul>
+                    )}
+                </ul>
+              )}
             </div>
           </div>
         </article>

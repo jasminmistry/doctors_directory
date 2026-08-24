@@ -78,6 +78,7 @@ export interface Clinic {
   x_twitter: string
   Treatments?: string[]
   claimed?: boolean
+  isConsentz?: boolean
   aestheticsAwards?: Array<{ year: number; result: string; category: string }>
   tatlerGuideYears?: number[]
   awardsBadgeLabel?: string | null

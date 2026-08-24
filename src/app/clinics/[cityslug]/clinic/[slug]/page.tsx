@@ -45,6 +45,7 @@ import { getClaimState } from "@/lib/claim-utils";
 import { getPortalUser } from "@/lib/portal";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
+import { isConsentzClinicSlug } from "@/lib/consentz-customers";
 function mergeBoxplotDataFromDict(
   base: BoxPlotDatum[],
   incoming: Record<string, ItemMeta>
@@ -88,6 +89,7 @@ function convertSearchClinicToOldType(clinic: any): Clinic {
     awards: '', affiliations: '', hours: '', Practitioners: '',
     Insurace: '' as any, Payments: '' as any, Fees: [] as any, x_twitter: '',
     claimed: clinic.claimed ?? false,
+    isConsentz: isConsentzClinicSlug(clinic.slug),
   } as Clinic);
 }
 
@@ -149,6 +151,7 @@ function convertDbClinicToOldType(dbClinic: any): Clinic {
     x_twitter: dbClinic.xTwitter || '',
     Treatments: dbClinic.treatments?.map((t: any) => t.treatment.name) || [],
     claimed: dbClinic.claimed ?? false,
+    isConsentz: isConsentzClinicSlug(dbClinic.slug),
     verified: (dbClinic as any).verified ?? false,
     domainVerified: (dbClinic as any).domainVerified ?? false,
     gbpMatch: (dbClinic as any).gbpMatch ?? false,
@@ -320,6 +323,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
               <div className="mb-4 space-y-4">
                 <EventBookingSection clinicSlug={slug} entityName={dbClinic.name ?? undefined} />
                 <AccreditationBadges
+                  isConsentz={clinic.isConsentz}
                   isSaveFace={clinic.isSaveFace}
                   isDoctor={clinic.isDoctor}
                   isJccp={clinic.isJCCP ? clinic.isJCCP[0] : null}
@@ -334,6 +338,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                   rqiaUrl={clinic.isRQIA ? clinic.isRQIA[1] : null}
                   aestheticsAwards={clinic.aestheticsAwards}
                   tatlerGuideYears={clinic.tatlerGuideYears}
+                  awardsBadgeLabel={clinic.awardsBadgeLabel}
+                  tatlerBadgeLabel={clinic.tatlerBadgeLabel}
                 />
                 <TransparencyBox
                   claimedAt={dbClinic.claimedAt}

@@ -118,9 +118,9 @@ export default function AdminVerificationPage() {
                 key={r.id}
                 className="flex items-center justify-between rounded-lg border bg-card px-4 py-3 text-sm"
               >
-                <div className="flex flex-col gap-0.5">
-                  <span className="font-medium">{r.claimerName}</span>
-                  <span className="text-muted-foreground">{r.claimerEmail}</span>
+                <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="font-medium truncate">{r.claimerName}</span>
+                  <span className="text-muted-foreground truncate" title={r.claimerEmail}>{r.claimerEmail}</span>
                   <span className="text-xs text-muted-foreground capitalize">
                     {r.entityType} · {r.entitySlug}
                   </span>
@@ -168,9 +168,9 @@ export default function AdminVerificationPage() {
                   <span className="text-muted-foreground text-xs">Full name</span>
                   <p className="font-medium">{selected.claimerName}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <span className="text-muted-foreground text-xs">Email</span>
-                  <p className="font-medium">{selected.claimerEmail}</p>
+                  <p className="font-medium break-all">{selected.claimerEmail}</p>
                 </div>
               </div>
 

@@ -57,20 +57,6 @@ const SOFTWARE_HERO_LAYERS = [
   { src: "/directory/images/software-hero-phones/hero-2.png", l: 108.47, t: 557.33 },
 ] as const;
 
-const SERVICE_PROVIDER_COLLAGE = {
-  w: PHONE_FAN_BOUNDS.w,
-  h: PHONE_FAN_BOUNDS.h,
-  layers: [
-    { src: "/directory/images/service-provider-collage/phone-1.png", l: 473.56, t: 0 },
-    { src: "/directory/images/service-provider-collage/phone-2.png", l: 578.09, t: 101.42 },
-    { src: "/directory/images/service-provider-collage/phone-3.png", l: 273.84, t: 245.73 },
-    { src: "/directory/images/service-provider-collage/phone-4.png", l: 168.54, t: 144.32 },
-    { src: "/directory/images/service-provider-collage/phone-5.png", l: 379.16, t: 347.15 },
-    { src: "/directory/images/service-provider-collage/phone-1.png", l: 0, t: 454.71 },
-    { src: "/directory/images/service-provider-collage/phone-2.png", l: 108.47, t: 557.33 },
-  ] as const,
-} as const;
-
 export { hubBuyerHubTestimonials } from "@/lib/b2b-hub/hub-testimonials";
 
 const softwarePainPoints = [
@@ -206,10 +192,6 @@ export function SoftwareHeroVisual() {
 
 export function SoftwareHeroCollage() {
   return <PhoneFanCollage layers={SOFTWARE_HERO_LAYERS} />;
-}
-
-export function ServiceProviderCollage() {
-  return <PhoneFanCollage layers={SERVICE_PROVIDER_COLLAGE.layers} />;
 }
 
 function CqcHeroVisual() {

@@ -80,6 +80,9 @@ const ACCREDITATIONS = [
   ["jccp", "JCCP"],
   ["rqia", "RQIA"],
   ["saveface", "Save Face"],
+  ["consentz", "Consentz"],
+  ["tatler", "Tatler"],
+  ["aesthetics-awards", "Aesthetics Awards"],
 ] as const;
 
 function isBusinessHubPath(pathname: string) {

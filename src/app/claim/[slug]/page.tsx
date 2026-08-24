@@ -39,7 +39,15 @@ export async function generateMetadata({ params }: Props) {
 export default async function ClaimPage({ params, searchParams }: Readonly<Props>) {
   const clinic = await prisma.clinic.findUnique({
     where: { slug: params.slug },
-    select: { id: true, slug: true, name: true, claimed: true, gmapsAddress: true, category: true },
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      claimed: true,
+      gmapsAddress: true,
+      category: true,
+      city: { select: { slug: true } },
+    },
   })
 
   if (!clinic) notFound()
@@ -65,7 +73,7 @@ export default async function ClaimPage({ params, searchParams }: Readonly<Props
     <div className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto px-4 py-8">
         <Link
-          href={`/clinics/${clinic.gmapsAddress?.split(',').pop()?.trim().toLowerCase().replace(/\s+/g, '-') ?? 'uk'}/clinic/${clinic.slug}`}
+          href={clinic.city?.slug ? `/clinics/${clinic.city.slug}/clinic/${clinic.slug}` : '/clinics'}
           className="inline-flex items-center gap-1 text-sm text-black hover:text-foreground mb-8"
         >
           <IconArrowNarrowLeft stroke={1.5} className="h-4 w-4" />

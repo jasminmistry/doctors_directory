@@ -14,6 +14,7 @@ import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
 import { IconMapPin, IconPhone, IconShieldCheck } from "@tabler/icons-react";
 import { capitalize } from "@/lib/utils";
+import { isConsentzClinic } from "@/lib/consentz-customers";
 interface ProfileHeaderProps {
   clinic: Clinic;
   clinicName?: string;
@@ -48,6 +49,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
       ? clinic.image
       : DEFAULT_IMG;
   const [imgSrc, setImgSrc] = useState(initialImg);
+  const isConsentz = isConsentzClinic(clinic);
 
   return (
     <Card className="relative md:mt-2 flex flex-col gap-6 md:rounded-lg px-0 md:px-6 py-6 relative shadow-none group transition-all duration-300 md:rounded-27 border-t border-b border-[#C4C4C4] md:border-t md:border md:border-(--alto) bg-white md:bg-(--primary-bg-color)">
@@ -74,67 +76,72 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
 
       <div className="px-4 md:px-0 grid grid-cols-1 lg:grid-cols-[4fr_1fr] gap-4 items-start">
         {/* Left: avatar + info */}
-        <div className="flex flex-row flex-wrap items-start gap-4 pb-4 border-b border-[#C4C4C4] md:pb-0 md:border-0">
-          
-          {/* Avatar */}
+          <div className="flex w-full flex-col items-center gap-4 pb-4 md:flex-row md:flex-wrap md:items-start md:border-0">
           <div className="flex flex-col items-center gap-2 shrink-0 md:items-start">
-            <div className="relative h-20 w-20 md:h-40 md:w-40 shrink-0 overflow-hidden rounded-full bg-gray-200">
-              <img
-                src={imgSrc}
-                alt={practitionerName}
-                className="object-cover w-full h-full rounded-full"
-                onError={() => setImgSrc(DEFAULT_IMG)}
-              />
+            <div className="relative h-20 w-20 md:h-40 md:w-40 shrink-0">
+              <div className="h-full w-full overflow-hidden rounded-full bg-gray-200">
+                <img
+                  src={imgSrc}
+                  alt=""
+                  className="object-cover w-full h-full rounded-full"
+                  onError={() => setImgSrc(DEFAULT_IMG)}
+                />
+              </div>
+              <div className="absolute -left-1 -top-1 z-20 md:-left-1.5 md:-top-1.5">
+                <ClinicLabels clinic={clinic} size="overlay-md" showConsentz={false} />
+              </div>
+              {isConsentz && (
+                <img
+                  src="/directory/consentz-customer-badge.jpg"
+                  alt="Consentz Customer"
+                  title="Consentz Customer"
+                  className="absolute -right-1 -top-1 z-20 h-7 w-7 rounded-full border-2 border-white object-cover shadow-sm md:-right-1.5 md:-top-1.5 md:h-10 md:w-10"
+                />
+              )}
             </div>
             <PrestigeProfileBadge
               awardsBadgeLabel={clinic.awardsBadgeLabel}
               tatlerBadgeLabel={clinic.tatlerBadgeLabel}
               size="md"
+              className="items-center md:items-start"
             />
-          </div>
-
-          {/* Text info — uniform gap between every row */}
-          <div className="flex flex-col gap-2 min-w-0 flex-1">
-            {/* Name + verification badges + CQC labels (side by side on desktop) */}
-            <div className="flex flex-col md:flex-row md:items-center gap-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="font-semibold text-lg md:text-2xl leading-tight">
+            <div className="flex max-w-[14rem] flex-col items-center gap-1 text-center md:items-start md:text-left">
+              <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
+                <h1 className="font-semibold text-lg md:text-xl leading-tight">
                   {practitionerName}
                 </h1>
                 {clinic.claimed && clinic.slug && (
                   <OnlineDot slug={clinic.slug} />
                 )}
-                {clinic.idVerified && (
-                  <Badge className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border-emerald-200 text-xs font-medium shrink-0">
-                    <IconShieldCheck stroke={1.5} className="h-3 w-3" />
-                    ID Verified
-                  </Badge>
-                )}
-                {!clinic.idVerified && clinic.manualVerified && (
-                  <Badge className="inline-flex items-center gap-1 bg-blue-100 text-black border-blue-200 text-xs font-medium shrink-0">
-                    <IconShieldCheck stroke={1.5} className="h-3 w-3" />
-                    Manually Verified
-                  </Badge>
-                )}
-                {!clinic.idVerified && !clinic.manualVerified && clinic.verified && (
-                  <Badge
-                    variant="outline"
-                    className="inline-flex items-center gap-1 border-foreground/30 text-foreground text-xs font-medium shrink-0"
-                  >
-                    <IconShieldCheck stroke={1.5} className="h-3 w-3" />
-                    Verified
-                  </Badge>
-                )}
               </div>
-              <ClinicLabels clinic={clinic} />
+              {clinic.idVerified && (
+                <Badge className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border-emerald-200 text-xs font-medium shrink-0">
+                  <IconShieldCheck stroke={1.5} className="h-3 w-3" />
+                  ID Verified
+                </Badge>
+              )}
+              {!clinic.idVerified && clinic.manualVerified && (
+                <Badge className="inline-flex items-center gap-1 bg-blue-100 text-black border-blue-200 text-xs font-medium shrink-0">
+                  <IconShieldCheck stroke={1.5} className="h-3 w-3" />
+                  Manually Verified
+                </Badge>
+              )}
+              {!clinic.idVerified && !clinic.manualVerified && clinic.verified && (
+                <Badge
+                  variant="outline"
+                  className="inline-flex items-center gap-1 border-foreground/30 text-foreground text-xs font-medium shrink-0"
+                >
+                  <IconShieldCheck stroke={1.5} className="h-3 w-3" />
+                  Verified
+                </Badge>
+              )}
             </div>
+          </div>
 
-            {/* Role / category */}
-            <p className="text-sm font-semibold text-muted-foreground leading-tight">
+          <div className="flex min-w-0 flex-1 flex-col items-center gap-2 text-center md:items-start md:text-left">
+            <p className="text-sm font-semibold leading-tight text-muted-foreground">
               {roleTitle}
             </p>
-
-            {/* Address + phone — desktop only */}
             <div className="hidden md:flex flex-col gap-1.5 mt-1">
               <address className="not-italic text-sm leading-snug flex items-start gap-2">
                 <IconMapPin stroke={1.5} className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
@@ -147,7 +154,6 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                 </span>
               )}
             </div>
-
           </div>
         </div>
 

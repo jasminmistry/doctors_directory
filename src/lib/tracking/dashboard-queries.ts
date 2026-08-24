@@ -6,7 +6,7 @@ import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from "@/lib/pricing"
 const PAGE_TYPES = ["practitioner_page", "clinic_page", "collection_page", "other"] as const
 const DEVICE_TYPES = ["mobile", "desktop"] as const
 
-export type TrackingTab = "events" | "leads" | "signups"
+export type TrackingTab = "events" | "leads" | "signups" | "campaign"
 
 export interface TrackingListParams {
   tab: TrackingTab
@@ -245,6 +245,9 @@ function mapConsultationLeadRow(row: {
   patientEmail: string | null
   treatment: string | null
   location: string | null
+  notificationEmailTo: string | null
+  notificationEmailSentAt: Date | null
+  notificationEmailReadAt: Date | null
   clinic: {
     slug: string
     city: { slug: string } | null
@@ -265,6 +268,9 @@ function mapConsultationLeadRow(row: {
     location: row.location,
     budget: null,
     lead_type: "consultation",
+    email_recipient: row.notificationEmailTo,
+    email_sent_at: row.notificationEmailSentAt ? row.notificationEmailSentAt.toISOString() : null,
+    email_read_at: row.notificationEmailReadAt ? row.notificationEmailReadAt.toISOString() : null,
   }
 }
 
@@ -296,6 +302,9 @@ function mapLeadRow(row: {
     location: row.location,
     budget: row.budget,
     lead_type: "pricing",
+    email_recipient: null,
+    email_sent_at: null,
+    email_read_at: null,
   }
 }
 
@@ -348,6 +357,27 @@ function mapSignUpRow(row: {
     claimer_email: row.claimerEmail,
     plan: row.selectedPlan,
     plan_label: planDisplayLabel(row.selectedPlan),
+  }
+}
+
+function mapCampaignEmailRow(row: {
+  id: number
+  slug: string
+  name: string | null
+  email: string | null
+  campaignEmailedAt: Date | null
+  campaignEmailReadAt: Date | null
+  city: { name: string | null } | null
+}) {
+  return {
+    id: `campaign-${row.id}`,
+    timestamp: (row.campaignEmailedAt ?? new Date(0)).toISOString(),
+    clinic_name: row.name?.trim() || getClinicDisplayName({ slug: row.slug, url: undefined }),
+    clinic_slug: row.slug,
+    city: row.city?.name ?? null,
+    email_recipient: row.email,
+    email_sent_at: row.campaignEmailedAt ? row.campaignEmailedAt.toISOString() : null,
+    email_read_at: row.campaignEmailReadAt ? row.campaignEmailReadAt.toISOString() : null,
   }
 }
 
@@ -439,6 +469,41 @@ export async function listTrackingRows(
     ])
 
     return { rows: items.map(mapSignUpRow), total }
+  }
+
+  if (params.tab === "campaign") {
+    const where: Prisma.ClinicWhereInput = {
+      campaignEmailedAt: { not: null },
+    }
+    if (timestamp) where.campaignEmailedAt = timestamp
+    if (q) {
+      where.OR = [
+        { name: { contains: q } },
+        { slug: { contains: q } },
+        { email: { contains: q } },
+      ]
+    }
+
+    const [items, total] = await prisma.$transaction([
+      prisma.clinic.findMany({
+        where,
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+          email: true,
+          campaignEmailedAt: true,
+          campaignEmailReadAt: true,
+          city: { select: { name: true } },
+        },
+        orderBy: { campaignEmailedAt: "desc" },
+        skip,
+        take,
+      }),
+      prisma.clinic.count({ where }),
+    ])
+
+    return { rows: items.map(mapCampaignEmailRow), total }
   }
 
   const where: Prisma.DirectoryLeadWhereInput = {}

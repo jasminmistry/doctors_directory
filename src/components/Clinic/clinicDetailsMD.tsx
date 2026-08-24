@@ -69,8 +69,8 @@ export default function ClinicDetailsSections({ clinic }: { clinic: Clinic }) {
 
       <div className="border-t border-[#e0e0e0]  my-6"></div>
 
-      {/* Treatments */}
-      {clinic?.Treatments!.length > 0 && (
+      {/* Treatments — hidden for unclaimed clinics; unverified treatment lists can be inaccurate */}
+      {clinic.claimed && clinic?.Treatments!.length > 0 && (
       <Section title="Treatments" id="treatments" data-testid='treatments'>
         <div className="flex flex-wrap gap-1">
           {clinic.Treatments &&

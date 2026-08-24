@@ -229,12 +229,15 @@ export async function sendPplLeadTeaserEmail({
   treatment,
   location,
   portalUrl,
+  trackingPixelUrl,
 }: {
   to: string
   clinicName: string
   treatment?: string
   location?: string
   portalUrl: string
+  /** Open-tracking pixel URL — appended as a hidden 1x1 image when present. */
+  trackingPixelUrl?: string
 }) {
   const transport = createTransport()
 
@@ -281,6 +284,7 @@ ${portalUrl}
   </a>
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
   <p style="color:#999;font-size:12px;">— The Consentz Team</p>
+  ${trackingPixelUrl ? `<img src="${trackingPixelUrl}" width="1" height="1" alt="" style="display:none" />` : ''}
 </body>
 </html>
     `.trim(),
@@ -295,6 +299,7 @@ export async function sendLeadNotificationEmail({
   treatment,
   location,
   portalUrl,
+  trackingPixelUrl,
 }: {
   to: string
   clinicName: string
@@ -303,6 +308,8 @@ export async function sendLeadNotificationEmail({
   treatment?: string
   location?: string
   portalUrl: string
+  /** Open-tracking pixel URL — appended as a hidden 1x1 image when present. */
+  trackingPixelUrl?: string
 }) {
   const transport = createTransport()
 
@@ -349,6 +356,7 @@ ${portalUrl}
   </a>
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
   <p style="color:#999;font-size:12px;">— The Consentz Team</p>
+  ${trackingPixelUrl ? `<img src="${trackingPixelUrl}" width="1" height="1" alt="" style="display:none" />` : ''}
 </body>
 </html>
     `.trim(),
@@ -706,6 +714,7 @@ export async function sendGhostLeadHook({
   location,
   pendingCount,
   claimUrl,
+  trackingPixelUrl,
 }: {
   to: string
   clinicName: string
@@ -713,6 +722,8 @@ export async function sendGhostLeadHook({
   location: string
   pendingCount: number
   claimUrl: string
+  /** Open-tracking pixel URL — appended as a hidden 1x1 image when present. */
+  trackingPixelUrl?: string
 }) {
   const transport = createTransport()
   const otherLeads = pendingCount - 1
@@ -759,6 +770,7 @@ ${claimUrl}
   </p>
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
   <p style="color:#999;font-size:12px;">You received this because a patient requested a consultation at ${clinicName} on Consentz Directory.</p>
+  ${trackingPixelUrl ? `<img src="${trackingPixelUrl}" width="1" height="1" alt="" style="display:none" />` : ''}
 </body>
 </html>
     `.trim(),
@@ -771,6 +783,7 @@ export async function sendClaimInviteEmail({
   claimUrl,
   unsubscribeUrl,
   removeUrl,
+  trackingPixelUrl,
 }: {
   to: string
   clinicName: string
@@ -779,6 +792,8 @@ export async function sendClaimInviteEmail({
   unsubscribeUrl: string
   /** Stops future campaign emails AND raises a directory listing removal request for admin review. */
   removeUrl: string
+  /** Open-tracking pixel URL — appended as a hidden 1x1 image when present. */
+  trackingPixelUrl?: string
 }) {
   const transport = createTransport()
   const supportEmail = 'care@consentz.com'
@@ -866,6 +881,7 @@ The Consentz Team
     <strong>Remove your listing:</strong> If you do not wish your clinic to appear in the Consentz Directory, <a href="${removeUrl}" style="color:#333;">click here</a> or contact us and we'll process your request promptly, subject to any legal obligations to retain certain records.
   </p>
   <p style="font-size:13px;color:#333;">Thank you,<br />The Consentz Team</p>
+  ${trackingPixelUrl ? `<img src="${trackingPixelUrl}" width="1" height="1" alt="" style="display:none" />` : ''}
 </body>
 </html>
     `.trim(),
