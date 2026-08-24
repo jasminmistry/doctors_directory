@@ -60,11 +60,12 @@ async function provisionConsentzAccount(
   entityName: string,
   authToken?: string,
   storedRefreshToken?: string,
-): Promise<{ newToken?: string; newRefreshToken?: string }> {
+): Promise<{ newToken?: string; newRefreshToken?: string; provisioningFailed: boolean }> {
   const tempPassword = generateTempPassword()
   let consentzUsername: string | null = null
   let consentzClinicId: number | null = null
   let consentzUserId: number | null = null
+  let isNewAccount = false
   let freshTokens: { token: string; refreshToken: string } | null = null
 
   const clinicEmail =
@@ -118,6 +119,10 @@ async function provisionConsentzAccount(
     )
     consentzUserId = consentzPractitioner.id
     consentzUsername = consentzPractitioner.username
+    // Only genuinely new accounts have their password set to tempPassword — a 409
+    // means Consentz already had this practitioner and returned the existing record
+    // untouched, so tempPassword would NOT match their real password (causes 401 on login).
+    isNewAccount = consentzPractitioner.isNew
 
     await prisma.claimRequest.update({
       where: { id: claim.id },
@@ -139,23 +144,38 @@ async function provisionConsentzAccount(
     console.error('[claim] Consentz account provisioning failed — claimId=%d:', claim.id, err)
   }
 
-  if (consentzUsername) {
+  if (consentzUsername && isNewAccount) {
     await sendWelcomeEmail({
       to: claim.claimerEmail,
       entityName,
       username: consentzUsername,
       tempPassword,
     }).catch(err => console.error('[claim] sendWelcomeEmail failed:', err))
-  } else {
+  } else if (consentzUsername && !isNewAccount) {
+    // Consentz already had this account (409 on register) — its real password is
+    // unknown to us, so we must not email tempPassword since it was never actually
+    // applied on Consentz's side. They can still use their existing credentials.
+    console.warn('[claim] Consentz account already existed for claimId=%d (username=%s) — skipping welcome email with fabricated password', claim.id, consentzUsername)
     await sendClaimApprovedEmail({
       to: claim.claimerEmail,
       clinicName: entityName,
       plan: PLAN_LABELS[claim.selectedPlan ?? 'free'] ?? 'Free',
     }).catch(err => console.error('[claim] sendClaimApprovedEmail fallback failed:', err))
+  } else {
+    // Provisioning failed outright — no Consentz account exists at all (commonly a
+    // 401 from Core because the reviewing admin's session token had expired, and the
+    // refresh attempt above also failed). Do NOT tell the clinic they can log in —
+    // they have no working account yet. Surfaced to the admin via provisioningFailed
+    // below; retrying (after the admin refreshes their own Consentz session) via the
+    // "Reprovision" action will send the real welcome email once it actually succeeds.
+    console.error('[claim] Consentz provisioning failed outright for claimId=%d — no account created, no email sent', claim.id)
   }
 
   const ft = freshTokens as { token: string; refreshToken: string } | null
-  return ft ? { newToken: ft.token, newRefreshToken: ft.refreshToken } : {}
+  return {
+    ...(ft ? { newToken: ft.token, newRefreshToken: ft.refreshToken } : {}),
+    provisioningFailed: !consentzUsername,
+  }
 }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
@@ -219,7 +239,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
           ? (claim.practitioner?.displayName ?? claim.practitionerSlug ?? '')
           : (claim.clinic?.name ?? claim.clinicSlug ?? '')
       const tokens = await provisionConsentzAccount(claim, entityName, authToken, storedRefreshToken)
-      const res = NextResponse.json({ success: true })
+      const res = NextResponse.json({ success: true, provisioningFailed: tokens.provisioningFailed })
       applyFreshTokens(res, tokens)
       return res
     }
@@ -378,7 +398,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       }
 
       const tokens = await provisionConsentzAccount(claim, entityName, authToken, storedRefreshToken)
-      const res = NextResponse.json({ success: true })
+      const res = NextResponse.json({ success: true, provisioningFailed: tokens.provisioningFailed })
       applyFreshTokens(res, tokens)
       return res
     } else {

@@ -206,8 +206,13 @@ export default function AdminClaimsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'reprovision' }),
       })
+      const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error()
-      toast.success('Consentz account provisioned — welcome email sent')
+      if (data.provisioningFailed) {
+        toast.error('Reprovisioning still failed — your Consentz session may have expired. Log out, log back in, then try Reprovision again.')
+      } else {
+        toast.success('Consentz account provisioned — welcome email sent')
+      }
       fetchClaims(filter)
     } catch {
       toast.error('Reprovisioning failed — check server logs')
@@ -229,6 +234,8 @@ export default function AdminClaimsPage() {
       if (!res.ok) throw new Error(data.error ?? 'Failed to update claim')
       if (data.alreadyApproved) {
         toast.info('Claim was already approved — use Reprovision if Consentz account is missing')
+      } else if (data.provisioningFailed) {
+        toast.error('Claim approved, but Consentz account setup failed (likely an expired admin session) — no email was sent to the clinic. Log out, log back in, then use Reprovision to finish setup.')
       } else {
         toast.success(action === 'approve' ? 'Claim approved' : 'Claim rejected')
       }

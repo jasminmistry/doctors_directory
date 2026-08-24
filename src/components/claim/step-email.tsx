@@ -439,7 +439,9 @@ export function StepDetails(props: Readonly<Props>) {
 
           {isRegister ? (
             <div className="flex flex-col gap-2">
-              <Label htmlFor="practitioner-city">City</Label>
+              <Label htmlFor="practitioner-city">
+                City <span className="text-destructive">*</span>
+              </Label>
               <CityCombobox
                 id="practitioner-city"
                 value={city}
