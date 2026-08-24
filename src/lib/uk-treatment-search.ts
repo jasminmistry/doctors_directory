@@ -1,4 +1,9 @@
 import {
+  brands,
+  product_categories,
+  search_categories,
+} from '@/lib/data'
+import {
   matchClinicTreatmentToHubSlug,
   resolveTreatmentHubSlug,
 } from '@/lib/treatment-hub-registry'
@@ -39,6 +44,47 @@ export function matchTreatmentOption(
   )
 }
 
+function matchExactLabelledOption(query: string, labels: string[]): string | null {
+  const trimmed = query.trim()
+  if (!trimmed) return null
+
+  const normalized = trimmed.toLowerCase()
+  const slugCandidate = toUrlSlug(trimmed)
+
+  const exact = labels.find((label) => label.toLowerCase() === normalized)
+  if (exact) return toUrlSlug(exact)
+
+  const bySlug = labels.find((label) => toUrlSlug(label) === slugCandidate)
+  if (bySlug) return slugCandidate
+
+  return null
+}
+
+function matchLabelledOption(query: string, labels: string[]): string | null {
+  const exact = matchExactLabelledOption(query, labels)
+  if (exact) return exact
+
+  const normalized = query.trim().toLowerCase()
+  if (!normalized) return null
+
+  const partial = labels.find((label) => label.toLowerCase().includes(normalized))
+  if (partial) return toUrlSlug(partial)
+
+  return null
+}
+
+export function matchSearchCategorySlug(query: string): string | null {
+  return matchLabelledOption(query, search_categories)
+}
+
+export function matchProductCategorySlug(query: string): string | null {
+  return matchExactLabelledOption(query, product_categories)
+}
+
+export function matchBrandSlug(query: string): string | null {
+  return matchExactLabelledOption(query, brands)
+}
+
 function resolveTreatmentSlug(
   query: string,
   options: TreatmentSearchOption[]
@@ -64,6 +110,10 @@ function resolveTreatmentSlug(
   return null
 }
 
+function resolveServiceCityHref(serviceSlug: string, citySlug: string): string {
+  return `/${serviceSlug}/${citySlug}/`
+}
+
 export function resolveUkTreatmentSearchHref(
   query: string,
   location: string,
@@ -74,7 +124,7 @@ export function resolveUkTreatmentSearchHref(
 
   const city = location.trim()
   if (city) {
-    return `/${treatmentSlug}/${toUrlSlug(city)}/`
+    return resolveServiceCityHref(treatmentSlug, toUrlSlug(city))
   }
 
   return `/treatments/${treatmentSlug}/`
@@ -89,25 +139,39 @@ export function resolveDirectorySearchHref(
   const location = (input.location || '').trim()
   const citySlug = location ? toUrlSlug(location) : ''
   const treatmentSlug = resolveTreatmentSlug(query, options)
+  const searchCategorySlug = matchSearchCategorySlug(query)
+  const productCategorySlug = matchProductCategorySlug(query)
+  const brandSlug = matchBrandSlug(query)
 
   if (type === 'Treatments') {
     const treatmentHref = resolveUkTreatmentSearchHref(query, location, options)
     if (treatmentHref) return treatmentHref
+    if (searchCategorySlug && citySlug) {
+      return resolveServiceCityHref(searchCategorySlug, citySlug)
+    }
     if (citySlug) return `/clinics/${citySlug}/`
-    return null
+    if (treatmentSlug) return `/treatments/${treatmentSlug}/`
+    if (searchCategorySlug) return `/clinics/`
+    return '/treatments/'
   }
 
   if (type === 'Clinic') {
     if (treatmentSlug && citySlug) {
       return `/clinics/${citySlug}/services/${treatmentSlug}/`
     }
+    if (searchCategorySlug && citySlug) {
+      return resolveServiceCityHref(searchCategorySlug, citySlug)
+    }
     if (treatmentSlug) {
       return `/treatments/${treatmentSlug}/`
     }
-    if (citySlug && !query) {
+    if (citySlug) {
       return `/clinics/${citySlug}/`
     }
-    return null
+    if (searchCategorySlug) {
+      return `/clinics/`
+    }
+    return '/clinics/'
   }
 
   if (type === 'Practitioner') {
@@ -117,16 +181,29 @@ export function resolveDirectorySearchHref(
     if (treatmentSlug) {
       return `/treatments/${treatmentSlug}/`
     }
-    if (citySlug && !query) {
+    if (citySlug) {
       return `/practitioners/${citySlug}/`
     }
-    return null
+    if (searchCategorySlug) {
+      return '/practitioners/'
+    }
+    return '/practitioners/'
   }
 
   if (type === 'Product') {
-    if (citySlug && !query) return `/clinics/${citySlug}/`
-    if (!query && !citySlug) return '/products/'
-    return null
+    if (productCategorySlug) {
+      return `/products/category/${productCategorySlug}/`
+    }
+    if (brandSlug) {
+      return `/products/brands/${brandSlug}/`
+    }
+    if (searchCategorySlug && citySlug) {
+      return resolveServiceCityHref(searchCategorySlug, citySlug)
+    }
+    if (citySlug) {
+      return `/clinics/${citySlug}/`
+    }
+    return '/products/'
   }
 
   return null

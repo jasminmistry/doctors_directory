@@ -4,10 +4,8 @@ import { useState, useEffect, startTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSearchStore } from "@/app/stores/datastore";
 import { trackSearchUsage } from "@/lib/tracking/client";
-import {
-  resolveDirectorySearchHref,
-  type TreatmentSearchOption,
-} from "@/lib/uk-treatment-search";
+import { resolveValidatedDirectorySearchHref } from "@/app/actions/directory-search-routing";
+import type { TreatmentSearchOption } from "@/lib/uk-treatment-search";
 
 export function useSearchLogic(treatmentSearchOptions: TreatmentSearchOption[] = []) {
   const pathname = usePathname();
@@ -71,7 +69,7 @@ export function useSearchLogic(treatmentSearchOptions: TreatmentSearchOption[] =
     setShowResults(false);
     setIsExpanded(false);
 
-    const categoryHref = resolveDirectorySearchHref(
+    const categoryHref = await resolveValidatedDirectorySearchHref(
       {
         type: trimmedFilters.type || "",
         query: trimmedFilters.query || "",
