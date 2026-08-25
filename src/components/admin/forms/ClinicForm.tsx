@@ -239,14 +239,17 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
               }
               target="_blank"
               rel="noopener noreferrer"
+              aria-disabled={disabled}
+              onClick={(e) => disabled && e.preventDefault()}
+              className={disabled ? 'pointer-events-none' : undefined}
             >
-              <Button variant="outline" size="lg">
+              <Button variant="outline" size="lg" disabled={disabled}>
                 <IconExternalLink stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
                 Preview
               </Button>
             </a>
           )}
-          <Button size="lg" onClick={handleSave} disabled={saving}>
+          <Button size="lg" onClick={handleSave} disabled={saving || disabled}>
             <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
             {saving ? 'Saving…' : 'Save'}
           </Button>
@@ -523,7 +526,7 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
 
       {/* Footer save */}
       <div className="flex justify-end pt-2">
-        <Button size="lg" onClick={handleSave} disabled={saving}>
+        <Button size="lg" onClick={handleSave} disabled={saving || disabled}>
           <IconDeviceFloppy stroke={1.5} className="h-3.5 w-3.5 mr-1.5" />
           {saving ? 'Saving…' : 'Save Clinic'}
         </Button>

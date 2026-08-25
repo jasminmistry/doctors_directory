@@ -46,6 +46,8 @@ const PLAN_CONFIG: Record<string, { name: string; description: string; amountPen
   },
 }
 
+const ENTITY_SELECT = { claimedPlan: true, stripeCustomerId: true, stripeSubscriptionStatus: true } as const
+
 export async function POST(req: NextRequest) {
   const user = await getPortalUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -61,18 +63,27 @@ export async function POST(req: NextRequest) {
         id: user.claimId,
         status: 'approved',
       },
-      select: {
-        id: true,
-        selectedPlan: true,
-        stripeSubscriptionId: true,
-        stripeCustomerId: true,
-        claimerEmail: true,
-      },
+      select: { id: true, claimerEmail: true },
     })
 
     if (!claim) return NextResponse.json({ error: 'Claim not found' }, { status: 404 })
 
-    const currentPlanRank = PLAN_ORDER[claim.selectedPlan ?? 'free'] ?? 0
+    const entity = user.entityType === 'clinic'
+      ? (user.clinicId ? await prisma.clinic.findUnique({ where: { id: user.clinicId }, select: ENTITY_SELECT }) : null)
+      : (user.practitionerId ? await prisma.practitioner.findUnique({ where: { id: user.practitionerId }, select: ENTITY_SELECT }) : null)
+
+    if (!entity) return NextResponse.json({ error: 'Clinic or practitioner not found' }, { status: 404 })
+
+    // A scheduled cancellation/downgrade must be resumed before a new upgrade can start,
+    // otherwise the pending change (applied later by the webhook) would race this one.
+    if (entity.stripeSubscriptionStatus === 'cancel_at_period_end') {
+      return NextResponse.json(
+        { error: 'You have a scheduled plan change. Resume your current plan before upgrading.' },
+        { status: 400 },
+      )
+    }
+
+    const currentPlanRank = PLAN_ORDER[entity.claimedPlan ?? 'free'] ?? 0
     const newPlanRank = PLAN_ORDER[plan] ?? 0
 
     if (newPlanRank <= currentPlanRank) {
@@ -80,13 +91,34 @@ export async function POST(req: NextRequest) {
     }
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-04-22.dahlia' })
-    const planConfig = PLAN_CONFIG[plan]
+    const customerOpts = {
+      customer: entity.stripeCustomerId ?? undefined,
+      customer_email: entity.stripeCustomerId ? undefined : claim.claimerEmail,
+    }
+    const successUrl = `${DIRECTORY_BASE_URL}/directory/portal/upgrade/success?plan=${plan}&entityType=${user.entityType}`
+    const cancelUrl = `${DIRECTORY_BASE_URL}/directory/portal/${user.entityType}`
 
+    // Pay-per-lead — card-on-file only (SetupIntent), no recurring charge. Billed per
+    // lead unlock via src/app/api/portal/leads/[id]/unlock, matching the claim-time flow
+    // in src/app/api/claim/select-plan/route.ts.
+    if (plan === 'pay_per_lead') {
+      const session = await stripe.checkout.sessions.create({
+        mode: 'setup',
+        payment_method_types: ['card'],
+        ...customerOpts,
+        metadata: { claimId: String(claim.id), plan },
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+      })
+      return NextResponse.json({ redirect: session.url })
+    }
+
+    // Subscription — recurring monthly charge
+    const planConfig = PLAN_CONFIG[plan]
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
-      customer: claim.stripeCustomerId ?? undefined,
-      customer_email: claim.stripeCustomerId ? undefined : claim.claimerEmail,
+      ...customerOpts,
       line_items: [{
         quantity: 1,
         price_data: {
@@ -98,8 +130,8 @@ export async function POST(req: NextRequest) {
       }],
       metadata: { claimId: String(claim.id), plan },
       subscription_data: { metadata: { claimId: String(claim.id), plan } },
-      success_url: `${DIRECTORY_BASE_URL}/directory/portal/upgrade/success?plan=${plan}`,
-      cancel_url: `${DIRECTORY_BASE_URL}/directory/portal/${user.entityType}`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
     })
 
     return NextResponse.json({ redirect: session.url })
