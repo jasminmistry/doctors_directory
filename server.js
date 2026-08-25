@@ -131,6 +131,35 @@ async function prewarmJsonCache() {
   }
 }
 
+// ---------------------------------------------------------------------------
+// GDPR account-deletion sweep — hard-purges clinics/practitioners whose 7-day
+// grace period has elapsed. Runs once a day on the primary instance only, as
+// an HTTP self-call (rather than requiring the TS lib directly, which plain
+// Node can't resolve) so the route handler stays the single source of truth
+// shared with the admin "purge now" action.
+// ---------------------------------------------------------------------------
+const PURGE_SWEEP_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 h
+const INTERNAL_CRON_SECRET = process.env.INTERNAL_CRON_SECRET || 'internal-cron-dev-secret-change-in-prod';
+
+function runAccountDeletionSweep(port) {
+  fetch(`http://127.0.0.1:${port}/directory/api/internal/purge-deletions`, {
+    method: 'POST',
+    headers: { 'x-internal-secret': INTERNAL_CRON_SECRET },
+  })
+    .then(async (res) => {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      console.log(`[account-deletion-sweep] purged ${data.clinicsPurged ?? 0} clinic(s), ${data.practitionersPurged ?? 0} practitioner(s)`);
+    })
+    .catch((err) => console.error('[account-deletion-sweep] failed:', err.message));
+}
+
+function startAccountDeletionSweep(port) {
+  // Small initial delay so the first sweep doesn't race server startup; then daily.
+  setTimeout(() => runAccountDeletionSweep(port), 60 * 1000);
+  setInterval(() => runAccountDeletionSweep(port), PURGE_SWEEP_INTERVAL_MS);
+}
+
 // `dir: __dirname` ensures Next.js resolves .next/, public/, etc. relative to
 // this file regardless of what PM2 sets as process.cwd().
 const app = next({ dev: false, dir: __dirname });
@@ -205,6 +234,7 @@ setTimeout(() => {
       handle(req, res, parsedUrl);
     }).listen(port, '0.0.0.0', () => {
       console.log(`[uploads] serving ${UPLOAD_URL_PREFIX}* from ${UPLOADS_DIR}`);
+      if (isPrimary) startAccountDeletionSweep(port);
       if (process.send) process.send('ready');
     });
   });

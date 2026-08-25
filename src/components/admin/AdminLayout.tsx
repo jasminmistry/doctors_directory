@@ -12,7 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { HeaderIconLink } from "@/components/portal/header-icon-link";
 import { HeaderProfileMenu } from "@/components/portal/header-profile-menu";
-import { IconBuildingHospital, IconLayoutBoard, IconPackage, IconStethoscope, IconLinkOff, IconUsers, IconTrash, IconShieldCheck, IconStar, IconSparkles, IconMail, IconWorldLongitude, IconFlask, IconChartBar, IconLogout, IconWorld, IconMenu2, IconX, IconFlagCheck, IconExternalLink, IconClipboardList, IconUserCircle } from "@tabler/icons-react";
+import { IconBuildingHospital, IconLayoutBoard, IconPackage, IconStethoscope, IconLinkOff, IconUsers, IconTrash,IconUserOff, IconShieldCheck, IconStar, IconSparkles, IconMail, IconWorldLongitude, IconFlask, IconChartBar, IconLogout, IconWorld, IconMenu2, IconX, IconFlagCheck, IconExternalLink, IconClipboardList, IconUserCircle } from "@tabler/icons-react";
 
 const AdminCountsContext = createContext<{ refreshCounts: () => void }>({
   refreshCounts: () => {},
@@ -31,6 +31,7 @@ interface PendingCounts {
   pendingVerifications: number;
   pendingUnlinkRequests: number;
   pendingDirectoryRemovalRequests: number;
+  pendingAccountDeletions: number;
 }
 
 function NavBadge({ count }: { count: number }) {
@@ -65,6 +66,7 @@ const NAV = [
   { href: "/admin/treatments", label: "Treatments", icon: IconStethoscope },
   { href: "/admin/unlink-requests", label: "Unlink Requests", icon: IconLinkOff },
   { href: "/admin/directory-removal-requests", label: "Removal Requests", icon: IconTrash },
+  { href: "/admin/account-deletions", label: "Account Deletions", icon: IconUserOff },
   { href: "/admin/claims", label: "Claims", icon: IconShieldCheck },
   { href: "/admin/verification", label: "ID Verification", icon: IconShieldCheck },
   { href: "/admin/leads", label: "Leads", icon: IconClipboardList },
@@ -88,6 +90,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
     pendingVerifications: 0,
     pendingUnlinkRequests: 0,
     pendingDirectoryRemovalRequests: 0,
+    pendingAccountDeletions: 0,
   });
   const [consentzSessionStale, setConsentzSessionStale] = useState(false);
 
@@ -201,11 +204,13 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                     ? counts.pendingUnlinkRequests
                     : item.href === "/admin/directory-removal-requests"
                       ? counts.pendingDirectoryRemovalRequests
-                      : item.href === "/admin/claims"
-                        ? counts.pendingClaims
-                        : item.href === "/admin/verification"
-                          ? counts.pendingVerifications
-                          : 0;
+                      : item.href === "/admin/account-deletions"
+                        ? counts.pendingAccountDeletions
+                        : item.href === "/admin/claims"
+                          ? counts.pendingClaims
+                          : item.href === "/admin/verification"
+                            ? counts.pendingVerifications
+                            : 0;
 
                 return (
                   <Link

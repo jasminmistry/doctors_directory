@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { PractitionerForm } from '@/components/admin/forms/PractitionerForm'
+import { DangerZonePanel } from '@/components/portal/danger-zone-panel'
+import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from '@/lib/pricing'
 import { CommercialPanel, type SubscriptionInfo } from '@/components/portal/CommercialPanel'
 
 export const dynamic = 'force-dynamic'
@@ -10,6 +12,7 @@ export default function PortalPractitionerPage() {
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
   const [idVerified, setIdVerified] = useState<boolean | null>(null)
   const [entitySlug, setEntitySlug] = useState<string | null>(null)
+  const [entityName, setEntityName] = useState<string | null>(null)
   const [verificationChecked, setVerificationChecked] = useState(false)
 
   const fetchPractitionerData = useCallback(() => {
@@ -21,6 +24,7 @@ export default function PortalPractitionerPage() {
         setSubscription(data.subscription ?? null)
         setIdVerified(data.idVerified ?? false)
         setEntitySlug(data.slug ?? null)
+        setEntityName(data.displayName ?? data.slug ?? null)
       })
       .catch(() => {})
       .finally(() => setVerificationChecked(true))
@@ -61,6 +65,9 @@ export default function PortalPractitionerPage() {
           onSaved={fetchPractitionerData}
         />
       )}
+
+      {/* Danger zone */}
+      {entityName && <DangerZonePanel entityType="practitioner" entityName={entityName} plan={subscription?.plan} />}
     </div>
   )
 }

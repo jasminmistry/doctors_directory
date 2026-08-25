@@ -2,16 +2,20 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { IconExternalLink, IconLogout, IconUser, IconWorld } from '@tabler/icons-react';
+import { IconExternalLink, IconLogout, IconTrash, IconUser, IconWorld } from '@tabler/icons-react';
 import { cn } from '@/lib/utils'
+import { DeleteAccountModal } from '@/components/portal/delete-account-modal'
 
 interface HeaderProfileMenuProps {
   name: string
   onLogout: () => void
+  /** When set, shows a "Delete account" item that opens the GDPR self-serve deletion flow. */
+  entityType?: 'clinic' | 'practitioner'
 }
 
-export function HeaderProfileMenu({ name, onLogout }: HeaderProfileMenuProps) {
+export function HeaderProfileMenu({ name, onLogout, entityType }: HeaderProfileMenuProps) {
   const [open, setOpen] = useState(false)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -69,7 +73,33 @@ export function HeaderProfileMenu({ name, onLogout }: HeaderProfileMenuProps) {
             <IconLogout stroke={1.5} className="shrink-0" />
             Sign out
           </button>
+          {entityType && (
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false)
+                setDeleteModalOpen(true)
+              }}
+              className="flex rounded-[3px] w-full items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50 hover:cursor-pointer"
+            >
+              <IconTrash stroke={1.5} className="shrink-0" />
+              Delete account
+            </button>
+          )}
         </div>
+      )}
+
+      {entityType && (
+        <DeleteAccountModal
+          open={deleteModalOpen}
+          entityType={entityType}
+          entityName={name}
+          onClose={() => setDeleteModalOpen(false)}
+          onDeleted={() => {
+            setDeleteModalOpen(false)
+            onLogout()
+          }}
+        />
       )}
     </div>
   )
