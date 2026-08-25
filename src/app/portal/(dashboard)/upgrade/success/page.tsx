@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
-import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { IconLoader2 } from '@tabler/icons-react'
 
 const PLAN_LABELS: Record<string, string> = {
@@ -14,6 +13,7 @@ const POLL_INTERVAL_MS = 2000
 const MAX_POLL_ATTEMPTS = 10 // ~20s
 
 export default function UpgradeSuccessPage() {
+  const router = useRouter()
   const params = useSearchParams()
   const plan = params.get('plan') ?? ''
   const entityType = params.get('entityType') === 'practitioner' ? 'practitioner' : 'clinic'
@@ -31,7 +31,13 @@ export default function UpgradeSuccessPage() {
         if (res.ok) {
           const data = await res.json()
           if (data?.subscription?.plan === plan) {
-            if (!cancelled) setConfirmed(true)
+            if (!cancelled) {
+              setConfirmed(true)
+              // The dashboard layout (sidebar plan gating) was rendered before the
+              // webhook applied this upgrade — refresh it now that we've confirmed
+              // the new plan, otherwise it keeps showing the stale locked state.
+              router.refresh()
+            }
             return
           }
         }
@@ -78,12 +84,12 @@ export default function UpgradeSuccessPage() {
             <>Your payment went through — we&apos;re just confirming the update on your account.</>
           )}
         </p>
-        <Link
-          href={`/portal/${entityType}`}
+        <a
+          href={`/directory/portal/${entityType}`}
           className="inline-block mt-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-neutral-800"
         >
           Back to dashboard
-        </Link>
+        </a>
       </div>
     </div>
   )
