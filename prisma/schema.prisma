@@ -263,10 +263,11 @@ model Clinic {
   coreUnlinkRequestedAt DateTime?
 
   // Stripe — stored after PPL SetupIntent completes so we can charge per-lead unlock
-  stripeCustomerId         String?   @db.VarChar(255)
+  stripeCustomerId         String?    @db.VarChar(255)
   // Subscription lifecycle — kept in sync by webhook handlers
-  stripeSubscriptionStatus String?   @db.VarChar(50) // active | past_due | unpaid | canceled | cancel_at_period_end
+  stripeSubscriptionStatus String?    @db.VarChar(50) // active | past_due | unpaid | canceled | cancel_at_period_end
   subscriptionCancelAt     DateTime? // set when cancel_at_period_end=true; cleared when restored
+  downgradeToPlan          ClaimPlan? // pending downgrade target; applied by webhook when subscription actually ends
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -441,6 +442,13 @@ model Practitioner {
   idVerified     Boolean    @default(false)
   manualVerified Boolean    @default(false)
   isHidden       Boolean    @default(false)
+
+  // Stripe — stored after PPL SetupIntent completes / subscription created via portal upgrade
+  stripeCustomerId         String?    @db.VarChar(255)
+  // Subscription lifecycle — kept in sync by webhook handlers
+  stripeSubscriptionStatus String?    @db.VarChar(50) // active | past_due | unpaid | canceled | cancel_at_period_end
+  subscriptionCancelAt     DateTime? // set when cancel_at_period_end=true; cleared when restored
+  downgradeToPlan          ClaimPlan? // pending downgrade target; applied by webhook when subscription actually ends
 
   // Consentz Core — set when claimed via Consentz link; used for calendar + booking API calls
   coreClinicId         Int?
