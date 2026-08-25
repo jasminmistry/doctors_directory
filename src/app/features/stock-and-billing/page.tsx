@@ -45,7 +45,7 @@ export default function ClinicManagementSoftwarePage() {
   
   return (
     <main>
-      <section className="bg-white-10 py-6 md:py-10 bg-[var(--primary-bg-color)]">
+      <section className="bg-white-10 py-5 md:py-10 bg-[var(--primary-bg-color)]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
             <div className="max-w-lg mx-auto">
@@ -83,26 +83,28 @@ export default function ClinicManagementSoftwarePage() {
         </div>
       </section>
 
-      <section className="bg-white-50 py-15 md:py-20">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-8 align-items-center">
-          {featuresList.map((feature) => {
-            const Icon = feature.icon;
+      <section className="bg-white-50 py-10 md:py-20">
+        <div
+          className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-8 items-center justify-items-center">
+          {featuresList.map((feature, index) => {
+          const Icon = feature.icon;
 
-            return (
-              <div className="text-center" key={feature.name}>
-                <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <Icon stroke={1.5} className="w-8 h-8 text-primary" />
-                </div>
-                <p className="text-gray-700">{feature.name}</p>
-              </div>
-            );
+          return (
+          <div className={`text-center ${ index===featuresList.length - 1
+            ? "col-span-2 md:col-span-3 lg:col-span-1 justify-self-center" : "" }`} key={feature.name}>
+            <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
+              <Icon stroke={1.5} className="w-8 h-8 text-primary" />
+            </div>
+            <p className="text-gray-700">{feature.name}</p>
+          </div>
+          );
           })}
         </div>
       </section>
 
-      <section className="bg-white-10 py-6 md:py-10">
+      <section className="bg-white-10 py-0 md:py-10">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
+          <div className="grid mb-0 md:mb-10 md:grid-cols-2 gap-4 items-center">
             <div className="max-w-lg mx-auto">
               <h2 className="text-xl md:text-2xl text-center md:text-left font-medium mb-7">
                 Billing
@@ -118,7 +120,7 @@ export default function ClinicManagementSoftwarePage() {
               <img
                 src="/directory/images/srb-1.png"
                 alt="Healthcare dashboard on laptop"
-                className="max-w-full mr-[-30px] mt-4 md:mr-0 md:mt-0"
+                className="max-w-full mr-[-40px] mt-4 md:mr-0 md:mt-0"
               />
             </div>
             
@@ -126,7 +128,7 @@ export default function ClinicManagementSoftwarePage() {
         </div>
       </section>
 
-      <section className="bg-white-10 py-6 md:py-10">
+      <section className="bg-white-10 py-0 md:py-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
@@ -162,7 +164,7 @@ export default function ClinicManagementSoftwarePage() {
         </div>
       </section>
      
-      <section className="bg-white-10 py-6 md:py-10">
+      <section className="bg-white-10 py-0 md:py-10">
         <div className="max-w-7xl m-auto px-3">
             <h2
               id="provider-steps-heading"
@@ -176,24 +178,24 @@ export default function ClinicManagementSoftwarePage() {
 
             <div className="grid md:gap-6 md:grid-cols-2 lg:grid-cols-3">
 
-              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
+              <div className="mb-4 bg-white text-center md:text-left border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <div className="flex m-auto mb-4 md:m-0 md:mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
                   <IconClipboardPlus stroke={1.5} size={36}  />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Stock Level Reports</h3>
                 <p className="text-gray-700">Have you ever wanted to manage your stock levels of Botulinum Toxin? With Consentz you can see how much stock your clinicians are using and place the necessary orders.</p>
               </div>
 
-              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
+              <div className="mb-4 bg-white text-center md:text-left border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <div className="flex m-auto mb-4 md:m-0 md:mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
                   <IconBuildingWarehouse stroke={1.5} size={36} />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Stock Reduction</h3>
                 <p>Reduce stock numbers whenever you invoice an item, allow your Practitioner’s record usage when marking photograph, or manually enter an adjustment amount. Either way the history of all stock movements are recorded.</p>
               </div>
 
-              <div className="mb-4 bg-white border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
-                <div className="flex mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
+              <div className="mb-4 bg-white text-center md:text-left border border-[#e0e0e0] rounded-lg p-6 w-full max-w-md">
+                <div className="flex m-auto mb-4 md:m-0 md:mb-4 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
                   <IconAlertTriangle stroke={1.5} size={36} />
                 </div>
                 <h3 className="text-xl md:text-lg font-medium mb-4">Warnings</h3>

@@ -83,24 +83,26 @@ export default function ClinicManagementSoftwarePage() {
         </div>
       </section>
 
-      <section className="bg-white-50 py-15 md:py-20">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-8 align-items-center">
-          {featuresList.map((feature) => {
-            const Icon = feature.icon;
+      <section className="bg-white-50 py-10 md:py-20">
+        <div
+          className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-8 items-center justify-items-center">
+          {featuresList.map((feature, index) => {
+          const Icon = feature.icon;
 
-            return (
-              <div className="text-center" key={feature.name}>
-                <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
-                  <Icon stroke={1.5} className="w-8 h-8 text-primary" />
-                </div>
-                <p className="text-gray-700">{feature.name}</p>
-              </div>
-            );
+          return (
+          <div className={`text-center ${ index===featuresList.length - 1
+            ? "col-span-2 md:col-span-3 lg:col-span-1 justify-self-center" : "" }`} key={feature.name}>
+            <div className="flex m-auto mb-2 items-center justify-center w-[80px] h-[80px] rounded-full bg-gray-200">
+              <Icon stroke={1.5} className="w-8 h-8 text-primary" />
+            </div>
+            <p className="text-gray-700">{feature.name}</p>
+          </div>
+          );
           })}
         </div>
       </section>
 
-      <section className="bg-white-10 py-6 md:py-10">
+      <section className="bg-white-10 py-2 md:py-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
             <div className="max-w-lg mx-auto">
@@ -118,7 +120,7 @@ export default function ClinicManagementSoftwarePage() {
               <img
                 src="/directory/images/ecsb.png"
                 alt="Healthcare dashboard on laptop"
-                className="max-w-full mr-[-30px] mt-4 md:mr-0 md:mt-0"
+                className="max-w-full mr-[-40px] mt-4 md:mr-0 md:mt-0"
               />
             </div>
             
@@ -126,14 +128,14 @@ export default function ClinicManagementSoftwarePage() {
         </div>
       </section>
 
-       <section className="bg-white-10 py-6 md:py-10">
+       <section className="bg-white-10 py-2 md:py-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
             <div className="flex justify-center">
               <img
                 src="/directory/images/cmb.png"
                 alt="Healthcare dashboard on laptop"
-                className="max-w-full mr-[-30px] mt-4 md:mr-0 md:mt-0"
+                className="max-w-full mr-[-40px] mt-4 md:mr-0 md:mt-0"
               />
             </div>
             <div className="max-w-lg mx-auto">
@@ -151,7 +153,7 @@ export default function ClinicManagementSoftwarePage() {
         </div>
       </section>
 
-      <section className="bg-white-10 py-6 md:py-10">
+      <section className="bg-white-10 py-2 md:py-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid mb-10 md:grid-cols-2 gap-4 items-center">
             <div className="max-w-lg mx-auto">
@@ -169,7 +171,7 @@ export default function ClinicManagementSoftwarePage() {
               <img
                 src="/directory/images/ebb.png"
                 alt="Healthcare dashboard on laptop"
-                className="max-w-full mr-[-30px] mt-4 md:mr-0 md:mt-0"
+                className="max-w-full mr-[-40px] mt-4 md:mr-0 md:mt-0"
               />
             </div>
             
