@@ -85,6 +85,18 @@ export function consentzFetch(url: string, init: RequestInit): Promise<Response>
   return fetch(url, { ...init, cache: 'no-store' })
 }
 
+/**
+ * Consentz's API error handler (ExceptionListener::onKernelException) currently
+ * returns HTTP 200 for every application-level error — the real status only shows
+ * up as `error.code` in the JSON body. So `res.ok`/`res.status` alone cannot be
+ * trusted to detect a failed call; every Consentz response body must also be
+ * checked for an `error` envelope. See CONSENTZ_AUTH_API_URL callers below.
+ */
+function extractApiErrorCode(json: Record<string, unknown>): number | undefined {
+  const error = json.error as Record<string, unknown> | undefined
+  return typeof error?.code === 'number' ? error.code : undefined
+}
+
 export function extractTokens(data: Record<string, unknown>) {
   const user = data.user as Record<string, unknown>
   return {
@@ -133,7 +145,7 @@ export async function registerConsentzClinic(
     contactName?: string
   },
   sessionToken?: string,
-): Promise<{ id: number; name: string; email: string }> {
+): Promise<{ id: number; name: string; email: string; isNew: boolean }> {
   const res = await consentzApi('/register/clinic', {
     method: 'POST',
     sessionToken,
@@ -148,13 +160,15 @@ export async function registerConsentzClinic(
   })
 
   const json: Record<string, unknown> = await res.json().catch(() => ({}))
-  if (res.status === 409 && (json.clinic as Record<string, unknown>)?.id) {
-    return json.clinic as { id: number; name: string; email: string }
+  const errorCode = extractApiErrorCode(json)
+  if ((res.status === 409 || errorCode === 409) && (json.clinic as Record<string, unknown>)?.id) {
+    return { ...(json.clinic as { id: number; name: string; email: string }), isNew: false }
   }
-  if (!res.ok) {
-    throw Object.assign(new Error(`Consentz clinic registration failed ${res.status}`), { status: res.status, data: json })
+  if (!res.ok || errorCode !== undefined || !(json.clinic as Record<string, unknown>)?.id) {
+    const status = errorCode ?? res.status
+    throw Object.assign(new Error(`Consentz clinic registration failed ${status}`), { status, data: json })
   }
-  return json.clinic as { id: number; name: string; email: string }
+  return { ...(json.clinic as { id: number; name: string; email: string }), isNew: true }
 }
 
 export async function registerConsentzPractitioner(
@@ -167,7 +181,7 @@ export async function registerConsentzPractitioner(
     role: 'ROLE_PRACTITIONER' | 'ROLE_CLINIC_ADMIN'
   },
   sessionToken?: string,
-): Promise<{ id: number; username: string; email: string }> {
+): Promise<{ id: number; username: string; email: string; isNew: boolean }> {
   const res = await consentzApi('/register/practitioner', {
     method: 'POST',
     sessionToken,
@@ -175,11 +189,13 @@ export async function registerConsentzPractitioner(
   })
 
   const json: Record<string, unknown> = await res.json().catch(() => ({}))
-  if (res.status === 409 && (json.practitioner as Record<string, unknown>)?.id) {
-    return json.practitioner as { id: number; username: string; email: string }
+  const errorCode = extractApiErrorCode(json)
+  if ((res.status === 409 || errorCode === 409) && (json.practitioner as Record<string, unknown>)?.id) {
+    return { ...(json.practitioner as { id: number; username: string; email: string }), isNew: false }
   }
-  if (!res.ok) {
-    throw Object.assign(new Error(`Consentz practitioner registration failed ${res.status}`), { status: res.status, data: json })
+  if (!res.ok || errorCode !== undefined || !(json.practitioner as Record<string, unknown>)?.id) {
+    const status = errorCode ?? res.status
+    throw Object.assign(new Error(`Consentz practitioner registration failed ${status}`), { status, data: json })
   }
-  return json.practitioner as { id: number; username: string; email: string }
+  return { ...(json.practitioner as { id: number; username: string; email: string }), isNew: true }
 }

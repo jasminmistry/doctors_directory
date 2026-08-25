@@ -216,6 +216,7 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
           submitLabel="Confirm Booking"
           submitting={submitting}
           onSubmit={handleBook}
+          emailLocked={Boolean(defaultValues?.email)}
         />
       </div>
     )
