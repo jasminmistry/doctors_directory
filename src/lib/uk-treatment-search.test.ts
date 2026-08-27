@@ -13,9 +13,9 @@ const options = [
 ]
 
 describe('resolveUkTreatmentSearchHref', () => {
-  it('routes treatment plus city to treatment city hub', () => {
+  it('routes treatment plus city to clinic listing page', () => {
     expect(resolveUkTreatmentSearchHref('Botox', 'London', options)).toBe(
-      '/botox/london/'
+      '/clinics/london/services/botox/'
     )
   })
 
@@ -90,13 +90,13 @@ describe('resolveDirectorySearchHref', () => {
     ).toBe('/practitioners/oxford/')
   })
 
-  it('routes treatments type through treatment hub urls', () => {
+  it('routes treatments type to clinic listing page', () => {
     expect(
       resolveDirectorySearchHref(
         { type: 'Treatments', query: 'botox', location: 'london' },
         options
       )
-    ).toBe('/botox/london/')
+    ).toBe('/clinics/london/services/botox/')
   })
 
   it('falls back to city clinic page when treatments query is empty', () => {

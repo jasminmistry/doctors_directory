@@ -21,7 +21,6 @@ const RESERVED_ROOT_SEGMENTS = new Set([
   'sitemap',
 ])
 
-/** Two-segment paths like /beautician/london/ must exist as SSR pages or fall back to city clinics. */
 export function ensureServiceCityHrefExists(href: string): string {
   const match = href.match(/^\/([^/]+)\/([^/]+)\/$/)
   if (!match) return href
