@@ -124,7 +124,7 @@ export function resolveUkTreatmentSearchHref(
 
   const city = location.trim()
   if (city) {
-    return resolveServiceCityHref(treatmentSlug, toUrlSlug(city))
+    return `/clinics/${toUrlSlug(city)}/services/${treatmentSlug}/`
   }
 
   return `/treatments/${treatmentSlug}/`
