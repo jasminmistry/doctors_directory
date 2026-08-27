@@ -116,6 +116,7 @@ export function StepDetails(props: Readonly<Props>) {
       else if (email.trim().length > 255) errors.email = 'Email cannot exceed 255 characters.'
       else if (!isValidEmail(email)) errors.email = 'Please enter a valid email address.'
       if (practitionerPhone.trim() && !isValidUkPhone(practitionerPhone)) errors.practitionerPhone = 'Please enter a valid UK phone number.'
+      if (practitionerClinicName.trim().length > 255) errors.practitionerClinicName = 'Clinic Name cannot exceed 255 characters.'
       if (isRegister && !city.trim()) errors.city = 'City is required.'
     }
     return errors
@@ -123,7 +124,7 @@ export function StepDetails(props: Readonly<Props>) {
 
   function mapServerErrorToField(message: string): FieldErrors | null {
     const lower = message.toLowerCase()
-    if (lower.includes('clinic name')) return { clinicNameInput: message }
+    if (lower.includes('clinic name')) return entityType === 'clinic' ? { clinicNameInput: message } : { practitionerClinicName: message }
     if (lower.includes('full name')) return { name: message }
     if (lower.includes('email')) return { email: message }
     if (lower.includes('phone')) return entityType === 'clinic' ? { clinicPhone: message } : { practitionerPhone: message }
@@ -432,9 +433,12 @@ export function StepDetails(props: Readonly<Props>) {
               type="text"
               placeholder="e.g. The Skin Clinic London"
               value={practitionerClinicName}
-              onChange={(e) => setPractitionerClinicName(e.target.value)}
+              onChange={(e) => { setPractitionerClinicName(e.target.value); clearFieldError('practitionerClinicName') }}
               maxLength={255}
+              aria-invalid={!!fieldErrors.practitionerClinicName}
+              className={cn(fieldErrors.practitionerClinicName && 'border-destructive')}
             />
+            {fieldErrors.practitionerClinicName && <p className="text-xs text-destructive">{fieldErrors.practitionerClinicName}</p>}
           </div>
 
           {isRegister ? (
