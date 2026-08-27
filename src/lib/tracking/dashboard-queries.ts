@@ -129,6 +129,13 @@ function normalizePathInput(value: string): string {
   return `https://consentz.com/${value}`
 }
 
+// Slugs that can end up in this URL position but are not real cities — either a
+// nationwide/country placeholder (from a historical routing bug that derived the
+// slug from an address's country instead of its city) or another non-city route
+// segment (e.g. /clinics/treatment-by-city). Old tracked events with these slugs
+// would otherwise keep surfacing as fake "cities" in the dashboard forever.
+const NON_CITY_SLUGS = new Set(["united-kingdom", "uk", "gb", "great-britain"])
+
 function extractCity(pageUrl: string): string | null {
   try {
     const url = new URL(normalizePathInput(pageUrl))
@@ -136,7 +143,7 @@ function extractCity(pageUrl: string): string | null {
     const idx = segments.findIndex((segment) => segment === "clinics" || segment === "practitioners")
     if (idx === -1) return null
     const citySegment = segments[idx + 1]
-    if (!citySegment) return null
+    if (!citySegment || NON_CITY_SLUGS.has(citySegment.toLowerCase())) return null
     const formatted = citySegment
       .split("-")
       .filter(Boolean)

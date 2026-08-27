@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
-import { consentzApi, COOKIE_TOKEN } from '@/lib/auth'
+import { consentzApi, COOKIE_TOKEN, extractApiErrorCode } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -61,12 +61,12 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       body: parsed.data,
       sessionToken: token,
     })
-    if (!res.ok) {
-      const errText = await res.text().catch(() => '')
-      console.error('[admin/clinics/schedule] Core error:', res.status, errText)
+    const result: Record<string, unknown> = await res.json().catch(() => ({}))
+    const errorCode = extractApiErrorCode(result)
+    if (!res.ok || errorCode !== undefined) {
+      console.error('[admin/clinics/schedule] Core error:', errorCode ?? res.status, result)
       return NextResponse.json({ error: 'Failed to update schedule' }, { status: 502 })
     }
-    const result = await res.json()
     return NextResponse.json({ success: true, schedule: result.schedule ?? result })
   } catch (err) {
     console.error('[admin/clinics/schedule] error:', err)

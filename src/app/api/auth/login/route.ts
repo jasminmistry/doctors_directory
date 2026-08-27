@@ -39,15 +39,47 @@ export async function POST(request: Request) {
     const { token, refreshToken } = extractTokens(data)
 
     const isAdmin = isAdminUsername(username)
-    const claim = isAdmin
-      ? null
-      : await prisma.claimRequest.findFirst({
+    const claims = isAdmin
+      ? []
+      : await prisma.claimRequest.findMany({
           where: { consentzUsername: username },
-          select: { id: true },
+          select: {
+            status: true,
+            clinic: { select: { scheduledDeletionAt: true } },
+            practitioner: { select: { scheduledDeletionAt: true } },
+          },
         })
 
-    if (!isAdmin && !claim) {
+    if (!isAdmin && claims.length === 0) {
       return NextResponse.json({ error: 'You do not have access to this application' }, { status: 403 })
+    }
+
+    // A claim can be 'approved' yet still unusable — the underlying clinic/practitioner is
+    // mid-deletion (grace period) or already purged (status flips to 'deleted', see
+    // purgeClinicDeletion/purgePractitionerDeletion in src/lib/account-deletion.ts). Core auth
+    // itself has no concept of this, so without this check the login would otherwise succeed,
+    // only to silently bounce back from the portal layout's getPortalUser() === null redirect.
+    if (!isAdmin) {
+      const hasUsableClaim = claims.some(
+        (c) => c.status === 'approved' && !c.clinic?.scheduledDeletionAt && !c.practitioner?.scheduledDeletionAt,
+      )
+      if (!hasUsableClaim) {
+        if (claims.every((c) => c.status === 'deleted')) {
+          return NextResponse.json(
+            { error: 'This account has been deleted and is no longer available.' },
+            { status: 403 },
+          )
+        }
+        if (claims.some((c) => c.status === 'approved' && (c.clinic?.scheduledDeletionAt || c.practitioner?.scheduledDeletionAt))) {
+          return NextResponse.json(
+            {
+              error:
+                'This account is scheduled for deletion. Check your email for a link to cancel within the 7-day grace period, or contact support.',
+            },
+            { status: 403 },
+          )
+        }
+      }
     }
 
     const role = isAdmin ? 'admin' : 'portal'

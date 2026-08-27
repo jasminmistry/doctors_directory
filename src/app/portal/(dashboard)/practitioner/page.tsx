@@ -5,6 +5,7 @@ import { PractitionerForm } from '@/components/admin/forms/PractitionerForm'
 import { CommercialPanel, type SubscriptionInfo } from '@/components/portal/CommercialPanel'
 import { DangerZonePanel } from '@/components/portal/danger-zone-panel'
 import { PPL_LEAD_PRICE, SUBSCRIPTION_MONTHLY_PRICE } from '@/lib/pricing'
+import { CommercialPanel, type SubscriptionInfo } from '@/components/portal/CommercialPanel'
 
 export const dynamic = 'force-dynamic'
 

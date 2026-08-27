@@ -325,7 +325,7 @@ export default function AdminClaimsPage() {
         open={!!reviewClaim}
         onOpenChange={(open) => { if (!open) { setReviewClaim(null); setAdminNotes('') } }}
       >
-        <DialogContent>
+        <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{reviewClaim?.status === 'pending_approval' ? 'Review Claim' : 'Claim Details'}</DialogTitle>
           </DialogHeader>
@@ -333,43 +333,43 @@ export default function AdminClaimsPage() {
           {reviewClaim && (
             <div className="space-y-3 text-sm">
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                <div>
+                <div className="min-w-0">
                   <span className="text-muted-foreground">Type</span>
-                  <p className="font-medium capitalize">{reviewClaim.entityType}</p>
+                  <p className="font-medium capitalize break-words">{reviewClaim.entityType}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <span className="text-muted-foreground">Profile</span>
-                  <p className="font-medium">{reviewClaim.entityName}</p>
+                  <p className="font-medium break-words">{reviewClaim.entityName}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <span className="text-muted-foreground">Claimer</span>
-                  <p className="font-medium">{reviewClaim.claimerName}</p>
+                  <p className="font-medium break-words">{reviewClaim.claimerName}</p>
                 </div>
                 <div className="min-w-0">
                   <span className="text-muted-foreground">Email</span>
                   <p className="font-medium break-all">{reviewClaim.claimerEmail}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <span className="text-muted-foreground">Plan</span>
-                  <p className="font-medium">{PLAN_LABELS[reviewClaim.selectedPlan ?? ''] ?? '—'}</p>
+                  <p className="font-medium break-words">{PLAN_LABELS[reviewClaim.selectedPlan ?? ''] ?? '—'}</p>
                 </div>
 
                 {reviewClaim.entityType === 'clinic' && (
                   <>
                     {reviewClaim.clinicNameInput && (
-                      <div className="col-span-2">
+                      <div className="col-span-2 min-w-0">
                         <span className="text-muted-foreground">Clinic name</span>
-                        <p className="font-medium">{reviewClaim.clinicNameInput}</p>
+                        <p className="font-medium break-words">{reviewClaim.clinicNameInput}</p>
                       </div>
                     )}
                     {reviewClaim.clinicPhone && (
-                      <div>
+                      <div className="min-w-0">
                         <span className="text-muted-foreground">Phone</span>
-                        <p className="font-medium">{reviewClaim.clinicPhone}</p>
+                        <p className="font-medium break-words">{reviewClaim.clinicPhone}</p>
                       </div>
                     )}
                     {reviewClaim.clinicWebsite && (
-                      <div>
+                      <div className="min-w-0">
                         <span className="text-muted-foreground">Website</span>
                         <a href={reviewClaim.clinicWebsite} target="_blank" rel="noopener noreferrer" className="font-medium text-black hover:underline truncate block">
                           {reviewClaim.clinicWebsite}
@@ -377,7 +377,7 @@ export default function AdminClaimsPage() {
                       </div>
                     )}
                     {reviewClaim.googleBusinessLink && (
-                      <div className="col-span-2">
+                      <div className="col-span-2 min-w-0">
                         <span className="text-muted-foreground">Google Business</span>
                         <a href={reviewClaim.googleBusinessLink} target="_blank" rel="noopener noreferrer" className="font-medium text-black hover:underline truncate block">
                           {reviewClaim.googleBusinessLink}
@@ -389,21 +389,21 @@ export default function AdminClaimsPage() {
                       return (
                         <>
                           {listing.address && (
-                            <div className="col-span-2">
+                            <div className="col-span-2 min-w-0">
                               <span className="text-muted-foreground">Address</span>
-                              <p className="font-medium">{listing.address}{listing.city ? `, ${listing.city}` : ''}</p>
+                              <p className="font-medium break-words">{listing.address}{listing.city ? `, ${listing.city}` : ''}</p>
                             </div>
                           )}
                           {listing.category && (
-                            <div>
+                            <div className="min-w-0">
                               <span className="text-muted-foreground">Category</span>
-                              <p className="font-medium">{listing.category}</p>
+                              <p className="font-medium break-words">{listing.category}</p>
                             </div>
                           )}
                           {listing.about && (
-                            <div className="col-span-2">
+                            <div className="col-span-2 min-w-0">
                               <span className="text-muted-foreground">About</span>
-                              <p className="font-medium whitespace-pre-wrap">{listing.about}</p>
+                              <p className="font-medium whitespace-pre-wrap break-words">{listing.about}</p>
                             </div>
                           )}
                         </>
@@ -415,21 +415,21 @@ export default function AdminClaimsPage() {
                 {reviewClaim.entityType === 'practitioner' && (
                   <>
                     {reviewClaim.profession && (
-                      <div>
+                      <div className="min-w-0">
                         <span className="text-muted-foreground">Profession</span>
-                        <p className="font-medium">{reviewClaim.profession}</p>
+                        <p className="font-medium break-words">{reviewClaim.profession}</p>
                       </div>
                     )}
                     {reviewClaim.clinicNameInput && (
-                      <div className="col-span-2">
+                      <div className="col-span-2 min-w-0">
                         <span className="text-muted-foreground">Stated clinic</span>
-                        <p className="font-medium">{reviewClaim.clinicNameInput}</p>
+                        <p className="font-medium break-words">{reviewClaim.clinicNameInput}</p>
                       </div>
                     )}
                     {reviewClaim.licenseNumber && (
-                      <div className="col-span-2">
+                      <div className="col-span-2 min-w-0">
                         <span className="text-muted-foreground">Licence number</span>
-                        <p className="font-medium">
+                        <p className="font-medium break-words">
                           {reviewClaim.licenseNumber}
                           {reviewClaim.registryName && (
                             <span className="text-muted-foreground ml-1">({reviewClaim.registryName})</span>
@@ -443,15 +443,15 @@ export default function AdminClaimsPage() {
                       return (
                         <>
                           {listing.city && (
-                            <div>
+                            <div className="min-w-0">
                               <span className="text-muted-foreground">City</span>
-                              <p className="font-medium">{listing.city}</p>
+                              <p className="font-medium break-words">{listing.city}</p>
                             </div>
                           )}
                           {listing.about && (
-                            <div className="col-span-2">
+                            <div className="col-span-2 min-w-0">
                               <span className="text-muted-foreground">About</span>
-                              <p className="font-medium whitespace-pre-wrap">{listing.about}</p>
+                              <p className="font-medium whitespace-pre-wrap break-words">{listing.about}</p>
                             </div>
                           )}
                         </>
