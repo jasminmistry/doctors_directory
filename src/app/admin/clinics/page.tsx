@@ -174,7 +174,7 @@ export default function ClinicsList() {
             confirmLabel: 'Delete clinic',
           })
           if (!ok) return
-          await fetch(`/directory/api/admin/clinics/${clinic.slug}`, { method: 'DELETE' })
+          await fetch(`/directory/api/admin/clinics/${clinic.slug}/`, { method: 'DELETE' })
           setClinics((prev) => prev.filter((c) => c.slug !== clinic.slug))
         }}
         onAdd={() => router.push('/admin/clinics/new')}

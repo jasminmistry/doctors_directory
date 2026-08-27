@@ -12,7 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { HeaderIconLink } from "@/components/portal/header-icon-link";
 import { HeaderProfileMenu } from "@/components/portal/header-profile-menu";
-import { IconBuildingHospital, IconLayoutBoard, IconPackage, IconStethoscope, IconLinkOff, IconUsers, IconTrash, IconShieldCheck, IconStar, IconSparkles, IconMail, IconWorldLongitude, IconFlask, IconChartBar, IconLogout, IconWorld, IconMenu2, IconX, IconFlagCheck, IconExternalLink, IconClipboardList, IconUserCircle } from "@tabler/icons-react";
+import { IconBuildingHospital, IconLayoutBoard, IconPackage, IconStethoscope, IconLinkOff, IconUsers, IconTrash, IconShieldCheck, IconStar, IconSparkles, IconMail, IconWorldLongitude, IconFlask, IconChartBar, IconLogout, IconWorld, IconMenu2, IconX, IconFlagCheck, IconExternalLink, IconClipboardList, IconUserCircle, IconUserOff } from "@tabler/icons-react";
 
 const AdminCountsContext = createContext<{ refreshCounts: () => void }>({
   refreshCounts: () => {},
@@ -31,6 +31,7 @@ interface PendingCounts {
   pendingVerifications: number;
   pendingUnlinkRequests: number;
   pendingDirectoryRemovalRequests: number;
+  pendingAccountDeletions: number;
 }
 
 function NavBadge({ count }: { count: number }) {
@@ -65,6 +66,7 @@ const NAV = [
   { href: "/admin/treatments", label: "Treatments", icon: IconStethoscope },
   { href: "/admin/unlink-requests", label: "Unlink Requests", icon: IconLinkOff },
   { href: "/admin/directory-removal-requests", label: "Removal Requests", icon: IconTrash },
+  { href: "/admin/account-deletions", label: "Account Deletions", icon: IconUserOff },
   { href: "/admin/claims", label: "Claims", icon: IconShieldCheck },
   { href: "/admin/verification", label: "ID Verification", icon: IconShieldCheck },
   { href: "/admin/leads", label: "Leads", icon: IconClipboardList },
@@ -88,7 +90,9 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
     pendingVerifications: 0,
     pendingUnlinkRequests: 0,
     pendingDirectoryRemovalRequests: 0,
+    pendingAccountDeletions: 0,
   });
+  const [consentzSessionStale, setConsentzSessionStale] = useState(false);
 
   function refreshCounts() {
     fetch("/directory/api/admin/pending-counts/")
@@ -102,6 +106,31 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
   useEffect(() => {
     refreshCounts();
   }, [pathname]);
+
+  // Consentz session tokens for admin accounts expire after 1 hour of inactivity.
+  // Most admin pages never touch Consentz with the admin's own token at all
+  // (only claim approval/reprovisioning does today), so on an ordinary admin
+  // session that token quietly goes stale in the background — and if the admin
+  // closes the tab and comes back the next day, the directory's own login cookie
+  // (7-day) still lets them straight back in even though Consentz's token died
+  // hours ago. Check once on load (catches the "stale overnight" case) and keep
+  // pinging on an interval well inside the 1hr TTL (catches a long single
+  // session) so a dead token is surfaced up front instead of discovered mid-action.
+  useEffect(() => {
+    const KEEPALIVE_INTERVAL_MS = 15 * 60 * 1000;
+    async function checkConsentzSession() {
+      try {
+        const res = await fetch("/directory/api/admin/consentz-keepalive/", { method: "POST" });
+        const data = await res.json().catch(() => ({}));
+        setConsentzSessionStale(!data.ok);
+      } catch {
+        // Network hiccup, not necessarily a stale session — don't warn on this alone.
+      }
+    }
+    checkConsentzSession();
+    const interval = setInterval(checkConsentzSession, KEEPALIVE_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, []);
 
   async function handleLogout() {
     await fetch("/directory/api/auth/logout/", { method: "POST" });
@@ -167,7 +196,7 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                 const Icon = item.icon;
                 const active =
                   "exact" in item && item.exact
-                    ? pathname === item.href
+                    ? pathname === item.href || pathname === `${item.href}/`
                     : item.href === bestPrefixMatch;
 
                 const topCount =
@@ -175,11 +204,13 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                     ? counts.pendingUnlinkRequests
                     : item.href === "/admin/directory-removal-requests"
                       ? counts.pendingDirectoryRemovalRequests
-                      : item.href === "/admin/claims"
-                        ? counts.pendingClaims
-                        : item.href === "/admin/verification"
-                          ? counts.pendingVerifications
-                          : 0;
+                      : item.href === "/admin/account-deletions"
+                        ? counts.pendingAccountDeletions
+                        : item.href === "/admin/claims"
+                          ? counts.pendingClaims
+                          : item.href === "/admin/verification"
+                            ? counts.pendingVerifications
+                            : 0;
 
                 return (
                   <Link
@@ -257,7 +288,23 @@ export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {
                 <HeaderProfileMenu name="Admin Console" onLogout={handleLogout} />
               </div>
             </div>
-            <main className="flex-1 p-4 sm:p-6">{children}</main>
+            <main className="flex-1 p-4 sm:p-6">
+              {consentzSessionStale && (
+                <div className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                  <span>
+                    Your Consentz session has expired. Any action that talks to Consentz (approving/reprovisioning claims, etc.) will fail until you sign in again.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="shrink-0 rounded-md border border-amber-400 bg-white px-3 py-1.5 text-xs font-medium text-amber-900 hover:bg-amber-100"
+                  >
+                    Log out &amp; sign in again
+                  </button>
+                </div>
+              )}
+              {children}
+            </main>
           </div>
         </div>
       </div>

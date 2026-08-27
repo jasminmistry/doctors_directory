@@ -618,7 +618,7 @@ export function ConsultationChatDialog({
                 submitLabel="Send request"
                 submitting={offlineSubmitting}
                 onSubmit={handleOfflineSubmit}
-                emailLocked={Boolean(patientMe)}
+                emailLocked={Boolean(patientMe?.email)}
               />
             )
           )}
@@ -638,7 +638,7 @@ export function ConsultationChatDialog({
               submitLabel="Start Chat"
               submitting={startingChat}
               onSubmit={handleStartChat}
-              emailLocked={Boolean(patientMe)}
+              emailLocked={Boolean(patientMe?.email)}
             />
           )}
 

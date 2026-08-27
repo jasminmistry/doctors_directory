@@ -149,8 +149,8 @@ export default function UpgradePage() {
                   Current plan
                 </Button>
               ) : isDowngrade || plan.id === "free" ? (
-                <Button disabled variant="outline" className="w-full">
-                  Not available
+                <Button asChild variant="outline" className="w-full">
+                  <a href="/directory/portal/clinic">Manage in clinic settings</a>
                 </Button>
               ) : (
                 <Button

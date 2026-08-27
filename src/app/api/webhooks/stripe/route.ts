@@ -116,8 +116,8 @@ async function handleEventBookingPayment(session: Stripe.Checkout.Session) {
  */
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   const claim = await findClinicBySubscriptionId(subscription.id)
-  if (!claim?.clinicId) {
-    console.warn(`[stripe/webhook] subscription.updated — no clinic found for sub ${subscription.id}`)
+  if (!claim?.clinicId && !claim?.practitionerId) {
+    console.warn(`[stripe/webhook] subscription.updated — no clinic/practitioner found for sub ${subscription.id}`)
     return
   }
 
@@ -131,16 +131,16 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     statusLabel = 'cancel_at_period_end'
   }
 
-  await prisma.clinic.update({
-    where: { id: claim.clinicId },
-    data: {
-      stripeSubscriptionStatus: statusLabel,
-      subscriptionCancelAt: cancelAt,
-    },
-  })
+  const data = { stripeSubscriptionStatus: statusLabel, subscriptionCancelAt: cancelAt }
+
+  if (claim.clinicId) {
+    await prisma.clinic.update({ where: { id: claim.clinicId }, data })
+  } else if (claim.practitionerId) {
+    await prisma.practitioner.update({ where: { id: claim.practitionerId }, data })
+  }
 
   console.info(
-    `[stripe/webhook] subscription.updated: clinicId=${claim.clinicId} status=${statusLabel} cancelAt=${cancelAt?.toISOString() ?? 'none'}`,
+    `[stripe/webhook] subscription.updated: clinicId=${claim.clinicId ?? '-'} practitionerId=${claim.practitionerId ?? '-'} status=${statusLabel} cancelAt=${cancelAt?.toISOString() ?? 'none'}`,
   )
 }
 
@@ -152,21 +152,38 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
  */
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const claim = await findClinicBySubscriptionId(subscription.id)
-  if (!claim?.clinicId) {
-    console.warn(`[stripe/webhook] subscription.deleted — no clinic found for sub ${subscription.id}`)
+  if (!claim?.clinicId && !claim?.practitionerId) {
+    console.warn(`[stripe/webhook] subscription.deleted — no clinic/practitioner found for sub ${subscription.id}`)
     return
   }
 
-  await prisma.clinic.update({
-    where: { id: claim.clinicId },
-    data: {
-      claimedPlan: 'free',
-      stripeSubscriptionStatus: 'canceled',
-      subscriptionCancelAt: null,
-    },
-  })
-
-  console.info(`[stripe/webhook] subscription.deleted: clinicId=${claim.clinicId} → downgraded to free`)
+  if (claim.clinicId) {
+    const clinic = await prisma.clinic.findUnique({ where: { id: claim.clinicId }, select: { downgradeToPlan: true } })
+    const targetPlan = clinic?.downgradeToPlan ?? 'free'
+    await prisma.clinic.update({
+      where: { id: claim.clinicId },
+      data: {
+        claimedPlan: targetPlan,
+        stripeSubscriptionStatus: 'canceled',
+        subscriptionCancelAt: null,
+        downgradeToPlan: null,
+      },
+    })
+    console.info(`[stripe/webhook] subscription.deleted: clinicId=${claim.clinicId} → downgraded to ${targetPlan}`)
+  } else if (claim.practitionerId) {
+    const practitioner = await prisma.practitioner.findUnique({ where: { id: claim.practitionerId }, select: { downgradeToPlan: true } })
+    const targetPlan = practitioner?.downgradeToPlan ?? 'free'
+    await prisma.practitioner.update({
+      where: { id: claim.practitionerId },
+      data: {
+        claimedPlan: targetPlan,
+        stripeSubscriptionStatus: 'canceled',
+        subscriptionCancelAt: null,
+        downgradeToPlan: null,
+      },
+    })
+    console.info(`[stripe/webhook] subscription.deleted: practitionerId=${claim.practitionerId} → downgraded to ${targetPlan}`)
+  }
 }
 
 /**
@@ -185,14 +202,15 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   if (!subscriptionId) return
 
   const claim = await findClinicBySubscriptionId(subscriptionId)
-  if (!claim?.clinicId) return
+  if (!claim?.clinicId && !claim?.practitionerId) return
 
-  await prisma.clinic.update({
-    where: { id: claim.clinicId },
-    data: { stripeSubscriptionStatus: 'past_due' },
-  })
+  if (claim.clinicId) {
+    await prisma.clinic.update({ where: { id: claim.clinicId }, data: { stripeSubscriptionStatus: 'past_due' } })
+  } else if (claim.practitionerId) {
+    await prisma.practitioner.update({ where: { id: claim.practitionerId }, data: { stripeSubscriptionStatus: 'past_due' } })
+  }
 
-  console.warn(`[stripe/webhook] invoice.payment_failed: clinicId=${claim.clinicId} subscription=${subscriptionId}`)
+  console.warn(`[stripe/webhook] invoice.payment_failed: clinicId=${claim.clinicId ?? '-'} practitionerId=${claim.practitionerId ?? '-'} subscription=${subscriptionId}`)
 }
 
 // ── Main webhook handler ──────────────────────────────────────────────────────
@@ -225,10 +243,13 @@ export async function POST(req: NextRequest) {
 
       if (claimId && plan) {
         try {
+          // Persist Stripe identifiers unconditionally — covers both the claim-time checkout
+          // (status still otp_verified) and a later portal-upgrade checkout (status already
+          // approved), so findClinicBySubscriptionId() can always locate the entity for the
+          // subscription lifecycle webhooks below.
           await prisma.claimRequest.updateMany({
-            where: { id: claimId, status: 'otp_verified' },
+            where: { id: claimId },
             data: {
-              status: 'pending_approval',
               stripeCustomerId: customerId,
               stripeSubscriptionId: session.mode === 'subscription'
                 ? (session.subscription as string | null)
@@ -236,32 +257,53 @@ export async function POST(req: NextRequest) {
             },
           })
 
-          if (plan === 'pay_per_lead' && session.mode === 'setup' && customerId) {
-            const claim = await prisma.claimRequest.findUnique({
-              where: { id: claimId },
-              select: { clinicId: true },
-            })
-            if (claim?.clinicId) {
-              await prisma.clinic.update({
-                where: { id: claim.clinicId },
-                data: { stripeCustomerId: customerId },
-              })
-              console.info(`[stripe] Stored stripeCustomerId on clinic ${claim.clinicId} for PPL`)
+          // Claim-time flow only: move into the admin approval queue. claimedPlan is set
+          // when admin approves (src/app/api/admin/claims/[id]/route.ts), not here.
+          const statusFlip = await prisma.claimRequest.updateMany({
+            where: { id: claimId, status: 'otp_verified' },
+            data: { status: 'pending_approval' },
+          })
+
+          const claim = await prisma.claimRequest.findUnique({
+            where: { id: claimId },
+            select: { clinicId: true, practitionerId: true, status: true },
+          })
+
+          // A portal upgrade happens against an already-approved claim — the status flip
+          // above matches nothing in that case, so this checkout must apply the plan
+          // change directly instead of waiting on an admin approval step that already happened.
+          const isPortalUpgrade = claim?.status === 'approved' && statusFlip.count === 0
+
+          if (claim && plan === 'pay_per_lead' && session.mode === 'setup' && customerId) {
+            const data = {
+              stripeCustomerId: customerId,
+              ...(isPortalUpgrade ? { claimedPlan: 'pay_per_lead' as const, downgradeToPlan: null } : {}),
             }
+            if (claim.clinicId) {
+              await prisma.clinic.update({ where: { id: claim.clinicId }, data })
+            } else if (claim.practitionerId) {
+              await prisma.practitioner.update({ where: { id: claim.practitionerId }, data })
+            }
+            console.info(
+              `[stripe] PPL setup stored: clinicId=${claim.clinicId ?? '-'} practitionerId=${claim.practitionerId ?? '-'} portalUpgrade=${isPortalUpgrade}`,
+            )
           }
 
           // When a new subscription activates, record the status as active
-          if (plan === 'subscription' && session.mode === 'subscription') {
-            const claim = await prisma.claimRequest.findUnique({
-              where: { id: claimId },
-              select: { clinicId: true },
-            })
-            if (claim?.clinicId) {
-              await prisma.clinic.update({
-                where: { id: claim.clinicId },
-                data: { stripeSubscriptionStatus: 'active', subscriptionCancelAt: null },
-              })
+          if (claim && plan === 'subscription' && session.mode === 'subscription') {
+            const data = {
+              stripeSubscriptionStatus: 'active',
+              subscriptionCancelAt: null,
+              ...(isPortalUpgrade ? { claimedPlan: 'subscription' as const, downgradeToPlan: null } : {}),
             }
+            if (claim.clinicId) {
+              await prisma.clinic.update({ where: { id: claim.clinicId }, data })
+            } else if (claim.practitionerId) {
+              await prisma.practitioner.update({ where: { id: claim.practitionerId }, data })
+            }
+            console.info(
+              `[stripe] Subscription activated: clinicId=${claim.clinicId ?? '-'} practitionerId=${claim.practitionerId ?? '-'} portalUpgrade=${isPortalUpgrade}`,
+            )
           }
         } catch (error) {
           console.error('[stripe] checkout.session.completed (claim) processing error:', error)

@@ -145,7 +145,7 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
     const ranked = buildClinicRankedEntries(clinics, 6)
     const listItems = clinicItemListFromClinics(
       clinics,
-      (clinic) => getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
+      (clinic) => getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name })
     )
     const jsonLdSchemas = [
       buildBreadcrumbListJsonLd([
@@ -154,7 +154,7 @@ export default function StandaloneDirectoryPage({ params }: PageProps) {
       ]),
       buildItemListJsonLd(`${entry.name} Treatment Clinics`, listItems),
       ...buildMedicalClinicListJsonLd(clinics, (clinic) =>
-        getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
+        getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name })
       ),
     ]
 

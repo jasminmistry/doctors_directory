@@ -34,6 +34,9 @@ const PRACTITIONER_PORTAL_SELECT = {
   idVerified: true,
   claimedPlan: true,
   claimedAt: true,
+  stripeSubscriptionStatus: true,
+  subscriptionCancelAt: true,
+  downgradeToPlan: true,
   clinicAssociations: {
     take: 1,
     include: {
@@ -71,9 +74,12 @@ export async function GET() {
       ...rest,
       citySlug,
       subscription: {
-        plan: claim?.selectedPlan ?? practitioner.claimedPlan ?? null,
+        plan: practitioner.claimedPlan ?? claim?.selectedPlan ?? null,
         stripeSubscriptionId: claim?.stripeSubscriptionId ?? null,
         approvedAt: claim?.approvedAt ?? practitioner.claimedAt ?? null,
+        stripeStatus: practitioner.stripeSubscriptionStatus ?? null,
+        cancelAt: practitioner.subscriptionCancelAt ?? null,
+        downgradeToPlan: practitioner.downgradeToPlan ?? null,
       },
     })
   } catch (error) {

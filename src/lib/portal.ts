@@ -32,14 +32,20 @@ export async function getPortalUser(): Promise<PortalUser | null> {
   const username = cookieStore.get(COOKIE_USERNAME)?.value
   if (!username) return null
 
-  const claims = await prisma.claimRequest.findMany({
+  const rawClaims = await prisma.claimRequest.findMany({
     where: { consentzUsername: username, status: 'approved' },
     include: {
-      clinic: { select: { slug: true, gmapsUrl: true, image: true } },
-      practitioner: { select: { displayName: true, slug: true } },
+      clinic: { select: { slug: true, gmapsUrl: true, image: true, scheduledDeletionAt: true } },
+      practitioner: { select: { displayName: true, slug: true, scheduledDeletionAt: true } },
     },
     orderBy: { approvedAt: 'desc' },
   })
+
+  // A claim whose clinic/practitioner is mid-deletion (grace period or already purged)
+  // must not grant portal access, even if the browser still holds a valid session cookie.
+  const claims = rawClaims.filter(
+    (c) => !(c.entityType === 'clinic' ? c.clinic?.scheduledDeletionAt : c.practitioner?.scheduledDeletionAt),
+  )
 
   if (claims.length === 0) return null
 

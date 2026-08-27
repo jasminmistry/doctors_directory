@@ -60,7 +60,7 @@ export function BestInCityDirectoryPage({ entry }: Props) {
   )
 
   const listItems = clinicItemListFromClinics(clinics, (clinic) =>
-    getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
+    getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name })
   )
 
   const jsonLdSchemas = [
@@ -75,7 +75,7 @@ export function BestInCityDirectoryPage({ entry }: Props) {
     ),
     buildFaqPageJsonLd(consumerContent.faqItems),
     ...buildMedicalClinicListJsonLd(clinics, (clinic) =>
-      getClinicDisplayName({ slug: clinic.slug, url: clinic.url })
+      getClinicDisplayName({ slug: clinic.slug, url: clinic.url, name: clinic.name })
     ),
   ]
 

@@ -647,8 +647,8 @@ function SitemapSection({
   id?: string
 }) {
   return (
-    <section className="mb-14">
-      <h2 className="text-xl font-medium text-gray-900 mb-5 pb-2 border-b-2 border-[#e0e0e0] ">{title}</h2>
+    <section id={id} className="mb-14 scroll-mt-6">
+      <h2 className="text-xl font-medium text-gray-900 mb-5 pb-2 border-b-2 border-[#e0e0e0]">{title}</h2>
       {children}
     </section>
   )

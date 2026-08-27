@@ -36,6 +36,7 @@ import { getClinicDisplayName } from "@/lib/clinic-display";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 import { isConsentzClinicSlug } from "@/lib/consentz-customers";
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
+
 interface ProfilePageProps {
   params: {
     cityslug: string;
@@ -102,7 +103,10 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     .filter(
       (p) => p.City?.toLowerCase() === normalizedCitySlug && !isRemovedClinicSlug(p.slug)
     )
-    .map((clinic) => applyPrestigeToClinic(clinic))
+    .map((clinic) => applyPrestigeToClinic({
+      ...clinic,
+      isConsentz: isConsentzClinicSlug(clinic.slug) || Boolean(clinic.isConsentz),
+    }))
     .sort((left, right) => {
       const leftConsentz = isConsentzClinicSlug(left.slug) || Boolean(left.isConsentz);
       const rightConsentz = isConsentzClinicSlug(right.slug) || Boolean(right.isConsentz);

@@ -223,6 +223,90 @@ ${BASE_URL}/directory/portal/login
   })
 }
 
+const PLAN_LABEL: Record<string, string> = {
+  free: 'Free',
+  pay_per_lead: 'Pay Per Lead',
+  subscription: 'Subscription',
+}
+
+export async function sendPlanChangeEmail({
+  to,
+  entityName,
+  action,
+  fromPlan,
+  toPlan,
+  effectiveDate,
+}: {
+  to: string
+  entityName: string
+  action: 'scheduled_cancel' | 'immediate_downgrade' | 'resumed'
+  fromPlan: string
+  toPlan: string | null
+  effectiveDate: Date | null
+}) {
+  const transport = createTransport()
+  const fromLabel = PLAN_LABEL[fromPlan] ?? fromPlan
+  const toLabel = toPlan ? (PLAN_LABEL[toPlan] ?? toPlan) : null
+  const effectiveDateLabel = effectiveDate
+    ? effectiveDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    : null
+
+  let subject: string
+  let heading: string
+  let bodyText: string
+  let bodyHtml: string
+
+  if (action === 'scheduled_cancel') {
+    subject = `Your plan change for ${entityName} is scheduled`
+    heading = 'Plan change scheduled'
+    bodyText = `Your ${fromLabel} plan will change to ${toLabel} on ${effectiveDateLabel}. You'll keep full access to your current plan until then.`
+    bodyHtml = `<p>Your <strong>${fromLabel}</strong> plan for <strong>${entityName}</strong> will change to <strong>${toLabel}</strong> on <strong>${effectiveDateLabel}</strong>.</p><p>You'll keep full access to your current plan until then.</p>`
+  } else if (action === 'immediate_downgrade') {
+    subject = `${entityName} has been moved to the ${toLabel} plan`
+    heading = 'Plan changed'
+    bodyText = `Your plan for ${entityName} has changed from ${fromLabel} to ${toLabel}, effective immediately.`
+    bodyHtml = `<p>Your plan for <strong>${entityName}</strong> has changed from <strong>${fromLabel}</strong> to <strong>${toLabel}</strong>, effective immediately.</p>`
+  } else {
+    subject = `Your ${entityName} subscription cancellation was undone`
+    heading = 'Cancellation undone'
+    bodyText = `Your scheduled cancellation for ${entityName} has been reversed. You'll stay on the ${fromLabel} plan and continue to be billed as normal.`
+    bodyHtml = `<p>Your scheduled cancellation for <strong>${entityName}</strong> has been reversed. You'll stay on the <strong>${fromLabel}</strong> plan and continue to be billed as normal.</p>`
+  }
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject,
+    text: `
+Hi,
+
+${bodyText}
+
+View your plan in your portal:
+${BASE_URL}/directory/portal/login
+
+— The Consentz Team
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
+  <h2 style="margin-bottom:8px;">${heading}</h2>
+  ${bodyHtml}
+  <a href="${BASE_URL}/directory/portal/login"
+     style="display:inline-block;margin:24px 0;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
+    Go to Dashboard
+  </a>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">— The Consentz Team</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
 export async function sendPplLeadTeaserEmail({
   to,
   clinicName,
@@ -555,6 +639,109 @@ ${reviewUrl}
      style="display:inline-block;margin:0 0 24px;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
     Review removal requests
   </a>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">— Consentz Directory</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
+export async function sendAccountDeletionRequestedEmail({
+  to,
+  entityName,
+  scheduledDeletionAt,
+  cancelUrl,
+}: {
+  to: string
+  entityName: string
+  scheduledDeletionAt: Date
+  cancelUrl: string
+}) {
+  const transport = createTransport()
+  const dateStr = scheduledDeletionAt.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject: `Your Consentz Directory listing is scheduled for deletion`,
+    text: `
+We've received a request to delete ${entityName}'s profile from the Consentz Directory.
+
+Your listing has been hidden immediately. Unless you cancel, it will be permanently deleted on ${dateStr}.
+
+If this wasn't you, or you've changed your mind, cancel the deletion here:
+${cancelUrl}
+
+— Consentz Directory
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
+  <h2 style="margin-bottom:8px;">Your listing is scheduled for deletion</h2>
+  <p>We've received a request to delete <strong>${entityName}</strong>'s profile from the Consentz Directory.</p>
+  <p>Your listing has been hidden immediately. Unless you cancel, it will be <strong>permanently deleted on ${dateStr}</strong>.</p>
+  <a href="${cancelUrl}"
+     style="display:inline-block;margin:16px 0 24px;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
+    Cancel deletion
+  </a>
+  <p style="color:#666;font-size:13px;">If this wasn't you, cancelling will restore your listing and portal access immediately.</p>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">— Consentz Directory</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
+export async function sendAccountDeletionRequestedNotification({
+  entityType,
+  entityName,
+  entitySlug,
+  scheduledDeletionAt,
+}: {
+  entityType: 'clinic' | 'practitioner'
+  entityName: string
+  entitySlug: string
+  scheduledDeletionAt: Date
+}) {
+  const transport = createTransport()
+  const dateStr = scheduledDeletionAt.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })
+
+  await transport.sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    subject: `Account deletion requested — ${entityName}`,
+    text: `
+${entityName} (${entityType}) has requested to delete their profile from the Consentz Directory.
+
+Slug: ${entitySlug}
+Scheduled hard-delete: ${dateStr} (7-day grace period, self-cancellable via emailed link)
+
+— Consentz Directory
+    `.trim(),
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
+  <h2 style="margin-bottom:8px;">Account deletion requested</h2>
+  <p><strong>${entityName}</strong> (${entityType}) has requested to delete their profile from the Consentz Directory.</p>
+  <table style="margin:20px 0;background:#f5f5f5;border-radius:8px;width:100%;border-collapse:collapse;">
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;width:40%;border-bottom:1px solid #e5e5e5;">Slug</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #e5e5e5;">${entitySlug}</td>
+    </tr>
+    <tr>
+      <td style="padding:10px 16px;font-weight:600;">Scheduled hard-delete</td>
+      <td style="padding:10px 16px;">${dateStr}</td>
+    </tr>
+  </table>
+  <p style="color:#666;font-size:13px;">Self-serve, 7-day grace period. No action needed unless you want to restore or purge it early from the admin console.</p>
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
   <p style="color:#999;font-size:12px;">— Consentz Directory</p>
 </body>

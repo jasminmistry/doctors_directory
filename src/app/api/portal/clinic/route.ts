@@ -15,6 +15,7 @@ const CLINIC_PORTAL_SELECT = {
   claimedPlan: true,
   stripeSubscriptionStatus: true,
   subscriptionCancelAt: true,
+  downgradeToPlan: true,
   coreClinicId: true,
   coreUnlinkRequestedAt: true,
   image: true,
@@ -64,6 +65,7 @@ export async function GET() {
         approvedAt: claim?.approvedAt ?? null,
         stripeStatus: clinic.stripeSubscriptionStatus ?? null,
         cancelAt: clinic.subscriptionCancelAt ?? null,
+        downgradeToPlan: clinic.downgradeToPlan ?? null,
       },
     })
   } catch (error) {
