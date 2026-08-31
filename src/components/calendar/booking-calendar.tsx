@@ -213,6 +213,7 @@ export function BookingCalendar({ bookings, clinicTimezone, onRefresh, refreshin
                       <button
                         key={b.id}
                         onClick={() => setSelected(b)}
+                        title={`${format(zoned(b.slotStart, clinicTimezone), 'HH:mm')} ${b.patientName}${b.treatment ? ` — ${b.treatment}` : ''}`}
                         className={cn(
                           'w-full truncate rounded border px-1 py-0.5 text-left text-[10px] font-medium transition-opacity hover:opacity-80',
                           STATUS_STYLES[b.status],
@@ -360,20 +361,29 @@ function WeekView({
                   const topMinutes = (start.getHours() - hourStart) * 60 + start.getMinutes()
                   const durationMinutes = Math.max(differenceInMinutes(end, start), 15)
                   const top = (topMinutes / 60) * GRID_HEIGHT
-                  const height = Math.max((durationMinutes / 60) * GRID_HEIGHT, 20)
+                  const height = Math.max((durationMinutes / 60) * GRID_HEIGHT, 22)
+                  // Only render the second (treatment) line when the block is tall
+                  // enough to show it fully — otherwise it gets clipped mid-line and
+                  // reads as broken. Full label is always on the tooltip + detail panel.
+                  const showTreatment = !!b.treatment && height >= 42
+                  const label = `${format(start, 'HH:mm')} ${b.patientName}${b.treatment ? ` — ${b.treatment}` : ''}`
 
                   return (
                     <button
                       key={b.id}
                       onClick={() => onSelect(b)}
+                      title={label}
+                      aria-label={label}
                       style={{ top, height, left: 2, right: 2 }}
                       className={cn(
-                        'absolute overflow-hidden rounded border px-1 py-0.5 text-left text-[10px] font-medium transition-opacity hover:opacity-80',
+                        'absolute flex flex-col overflow-hidden rounded border px-1 py-0.5 text-left text-[10px] font-medium leading-tight transition-opacity hover:opacity-80',
                         STATUS_STYLES[b.status],
                       )}
                     >
-                      <span className="block truncate">{format(start, 'HH:mm')} {b.patientName}</span>
-                      {b.treatment && <span className="block truncate opacity-70">{b.treatment}</span>}
+                      <span className="block truncate">
+                        <span className="tabular-nums opacity-70">{format(start, 'HH:mm')}</span> {b.patientName}
+                      </span>
+                      {showTreatment && <span className="block truncate opacity-70">{b.treatment}</span>}
                     </button>
                   )
                 })}

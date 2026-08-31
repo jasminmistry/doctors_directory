@@ -66,7 +66,7 @@ export default function PortalPractitionerPage() {
         />
       )}
 
-      {/* Danger zone */}
+      {/* Delete profile */}
       {entityName && <DangerZonePanel entityType="practitioner" entityName={entityName} plan={subscription?.plan} />}
     </div>
   )
