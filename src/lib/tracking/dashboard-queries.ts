@@ -257,10 +257,20 @@ function mapConsultationLeadRow(row: {
   notificationEmailReadAt: Date | null
   clinic: {
     slug: string
+    email: string | null
     city: { slug: string } | null
   }
 }) {
   const citySlug = row.clinic.city?.slug ?? "unknown"
+  const clinicEmail = row.clinic.email?.trim() || null
+  // Distinguishes a genuine send failure ("not_sent") from the case where the
+  // clinic has no contact address on record ("no_clinic_email") — the latter
+  // renders differently in the dashboard so admins don't chase a non-bug.
+  const emailStatus = row.notificationEmailSentAt
+    ? "sent"
+    : clinicEmail
+      ? "not_sent"
+      : "no_clinic_email"
   return {
     id: `consultation-${row.id}`,
     timestamp: row.createdAt.toISOString(),
@@ -275,6 +285,8 @@ function mapConsultationLeadRow(row: {
     location: row.location,
     budget: null,
     lead_type: "consultation",
+    email_status: emailStatus,
+    clinic_email: clinicEmail,
     email_recipient: row.notificationEmailTo,
     email_sent_at: row.notificationEmailSentAt ? row.notificationEmailSentAt.toISOString() : null,
     email_read_at: row.notificationEmailReadAt ? row.notificationEmailReadAt.toISOString() : null,
@@ -309,6 +321,10 @@ function mapLeadRow(row: {
     location: row.location,
     budget: row.budget,
     lead_type: "pricing",
+    // Legacy DirectoryLead rows predate clinic-notification tracking — there is
+    // no email to report either way.
+    email_status: "not_tracked",
+    clinic_email: null,
     email_recipient: null,
     email_sent_at: null,
     email_read_at: null,
@@ -552,6 +568,7 @@ export async function listTrackingRows(
           clinic: {
             select: {
               slug: true,
+              email: true,
               city: { select: { slug: true } },
             },
           },
