@@ -11,6 +11,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { getProductsByCategory } from "@/lib/data-access/products";
+import { resolveDirectoryPageMeta } from "@/lib/directory-page-meta";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { CategoryProductsGrid } from "./CategoryProductsGrid";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
@@ -130,15 +131,22 @@ export async function generateMetadata({ params }: ProfilePageProps) {
     ? `Compare prices for ${sampleNames} and more. Access verified medical supplies and bulk pricing from multiple clinic distributors.`
     : `Explore the ${resolvedCategory} range. View pricing and find verified medical distributors for your clinic.`;
 
-  return {
+  const categorySlug = toUrlSlug(resolvedCategory);
+  const meta = resolveDirectoryPageMeta(`/products/category/${categorySlug}/`, {
     title: `${resolvedCategory}: Compare Brands and Pricing`,
     description,
+  });
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    ...(meta.keywords ? { keywords: meta.keywords } : {}),
     alternates: {
       canonical: toDirectoryCanonical(`/products/category/${canonicalCategory}`),
     },
     openGraph: {
-      title: `${resolvedCategory}: Compare Brands and Pricing`,
-      description,
+      title: meta.title,
+      description: meta.description,
       images: [
         {
           url: categoryProducts[0]?.image_url || "/og-image.png",
