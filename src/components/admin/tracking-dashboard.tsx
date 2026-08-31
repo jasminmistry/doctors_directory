@@ -11,6 +11,7 @@ import {
   LayoutGrid,
   Link2,
   Mail,
+  MailX,
   MessageSquareText,
   Search,
   Share2,
@@ -154,9 +155,34 @@ function EntityTypeIcon({ entityType }: { entityType: string }) {
   )
 }
 
-function EmailSentCell({ sentAt }: { sentAt: unknown }) {
+function EmailSentCell({ sentAt, status }: { sentAt: unknown; status?: unknown }) {
   const iso = typeof sentAt === "string" ? sentAt : null
   if (!iso) {
+    if (status === "no_clinic_email") {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="inline-flex items-center gap-1 text-amber-600">
+              <MailX className="size-4" />
+              No clinic email
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            No contact email on record for this clinic, so no notification could be sent.
+          </TooltipContent>
+        </Tooltip>
+      )
+    }
+    if (status === "not_tracked") {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="text-gray-400">—</span>
+          </TooltipTrigger>
+          <TooltipContent>Legacy lead — notification emails were not tracked.</TooltipContent>
+        </Tooltip>
+      )
+    }
     return (
       <span className="inline-flex items-center gap-1 text-gray-400">
         <XCircle className="size-4" />
@@ -869,13 +895,22 @@ export function TrackingDashboard() {
                       <td className="px-3 py-2">{row.location ? String(row.location) : "—"}</td>
                       <td className="px-3 py-2">{row.budget ? String(row.budget) : "—"}</td>
                       <td className="px-3 py-2 whitespace-nowrap">
-                        <EmailSentCell sentAt={row.email_sent_at} />
+                        <EmailSentCell sentAt={row.email_sent_at} status={row.email_status} />
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
                         <EmailReadCell readAt={row.email_read_at} sentAt={row.email_sent_at} />
                       </td>
-                      <td className="px-3 py-2 max-w-[180px] truncate" title={row.email_recipient ? String(row.email_recipient) : ""}>
-                        {row.email_recipient ? String(row.email_recipient) : "—"}
+                      <td
+                        className="px-3 py-2 max-w-[180px] truncate"
+                        title={String(row.email_recipient || row.clinic_email || "")}
+                      >
+                        {row.email_recipient ? (
+                          String(row.email_recipient)
+                        ) : row.clinic_email ? (
+                          <span className="text-gray-400">{String(row.clinic_email)}</span>
+                        ) : (
+                          "—"
+                        )}
                       </td>
                     </>
                   )}

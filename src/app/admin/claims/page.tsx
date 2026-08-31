@@ -60,7 +60,24 @@ const columns = [
       </Badge>
     ),
   },
-  { key: 'entityName', label: 'Profile' },
+  {
+    key: 'entityName',
+    label: 'Profile',
+    render: (value: string, row: Claim) =>
+      row.profileUrl ? (
+        <a
+          href={row.profileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="text-black hover:underline"
+        >
+          {value} ↗
+        </a>
+      ) : (
+        value
+      ),
+  },
   { key: 'claimerName', label: 'Claimer' },
   { key: 'claimerEmail', label: 'Email' },
   {
@@ -114,6 +131,7 @@ interface Claim {
   newListingData: string | null
   clinicSlug: string | null
   practitionerSlug: string | null
+  profileUrl: string | null
   claimerName: string
   claimerEmail: string
   clinicNameInput: string | null
@@ -339,7 +357,18 @@ export default function AdminClaimsPage() {
                 </div>
                 <div className="min-w-0">
                   <span className="text-muted-foreground">Profile</span>
-                  <p className="font-medium break-words">{reviewClaim.entityName}</p>
+                  {reviewClaim.profileUrl ? (
+                    <a
+                      href={reviewClaim.profileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-black hover:underline break-words block"
+                    >
+                      {reviewClaim.entityName} ↗
+                    </a>
+                  ) : (
+                    <p className="font-medium break-words">{reviewClaim.entityName}</p>
+                  )}
                 </div>
                 <div className="min-w-0">
                   <span className="text-muted-foreground">Claimer</span>

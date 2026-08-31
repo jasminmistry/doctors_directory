@@ -169,55 +169,59 @@ export async function POST(req: NextRequest) {
         data: { notificationEmailTo: clinic.email, notificationEmailSentAt: new Date() },
       })
 
-    if (isGhostLead) {
-      if (clinic.email) {
-        // Skip the "claim your profile" email if a claim is already in flight or
-        // approved — the clinic already knows, no need to nag them again.
-        const claimState = await getClaimState({ claimed: false, entityType: 'clinic', slug: clinicSlug })
-        if (claimState === 'unclaimed') {
-          const pendingCount = await prisma.consultationLead.count({
-            where: { clinicId: clinic.id, isGhostLead: true, isUnlocked: false },
-          })
-          sendGhostLeadHook({
+    // Notify the clinic. The lead is already persisted, so a send failure must not
+    // fail the request — log and move on. Awaited (not fire-and-forget) so the
+    // "email sent" timestamp is committed before we respond: a worker restart
+    // between the send and the DB write can no longer lose it.
+    try {
+      if (isGhostLead) {
+        if (clinic.email) {
+          // Skip the "claim your profile" email if a claim is already in flight or
+          // approved — the clinic already knows, no need to nag them again.
+          const claimState = await getClaimState({ claimed: false, entityType: 'clinic', slug: clinicSlug })
+          if (claimState === 'unclaimed') {
+            const pendingCount = await prisma.consultationLead.count({
+              where: { clinicId: clinic.id, isGhostLead: true, isUnlocked: false },
+            })
+            await sendGhostLeadHook({
+              to: clinic.email,
+              clinicName: clinic.name ?? clinicSlug,
+              patientFirstName: firstName,
+              location: location ?? '',
+              pendingCount,
+              claimUrl: `${baseUrl}/directory/claim/${clinicSlug}`,
+              trackingPixelUrl,
+            })
+            await recordEmailSent()
+          }
+        }
+      } else if (clinic.email) {
+        const portalUrl = `${baseUrl}/directory/portal/clinic/prospects`
+        if (clinic.claimedPlan === 'subscription') {
+          await sendLeadNotificationEmail({
             to: clinic.email,
             clinicName: clinic.name ?? clinicSlug,
-            patientFirstName: firstName,
-            location: location ?? '',
-            pendingCount,
-            claimUrl: `${baseUrl}/directory/claim/${clinicSlug}`,
+            patientName,
+            contact: patientEmail,
+            treatment,
+            location,
+            portalUrl,
             trackingPixelUrl,
           })
-            .then(recordEmailSent)
-            .catch((err) => console.error('[leads] ghost hook email error:', err))
+        } else {
+          await sendPplLeadTeaserEmail({
+            to: clinic.email,
+            clinicName: clinic.name ?? clinicSlug,
+            treatment,
+            location,
+            portalUrl,
+            trackingPixelUrl,
+          })
         }
+        await recordEmailSent()
       }
-    } else if (clinic.email) {
-      const portalUrl = `${baseUrl}/directory/portal/clinic/prospects`
-      if (clinic.claimedPlan === 'subscription') {
-        sendLeadNotificationEmail({
-          to: clinic.email,
-          clinicName: clinic.name ?? clinicSlug,
-          patientName,
-          contact: patientEmail,
-          treatment,
-          location,
-          portalUrl,
-          trackingPixelUrl,
-        })
-          .then(recordEmailSent)
-          .catch((err) => console.error('[leads] notification email error:', err))
-      } else {
-        sendPplLeadTeaserEmail({
-          to: clinic.email,
-          clinicName: clinic.name ?? clinicSlug,
-          treatment,
-          location,
-          portalUrl,
-          trackingPixelUrl,
-        })
-          .then(recordEmailSent)
-          .catch((err) => console.error('[leads] ppl teaser email error:', err))
-      }
+    } catch (err) {
+      console.error('[leads] clinic notification email error:', err)
     }
 
     return NextResponse.json({ success: true, leadId: lead.id })
