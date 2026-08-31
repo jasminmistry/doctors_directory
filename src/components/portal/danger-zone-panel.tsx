@@ -19,16 +19,13 @@ export function DangerZonePanel({ entityType, entityName, plan }: DangerZonePane
   }
 
   return (
-    <div className="rounded-lg border border-red-200 bg-red-50/40 p-6 space-y-4">
-      <h2 className="text-xs font-medium text-red-700 uppercase tracking-[0.2em]">
-        Danger Zone
-      </h2>
+    <div className="rounded-lg border border-gray-200 bg-white p-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <p className="text-sm font-medium text-gray-900">Delete this {entityType} profile</p>
-          <p className="text-xs text-gray-600 mt-0.5 max-w-md">
-            Permanently deletes your listing and portal access. Hidden immediately, then permanently
-            removed after a 7-day grace period — you can cancel any time before then via an emailed link.
+          <p className="text-xs text-gray-500 mt-1 max-w-md">
+            Hidden immediately, then permanently removed after a 7-day grace period. You can cancel any
+            time before then via an emailed link.
           </p>
         </div>
         <button

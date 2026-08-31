@@ -83,7 +83,7 @@ export default function PortalClinicPage() {
         onRefresh={fetchClinicData}
       />
 
-      {/* Danger zone */}
+      {/* Delete profile */}
       {entityName && <DangerZonePanel entityType="clinic" entityName={entityName} plan={subscription?.plan} />}
     </div>
   );

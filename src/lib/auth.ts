@@ -92,7 +92,7 @@ export function consentzFetch(url: string, init: RequestInit): Promise<Response>
  * trusted to detect a failed call; every Consentz response body must also be
  * checked for an `error` envelope. See CONSENTZ_AUTH_API_URL callers below.
  */
-function extractApiErrorCode(json: Record<string, unknown>): number | undefined {
+export function extractApiErrorCode(json: Record<string, unknown>): number | undefined {
   const error = json.error as Record<string, unknown> | undefined
   return typeof error?.code === 'number' ? error.code : undefined
 }
