@@ -3,7 +3,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { IconBuildingHospital, IconMailOpened, IconCalendarWeek, IconLogout, IconExternalLink, IconWorld, IconUser, IconLock, IconMessages, IconCalendarCheck, IconX, IconMenu2, IconCalendarMonth, IconCalendarClock, IconMessage, IconPresentation, IconClock, IconCurrencyPound, IconCalendarDue, IconPresentationAnalytics } from "@tabler/icons-react";
+import { IconBuildingHospital, IconMailOpened, IconCalendarWeek, IconLogout, IconExternalLink, IconWorld, IconUser, IconLock, IconMessages, IconCalendarCheck, IconX, IconMenu2, IconCalendarMonth, IconCalendarClock, IconMessage, IconPresentation, IconClock, IconCurrencyPound, IconCalendarDue, IconPresentationAnalytics, IconBrandGoogle, IconStar } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { LeadBadge } from "@/components/portal/lead-badge";
 import { ChatBadge } from "@/components/portal/chat-badge";
@@ -264,6 +264,48 @@ export function PortalLayoutClient({
                       Prospects
                     </span>
                   </li>
+
+                  {[
+                    { href: "/portal/clinic/google", label: "Google Profile", Icon: IconBrandGoogle, lockedTitle: "Upgrade to sync with Google" },
+                    { href: "/portal/clinic/reviews", label: "Reviews", Icon: IconStar, lockedTitle: "Upgrade to collect reviews" },
+                  ].map(({ href, label, Icon, lockedTitle }) =>
+                    plan === "free" ? (
+                      <li key={href} className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                        <span
+                          className="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0"
+                          title={lockedTitle}
+                        >
+                          <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
+                            <Icon stroke={1.5} />
+                            <IconLock stroke={1.5} className="absolute -bottom-1 -right-1 h-3 w-3 shrink-0" />
+                          </span>
+                          <span className="lg:hidden">{label}</span>
+                        </span>
+                        <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                          {lockedTitle}
+                        </span>
+                      </li>
+                    ) : (
+                      <li key={href} className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">
+                        <Link
+                          href={href}
+                          onClick={() => setIsMobileNavOpen(false)}
+                          className={cn(
+                            "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:h-11 lg:w-11 lg:justify-center lg:gap-0 lg:px-0 lg:py-0",
+                            pathname.startsWith(href)
+                              ? "bg-[#f3f3f3] text-gray-900"
+                              : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                          )}
+                        >
+                          <Icon stroke={1.5} className="w-6 h-6 shrink-0" />
+                          <span className="lg:hidden">{label}</span>
+                        </Link>
+                        <span className="hidden lg:block pointer-events-none invisible absolute left-full top-1/2 z-50 -translate-y-1/2 scale-95 whitespace-nowrap rounded bg-black p-2 text-sm text-white opacity-0 transition-all duration-[0.4s] group-hover:visible group-hover:scale-100 group-hover:opacity-100">
+                          {label}
+                        </span>
+                      </li>
+                    ),
+                  )}
 
                   {plan === "free" ? (
                     <li className="group relative flex items-center lg:h-11 lg:w-14 lg:justify-center my-2">

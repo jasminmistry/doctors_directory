@@ -53,6 +53,7 @@ type ClinicData = {
   avgReplyTime: 'within_24hrs' | 'within_48hrs' | 'more_than_48hrs' | null
   coreClinicId: number | null
   consentzUsername: string | null
+  placeId: string | null
 }
 
 const EMPTY: ClinicData = {
@@ -63,6 +64,7 @@ const EMPTY: ClinicData = {
   isSaveFace: false, isDoctor: false, isJccp: false, jccpUrl: null, isCqc: false, cqcUrl: null,
   isHiw: false, hiwUrl: null, isHis: false, hisUrl: null, isRqia: false, rqiaUrl: null,
   coverImage: null, cqcStatus: null, avgReplyTime: null, coreClinicId: null, consentzUsername: null,
+  placeId: null,
 }
 
 // Converts stored Python-list / JSON-array strings to newline-separated display text
@@ -355,6 +357,16 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
               placeholder="https://maps.google.com/…"
               className={cn(fieldErrors.gmapsUrl && 'border-red-500 focus-visible:ring-red-500')}
               aria-invalid={Boolean(fieldErrors.gmapsUrl)}
+            />
+          </Field>
+          <Field label="Google Place ID" error={fieldErrors.placeId}>
+            <Input
+              value={data.placeId ?? ''}
+              onChange={(e) => set('placeId', e.target.value || null)}
+              placeholder="ChIJ… (powers the Google review link)"
+              maxLength={255}
+              className={cn(fieldErrors.placeId && 'border-red-500 focus-visible:ring-red-500')}
+              aria-invalid={Boolean(fieldErrors.placeId)}
             />
           </Field>
           <Field label="Website" error={fieldErrors.website}>
