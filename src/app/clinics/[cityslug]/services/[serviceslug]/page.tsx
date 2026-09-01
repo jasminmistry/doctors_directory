@@ -24,6 +24,7 @@ import { locations, modalities } from "@/lib/data";
 import { capitalize, toUrlSlug } from "@/lib/utils";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
+import { resolveDirectoryPageMeta } from "@/lib/directory-page-meta";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 interface ProfilePageProps {
@@ -248,10 +249,16 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const serviceSlug = decodeURIComponent(params.serviceslug).toLowerCase();
   const displayCityName = capitalize(citySlug);
   const displayServiceName = capitalize(serviceSlug);
-
-  return {
+  const path = `/clinics/${citySlug}/services/${serviceSlug}/`;
+  const meta = resolveDirectoryPageMeta(path, {
     title: `Top ${displayServiceName} Clinics in ${displayCityName} - Reviews, Prices & Booking`,
     description: `Find the best verified ${displayServiceName} clinics in ${displayCityName}. Compare real patient reviews, prices and book your treatment.`,
+  });
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    ...(meta.keywords ? { keywords: meta.keywords } : {}),
     alternates: {
       canonical: toDirectoryCanonical(`/clinics/${citySlug}/services/${serviceSlug}`),
     },
