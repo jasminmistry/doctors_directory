@@ -201,7 +201,7 @@ function PractitionerHeroMockup() {
           )}
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2.5 overflow-auto p-4">
-          <div className="flex items-center gap-2.5 rounded-[10px] border border-[#e6e0d8] bg-[#faf8f5] px-3 py-2.5">
+          <div className="flex md:items-center gap-2.5 rounded-[10px] flex-col md:flex-row border border-[#e6e0d8] bg-[#faf8f5] px-3 py-2.5">
             <div className="h-8 w-8 shrink-0 rounded-full bg-[#e6e0d8]" />
             <div className="min-w-0 flex-1 leading-tight">
               <p className="text-xs font-semibold text-[#2e2e2e]">Sarah Mitchell</p>
@@ -212,7 +212,7 @@ function PractitionerHeroMockup() {
             </span>
           </div>
           <div className="flex flex-col gap-2 rounded-[10px] border border-[#e6e0d8] bg-[#faf8f5] px-3 py-2.5">
-            <div className="flex items-center gap-2 text-[11px] font-semibold text-[#2e2e2e]">
+            <div className="flex md:items-center gap-2 flex-col md:flex-row text-[11px] font-semibold text-[#2e2e2e]">
               Treatment Note
               <span className="h-px flex-1 bg-[#e6e0d8]" />
               <span className="text-[9px] font-normal text-[#928b82]">Today, 2:15pm</span>
@@ -228,7 +228,7 @@ function PractitionerHeroMockup() {
               Batch no.: <span className="text-[#2e2e2e]">JVB-2024-0341</span>
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-col md:flex-row">
             {[
               ["Consent", "Signed ✓"],
               ["Aftercare", "Sent"],
@@ -273,13 +273,9 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
           HUB_DETAIL_HERO_VIEWPORT_CLASS
         )}
       >
-        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-0">
-          <div className={HUB_SPLIT_HERO_GRID_COMPARE}>
-            <div className={HUB_SPLIT_HERO_VISUAL} aria-hidden>
-              <PractitionerHeroMockup />
-            </div>
-            <div className={HUB_SPLIT_HERO_CONTENT}>
-              <Breadcrumb className="mb-6 flex w-full justify-center lg:justify-start">
+        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col p-6">
+          <div>
+            <Breadcrumb className="mb-6 flex w-full justify-center lg:justify-start">
                 <BreadcrumbList>
                   <BreadcrumbItem>
                     <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
@@ -298,6 +294,12 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
+          </div>
+          <div className={HUB_SPLIT_HERO_GRID_COMPARE}>
+            <div className={HUB_SPLIT_HERO_VISUAL} aria-hidden>
+              <PractitionerHeroMockup />
+            </div>
+            <div className={HUB_SPLIT_HERO_CONTENT}>
               <header>
                 <h1 className="mb-5 max-w-[720px] font-medium leading-[1.08] tracking-[0.468px] text-[#2e2e2e] [font-family:var(--font-playfair),Georgia,serif] text-[clamp(1.75rem,5vw,3.25rem)] lg:text-[52px] lg:leading-[62px]">
                   {toDisplayTitle(entry.title)}
@@ -355,7 +357,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
             {navLinks.map((item) => {
               const external = item.href.startsWith("http")
               const className =
-                "flex min-h-[93px] items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-5 py-[18px] text-center text-xl font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white"
+                "flex min-h-[93px] items-center justify-center rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-5 py-[18px] text-center text-sm md:text-xl font-semibold text-[#111111] transition-colors hover:border-neutral-400 hover:bg-white"
               if (external) {
                 return (
                   <a
@@ -389,7 +391,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
         <section className={cn(HUB_BLEED_FROM_CONTAINER, "mb-0 bg-[#fcfbf9] px-4 py-16 md:px-12 md:py-24 lg:px-[120px]")}>
           <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-12">
             <div className="max-w-[900px] text-center">
-              <h2 className="text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
+              <h2 className="text-lg md:text-xl md:text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
                 Built Around How Practitioners Actually Work
               </h2>
               <p className="mt-4 text-lg font-medium leading-7 text-[#928b82] md:text-xl">
@@ -429,10 +431,10 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
                 Practitioner Reality
               </p>
-              <h2 className="text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
+              <h2 className="text-xl md:text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
                 Less Admin Between You And Your Patients
               </h2>
-              <p className="mt-4 text-lg leading-7 text-[#928b82] md:text-[18px]">
+              <p className="mt-4 text-md md:text-lg leading-7 text-[#000] md:text-[18px]">
                 The scattered tools and manual processes that slow down independent practitioners — and how
                 Consentz removes them.
               </p>
@@ -460,10 +462,10 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
                 Practitioner Workflow
               </p>
-              <h2 className="text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
+              <h2 className="text-xl md:text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
                 One Workflow From Consultation To Follow-Up
               </h2>
-              <p className="mt-4 text-lg leading-7 text-[#928b82] md:text-[18px]">
+              <p className="mt-4 text-md md:text-lg leading-7 text-[#000] md:text-[18px]">
                 Every step of the patient journey — captured, structured, and connected in one place.
               </p>
             </div>
@@ -499,10 +501,10 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
                 Practitioner Toolkit
               </p>
-              <h2 className="text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
+              <h2 className="text-xl md:text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
                 Everything A Practitioner Needs To Run A Professional Clinic Workflow
               </h2>
-              <p className="mt-4 text-lg leading-7 text-[#928b82] md:text-[18px]">
+              <p className="mt-4 text-md md:text-lg leading-7 text-[#000] md:text-[18px]">
                 From first consultation to long-term patient reactivation — all in one connected system.
               </p>
             </div>
@@ -556,7 +558,7 @@ export function HubPractitionersDetailTemplate({ entry }: Props) {
               <p className="mb-3 text-[11px] font-semibold tracking-[2.5px] text-[#1a877a]">
                 Records & Compliance
               </p>
-              <h2 className="text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
+              <h2 className="text-xl md:text-3xl font-medium leading-tight text-[#2e2e2e] md:text-4xl md:leading-[48px]">
                 Professional Records Without The Admin Overwhelm
               </h2>
               <p className="mt-4 text-lg leading-[30px] text-[#928b82] md:text-[18px]">

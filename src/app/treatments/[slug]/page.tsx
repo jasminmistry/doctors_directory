@@ -455,7 +455,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
           </div>
           {/* Similar Clinics Section */}
           <div className="mx-auto max-w-7xl px-6 py-4">
-            <div className="px-4 md:px-0 space-y-6 mt-8">
+            <div className="md:px-4 md:px-0 space-y-6 mt-8">
               <h3 className="text-lg font-semibold text-foreground mb-2">
                 Top Clinics for {treatment.name}
               </h3>

@@ -206,13 +206,9 @@ export function HubCityScaledPage({
           HUB_DETAIL_HERO_VIEWPORT_CLASS
         )}
       >
-        <div className="max-w-7xl mx-auto p-6 flex min-w-0 flex-1 flex-col">
-          <div className={HUB_SPLIT_HERO_GRID_TWO_COL}>
-            <div className={HUB_SPLIT_HERO_VISUAL_TALL} aria-hidden>
-              <SoftwareHeroVisual />
-            </div>
-            <div className={HUB_SPLIT_HERO_CONTENT}>
-              <Breadcrumb className="mb-6 flex w-full justify-center lg:justify-start">
+        <div className="w-full max-w-7xl mx-auto p-6 flex flex-1 flex-col">
+          <div className="block">
+            <Breadcrumb className="mb-6 flex w-full justify-center lg:justify-start">
                 <BreadcrumbList>
                   <BreadcrumbItem>
                     <BreadcrumbLink href="/business/">Buyer Hub</BreadcrumbLink>
@@ -251,6 +247,12 @@ export function HubCityScaledPage({
                   )}
                 </BreadcrumbList>
               </Breadcrumb>
+          </div>
+          <div className={HUB_SPLIT_HERO_GRID_TWO_COL}>
+            <div className={HUB_SPLIT_HERO_VISUAL_TALL} aria-hidden>
+              <SoftwareHeroVisual />
+            </div>
+            <div className={HUB_SPLIT_HERO_CONTENT}>
               <header>
                 <h1 className="mb-5 max-w-[700px] text-[clamp(1.75rem,5vw,3.25rem)] font-medium leading-[1.08] tracking-[0.468px] text-[#1A1A1A] [font-family:var(--font-playfair),Georgia,serif] lg:text-[52px]">
                   {hero.line2 ? (
@@ -292,12 +294,12 @@ export function HubCityScaledPage({
         </div>
       </section>
 
-      <article className="mx-auto max-w-7xl px-4 pb-0 pt-10 md:pt-12 [font-family:Inter,system-ui,sans-serif]">
+      <article className="mx-auto w-full max-w-7xl px-5 sm:px-6 pb-0 pt-10 md:pt-12 [font-family:Inter,system-ui,sans-serif]">
         <section className="mb-12 text-center">
-          <h2 className="text-[30px] font-medium  text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+          <h2 className="text-[24px] font-medium  text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
             The {cityTitle} Aesthetic Market
           </h2>
-          <div className="mx-auto mt-10 grid max-w-[1142px] grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mx-auto mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-[#DEDBDB] bg-[#fbfbfb] px-2 py-7 text-center">
               <IconMapPin className="h-12 w-12 mb-4 text-[#111111]" stroke={1.5} aria-hidden />
               <p className="text-lg font-medium  text-[#111111]  ">
@@ -338,7 +340,7 @@ export function HubCityScaledPage({
         ) : null}
 
         <section className="mb-16">
-          <h2 className="mb-10 text-center text-[30px] font-medium  text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+          <h2 className="mb-10 text-center text-[24px] font-medium  text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
             Why {cityTitle} Clinics Choose Consentz
           </h2>
           <div className="mx-auto grid max-w-[1070px] grid-cols-1 gap-6 md:grid-cols-2">
@@ -359,7 +361,7 @@ export function HubCityScaledPage({
 
         {nearbyCities.length > 0 ? (
           <section className="mb-16 text-center">
-            <h2 className="mb-6 text-[30px] font-medium  text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
+            <h2 className="mb-6 text-[24px] font-medium  text-[#111111] md:text-[36px] md:tracking-[-0.72px]">
               Also Serving Clinics Near {cityTitle}
             </h2>
             <div className="mx-auto flex max-w-[900px] flex-wrap justify-center gap-3">

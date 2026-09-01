@@ -52,7 +52,7 @@ export function HubLayoutBlogSlot() {
   }
 
   return (
-    <div className="relative z-0 w-full shrink-0 bg-white pt-14 max-lg:mt-20 max-lg:pt-16 md:mt-16 md:pt-16">
+    <div className="relative z-0 w-full shrink-0 bg-white mt-4 pt-4 md:mt-16 md:pt-16">
       <RelevantBlogGuides />
     </div>
   );

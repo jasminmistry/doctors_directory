@@ -141,7 +141,7 @@ function PhoneFanCollage({
   const cellH = (288.695 / h) * 100;
   return (
     <div
-      className="relative mx-auto w-full aspect-[915/846] min-h-[220px] max-w-[400px] overflow-visible"
+      className="relative m-auto w-full aspect-[915/846] min-h-[220px] max-w-[400px] overflow-visible"
       aria-hidden
     >
         <div className="absolute inset-0">
@@ -184,7 +184,7 @@ function PhoneFanCollage({
 
 export function SoftwareHeroVisual() {
   return (
-    <div className="relative mx-auto w-full max-w-[min(100%,400px)]">
+    <div className="relative m-auto w-full max-w-[min(100%,400px)]">
       <SoftwareHeroCollage />
     </div>
   );

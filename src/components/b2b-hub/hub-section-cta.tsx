@@ -63,8 +63,8 @@ export function HubSectionCta({
         className
       )}
     >
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-20">
-        <div className="relative pt-8 pb-10 max-lg:pb-12 sm:pt-10 lg:grid lg:h-[472px] lg:grid-cols-[minmax(0,1fr)_407px] lg:overflow-hidden lg:pb-0 lg:pt-0 flex items-center">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+        <div className="relative flex min-h-[500px] flex-col justify-between pt-0 pb-10 max-lg:pb-12 sm:pt-10 lg:grid lg:h-[472px] lg:grid-cols-[minmax(0,1fr)_407px] lg:overflow-hidden lg:pb-0 lg:pt-0 lg:items-center">
           <div className="relative z-10 flex flex-col items-center text-center lg:items-center lg:justify-center lg:py-20 lg:pr-6">
             <h2 className="max-w-[720px] text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#111111] sm:text-[30px] lg:text-[36px] lg:leading-normal lg:tracking-[-1.08px]">
               {heading}

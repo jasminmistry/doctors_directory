@@ -367,7 +367,7 @@ export function TreatmentDetail({
       {/* Header Section - Responsive Design */}
 
       {/* Mobile Layout */}
-      <header className="lg:hidden bg-white rounded-lg border border-gray-200 p-2 mb-8">
+      <header className="hidden bg-white rounded-lg border border-gray-200 p-2 mb-8">
         <div className="flex gap-6">
           {/* Treatment Image */}
           <div className="flex-shrink-0">
@@ -434,10 +434,10 @@ export function TreatmentDetail({
       </header>
 
       {/* Desktop Layout - Original Design */}
-      <div className="hidden lg:flex flex-col lg:flex-row gap-8 mb-8 p-5 rounded-lg bg-[#F2EDE6]">
+      <div className="flex flex-col items-center md:items-start md:flex-row gap-8 mb-8 p-5 rounded-lg bg-[#F2EDE6]">
         {/* Treatment Image */}
         <div className="shrink-0">
-          <div className="w-48 h-48 rounded-full overflow-hidden">
+          <div className="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden">
             <FallbackImage
               src={treatment.image}
               alt={treatment.name}
@@ -449,8 +449,8 @@ export function TreatmentDetail({
 
         {/* Treatment Info */}
         <div className="grow">
-          <header>
-            <h1 className="text-2xl font-medium text-gray-900">
+          <header className="text-center md:text-left">
+            <h1 className="text-xl md:text-2xl font-medium text-gray-900">
               {treatment.name} Treatment
             </h1>
           </header>
@@ -467,7 +467,7 @@ export function TreatmentDetail({
             </h2>
 
             <dl className="grid grid-cols-1 md:grid-cols-3 gap-1">
-              <div className="flex items-center gap-3 p-4 border-0 bg-transparent">
+              <div className="flex items-center gap-3 p-2 md:p-4 border-0 bg-transparent">
                 <dt className="sr-only">Patient Satisfaction Rate</dt>
                 <div
                   itemProp="satisfactionRating"
