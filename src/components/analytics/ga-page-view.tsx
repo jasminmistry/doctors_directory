@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 
 import { getSourceBucket } from "@/lib/attribution"
@@ -19,24 +19,42 @@ declare global {
 }
 
 /**
- * The single source of GA4 `page_view` events. Auto page_view is disabled in the
- * gtag config (`send_page_view: false`) because App Router client navigations
- * don't trigger it — this fires on first mount and on every pathname change,
- * enriched with `source_bucket` and `page_type` so GA reports can slice by them.
+ * GA4 `page_view` for App Router client-side navigations.
+ *
+ * The initial hard-load page_view is still sent by `gtag('config', …)` itself —
+ * resilient, with no dependency on this component mounting. This only covers the
+ * SPA navigations that `config` misses, enriched with `source_bucket` /
+ * `page_type` / `entity_slug`. On first mount it `gtag('set', …)`s those
+ * dimensions (best-effort) so the config-sent page_view and later events carry
+ * them too. `page_title` is deliberately omitted — App Router hasn't applied the
+ * new <title> yet when this effect runs, so GA reading it at send time is more
+ * accurate than a stale value from here.
  */
 export function GaPageView() {
   const pathname = usePathname()
+  const isFirst = useRef(true)
 
   useEffect(() => {
     if (!pathname || typeof window === "undefined" || typeof window.gtag !== "function") return
+
+    const params = {
+      source_bucket: getSourceBucket(pathname),
+      page_type: getPageTypeFromPath(pathname),
+      entity_slug: getEntitySlugFromPath(pathname),
+    }
+
     try {
+      if (isFirst.current) {
+        isFirst.current = false
+        // `config` already sent (or queued) the first page_view — just make the
+        // enrichment dimensions available rather than sending a duplicate.
+        window.gtag("set", params)
+        return
+      }
       window.gtag("event", "page_view", {
+        ...params,
         page_path: pathname,
         page_location: window.location.href,
-        page_title: document.title,
-        source_bucket: getSourceBucket(pathname),
-        page_type: getPageTypeFromPath(pathname),
-        entity_slug: getEntitySlugFromPath(pathname),
       })
     } catch {
       /* never break navigation over analytics */
