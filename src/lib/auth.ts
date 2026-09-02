@@ -143,6 +143,11 @@ export async function registerConsentzClinic(
     email: string
     phone?: string | null
     contactName?: string
+    /** First-touch attribution — which directory surface this sign-up came from. */
+    source?: string | null
+    sourceLandingPage?: string | null
+    sourceReferrer?: string | null
+    sourceUtm?: { source?: string | null; medium?: string | null; campaign?: string | null } | null
   },
   sessionToken?: string,
 ): Promise<{ id: number; name: string; email: string; isNew: boolean }> {
@@ -156,6 +161,12 @@ export async function registerConsentzClinic(
       currency: 'GBP',
       ...(data.phone ? { phone: data.phone } : {}),
       ...(data.contactName ? { contactName: data.contactName } : {}),
+      ...(data.source ? { source: data.source } : {}),
+      ...(data.sourceLandingPage ? { sourceLandingPage: data.sourceLandingPage } : {}),
+      ...(data.sourceReferrer ? { sourceReferrer: data.sourceReferrer } : {}),
+      ...(data.sourceUtm && (data.sourceUtm.source || data.sourceUtm.medium || data.sourceUtm.campaign)
+        ? { sourceUtm: data.sourceUtm }
+        : {}),
     },
   })
 

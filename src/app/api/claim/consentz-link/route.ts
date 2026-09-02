@@ -158,6 +158,13 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      // TODO(GA-attribution, cross-team): this path links an *existing* Consentz
+      // Organisation, so there's no `register/clinic` call to carry the source on.
+      // The attribution is already persisted on the ClaimRequest (set at initiate
+      // time). Once Core exposes an endpoint to set the directory source on an
+      // existing Organisation, forward `claim.attributionSource` (+ landing page /
+      // utm) here, best-effort.
+
       // Auto-approve: unlike the cold OTP claim flow, the claimer already proved they're
       // an authenticated Consentz clinic admin (verifyConsentzSession above), so there's
       // no ownership question for a human reviewer to check. `verified` (domain/GBP match)

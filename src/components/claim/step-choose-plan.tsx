@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { getGaClientId } from '@/lib/analytics/track'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -12,6 +13,7 @@ type Plan = 'free' | 'pay_per_lead' | 'subscription'
 interface Props {
   claimId: number
   entitySlug: string
+  onPlanSelected?: (plan: Plan) => void
   onPending: () => void
 }
 
@@ -69,7 +71,7 @@ const PLANS: {
   },
 ]
 
-export function StepChoosePlan({ claimId, entitySlug, onPending }: Readonly<Props>) {
+export function StepChoosePlan({ claimId, entitySlug, onPlanSelected, onPending }: Readonly<Props>) {
   const [selected, setSelected] = useState<Plan | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -80,16 +82,18 @@ export function StepChoosePlan({ claimId, entitySlug, onPending }: Readonly<Prop
     setLoading(true)
 
     try {
+      const gaClientId = await getGaClientId()
       const res = await fetch('/directory/api/claim/select-plan/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ claimId, plan: selected }),
+        body: JSON.stringify({ claimId, plan: selected, gaClientId: gaClientId ?? undefined }),
       })
       const data = await res.json()
       if (!res.ok) {
         setError(typeof data.error === 'string' ? data.error : 'Something went wrong. Please try again.')
         return
       }
+      onPlanSelected?.(selected)
       if (data.redirect) {
         window.location.href = data.redirect
       } else {

@@ -12,6 +12,7 @@ import { InlineLogin } from '@/components/consultation/inline-login'
 import { ConsultationRichForm } from '@/components/consultation/consultation-form'
 import type { ConsultationFormData } from '@/components/consultation/consultation-form'
 import { cn } from '@/lib/utils'
+import { track } from '@/lib/analytics/track'
 import { trackCtaClick } from '@/lib/tracking/client'
 import type { DirectoryPageType } from '@/lib/tracking/types'
 import { useExclusiveFloatingPanel } from '@/lib/floating-panel-bus'
@@ -315,6 +316,7 @@ export function ConsultationChatDialog({
   async function handleOpen() {
     setOpen(true)
     trackCtaClick({ ctaLabel: 'Request Consultation', pageType })
+    track('chat_open', { clinic_slug: clinicSlug, page_type: pageType })
 
     if (sessionId && visitorToken) {
       setPhase('chat')
@@ -435,6 +437,7 @@ export function ConsultationChatDialog({
     const data: { message: Message } = await res.json()
     setMessages((prev) => [...prev, data.message])
     lastCreatedAt.current = data.message.createdAt
+    track('chat_message_sent', { clinic_slug: clinicSlug, sender: 'patient' })
   }
 
   async function handleSend() {

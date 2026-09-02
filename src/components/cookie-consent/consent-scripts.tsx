@@ -82,7 +82,10 @@ export function ConsentScripts({
       <Script id="google-analytics-init" strategy="afterInteractive">
         {`
           gtag('js', new Date());
-          gtag('config', '${GA_MEASUREMENT_ID}');
+          // App Router is a SPA — auto page_view only fires on hard loads and
+          // misses client navigations. <GaPageView> sends an enriched page_view
+          // on every route change instead (source_bucket, page_type).
+          gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
         `}
       </Script>
       {consent?.statistics ? (

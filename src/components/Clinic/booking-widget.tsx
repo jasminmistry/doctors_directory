@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { track } from '@/lib/analytics/track'
 import { format, addDays, isSameDay } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 import { toast } from 'sonner'
@@ -52,6 +53,11 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
   const [videoCall, setVideoCall] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [confirmation, setConfirmation] = useState<BookingConfirmation | null>(null)
+
+  useEffect(() => {
+    track('booking_start', { clinic_slug: slug, booking_type: 'in_person' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -113,6 +119,11 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
         practitionerName: booking.practitioner?.name ?? selectedSlot.practitioner,
         patientEmail: data.email,
         videoCall: booking.video_call,
+      })
+      track('booking_complete', {
+        clinic_slug: slug,
+        booking_type: videoCall ? 'video' : 'in_person',
+        practitioner: booking.practitioner?.name ?? selectedSlot.practitioner,
       })
       setStep('confirmation')
     } catch {
@@ -305,9 +316,11 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
                   <button
                     key={i}
                     type="button"
-                    onClick={() => setSelectedSlot(s =>
-                      s?.datetime === slot.datetime ? null : slot,
-                    )}
+                    onClick={() => setSelectedSlot(s => {
+                      if (s?.datetime === slot.datetime) return null
+                      track('booking_slot_select', { clinic_slug: slug, booking_type: 'in_person' })
+                      return slot
+                    })}
                     className={cn(
                       'rounded-lg border px-2 py-2 text-xs transition-colors text-center',
                       selectedSlot?.datetime === slot.datetime

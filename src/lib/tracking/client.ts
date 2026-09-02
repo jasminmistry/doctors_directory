@@ -1,12 +1,7 @@
 "use client"
 
+import { track } from "@/lib/analytics/track"
 import type { CtaClickPayload, DirectoryPageType, LeadPayload } from "@/lib/tracking/types"
-
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void
-  }
-}
 
 const PREV_PATH_KEY = "directory:previous-path"
 
@@ -54,9 +49,7 @@ export function rememberCurrentPath(pathname: string): void {
 }
 
 function fireGaEvent(eventName: "cta_click" | "lead_submitted", params: Record<string, unknown>) {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") return
-
-  window.gtag("event", eventName, params)
+  track(eventName, params)
 }
 
 export async function trackSearchUsage(input: {
@@ -78,6 +71,13 @@ export async function trackSearchUsage(input: {
   if (category) searchParams.set("category", category)
   if (location) searchParams.set("location", location)
   if (!searchParams.toString()) return
+
+  track("search", {
+    search_term: query || category,
+    search_category: category,
+    search_location: location,
+    search_type: type,
+  })
 
   const payload: CtaClickPayload = {
     timestamp: new Date().toISOString(),

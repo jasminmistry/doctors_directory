@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { IconBuildingHospital, IconMailOpened, IconCalendarWeek, IconLogout, IconExternalLink, IconWorld, IconUser, IconLock, IconMessages, IconCalendarCheck, IconX, IconMenu2, IconCalendarMonth, IconCalendarClock, IconMessage, IconPresentation, IconClock, IconCurrencyPound, IconCalendarDue, IconPresentationAnalytics } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
+import { getGaClientId } from "@/lib/analytics/track";
 import { LeadBadge } from "@/components/portal/lead-badge";
 import { ChatBadge } from "@/components/portal/chat-badge";
 import { WelcomeWizard } from "@/components/portal/welcome-wizard";
@@ -59,16 +60,26 @@ export function PortalLayoutClient({
       .catch(() => {});
   }, []);
 
+  // Tag every GA4 event from the portal as clinic-side.
+  useEffect(() => {
+    if (entityType && typeof window !== "undefined" && typeof window.gtag === "function") {
+      window.gtag("set", { user_type: entityType });
+    }
+  }, [entityType]);
+
   // Keep clinic presence alive while portal is open
   useEffect(() => {
     if (entityType !== "clinic") return;
-    function ping() {
-      fetch("/directory/api/portal/presence/", { method: "POST" }).catch(
-        () => {},
-      );
+    async function ping() {
+      const gaClientId = await getGaClientId().catch(() => null);
+      fetch("/directory/api/portal/presence/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(gaClientId ? { gaClientId } : {}),
+      }).catch(() => {});
     }
-    ping();
-    const id = setInterval(ping, PRESENCE_INTERVAL_MS);
+    void ping();
+    const id = setInterval(() => void ping(), PRESENCE_INTERVAL_MS);
     return () => clearInterval(id);
   }, [entityType]);
 

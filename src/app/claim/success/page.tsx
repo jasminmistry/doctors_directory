@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Stripe from 'stripe'
 import { IconAlertTriangle, IconCircleCheck } from '@tabler/icons-react'
 import { Button } from '@/components/ui/button'
+import { SignUpConversion } from '@/components/claim/sign-up-conversion'
 import { prisma } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
@@ -10,7 +11,9 @@ interface Props {
   searchParams: { session_id?: string }
 }
 
-type VerifyResult = { ok: true; isRegister: boolean } | { ok: false }
+type VerifyResult =
+  | { ok: true; isRegister: boolean; plan: string | null; entityType: string }
+  | { ok: false }
 
 /**
  * Confirms the Stripe checkout session actually completed before the page is
@@ -24,7 +27,7 @@ async function verifySession(sessionId: string | undefined): Promise<VerifyResul
   // The session id must belong to a claim we started checkout for.
   const claim = await prisma.claimRequest.findFirst({
     where: { stripeSessionId: trimmed },
-    select: { isNewRegistration: true },
+    select: { isNewRegistration: true, selectedPlan: true, entityType: true },
   })
   if (!claim) return { ok: false }
 
@@ -39,7 +42,12 @@ async function verifySession(sessionId: string | undefined): Promise<VerifyResul
     // setup mode (pay-per-lead) → card capture done; status:'complete' above is enough.
     if (session.mode === 'subscription' && session.payment_status !== 'paid') return { ok: false }
 
-    return { ok: true, isRegister: claim.isNewRegistration === true }
+    return {
+      ok: true,
+      isRegister: claim.isNewRegistration === true,
+      plan: claim.selectedPlan,
+      entityType: claim.entityType,
+    }
   } catch (error) {
     console.error('[claim/success] session verification failed:', error)
     return { ok: false }
@@ -48,6 +56,7 @@ async function verifySession(sessionId: string | undefined): Promise<VerifyResul
 
 export default async function ClaimSuccessPage({ searchParams }: Readonly<Props>) {
   const result = await verifySession(searchParams.session_id)
+  const sessionId = searchParams.session_id?.trim() ?? ''
 
   if (!result.ok) {
     return (
@@ -79,6 +88,7 @@ export default async function ClaimSuccessPage({ searchParams }: Readonly<Props>
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <SignUpConversion dedupeKey={sessionId} plan={result.plan} entityType={result.entityType} />
       <div className="max-w-sm w-full text-center">
         <div className="flex justify-center mb-4">
           <div className="flex items-center justify-center w-14 h-14 rounded-full bg-emerald-50">
