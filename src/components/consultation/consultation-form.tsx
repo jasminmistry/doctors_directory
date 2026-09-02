@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { track } from '@/lib/analytics/track'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { consentDisclaimer, consentCheckboxWording, TERMS_URL } from '@/lib/consent'
@@ -136,6 +137,13 @@ export function ConsultationRichForm({
 
   const consentWording = consentCheckboxWording(clinicName)
 
+  const formStarted = useRef(false)
+  function markFormStart() {
+    if (formStarted.current) return
+    formStarted.current = true
+    track('form_start', { form_name: 'consultation' })
+  }
+
   const canSubmit =
     firstName.trim() && lastName.trim() && email.trim() && phone.trim() && dateOfBirth &&
     consentShare && consentPrivacy && consentAge && consentTerms && !submitting
@@ -194,6 +202,7 @@ export function ConsultationRichForm({
 
     if (hasError) return
 
+    track('form_submit', { form_name: 'consultation' })
     onSubmit({
       firstName: normalizedFirstName,
       lastName: normalizedLastName,
@@ -204,7 +213,7 @@ export function ConsultationRichForm({
   }
 
   return (
-    <form className="flex flex-col gap-4 px-5 py-4" onSubmit={handleSubmit} noValidate>
+    <form className="flex flex-col gap-4 px-5 py-4" onSubmit={handleSubmit} onFocusCapture={markFormStart} noValidate>
       {description && (
         <p className="rounded-lg bg-gray-50 px-3 py-2.5 text-xs text-gray-600 leading-relaxed">
           {description}

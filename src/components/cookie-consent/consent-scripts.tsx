@@ -82,6 +82,9 @@ export function ConsentScripts({
       <Script id="google-analytics-init" strategy="afterInteractive">
         {`
           gtag('js', new Date());
+          // gtag('config') sends the initial hard-load page_view (resilient, no
+          // React dependency). <GaPageView> then sends an enriched page_view for
+          // each App Router client navigation, which auto page_view misses.
           gtag('config', '${GA_MEASUREMENT_ID}');
         `}
       </Script>

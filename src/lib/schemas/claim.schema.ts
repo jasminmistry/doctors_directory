@@ -82,11 +82,29 @@ export const initiatePractitionerRegistrationSchema = z.object({
   about: z.string().trim().optional(),
 })
 
+// First-touch attribution read from the `dd_attr` cookie by the claim wizard.
+// Every field optional and the whole thing `.catch(undefined)` — a missing,
+// malformed or over-long value must never fail the claim (the initiate route
+// also re-reads the cookie server-side as a fallback).
+export const attributionInitSchema = z
+  .object({
+    source: z.enum(['home', 'blog', 'business_hub', 'directory']).nullish(),
+    landingPage: z.string().max(512).nullish(),
+    referrer: z.string().max(512).nullish(),
+    utmSource: z.string().max(128).nullish(),
+    utmMedium: z.string().max(128).nullish(),
+    utmCampaign: z.string().max(191).nullish(),
+  })
+  .optional()
+  .catch(undefined)
+
+const attributionShape = { attribution: attributionInitSchema }
+
 export const initiateClaimSchema = z.union([
-  initiateClinicClaimSchema,
-  initiatePractitionerClaimSchema,
-  initiateClinicRegistrationSchema,
-  initiatePractitionerRegistrationSchema,
+  initiateClinicClaimSchema.extend(attributionShape),
+  initiatePractitionerClaimSchema.extend(attributionShape),
+  initiateClinicRegistrationSchema.extend(attributionShape),
+  initiatePractitionerRegistrationSchema.extend(attributionShape),
 ])
 
 export const verifyOtpSchema = z.object({
@@ -97,6 +115,7 @@ export const verifyOtpSchema = z.object({
 export const selectPlanSchema = z.object({
   claimId: z.number().int().positive(),
   plan: z.enum(['free', 'pay_per_lead', 'subscription']),
+  gaClientId: z.string().max(64).optional().catch(undefined),
 })
 
 export const resendOtpSchema = z.object({
