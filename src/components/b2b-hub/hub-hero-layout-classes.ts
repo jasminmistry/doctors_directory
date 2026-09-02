@@ -1,8 +1,8 @@
 export const HUB_SPLIT_HERO_GRID_TWO_COL =
-  "relative flex flex-col flex-1 gap-6 overflow-visible pt-8 pb-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:overflow-hidden lg:px-0 lg:py-0"
+  "relative flex flex-1 flex-col-reverse gap-6 overflow-visible pt-8 pb-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:overflow-hidden lg:px-0 lg:py-0"
 
 export const HUB_SPLIT_HERO_GRID_COMPARE =
-  "relative flex flex-col flex-1 gap-6 overflow-visible pt-8 pb-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,520px)] lg:items-center lg:gap-x-12 lg:overflow-hidden lg:px-12 lg:py-8 xl:px-[120px]"
+  "relative flex flex-1 flex-col-reverse gap-6 overflow-visible pt-4 pb-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,520px)] lg:items-center lg:gap-x-12 lg:overflow-hidden lg:py-8"
 
 export const HUB_SPLIT_HERO_CONTENT =
   "relative z-10 flex min-w-0 flex-col items-center text-center lg:col-start-1 lg:row-start-1 lg:items-start lg:text-left lg:pr-2"
