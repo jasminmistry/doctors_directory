@@ -1,15 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { track } from '@/lib/analytics/track'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { CityCombobox } from '@/components/claim/city-combobox'
+import { ATTR_COOKIE_NAME, parseAttrCookie } from '@/lib/attribution'
 import { isGenericEmailDomain } from '@/lib/email-domains'
 import { isValidEmail } from '@/lib/email-validation'
 import { isValidSingleUrl } from '@/lib/url-validation'
 import { cn } from '@/lib/utils'
+
+/** Read the first-touch `dd_attr` cookie so the claim carries its acquisition source. */
+function readAttribution() {
+  if (typeof document === 'undefined') return undefined
+  const raw = document.cookie
+    .split('; ')
+    .find((c) => c.startsWith(`${ATTR_COOKIE_NAME}=`))
+    ?.slice(ATTR_COOKIE_NAME.length + 1)
+  return parseAttrCookie(raw) ?? undefined
+}
 
 interface ClinicProps {
   entityType: 'clinic'
@@ -74,6 +86,13 @@ export function StepDetails(props: Readonly<Props>) {
   const [loading, setLoading] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [formError, setFormError] = useState<string | null>(null)
+
+  const formStarted = useRef(false)
+  function markFormStart() {
+    if (formStarted.current) return
+    formStarted.current = true
+    track('form_start', { form_name: isRegister ? 'register' : 'claim', entity_type: entityType })
+  }
 
   function clearFieldError(field: string) {
     setFieldErrors((prev) => {
@@ -183,7 +202,7 @@ export function StepDetails(props: Readonly<Props>) {
       const res = await fetch('/directory/api/claim/initiate/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...payload, attribution: readAttribution() }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -205,7 +224,7 @@ export function StepDetails(props: Readonly<Props>) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} onFocusCapture={markFormStart} noValidate className="flex flex-col gap-5">
       <div>
         <h2 className="text-xl font-semibold mb-1">
           {isRegister

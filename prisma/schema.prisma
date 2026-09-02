@@ -274,6 +274,9 @@ model Clinic {
   stripeSubscriptionStatus String?    @db.VarChar(50) // active | past_due | unpaid | canceled | cancel_at_period_end
   subscriptionCancelAt     DateTime? // set when cancel_at_period_end=true; cleared when restored
   downgradeToPlan          ClaimPlan? // pending downgrade target; applied by webhook when subscription actually ends
+  // GA4 client id — copied from the claim on approval, refreshed on portal pings.
+  // Attributes server-side Measurement Protocol events (lead-unlock purchase, …).
+  gaClientId               String?    @db.VarChar(64)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -455,6 +458,8 @@ model Practitioner {
   stripeSubscriptionStatus String?    @db.VarChar(50) // active | past_due | unpaid | canceled | cancel_at_period_end
   subscriptionCancelAt     DateTime? // set when cancel_at_period_end=true; cleared when restored
   downgradeToPlan          ClaimPlan? // pending downgrade target; applied by webhook when subscription actually ends
+  // GA4 client id — copied from the claim on approval; for server-side MP events.
+  gaClientId               String?    @db.VarChar(64)
 
   // Consentz Core — set when claimed via Consentz link; used for calendar + booking API calls
   coreClinicId         Int?
@@ -721,6 +726,19 @@ model ClaimRequest {
   // Anti-fraud
   requiresManualReview Boolean @default(false)
 
+  // Attribution — captured client-side from the `dd_attr` first-touch cookie when
+  // the claim is created (or re-read server-side from the same cookie as a fallback).
+  // Answers "which page did this Consentz sign-up come from". No PII.
+  attributionSource      String? @db.VarChar(32) // home | blog | business_hub | directory
+  attributionLandingPage String? @db.VarChar(512)
+  attributionReferrer    String? @db.VarChar(512)
+  utmSource              String? @db.VarChar(128)
+  utmMedium              String? @db.VarChar(128)
+  utmCampaign            String? @db.VarChar(191)
+  // GA4 client id captured at plan selection — lets the server-side `purchase`
+  // and `sign_up` Measurement Protocol events stitch to the same GA user.
+  gaClientId             String? @db.VarChar(64)
+
   // New business registration (no existing Clinic/Practitioner row yet)
   isNewRegistration Boolean @default(false)
   newListingData    String? @db.LongText // raw JSON string of submitted business details
@@ -761,6 +779,7 @@ model ClaimRequest {
   @@index([practitionerId])
   @@index([status])
   @@index([claimerEmail])
+  @@index([attributionSource])
   @@map("claim_requests")
 }
 

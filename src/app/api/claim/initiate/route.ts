@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { prisma } from '@/lib/db'
 import { initiateClaimSchema } from '@/lib/schemas/claim.schema'
+import { ATTR_COOKIE_NAME, parseAttrCookie, toAttributionColumns, type Attribution } from '@/lib/attribution'
 import { generateOtp, otpExpiresAt, isGenericEmailDomain, hasCompetingActiveClaim } from '@/lib/claim-utils'
 import { domainHasMailServer } from '@/lib/email-domain-check'
 import { sendClaimOtp } from '@/lib/email'
@@ -15,6 +16,37 @@ function generateLinkToken(): string {
 
 function linkTokenExpiresAt(): Date {
   return new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
+}
+
+type AttributionInput = {
+  source?: 'home' | 'blog' | 'business_hub' | 'directory' | null
+  landingPage?: string | null
+  referrer?: string | null
+  utmSource?: string | null
+  utmMedium?: string | null
+  utmCampaign?: string | null
+} | undefined
+
+/**
+ * Prefer the attribution the wizard read from the `dd_attr` cookie client-side;
+ * fall back to reading the same cookie server-side if the body carried nothing
+ * (e.g. client JS blocked). Returns null-filled columns when there's no signal.
+ */
+function resolveAttributionColumns(input: AttributionInput, req: NextRequest) {
+  let attribution: Attribution | null = null
+  if (input && (input.source || input.landingPage || input.utmSource || input.utmMedium || input.utmCampaign)) {
+    attribution = {
+      source: input.source ?? null,
+      landingPage: input.landingPage ?? null,
+      referrer: input.referrer ?? null,
+      utmSource: input.utmSource ?? null,
+      utmMedium: input.utmMedium ?? null,
+      utmCampaign: input.utmCampaign ?? null,
+    }
+  } else {
+    attribution = parseAttrCookie(req.cookies.get(ATTR_COOKIE_NAME)?.value)
+  }
+  return toAttributionColumns(attribution)
 }
 
 async function cityExists(name: string): Promise<boolean> {
@@ -48,6 +80,7 @@ export async function POST(req: NextRequest) {
     }
 
     const data = parsed.data
+    const attributionCols = resolveAttributionColumns(data.attribution, req)
 
     if (!(await domainHasMailServer(data.claimerEmail))) {
       return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
@@ -75,6 +108,7 @@ export async function POST(req: NextRequest) {
           clinicWebsite: clinicWebsite || null,
           googleBusinessLink: googleBusinessLink || null,
           requiresManualReview,
+          ...attributionCols,
           otpCode: otp,
           otpExpiresAt: otpExpiresAt(),
           status: 'pending_otp',
@@ -131,6 +165,7 @@ export async function POST(req: NextRequest) {
             clinicWebsite: clinicWebsite || null,
             googleBusinessLink: googleBusinessLink || null,
             requiresManualReview: false,
+            ...attributionCols,
             status: 'awaiting_consentz_link',
             linkToken: token,
             linkTokenExpiresAt: linkTokenExpiresAt(),
@@ -169,6 +204,7 @@ export async function POST(req: NextRequest) {
           clinicWebsite: clinicWebsite || null,
           googleBusinessLink: googleBusinessLink || null,
           requiresManualReview,
+          ...attributionCols,
           otpCode: otp,
           otpExpiresAt: otpExpiresAt(),
           status: 'pending_otp',
@@ -201,6 +237,7 @@ export async function POST(req: NextRequest) {
           profession,
           clinicNameInput: clinicNameInput ?? null,
           requiresManualReview,
+          ...attributionCols,
           otpCode: otp,
           otpExpiresAt: otpExpiresAt(),
           status: 'pending_otp',
@@ -255,6 +292,7 @@ export async function POST(req: NextRequest) {
           licenseNumber: licenseNumber ?? null,
           registryName: registryName ?? null,
           requiresManualReview: false,
+          ...attributionCols,
           status: 'awaiting_consentz_link',
           linkToken: token,
           linkTokenExpiresAt: linkTokenExpiresAt(),
@@ -293,6 +331,7 @@ export async function POST(req: NextRequest) {
         licenseNumber: licenseNumber ?? null,
         registryName: registryName ?? null,
         requiresManualReview,
+        ...attributionCols,
         otpCode: otp,
         otpExpiresAt: otpExpiresAt(),
         status: 'pending_otp',

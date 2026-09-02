@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { track } from '@/lib/analytics/track'
 import { format, addDays, isSameDay } from 'date-fns'
 import { fromZonedTime, formatInTimeZone } from 'date-fns-tz'
 import { toast } from 'sonner'
@@ -126,6 +127,15 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
   today.setHours(0, 0, 0, 0)
   const weekStart = addDays(today, weekOffset * WEEK_SIZE)
   const weekDays = Array.from({ length: WEEK_SIZE }, (_, i) => addDays(weekStart, i))
+
+  useEffect(() => {
+    track('booking_start', {
+      clinic_slug: clinicSlug ?? undefined,
+      practitioner_slug: practitionerSlug ?? undefined,
+      booking_type: 'event',
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     console.log(`[EventBookingSection] fetching events from ${basePath}`)
@@ -301,6 +311,12 @@ export function EventBookingSection({ practitionerSlug, clinicSlug, entityName }
       }
 
       setConfirmation((resData as BookingResponse).booking)
+      track('booking_complete', {
+        clinic_slug: clinicSlug ?? undefined,
+        booking_type: 'event',
+        event_title: selectedEvent.title,
+        paid: false,
+      })
       setStep('confirmation')
     } catch {
       toast.error('Booking failed — please try again')

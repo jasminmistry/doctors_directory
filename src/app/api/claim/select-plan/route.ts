@@ -44,7 +44,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
     }
 
-    const { claimId, plan } = parsed.data
+    const { claimId, plan, gaClientId } = parsed.data
+
+    if (gaClientId) {
+      await prisma.claimRequest
+        .updateMany({ where: { id: claimId }, data: { gaClientId } })
+        .catch((err) => console.error('[select-plan] failed to store gaClientId:', err))
+    }
 
     const claim = await prisma.claimRequest.findUnique({
       where: { id: claimId },
@@ -87,7 +93,7 @@ export async function POST(req: NextRequest) {
         mode: 'setup',
         payment_method_types: ['card'],
         customer_email: claim.claimerEmail,
-        metadata: { claimId: String(claimId), plan },
+        metadata: { claimId: String(claimId), plan, ...(gaClientId ? { ga_client_id: gaClientId } : {}) },
         success_url: `${DIRECTORY_BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${DIRECTORY_BASE_URL}${basePath}?claimId=${claimId}&step=plan`,
       })
@@ -118,7 +124,7 @@ export async function POST(req: NextRequest) {
           },
         ],
         customer_email: claim.claimerEmail,
-        metadata: { claimId: String(claimId), plan },
+        metadata: { claimId: String(claimId), plan, ...(gaClientId ? { ga_client_id: gaClientId } : {}) },
         subscription_data: { metadata: { claimId: String(claimId), plan } },
         success_url: `${DIRECTORY_BASE_URL}/directory/claim/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${DIRECTORY_BASE_URL}${basePath}?claimId=${claimId}&step=plan`,

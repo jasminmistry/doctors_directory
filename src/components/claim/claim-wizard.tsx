@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { attributionParams, track, trackOnce } from '@/lib/analytics/track'
 import { StepDetails } from './step-email'
 import { StepVerifyOtp, VerificationBadge } from './step-check-email'
 import { StepChoosePlan } from './step-choose-plan'
@@ -56,6 +57,10 @@ export function ClaimWizard(props: Readonly<Props>) {
   const [affiliated, setAffiliated] = useState(false)
   const [entityName, setEntityName] = useState(props.entityName)
 
+  // GA4 sign-up funnel. `funnelParams` carries acquisition context on every step
+  // so each event can be split by source in GA.
+  const funnelParams = () => ({ entity_type: entityType, mode, ...attributionParams() })
+
   function handleSent(id: number, email: string, name?: string, consentzExists?: boolean, token?: string) {
     setClaimId(id)
     setClaimerEmail(email)
@@ -64,6 +69,7 @@ export function ClaimWizard(props: Readonly<Props>) {
       setLinkToken(token)
       setStep('consentz-exists')
     } else {
+      track('sign_up_start', funnelParams())
       setStep('verify-otp')
     }
   }
@@ -71,8 +77,17 @@ export function ClaimWizard(props: Readonly<Props>) {
   function handleVerified(dv: boolean, aff: boolean) {
     setDomainVerified(dv)
     setAffiliated(aff)
+    track('sign_up_otp_verified', funnelParams())
     setStep('plan')
   }
+
+  useEffect(() => {
+    if (step === 'pending') {
+      // `trackOnce` keyed by claim so a refresh on ?step=pending doesn't re-fire.
+      trackOnce(`sign_up:${claimId ?? 'unknown'}`, 'sign_up', funnelParams())
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step])
 
   const entitySlug =
     entityType === 'practitioner'
@@ -152,6 +167,7 @@ export function ClaimWizard(props: Readonly<Props>) {
           <StepChoosePlan
             claimId={claimId}
             entitySlug={entityType === 'practitioner' ? `practitioner/${entitySlug ?? ''}` : entitySlug ?? ''}
+            onPlanSelected={(plan) => track('sign_up_plan_selected', { ...funnelParams(), plan })}
             onPending={() => setStep('pending')}
           />
         </div>

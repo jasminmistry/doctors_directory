@@ -79,6 +79,7 @@ const NAV = [
     label: "Main site tracking",
     icon: IconWorldLongitude,
   },
+  { href: "/admin/ga-analytics", label: "GA4 analytics", icon: IconChartBar },
 ] as const;
 
 export function AdminLayout({ children, title }: Readonly<AdminLayoutProps>) {

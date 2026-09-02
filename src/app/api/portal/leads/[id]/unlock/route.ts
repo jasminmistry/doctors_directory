@@ -5,7 +5,8 @@ import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
 import { calculateAge } from '@/lib/utils'
-import { PPL_LEAD_PRICE_PENCE } from '@/lib/pricing'
+import { PPL_LEAD_PRICE, PPL_LEAD_PRICE_PENCE } from '@/lib/pricing'
+import { purchaseEvent, sendMpEvents, syntheticClientId } from '@/lib/analytics/measurement-protocol'
 
 function resolveDirectoryBaseUrl(): string {
   const candidates = [
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   const clinic = await prisma.clinic.findUnique({
     where: { id: user.clinicId },
-    select: { claimedPlan: true, stripeCustomerId: true },
+    select: { claimedPlan: true, stripeCustomerId: true, gaClientId: true, slug: true },
   })
 
   if (clinic?.claimedPlan !== 'pay_per_lead') {
@@ -129,6 +130,21 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       },
       include: { patient: { select: { dateOfBirth: true } } },
     })
+
+    await sendMpEvents(clinic.gaClientId ?? syntheticClientId(`clinic-${user.clinicId}`), [
+      purchaseEvent({
+        transactionId: intent.id,
+        value: PPL_LEAD_PRICE,
+        itemId: 'lead_unlock',
+        itemName: 'Lead unlock',
+        extra: {
+          plan: 'pay_per_lead',
+          clinic_slug: clinic.slug,
+          treatment: lead.treatment ?? undefined,
+          user_type: 'clinic',
+        },
+      }),
+    ])
 
     return NextResponse.json({
       success: true,

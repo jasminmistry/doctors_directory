@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { AdminRootShell } from "@/components/admin/admin-root-shell";
+import { GaPageView } from "@/components/analytics/ga-page-view";
+import { AttributionTracker } from "@/components/tracking/attribution-tracker";
 import { ConsentScripts } from "@/components/cookie-consent/consent-scripts";
 import { SearchAtlasScript } from "@/components/search-atlas-script";
 import { readCookieConsentFromRequest } from "@/lib/cookie-consent-server";
@@ -41,6 +43,8 @@ export default async function RootLayout({
         className={`${GeistSans.variable} ${GeistMono.variable} font-base`}
         
       >
+        <AttributionTracker />
+        <GaPageView />
         <AdminRootShell>
           {children}
         </AdminRootShell>

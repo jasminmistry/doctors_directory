@@ -13,6 +13,7 @@ import {
   splitName,
 } from '@/lib/auth'
 import { PLAN_LABELS } from '@/lib/claim-utils'
+import { sendMpEvents } from '@/lib/analytics/measurement-protocol'
 import { invalidateSearchCache } from '@/lib/search-cache'
 import { createClinic } from '@/lib/data-access/clinics'
 import { createPractitioner, invalidatePractitionersSearchCache } from '@/lib/data-access/practitioners'
@@ -55,6 +56,12 @@ async function provisionConsentzAccount(
     claimerEmail: string
     claimerPhone: string | null
     selectedPlan: string | null
+    attributionSource: string | null
+    attributionLandingPage: string | null
+    attributionReferrer: string | null
+    utmSource: string | null
+    utmMedium: string | null
+    utmCampaign: string | null
     clinic: { name: string | null; email: string | null; gmapsPhone: string | null } | null
   },
   entityName: string,
@@ -102,6 +109,13 @@ async function provisionConsentzAccount(
         email: clinicEmail,
         phone: claim.claimerPhone,
         contactName: claim.claimerName,
+        source: claim.attributionSource,
+        sourceLandingPage: claim.attributionLandingPage,
+        sourceReferrer: claim.attributionReferrer,
+        sourceUtm:
+          claim.utmSource || claim.utmMedium || claim.utmCampaign
+            ? { source: claim.utmSource, medium: claim.utmMedium, campaign: claim.utmCampaign }
+            : null,
       }, token)
     )
     consentzClinicId = consentzClinic.id
@@ -386,6 +400,33 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         await invalidateSearchCache()
         await invalidatePractitionersSearchCache()
       }
+
+      // Carry the GA4 client id onto the live entity so later server-side events
+      // (lead-unlock purchase, etc.) attribute to the same GA user.
+      if (claim.gaClientId) {
+        if (claim.clinicId) {
+          await prisma.clinic.update({ where: { id: claim.clinicId }, data: { gaClientId: claim.gaClientId } }).catch(() => {})
+        } else if (claim.practitionerId) {
+          await prisma.practitioner.update({ where: { id: claim.practitionerId }, data: { gaClientId: claim.gaClientId } }).catch(() => {})
+        }
+      }
+
+      // Server-side GA4 `sign_up_approved` — the real "approved & provisioned"
+      // outcome. Kept as a distinct event from the client-side `sign_up`
+      // ("submitted") so the key-event conversion isn't double-counted.
+      await sendMpEvents(claim.gaClientId, [
+        {
+          name: 'sign_up_approved',
+          params: {
+            method: 'directory_claim',
+            entity_type: claim.entityType,
+            user_type: claim.entityType,
+            plan: claim.selectedPlan ?? 'free',
+            source_bucket: claim.attributionSource ?? undefined,
+            landing_page: claim.attributionLandingPage ?? undefined,
+          },
+        },
+      ])
 
       // Consentz-linked claims already have an account — skip provisioning but still notify
       if (claim.consentzUserId) {

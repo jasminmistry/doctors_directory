@@ -3,6 +3,8 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
+import { purchaseEvent, sendMpEvents } from '@/lib/analytics/measurement-protocol'
+import { SUBSCRIPTION_MONTHLY_PRICE } from '@/lib/pricing'
 
 function getCoreLiteBase() {
   const authUrl = process.env.CONSENTZ_AUTH_API_URL
@@ -101,6 +103,18 @@ async function handleEventBookingPayment(session: Stripe.Checkout.Session) {
     })
 
     console.info(`[stripe/webhook] event_booking created: coreBookingId=${booking.id} clinicId=${clinicId}`)
+
+    if (amountPaid && amountPaid > 0 && paymentIntentId) {
+      await sendMpEvents(meta.ga_client_id, [
+        purchaseEvent({
+          transactionId: paymentIntentId,
+          value: amountPaid,
+          itemId: 'booking_deposit',
+          itemName: meta.event_title ?? 'Booking deposit',
+          extra: { clinic_slug: meta.clinic_slug, booking_type: 'event' },
+        }),
+      ])
+    }
   } catch (err) {
     console.error('[stripe/webhook] event_booking handler error:', err)
   }
@@ -266,7 +280,7 @@ export async function POST(req: NextRequest) {
 
           const claim = await prisma.claimRequest.findUnique({
             where: { id: claimId },
-            select: { clinicId: true, practitionerId: true, status: true },
+            select: { clinicId: true, practitionerId: true, status: true, gaClientId: true },
           })
 
           // A portal upgrade happens against an already-approved claim — the status flip
@@ -304,6 +318,22 @@ export async function POST(req: NextRequest) {
             console.info(
               `[stripe] Subscription activated: clinicId=${claim.clinicId ?? '-'} practitionerId=${claim.practitionerId ?? '-'} portalUpgrade=${isPortalUpgrade}`,
             )
+
+            const subscriptionId = session.subscription as string | null
+            await sendMpEvents(session.metadata?.ga_client_id ?? claim.gaClientId, [
+              purchaseEvent({
+                transactionId: subscriptionId ?? session.id,
+                value: SUBSCRIPTION_MONTHLY_PRICE,
+                itemId: 'subscription',
+                itemName: 'Verified Subscription',
+                extra: {
+                  plan: 'subscription',
+                  billing_period: 'month',
+                  portal_upgrade: isPortalUpgrade,
+                  entity_type: claim.clinicId ? 'clinic' : 'practitioner',
+                },
+              }),
+            ])
           }
         } catch (error) {
           console.error('[stripe] checkout.session.completed (claim) processing error:', error)

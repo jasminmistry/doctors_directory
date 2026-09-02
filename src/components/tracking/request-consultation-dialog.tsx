@@ -9,7 +9,11 @@ import { InlineLogin } from "@/components/consultation/inline-login"
 import { ConsultationRichForm } from "@/components/consultation/consultation-form"
 import type { ConsultationFormData } from "@/components/consultation/consultation-form"
 import { cn } from "@/lib/utils"
+import { track } from "@/lib/analytics/track"
 import { trackCtaClick } from "@/lib/tracking/client"
+
+/** Rough per-lead value used for GA4 conversion reporting (matches the PPL price). */
+const ESTIMATED_LEAD_VALUE = 55
 import type { DirectoryPageType } from "@/lib/tracking/types"
 import { useExclusiveFloatingPanel } from "@/lib/floating-panel-bus"
 import { IconX } from "@tabler/icons-react"
@@ -171,6 +175,15 @@ export function RequestConsultationDialog({
         ctaLabel: `${triggerLabel} Form Submit`,
         ctaTargetUrl: consultationHref ?? undefined,
         pageType,
+      })
+      track("generate_lead", {
+        lead_source: leadSource,
+        clinic_slug: clinicSlug,
+        treatment: treatmentFallback,
+        location,
+        page_type: pageType,
+        value: ESTIMATED_LEAD_VALUE,
+        currency: "GBP",
       })
       setSubmittedEmail(data.email)
       setPhase('submitted')

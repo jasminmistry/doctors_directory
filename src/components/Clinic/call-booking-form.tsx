@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { track } from '@/lib/analytics/track'
 import { format, addDays, isSameDay } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 import { cn, formatTimezoneAbbr } from '@/lib/utils'
@@ -86,6 +87,11 @@ export function CallBookingForm({
   const [result, setResult] = useState<BookingResult | null>(null)
   const [joinUrl, setJoinUrl] = useState<string | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    track('call_booking_start', { clinic_slug: clinicSlug })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -181,6 +187,10 @@ export function CallBookingForm({
       }
       setResult(data)
       if (data.join_url_ready && data.join_url) setJoinUrl(data.join_url)
+      track('call_booking_complete', {
+        clinic_slug: clinicSlug,
+        call_type: (data as { call_type?: string }).call_type,
+      })
       setStep(3)
     } catch {
       setError('Booking failed — please try again')
