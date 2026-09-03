@@ -57,10 +57,10 @@ export default async function ProfilePage() {
         </div>
       </div>
 
-      <div className="container mx-auto max-w-7xl pt-0 md:px-4 py-20 space-y-8">
+      <div className="container mx-auto max-w-7xl pt-0 px-4 py-20 space-y-8">
         {/* Profile Header */}
 
-        <h3 className="text-lg font-semibold text-foreground mb-2">
+        <h3 className="text-lg font-semibold text-foreground mt-4 mb-2">
           Top Categories
         </h3>
         <div className="bg--(--primary-bg-color) grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -71,14 +71,14 @@ export default async function ProfilePage() {
             return (
               <div key={brand} style={{ animationDelay: `${index * 50}ms` }}>
                 <Link href={`/products/category/${toUrlSlug(brand)}`} className="block">
-                  <Card className="group bg-white transition-all duration-300 cursor-pointer border border-[#BDBDBD] md:border-0 rounded-lg sm:bg-transparent sm:border-0 sm:hover:border-accent/50 sm:flex sm:flex-col sm:gap-5">
+                  <Card className="group bg-white transition-all duration-300 cursor-pointer border border-[#BDBDBD] rounded-lg sm:bg-transparent sm:flex sm:flex-col sm:gap-5">
                     <CardHeader className="pb-2 px-2">
                       <h2 id={`brand-${brand}`} className="text-center">
                         {brand}
                       </h2>
                       <div className="flex items-start gap-4">
-                        <div className="text-center flex-1 min-w-0 items-center flex flex-col">
-                          <div className="flex w-full flex-row items-start border-b border-[#C4C4C4] md:border-0 md:flex-col md:items-center">
+                        <div className="text-center w-full flex-1 min-w-0 items-center flex flex-col">
+                          <div className="flex w-full flex-row border-0 md:flex-col justify-center items-center">
                             <div className="w-20 h-20 md:w-[150px] md:h-[150px] flex items-center justify-center overflow-hidden rounded-lg md:mb-4 mr-0">
                               <FallbackImage
                                 src={itemDetail?.image_url?.replaceAll('"', "")}

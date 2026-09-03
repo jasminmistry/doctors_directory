@@ -22,7 +22,7 @@ function PhoneFanCollage({
   const cellH = (288.695 / h) * 100
   return (
     <div
-      className="relative mx-auto w-full aspect-[915/846] min-h-[220px] max-w-[400px] overflow-visible"
+      className="relative m-auto w-full aspect-[915/846] min-h-[220px] max-w-[400px] overflow-visible"
       aria-hidden
     >
       <div className="absolute inset-0">

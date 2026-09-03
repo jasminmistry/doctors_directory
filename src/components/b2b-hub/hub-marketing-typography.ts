@@ -1,5 +1,5 @@
 export const HUB_FAQ_TITLE_CLASS =
-  "text-center text-[28px] font-semibold leading-tight text-black sm:text-[38px] lg:text-[48px]"
+  "text-center text-[24px] font-semibold leading-tight text-black md:text-[38px] lg:text-[48px]"
 
 export const HUB_FAQ_SECTION_TITLE_CLASS =
   "text-center text-2xl font-medium leading-tight text-[#111111] md:text-3xl"

@@ -61,7 +61,7 @@ export function HubIndexHeroSearch({
       >
         <div
           className={cn(
-            "grid flex-1 items-center gap-10 pb-4 md:gap-12 lg:grid-cols-2 lg:pb-6",
+            "flex flex-1 flex-col-reverse items-center gap-10 pb-4 md:gap-12 lg:grid lg:grid-cols-2 lg:pb-6",
             !showSearch && "min-h-[min(100%,28rem)] sm:min-h-[min(100%,32rem)]"
           )}
         >
