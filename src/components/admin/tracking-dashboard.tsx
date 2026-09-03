@@ -15,6 +15,8 @@ import {
   MessageSquareText,
   Search,
   Share2,
+  Smartphone,
+  SmartphoneNfc,
   UserRound,
   XCircle,
 } from "lucide-react"
@@ -214,6 +216,88 @@ function EmailReadCell({ readAt, sentAt }: { readAt: unknown; sentAt: unknown })
       <TooltipTrigger asChild>
         <span className="inline-flex items-center gap-1 text-emerald-700">
           <Mail className="size-4" />
+          {formatShortTime(readIso)}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>{new Date(readIso).toLocaleString()}</TooltipContent>
+    </Tooltip>
+  )
+}
+
+function SmsSentCell({
+  sentAt,
+  status,
+  deliveryStatus,
+  deliveredAt,
+}: {
+  sentAt: unknown
+  status?: unknown
+  deliveryStatus?: unknown
+  deliveredAt?: unknown
+}) {
+  const iso = typeof sentAt === "string" ? sentAt : null
+  if (!iso) {
+    if (status === "no_clinic_phone") {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="inline-flex items-center gap-1 text-amber-600">
+              <Smartphone className="size-4" />
+              No clinic phone
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>No phone number on record for this clinic, so no SMS could be sent.</TooltipContent>
+        </Tooltip>
+      )
+    }
+    if (status === "not_tracked") {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="text-gray-400">—</span>
+          </TooltipTrigger>
+          <TooltipContent>Legacy lead — notification SMS were not tracked.</TooltipContent>
+        </Tooltip>
+      )
+    }
+    return (
+      <span className="inline-flex items-center gap-1 text-gray-400">
+        <XCircle className="size-4" />
+        Not sent
+      </span>
+    )
+  }
+  const delivery = typeof deliveryStatus === "string" ? deliveryStatus : null
+  const deliveredIso = typeof deliveredAt === "string" ? deliveredAt : null
+  const failed = delivery === "undelivered" || delivery === "failed"
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className={`inline-flex items-center gap-1 ${failed ? "text-red-600" : "text-emerald-700"}`}>
+          <CheckCircle2 className="size-4" />
+          {formatShortTime(iso)}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>
+        {new Date(iso).toLocaleString()}
+        {delivery ? ` · ${delivery}` : ""}
+        {deliveredIso ? ` · delivered ${new Date(deliveredIso).toLocaleString()}` : ""}
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
+function SmsReadCell({ readAt, sentAt }: { readAt: unknown; sentAt: unknown }) {
+  const readIso = typeof readAt === "string" ? readAt : null
+  const sentIso = typeof sentAt === "string" ? sentAt : null
+  if (!readIso) {
+    return <span className="text-gray-400">{sentIso ? "Unread" : "—"}</span>
+  }
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="inline-flex items-center gap-1 text-emerald-700">
+          <SmartphoneNfc className="size-4" />
           {formatShortTime(readIso)}
         </span>
       </TooltipTrigger>
@@ -766,6 +850,8 @@ export function TrackingDashboard() {
                     <th className="px-3 py-2">Budget</th>
                     <th className="px-3 py-2">Email sent</th>
                     <th className="px-3 py-2">Email read</th>
+                    <th className="px-3 py-2">SMS sent</th>
+                    <th className="px-3 py-2">SMS read</th>
                     <th className="px-3 py-2">Recipient</th>
                   </>
                 )}
@@ -900,9 +986,20 @@ export function TrackingDashboard() {
                       <td className="px-3 py-2 whitespace-nowrap">
                         <EmailReadCell readAt={row.email_read_at} sentAt={row.email_sent_at} />
                       </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <SmsSentCell
+                          sentAt={row.sms_sent_at}
+                          status={row.sms_status}
+                          deliveryStatus={row.sms_delivery_status}
+                          deliveredAt={row.sms_delivered_at}
+                        />
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <SmsReadCell readAt={row.sms_read_at} sentAt={row.sms_sent_at} />
+                      </td>
                       <td
                         className="px-3 py-2 max-w-[180px] truncate"
-                        title={String(row.email_recipient || row.clinic_email || "")}
+                        title={String(row.email_recipient || row.clinic_email || row.sms_recipient || row.clinic_phone || "")}
                       >
                         {row.email_recipient ? (
                           String(row.email_recipient)
@@ -920,7 +1017,7 @@ export function TrackingDashboard() {
                 <tr>
                   <td
                     className="px-3 py-6 text-center text-gray-600"
-                    colSpan={tab === "events" ? 8 : tab === "signups" ? 7 : tab === "campaign" ? 5 : 13}
+                    colSpan={tab === "events" ? 8 : tab === "signups" ? 7 : tab === "campaign" ? 5 : 15}
                   >
                     No rows match these filters.
                   </td>

@@ -253,6 +253,11 @@ model Clinic {
   campaignEmailReadAt         DateTime? // when the claim-invite open-tracking pixel was first hit
   directoryRemovalRequestedAt DateTime?
 
+  // Lead-notification SMS — per-clinic override for the global SMS_SEND_MODE.
+  // null = use the env default; "fallback" = SMS only when email is missing/failed;
+  // "always" = SMS on every lead with a valid phone; "off" = never (also set by a STOP reply).
+  smsNotifyMode String? @db.VarChar(10)
+
   // Self-serve GDPR account deletion — set when the claimer requests deletion from
   // the portal. Listing is hidden immediately; a daily sweep hard-purges (reverts to
   // unclaimed + anonymises the claim) once this timestamp has passed.
@@ -844,6 +849,14 @@ model ConsultationLead {
   notificationEmailSentAt DateTime? // when the notification email successfully sent
   notificationEmailReadAt DateTime? // when the open-tracking pixel was first hit
 
+  // Clinic notification SMS — Twilio, sent alongside or instead of the email (see SMS_SEND_MODE / Clinic.smsNotifyMode)
+  notificationSmsTo          String?   @db.VarChar(20) // E.164 number the SMS was sent to
+  notificationSmsSid         String?   @db.VarChar(64) // Twilio Message SID — correlates the status-callback webhook
+  notificationSmsStatus      String?   @db.VarChar(20) // queued | sent | delivered | undelivered | failed
+  notificationSmsSentAt      DateTime? // when Twilio accepted the message
+  notificationSmsDeliveredAt DateTime? // carrier delivery receipt (status webhook)
+  notificationSmsReadAt      DateTime? // when the clinic first tapped the tracked link in the SMS
+
   // Pipeline CRM fields
   pipelineStatus LeadStatus @default(new)
   notes          String?    @db.Text
@@ -867,6 +880,7 @@ model ConsultationLead {
   @@index([createdAt])
   @@index([patientId])
   @@index([pipelineStatus])
+  @@index([notificationSmsSid])
   @@map("consultation_leads")
 }
 

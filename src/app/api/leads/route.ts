@@ -5,6 +5,7 @@ import { getPatientClaims } from '@/lib/patient-auth'
 import { domainHasMailServer } from '@/lib/email-domain-check'
 import { sendGhostLeadHook, sendLeadNotificationEmail, sendPplLeadTeaserEmail } from '@/lib/email'
 import { signEmailTrackingToken } from '@/lib/email-open-tracking'
+import { notifyClinicBySms } from '@/lib/lead-sms-notify'
 import { getClaimState } from '@/lib/claim-utils'
 import { CONSENT_FORM_VERSION, consentCheckboxWording } from '@/lib/consent'
 import { contactReasonLabel, isValidContactReason } from '@/lib/consultation-reasons'
@@ -115,7 +116,17 @@ export async function POST(req: NextRequest) {
 
     const clinic = await prisma.clinic.findUnique({
       where: { slug: clinicSlug },
-      select: { id: true, name: true, claimed: true, claimedPlan: true, email: true, gmapsPhone: true },
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        claimed: true,
+        claimedPlan: true,
+        email: true,
+        gmapsPhone: true,
+        smsNotifyMode: true,
+        gaClientId: true,
+      },
     })
 
     if (!clinic) {
@@ -189,31 +200,34 @@ export async function POST(req: NextRequest) {
         data: { notificationEmailTo: clinic.email, notificationEmailSentAt: new Date() },
       })
 
+    // Ghost lead → only notify while the clinic is genuinely still unclaimed; a
+    // claim already in flight or approved means they know, no need to nag.
+    const ghostEligible =
+      isGhostLead && (clinic.email || clinic.gmapsPhone)
+        ? (await getClaimState({ claimed: false, entityType: 'clinic', slug: clinicSlug })) === 'unclaimed'
+        : false
+
     // Notify the clinic. The lead is already persisted, so a send failure must not
     // fail the request — log and move on. Awaited (not fire-and-forget) so the
     // "email sent" timestamp is committed before we respond: a worker restart
     // between the send and the DB write can no longer lose it.
+    let emailFailed = false
     try {
       if (isGhostLead) {
-        if (clinic.email) {
-          // Skip the "claim your profile" email if a claim is already in flight or
-          // approved — the clinic already knows, no need to nag them again.
-          const claimState = await getClaimState({ claimed: false, entityType: 'clinic', slug: clinicSlug })
-          if (claimState === 'unclaimed') {
-            const pendingCount = await prisma.consultationLead.count({
-              where: { clinicId: clinic.id, isGhostLead: true, isUnlocked: false },
-            })
-            await sendGhostLeadHook({
-              to: clinic.email,
-              clinicName: clinic.name ?? clinicSlug,
-              patientFirstName: firstName ?? undefined,
-              location: location ?? '',
-              pendingCount,
-              claimUrl: `${baseUrl}/directory/claim/${clinicSlug}`,
-              trackingPixelUrl,
-            })
-            await recordEmailSent()
-          }
+        if (clinic.email && ghostEligible) {
+          const pendingCount = await prisma.consultationLead.count({
+            where: { clinicId: clinic.id, isGhostLead: true, isUnlocked: false },
+          })
+          await sendGhostLeadHook({
+            to: clinic.email,
+            clinicName: clinic.name ?? clinicSlug,
+            patientFirstName: firstName ?? undefined,
+            location: location ?? '',
+            pendingCount,
+            claimUrl: `${baseUrl}/directory/claim/${clinicSlug}`,
+            trackingPixelUrl,
+          })
+          await recordEmailSent()
         }
       } else if (clinic.email) {
         const portalUrl = `${baseUrl}/directory/portal/clinic/prospects`
@@ -241,8 +255,33 @@ export async function POST(req: NextRequest) {
         await recordEmailSent()
       }
     } catch (err) {
+      emailFailed = true
       console.error('[leads] clinic notification email error:', err)
     }
+
+    // Notify the clinic by SMS too — always, or only as an email fallback,
+    // depending on SMS_SEND_MODE / clinic.smsNotifyMode. Same never-throw contract.
+    let claimPhone: string | null = null
+    if (clinic.claimed) {
+      const claim = await prisma.claimRequest
+        .findFirst({
+          where: { clinicId: clinic.id, status: 'approved', entityType: 'clinic' },
+          orderBy: { updatedAt: 'desc' },
+          select: { clinicPhone: true, claimerPhone: true },
+        })
+        .catch(() => null)
+      claimPhone = claim?.clinicPhone || claim?.claimerPhone || null
+    }
+    await notifyClinicBySms({
+      leadId: lead.id,
+      clinic,
+      claimPhone,
+      leadSource: source,
+      emailAvailable: !!clinic.email,
+      emailFailed,
+      ghostEligible,
+      baseUrl,
+    })
 
     return NextResponse.json({ success: true, leadId: lead.id })
   } catch (error) {
