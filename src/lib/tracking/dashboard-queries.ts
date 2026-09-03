@@ -247,8 +247,8 @@ function parseSearchParams(ctaTargetUrl: string | null): {
 function mapConsultationLeadRow(row: {
   id: number
   createdAt: Date
-  patientName: string
-  patientPhone: string
+  patientName: string | null
+  patientPhone: string | null
   patientEmail: string | null
   treatment: string | null
   location: string | null
@@ -279,8 +279,8 @@ function mapConsultationLeadRow(row: {
     referrer: "consultation_form",
     country: "GB",
     device_type: "unknown",
-    name: row.patientName,
-    contact: row.patientEmail || row.patientPhone,
+    name: row.patientName ?? "—",
+    contact: row.patientEmail || row.patientPhone || "—",
     treatment: row.treatment,
     location: row.location,
     budget: null,

@@ -819,10 +819,11 @@ model VerificationRequest {
 model ConsultationLead {
   id            Int        @id @default(autoincrement())
   clinicId      Int
-  patientName   String     @db.VarChar(200)
-  patientPhone  String     @db.VarChar(30)
+  patientName   String?    @db.VarChar(200) // null for simplified unclaimed-clinic enquiries (no name collected)
+  patientPhone  String?    @db.VarChar(30) // null when the patient left phone blank (optional on the enquiry form)
   patientEmail  String?    @db.VarChar(255)
   treatment     String?    @db.VarChar(255)
+  contactReason String?    @db.VarChar(80) // canonical reason value for unclaimed-clinic enquiries (see src/lib/consultation-reasons.ts)
   preferredTime String?    @db.VarChar(100) // "morning", "afternoon", "evening"
   location      String?    @db.VarChar(255) // city/area for context
   source        LeadSource @default(consultation)

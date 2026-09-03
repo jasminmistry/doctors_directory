@@ -25,6 +25,7 @@ export type AnalyticsEvent =
   | "form_start"
   | "form_submit"
   | "generate_lead"
+  | "enquiry_submitted"
   | "sign_up_start"
   | "sign_up_otp_verified"
   | "sign_up_plan_selected"

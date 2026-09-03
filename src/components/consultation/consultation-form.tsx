@@ -3,9 +3,22 @@
 import { useRef, useState } from 'react'
 import { track } from '@/lib/analytics/track'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { consentDisclaimer, consentCheckboxWording, TERMS_URL } from '@/lib/consent'
 import { cn } from '@/lib/utils'
+import {
+  ConsentCheckboxes,
+  EMPTY_CONSENT,
+  EMAIL_RE,
+  Field,
+  IconInput,
+  NAME_MAX_LENGTH,
+  NAME_RE,
+  UK_PHONE_RE,
+  consentComplete,
+  isOver18,
+  maxDobDate,
+  normalizeName,
+  type ConsentValues,
+} from '@/components/consultation/consultation-form-parts'
 import { IconCalendar, IconLoader2, IconLock, IconMail, IconPhone } from '@tabler/icons-react'
 
 export interface ConsultationFormData {
@@ -25,87 +38,6 @@ interface ConsultationRichFormProps {
   onSubmit: (data: ConsultationFormData) => void
   /** True once the patient is logged in — locks the email field to their verified account email. */
   emailLocked?: boolean
-}
-
-const PRIVACY_POLICY_URL =
-  `${process.env.NEXT_PUBLIC_MARKETING_BASE_URL || 'https://www.consentz.com'}/privacy-policy/`
-
-const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
-const EMAIL_RE = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/
-const NAME_RE = /^[A-Za-z]+(?:[-' ][A-Za-z]+)*$/
-const NAME_MAX_LENGTH = 50
-
-// Collapses internal double/triple spaces (e.g. "William  Arthur") so stray extra
-// whitespace doesn't trip the letters-only NAME_RE check below.
-function normalizeName(value: string): string {
-  return value.trim().replace(/\s+/g, ' ')
-}
-
-function isOver18(dob: string): boolean {
-  const birth = new Date(dob)
-  const cutoff = new Date()
-  cutoff.setFullYear(cutoff.getFullYear() - 18)
-  return birth <= cutoff
-}
-
-function maxDobDate(): string {
-  const d = new Date()
-  d.setFullYear(d.getFullYear() - 18)
-  return d.toISOString().slice(0, 10)
-}
-
-interface FieldProps {
-  label: string
-  error?: string
-  required?: boolean
-  children: React.ReactNode
-}
-
-function Field({ label, error, required, children }: FieldProps) {
-  return (
-    <div className="space-y-1.5">
-      <label className="block text-xs font-medium text-gray-600">
-        {label}
-        {required && <span className="ml-0.5 text-red-500">*</span>}
-      </label>
-      {children}
-      {error && (
-        <p className="flex items-center gap-1 text-xs text-red-500">
-          <span className="inline-block h-1 w-1 rounded-full bg-red-500 shrink-0" />
-          {error}
-        </p>
-      )}
-    </div>
-  )
-}
-
-interface IconInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  icon?: React.ReactNode
-  error?: boolean
-}
-
-function IconInput({ icon, error, className, ...props }: IconInputProps) {
-  return (
-    <div className="relative">
-      {icon && (
-        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-600">
-          {icon}
-        </span>
-      )}
-      <input
-        {...props}
-        className={cn(
-          'w-full rounded-lg border bg-white py-2.5 text-sm text-gray-900 placeholder:text-gray-400',
-          'transition-colors focus:outline-none focus:ring-2',
-          icon ? 'pl-9 pr-3' : 'px-3',
-          error
-            ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
-            : 'border-gray-200 focus:border-gray-400 focus:ring-gray-100',
-          className,
-        )}
-      />
-    </div>
-  )
 }
 
 export function ConsultationRichForm({
@@ -129,13 +61,8 @@ export function ConsultationRichForm({
   const [phoneError, setPhoneError] = useState('')
   const [dobError, setDobError] = useState('')
 
-  const [consentShare, setConsentShare] = useState(false)
-  const [consentPrivacy, setConsentPrivacy] = useState(false)
-  const [consentAge, setConsentAge] = useState(false)
-  const [consentTerms, setConsentTerms] = useState(false)
+  const [consent, setConsent] = useState<ConsentValues>(EMPTY_CONSENT)
   const [consentError, setConsentError] = useState('')
-
-  const consentWording = consentCheckboxWording(clinicName)
 
   const formStarted = useRef(false)
   function markFormStart() {
@@ -146,7 +73,7 @@ export function ConsultationRichForm({
 
   const canSubmit =
     firstName.trim() && lastName.trim() && email.trim() && phone.trim() && dateOfBirth &&
-    consentShare && consentPrivacy && consentAge && consentTerms && !submitting
+    consentComplete(consent) && !submitting
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -195,7 +122,7 @@ export function ConsultationRichForm({
       hasError = true
     }
 
-    if (!consentShare || !consentPrivacy || !consentAge || !consentTerms) {
+    if (!consentComplete(consent)) {
       setConsentError('Please confirm all four statements below to continue.')
       hasError = true
     }
@@ -309,71 +236,12 @@ export function ConsultationRichForm({
       </Field>
 
       {/* Consent disclaimer + checkboxes */}
-      <div className="space-y-2.5">
-        <p className="rounded-lg bg-gray-50 px-3 py-2.5 text-xs text-gray-600 leading-relaxed">
-          {consentDisclaimer(clinicName)}
-        </p>
-        <label className="flex items-start gap-2 text-xs text-gray-600">
-          <Checkbox
-            checked={consentShare}
-            onCheckedChange={(checked) => { setConsentShare(checked === true); setConsentError('') }}
-            className="mt-0.5"
-          />
-          <span>{consentWording.share}</span>
-        </label>
-        <label className="flex items-start gap-2 text-xs text-gray-600">
-          <Checkbox
-            checked={consentPrivacy}
-            onCheckedChange={(checked) => { setConsentPrivacy(checked === true); setConsentError('') }}
-            className="mt-0.5"
-          />
-          <span>
-            I have read and agree to the{' '}
-            <a
-              href={PRIVACY_POLICY_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-gray-900"
-            >
-              Privacy Policy
-            </a>
-            , which explains how Consentz uses my information and how I can withdraw my consent.
-          </span>
-        </label>
-        <label className="flex items-start gap-2 text-xs text-gray-600">
-          <Checkbox
-            checked={consentAge}
-            onCheckedChange={(checked) => { setConsentAge(checked === true); setConsentError('') }}
-            className="mt-0.5"
-          />
-          <span>{consentWording.age}</span>
-        </label>
-        <label className="flex items-start gap-2 text-xs text-gray-600">
-          <Checkbox
-            checked={consentTerms}
-            onCheckedChange={(checked) => { setConsentTerms(checked === true); setConsentError('') }}
-            className="mt-0.5"
-          />
-          <span>
-            I have read and agree to the Consentz{' '}
-            <a
-              href={TERMS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-gray-900"
-            >
-              Terms &amp; Conditions
-            </a>
-            .
-          </span>
-        </label>
-        {consentError && (
-          <p className="flex items-center gap-1 text-xs text-red-500">
-            <span className="inline-block h-1 w-1 rounded-full bg-red-500 shrink-0" />
-            {consentError}
-          </p>
-        )}
-      </div>
+      <ConsentCheckboxes
+        clinicName={clinicName}
+        values={consent}
+        onChange={(next) => { setConsent(next); setConsentError('') }}
+        error={consentError}
+      />
 
       <Button
         type="submit"

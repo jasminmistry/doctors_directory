@@ -198,6 +198,7 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
         </div>
 
         <div className="flex flex-col gap-3 justify-center">
+          {/* Unclaimed practitioners keep the same triggers but get a slimmed-down form — we record and share less. */}
           <RequestConsultationDialog
             pageType="practitioner_page"
             clinicSlug={k_value?.slug}
@@ -205,6 +206,7 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
             entityImage={imgSrc}
             location={k_value?.City || clinic.City}
             consultationHref={consultationHref}
+            simplified={claimState !== 'claimed'}
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
           />
           <RequestConsultationDialog
@@ -221,6 +223,7 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
             treatmentFallback="Pricing Enquiry"
             openParam="pricing"
             leadSource="pricing"
+            simplified={claimState !== 'claimed'}
             buttonClassName="shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
           />
           <SocialMediaIcons clinic={k_value} />
