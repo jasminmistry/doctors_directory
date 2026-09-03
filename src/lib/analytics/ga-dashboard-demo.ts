@@ -76,9 +76,27 @@ export function demoGaDashboard(params: GaDashboardParams & { days: number }): G
   const signUpStarts = Math.round(perDay * days * 0.011)
   const signUps = Math.round(signUpStarts * 0.34)
   const leads = Math.round(perDay * days * 0.028)
+  const enquiries = Math.round(perDay * days * 0.017)
   const bookings = Math.round(perDay * days * 0.014)
   const chats = Math.round(perDay * days * 0.019)
   const revenue = signUps * 99 + Math.round(leads * 0.3) * 55
+
+  // Built as a standalone object (not an inline literal) so it satisfies the
+  // GaDashboard["kpis"] shape without an excess-property check — `enquiries` is
+  // present on branches that have the unclaimed-enquiry feature and harmless on
+  // ones that don't.
+  const kpis = {
+    sessions,
+    users,
+    pageViews,
+    signUpStarts,
+    signUps,
+    leads,
+    enquiries,
+    bookings,
+    chats,
+    revenue,
+  }
 
   const signUpFunnel = [
     { stage: "sign_up_start", label: "Started", count: signUpStarts },
@@ -130,6 +148,10 @@ export function demoGaDashboard(params: GaDashboardParams & { days: number }): G
     { name: "form_submit", count: Math.round((signUps + leads) * 1.15) },
     { name: "generate_lead", count: leads },
     { name: "lead_submitted", count: leads },
+    { name: "enquiry_submitted", count: enquiries },
+    { name: "sms_notification_sent", count: Math.round((leads + enquiries) * 0.9) },
+    { name: "sms_notification_delivered", count: Math.round((leads + enquiries) * 0.85) },
+    { name: "sms_notification_read", count: Math.round((leads + enquiries) * 0.4) },
     { name: "chat_open", count: chats },
     { name: "chat_message_sent", count: Math.round(chats * 3.3) },
     { name: "sign_up_start", count: signUpFunnel[0].count },
@@ -150,7 +172,7 @@ export function demoGaDashboard(params: GaDashboardParams & { days: number }): G
   return {
     configured: true,
     range: { startDate: params.startDate, endDate: params.endDate },
-    kpis: { sessions, users, pageViews, signUpStarts, signUps, leads, bookings, chats, revenue },
+    kpis,
     signUpFunnel,
     bookingFunnel,
     signUpsBySource,
