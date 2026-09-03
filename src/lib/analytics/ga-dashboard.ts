@@ -40,6 +40,8 @@ export interface GaDashboard {
   topPages: { path: string; views: number }[]
   devices: NamedValue[]
   trend: { date: string; sessions: number; keyEvents: number }[]
+  /** Every event GA4 recorded in the range, highest count first. */
+  events: { name: string; count: number }[]
 }
 
 const FUNNEL_STAGES: { event: string; label: string }[] = [
@@ -54,18 +56,6 @@ const BOOKING_STAGES: { event: string; label: string }[] = [
   { event: "booking_start", label: "Started" },
   { event: "booking_slot_select", label: "Slot selected" },
   { event: "booking_complete", label: "Booked" },
-]
-
-const FUNNEL_EVENTS = FUNNEL_STAGES.map((s) => s.event)
-const COUNTED_EVENTS = [
-  ...FUNNEL_EVENTS,
-  ...BOOKING_STAGES.map((s) => s.event),
-  "search",
-  "generate_lead",
-  "chat_open",
-  "call_booking_start",
-  "call_booking_complete",
-  "purchase",
 ]
 
 function eventNameFilter(values: string[]) {
@@ -84,6 +74,7 @@ function blank(params: GaDashboardParams): GaDashboard {
     topPages: [],
     devices: [],
     trend: [],
+    events: [],
   }
 }
 
@@ -121,12 +112,13 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
         { name: "totalRevenue" },
       ],
     },
-    // 1 — per-event counts (KPIs + funnel in one)
+    // 1 — every event's count (feeds KPIs, funnels, and the events table)
     {
       dateRanges,
       dimensions: [{ name: "eventName" }],
       metrics: [{ name: "eventCount" }],
-      dimensionFilter: eventNameFilter(COUNTED_EVENTS),
+      orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
+      limit: 100,
     },
     // 2 — sign-ups by first-touch source bucket
     {
@@ -213,5 +205,11 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
       sessions: Number(row.metricValues?.[0]?.value) || 0,
       keyEvents: Number(row.metricValues?.[1]?.value) || 0,
     })),
+    events: (events?.rows ?? [])
+      .map((row) => ({
+        name: row.dimensionValues?.[0]?.value ?? "(not set)",
+        count: Number(row.metricValues?.[0]?.value) || 0,
+      }))
+      .filter((e) => e.count > 0),
   }
 }
