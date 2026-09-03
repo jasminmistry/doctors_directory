@@ -59,22 +59,6 @@ const BOOKING_STAGES: { event: string; label: string }[] = [
   { event: "booking_complete", label: "Booked" },
 ]
 
-const FUNNEL_EVENTS = FUNNEL_STAGES.map((s) => s.event)
-const COUNTED_EVENTS = [
-  ...FUNNEL_EVENTS,
-  ...BOOKING_STAGES.map((s) => s.event),
-  "search",
-  "generate_lead",
-  "enquiry_submitted",
-  "chat_open",
-  "call_booking_start",
-  "call_booking_complete",
-  "purchase",
-  "sms_notification_sent",
-  "sms_notification_delivered",
-  "sms_notification_read",
-]
-
 function eventNameFilter(values: string[]) {
   return { filter: { fieldName: "eventName", inListFilter: { values } } }
 }
