@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { IconBrandGoogle, IconRefresh, IconCloudUpload, IconPlugConnectedX } from '@tabler/icons-react'
+import { Button } from '@/components/ui/button'
 
 interface ConnectionState {
   status: 'pending_location' | 'connected' | 'needs_reauth' | 'revoked'
@@ -30,9 +31,6 @@ interface GbpLocation {
   title?: string
   storefrontAddress?: { addressLines?: string[]; locality?: string }
 }
-
-const btn =
-  'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-60'
 
 export function GbpConnectionCard({ onChange }: { onChange?: () => void }) {
   const [status, setStatus] = useState<StatusResponse | null>(null)
@@ -100,12 +98,11 @@ export function GbpConnectionCard({ onChange }: { onChange?: () => void }) {
           Link your Google account to import your existing details
           {status.canPush ? ' and push updates back to Google in one click.' : '.'}
         </p>
-        <a
-          href="/directory/api/portal/gbp/connect/"
-          className={`${btn} mt-3 bg-black text-white hover:bg-neutral-800`}
-        >
-          <IconBrandGoogle className="h-4 w-4" /> Connect Google
-        </a>
+        <Button asChild size="md" className="mt-3">
+          <a href="/directory/api/portal/gbp/connect/">
+            <IconBrandGoogle /> Connect Google
+          </a>
+        </Button>
       </div>
     )
   }
@@ -117,9 +114,11 @@ export function GbpConnectionCard({ onChange }: { onChange?: () => void }) {
         <p className="mt-1 text-sm text-amber-800">
           Your Google authorisation has expired. Reconnect to keep importing and syncing.
         </p>
-        <a href="/directory/api/portal/gbp/connect/" className={`${btn} mt-3 bg-black text-white hover:bg-neutral-800`}>
-          <IconBrandGoogle className="h-4 w-4" /> Reconnect
-        </a>
+        <Button asChild size="md" className="mt-3">
+          <a href="/directory/api/portal/gbp/connect/">
+            <IconBrandGoogle /> Reconnect
+          </a>
+        </Button>
       </div>
     )
   }
@@ -141,9 +140,9 @@ export function GbpConnectionCard({ onChange }: { onChange?: () => void }) {
             <p className="text-xs text-gray-400">Last synced {new Date(conn.lastSyncedAt).toLocaleString()}</p>
           )}
         </div>
-        <button type="button" onClick={disconnect} disabled={busy} className={`${btn} border border-gray-200 text-gray-600 hover:bg-gray-50`}>
-          <IconPlugConnectedX className="h-4 w-4" /> Disconnect
-        </button>
+        <Button type="button" variant="outline" size="md" onClick={disconnect} disabled={busy} className="normal-case">
+          <IconPlugConnectedX /> Disconnect
+        </Button>
       </div>
 
       {conn.lastSyncError && (
@@ -163,9 +162,9 @@ export function GbpConnectionCard({ onChange }: { onChange?: () => void }) {
       )}
 
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={pull} disabled={busy} className={`${btn} border border-gray-200 text-gray-700 hover:bg-gray-50`}>
-          <IconRefresh className="h-4 w-4" /> Import from Google
-        </button>
+        <Button type="button" variant="outline" size="md" onClick={pull} disabled={busy} className="normal-case">
+          <IconRefresh /> Import from Google
+        </Button>
         {status.canPush ? (
           <SyncButton onDone={load} />
         ) : (
@@ -244,9 +243,9 @@ function LocationPicker({
     <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-gray-900">Choose your business location</h2>
-        <button type="button" onClick={onDisconnect} disabled={busy} className="text-xs text-gray-500 hover:text-gray-900">
+        <Button type="button" variant="ghost" size="sm" onClick={onDisconnect} disabled={busy}>
           Cancel
-        </button>
+        </Button>
       </div>
       <p className="text-xs text-gray-500">Signed in as {email}</p>
 
@@ -285,14 +284,9 @@ function LocationPicker({
                       .join(', ')}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => bind(loc.name)}
-                  disabled={binding}
-                  className={`${btn} bg-black text-white hover:bg-neutral-800`}
-                >
+                <Button type="button" size="md" onClick={() => bind(loc.name)} disabled={binding}>
                   Link
-                </button>
+                </Button>
               </li>
             ))}
           </ul>
@@ -333,9 +327,9 @@ function SyncButton({ onDone }: { onDone: () => void }) {
 
   return (
     <>
-      <button type="button" onClick={() => run(false)} disabled={running} className={`${btn} bg-black text-white hover:bg-neutral-800`}>
-        <IconCloudUpload className="h-4 w-4" /> {running ? 'Syncing…' : 'Sync to Google'}
-      </button>
+      <Button type="button" size="md" onClick={() => run(false)} disabled={running}>
+        <IconCloudUpload /> {running ? 'Syncing…' : 'Sync to Google'}
+      </Button>
 
       {confirmOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
@@ -346,21 +340,18 @@ function SyncButton({ onDone }: { onDone: () => void }) {
               and may require re-verification (by postcard or phone). Other fields have already been synced.
             </p>
             <div className="mt-4 flex gap-2">
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="lg"
                 onClick={() => setConfirmOpen(false)}
-                className="flex-1 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex-1 normal-case"
               >
                 Skip these
-              </button>
-              <button
-                type="button"
-                onClick={() => run(true)}
-                disabled={running}
-                className="flex-1 rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-800 disabled:opacity-60"
-              >
+              </Button>
+              <Button type="button" size="lg" onClick={() => run(true)} disabled={running} className="flex-1">
                 {running ? 'Syncing…' : 'Sync everything'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

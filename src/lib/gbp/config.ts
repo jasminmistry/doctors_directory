@@ -5,7 +5,11 @@ export const GBP_MOCK = process.env.GBP_MOCK === 'true'
 export const GBP_REGION_CODE = process.env.GBP_REGION_CODE || 'GB'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
-export const GBP_REDIRECT_URI = `${BASE_URL}/directory/api/portal/gbp/callback`
+// Trailing slash required: next.config.js sets `trailingSlash: true`, and the OAuth
+// client's Authorized redirect URIs are all registered with the slash (localhost +
+// staging + prod). Any difference → OAuth error 400 redirect_uri_mismatch.
+export const GBP_REDIRECT_URI = `${BASE_URL}/directory/api/portal/gbp/callback/`
+console.log(`GBP_REDIRECT_URI=${GBP_REDIRECT_URI} (NB: must match OAuth client config)`)
 
 export const GBP_SCOPE = 'https://www.googleapis.com/auth/business.manage'
 
