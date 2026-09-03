@@ -68,6 +68,9 @@ const COUNTED_EVENTS = [
   "call_booking_start",
   "call_booking_complete",
   "purchase",
+  "sms_notification_sent",
+  "sms_notification_delivered",
+  "sms_notification_read",
 ]
 
 function eventNameFilter(values: string[]) {

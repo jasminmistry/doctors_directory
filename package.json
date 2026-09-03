@@ -20,7 +20,8 @@
     "db:generate": "prisma generate",
     "db:studio": "prisma studio",
     "campaign:claim-invites": "tsx scripts/send-claim-invites.ts",
-    "chats:merge-duplicates": "tsx scripts/merge-duplicate-chat-sessions.ts"
+    "chats:merge-duplicates": "tsx scripts/merge-duplicate-chat-sessions.ts",
+    "sms:test": "tsx scripts/send-test-sms.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -95,6 +96,7 @@
     "supabase": "^2.58.5",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
+    "twilio": "^6.1.0",
     "vaul": "^0.9.9",
     "zod": "3.25.67",
     "zustand": "^5.0.8"
