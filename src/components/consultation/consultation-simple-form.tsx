@@ -10,37 +10,36 @@ import {
   EMAIL_RE,
   Field,
   IconInput,
-  NAME_MAX_LENGTH,
-  NAME_RE,
   UK_PHONE_RE,
   consentComplete,
-  isOver18,
-  maxDobDate,
-  normalizeName,
   type ConsentValues,
 } from '@/components/consultation/consultation-form-parts'
-import { IconCalendar, IconLoader2, IconLock, IconMail, IconPhone } from '@tabler/icons-react'
+import { CONTACT_REASONS } from '@/lib/consultation-reasons'
+import { IconLoader2, IconLock, IconMail, IconMessage, IconPhone } from '@tabler/icons-react'
 
-export interface ConsultationFormData {
-  firstName: string
-  lastName: string
+export interface SimpleEnquiryData {
   email: string
   phone: string
-  dateOfBirth: string
+  contactReason: string
 }
 
-interface ConsultationRichFormProps {
-  defaultValues?: Partial<ConsultationFormData>
+interface ConsultationSimpleFormProps {
+  defaultValues?: Partial<SimpleEnquiryData>
   clinicName: string
   description?: React.ReactNode
   submitLabel: string
   submitting: boolean
-  onSubmit: (data: ConsultationFormData) => void
+  onSubmit: (data: SimpleEnquiryData) => void
   /** True once the patient is logged in — locks the email field to their verified account email. */
   emailLocked?: boolean
 }
 
-export function ConsultationRichForm({
+/**
+ * Slimmed-down enquiry form shown for **unclaimed** clinics: no name, no date of
+ * birth, phone optional, plus a required "Reason for contact". Claimed clinics
+ * keep the full `ConsultationRichForm`.
+ */
+export function ConsultationSimpleForm({
   defaultValues,
   clinicName,
   description,
@@ -48,18 +47,14 @@ export function ConsultationRichForm({
   submitting,
   onSubmit,
   emailLocked,
-}: ConsultationRichFormProps) {
-  const [firstName, setFirstName] = useState(defaultValues?.firstName ?? '')
-  const [lastName, setLastName] = useState(defaultValues?.lastName ?? '')
+}: ConsultationSimpleFormProps) {
   const [email, setEmail] = useState(defaultValues?.email ?? '')
   const [phone, setPhone] = useState(defaultValues?.phone ?? '')
-  const [dateOfBirth, setDateOfBirth] = useState(defaultValues?.dateOfBirth ?? '')
+  const [contactReason, setContactReason] = useState(defaultValues?.contactReason ?? '')
 
-  const [firstNameError, setFirstNameError] = useState('')
-  const [lastNameError, setLastNameError] = useState('')
   const [emailError, setEmailError] = useState('')
   const [phoneError, setPhoneError] = useState('')
-  const [dobError, setDobError] = useState('')
+  const [reasonError, setReasonError] = useState('')
 
   const [consent, setConsent] = useState<ConsentValues>(EMPTY_CONSENT)
   const [consentError, setConsentError] = useState('')
@@ -68,42 +63,20 @@ export function ConsultationRichForm({
   function markFormStart() {
     if (formStarted.current) return
     formStarted.current = true
-    track('form_start', { form_name: 'consultation' })
+    track('form_start', { form_name: 'enquiry' })
   }
 
   const canSubmit =
-    firstName.trim() && lastName.trim() && email.trim() && phone.trim() && dateOfBirth &&
-    consentComplete(consent) && !submitting
+    email.trim() && contactReason && consentComplete(consent) && !submitting
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setFirstNameError('')
-    setLastNameError('')
     setEmailError('')
     setPhoneError('')
-    setDobError('')
+    setReasonError('')
     setConsentError('')
 
-    const normalizedFirstName = normalizeName(firstName)
-    const normalizedLastName = normalizeName(lastName)
-    if (normalizedFirstName !== firstName) setFirstName(normalizedFirstName)
-    if (normalizedLastName !== lastName) setLastName(normalizedLastName)
-
     let hasError = false
-    if (!normalizedFirstName) {
-      setFirstNameError('First name is required.')
-      hasError = true
-    } else if (!NAME_RE.test(normalizedFirstName)) {
-      setFirstNameError('Enter a valid first name (letters only, no numbers or symbols).')
-      hasError = true
-    }
-    if (!normalizedLastName) {
-      setLastNameError('Last name is required.')
-      hasError = true
-    } else if (!NAME_RE.test(normalizedLastName)) {
-      setLastNameError('Enter a valid last name (letters only, no numbers or symbols).')
-      hasError = true
-    }
     if (!email.trim()) {
       setEmailError('Email address is required.')
       hasError = true
@@ -113,12 +86,13 @@ export function ConsultationRichForm({
     }
 
     const cleanPhone = phone.replace(/\s/g, '')
-    if (!UK_PHONE_RE.test(cleanPhone)) {
+    if (cleanPhone && !UK_PHONE_RE.test(cleanPhone)) {
       setPhoneError('Enter a valid UK number — e.g. 07700 900000 or +447700 900000')
       hasError = true
     }
-    if (!isOver18(dateOfBirth)) {
-      setDobError('You must be 18 or over to use this service')
+
+    if (!contactReason) {
+      setReasonError('Please choose a reason for contacting the clinic.')
       hasError = true
     }
 
@@ -129,14 +103,8 @@ export function ConsultationRichForm({
 
     if (hasError) return
 
-    track('form_submit', { form_name: 'consultation' })
-    onSubmit({
-      firstName: normalizedFirstName,
-      lastName: normalizedLastName,
-      email: email.trim(),
-      phone: cleanPhone,
-      dateOfBirth,
-    })
+    track('form_submit', { form_name: 'enquiry' })
+    onSubmit({ email: email.trim(), phone: cleanPhone, contactReason })
   }
 
   return (
@@ -146,32 +114,6 @@ export function ConsultationRichForm({
           {description}
         </p>
       )}
-
-      {/* Name row */}
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="First name" error={firstNameError} required>
-          <IconInput
-            placeholder="Jane"
-            value={firstName}
-            error={!!firstNameError}
-            onChange={(e) => { setFirstName(e.target.value); setFirstNameError('') }}
-            onBlur={() => setFirstName((v) => normalizeName(v))}
-            autoComplete="given-name"
-            maxLength={NAME_MAX_LENGTH}
-          />
-        </Field>
-        <Field label="Last name" error={lastNameError} required>
-          <IconInput
-            placeholder="Smith"
-            value={lastName}
-            error={!!lastNameError}
-            onChange={(e) => { setLastName(e.target.value); setLastNameError('') }}
-            onBlur={() => setLastName((v) => normalizeName(v))}
-            autoComplete="family-name"
-            maxLength={NAME_MAX_LENGTH}
-          />
-        </Field>
-      </div>
 
       {/* Email */}
       <Field label="Email address" error={emailError} required>
@@ -198,8 +140,8 @@ export function ConsultationRichForm({
         </p>
       )}
 
-      {/* Phone */}
-      <Field label="Phone number" error={phoneError} required>
+      {/* Phone — optional */}
+      <Field label="Phone number (optional)" error={phoneError}>
         <IconInput
           type="tel"
           icon={<IconPhone stroke={1.5} className="h-3.5 w-3.5" />}
@@ -212,27 +154,30 @@ export function ConsultationRichForm({
         />
       </Field>
 
-      {/* Date of birth */}
-      <Field label="Date of birth" error={dobError} required>
+      {/* Reason for contact */}
+      <Field label="Reason for contact" error={reasonError} required>
         <div className="relative">
           <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-600">
-            <IconCalendar stroke={1.5} className="h-3.5 w-3.5" />
+            <IconMessage stroke={1.5} className="h-3.5 w-3.5" />
           </span>
-          <input
-            type="date"
-            max={maxDobDate()}
-            value={dateOfBirth}
-            onChange={(e) => { setDateOfBirth(e.target.value); setDobError('') }}
+          <select
+            value={contactReason}
+            onChange={(e) => { setContactReason(e.target.value); setReasonError('') }}
             className={cn(
-              'w-full rounded-lg border bg-white pl-9 pr-3 py-2.5 text-sm text-gray-900',
+              'w-full appearance-none rounded-lg border bg-white pl-9 pr-3 py-2.5 text-sm text-gray-900',
               'transition-colors focus:outline-none focus:ring-2',
-              dobError
+              contactReason ? '' : 'text-gray-400',
+              reasonError
                 ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
                 : 'border-gray-200 focus:border-gray-400 focus:ring-gray-100',
             )}
-          />
+          >
+            <option value="" disabled>Select a reason…</option>
+            {CONTACT_REASONS.map((reason) => (
+              <option key={reason.value} value={reason.value}>{reason.label}</option>
+            ))}
+          </select>
         </div>
-        <p className="text-[11px] text-gray-600">You must be 18 or over to request a consultation</p>
       </Field>
 
       {/* Consent disclaimer + checkboxes */}

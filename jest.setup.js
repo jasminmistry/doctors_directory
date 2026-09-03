@@ -8,3 +8,12 @@ Object.defineProperty(global, 'TextDecoder', {
 Object.defineProperty(global, 'TextEncoder', {
   value: TextEncoder,
 });
+
+// jsdom lacks ResizeObserver, which Radix UI primitives (Checkbox, Select, …) touch on mount.
+if (typeof global.ResizeObserver === 'undefined') {
+  global.ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+}

@@ -8,6 +8,8 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { InlineLogin } from "@/components/consultation/inline-login"
 import { ConsultationRichForm } from "@/components/consultation/consultation-form"
 import type { ConsultationFormData } from "@/components/consultation/consultation-form"
+import { ConsultationSimpleForm } from "@/components/consultation/consultation-simple-form"
+import type { SimpleEnquiryData } from "@/components/consultation/consultation-simple-form"
 import { cn } from "@/lib/utils"
 import { track } from "@/lib/analytics/track"
 import { trackCtaClick } from "@/lib/tracking/client"
@@ -36,6 +38,12 @@ interface RequestConsultationDialogProps {
   openParam?: string
   /** Tags the lead so the clinic can tell a pricing enquiry apart from a general callback request. */
   leadSource?: "consultation" | "pricing"
+  /**
+   * Render the slimmed-down enquiry form (email + optional phone + reason, no
+   * name / DOB) behind the same trigger button. Used for unclaimed clinics —
+   * we record and share less.
+   */
+  simplified?: boolean
 }
 
 interface PatientMe {
@@ -64,6 +72,7 @@ export function RequestConsultationDialog({
   treatmentFallback,
   openParam = "consult",
   leadSource = "consultation",
+  simplified = false,
 }: Readonly<RequestConsultationDialogProps>) {
   const router = useRouter()
   const pathname = usePathname()
@@ -145,31 +154,37 @@ export function RequestConsultationDialog({
     setSubmittedEmail(null)
   }
 
+  async function postLead(body: Record<string, unknown>): Promise<boolean> {
+    const res = await fetch("/directory/api/leads/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    })
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}))
+      toast.error((errData as { error?: string }).error ?? "Something went wrong, please try again.")
+      return false
+    }
+    return true
+  }
+
   const handleSubmit = async (data: ConsultationFormData) => {
     if (isSubmitting) return
     setIsSubmitting(true)
     try {
       if (clinicSlug) {
-        const res = await fetch("/directory/api/leads/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            clinicSlug,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            phone: data.phone,
-            treatment: treatmentFallback || undefined,
-            dateOfBirth: data.dateOfBirth,
-            location: location ?? undefined,
-            source: leadSource,
-          }),
+        const ok = await postLead({
+          clinicSlug,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phone: data.phone,
+          treatment: treatmentFallback || undefined,
+          dateOfBirth: data.dateOfBirth,
+          location: location ?? undefined,
+          source: leadSource,
         })
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}))
-          toast.error((errData as { error?: string }).error ?? "Something went wrong, please try again.")
-          return
-        }
+        if (!ok) return
       }
       await trackCtaClick({
         ctaLabel: `${triggerLabel} Form Submit`,
@@ -184,6 +199,46 @@ export function RequestConsultationDialog({
         page_type: pageType,
         value: ESTIMATED_LEAD_VALUE,
         currency: "GBP",
+      })
+      setSubmittedEmail(data.email)
+      setPhase('submitted')
+    } catch {
+      toast.error("Something went wrong, please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  // Slimmed-down enquiry for an unclaimed clinic — no name / DOB, records less,
+  // and fires a distinct (non-billable, value-0) analytics event so it never
+  // pollutes the `generate_lead` conversion the paid pipeline relies on.
+  const handleSimpleSubmit = async (data: SimpleEnquiryData) => {
+    if (isSubmitting) return
+    setIsSubmitting(true)
+    try {
+      if (clinicSlug) {
+        const ok = await postLead({
+          clinicSlug,
+          email: data.email,
+          phone: data.phone || undefined,
+          contactReason: data.contactReason,
+          location: location ?? undefined,
+          source: leadSource,
+        })
+        if (!ok) return
+      }
+      await trackCtaClick({
+        ctaLabel: `${triggerLabel} Form Submit`,
+        ctaTargetUrl: consultationHref ?? undefined,
+        pageType,
+      })
+      track("enquiry_submitted", {
+        clinic_slug: clinicSlug,
+        contact_reason: data.contactReason,
+        location,
+        page_type: pageType,
+        clinic_claimed: false,
+        value: 0,
       })
       setSubmittedEmail(data.email)
       setPhase('submitted')
@@ -261,15 +316,27 @@ export function RequestConsultationDialog({
           )}
 
           {phase === 'form' && (
-            <ConsultationRichForm
-              key={patientMe?.email ?? 'form'}
-              defaultValues={formDefaults}
-              clinicName={entityName ?? ''}
-              submitLabel={submitLabel}
-              submitting={isSubmitting}
-              onSubmit={handleSubmit}
-              emailLocked={Boolean(patientMe?.email)}
-            />
+            simplified ? (
+              <ConsultationSimpleForm
+                key={patientMe?.email ?? 'form'}
+                defaultValues={{ email: patientMe?.email ?? '', phone: patientMe?.phone ?? '' }}
+                clinicName={entityName ?? ''}
+                submitLabel={submitLabel}
+                submitting={isSubmitting}
+                onSubmit={handleSimpleSubmit}
+                emailLocked={Boolean(patientMe?.email)}
+              />
+            ) : (
+              <ConsultationRichForm
+                key={patientMe?.email ?? 'form'}
+                defaultValues={formDefaults}
+                clinicName={entityName ?? ''}
+                submitLabel={submitLabel}
+                submitting={isSubmitting}
+                onSubmit={handleSubmit}
+                emailLocked={Boolean(patientMe?.email)}
+              />
+            )
           )}
 
           {phase === 'submitted' && (

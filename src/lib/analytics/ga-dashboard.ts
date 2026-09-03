@@ -29,6 +29,7 @@ export interface GaDashboard {
     signUpStarts: number
     signUps: number
     leads: number
+    enquiries: number
     bookings: number
     chats: number
     revenue: number
@@ -62,6 +63,7 @@ const COUNTED_EVENTS = [
   ...BOOKING_STAGES.map((s) => s.event),
   "search",
   "generate_lead",
+  "enquiry_submitted",
   "chat_open",
   "call_booking_start",
   "call_booking_complete",
@@ -76,7 +78,7 @@ function blank(params: GaDashboardParams): GaDashboard {
   return {
     configured: false,
     range: { startDate: params.startDate, endDate: params.endDate },
-    kpis: { sessions: 0, users: 0, pageViews: 0, signUpStarts: 0, signUps: 0, leads: 0, bookings: 0, chats: 0, revenue: 0 },
+    kpis: { sessions: 0, users: 0, pageViews: 0, signUpStarts: 0, signUps: 0, leads: 0, enquiries: 0, bookings: 0, chats: 0, revenue: 0 },
     signUpFunnel: FUNNEL_STAGES.map((s) => ({ stage: s.event, label: s.label, count: 0 })),
     bookingFunnel: BOOKING_STAGES.map((s) => ({ stage: s.event, label: s.label, count: 0 })),
     signUpsBySource: [],
@@ -184,6 +186,7 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
       signUpStarts: counts.sign_up_start ?? 0,
       signUps: counts.sign_up ?? 0,
       leads: counts.generate_lead ?? 0,
+      enquiries: counts.enquiry_submitted ?? 0,
       bookings: (counts.booking_complete ?? 0) + (counts.call_booking_complete ?? 0),
       chats: counts.chat_open ?? 0,
     },

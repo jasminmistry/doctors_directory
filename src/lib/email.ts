@@ -802,7 +802,8 @@ export async function sendGhostLeadHook({
 }: {
   to: string
   clinicName: string
-  patientFirstName: string
+  /** Omitted for slimmed unclaimed-clinic enquiries — falls back to "A patient". */
+  patientFirstName?: string
   location: string
   pendingCount: number
   claimUrl: string
@@ -810,6 +811,7 @@ export async function sendGhostLeadHook({
   trackingPixelUrl?: string
 }) {
   const transport = createTransport()
+  const who = patientFirstName || 'A patient'
   const otherLeads = pendingCount - 1
   const otherText = otherLeads > 0 ? ` and ${otherLeads} other pending lead${otherLeads === 1 ? '' : 's'}` : ''
   const locationText = location ? ` in ${location}` : ''
@@ -817,11 +819,11 @@ export async function sendGhostLeadHook({
   await transport.sendMail({
     from: FROM,
     to,
-    subject: `${patientFirstName} has requested a consultation at ${clinicName} via Consentz`,
+    subject: `${who} has requested a consultation at ${clinicName} via Consentz`,
     text: `
 Hi,
 
-${patientFirstName} has requested a consultation at your clinic${locationText} through Consentz.
+${who} has requested a consultation at your clinic${locationText} through Consentz.
 
 Claim your ${clinicName} profile to access the patient's details and manage your enquiries${otherText}.
 
@@ -839,7 +841,7 @@ ${claimUrl}
   ${EMAIL_HEADER}
   <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:16px 20px;margin-bottom:24px;">
     <p style="margin:0;font-size:15px;">
-      <strong>${patientFirstName}</strong> has requested a consultation at your clinic${location ? ` in <strong>${location}</strong>` : ''} through Consentz.
+      <strong>${who}</strong> has requested a consultation at your clinic${location ? ` in <strong>${location}</strong>` : ''} through Consentz.
     </p>
     ${otherLeads > 0 ? `<p style="margin:8px 0 0;font-size:13px;color:#666;">Plus ${otherLeads} other pending lead${otherLeads === 1 ? '' : 's'} waiting for you.</p>` : ''}
   </div>

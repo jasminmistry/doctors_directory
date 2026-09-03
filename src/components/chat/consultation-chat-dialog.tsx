@@ -11,6 +11,8 @@ import { CallBookingForm } from '@/components/Clinic/call-booking-form'
 import { InlineLogin } from '@/components/consultation/inline-login'
 import { ConsultationRichForm } from '@/components/consultation/consultation-form'
 import type { ConsultationFormData } from '@/components/consultation/consultation-form'
+import { ConsultationSimpleForm } from '@/components/consultation/consultation-simple-form'
+import type { SimpleEnquiryData } from '@/components/consultation/consultation-simple-form'
 import { cn } from '@/lib/utils'
 import { track } from '@/lib/analytics/track'
 import { trackCtaClick } from '@/lib/tracking/client'
@@ -50,6 +52,12 @@ interface ConsultationChatDialogProps {
   location?: string
   pageType: Extract<DirectoryPageType, 'clinic_page' | 'practitioner_page' | 'collection_page'>
   buttonClassName?: string
+  /**
+   * Render the slimmed-down enquiry form (email + optional phone + reason, no
+   * name / DOB) behind the same trigger button. Used for unclaimed clinics —
+   * they can never be "online", so only the offline lead form is reachable.
+   */
+  simplified?: boolean
 }
 
 type Phase = 'intro' | 'chat' | 'offline' | 'login_required'
@@ -89,8 +97,10 @@ export function ConsultationChatDialog({
   clinicName,
   clinicImage,
   hasCoreCalendar,
+  location,
   pageType,
   buttonClassName,
+  simplified = false,
 }: ConsultationChatDialogProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -330,6 +340,12 @@ export function ConsultationChatDialog({
       return
     }
 
+    // Unclaimed clinics can never be online — skip the status check.
+    if (simplified) {
+      setPhase('offline')
+      return
+    }
+
     await checkOnlineStatus()
   }
 
@@ -346,6 +362,11 @@ export function ConsultationChatDialog({
     const patient = await fetchAndSetPatient()
     if (!patient) {
       setPhase('login_required')
+      return
+    }
+
+    if (simplified) {
+      setPhase('offline')
       return
     }
 
@@ -396,27 +417,61 @@ export function ConsultationChatDialog({
     }
   }
 
+  async function postOfflineLead(body: Record<string, unknown>): Promise<boolean> {
+    const res = await fetch('/directory/api/leads/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clinicSlug, ...body }),
+    })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      toast.error((err as { error?: string }).error ?? 'Something went wrong, please try again.')
+      return false
+    }
+    return true
+  }
+
   async function handleOfflineSubmit(data: ConsultationFormData) {
     setOfflineSubmitting(true)
     try {
-      const res = await fetch('/directory/api/leads/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          clinicSlug,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          phone: data.phone,
-          dateOfBirth: data.dateOfBirth,
-        }),
+      const ok = await postOfflineLead({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        dateOfBirth: data.dateOfBirth,
       })
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        toast.error((err as { error?: string }).error ?? 'Something went wrong, please try again.')
-        return
+      if (ok) setOfflineSent(true)
+    } catch {
+      toast.error('Something went wrong, please try again.')
+    } finally {
+      setOfflineSubmitting(false)
+    }
+  }
+
+  // Unclaimed clinic — slimmed enquiry, no name / DOB. Fires a distinct
+  // (non-billable, value-0) analytics event so ghost leads never pollute the
+  // `generate_lead` conversion the paid pipeline relies on.
+  async function handleSimpleOfflineSubmit(data: SimpleEnquiryData) {
+    setOfflineSubmitting(true)
+    try {
+      const ok = await postOfflineLead({
+        email: data.email,
+        phone: data.phone || undefined,
+        contactReason: data.contactReason,
+        location: location ?? undefined,
+      })
+      if (ok) {
+        track('enquiry_submitted', {
+          clinic_slug: clinicSlug,
+          contact_reason: data.contactReason,
+          location,
+          page_type: pageType,
+          clinic_claimed: false,
+          value: 0,
+        })
+        setOfflineSent(true)
       }
-      setOfflineSent(true)
     } catch {
       toast.error('Something went wrong, please try again.')
     } finally {
@@ -566,7 +621,7 @@ export function ConsultationChatDialog({
                 {phase === 'offline' && (
                   <span className="flex items-center gap-1.5 text-xs text-gray-600">
                     <span className="h-2 w-2 rounded-full bg-gray-400" />
-                    Currently offline
+                    {simplified ? 'Send an enquiry' : 'Currently offline'}
                   </span>
                 )}
                 {phase === 'chat' && (
@@ -612,6 +667,17 @@ export function ConsultationChatDialog({
                 <p className="font-semibold">Request sent!</p>
                 <p className="text-sm text-gray-600">The clinic will be in touch shortly.</p>
               </div>
+            ) : simplified ? (
+              <ConsultationSimpleForm
+                key={patientMe?.email ?? 'offline'}
+                defaultValues={{ email: patientMe?.email ?? '', phone: patientMe?.phone ?? '' }}
+                clinicName={clinicName}
+                description="Leave your email and the clinic will get back to you."
+                submitLabel="Send request"
+                submitting={offlineSubmitting}
+                onSubmit={handleSimpleOfflineSubmit}
+                emailLocked={Boolean(patientMe?.email)}
+              />
             ) : (
               <ConsultationRichForm
                 key={patientMe?.email ?? 'offline'}
