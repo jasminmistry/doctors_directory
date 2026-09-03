@@ -476,6 +476,42 @@ export async function sendMagicLinkEmail({ to, magicLink }: { to: string; magicL
   })
 }
 
+export async function sendReviewRequestEmail({
+  to,
+  clinicName,
+  feedbackUrl,
+}: {
+  to: string
+  clinicName: string
+  feedbackUrl: string
+}) {
+  const transport = createTransport()
+
+  await transport.sendMail({
+    from: FROM,
+    to,
+    subject: `How was your visit to ${clinicName}?`,
+    text: `Hi,\n\n${clinicName} would love to hear about your experience. It takes less than a minute:\n\n${feedbackUrl}\n\nThank you,\n${clinicName}`,
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /></head>
+<body style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#111;">
+  ${EMAIL_HEADER}
+  <h2 style="margin-bottom:8px;">How was your visit to ${clinicName}?</h2>
+  <p>${clinicName} would love to hear about your experience. It takes less than a minute and helps other patients.</p>
+  <a href="${feedbackUrl}"
+     style="display:inline-block;margin:24px 0;padding:14px 28px;background:#111;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">
+    Leave your feedback
+  </a>
+  <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+  <p style="color:#999;font-size:12px;">If this wasn't meant for you, you can ignore this email.</p>
+</body>
+</html>
+    `.trim(),
+  })
+}
+
 export async function sendClaimRejectedEmail({
   to,
   entityName,

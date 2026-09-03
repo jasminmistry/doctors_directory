@@ -68,3 +68,20 @@ export async function delCache(key: string): Promise<void> {
     console.warn('[redis-cache] delCache failed:', err.message)
   }
 }
+
+/**
+ * Atomically increments a counter, setting its TTL on first creation.
+ * Returns the new count, or null when Redis is unavailable (caller decides the fallback).
+ */
+export async function incrCache(key: string, ttlSeconds: number): Promise<number | null> {
+  const client = await getReadyRedis()
+  if (!client) return null
+  try {
+    const count = await client.incr(key)
+    if (count === 1) await client.expire(key, ttlSeconds)
+    return count
+  } catch (err: any) {
+    console.warn('[redis-cache] incrCache failed:', err.message)
+    return null
+  }
+}

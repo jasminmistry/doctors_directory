@@ -48,6 +48,7 @@ const CLINIC_EDIT_SELECT = {
   avgReplyTime: true,
   coreClinicId: true,
   coreUnlinkRequestedAt: true,
+  placeId: true,
 }
 
 export async function GET(

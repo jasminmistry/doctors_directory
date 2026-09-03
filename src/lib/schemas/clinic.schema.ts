@@ -93,6 +93,7 @@ export const clinicEditSchema = z.object({
   cqcStatus: z.enum(['not_applicable', 'good', 'requires_improvement', 'outstanding']).optional().nullable(),
   avgReplyTime: z.enum(['within_24hrs', 'within_48hrs', 'more_than_48hrs']).optional().nullable(),
   coreClinicId: z.coerce.number().int().positive().optional().nullable(),
+  placeId: maxStr(255, 'Google Place ID'),
 })
 
 export type ClinicEditInput = z.infer<typeof clinicEditSchema>

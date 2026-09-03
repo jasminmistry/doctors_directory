@@ -41,6 +41,8 @@ export interface GaDashboard {
   topPages: { path: string; views: number }[]
   devices: NamedValue[]
   trend: { date: string; sessions: number; keyEvents: number }[]
+  /** Every event GA4 recorded in the range, highest count first. */
+  events: { name: string; count: number }[]
 }
 
 const FUNNEL_STAGES: { event: string; label: string }[] = [
@@ -89,6 +91,7 @@ function blank(params: GaDashboardParams): GaDashboard {
     topPages: [],
     devices: [],
     trend: [],
+    events: [],
   }
 }
 
@@ -126,12 +129,13 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
         { name: "totalRevenue" },
       ],
     },
-    // 1 — per-event counts (KPIs + funnel in one)
+    // 1 — every event's count (feeds KPIs, funnels, and the events table)
     {
       dateRanges,
       dimensions: [{ name: "eventName" }],
       metrics: [{ name: "eventCount" }],
-      dimensionFilter: eventNameFilter(COUNTED_EVENTS),
+      orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
+      limit: 100,
     },
     // 2 — sign-ups by first-touch source bucket
     {
@@ -219,5 +223,11 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
       sessions: Number(row.metricValues?.[0]?.value) || 0,
       keyEvents: Number(row.metricValues?.[1]?.value) || 0,
     })),
+    events: (events?.rows ?? [])
+      .map((row) => ({
+        name: row.dimensionValues?.[0]?.value ?? "(not set)",
+        count: Number(row.metricValues?.[0]?.value) || 0,
+      }))
+      .filter((e) => e.count > 0),
   }
 }
