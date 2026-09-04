@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { getProductsByBrand, getAllBrands } from "@/lib/data-access/products";
 import { isRemovedBrandHub } from "@/lib/product-removals";
+import { resolveDirectoryPageMeta } from "@/lib/directory-page-meta";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { toUrlSlug } from "@/lib/utils";
 import { notFound } from "next/navigation";
@@ -39,9 +40,15 @@ export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
     };
   }
 
-  return {
+  const meta = resolveDirectoryPageMeta(`/products/brands/${toUrlSlug(brandSlug)}/`, {
     title: `Top ${brandName} Aesthetic Products - Compare Prices & Reviews`,
     description: `Browse verified ${brandName} aesthetic products. Compare formulations, pricing and distributor information from a trusted UK directory.`,
+  });
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    keywords: meta.keywords,
     alternates: {
       canonical: toDirectoryCanonical(`/products/brands/${brandSlug}`),
     },

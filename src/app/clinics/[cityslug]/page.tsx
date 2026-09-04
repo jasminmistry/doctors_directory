@@ -24,6 +24,7 @@ import { CityPricingContext } from "@/components/city-pricing-context";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
 import { buildCityTreatmentPriceInsights } from "@/lib/city-pricing";
 import { isRemovedClinicSlug } from "@/lib/directory-removals";
+import { resolveDirectoryPageMeta } from "@/lib/directory-page-meta";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { DirectoryJsonLd } from "@/components/directory-json-ld";
 import {
@@ -274,12 +275,17 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const displayCityName = capitalize(citySlug);
   const canonicalUrl = toDirectoryCanonical(`/clinics/${citySlug}`);
-  const title = `Top Rated Aesthetic Clinics in ${displayCityName} - Reviews, Prices & Booking`
-  const description = `Find the best verified aesthetic clinics in ${displayCityName}. Compare real patient reviews, treatment prices and book with confidence.`
+  const meta = resolveDirectoryPageMeta(`/clinics/${citySlug}/`, {
+    title: `Top Rated Aesthetic Clinics in ${displayCityName} - Reviews, Prices & Booking`,
+    description: `Find the best verified aesthetic clinics in ${displayCityName}. Compare real patient reviews, treatment prices and book with confidence.`,
+  })
+  const title = meta.title
+  const description = meta.description
 
   return {
     title,
     description,
+    keywords: meta.keywords,
     alternates: {
       canonical: canonicalUrl,
     },

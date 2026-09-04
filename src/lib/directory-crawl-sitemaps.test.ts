@@ -61,6 +61,7 @@ describe('directory crawl sitemaps', () => {
 
   test('exposes filtered B2C index file list', () => {
     expect(getB2cSitemapIndexFiles()).toContain('all-clinics.xml')
+    expect(getB2cSitemapIndexFiles()).toContain('seo-directory-pages.xml')
     expect(getB2cSitemapIndexFiles()).not.toContain('all-practitioners.xml')
   })
 })
