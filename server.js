@@ -160,6 +160,26 @@ function startAccountDeletionSweep(port) {
   setInterval(() => runAccountDeletionSweep(port), PURGE_SWEEP_INTERVAL_MS);
 }
 
+// --- Next.js standalone: skip webpack/config re-resolution at boot ----------
+// next() normally resolves next.config.js through a code path that require()s
+// next/dist/compiled/webpack. The `output: 'standalone'` bundle traces neither
+// webpack nor the config module, so that require throws — unless
+// __NEXT_PRIVATE_STANDALONE_CONFIG is set, in which case Next swallows the error
+// and uses the fully-resolved config baked into the build. redirects()/headers()
+// are compiled into .next/routes-manifest.json at build time and applied from
+// there, so nothing dynamic is lost. No-op for `next dev`; a harmless identity
+// swap for a non-standalone `next start` (this app has no custom webpack config).
+try {
+  const requiredServerFiles = path.join(__dirname, '.next', 'required-server-files.json');
+  if (!process.env.__NEXT_PRIVATE_STANDALONE_CONFIG && fs.existsSync(requiredServerFiles)) {
+    process.env.__NEXT_PRIVATE_STANDALONE_CONFIG = JSON.stringify(
+      JSON.parse(fs.readFileSync(requiredServerFiles, 'utf-8')).config
+    );
+  }
+} catch (err) {
+  console.warn('[standalone] could not preload build config:', err.message);
+}
+
 // `dir: __dirname` ensures Next.js resolves .next/, public/, etc. relative to
 // this file regardless of what PM2 sets as process.cwd().
 const app = next({ dev: false, dir: __dirname });

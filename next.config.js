@@ -3,6 +3,12 @@
 const nextConfig = {
   reactStrictMode: true,
   staticPageGenerationTimeout: 600,
+  // Emit a self-contained build (.next/standalone) whose node_modules is file-traced
+  // down to only what the server actually loads at runtime. The Docker runner ships
+  // that instead of the full prod-pruned node_modules — see Dockerfile. The Prisma
+  // CLI (migrate deploy at container start) is invoked as a shell command, never
+  // imported, so it is NOT traced — the Dockerfile copies it in explicitly.
+  output: 'standalone',
     images: {
       
       formats: ["image/avif", "image/webp"], // enable AVIF + WebP
@@ -18,6 +24,12 @@ const nextConfig = {
   // must stay external and be require()'d from node_modules at runtime instead.
   experimental: {
     serverComponentsExternalPackages: ['geoip-lite'],
+    // With output: 'standalone', nft traces geoip-lite's JS but not its ~110 MB of
+    // binary .dat files (they're read via fs at runtime, not require()'d). Force them
+    // into the standalone bundle so geo lookups work in the container.
+    outputFileTracingIncludes: {
+      '/**/*': ['./node_modules/geoip-lite/data/**/*'],
+    },
   },
   async redirects() {
     // Bare-path redirects (basePath: false) catch old indexed / external URLs
