@@ -1,7 +1,8 @@
 /**
- * Standalone Twilio smoke test — exercises the SAME send path the lead-notification
- * flow uses (`src/lib/sms.ts` → `sendLeadNotificationSms` → Twilio `messages.create`),
- * including the signed tracked link built exactly as `notifyClinicBySms` builds it.
+ * Standalone SMS smoke test — exercises the SAME send path the lead-notification
+ * flow uses (`src/lib/sms` → `sendLeadNotificationSms` → the active provider
+ * adapter), including the signed tracked link built exactly as `notifyClinicBySms`
+ * builds it. Works with whichever provider `SMS_PROVIDER` selects (default plivo).
  *
  *   npx tsx scripts/send-test-sms.ts                 # → default number below
  *   npx tsx scripts/send-test-sms.ts +447700900123   # → override recipient
@@ -10,9 +11,14 @@
  * Reads .env (dotenv/config). Nothing is written to the database.
  */
 import 'dotenv/config'
-import twilio from 'twilio'
 
-import { isSmsConfigured, sendLeadNotificationSms, smsStatusCallbackUrl } from '../src/lib/sms'
+import {
+  activeProviderName,
+  getActiveProvider,
+  isSmsConfigured,
+  sendLeadNotificationSms,
+  smsStatusCallbackUrl,
+} from '../src/lib/sms'
 import { signSmsTrackingToken } from '../src/lib/sms-tracking'
 
 const DEFAULT_TO = '+919601277532'
@@ -27,31 +33,82 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms))
 }
 
+function senderSummary(): string {
+  const name = activeProviderName()
+  if (name === 'twilio') {
+    if (process.env.TWILIO_MESSAGING_SERVICE_SID) {
+      return `messagingServiceSid ${process.env.TWILIO_MESSAGING_SERVICE_SID.slice(0, 6)}…`
+    }
+    return process.env.TWILIO_FROM_NUMBER ? `from ${process.env.TWILIO_FROM_NUMBER}` : '(missing)'
+  }
+  if (name === 'plivo') {
+    if (process.env.PLIVO_POWERPACK_UUID) {
+      return `powerpack ${process.env.PLIVO_POWERPACK_UUID.slice(0, 8)}…`
+    }
+    return process.env.PLIVO_FROM_NUMBER ? `src ${process.env.PLIVO_FROM_NUMBER}` : '(missing)'
+  }
+  return '(SMS disabled — SMS_PROVIDER=off)'
+}
+
+/** Best-effort provider poll so you can watch the message reach "delivered". */
+async function pollStatus(sid: string): Promise<void> {
+  const name = activeProviderName()
+  for (let i = 1; i <= 6; i++) {
+    await sleep(3000)
+    try {
+      if (name === 'twilio') {
+        const twilio = (await import('twilio')).default
+        const msg = await twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!)
+          .messages(sid)
+          .fetch()
+        console.log(
+          `  [${i}] status=${msg.status}` +
+            (msg.errorCode ? ` errorCode=${msg.errorCode} (${msg.errorMessage})` : ''),
+        )
+        if (['delivered', 'undelivered', 'failed', 'read'].includes(msg.status)) break
+      } else if (name === 'plivo') {
+        const plivo = await import('plivo')
+        const client = new plivo.Client(process.env.PLIVO_AUTH_ID!, process.env.PLIVO_AUTH_TOKEN!)
+        const msg = await client.messages.get(sid)
+        console.log(
+          `  [${i}] state=${msg.messageState}` +
+            (msg.errorCode ? ` errorCode=${msg.errorCode}` : ''),
+        )
+        if (['delivered', 'undelivered', 'failed', 'rejected'].includes(msg.messageState)) break
+      }
+    } catch (err) {
+      console.log(`  [${i}] poll failed:`, (err as Error).message)
+      break
+    }
+  }
+}
+
 async function main() {
-  console.log('── Twilio SMS smoke test ─────────────────────────────')
+  console.log('── SMS smoke test ────────────────────────────────────')
+  console.log('provider          :', activeProviderName() ?? 'off')
   console.log('configured        :', isSmsConfigured())
-  console.log('account sid       :', process.env.TWILIO_ACCOUNT_SID ? `${process.env.TWILIO_ACCOUNT_SID.slice(0, 6)}…` : '(missing)')
-  console.log(
-    'sender            :',
-    process.env.TWILIO_MESSAGING_SERVICE_SID
-      ? `messagingServiceSid ${process.env.TWILIO_MESSAGING_SERVICE_SID.slice(0, 6)}…`
-      : process.env.TWILIO_FROM_NUMBER
-        ? `from ${process.env.TWILIO_FROM_NUMBER}`
-        : '(missing — will no-op)',
-  )
-  const token = process.env.TWILIO_AUTH_TOKEN ?? ''
-  console.log('auth token        :', token ? `len ${token.length}${token !== token.trim() ? ' ⚠ has surrounding whitespace' : ''}` : '(missing)')
+  console.log('sender            :', senderSummary())
   console.log('status callback   :', smsStatusCallbackUrl() ?? '(omitted — non-public base URL)')
   console.log('recipient         :', to)
   console.log('tracked link      :', trackedUrl)
   console.log('──────────────────────────────────────────────────────')
 
-  if (!isSmsConfigured()) {
-    console.error('\n✗ Twilio env not fully set — set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and a sender.')
+  const provider = getActiveProvider()
+  if (!provider) {
+    console.error('\n✗ SMS_PROVIDER is off — set it to "plivo" or "twilio".')
     process.exit(1)
   }
-  if (process.env.TWILIO_FROM_NUMBER === '+441234567890') {
-    console.error('\n✗ TWILIO_FROM_NUMBER is still the example placeholder (+441234567890). Set a real Twilio number you own.')
+  if (!isSmsConfigured()) {
+    console.error(
+      `\n✗ Provider "${provider.name}" is not fully configured. Set:` +
+        (provider.name === 'plivo'
+          ? '\n   PLIVO_AUTH_ID, PLIVO_AUTH_TOKEN, and PLIVO_POWERPACK_UUID (or PLIVO_FROM_NUMBER)'
+          : '\n   TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_MESSAGING_SERVICE_SID (or TWILIO_FROM_NUMBER)'),
+    )
+    process.exit(1)
+  }
+  if (process.env.TWILIO_FROM_NUMBER === '+441234567890' || process.env.PLIVO_FROM_NUMBER === '+441234567890') {
+    console.error('\n✗ A *_FROM_NUMBER is still the example placeholder (+441234567890). Set a real number you own.')
     process.exit(1)
   }
 
@@ -63,25 +120,15 @@ async function main() {
   })
 
   if (!result) {
-    console.error('\n✗ send() returned null — Twilio treated as not configured.')
+    console.error('\n✗ send() returned null — provider treated as not configured.')
     process.exit(1)
   }
 
-  console.log(`\n✓ Accepted by Twilio — SID ${result.sid}, initial status "${result.status}"`)
+  console.log(`\n✓ Accepted by ${result.provider} — id ${result.sid}, initial status "${result.status}"`)
 
-  // Poll the message resource a few times so you can see it progress to delivered.
-  const client = twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!)
-  for (let i = 1; i <= 6; i++) {
-    await sleep(3000)
-    const msg = await client.messages(result.sid).fetch()
-    console.log(
-      `  [${i}] status=${msg.status}` +
-        (msg.errorCode ? ` errorCode=${msg.errorCode} (${msg.errorMessage})` : ''),
-    )
-    if (['delivered', 'undelivered', 'failed', 'read'].includes(msg.status)) break
-  }
+  await pollStatus(result.sid)
 
-  console.log('\nDone. Check the handset and the Twilio Console → Monitor → Logs → Messaging.')
+  console.log('\nDone. Check the handset and the provider console message logs.')
 }
 
 main().catch((err) => {
@@ -94,7 +141,7 @@ main().catch((err) => {
         '   • the token has not been rotated in the Twilio Console',
     )
   } else if (code === 21212 || code === 21606 || code === 21659) {
-    console.error(`\n✗ Sender number problem (${code}) — TWILIO_FROM_NUMBER must be a Twilio number on this account, SMS-capable, in E.164.`)
+    console.error(`\n✗ Twilio sender problem (${code}) — TWILIO_FROM_NUMBER must be a Twilio number on this account, SMS-capable, in E.164.`)
   } else {
     console.error('\n✗ Error:', err)
   }

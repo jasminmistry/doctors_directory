@@ -849,11 +849,12 @@ model ConsultationLead {
   notificationEmailSentAt DateTime? // when the notification email successfully sent
   notificationEmailReadAt DateTime? // when the open-tracking pixel was first hit
 
-  // Clinic notification SMS — Twilio, sent alongside or instead of the email (see SMS_SEND_MODE / Clinic.smsNotifyMode)
+  // Clinic notification SMS — via the active provider adapter (Plivo/Twilio), sent
+  // alongside or instead of the email (see SMS_PROVIDER / SMS_SEND_MODE / Clinic.smsNotifyMode)
   notificationSmsTo          String?   @db.VarChar(20) // E.164 number the SMS was sent to
-  notificationSmsSid         String?   @db.VarChar(64) // Twilio Message SID — correlates the status-callback webhook
+  notificationSmsSid         String?   @db.VarChar(64) // provider message id (Twilio SID / Plivo MessageUUID) — correlates the status webhook
   notificationSmsStatus      String?   @db.VarChar(20) // queued | sent | delivered | undelivered | failed
-  notificationSmsSentAt      DateTime? // when Twilio accepted the message
+  notificationSmsSentAt      DateTime? // when the provider accepted the message
   notificationSmsDeliveredAt DateTime? // carrier delivery receipt (status webhook)
   notificationSmsReadAt      DateTime? // when the clinic first tapped the tracked link in the SMS
 
