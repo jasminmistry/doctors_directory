@@ -53,6 +53,8 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+# SEO meta JSON is read at runtime via fs (not bundled into .next)
+COPY --from=builder /app/src/lib/data/directory-page-metas ./src/lib/data/directory-page-metas
 # Production-only node_modules — dev deps (Playwright, Jest, TypeScript …) excluded
 COPY --from=prod-deps /app/node_modules ./node_modules
 # Prisma generates its client into node_modules/.prisma at build time — copy it over

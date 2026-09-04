@@ -64,6 +64,7 @@ const XML_SITEMAPS: { file: string; label: string }[] = [
   { file: 'treatment-city-hub-pages.xml', label: 'Directory — Treatment hub by city' },
   { file: 'standalone-treatment-product-pages.xml', label: 'Directory — Standalone treatments and products' },
   { file: 'best-in-city-pages.xml', label: 'Directory — Best in city editorials' },
+  { file: 'seo-directory-pages.xml', label: 'Directory — SEO crawlable category pages (Moiz metas)' },
 ]
 
 const B2B_XML_SITEMAPS: { file: string; label: string }[] = [

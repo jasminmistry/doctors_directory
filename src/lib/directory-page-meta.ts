@@ -17,15 +17,43 @@ export type DirectoryPageMeta = {
 const metaCache = new NodeCache({ stdTTL: 0, useClones: false })
 const META_DIR = path.join(process.cwd(), 'src/lib/data/directory-page-metas')
 
+export const DIRECTORY_PAGE_META_BUCKETS = [
+  'clinic_city_x_treatment.json',
+  'practitioner_city_x_treatment.json',
+  'clinic_city.json',
+  'practitioner_city.json',
+  'national_treatment.json',
+  'service_category_city.json',
+  'product_category.json',
+  'product_brand.json',
+] as const
+
 function loadBucket(filename: string): Record<string, MetaEntry> {
   const cacheKey = `directory-page-meta:${filename}`
   const cached = metaCache.get<Record<string, MetaEntry>>(cacheKey)
   if (cached) return cached
 
   const filePath = path.join(META_DIR, filename)
-  const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8')) as Record<string, MetaEntry>
-  metaCache.set(cacheKey, parsed)
-  return parsed
+  try {
+    if (!fs.existsSync(filePath)) {
+      console.error(`[directory-page-meta] Missing meta bucket: ${filePath}`)
+      metaCache.set(cacheKey, {})
+      return {}
+    }
+    const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8')) as Record<
+      string,
+      MetaEntry
+    >
+    metaCache.set(cacheKey, parsed)
+    return parsed
+  } catch (error) {
+    console.error(
+      `[directory-page-meta] Failed to load meta bucket ${filename}:`,
+      error
+    )
+    metaCache.set(cacheKey, {})
+    return {}
+  }
 }
 
 export function normalizeDirectoryMetaPath(pathname: string): string {
@@ -108,4 +136,15 @@ export function resolveDirectoryPageMeta(
     description: meta.description || fallback.description,
     keywords: meta.keywords || fallback.keywords,
   }
+}
+
+/** All crawlable SEO paths covered by Moiz directory page metas. */
+export function listDirectoryPageMetaPaths(): string[] {
+  const paths = new Set<string>()
+  for (const filename of DIRECTORY_PAGE_META_BUCKETS) {
+    for (const pathname of Object.keys(loadBucket(filename))) {
+      paths.add(normalizeDirectoryMetaPath(pathname))
+    }
+  }
+  return [...paths]
 }

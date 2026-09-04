@@ -36,6 +36,7 @@ export const B2C_SITEMAP_INDEX_FILES = [
   "treatment-city-hub-pages.xml",
   "standalone-treatment-product-pages.xml",
   "best-in-city-pages.xml",
+  "seo-directory-pages.xml",
 ] as const
 
 export const B2B_SITEMAP_INDEX_FILES = [
