@@ -25,6 +25,7 @@ interface GaDashboardResponse {
     signUpStarts: number
     signUps: number
     leads: number
+    enquiries: number
     bookings: number
     chats: number
     revenue: number
@@ -237,6 +238,7 @@ export function GaAnalyticsDashboard() {
                 ["Business sign-ups", nf(data.kpis.signUps)],
                 ["Sign-up starts", nf(data.kpis.signUpStarts)],
                 ["Patient leads", nf(data.kpis.leads)],
+                ["Unclaimed enquiries", nf(data.kpis.enquiries)],
                 ["Bookings", nf(data.kpis.bookings)],
                 ["Consultation chats", nf(data.kpis.chats)],
                 ["Revenue", `£${nf(Math.round(data.kpis.revenue))}`],

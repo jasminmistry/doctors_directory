@@ -285,6 +285,11 @@ model Clinic {
   campaignEmailReadAt         DateTime? // when the claim-invite open-tracking pixel was first hit
   directoryRemovalRequestedAt DateTime?
 
+  // Lead-notification SMS — per-clinic override for the global SMS_SEND_MODE.
+  // null = use the env default; "fallback" = SMS only when email is missing/failed;
+  // "always" = SMS on every lead with a valid phone; "off" = never (also set by a STOP reply).
+  smsNotifyMode String? @db.VarChar(10)
+
   // Self-serve GDPR account deletion — set when the claimer requests deletion from
   // the portal. Listing is hidden immediately; a daily sweep hard-purges (reverts to
   // unclaimed + anonymises the claim) once this timestamp has passed.
@@ -858,10 +863,11 @@ model VerificationRequest {
 model ConsultationLead {
   id            Int        @id @default(autoincrement())
   clinicId      Int
-  patientName   String     @db.VarChar(200)
-  patientPhone  String     @db.VarChar(30)
+  patientName   String?    @db.VarChar(200) // null for simplified unclaimed-clinic enquiries (no name collected)
+  patientPhone  String?    @db.VarChar(30) // null when the patient left phone blank (optional on the enquiry form)
   patientEmail  String?    @db.VarChar(255)
   treatment     String?    @db.VarChar(255)
+  contactReason String?    @db.VarChar(80) // canonical reason value for unclaimed-clinic enquiries (see src/lib/consultation-reasons.ts)
   preferredTime String?    @db.VarChar(100) // "morning", "afternoon", "evening"
   location      String?    @db.VarChar(255) // city/area for context
   source        LeadSource @default(consultation)
@@ -881,6 +887,15 @@ model ConsultationLead {
   notificationEmailTo     String?   @db.VarChar(255) // recipient the notification email was sent to
   notificationEmailSentAt DateTime? // when the notification email successfully sent
   notificationEmailReadAt DateTime? // when the open-tracking pixel was first hit
+
+  // Clinic notification SMS — via the active provider adapter (Plivo/Twilio), sent
+  // alongside or instead of the email (see SMS_PROVIDER / SMS_SEND_MODE / Clinic.smsNotifyMode)
+  notificationSmsTo          String?   @db.VarChar(20) // E.164 number the SMS was sent to
+  notificationSmsSid         String?   @db.VarChar(64) // provider message id (Twilio SID / Plivo MessageUUID) — correlates the status webhook
+  notificationSmsStatus      String?   @db.VarChar(20) // queued | sent | delivered | undelivered | failed
+  notificationSmsSentAt      DateTime? // when the provider accepted the message
+  notificationSmsDeliveredAt DateTime? // carrier delivery receipt (status webhook)
+  notificationSmsReadAt      DateTime? // when the clinic first tapped the tracked link in the SMS
 
   // Pipeline CRM fields
   pipelineStatus LeadStatus @default(new)
@@ -905,6 +920,7 @@ model ConsultationLead {
   @@index([createdAt])
   @@index([patientId])
   @@index([pipelineStatus])
+  @@index([notificationSmsSid])
   @@map("consultation_leads")
 }
 

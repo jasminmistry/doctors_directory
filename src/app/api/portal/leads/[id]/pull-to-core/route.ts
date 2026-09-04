@@ -43,9 +43,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: 'Unlock this lead before pulling it into Core' }, { status: 403 })
   }
 
-  const nameParts = lead.patientName.trim().split(/\s+/)
-  const firstName = nameParts[0]
-  const lastName = nameParts.slice(1).join(' ') || firstName
+  // Slimmed enquiries (unclaimed clinics) carry no name — fall back to a placeholder
+  // so Core still gets a prospect it can attach the email/phone to.
+  const nameParts = (lead.patientName ?? '').trim().split(/\s+/).filter(Boolean)
+  const firstName = nameParts[0] || 'Directory'
+  const lastName = nameParts.slice(1).join(' ') || (nameParts[0] ? firstName : 'Enquiry')
 
   try {
     const result = await pullLeadToCore(clinic.coreClinicId, lead.id, {

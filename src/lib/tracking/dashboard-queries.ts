@@ -247,22 +247,29 @@ function parseSearchParams(ctaTargetUrl: string | null): {
 function mapConsultationLeadRow(row: {
   id: number
   createdAt: Date
-  patientName: string
-  patientPhone: string
+  patientName: string | null
+  patientPhone: string | null
   patientEmail: string | null
   treatment: string | null
   location: string | null
   notificationEmailTo: string | null
   notificationEmailSentAt: Date | null
   notificationEmailReadAt: Date | null
+  notificationSmsTo: string | null
+  notificationSmsStatus: string | null
+  notificationSmsSentAt: Date | null
+  notificationSmsDeliveredAt: Date | null
+  notificationSmsReadAt: Date | null
   clinic: {
     slug: string
     email: string | null
+    gmapsPhone: string | null
     city: { slug: string } | null
   }
 }) {
   const citySlug = row.clinic.city?.slug ?? "unknown"
   const clinicEmail = row.clinic.email?.trim() || null
+  const clinicPhone = row.clinic.gmapsPhone?.trim() || null
   // Distinguishes a genuine send failure ("not_sent") from the case where the
   // clinic has no contact address on record ("no_clinic_email") — the latter
   // renders differently in the dashboard so admins don't chase a non-bug.
@@ -271,6 +278,11 @@ function mapConsultationLeadRow(row: {
     : clinicEmail
       ? "not_sent"
       : "no_clinic_email"
+  const smsStatus = row.notificationSmsSentAt
+    ? "sent"
+    : clinicPhone
+      ? "not_sent"
+      : "no_clinic_phone"
   return {
     id: `consultation-${row.id}`,
     timestamp: row.createdAt.toISOString(),
@@ -279,8 +291,8 @@ function mapConsultationLeadRow(row: {
     referrer: "consultation_form",
     country: "GB",
     device_type: "unknown",
-    name: row.patientName,
-    contact: row.patientEmail || row.patientPhone,
+    name: row.patientName ?? "—",
+    contact: row.patientEmail || row.patientPhone || "—",
     treatment: row.treatment,
     location: row.location,
     budget: null,
@@ -290,6 +302,13 @@ function mapConsultationLeadRow(row: {
     email_recipient: row.notificationEmailTo,
     email_sent_at: row.notificationEmailSentAt ? row.notificationEmailSentAt.toISOString() : null,
     email_read_at: row.notificationEmailReadAt ? row.notificationEmailReadAt.toISOString() : null,
+    sms_status: smsStatus,
+    sms_delivery_status: row.notificationSmsStatus,
+    clinic_phone: clinicPhone,
+    sms_recipient: row.notificationSmsTo,
+    sms_sent_at: row.notificationSmsSentAt ? row.notificationSmsSentAt.toISOString() : null,
+    sms_delivered_at: row.notificationSmsDeliveredAt ? row.notificationSmsDeliveredAt.toISOString() : null,
+    sms_read_at: row.notificationSmsReadAt ? row.notificationSmsReadAt.toISOString() : null,
   }
 }
 
@@ -328,6 +347,13 @@ function mapLeadRow(row: {
     email_recipient: null,
     email_sent_at: null,
     email_read_at: null,
+    sms_status: "not_tracked",
+    sms_delivery_status: null,
+    clinic_phone: null,
+    sms_recipient: null,
+    sms_sent_at: null,
+    sms_delivered_at: null,
+    sms_read_at: null,
   }
 }
 
@@ -569,6 +595,7 @@ export async function listTrackingRows(
             select: {
               slug: true,
               email: true,
+              gmapsPhone: true,
               city: { select: { slug: true } },
             },
           },

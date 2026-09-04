@@ -175,6 +175,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
           {clinic.claimed && (
             <ClinicOnlineStatus clinicSlug={clinic.slug ?? ''} />
           )}
+          {/* Unclaimed clinics keep the same triggers but get a slimmed-down form — we record and share less. */}
           <ConsultationChatDialog
             clinicSlug={clinic.slug ?? ''}
             clinicName={clinicName ?? practitionerName}
@@ -182,6 +183,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
             hasCoreCalendar={hasCoreCalendar}
             location={clinic.City}
             pageType="clinic_page"
+            simplified={claimState !== 'claimed'}
             buttonClassName="shadow-none h-auto rounded-lg text-md px-7 py-3 text-white hover:cursor-pointer"
           />
           <RequestConsultationDialog
@@ -197,6 +199,7 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
             treatmentFallback="Pricing Enquiry"
             openParam="pricing"
             leadSource="pricing"
+            simplified={claimState !== 'claimed'}
             buttonClassName="w-full shadow-none border-black h-auto rounded-lg text-md px-7 py-3 hover:cursor-pointer"
           />
           <SocialMediaIcons clinic={clinic} />

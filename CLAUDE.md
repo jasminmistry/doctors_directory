@@ -121,6 +121,42 @@ Free plan: messages stored locally only, no Core push. Paid plans: pushed to Cor
 
 ---
 
+## Lead-notification SMS (provider adapter)
+
+When a consultation/pricing lead comes in (`POST /api/leads`), the clinic is notified by
+email (nodemailer, unchanged) **and** — depending on `SMS_SEND_MODE` / `Clinic.smsNotifyMode`
+— by SMS. Send decision + templating: `src/lib/lead-sms-notify.ts`.
+
+- **Provider adapter** — `src/lib/sms/`. `SMS_PROVIDER` selects the backend: `plivo` (default),
+  `twilio`, or `off`. Each provider (`plivo.ts`, `twilio.ts`) implements the `SmsProvider`
+  interface in `provider.ts` (`send`, `verifyWebhook`, `parseStatus`, `parseInbound`);
+  `index.ts` picks the active one and exposes `sendLeadNotificationSms` / `sendLeadTeaserSms` /
+  `sendGhostLeadSms` plus the webhook helpers. Add a provider = new file + one line in `PROVIDERS`.
+  - **Plivo** sender: `PLIVO_POWERPACK_UUID` (preferred — pool + STOP suppression) or `PLIVO_FROM_NUMBER`.
+  - **Twilio** sender: `TWILIO_MESSAGING_SERVICE_SID` (preferred) or `TWILIO_FROM_NUMBER`.
+- **Send modes:** `fallback` (default) sends SMS only when the clinic has no email or the email
+  send threw; `always` sends on every lead with a usable phone; `off` never sends. `Clinic.smsNotifyMode`
+  (null = use env) overrides per clinic; a `STOP` reply flips it to `off`.
+- **Phone source:** `toE164()` in `src/lib/phone.ts` normalises the approved claim's
+  `clinicPhone`/`claimerPhone` (claimed) or the scraped `Clinic.gmapsPhone` — messy input, UK default.
+- **Templates** mirror the email ones: full notification (subscription), teaser (PPL/free),
+  ghost hook (unclaimed — only while `getClaimState` is still `unclaimed`).
+- **Tracking** on `ConsultationLead` (mirrors `notificationEmail*`):
+  - `notificationSmsSentAt` — the provider accepted the message
+  - `notificationSmsDeliveredAt` — carrier receipt via `POST /api/webhooks/sms/status` (signature-checked
+    through the active provider adapter)
+  - `notificationSmsReadAt` — clinic tapped the signed link → `GET /api/track/sms-click/[token]` (the SMS
+    analogue of the email open pixel; token from `src/lib/sms-tracking.ts`)
+  - `notificationSmsStatus` (raw provider status) / `notificationSmsSid` (Twilio SID / Plivo UUID) / `notificationSmsTo`
+- **Opt-out:** `POST /api/webhooks/sms/inbound` — STOP/START keywords flip `smsNotifyMode` for the matching clinic(s).
+- **GA:** server-side MP events `sms_notification_sent` / `_delivered` / `_read` (no PII).
+- **Admin dashboard:** "SMS sent" / "SMS read" columns on the leads tab of `/admin` tracking
+  (`src/components/admin/tracking-dashboard.tsx`, data from `src/lib/tracking/dashboard-queries.ts`).
+- **Smoke test:** `npm run sms:test -- +44…` sends through the exact same path as a real lead.
+- No provider configured ⇒ every send is a logged no-op (local dev / CI need no account).
+
+---
+
 ## Clinic online status
 
 A clinic shows as **online** when all three are true:
@@ -191,6 +227,13 @@ Public (no auth):
   GET  /api/call/[slug]/meeting/[id]                poll zoom meeting status
   POST /api/book/[slug]                             book in-person appointment
   GET  /api/book/[slug]/availability                appointment slot availability
+  GET  /api/track/email-open/[token]                email open pixel
+  GET  /api/track/sms-click/[token]                 lead SMS link tap → stamps read, redirects
+
+Webhooks (signature-gated, no cookie):
+  POST /api/webhooks/stripe                         Stripe events
+  POST /api/webhooks/sms/status                     SMS delivery status callback (active provider adapter)
+  POST /api/webhooks/sms/inbound                    inbound SMS — STOP/START opt-out
 
 Portal (cookie-gated via getPortalUser):
   GET  /api/portal/chat/sessions                    inbox session list
@@ -261,9 +304,9 @@ Admin:
 
 | Model | Fields that matter |
 |---|---|
-| `Clinic` | `claimed`, `claimedPlan`, `coreClinicId`, `stripeCustomerId`, `verified`, `idVerified` |
+| `Clinic` | `claimed`, `claimedPlan`, `coreClinicId`, `stripeCustomerId`, `verified`, `idVerified`, `smsNotifyMode` |
 | `ClaimRequest` | `status` (pending_otp → otp_verified → pending_approval → approved/rejected), `selectedPlan`, `consentzClinicId`, `consentzUsername` |
-| `ConsultationLead` | `isUnlocked`, `isGhostLead`, `seenAt`, `stripePaymentIntentId` |
+| `ConsultationLead` | `isUnlocked`, `isGhostLead`, `seenAt`, `stripePaymentIntentId`, `notificationEmail*`, `notificationSms*` |
 | `Booking` | `coreBookingId`, `syncedFromCore`, `status` (pending/confirmed/cancelled/completed/no_show) |
 | `ChatSession` | `visitorToken` (unique), `coreConversationId`, `status` (active/closed) |
 | `ChatMessage` | `sender` (patient/clinic), `coreMessageId` |
@@ -296,7 +339,15 @@ Admin:
 | `STRIPE_SECRET_KEY` | Stripe server-side operations |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signature validation |
 | `RESEND_API_KEY` | Transactional email |
-| `UNSUBSCRIBE_SECRET` | HMAC signing for campaign unsubscribe/unlist links (`src/lib/campaign-unsubscribe.ts`) |
+| `UNSUBSCRIBE_SECRET` | HMAC signing for campaign unsubscribe/unlist links (`src/lib/campaign-unsubscribe.ts`) + account-deletion cancel links |
+| `EMAIL_TRACKING_SECRET` | HMAC signing for the email open-tracking pixel token (`src/lib/email-open-tracking.ts`) |
+| `INTERNAL_CRON_SECRET` | Bearer secret for the internal purge-deletions cron endpoint |
+| `GA4_MP_API_SECRET` / `GA4_PROPERTY_ID` | Server-side GA4 Measurement Protocol events + admin GA analytics dashboard |
+| `SMS_PROVIDER` | `plivo` (default) \| `twilio` \| `off` — selects the lead-notification SMS backend (`src/lib/sms/`) |
+| `PLIVO_AUTH_ID` / `PLIVO_AUTH_TOKEN` + a sender (`PLIVO_POWERPACK_UUID` preferred, or `PLIVO_FROM_NUMBER`) | Plivo provider creds. Absent ⇒ every send is a logged no-op |
+| `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` + a sender (`TWILIO_MESSAGING_SERVICE_SID` preferred, or `TWILIO_FROM_NUMBER`) | Twilio provider creds. Absent ⇒ every send is a logged no-op |
+| `SMS_SEND_MODE` | `fallback` (default) \| `always` \| `off` — global default, overridden per-clinic by `Clinic.smsNotifyMode` |
+| `SMS_TRACKING_SECRET` | HMAC signing for the tracked link in lead-notification SMS (tap = "read") |
 
 ---
 
