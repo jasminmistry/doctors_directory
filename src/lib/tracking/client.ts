@@ -52,11 +52,20 @@ function fireGaEvent(eventName: "cta_click" | "lead_submitted", params: Record<s
   track(eventName, params)
 }
 
+/** Where a directory search resolved to after the SEO crawlable-URL routing. */
+export type SearchDestination = "category_page" | "treatments" | "search_results"
+
 export async function trackSearchUsage(input: {
   query?: string
   type?: string
   category?: string
   location?: string
+  /** Which surface fired the search — top-bar search vs. the filter sidebar. */
+  trigger?: "searchbar" | "filter"
+  /** The page kind the query routed to (crawlable category page vs. /search). */
+  destination?: SearchDestination
+  /** Resolved href/path the user was navigated to. */
+  destinationPath?: string
 }): Promise<void> {
   if (typeof window === "undefined") return
 
@@ -77,6 +86,9 @@ export async function trackSearchUsage(input: {
     search_category: category,
     search_location: location,
     search_type: type,
+    search_trigger: input.trigger,
+    search_destination: input.destination,
+    destination_path: input.destinationPath,
   })
 
   const payload: CtaClickPayload = {

@@ -24,6 +24,7 @@ import { locations, modalities } from "@/lib/data";
 import { capitalize, toUrlSlug } from "@/lib/utils";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildClinicRankedEntries } from "@/lib/best-ranked";
+import { resolveDirectoryPageMeta } from "@/lib/directory-page-meta";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 interface ProfilePageProps {
@@ -140,8 +141,9 @@ const serviceMatch = categories.some((cat: string) =>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbPage>
-                    {serviceslug.charAt(0).toUpperCase() +
-                      serviceslug.replaceAll("%20", " ").slice(1)}
+                    {String(normalizedServiceName)
+                      .charAt(0)
+                      .toUpperCase() + String(normalizedServiceName).slice(1)}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
@@ -151,7 +153,7 @@ const serviceMatch = categories.some((cat: string) =>
         </div>
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">
-            Top {serviceslug.replaceAll("%20", " ")} Providers in {cityDisplayName}
+            Top {String(normalizedServiceName)} Providers in {cityDisplayName}
           </h1>
         </div>
 
@@ -248,10 +250,16 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const serviceSlug = decodeURIComponent(params.serviceslug).toLowerCase();
   const displayCityName = capitalize(citySlug);
   const displayServiceName = capitalize(serviceSlug);
-
-  return {
+  const path = `/clinics/${citySlug}/services/${serviceSlug}/`;
+  const meta = resolveDirectoryPageMeta(path, {
     title: `Top ${displayServiceName} Clinics in ${displayCityName} - Reviews, Prices & Booking`,
     description: `Find the best verified ${displayServiceName} clinics in ${displayCityName}. Compare real patient reviews, prices and book your treatment.`,
+  });
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    keywords: meta.keywords,
     alternates: {
       canonical: toDirectoryCanonical(`/clinics/${citySlug}/services/${serviceSlug}`),
     },

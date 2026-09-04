@@ -3,11 +3,9 @@
 import { useState, useEffect, startTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSearchStore } from "@/app/stores/datastore";
-import { trackSearchUsage } from "@/lib/tracking/client";
-import {
-  resolveUkTreatmentSearchHref,
-  type TreatmentSearchOption,
-} from "@/lib/uk-treatment-search";
+import { trackSearchUsage, type SearchDestination } from "@/lib/tracking/client";
+import { resolveValidatedDirectorySearchHref } from "@/app/actions/directory-search-routing";
+import type { TreatmentSearchOption } from "@/lib/uk-treatment-search";
 
 export function useSearchLogic(treatmentSearchOptions: TreatmentSearchOption[] = []) {
   const pathname = usePathname();
@@ -62,26 +60,49 @@ export function useSearchLogic(treatmentSearchOptions: TreatmentSearchOption[] =
       query: localFilters.query?.trim() ?? localFilters.query,
       location: localFilters.location?.trim() ?? localFilters.location,
     };
+    setShowResults(false);
+    setIsExpanded(false);
+
+    const categoryHref = await resolveValidatedDirectorySearchHref(
+      {
+        type: trimmedFilters.type || "",
+        query: trimmedFilters.query || "",
+        location: trimmedFilters.location || "",
+      },
+      treatmentSearchOptions
+    );
+
+    const onTreatmentsPage = pathname.includes("/treatments");
+    const keepsTreatmentsPage = onTreatmentsPage && trimmedFilters.type === "Treatments";
+    let destination: SearchDestination;
+    let destinationPath: string;
+    if (categoryHref) {
+      destination = "category_page";
+      destinationPath = categoryHref;
+    } else if (keepsTreatmentsPage) {
+      destination = "treatments";
+      destinationPath = "/treatments";
+    } else {
+      destination = "search_results";
+      destinationPath = "/search";
+    }
+
     void trackSearchUsage({
       query: trimmedFilters.query,
       type: trimmedFilters.type,
       category: trimmedFilters.category,
       location: trimmedFilters.location,
+      trigger: "searchbar",
+      destination,
+      destinationPath,
     });
-    setShowResults(false);
-    setIsExpanded(false);
 
-    if (trimmedFilters.type === "Treatments") {
-      const treatmentHref = resolveUkTreatmentSearchHref(
-        trimmedFilters.query || "",
-        trimmedFilters.location || "",
-        treatmentSearchOptions
-      );
-      if (treatmentHref) {
-        router.push(treatmentHref);
-        setIsLoading(false);
-        return;
-      }
+    if (categoryHref) {
+      setFilters(trimmedFilters);
+      setLocalFilters(trimmedFilters);
+      router.push(categoryHref);
+      setIsLoading(false);
+      return;
     }
 
     setFilters(trimmedFilters);
