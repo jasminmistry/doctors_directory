@@ -138,7 +138,6 @@ export function resolveDirectoryPageMeta(
   }
 }
 
-/** All crawlable SEO paths covered by Moiz directory page metas. */
 export function listDirectoryPageMetaPaths(): string[] {
   const paths = new Set<string>()
   for (const filename of DIRECTORY_PAGE_META_BUCKETS) {
