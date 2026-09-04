@@ -10,6 +10,7 @@ import {
 } from "@/lib/treatment-content";
 import { getTreatmentCategory, getTreatmentCategorySlug } from "@/lib/treatment-categories";
 import { toUrlSlug } from "@/lib/utils";
+import { resolveDirectoryPageMeta } from "@/lib/directory-page-meta";
 import { getTreatmentImage, TreatmentMap } from "@/lib/data";
 import { TreatmentDetail } from "@/components/treatment-detail";
 import Script from "next/script";
@@ -495,19 +496,27 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
     jsonRecord,
     `Find qualified practitioners for ${treatmentName} treatment.`
   );
-  const description =
+  const fallbackTitle = `${treatmentName} Treatment - Find Qualified Practitioners | Healthcare Directory`;
+  const fallbackDescription =
     overview.length > 155
       ? `${overview.substring(0, 155)}...`
       : overview;
-
-  const title = `${treatmentName} Treatment - Find Qualified Practitioners | Healthcare Directory`;
+  const fallbackKeywords = `${treatmentName}, ${treatmentName} treatment, dermatology, skin care, aesthetic treatment, medical procedure, qualified practitioners, healthcare directory`;
+  const meta = resolveDirectoryPageMeta(`/treatments/${toUrlSlug(resolvedTreatmentName)}/`, {
+    title: fallbackTitle,
+    description: fallbackDescription,
+    keywords: fallbackKeywords,
+  });
+  const title = meta.title;
+  const description = meta.description;
+  const keywords = meta.keywords || fallbackKeywords;
   const image = getTreatmentImage(resolvedTreatmentName) || '/directory/treatments/default-treatment.webp';
   const url = `${baseUrl}/directory/treatments/${slug}`;
 
   return {
     title,
     description,
-    keywords: `${treatmentName}, ${treatmentName} treatment, dermatology, skin care, aesthetic treatment, medical procedure, qualified practitioners, healthcare directory`,
+    keywords,
     authors: [{ name: 'Healthcare Directory' }],
     creator: 'Healthcare Directory',
     publisher: 'Healthcare Directory',

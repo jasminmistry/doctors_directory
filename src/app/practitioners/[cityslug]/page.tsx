@@ -20,6 +20,7 @@ import { EmptyCityState } from "@/components/empty-city-state";
 import { BestRankedBlock } from "@/components/best-ranked-block";
 import { buildPractitionerRankedEntries } from "@/lib/best-ranked";
 import { capitalize } from "@/lib/utils";
+import { resolveDirectoryPageMeta } from "@/lib/directory-page-meta";
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { getClinics, getEnrichedPractitioners } from "@/lib/sitemap-data";
@@ -227,14 +228,19 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const displayCityName = capitalize(citySlug);
   const canonical = toDirectoryCanonical(`/practitioners/${citySlug}`)
-  const title = `Best Verified Aesthetic Practitioners in ${displayCityName} - Reviews & Booking`
-  const description = `Find the best verified aesthetic practitioners in ${displayCityName}. Compare qualifications, real patient reviews and book your consultation.`
+  const meta = resolveDirectoryPageMeta(`/practitioners/${citySlug}/`, {
+    title: `Best Verified Aesthetic Practitioners in ${displayCityName} - Reviews & Booking`,
+    description: `Find the best verified aesthetic practitioners in ${displayCityName}. Compare qualifications, real patient reviews and book your consultation.`,
+  })
+  const title = meta.title
+  const description = meta.description
 
   const robots = getPractitionerDirectoryRobots();
 
   return {
     title,
     description,
+    keywords: meta.keywords,
     alternates: {
       canonical,
     },

@@ -1,0 +1,42 @@
+{
+  "clinic_city_x_treatment": {
+    "file": "clinic_city_x_treatment.json",
+    "count": 17141,
+    "bytes": 5721266
+  },
+  "practitioner_city_x_treatment": {
+    "file": "practitioner_city_x_treatment.json",
+    "count": 14939,
+    "bytes": 5702820
+  },
+  "clinic_city": {
+    "file": "clinic_city.json",
+    "count": 675,
+    "bytes": 203160
+  },
+  "practitioner_city": {
+    "file": "practitioner_city.json",
+    "count": 598,
+    "bytes": 202523
+  },
+  "national_treatment": {
+    "file": "national_treatment.json",
+    "count": 69,
+    "bytes": 23089
+  },
+  "service_category_city": {
+    "file": "service_category_city.json",
+    "count": 401,
+    "bytes": 124060
+  },
+  "product_category": {
+    "file": "product_category.json",
+    "count": 10,
+    "bytes": 3403
+  },
+  "product_brand": {
+    "file": "product_brand.json",
+    "count": 895,
+    "bytes": 263717
+  }
+}

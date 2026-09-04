@@ -22,6 +22,7 @@ import {
   buildClinicRankedEntries,
   buildPractitionerRankedEntries,
 } from "@/lib/best-ranked";
+import { resolveDirectoryPageMeta } from "@/lib/directory-page-meta";
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
 import { toDirectoryCanonical } from "@/lib/seo";
 import {
@@ -331,10 +332,16 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const displayCityName = capitalize(citySlug);
   const displayTreatmentName = capitalize(treatmentSlug);
   const robots = getPractitionerDirectoryRobots();
-
-  return {
+  const path = `/practitioners/${citySlug}/treatments/${treatmentSlug}/`;
+  const meta = resolveDirectoryPageMeta(path, {
     title: `Best ${displayTreatmentName} Practitioners in ${displayCityName} - Reviews, Prices & Booking`,
     description: `Find the best verified ${displayTreatmentName} practitioners in ${displayCityName}. Compare qualifications, real patient reviews and book your consultation.`,
+  });
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    keywords: meta.keywords,
     alternates: {
       canonical: toDirectoryCanonical(
         `/practitioners/${citySlug}/treatments/${treatmentSlug}`
