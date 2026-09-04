@@ -1,5 +1,6 @@
 import {
   getDirectoryPageMeta,
+  listDirectoryPageMetaPaths,
   normalizeDirectoryMetaPath,
   resolveDirectoryPageMeta,
 } from '@/lib/directory-page-meta'
@@ -35,5 +36,16 @@ describe('directory page meta lookup', () => {
       description: 'Fallback Description',
       keywords: undefined,
     })
+  })
+
+  it('lists Moiz meta paths for sitemap coverage', () => {
+    const paths = listDirectoryPageMetaPaths()
+    expect(paths).toEqual(
+      expect.arrayContaining([
+        '/clinics/london/services/botox/',
+        '/treatments/botox/',
+      ])
+    )
+    expect(paths.length).toBeGreaterThan(1000)
   })
 })

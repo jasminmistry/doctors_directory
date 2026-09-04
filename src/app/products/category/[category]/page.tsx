@@ -140,7 +140,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   return {
     title: meta.title,
     description: meta.description,
-    ...(meta.keywords ? { keywords: meta.keywords } : {}),
+    keywords: meta.keywords,
     alternates: {
       canonical: toDirectoryCanonical(`/products/category/${canonicalCategory}`),
     },

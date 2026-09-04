@@ -141,8 +141,9 @@ const serviceMatch = categories.some((cat: string) =>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbPage>
-                    {serviceslug.charAt(0).toUpperCase() +
-                      serviceslug.replaceAll("%20", " ").slice(1)}
+                    {String(normalizedServiceName)
+                      .charAt(0)
+                      .toUpperCase() + String(normalizedServiceName).slice(1)}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
@@ -152,7 +153,7 @@ const serviceMatch = categories.some((cat: string) =>
         </div>
         <div className="flex flex-col pt-2 w-full pb-4 px-4 md:px-0">
           <h1 className="text-sm md:text-2xl md:font-semibold mb-1 md:mb-2">
-            Top {serviceslug.replaceAll("%20", " ")} Providers in {cityDisplayName}
+            Top {String(normalizedServiceName)} Providers in {cityDisplayName}
           </h1>
         </div>
 
@@ -258,7 +259,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   return {
     title: meta.title,
     description: meta.description,
-    ...(meta.keywords ? { keywords: meta.keywords } : {}),
+    keywords: meta.keywords,
     alternates: {
       canonical: toDirectoryCanonical(`/clinics/${citySlug}/services/${serviceSlug}`),
     },

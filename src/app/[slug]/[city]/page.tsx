@@ -63,7 +63,7 @@ export function generateMetadata({ params }: PageProps): Metadata {
     return {
       title,
       description,
-      ...(meta.keywords ? { keywords: meta.keywords } : {}),
+      keywords: meta.keywords,
       alternates: { canonical },
       openGraph: { title, description, url: canonical, type: 'website' },
       twitter: { card: 'summary_large_image', title, description },

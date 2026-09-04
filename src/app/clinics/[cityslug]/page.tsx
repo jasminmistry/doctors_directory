@@ -285,7 +285,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   return {
     title,
     description,
-    ...(meta.keywords ? { keywords: meta.keywords } : {}),
+    keywords: meta.keywords,
     alternates: {
       canonical: canonicalUrl,
     },
