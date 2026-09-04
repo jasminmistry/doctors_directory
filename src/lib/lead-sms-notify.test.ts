@@ -125,7 +125,7 @@ describe('notifyClinicBySms', () => {
     expect(mockSendGhostLeadSms).toHaveBeenCalledTimes(1)
   })
 
-  it('does not record a send when Twilio is not configured (null result)', async () => {
+  it('does not record a send when the SMS provider is not configured (null result)', async () => {
     mockSendLeadNotificationSms.mockResolvedValue(null)
     await call({ emailFailed: true })
     expect(mockUpdateMany).not.toHaveBeenCalled()

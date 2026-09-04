@@ -337,6 +337,9 @@ export function AdvancedFilterSidebar({ pageType }: AdvancedFiltersProps) {
       type: updatedFilters.type,
       category: updatedFilters.category,
       location: updatedFilters.location,
+      trigger: "filter",
+      destination: "search_results",
+      destinationPath: "/search",
     });
 
     if (pathname !== "/search") {

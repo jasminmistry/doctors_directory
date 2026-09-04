@@ -80,7 +80,7 @@ export async function notifyClinicBySms(args: NotifyArgs): Promise<void> {
       result = await sendLeadTeaserSms({ to: phone, clinicName, leadSource: args.leadSource, trackedUrl })
     }
 
-    // Twilio not configured — nothing sent, nothing to record.
+    // SMS provider not configured / disabled — nothing sent, nothing to record.
     if (!result) return
 
     await prisma.consultationLead.updateMany({

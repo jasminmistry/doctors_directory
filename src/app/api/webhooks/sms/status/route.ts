@@ -1,46 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server'
-import twilio from 'twilio'
+
 import { prisma } from '@/lib/db'
-import { smsStatusCallbackUrl } from '@/lib/sms'
 import { sendMpEvents, syntheticClientId } from '@/lib/analytics/measurement-protocol'
+import { parseSmsStatus, smsStatusCallbackUrl, verifySmsWebhook } from '@/lib/sms'
 
 /**
- * Twilio message status callback. Fires on every state change
- * (queued → sent → delivered / undelivered / failed, plus `read` on RCS/WhatsApp).
- * We record the carrier delivery receipt as `notificationSmsDeliveredAt` — the
- * "read" timestamp comes from the tracked link tap, not from here.
+ * SMS delivery-status callback (provider-agnostic — routed through the active
+ * adapter). Fires on every state change; we record the carrier delivery receipt
+ * as `notificationSmsDeliveredAt`. The "read" timestamp comes from the tracked
+ * link tap (`/api/track/sms-click/[token]`), not from here.
  */
 export async function POST(req: NextRequest) {
-  const authToken = process.env.TWILIO_AUTH_TOKEN
-  const signature = req.headers.get('x-twilio-signature')
-
   const form = await req.formData()
   const params: Record<string, string> = {}
   for (const [key, value] of form.entries()) {
     params[key] = typeof value === 'string' ? value : ''
   }
 
-  // Reject anything not genuinely from Twilio. Signature is computed over the
-  // exact callback URL Twilio was given — use the configured one, falling back to
-  // the request URL.
-  const callbackUrl = smsStatusCallbackUrl() ?? req.url
-  if (
-    !authToken ||
-    !signature ||
-    !twilio.validateRequest(authToken, signature, callbackUrl, params)
-  ) {
+  // Signature is computed over the exact callback URL the provider was given —
+  // use the configured one, falling back to the request URL.
+  const url = smsStatusCallbackUrl() ?? req.url
+  if (!verifySmsWebhook({ url, headers: req.headers, params })) {
     return NextResponse.json({ error: 'invalid signature' }, { status: 403 })
   }
 
-  const sid = params.MessageSid || params.SmsSid
-  const status = params.MessageStatus || params.SmsStatus
-  if (!sid || !status) {
+  const update = parseSmsStatus(params)
+  if (!update) {
     return new NextResponse(null, { status: 204 })
   }
 
   try {
     const lead = await prisma.consultationLead.findFirst({
-      where: { notificationSmsSid: sid },
+      where: { notificationSmsSid: update.sid },
       select: {
         id: true,
         notificationSmsDeliveredAt: true,
@@ -52,9 +43,12 @@ export async function POST(req: NextRequest) {
       const data: {
         notificationSmsStatus: string
         notificationSmsDeliveredAt?: Date
-      } = { notificationSmsStatus: status }
+      } = { notificationSmsStatus: update.raw }
 
-      if ((status === 'delivered' || status === 'read') && !lead.notificationSmsDeliveredAt) {
+      if (
+        (update.status === 'delivered' || update.status === 'read') &&
+        !lead.notificationSmsDeliveredAt
+      ) {
         data.notificationSmsDeliveredAt = new Date()
       }
 
@@ -68,7 +62,7 @@ export async function POST(req: NextRequest) {
       }
     }
   } catch (error) {
-    console.error('[webhooks/twilio/sms] failed to record status:', error)
+    console.error('[webhooks/sms/status] failed to record status:', error)
   }
 
   return new NextResponse(null, { status: 204 })
