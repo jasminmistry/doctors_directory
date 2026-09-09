@@ -82,6 +82,10 @@ export function ConsentScripts({
       <Script id="google-analytics-init" strategy="afterInteractive">
         {`
           gtag('js', new Date());
+          // Split GA4 traffic by surface — the marketing site (WordPress) sends
+          // to this same property tagged site: 'main'. gtag('set') attaches the
+          // param to the page_view and every subsequent event.
+          gtag('set', { site: 'directory' });
           // gtag('config') sends the initial hard-load page_view (resilient, no
           // React dependency). <GaPageView> then sends an enriched page_view for
           // each App Router client navigation, which auto page_view misses.

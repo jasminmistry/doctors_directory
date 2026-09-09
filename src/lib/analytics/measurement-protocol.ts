@@ -59,9 +59,14 @@ export async function sendMpEvents(
           non_personalized_ads: true,
           events: events.map((e) => ({
             name: e.name,
-            params: Object.fromEntries(
-              Object.entries(e.params ?? {}).filter(([, v]) => v !== null && v !== undefined && v !== ""),
-            ),
+            params: {
+              // Split GA4 traffic by surface — the marketing site (WordPress)
+              // sends the same events to this property tagged `site: 'main'`.
+              site: "directory",
+              ...Object.fromEntries(
+                Object.entries(e.params ?? {}).filter(([, v]) => v !== null && v !== undefined && v !== ""),
+              ),
+            },
           })),
         }),
         signal: AbortSignal.timeout(4000),
