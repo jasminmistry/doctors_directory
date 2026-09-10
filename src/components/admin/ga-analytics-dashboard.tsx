@@ -38,6 +38,20 @@ interface GaDashboardResponse {
   devices: NamedValue[]
   trend: { date: string; sessions: number; keyEvents: number }[]
   events: { name: string; count: number }[]
+  mainSite: {
+    pageViews: number
+    users: number
+    sessions: number
+    contentClicks: number
+    formStarts: number
+    leads: number
+    logins: number
+    topBlogPosts: NamedValue[]
+    topArticles: NamedValue[]
+    topBlogClicks: NamedValue[]
+    topArticleClicks: NamedValue[]
+    leadFunnel: { formName: string; label: string; starts: number; leads: number }[]
+  }
 }
 
 type Range = "7d" | "28d" | "90d"
@@ -439,6 +453,81 @@ export function GaAnalyticsDashboard() {
               />
               <ListCard title="Devices" items={data.devices} />
             </div>
+
+            {data.mainSite && (
+              <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div>
+                  <div className="text-sm font-semibold text-gray-800">Main site (consentz.com)</div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    The marketing-site slice of this property · GA4 events tagged{" "}
+                    <code>site=main</code>. Blog / article content lives here; the directory
+                    figures above are property-wide (traffic) or patient-only (leads).
+                  </p>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+                  {([
+                    ["Page views", nf(data.mainSite.pageViews)],
+                    ["Users", nf(data.mainSite.users)],
+                    ["Content clicks", nf(data.mainSite.contentClicks)],
+                    ["Form starts", nf(data.mainSite.formStarts)],
+                    ["Demo / register leads", nf(data.mainSite.leads)],
+                    ["Login clicks", nf(data.mainSite.logins)],
+                  ] as [string, string][]).map(([label, value]) => (
+                    <div key={label} className="rounded-lg border border-gray-200 bg-white p-3">
+                      <div className="text-[11px] uppercase text-gray-600">{label}</div>
+                      <div className="mt-1 text-xl font-semibold tabular-nums">{value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <ListCard title="Top blog posts (by views)" items={data.mainSite.topBlogPosts} />
+                  <ListCard title="Top articles (by views)" items={data.mainSite.topArticles} />
+                  <ListCard title="Top blog links clicked" items={data.mainSite.topBlogClicks} />
+                  <ListCard title="Top article links clicked" items={data.mainSite.topArticleClicks} />
+                </div>
+
+                <div className="rounded-lg border border-gray-200 bg-white p-4">
+                  <div className="mb-1 text-sm font-medium text-gray-700">Lead funnel by form</div>
+                  <p className="mb-3 text-xs text-gray-500">
+                    GA4 events <code>form_start</code> → <code>generate_lead</code>, split by{" "}
+                    <code>form_name</code>
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full text-left text-sm">
+                      <thead className="text-xs uppercase text-gray-500">
+                        <tr>
+                          <th className="py-2 pr-4">Form</th>
+                          <th className="py-2 pr-4 text-right">Starts</th>
+                          <th className="py-2 pr-4 text-right">Leads</th>
+                          <th className="py-2 text-right">Conv.</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.mainSite.leadFunnel.length === 0 && (
+                          <tr>
+                            <td colSpan={4} className="py-3 text-gray-500">
+                              No data yet
+                            </td>
+                          </tr>
+                        )}
+                        {data.mainSite.leadFunnel.map((f) => (
+                          <tr key={f.formName} className="border-t border-gray-100">
+                            <td className="py-2 pr-4">{f.label}</td>
+                            <td className="py-2 pr-4 text-right tabular-nums">{nf(f.starts)}</td>
+                            <td className="py-2 pr-4 text-right tabular-nums">{nf(f.leads)}</td>
+                            <td className="py-2 text-right tabular-nums">
+                              {f.starts > 0 ? `${Math.round((f.leads / f.starts) * 100)}%` : "—"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>

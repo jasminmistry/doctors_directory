@@ -135,6 +135,45 @@ export function demoGaDashboard(params: GaDashboardParams & { days: number }): G
     { label: "tablet", value: Math.round(sessions * 0.05) },
   ]
 
+  // Marketing site (consentz.com) — a smaller, blog-heavy slice.
+  const msPageViews = Math.round(pageViews * 0.22)
+  const msDemoStarts = Math.round(perDay * days * 0.006)
+  const msRegisterStarts = Math.round(perDay * days * 0.004)
+  const mainSite = {
+    pageViews: msPageViews,
+    users: Math.round(msPageViews * 0.7),
+    sessions: Math.round(msPageViews * 0.42),
+    contentClicks: Math.round(msPageViews * 0.11),
+    formStarts: msDemoStarts + msRegisterStarts,
+    leads: Math.round((msDemoStarts + msRegisterStarts) * 0.38),
+    logins: Math.round(perDay * days * 0.009),
+    topBlogPosts: [
+      "profhilo-vs-filler",
+      "botox-aftercare-guide",
+      "how-to-choose-a-clinic",
+      "polynucleotides-explained",
+      "skin-boosters-101",
+    ].map((label, i) => ({ label, value: Math.round(msPageViews * (0.14 - i * 0.022)) })),
+    topArticles: [
+      "cqc-registration-for-clinics",
+      "aesthetics-marketing-2026",
+      "patient-retention-playbook",
+    ].map((label, i) => ({ label, value: Math.round(msPageViews * (0.06 - i * 0.014)) })),
+    topBlogClicks: [
+      "Book a consultation",
+      "Read the full guide",
+      "See treatment prices",
+    ].map((label, i) => ({ label, value: Math.round(msPageViews * (0.04 - i * 0.01)) })),
+    topArticleClicks: [
+      "Get a demo",
+      "Download the checklist",
+    ].map((label, i) => ({ label, value: Math.round(msPageViews * (0.02 - i * 0.006)) })),
+    leadFunnel: [
+      { formName: "book_demo", label: "Book a demo", starts: msDemoStarts, leads: Math.round(msDemoStarts * 0.4) },
+      { formName: "register", label: "Register", starts: msRegisterStarts, leads: Math.round(msRegisterStarts * 0.34) },
+    ],
+  }
+
   const span = leads + signUpStarts
   const events = [
     { name: "page_view", count: pageViews },
@@ -181,5 +220,6 @@ export function demoGaDashboard(params: GaDashboardParams & { days: number }): G
     devices,
     trend,
     events,
+    mainSite,
   }
 }
