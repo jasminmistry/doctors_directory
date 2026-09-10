@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import Stripe from 'stripe'
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/db'
 import { invalidateSearchCache } from '@/lib/search-cache'
 
@@ -60,6 +61,16 @@ const UNCLAIM_CLINIC_DATA = {
   gbpVerified: false,
   idVerified: false,
   manualVerified: false,
+  // GBP-mirror fields — clinic content the claimer supplied; cleared on unclaim.
+  placeId: null,
+  gbpPrimaryPhone: null,
+  additionalPhones: Prisma.DbNull,
+  gbpPrimaryCategoryId: null,
+  gbpPrimaryCategoryName: null,
+  gbpAdditionalCategories: Prisma.DbNull,
+  gbpServiceArea: Prisma.DbNull,
+  gbpBookingUrl: null,
+  gbpFieldsUpdatedAt: null,
   coreClinicId: null,
   coreRegistrationType: null,
   coreUnlinkRequestedAt: null,
@@ -202,6 +213,12 @@ export async function purgeClinicDeletion(clinicId: number) {
 
   await prisma.$transaction([
     prisma.clinic.update({ where: { id: clinicId }, data: UNCLAIM_CLINIC_DATA }),
+    // GBP OAuth link + private feedback + review links hold third-party PII with no
+    // separate data-subject account — purge them. ClinicAddress / hour periods / services
+    // / photos are directory content (like ClinicHour / ClinicFee) and are left in place.
+    prisma.gbpConnection.deleteMany({ where: { clinicId } }),
+    prisma.privateFeedback.deleteMany({ where: { clinicId } }),
+    prisma.reviewRequest.deleteMany({ where: { clinicId } }),
     ...(approvedClaim
       ? [prisma.claimRequest.update({ where: { id: approvedClaim.id }, data: anonymisedClaimerData(approvedClaim.id) })]
       : []),

@@ -14,6 +14,7 @@ interface NamedValue {
 
 interface GaDashboardResponse {
   configured: boolean
+  demo?: boolean
   message?: string
   error?: string
   range: { startDate: string; endDate: string }
@@ -36,6 +37,7 @@ interface GaDashboardResponse {
   topPages: { path: string; views: number }[]
   devices: NamedValue[]
   trend: { date: string; sessions: number; keyEvents: number }[]
+  events: { name: string; count: number }[]
 }
 
 type Range = "7d" | "28d" | "90d"
@@ -106,6 +108,7 @@ export function GaAnalyticsDashboard() {
   const searchParams = useSearchParams()
 
   const range = useMemo(() => parseRange(searchParams.get("range")), [searchParams])
+  const demo = searchParams.get("demo") === "1"
   const [data, setData] = useState<GaDashboardResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -125,7 +128,9 @@ export function GaAnalyticsDashboard() {
       setLoading(true)
       setError(null)
       try {
-        const res = await fetch(`${apiBase()}/api/admin/ga-analytics/?range=${range}`)
+        const res = await fetch(
+          `${apiBase()}/api/admin/ga-analytics/?range=${range}${demo ? "&demo=1" : ""}`,
+        )
         const body = (await res.json()) as GaDashboardResponse
         if (cancelled) return
         if (!res.ok) {
@@ -147,7 +152,7 @@ export function GaAnalyticsDashboard() {
     return () => {
       cancelled = true
     }
-  }, [range])
+  }, [range, demo])
 
   const funnelMax = Math.max(1, ...(data?.signUpFunnel ?? []).map((s) => s.count))
   const bookingFunnelMax = Math.max(1, ...(data?.bookingFunnel ?? []).map((s) => s.count))
@@ -158,6 +163,17 @@ export function GaAnalyticsDashboard() {
   return (
     <AdminLayout title="GA4 analytics">
       <div className="space-y-6">
+        {data?.demo && (
+          <div className="rounded-lg border border-purple-200 bg-purple-50 px-4 py-3 text-sm text-purple-900">
+            <p className="font-medium">Sample data — for demonstration only</p>
+            <p className="mt-1">
+              These numbers are synthetic and illustrate the dashboard layout before GA4 is
+              connected. Remove <code>?demo=1</code> from the URL to see the real (or
+              not-yet-connected) state.
+            </p>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-start justify-between gap-3">
           <p className="max-w-2xl text-sm text-gray-600">
             Live from Google Analytics 4 via the Data API. This dashboard runs in parallel with{" "}
@@ -232,6 +248,47 @@ export function GaAnalyticsDashboard() {
                   <div className="mt-2 text-2xl font-semibold tabular-nums">{value}</div>
                 </div>
               ))}
+            </div>
+
+            <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <div className="mb-1 text-sm font-medium text-gray-700">All events</div>
+              <p className="mb-3 text-xs text-gray-500">
+                Every event GA4 recorded in this range — custom events the app fires (
+                <code>generate_lead</code>, <code>chat_open</code>, <code>sign_up</code>, …) plus
+                GA4&apos;s automatically-collected events.
+              </p>
+              <div className="max-h-[420px] overflow-y-auto">
+                <table className="min-w-full text-left text-sm">
+                  <thead className="sticky top-0 bg-white text-xs uppercase text-gray-500">
+                    <tr>
+                      <th className="py-2 pr-4">Event</th>
+                      <th className="py-2 pr-4 text-right">Count</th>
+                      <th className="w-1/3 py-2" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(data.events?.length ?? 0) === 0 && (
+                      <tr>
+                        <td colSpan={3} className="py-3 text-gray-500">
+                          No events recorded yet
+                        </td>
+                      </tr>
+                    )}
+                    {(data.events ?? []).map((ev) => (
+                      <tr key={ev.name} className="border-t border-gray-100">
+                        <td className="py-2 pr-4 font-mono text-xs">{ev.name}</td>
+                        <td className="py-2 pr-4 text-right tabular-nums">{nf(ev.count)}</td>
+                        <td className="py-2">
+                          <Bar
+                            value={ev.count}
+                            max={Math.max(1, ...(data.events ?? []).map((e) => e.count))}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             <div className="grid gap-4 xl:grid-cols-2">

@@ -114,6 +114,25 @@ enum ChatSessionStatus {
   closed
 }
 
+enum GbpConnectionStatus {
+  pending_location // OAuth complete, no location bound yet
+  connected
+  needs_reauth // refresh token rejected — clinic must reconnect
+  revoked
+}
+
+enum GbpPhotoCategory {
+  COVER
+  PROFILE
+  LOGO
+  EXTERIOR
+  INTERIOR
+  PRODUCT
+  AT_WORK
+  TEAMS
+  ADDITIONAL
+}
+
 // ============================================================
 // CITIES
 // ============================================================
@@ -244,6 +263,19 @@ model Clinic {
   gbpMatch       Boolean    @default(false)
   gbpVerified    Boolean    @default(false)
   idVerified     Boolean    @default(false)
+
+  // GBP mirror — structured fields pushed to / pulled from Google Business Profile.
+  // placeId is also the source for the public "write a Google review" deep link and
+  // works without an OAuth connection (entered manually or parsed from gmapsUrl).
+  placeId                 String?   @db.VarChar(255)
+  gbpPrimaryPhone         String?   @db.VarChar(50)
+  additionalPhones        Json? // string[]
+  gbpPrimaryCategoryId    String?   @db.VarChar(100) // gcid:...
+  gbpPrimaryCategoryName  String?   @db.VarChar(255)
+  gbpAdditionalCategories Json? // { id: string, name: string }[] (max 9)
+  gbpServiceArea          Json? // { businessType, places: { placeInfos: {placeName, placeId}[] } }
+  gbpBookingUrl           String?   @db.VarChar(1000)
+  gbpFieldsUpdatedAt      DateTime?
   manualVerified Boolean    @default(false)
   isHidden       Boolean    @default(false)
 
@@ -300,6 +332,13 @@ model Clinic {
   platformReviews          PlatformReview[]
   chatSessions             ChatSession[]
   presence                 ClinicPresence?
+  gbpConnection            GbpConnection?
+  address                  ClinicAddress?
+  hourPeriods              ClinicHourPeriod[]
+  services                 ClinicService[]
+  photos                   ClinicPhoto[]
+  reviewRequests           ReviewRequest[]
+  privateFeedback          PrivateFeedback[]
 
   @@index([cityId])
   @@index([rating])
@@ -1023,6 +1062,170 @@ model ClinicPresence {
   clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
 
   @@map("clinic_presence")
+}
+
+// ============================================================
+// GOOGLE BUSINESS PROFILE CONNECTOR
+// ============================================================
+
+// Per-clinic OAuth link to Google Business Profile. Access token is short-lived and
+// stored plaintext; the refresh token is encrypted at rest (AES-256-GCM) via
+// src/lib/gbp/crypto.ts — cipher/iv/tag are stored as separate base64 columns.
+model GbpConnection {
+  id       Int @id @default(autoincrement())
+  clinicId Int @unique
+
+  accessToken          String?   @db.Text
+  accessTokenExpiresAt DateTime?
+  refreshTokenCipher   String?   @db.Text
+  refreshTokenIv       String?   @db.VarChar(32)
+  refreshTokenTag      String?   @db.VarChar(32)
+  scope                String?   @db.VarChar(500)
+  googleEmail          String?   @db.VarChar(255)
+
+  // Binding — populated at the location-picker step
+  accountName    String? @db.VarChar(255) // "accounts/123"
+  locationName   String? @db.VarChar(255) // "locations/456" (Business Information API v1)
+  locationV4Name String? @db.VarChar(255) // "accounts/123/locations/456" (Media/Reviews v4 parent)
+  placeId        String? @db.VarChar(255)
+  newReviewUri   String? @db.VarChar(1000)
+  mapsUri        String? @db.VarChar(1000)
+
+  status         GbpConnectionStatus @default(pending_location)
+  lastPulledAt   DateTime?
+  lastSyncedAt   DateTime?
+  lastSyncError  String?             @db.Text
+  syncFieldState Json? // { [field]: "ok" | "error: ..." } from the last sync run
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@map("gbp_connections")
+}
+
+// Structured postal address mirroring GBP storefrontAddress. gmapsAddress (single line,
+// used in search predicates) is regenerated from these parts on every save.
+model ClinicAddress {
+  id                Int      @id @default(autoincrement())
+  clinicId          Int      @unique
+  regionCode        String?  @db.VarChar(2) // "GB"
+  languageCode      String?  @db.VarChar(10) // "en-GB"
+  postalCode        String?  @db.VarChar(20)
+  administrativeArea String? @db.VarChar(120)
+  locality          String?  @db.VarChar(120)
+  sublocality       String?  @db.VarChar(120)
+  addressLines      Json? // string[]
+  latitude          Decimal? @db.Decimal(9, 6)
+  longitude         Decimal? @db.Decimal(9, 6)
+  source            String   @default("manual") @db.VarChar(20) // manual | gbp
+  updatedAt         DateTime @updatedAt
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@map("clinic_addresses")
+}
+
+// GBP regularHours.periods — supports split shifts / multiple periods per day, which the
+// legacy ClinicHour (@@unique([clinicId, dayOfWeek])) cannot. Collapsed into ClinicHour
+// free-text rows on save so the public hours renderer is untouched.
+model ClinicHourPeriod {
+  id        Int       @id @default(autoincrement())
+  clinicId  Int
+  openDay   DayOfWeek
+  openTime  String    @db.VarChar(5) // "09:00"
+  closeDay  DayOfWeek
+  closeTime String    @db.VarChar(5) // "17:30"
+  sortOrder Int       @default(0)
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@map("clinic_hour_periods")
+}
+
+// GBP serviceItems — richer than ClinicFee. ClinicFee is kept for the existing Fees panel.
+model ClinicService {
+  id          Int      @id @default(autoincrement())
+  clinicId    Int
+  name        String   @db.VarChar(255)
+  description String?  @db.VarChar(1000)
+  priceUnits  Int? // whole currency units (GBP major); null = "price on request"
+  priceNanos  Int? // sub-unit (GBP API shape)
+  currency    String?  @default("GBP") @db.VarChar(3)
+  categoryId  String?  @db.VarChar(100) // gcid the structured item attaches to
+  isFreeForm  Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  source      String   @default("manual") @db.VarChar(20) // manual | gbp
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@map("clinic_services")
+}
+
+model ClinicPhoto {
+  id           Int              @id @default(autoincrement())
+  clinicId     Int
+  url          String           @db.Text // local uploaded URL, or lh3.googleusercontent.com URL when source=gbp
+  category     GbpPhotoCategory @default(ADDITIONAL)
+  sortOrder    Int              @default(0)
+  gbpMediaName String?          @db.VarChar(255) // "accounts/../locations/../media/.." after upload
+  gbpState     String?          @db.VarChar(30) // PROCESSING | PROCESSED | REJECTED
+  uploadError  String?          @db.Text
+  source       String           @default("manual") @db.VarChar(20) // manual | gbp
+  createdAt    DateTime         @default(now())
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@map("clinic_photos")
+}
+
+// Per-patient review-collection link. Follows PatientMagicLink: sha256 hash stored,
+// expiring, single-use.
+model ReviewRequest {
+  id               Int       @id @default(autoincrement())
+  clinicId         Int
+  tokenHash        String    @unique @db.VarChar(64)
+  patientName      String?   @db.VarChar(200)
+  patientEmail     String?   @db.VarChar(255)
+  channel          String    @default("link") @db.VarChar(10) // link | email
+  createdByClaimId Int?
+  issuedAt         DateTime  @default(now())
+  emailSentAt      DateTime?
+  expiresAt        DateTime
+  usedAt           DateTime?
+
+  clinic   Clinic           @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  feedback PrivateFeedback?
+
+  @@index([clinicId])
+  @@map("review_requests")
+}
+
+// Private rating + comment captured via a ReviewRequest link. Never public by default;
+// the clinic can promote one to a PlatformReview (pending admin moderation).
+model PrivateFeedback {
+  id                    Int       @id @default(autoincrement())
+  clinicId              Int
+  reviewRequestId       Int?      @unique
+  rating                Int       @db.TinyInt // 1-5
+  comment               String    @db.Text
+  submitterName         String?   @db.VarChar(200)
+  ipHash                String?   @db.VarChar(64)
+  submittedAt           DateTime  @default(now())
+  googlePromptShownAt   DateTime?
+  googleReviewClickedAt DateTime?
+  publishedReviewId     Int?      @unique // PlatformReview.id once promoted
+  publishedAt           DateTime?
+
+  clinic        Clinic         @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  reviewRequest ReviewRequest? @relation(fields: [reviewRequestId], references: [id], onDelete: SetNull)
+
+  @@index([clinicId])
+  @@map("private_feedback")
 }
 
 model MainSiteEvent {
