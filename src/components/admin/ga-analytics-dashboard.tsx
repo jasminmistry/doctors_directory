@@ -194,11 +194,7 @@ export function GaAnalyticsDashboard() {
             <Link href="/admin/tracking" className="underline">
               Directory tracking
             </Link>{" "}
-            and{" "}
-            <Link href="/admin/main-site-tracking" className="underline">
-              Main site tracking
-            </Link>{" "}
-            — verify the numbers line up over a few days, then retire the old dashboards.
+            — verify the numbers line up over a few days, then retire the old dashboard.
           </p>
           <a
             href="https://analytics.google.com/"
