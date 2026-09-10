@@ -738,9 +738,6 @@ export function TrackingDashboard() {
           <Link href="/admin" className="ml-auto self-center text-sm underline">
             Admin home
           </Link>
-          <Link href="/admin/main-site-tracking" className="self-center text-sm underline">
-            Main site tracking
-          </Link>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 bg-white p-3 sm:p-4 rounded-lg border border-gray-200">

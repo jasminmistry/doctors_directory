@@ -123,6 +123,24 @@ export interface GaReport {
   rowCount?: number
 }
 
+/** Run a single report. Used as the per-request fallback when a batch 400s. */
+async function runReport(
+  config: Ga4Config,
+  token: string,
+  request: GaReportRequest,
+): Promise<GaReport> {
+  const res = await fetch(`${DATA_API_BASE}/properties/${config.propertyId}:runReport`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  })
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "")
+    throw new Error(`GA4 runReport ${res.status}: ${detail.slice(0, 300)}`)
+  }
+  return (await res.json()) as GaReport
+}
+
 /** Run several reports in one HTTP round-trip (GA4 allows up to 5 per batch). */
 export async function batchRunReports(requests: GaReportRequest[]): Promise<GaReport[]> {
   const config = getGa4Config()
@@ -141,12 +159,32 @@ export async function batchRunReports(requests: GaReportRequest[]): Promise<GaRe
         body: JSON.stringify({ requests: slice }),
       },
     )
-    if (!res.ok) {
-      const detail = await res.text().catch(() => "")
+    if (res.ok) {
+      const data = (await res.json()) as { reports?: GaReport[] }
+      results.push(...(data.reports ?? slice.map(() => ({}) as GaReport)))
+      continue
+    }
+
+    const detail = await res.text().catch(() => "")
+    // A 400 means one request in the batch is malformed (e.g. an unregistered
+    // `customEvent:` dimension). GA4 fails the whole batch for one bad request,
+    // so retry each one alone and drop only the offender — a missing widget
+    // beats a dead dashboard. Other statuses (401/403/429/5xx) are batch-wide
+    // and not worth re-hammering per request.
+    if (res.status !== 400) {
       throw new Error(`GA4 batchRunReports ${res.status}: ${detail.slice(0, 300)}`)
     }
-    const data = (await res.json()) as { reports?: GaReport[] }
-    results.push(...(data.reports ?? slice.map(() => ({}) as GaReport)))
+    const recovered = await Promise.all(
+      slice.map(async (request) => {
+        try {
+          return await runReport(config, token, request)
+        } catch (error) {
+          console.error("[ga-data-api] dropping failed report:", error)
+          return {} as GaReport
+        }
+      }),
+    )
+    results.push(...recovered)
   }
 
   return results

@@ -74,11 +74,6 @@ const NAV = [
   { href: "/admin/reviews", label: "Reviews", icon: IconStar },
   { href: "/admin/qa", label: "QA Report", icon: IconFlask },
   { href: "/admin/tracking", label: "Directory tracking", icon: IconChartBar },
-  {
-    href: "/admin/main-site-tracking",
-    label: "Main site tracking",
-    icon: IconWorldLongitude,
-  },
   { href: "/admin/ga-analytics", label: "GA4 analytics", icon: IconChartBar },
 ] as const;
 
