@@ -365,6 +365,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
               verified: claim.domainVerified,
               // Preserve clinic name entered during claim if the record has no name
               ...(!claim.clinic?.name && claim.clinicNameInput ? { name: claim.clinicNameInput } : {}),
+              // Sync contact details the claimer supplied/re-confirmed during the claim —
+              // these are more current than the original scraped listing and are exactly
+              // what the person claiming the business is asserting is correct.
+              email: claim.claimerEmail,
+              ...(claim.clinicPhone ? { gmapsPhone: claim.clinicPhone } : {}),
+              ...(claim.clinicWebsite ? { website: claim.clinicWebsite } : {}),
               // Copy Stripe customer ID if the webhook already stored it on the claim
               ...(claim.stripeCustomerId ? { stripeCustomerId: claim.stripeCustomerId } : {}),
             },
