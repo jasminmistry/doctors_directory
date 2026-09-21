@@ -4,8 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
+import { IconInfoCircle } from "@tabler/icons-react"
+
 import { AdminLayout } from "@/components/admin/AdminLayout"
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 interface NamedValue {
   label: string
@@ -74,6 +77,43 @@ function nf(n: number): string {
   return n.toLocaleString("en-GB")
 }
 
+const EVENT_DESCRIPTIONS: Record<string, string> = {
+  cta_click: "Someone clicked a button to get in touch — like Book Now, Contact, or opening a request/consultation form.",
+  search: "Someone used the search bar or filters to find a treatment, clinic, or practitioner.",
+  form_start: "Someone started filling in a form — a consultation request, a quick enquiry, a claim/registration form, or a form on the main website.",
+  form_submit: "Someone finished and submitted a consultation request or quick enquiry form.",
+  generate_lead: "Someone sent a full enquiry — either a patient's consultation request on a clinic page, or a demo/registration request on the main website.",
+  enquiry_submitted: "A patient sent a quick enquiry to a clinic that hasn't been claimed yet.",
+  sign_up_start: "A clinic or practitioner started claiming their listing.",
+  sign_up_otp_verified: "A clinic or practitioner verified their email while claiming their listing.",
+  sign_up_plan_selected: "A clinic or practitioner picked a pricing plan while claiming their listing.",
+  sign_up: "A clinic or practitioner submitted their claim/registration, still waiting for approval.",
+  sign_up_approved: "An admin approved a clinic or practitioner's claim/registration.",
+  chat_open: "A patient opened the chat box on a clinic or practitioner page.",
+  chat_message_sent: "A patient sent a message in the chat box.",
+  booking_start: "Someone opened the appointment or event booking form.",
+  booking_slot_select: "Someone picked an available appointment time.",
+  booking_complete: "Someone successfully booked an appointment.",
+  call_booking_start: "Someone opened the video call booking form.",
+  call_booking_complete: "Someone successfully booked a video call appointment.",
+  purchase: "Money changed hands — a clinic paid to unlock a lead, paid a booking deposit, or started a paid subscription.",
+  sms_notification_sent: "A text message was sent to a clinic to let them know about a new lead.",
+  sms_notification_delivered: "A text message about a new lead was delivered to a clinic's phone.",
+  sms_notification_read: "A clinic tapped the link in a text message about a new lead.",
+  content_click: "Someone clicked a link inside a blog post or article on the main website.",
+  login_click: "Someone clicked a login link on the main website.",
+  page_view: "Someone opened a page on the site.",
+  click: "Someone clicked something on a page. Tracked automatically by Google, not something we set up ourselves.",
+  scroll: "Someone scrolled down a page. Tracked automatically by Google, not something we set up ourselves.",
+  session_start: "Someone started a new visit to the site. Tracked automatically by Google, not something we set up ourselves.",
+  first_visit: "Someone visited the site for the very first time. Tracked automatically by Google, not something we set up ourselves.",
+  user_engagement: "Someone spent active time on the site. Tracked automatically by Google, not something we set up ourselves.",
+}
+
+function eventDescription(name: string): string {
+  return EVENT_DESCRIPTIONS[name] ?? "A standard action Google Analytics tracks automatically, not something we specifically set up."
+}
+
 function Bar({ value, max, className }: { value: number; max: number; className?: string }) {
   const pct = max > 0 ? Math.max(2, Math.round((value / max) * 100)) : 0
   return (
@@ -83,19 +123,37 @@ function Bar({ value, max, className }: { value: number; max: number; className?
   )
 }
 
+function InfoTooltip({ label, text }: { label: string; text: string }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button type="button" aria-label={`What does "${label}" mean?`} className="shrink-0 text-gray-400 hover:text-gray-600">
+          <IconInfoCircle className="h-3.5 w-3.5" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent>{text}</TooltipContent>
+    </Tooltip>
+  )
+}
+
 function ListCard({
   title,
   items,
   formatValue = nf,
+  tooltip,
 }: {
   title: string
   items: NamedValue[]
   formatValue?: (n: number) => string
+  tooltip?: string
 }) {
   const max = Math.max(1, ...items.map((i) => i.value))
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4">
-      <div className="mb-3 text-sm font-medium text-gray-700">{title}</div>
+      <div className="mb-3 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+        {title}
+        {tooltip && <InfoTooltip label={title} text={tooltip} />}
+      </div>
       <div className="space-y-2">
         {items.length === 0 && <div className="text-sm text-gray-500">No data yet</div>}
         {items.map((item) => (
@@ -175,6 +233,7 @@ export function GaAnalyticsDashboard() {
   const channelMax = Math.max(1, ...(data?.channels ?? []).map((c) => c.sessions))
 
   return (
+    <TooltipProvider>
     <AdminLayout title="GA4 analytics">
       <div className="space-y-6">
         {data?.demo && (
@@ -190,11 +249,11 @@ export function GaAnalyticsDashboard() {
 
         <div className="flex flex-wrap items-start justify-between gap-3">
           <p className="max-w-2xl text-sm text-gray-600">
-            Live from Google Analytics 4 via the Data API. This dashboard runs in parallel with{" "}
+            Live numbers from Google Analytics. We're also still running the older{" "}
             <Link href="/admin/tracking" className="underline">
               Directory tracking
             </Link>{" "}
-            — verify the numbers line up over a few days, then retire the old dashboard.
+            dashboard alongside this one for a few days, to check the numbers match up before we retire it.
           </p>
           <a
             href="https://analytics.google.com/"
@@ -242,30 +301,44 @@ export function GaAnalyticsDashboard() {
           <>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {([
-                ["Sessions", nf(data.kpis.sessions)],
-                ["Users", nf(data.kpis.users)],
-                ["Page views", nf(data.kpis.pageViews)],
-                ["Business sign-ups", nf(data.kpis.signUps)],
-                ["Sign-up starts", nf(data.kpis.signUpStarts)],
-                ["Patient leads", nf(data.kpis.leads)],
-                ["Unclaimed enquiries", nf(data.kpis.enquiries)],
-                ["Bookings", nf(data.kpis.bookings)],
-                ["Consultation chats", nf(data.kpis.chats)],
-                ["Revenue", `£${nf(Math.round(data.kpis.revenue))}`],
-              ] as [string, string][]).map(([label, value]) => (
+                ["Sessions", nf(data.kpis.sessions), "How many visits there were to the website(s) in this date range. One person visiting twice counts as two sessions."],
+                ["Users", nf(data.kpis.users), "How many different people visited the website(s) in this date range."],
+                ["Page views", nf(data.kpis.pageViews), "How many pages were opened in total across the whole website (directory + main site). This is a bigger number than the \"Page Views\" shown on a single clinic's page, which only counts that one page."],
+                ["Business sign-ups", nf(data.kpis.signUps), "How many clinics or practitioners finished claiming their listing."],
+                ["Sign-up starts", nf(data.kpis.signUpStarts), "How many clinics or practitioners started claiming their listing, whether or not they finished."],
+                ["Patient leads", nf(data.kpis.leads), "How many patients asked a clinic about a consultation or pricing (not counting clinics signing up to the site themselves)."],
+                ["Unclaimed enquiries", nf(data.kpis.enquiries), "How many people filled in the short enquiry form shown on a clinic page that hasn't been claimed yet."],
+                ["Bookings", nf(data.kpis.bookings), "How many appointments were booked, in person or by video call."],
+                ["Consultation chats", nf(data.kpis.chats), "How many times a patient opened the chat box to talk to a clinic."],
+                ["Revenue", `£${nf(Math.round(data.kpis.revenue))}`, "Total money taken through the website in this date range."],
+              ] as [string, string, string][]).map(([label, value, tooltip]) => (
                 <div key={label} className="rounded-lg border border-gray-200 bg-white p-4">
-                  <div className="text-xs uppercase text-gray-600">{label}</div>
+                  <div className="flex items-center gap-1 text-xs uppercase text-gray-600">
+                    {label}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button type="button" aria-label={`What does "${label}" measure?`} className="shrink-0 normal-case text-gray-400 hover:text-gray-600">
+                          <IconInfoCircle className="h-3.5 w-3.5" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>{tooltip}</TooltipContent>
+                    </Tooltip>
+                  </div>
                   <div className="mt-2 text-2xl font-semibold tabular-nums">{value}</div>
                 </div>
               ))}
             </div>
 
             <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <div className="mb-1 text-sm font-medium text-gray-700">All events</div>
+              <div className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                All events
+                <InfoTooltip
+                  label="All events"
+                  text="Every action Google Analytics recorded on the site in this date range."
+                />
+              </div>
               <p className="mb-3 text-xs text-gray-500">
-                Every event GA4 recorded in this range — custom events the app fires (
-                <code>generate_lead</code>, <code>chat_open</code>, <code>sign_up</code>, …) plus
-                GA4&apos;s automatically-collected events.
+                Hover the (i) next to each event name below to see what it means.
               </p>
               <div className="max-h-[420px] overflow-y-auto">
                 <table className="min-w-full text-left text-sm">
@@ -286,7 +359,16 @@ export function GaAnalyticsDashboard() {
                     )}
                     {(data.events ?? []).map((ev) => (
                       <tr key={ev.name} className="border-t border-gray-100">
-                        <td className="py-2 pr-4 font-mono text-xs">{ev.name}</td>
+                        <td className="py-2 pr-4">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button type="button" aria-label={`What does "${ev.name}" mean?`} className="inline-flex items-center gap-1 font-mono text-xs">
+                                {ev.name} <IconInfoCircle className="h-3 w-3 shrink-0 text-gray-400" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>{eventDescription(ev.name)}</TooltipContent>
+                          </Tooltip>
+                        </td>
                         <td className="py-2 pr-4 text-right tabular-nums">{nf(ev.count)}</td>
                         <td className="py-2">
                           <Bar
@@ -303,8 +385,12 @@ export function GaAnalyticsDashboard() {
 
             <div className="grid gap-4 xl:grid-cols-2">
               <div className="rounded-lg border border-gray-200 bg-white p-4">
-                <div className="mb-3 text-sm font-medium text-gray-700">
+                <div className="mb-3 flex items-center gap-1.5 text-sm font-medium text-gray-700">
                   Business sign-up funnel
+                  <InfoTooltip
+                    label="Business sign-up funnel"
+                    text="How many people moved through each step of a clinic or practitioner signing up — from starting the process to being approved by us. The percentage shows how many made it from one step to the next."
+                  />
                 </div>
                 <div className="space-y-3">
                   {data.signUpFunnel.map((stage, i) => {
@@ -329,11 +415,16 @@ export function GaAnalyticsDashboard() {
               </div>
 
               <div className="rounded-lg border border-gray-200 bg-white p-4">
-                <div className="mb-1 text-sm font-medium text-gray-700">
+                <div className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-700">
                   Business sign-ups by source
+                  <InfoTooltip
+                    label="Business sign-ups by source"
+                    text="Where clinics/practitioners came from before they signed up — the very first place they arrived from."
+                  />
                 </div>
                 <p className="mb-3 text-xs text-gray-500">
-                  First-touch attribution · GA4 event <code>sign_up</code> × <code>source_bucket</code>
+                  Where clinics/practitioners came from before they signed up (the very first place they
+                  arrived from, e.g. Google search, a social link, or a direct visit).
                 </p>
                 <div className="space-y-2">
                   {data.signUpsBySource.length === 0 && (
@@ -353,9 +444,16 @@ export function GaAnalyticsDashboard() {
             </div>
 
             <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <div className="mb-1 text-sm font-medium text-gray-700">Booking funnel</div>
+              <div className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                Booking funnel
+                <InfoTooltip
+                  label="Booking funnel"
+                  text="How many people started booking an appointment and how many actually completed it."
+                />
+              </div>
               <p className="mb-3 text-xs text-gray-500">
-                In-person + event bookings · GA4 events <code>booking_start</code> → <code>booking_complete</code>
+                How many people started booking an appointment (in person or by video call) and how many
+                went on to actually complete the booking.
               </p>
               <div className="space-y-3">
                 {data.bookingFunnel.map((stage, i) => {
@@ -378,14 +476,33 @@ export function GaAnalyticsDashboard() {
             </div>
 
             <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <div className="mb-3 text-sm font-medium text-gray-700">Acquisition channels</div>
+              <div className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                Where visitors come from
+                <InfoTooltip
+                  label="Where visitors come from"
+                  text="How visitors found the site — a Google search, a link, a social post — and how many went on to do something important, like sign up or send a lead."
+                />
+              </div>
+              <p className="mb-3 text-xs text-gray-500">
+                How visitors found the site (e.g. a Google search, a link, a social post) and how many of
+                them went on to do something important, like sign up or send a lead.
+              </p>
               <div className="overflow-x-auto">
                 <table className="min-w-full text-left text-sm">
                   <thead className="text-xs uppercase text-gray-500">
                     <tr>
                       <th className="py-2 pr-4">Channel</th>
-                      <th className="py-2 pr-4 text-right">Sessions</th>
-                      <th className="py-2 text-right">Key events</th>
+                      <th className="py-2 pr-4 text-right">Visits</th>
+                      <th className="py-2 text-right">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button type="button" aria-label="What are key events?" className="inline-flex items-center gap-1">
+                              Results <IconInfoCircle className="h-3 w-3 text-gray-400" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>Important actions from that channel's visitors — like signing up, booking, or sending a lead.</TooltipContent>
+                        </Tooltip>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -419,9 +536,17 @@ export function GaAnalyticsDashboard() {
             </div>
 
             <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <div className="mb-3 text-sm font-medium text-gray-700">
-                Daily trend (sessions vs key events)
+              <div className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                Daily trend
+                <InfoTooltip
+                  label="Daily trend"
+                  text="Visits per day, compared with how many of those visits led to an important action like a sign-up or a lead."
+                />
               </div>
+              <p className="mb-3 text-xs text-gray-500">
+                Visits per day compared with how many of those visits led to an important action (like a
+                sign-up or a lead).
+              </p>
               <div className="max-h-[360px] space-y-2 overflow-y-auto">
                 {data.trend.length === 0 && <div className="text-sm text-gray-500">No data yet</div>}
                 {data.trend.map((point) => (
@@ -433,7 +558,7 @@ export function GaAnalyticsDashboard() {
                       <span className="w-10 text-right text-xs tabular-nums">{point.sessions}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="w-16 text-xs text-gray-500">Key ev.</span>
+                      <span className="w-16 text-xs text-gray-500">Results</span>
                       <Bar value={point.keyEvents} max={trendMax} className="bg-emerald-500" />
                       <span className="w-10 text-right text-xs tabular-nums">{point.keyEvents}</span>
                     </div>
@@ -446,49 +571,91 @@ export function GaAnalyticsDashboard() {
               <ListCard
                 title="Top pages (by views)"
                 items={data.topPages.map((p) => ({ label: p.path, value: p.views }))}
+                tooltip="The pages on the site that got the most views, ranked from most to least, across the whole property."
               />
-              <ListCard title="Devices" items={data.devices} />
+              <ListCard
+                title="Devices"
+                items={data.devices}
+                tooltip="What kind of device visitors used to browse the site — phone, computer, or tablet."
+              />
             </div>
 
             {data.mainSite && (
               <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                 <div>
-                  <div className="text-sm font-semibold text-gray-800">Main site (consentz.com)</div>
+                  <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-800">
+                    Main site (consentz.com)
+                    <InfoTooltip
+                      label="Main site (consentz.com)"
+                      text="Everything in this section is activity on our main marketing website, consentz.com — separate from the clinic directory figures above."
+                    />
+                  </div>
                   <p className="mt-1 text-xs text-gray-500">
-                    The marketing-site slice of this property · GA4 events tagged{" "}
-                    <code>site=main</code>. Blog / article content lives here; the directory
-                    figures above are property-wide (traffic) or patient-only (leads).
+                    Activity on our main marketing website (consentz.com) — separate from the clinic
+                    directory figures above.
                   </p>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
                   {([
-                    ["Page views", nf(data.mainSite.pageViews)],
-                    ["Users", nf(data.mainSite.users)],
-                    ["Content clicks", nf(data.mainSite.contentClicks)],
-                    ["Form starts", nf(data.mainSite.formStarts)],
-                    ["Demo / register leads", nf(data.mainSite.leads)],
-                    ["Login clicks", nf(data.mainSite.logins)],
-                  ] as [string, string][]).map(([label, value]) => (
+                    ["Page views", nf(data.mainSite.pageViews), "How many pages were opened on the main consentz.com website — not the clinic directory."],
+                    ["Users", nf(data.mainSite.users), "How many different people visited the main consentz.com website."],
+                    ["Content clicks", nf(data.mainSite.contentClicks), "How many times someone clicked a link inside a blog post or article on the main website."],
+                    ["Form starts", nf(data.mainSite.formStarts), "How many times someone started filling in a form on the main website, whether or not they finished it."],
+                    ["Demo / register leads", nf(data.mainSite.leads), "How many people asked for a demo or registered interest on the main website. This is separate from patient leads on the clinic directory, shown above."],
+                    ["Login clicks", nf(data.mainSite.logins), "How many times someone clicked a login link on the main website."],
+                  ] as [string, string, string][]).map(([label, value, tooltip]) => (
                     <div key={label} className="rounded-lg border border-gray-200 bg-white p-3">
-                      <div className="text-[11px] uppercase text-gray-600">{label}</div>
+                      <div className="flex items-center gap-1 text-[11px] uppercase text-gray-600">
+                        {label}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button type="button" aria-label={`What does "${label}" measure?`} className="shrink-0 normal-case text-gray-400 hover:text-gray-600">
+                              <IconInfoCircle className="h-3.5 w-3.5" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>{tooltip}</TooltipContent>
+                        </Tooltip>
+                      </div>
                       <div className="mt-1 text-xl font-semibold tabular-nums">{value}</div>
                     </div>
                   ))}
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <ListCard title="Top blog posts (by views)" items={data.mainSite.topBlogPosts} />
-                  <ListCard title="Top articles (by views)" items={data.mainSite.topArticles} />
-                  <ListCard title="Top blog links clicked" items={data.mainSite.topBlogClicks} />
-                  <ListCard title="Top article links clicked" items={data.mainSite.topArticleClicks} />
+                  <ListCard
+                    title="Top blog posts (by views)"
+                    items={data.mainSite.topBlogPosts}
+                    tooltip="The blog posts on the main website that were opened the most, ranked from most to least."
+                  />
+                  <ListCard
+                    title="Top articles (by views)"
+                    items={data.mainSite.topArticles}
+                    tooltip="The articles on the main website that were opened the most, ranked from most to least."
+                  />
+                  <ListCard
+                    title="Top blog links clicked"
+                    items={data.mainSite.topBlogClicks}
+                    tooltip="Which links inside blog posts got clicked the most by readers."
+                  />
+                  <ListCard
+                    title="Top article links clicked"
+                    items={data.mainSite.topArticleClicks}
+                    tooltip="Which links inside articles got clicked the most by readers."
+                  />
                 </div>
 
                 <div className="rounded-lg border border-gray-200 bg-white p-4">
-                  <div className="mb-1 text-sm font-medium text-gray-700">Lead funnel by form</div>
+                  <div className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                    Lead funnel by form
+                    <InfoTooltip
+                      label="Lead funnel by form"
+                      text="For each form on the main site: how many people started filling it in, and how many went on to submit it as a lead."
+                    />
+                  </div>
                   <p className="mb-3 text-xs text-gray-500">
-                    GA4 events <code>form_start</code> → <code>generate_lead</code>, split by{" "}
-                    <code>form_name</code>
+                    For each form on the main site: how many people started filling it in, and how many
+                    went on to submit it as a lead.
                   </p>
                   <div className="overflow-x-auto">
                     <table className="min-w-full text-left text-sm">
@@ -528,5 +695,6 @@ export function GaAnalyticsDashboard() {
         )}
       </div>
     </AdminLayout>
+    </TooltipProvider>
   )
 }
