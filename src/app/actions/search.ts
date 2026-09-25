@@ -372,6 +372,7 @@ export async function getSearchDiscoveryData(filters: SearchFilters) {
     .sort(
       (left, right) =>
         right.score - left.score ||
+        Number(Boolean(right.clinic.isConsentz)) - Number(Boolean(left.clinic.isConsentz)) ||
         right.clinic.reviewCount - left.clinic.reviewCount ||
         right.clinic.rating - left.clinic.rating
     )

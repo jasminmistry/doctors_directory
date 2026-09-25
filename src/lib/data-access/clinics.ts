@@ -1,3 +1,4 @@
+import { getConsentzCustomerSlugs } from '@/lib/consentz-customers'
 import { prisma } from '@/lib/db'
 import { Clinic as PrismaClinic, Prisma } from '@prisma/client'
 import { cache } from 'react'
@@ -198,18 +199,65 @@ export async function searchClinicsForListing(params: {
         ? { reviewCount: 'desc' }
         : { id: 'asc' }
 
-  const [rows, totalCount] = await Promise.all([
-    prisma.clinic.findMany({
-      where,
-      orderBy,
-      skip: params.skip,
-      take: params.take,
-      select: SEARCH_CLINIC_SELECT,
-    }),
-    prisma.clinic.count({ where }),
+  // Explicit rating/reviews sorts are honoured as-is. The default ("relevance") sort pins
+  // Consentz customers above everyone else — same rule as the city listing page — so e.g. a
+  // search for "111" surfaces 111 Harley St first instead of wherever its id happens to fall.
+  if (params.sortBy === 'rating' || params.sortBy === 'reviews') {
+    const [rows, totalCount] = await Promise.all([
+      prisma.clinic.findMany({
+        where,
+        orderBy,
+        skip: params.skip,
+        take: params.take,
+        select: SEARCH_CLINIC_SELECT,
+      }),
+      prisma.clinic.count({ where }),
+    ])
+
+    return { clinics: rows.map(mapSearchClinicRow), totalCount }
+  }
+
+  // Two-bucket pagination: Consentz matches first, then the rest, with skip/take spanning
+  // the boundary. The Consentz slug list is small, so `IN`/`NOT IN` stays cheap.
+  const consentzSlugs = Array.from(getConsentzCustomerSlugs())
+  const consentzWhere: Prisma.ClinicWhereInput = { AND: [...and, { slug: { in: consentzSlugs } }] }
+  const otherWhere: Prisma.ClinicWhereInput = { AND: [...and, { slug: { notIn: consentzSlugs } }] }
+
+  const [consentzCount, otherCount] = await Promise.all([
+    prisma.clinic.count({ where: consentzWhere }),
+    prisma.clinic.count({ where: otherWhere }),
   ])
 
-  return { clinics: rows.map(mapSearchClinicRow), totalCount }
+  const consentzSkip = Math.min(params.skip, consentzCount)
+  const consentzTake = Math.max(0, Math.min(params.take, consentzCount - consentzSkip))
+  const otherSkip = Math.max(0, params.skip - consentzCount)
+  const otherTake = params.take - consentzTake
+
+  const [consentzRows, otherRows] = await Promise.all([
+    consentzTake > 0
+      ? prisma.clinic.findMany({
+          where: consentzWhere,
+          orderBy: [{ reviewCount: 'desc' }, { rating: 'desc' }, { id: 'asc' }],
+          skip: consentzSkip,
+          take: consentzTake,
+          select: SEARCH_CLINIC_SELECT,
+        })
+      : Promise.resolve([]),
+    otherTake > 0
+      ? prisma.clinic.findMany({
+          where: otherWhere,
+          orderBy,
+          skip: otherSkip,
+          take: otherTake,
+          select: SEARCH_CLINIC_SELECT,
+        })
+      : Promise.resolve([]),
+  ])
+
+  return {
+    clinics: [...consentzRows, ...otherRows].map(mapSearchClinicRow),
+    totalCount: consentzCount + otherCount,
+  }
 }
 
 /**
