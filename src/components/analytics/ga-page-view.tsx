@@ -52,6 +52,7 @@ export function GaPageView() {
         return
       }
       window.gtag("event", "page_view", {
+        site: "directory",
         ...params,
         page_path: pathname,
         page_location: window.location.href,

@@ -26,6 +26,18 @@ interface DataTableProps<T extends Record<string, any>> {
   loading?: boolean
   addLabel?: string
   filters?: React.ReactNode
+  /** Restrict free-text search to these row keys (default: every key not marked `searchable: false`). */
+  searchKeys?: string[]
+  /** Row order when no column header sort is active (with or without a search). */
+  defaultSort?: (a: T, b: T) => number
+}
+
+function normalizeSearchText(value: string): string {
+  return value.toLowerCase().replace(/[-_]+/g, ' ')
+}
+
+export function tokenizeSearch(value: string): string[] {
+  return normalizeSearchText(value).split(/\s+/).filter(Boolean)
 }
 
 const PAGE_SIZES = [10, 25, 50, 100]
@@ -46,6 +58,7 @@ function getPages(current: number, total: number): (number | '…')[] {
 
 export function DataTable<T extends Record<string, any>>({
   data, columns, onEdit, onDelete, onAdd, onApprove, loading, addLabel = 'Add New', filters,
+  searchKeys, defaultSort,
 }: Readonly<DataTableProps<T>>) {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -64,26 +77,36 @@ export function DataTable<T extends Record<string, any>>({
     [columns]
   )
 
+  // Word-tokenised AND match (same semantics as the public /search page): every word must
+  // appear somewhere in the row. Hyphens/underscores count as spaces so "111 harley" matches
+  // slug "111-harley-st"; a whitespace-free copy keeps "02079460111" matching "020 7946 0111".
+  // Booleans are skipped — otherwise typing "fa"/"tr" matched every unclaimed/claimed row.
+  const words = useMemo(() => tokenizeSearch(search), [search])
+
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase().replace(/\s+/g, '')
-    if (!q) return data
-    return data.filter(item =>
-      Object.entries(item).some(
-        ([key, v]) =>
-          !nonSearchableKeys.has(key) &&
-          String(v ?? '').toLowerCase().replace(/\s+/g, '').includes(q)
-      )
-    )
-  }, [data, search, nonSearchableKeys])
+    if (words.length === 0) return data
+    const allowedKeys = searchKeys ? new Set(searchKeys) : null
+    return data.filter(item => {
+      const parts: string[] = []
+      for (const [key, v] of Object.entries(item)) {
+        if (allowedKeys ? !allowedKeys.has(key) : nonSearchableKeys.has(key)) continue
+        if (typeof v !== 'string' && typeof v !== 'number') continue
+        parts.push(normalizeSearchText(String(v)))
+      }
+      const haystack = parts.join(' ')
+      const compact = haystack.replace(/\s+/g, '')
+      return words.every(word => haystack.includes(word) || compact.includes(word))
+    })
+  }, [data, words, searchKeys, nonSearchableKeys])
 
   const sorted = useMemo(() => {
-    if (!sortKey) return filtered
+    if (!sortKey) return defaultSort ? [...filtered].sort(defaultSort) : filtered
     return [...filtered].sort((a, b) => {
       const av = String(a[sortKey] ?? '')
       const bv = String(b[sortKey] ?? '')
       return sortDir === 'asc' ? av.localeCompare(bv, undefined, { numeric: true }) : bv.localeCompare(av, undefined, { numeric: true })
     })
-  }, [filtered, sortKey, sortDir])
+  }, [filtered, sortKey, sortDir, defaultSort])
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize))
   const curPage = Math.min(page, totalPages)

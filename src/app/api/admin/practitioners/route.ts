@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { isConsentzClinicSlug } from '@/lib/consentz-customers'
 import { prisma } from '@/lib/db'
 import { invalidateSearchCache } from '@/lib/search-cache'
 import { invalidatePractitionersSearchCache } from '@/lib/data-access/practitioners'
@@ -9,20 +10,30 @@ export async function GET() {
   try {
     const practitioners = await prisma.practitioner.findMany({
       select: {
-        slug: true, displayName: true, specialty: true, imageUrl: true, claimed: true, verified: true, claimedPlan: true,
+        id: true, slug: true, displayName: true, specialty: true, imageUrl: true, claimed: true, verified: true, claimedPlan: true,
         clinicAssociations: {
           orderBy: { clinicId: 'asc' },
-          take: 1,
-          select: { clinic: { select: { city: { select: { name: true } } } } },
+          select: {
+            clinic: {
+              select: { slug: true, rating: true, reviewCount: true, city: { select: { name: true } } },
+            },
+          },
         },
       },
       orderBy: { displayName: 'asc' },
     })
     return NextResponse.json(
-      practitioners.map(({ clinicAssociations, ...p }) => ({
-        ...p,
-        cityName: clinicAssociations[0]?.clinic?.city?.name ?? null,
-      }))
+      practitioners.map(({ clinicAssociations, ...p }) => {
+        // First association by clinicId = the "primary clinic" used by the public listing.
+        const primary = clinicAssociations[0]?.clinic
+        return {
+          ...p,
+          cityName: primary?.city?.name ?? null,
+          rating: primary?.rating != null ? Number(primary.rating) : null,
+          reviewCount: primary?.reviewCount ?? null,
+          isConsentz: clinicAssociations.some(({ clinic }) => isConsentzClinicSlug(clinic?.slug)),
+        }
+      })
     )
   } catch (error) {
     console.error('Failed to read practitioners:', error)

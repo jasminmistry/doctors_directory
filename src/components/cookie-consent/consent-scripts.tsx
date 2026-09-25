@@ -83,13 +83,15 @@ export function ConsentScripts({
         {`
           gtag('js', new Date());
           // Split GA4 traffic by surface — the marketing site (WordPress) sends
-          // to this same property tagged site: 'main'. gtag('set') attaches the
-          // param to the page_view and every subsequent event.
+          // to this same property tagged site: 'main'. gtag('set') is kept as a
+          // best-effort default, but it does NOT reliably attach to the page_view
+          // gtag('config') auto-fires — pass site directly on config too so that
+          // first hit always carries it.
           gtag('set', { site: 'directory' });
           // gtag('config') sends the initial hard-load page_view (resilient, no
           // React dependency). <GaPageView> then sends an enriched page_view for
           // each App Router client navigation, which auto page_view misses.
-          gtag('config', '${GA_MEASUREMENT_ID}');
+          gtag('config', '${GA_MEASUREMENT_ID}', { site: 'directory' });
         `}
       </Script>
       {consent?.statistics ? (

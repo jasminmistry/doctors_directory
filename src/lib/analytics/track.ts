@@ -42,7 +42,9 @@ export function track(event: AnalyticsEvent, params: Record<string, unknown> = {
   if (typeof window === "undefined") return
 
   // Drop null/undefined so GA doesn't record empty custom dimensions.
-  const clean: Record<string, unknown> = {}
+  // `site` is set explicitly rather than relying on the global gtag('set', …)
+  // in consent-scripts.tsx — that state doesn't reliably propagate to events.
+  const clean: Record<string, unknown> = { site: "directory" }
   for (const [key, value] of Object.entries(params)) {
     if (value !== null && value !== undefined && value !== "") clean[key] = value
   }

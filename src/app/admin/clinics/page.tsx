@@ -7,6 +7,7 @@ import { DataTable } from '@/components/admin/DataTable'
 import { DEFAULT_PERSON, FallbackImage } from '@/components/ui/fallback-image'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useConfirmDialog } from '@/hooks/use-confirm-dialog'
+import { compareClinicListingOrder } from '@/lib/consentz-customers'
 
 export const dynamic = 'force-dynamic'
 
@@ -75,6 +76,8 @@ const columns = [
     render: (value: number) => value ? <span className="text-amber-600 font-medium">{value}</span> : <span className="text-gray-300">—</span>,
   },
 ]
+
+const CLINIC_SEARCH_KEYS = ['name', 'slug', 'email', 'gmapsPhone', 'gmapsAddress', 'cityName', 'claimedPlan']
 
 export default function ClinicsList() {
   const [clinics, setClinics] = useState<any[]>([])
@@ -165,6 +168,8 @@ export default function ClinicsList() {
         columns={columns}
         loading={loading}
         filters={filterControls}
+        searchKeys={CLINIC_SEARCH_KEYS}
+        defaultSort={(a, b) => compareClinicListingOrder(a, b)}
         onEdit={(clinic) => router.push(`/admin/clinics/${clinic.slug}`)}
         onDelete={async (clinic) => {
           const name = clinic.name || clinic.slug

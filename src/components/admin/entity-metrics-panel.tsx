@@ -1,7 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { IconChartBarPopular, IconEye, IconHandFinger, IconSearch, IconTrendingUp, IconUsers, IconWorld } from '@tabler/icons-react'
+import { IconChartBarPopular, IconEye, IconHandFinger, IconInfoCircle, IconSearch, IconTrendingUp, IconUsers, IconWorld } from '@tabler/icons-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 interface InternalMetrics {
   pageViews: number
@@ -51,12 +52,14 @@ function StatCard({
   value,
   sub,
   color = 'gray',
+  tooltip,
 }: {
   icon: React.ElementType
   label: string
   value: string | number
   sub?: string
   color?: 'gray' | 'blue' | 'green' | 'violet' | 'amber'
+  tooltip?: string
 }) {
   const colors = {
     gray: 'bg-gray-50 text-gray-600',
@@ -72,7 +75,19 @@ function StatCard({
           <Icon className="h-4 w-4" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium text-gray-600 truncate">{label}</p>
+          <div className="flex items-center gap-1">
+            <p className="text-xs font-medium text-gray-600 truncate">{label}</p>
+            {tooltip && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" aria-label={`What does "${label}" measure?`} className="shrink-0 text-gray-400 hover:text-gray-600">
+                    <IconInfoCircle className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>{tooltip}</TooltipContent>
+              </Tooltip>
+            )}
+          </div>
           <p className="mt-0.5 text-2xl font-medium text-gray-900">{value}</p>
           {sub && <p className="mt-0.5 text-xs text-gray-600">{sub}</p>}
         </div>
@@ -116,6 +131,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
   const handleApply = () => fetchMetrics(dateRange.from, dateRange.to)
 
   return (
+    <TooltipProvider>
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
       {/* Header */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
@@ -169,27 +185,40 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
         <>
           {/* Internal metrics */}
           <div className="mb-4">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-600">
-              Internal
-            </p>
+            <div className="mb-3 flex items-center gap-1.5">
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-600">
+                Internal
+              </p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" aria-label="What does 'Internal' mean?" className="shrink-0 text-gray-400 hover:text-gray-600">
+                    <IconInfoCircle className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>Numbers we collect ourselves on this website, from people visiting this profile page.</TooltipContent>
+              </Tooltip>
+            </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <StatCard
                 icon={IconEye}
                 label="Page Views"
                 value={data.internal.pageViews.toLocaleString()}
                 color="blue"
+                tooltip="How many times this profile page was opened during the selected dates."
               />
               <StatCard
                 icon={IconHandFinger}
                 label="CTA / Contact Clicks"
                 value={data.internal.contactClicks.toLocaleString()}
                 color="violet"
+                tooltip="How many times a visitor clicked something on this page to get in touch — like Call, Website, Book Now, or Message."
               />
               <StatCard
                 icon={IconUsers}
                 label="Leads Received"
                 value={data.internal.leadsReceived.toLocaleString()}
                 color="green"
+                tooltip="How many enquiries (people asking about a consultation or pricing) this profile received."
               />
             </div>
           </div>
@@ -200,6 +229,14 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
               <p className="text-xs font-semibold uppercase tracking-widest text-gray-600">
                 Google Search Console
               </p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" aria-label="What does 'Google Search Console' mean?" className="shrink-0 text-gray-400 hover:text-gray-600">
+                    <IconInfoCircle className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>How this page is doing in Google's normal (unpaid) search results — pulled directly from Google, not from our own website tracking.</TooltipContent>
+              </Tooltip>
               {!data.gscConfigured && (
                 <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">
                   Not configured
@@ -226,12 +263,14 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
                     label="Impressions (Google)"
                     value={data.gsc.impressions.toLocaleString()}
                     color="blue"
+                    tooltip="How many times this page showed up in Google search results, even if nobody clicked it."
                   />
                   <StatCard
                     icon={IconHandFinger}
                     label="Clicks (Google)"
                     value={data.gsc.clicks.toLocaleString()}
                     color="violet"
+                    tooltip="How many times someone clicked through to this page from a Google search result."
                   />
                   <StatCard
                     icon={IconTrendingUp}
@@ -239,6 +278,7 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
                     value={data.gsc.avgPosition > 0 ? data.gsc.avgPosition.toFixed(1) : '—'}
                     sub="lower is better"
                     color="amber"
+                    tooltip="Roughly where this page tends to show up in Google's search results. Position 1 is top of the page — the lower the number, the better."
                   />
                 </div>
 
@@ -257,8 +297,26 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
                             <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-600">Keyword</th>
                             <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">Clicks</th>
                             <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">Impressions</th>
-                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">CTR</th>
-                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">Position</th>
+                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <button type="button" aria-label="What is CTR?" className="inline-flex items-center gap-1">
+                                    CTR <IconInfoCircle className="h-3 w-3 text-gray-400" />
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent>Out of everyone who saw this page for this search, the percentage who clicked on it.</TooltipContent>
+                              </Tooltip>
+                            </th>
+                            <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <button type="button" aria-label="What is Position?" className="inline-flex items-center gap-1">
+                                    Position <IconInfoCircle className="h-3 w-3 text-gray-400" />
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent>Where this page usually ranks in Google for this search. Lower is better — position 1 is the top result.</TooltipContent>
+                              </Tooltip>
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -287,5 +345,6 @@ export function EntityMetricsPanel({ entityType, slug }: EntityMetricsPanelProps
         </>
       )}
     </div>
+    </TooltipProvider>
   )
 }
