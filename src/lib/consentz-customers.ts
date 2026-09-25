@@ -66,3 +66,29 @@ export function isConsentzLinked(entity: {
     isConsentzClinicSlug(slug),
   );
 }
+
+interface ListingSortable {
+  id?: number | null;
+  slug?: string | null;
+  isConsentz?: boolean;
+  reviewCount?: number | null;
+  rating?: number | null;
+}
+
+/**
+ * The one default listing order used by the public /search listing (clinics + practitioners),
+ * the clinic city pages and the admin clinics/practitioners tables: Consentz first, then most
+ * reviews, then highest rating, then id. searchClinicsForListing() and
+ * searchPractitionersForListing() apply the same order in SQL — keep them in sync.
+ */
+export function compareClinicListingOrder(left: ListingSortable, right: ListingSortable): number {
+  const leftConsentz = isConsentzClinicSlug(left.slug) || Boolean(left.isConsentz);
+  const rightConsentz = isConsentzClinicSlug(right.slug) || Boolean(right.isConsentz);
+  if (leftConsentz !== rightConsentz) return leftConsentz ? -1 : 1;
+  // null sorts below 0, matching MySQL's DESC ordering of NULLs.
+  return (
+    (right.reviewCount ?? -1) - (left.reviewCount ?? -1) ||
+    (right.rating ?? -1) - (left.rating ?? -1) ||
+    (left.id ?? 0) - (right.id ?? 0)
+  );
+}

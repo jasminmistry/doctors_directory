@@ -6,11 +6,11 @@ jest.mock('react', () => ({ ...jest.requireActual('react'), cache: (fn: unknown)
 
 jest.mock('../lib/db', () => {
   const rows = [
-    { id: 1, slug: 'alpha-clinic' },
-    { id: 2, slug: 'beta-clinic' },
-    { id: 3, slug: 'gamma-clinic' },
-    { id: 4, slug: 'delta-clinic' },
-    { id: 50, slug: '111-harley-st' },
+    { id: 1, slug: 'alpha-clinic', reviewCount: 5, rating: 4.9 },
+    { id: 2, slug: 'beta-clinic', reviewCount: 80, rating: 4.1 },
+    { id: 3, slug: 'gamma-clinic', reviewCount: 80, rating: 4.6 },
+    { id: 4, slug: 'delta-clinic', reviewCount: 0, rating: null },
+    { id: 50, slug: '111-harley-st', reviewCount: 2, rating: 5 },
   ].map((r) => ({ ...r, city: null, treatments: [] }))
 
   const matches = (where: any, row: any): boolean => {
@@ -25,11 +25,20 @@ jest.mock('../lib/db', () => {
     prisma: {
       clinic: {
         count: async ({ where }: any) => rows.filter((r) => matches(where, r)).length,
-        findMany: async ({ where, skip = 0, take }: any) =>
-          rows
+        findMany: async ({ where, orderBy, skip = 0, take }: any) => {
+          const keys: Array<Record<string, 'asc' | 'desc'>> = Array.isArray(orderBy) ? orderBy : [orderBy]
+          return rows
             .filter((r) => matches(where, r))
-            .sort((a, b) => a.id - b.id)
-            .slice(skip, skip + take),
+            .sort((a: any, b: any) => {
+              for (const key of keys) {
+                const [field, dir] = Object.entries(key)[0]
+                const diff = (a[field] ?? -1) - (b[field] ?? -1)
+                if (diff !== 0) return dir === 'asc' ? diff : -diff
+              }
+              return 0
+            })
+            .slice(skip, skip + take)
+        },
       },
     },
   }
@@ -38,19 +47,19 @@ jest.mock('../lib/db', () => {
 import { searchClinicsForListing } from '../lib/data-access/clinics'
 
 describe('searchClinicsForListing — Consentz first', () => {
-  it('puts Consentz clinics on the first page ahead of lower ids', async () => {
+  it('puts Consentz first, then most reviews / highest rating (shared listing order)', async () => {
     const { clinics, totalCount } = await searchClinicsForListing({ query: '111', skip: 0, take: 3 })
     expect(totalCount).toBe(5)
-    expect(clinics.map((c) => c.slug)).toEqual(['111-harley-st', 'alpha-clinic', 'beta-clinic'])
+    expect(clinics.map((c) => c.slug)).toEqual(['111-harley-st', 'gamma-clinic', 'beta-clinic'])
   })
 
   it('continues with non-Consentz clinics on later pages without duplicates', async () => {
     const { clinics } = await searchClinicsForListing({ query: '111', skip: 3, take: 3 })
-    expect(clinics.map((c) => c.slug)).toEqual(['gamma-clinic', 'delta-clinic'])
+    expect(clinics.map((c) => c.slug)).toEqual(['alpha-clinic', 'delta-clinic'])
   })
 
   it('leaves explicit rating sort untouched', async () => {
     const { clinics } = await searchClinicsForListing({ query: '111', sortBy: 'rating', skip: 0, take: 3 })
-    expect(clinics.map((c) => c.slug)).toEqual(['alpha-clinic', 'beta-clinic', 'gamma-clinic'])
+    expect(clinics.map((c) => c.slug)).toEqual(['111-harley-st', 'alpha-clinic', 'gamma-clinic'])
   })
 })

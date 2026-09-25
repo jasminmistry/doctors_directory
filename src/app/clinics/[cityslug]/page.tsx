@@ -35,7 +35,7 @@ import {
 } from "@/lib/directory-json-ld";
 import { getClinicDisplayName } from "@/lib/clinic-display";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
-import { isConsentzClinicSlug } from "@/lib/consentz-customers";
+import { compareClinicListingOrder } from "@/lib/consentz-customers";
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
 interface ProfilePageProps {
   params: {
@@ -104,13 +104,7 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
       (p) => p.City?.toLowerCase() === normalizedCitySlug && !isRemovedClinicSlug(p.slug)
     )
     .map((clinic) => applyPrestigeToClinic(clinic))
-    .sort((left, right) => {
-      const leftConsentz = isConsentzClinicSlug(left.slug) || Boolean(left.isConsentz);
-      const rightConsentz = isConsentzClinicSlug(right.slug) || Boolean(right.isConsentz);
-      if (leftConsentz !== rightConsentz) return leftConsentz ? -1 : 1;
-      if ((right.reviewCount ?? 0) !== (left.reviewCount ?? 0)) return (right.reviewCount ?? 0) - (left.reviewCount ?? 0);
-      return (right.rating ?? 0) - (left.rating ?? 0);
-    });
+    .sort(compareClinicListingOrder);
   const cityData = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   );

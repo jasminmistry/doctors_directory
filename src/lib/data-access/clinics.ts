@@ -152,6 +152,7 @@ export async function searchClinicsForListing(params: {
     for (const word of words) {
       and.push({
         OR: [
+          { name: { contains: word } },
           { slug: { contains: word } },
           { category: { contains: word } },
           { gmapsAddress: { contains: word } },
@@ -195,9 +196,14 @@ export async function searchClinicsForListing(params: {
   const orderBy: Prisma.ClinicOrderByWithRelationInput =
     params.sortBy === 'rating'
       ? { rating: 'desc' }
-      : params.sortBy === 'reviews'
-        ? { reviewCount: 'desc' }
-        : { id: 'asc' }
+      : { reviewCount: 'desc' }
+  // Default order within each bucket — mirrors compareClinicListingOrder() in
+  // @/lib/consentz-customers (used by the city pages and the admin clinics table).
+  const defaultOrderBy: Prisma.ClinicOrderByWithRelationInput[] = [
+    { reviewCount: 'desc' },
+    { rating: 'desc' },
+    { id: 'asc' },
+  ]
 
   // Explicit rating/reviews sorts are honoured as-is. The default ("relevance") sort pins
   // Consentz customers above everyone else — same rule as the city listing page — so e.g. a
@@ -237,7 +243,7 @@ export async function searchClinicsForListing(params: {
     consentzTake > 0
       ? prisma.clinic.findMany({
           where: consentzWhere,
-          orderBy: [{ reviewCount: 'desc' }, { rating: 'desc' }, { id: 'asc' }],
+          orderBy: defaultOrderBy,
           skip: consentzSkip,
           take: consentzTake,
           select: SEARCH_CLINIC_SELECT,
@@ -246,7 +252,7 @@ export async function searchClinicsForListing(params: {
     otherTake > 0
       ? prisma.clinic.findMany({
           where: otherWhere,
-          orderBy,
+          orderBy: defaultOrderBy,
           skip: otherSkip,
           take: otherTake,
           select: SEARCH_CLINIC_SELECT,

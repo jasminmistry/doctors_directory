@@ -4,7 +4,7 @@ import { cache } from 'react'
 import NodeCache from 'node-cache'
 import type { Practitioner, RankingMeta, ItemMeta } from '@/lib/types'
 import { isRemovedPractitionerSlug, hasTripleLetterSequence, REMOVED_PRACTITIONER_SLUGS } from '@/lib/directory-removals'
-import { isConsentzClinicSlug } from '@/lib/consentz-customers'
+import { getConsentzCustomerSlugs, isConsentzClinicSlug } from '@/lib/consentz-customers'
 import { applyPrestigeFromSlugs } from '@/lib/prestige-accreditations'
 import { getCache, setCache, delCache } from '@/lib/redis-cache'
 
@@ -317,12 +317,24 @@ export async function searchPractitionersForListing(params: {
 }): Promise<{ practitioners: Practitioner[]; totalCount: number }> {
   const where = buildPractitionerSearchWhere(params)
 
+  // Default order mirrors compareClinicListingOrder() (@/lib/consentz-customers), used by the
+  // clinic listing and the admin tables: Consentz-linked first (any associated clinic, same rule
+  // as the isConsentzLinked badge), then primary clinic's reviews, rating, then id. Every branch
+  // ends on p.id so equal values can't shuffle between LIMIT/OFFSET pages.
+  const consentzSlugs = Array.from(getConsentzCustomerSlugs())
+  const consentzFirst = consentzSlugs.length > 0
+    ? Prisma.sql`EXISTS (
+        SELECT 1 FROM practitioner_clinic_associations pca2
+        JOIN clinics cc ON cc.id = pca2.clinicId
+        WHERE pca2.practitionerId = p.id AND cc.slug IN (${Prisma.join(consentzSlugs)})
+      ) DESC,`
+    : Prisma.empty
   const orderBy =
     params.sortBy === 'rating'
-      ? Prisma.sql`c.rating DESC`
+      ? Prisma.sql`c.rating DESC, p.id ASC`
       : params.sortBy === 'reviews'
-        ? Prisma.sql`c.reviewCount DESC`
-        : Prisma.sql`p.displayName ASC`
+        ? Prisma.sql`c.reviewCount DESC, p.id ASC`
+        : Prisma.sql`${consentzFirst} c.reviewCount DESC, c.rating DESC, p.id ASC`
 
   const [idRows, countRows] = await Promise.all([
     prisma.$queryRaw<{ id: number }[]>(Prisma.sql`

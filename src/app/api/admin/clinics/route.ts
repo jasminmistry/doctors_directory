@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { clinicEditSchema } from '@/lib/schemas/clinic.schema'
+import { isConsentzClinicSlug } from '@/lib/consentz-customers'
 import { prisma } from '@/lib/db'
 import { invalidateSearchCache } from '@/lib/search-cache'
 import { consentzUsernameSchema, syncConsentzLinkClaim } from '@/lib/admin/consentz-link'
@@ -35,6 +36,7 @@ export async function GET(request: Request) {
     return NextResponse.json(clinics.map(({ city, ...c }) => ({
       ...c,
       rating: c.rating ? Number(c.rating) : null,
+      isConsentz: isConsentzClinicSlug(c.slug),
       citySlug: city?.slug ?? null,
       cityName: city?.name ?? null,
     })))

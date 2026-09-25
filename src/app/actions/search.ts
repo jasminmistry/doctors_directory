@@ -7,7 +7,7 @@ import { getAllProducts as getAllProductsFromDb, searchProductsForListing } from
 import { getAllPractitionersForSearch, searchPractitionersForListing } from "@/lib/data-access/practitioners"
 import { modalities } from "@/lib/data"
 import { getCachedSearchData, setCachedSearchData } from "@/lib/search-cache"
-import { isConsentzClinicSlug } from "@/lib/consentz-customers"
+import { isConsentzClinicSlug, isConsentzLinked } from "@/lib/consentz-customers"
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations"
 
 const modalitiesSet = new Set(modalities.map((m) => m.toLowerCase()))
@@ -385,6 +385,7 @@ export async function getSearchDiscoveryData(filters: SearchFilters) {
     .sort(
       (left, right) =>
         right.score - left.score ||
+        Number(isConsentzLinked(right.practitioner)) - Number(isConsentzLinked(left.practitioner)) ||
         right.practitioner.reviewCount - left.practitioner.reviewCount ||
         right.practitioner.rating - left.practitioner.rating
     )
