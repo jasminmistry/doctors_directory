@@ -168,6 +168,12 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
                     {k_value.gmapsPhone}
                   </span>
                 )}
+                {claimState === 'claimed' && k_value.email && (
+                  <a href={`mailto:${k_value.email}`} className="inline-flex items-center text-sm hover:underline">
+                    <IconMail stroke={1.5} className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                    {k_value.email}
+                  </a>
+                )}
                 <ClinicTabsHeader
                   k_value={k_value}
                   clinic_list={clinic_list}
@@ -194,6 +200,12 @@ export function ProfileHeader({ clinic, k_value, clinic_list, claimState = clini
                 {k_value.gmapsPhone}
               </span>
             </div>
+          )}
+          {claimState === 'claimed' && k_value.email && (
+            <a href={`mailto:${k_value.email}`} className="inline-flex items-center text-sm hover:underline">
+              <IconMail stroke={1.5} className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+              {k_value.email}
+            </a>
           )}
         </div>
 
