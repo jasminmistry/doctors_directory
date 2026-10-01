@@ -26,6 +26,7 @@ import { DirectoryStarRating } from "@/components/directory-star-rating";
 import { PageViewTracker } from "@/components/tracking/page-view-tracker";
 import { EventBookingSection } from "@/components/Clinic/event-booking-section";
 import { getClaimState } from "@/lib/claim-utils";
+import { prisma } from "@/lib/db";
 import { getPortalUser } from "@/lib/portal";
 import { getPractitionerProfileRobots } from "@/lib/practitioner-profile-robots";
 import { getPractitionerDirectoryRobots } from "@/lib/practitioner-profile-robots";
@@ -71,6 +72,14 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   ]);
   const goToProfileHref = portalUser ? `/portal/${portalUser.entityType}` : '/portal/login';
   const isOwner = portalUser?.entityType === 'practitioner' && portalUser.entitySlug === clinic.practitioner_name;
+  // Practitioners have no email column — once claimed, show the email they claimed with.
+  const approvedClaim = claimState === 'claimed'
+    ? await prisma.claimRequest.findFirst({
+        where: { entityType: 'practitioner', practitionerSlug: clinic.practitioner_name!, status: 'approved' },
+        orderBy: { approvedAt: 'desc' },
+        select: { claimerEmail: true },
+      })
+    : null;
 
   const hoursObj = clinic.hours as unknown as Record<string, any>;
   const hours = hoursObj?.["Typical_hours_listed_in_directories"] ?? clinic.hours;
@@ -138,7 +147,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                {/* Profile Header */}
                <ProfileHeader
                  clinic={clinic}
-                 k_value={practitioner as any}
+                 k_value={{ ...practitioner, email: approvedClaim?.claimerEmail ?? '' } as any}
                  clinic_list={associatedClinics}
                  claimState={claimState}
                  goToProfileHref={goToProfileHref}

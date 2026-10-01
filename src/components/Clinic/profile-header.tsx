@@ -12,7 +12,7 @@ import { OnlineDot } from "@/components/Clinic/online-dot";
 import { ConsultationChatDialog } from "@/components/chat/consultation-chat-dialog";
 import { ClinicOnlineStatus } from "@/components/Clinic/online-status";
 import { RequestConsultationDialog } from "@/components/tracking/request-consultation-dialog";
-import { IconMapPin, IconPhone, IconShieldCheck } from "@tabler/icons-react";
+import { IconMail, IconMapPin, IconPhone, IconShieldCheck } from "@tabler/icons-react";
 import { capitalize } from "@/lib/utils";
 import { isConsentzClinic } from "@/lib/consentz-customers";
 interface ProfileHeaderProps {
@@ -153,6 +153,12 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
                   {clinic.gmapsPhone}
                 </span>
               )}
+              {claimState === 'claimed' && clinic.email && (
+                <a href={`mailto:${clinic.email}`} className="inline-flex items-center text-sm hover:underline">
+                  <IconMail stroke={1.5} className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                  {clinic.email}
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -168,6 +174,12 @@ export function ProfileHeader({ clinic, clinicName, hasCoreCalendar = false, cla
               <IconPhone stroke={1.5} className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
               {clinic.gmapsPhone}
             </span>
+          )}
+          {claimState === 'claimed' && clinic.email && (
+            <a href={`mailto:${clinic.email}`} className="inline-flex items-center text-sm hover:underline">
+              <IconMail stroke={1.5} className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+              {clinic.email}
+            </a>
           )}
         </div>
 
