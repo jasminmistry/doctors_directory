@@ -97,6 +97,7 @@ export interface GaFilterExpression {
   filter?: GaStringFilter
   andGroup?: { expressions: GaFilterExpression[] }
   orGroup?: { expressions: GaFilterExpression[] }
+  notExpression?: GaFilterExpression
 }
 
 export interface GaReportRequest {

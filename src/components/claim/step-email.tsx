@@ -10,6 +10,11 @@ import { CityCombobox } from '@/components/claim/city-combobox'
 import { ATTR_COOKIE_NAME, parseAttrCookie } from '@/lib/attribution'
 import { isGenericEmailDomain } from '@/lib/email-domains'
 import { isValidEmail } from '@/lib/email-validation'
+import {
+  PRACTITIONER_CLINIC_NAME_MAX,
+  PRACTITIONER_NAME_MAX,
+  PRACTITIONER_PROFESSION_MAX,
+} from '@/lib/schemas/claim.schema'
 import { isValidSingleUrl } from '@/lib/url-validation'
 import { cn } from '@/lib/utils'
 
@@ -53,6 +58,16 @@ function normalizePhone(value: string): string {
 
 function isValidUkPhone(value: string): boolean {
   return UK_PHONE_RE.test(normalizePhone(value))
+}
+
+function maxLengthMessage(max: number): string {
+  return `Maximum ${max} characters allowed.`
+}
+
+// Shown once the browser's maxLength stops further input, so the cap isn't silent.
+function MaxLengthHint({ value, max }: Readonly<{ value: string; max: number }>) {
+  if (value.length < max) return null
+  return <p className="text-xs text-muted-foreground">{maxLengthMessage(max)}</p>
 }
 
 export function StepDetails(props: Readonly<Props>) {
@@ -128,14 +143,14 @@ export function StepDetails(props: Readonly<Props>) {
       }
     } else {
       if (name.trim().length < 2) errors.name = 'Please enter your full name.'
-      else if (name.trim().length > 255) errors.name = 'Full Name cannot exceed 255 characters.'
+      else if (name.trim().length > PRACTITIONER_NAME_MAX) errors.name = maxLengthMessage(PRACTITIONER_NAME_MAX)
       if (!profession.trim()) errors.profession = 'Profession is required.'
-      else if (profession.trim().length > 255) errors.profession = 'Profession cannot exceed 255 characters.'
+      else if (profession.trim().length > PRACTITIONER_PROFESSION_MAX) errors.profession = maxLengthMessage(PRACTITIONER_PROFESSION_MAX)
       if (!email.trim()) errors.email = 'Email is required.'
       else if (email.trim().length > 255) errors.email = 'Email cannot exceed 255 characters.'
       else if (!isValidEmail(email)) errors.email = 'Please enter a valid email address.'
       if (practitionerPhone.trim() && !isValidUkPhone(practitionerPhone)) errors.practitionerPhone = 'Please enter a valid UK phone number.'
-      if (practitionerClinicName.trim().length > 255) errors.practitionerClinicName = 'Clinic Name cannot exceed 255 characters.'
+      if (practitionerClinicName.trim().length > PRACTITIONER_CLINIC_NAME_MAX) errors.practitionerClinicName = maxLengthMessage(PRACTITIONER_CLINIC_NAME_MAX)
       if (isRegister && !city.trim()) errors.city = 'City is required.'
     }
     return errors
@@ -268,11 +283,13 @@ export function StepDetails(props: Readonly<Props>) {
           value={name}
           onChange={(e) => { setName(e.target.value); clearFieldError('name') }}
           autoComplete="name"
-          maxLength={255}
+          maxLength={entityType === 'practitioner' ? PRACTITIONER_NAME_MAX : 255}
           aria-invalid={!!fieldErrors.name}
           className={cn(fieldErrors.name && 'border-destructive')}
         />
-        {fieldErrors.name && <p className="text-xs text-destructive">{fieldErrors.name}</p>}
+        {fieldErrors.name
+          ? <p className="text-xs text-destructive">{fieldErrors.name}</p>
+          : entityType === 'practitioner' && <MaxLengthHint value={name} max={PRACTITIONER_NAME_MAX} />}
       </div>
 
       {entityType === 'practitioner' && (
@@ -287,11 +304,13 @@ export function StepDetails(props: Readonly<Props>) {
               placeholder="e.g. Aesthetic Nurse, Dermatologist"
               value={profession}
               onChange={(e) => { setProfession(e.target.value); clearFieldError('profession') }}
-              maxLength={255}
+              maxLength={PRACTITIONER_PROFESSION_MAX}
               aria-invalid={!!fieldErrors.profession}
               className={cn(fieldErrors.profession && 'border-destructive')}
             />
-            {fieldErrors.profession && <p className="text-xs text-destructive">{fieldErrors.profession}</p>}
+            {fieldErrors.profession
+              ? <p className="text-xs text-destructive">{fieldErrors.profession}</p>
+              : <MaxLengthHint value={profession} max={PRACTITIONER_PROFESSION_MAX} />}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="practitioner-phone">
@@ -453,11 +472,13 @@ export function StepDetails(props: Readonly<Props>) {
               placeholder="e.g. The Skin Clinic London"
               value={practitionerClinicName}
               onChange={(e) => { setPractitionerClinicName(e.target.value); clearFieldError('practitionerClinicName') }}
-              maxLength={255}
+              maxLength={PRACTITIONER_CLINIC_NAME_MAX}
               aria-invalid={!!fieldErrors.practitionerClinicName}
               className={cn(fieldErrors.practitionerClinicName && 'border-destructive')}
             />
-            {fieldErrors.practitionerClinicName && <p className="text-xs text-destructive">{fieldErrors.practitionerClinicName}</p>}
+            {fieldErrors.practitionerClinicName
+              ? <p className="text-xs text-destructive">{fieldErrors.practitionerClinicName}</p>
+              : <MaxLengthHint value={practitionerClinicName} max={PRACTITIONER_CLINIC_NAME_MAX} />}
           </div>
 
           {isRegister ? (

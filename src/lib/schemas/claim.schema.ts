@@ -3,6 +3,24 @@ import { EMAIL_RE } from '@/lib/email-validation'
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 
+// Practitioner claim/registration field limits — shared with the form in step-email.tsx.
+export const PRACTITIONER_NAME_MAX = 100
+export const PRACTITIONER_PROFESSION_MAX = 100
+export const PRACTITIONER_CLINIC_NAME_MAX = 150
+
+// Field label is kept in the message so the form can map a server error back to its input.
+const maxMessage = (label: string, max: number) => `${label}: Maximum ${max} characters allowed.`
+
+const practitionerNameSchema = z.string().trim()
+  .min(2, 'Please enter your full name.')
+  .max(PRACTITIONER_NAME_MAX, maxMessage('Full Name', PRACTITIONER_NAME_MAX))
+const practitionerProfessionSchema = z.string().trim()
+  .min(1, 'Profession is required.')
+  .max(PRACTITIONER_PROFESSION_MAX, maxMessage('Profession', PRACTITIONER_PROFESSION_MAX))
+const practitionerClinicNameSchema = z.string().trim()
+  .max(PRACTITIONER_CLINIC_NAME_MAX, maxMessage('Clinic Name', PRACTITIONER_CLINIC_NAME_MAX))
+  .optional()
+
 // Strips all internal whitespace (e.g. "+4 4 2 0 79 46 095 8") before validating and
 // storing, so the persisted number is always a clean, dialable string.
 function ukPhoneSchema(requiredError: string) {
@@ -45,11 +63,11 @@ export const initiatePractitionerClaimSchema = z.object({
   entityType: z.literal('practitioner'),
   isNewRegistration: z.literal(false).optional(),
   practitionerSlug: z.string().min(1),
-  claimerName: z.string().trim().min(2, 'Please enter your full name.').max(255, 'Full Name cannot exceed 255 characters.'),
+  claimerName: practitionerNameSchema,
   claimerEmail: z.string().trim().min(1, 'Email is required.').regex(EMAIL_RE, 'Please enter a valid email address.').max(255, 'Email cannot exceed 255 characters.'),
   claimerPhone: optionalUkPhoneSchema(),
-  profession: z.string().trim().min(1, 'Profession is required.').max(255, 'Profession cannot exceed 255 characters.'),
-  clinicNameInput: z.string().trim().max(255, 'Clinic Name cannot exceed 255 characters.').optional(),
+  profession: practitionerProfessionSchema,
+  clinicNameInput: practitionerClinicNameSchema,
   licenseNumber: z.string().trim().max(100, 'Licence number cannot exceed 100 characters.').optional(),
   registryName: z.string().trim().max(255, 'Registry name cannot exceed 255 characters.').optional(),
 })
@@ -73,11 +91,11 @@ export const initiateClinicRegistrationSchema = z.object({
 export const initiatePractitionerRegistrationSchema = z.object({
   entityType: z.literal('practitioner'),
   isNewRegistration: z.literal(true),
-  claimerName: z.string().trim().min(2, 'Please enter your full name.').max(255, 'Full Name cannot exceed 255 characters.'),
+  claimerName: practitionerNameSchema,
   claimerEmail: z.string().trim().min(1, 'Email is required.').regex(EMAIL_RE, 'Please enter a valid email address.').max(255, 'Email cannot exceed 255 characters.'),
   claimerPhone: optionalUkPhoneSchema(),
-  profession: z.string().trim().min(1, 'Profession is required.').max(255, 'Profession cannot exceed 255 characters.'),
-  clinicNameInput: z.string().trim().max(255, 'Clinic Name cannot exceed 255 characters.').optional(),
+  profession: practitionerProfessionSchema,
+  clinicNameInput: practitionerClinicNameSchema,
   city: z.string().trim().min(1, 'City is required.').max(255, 'City cannot exceed 255 characters.'),
   about: z.string().trim().optional(),
 })

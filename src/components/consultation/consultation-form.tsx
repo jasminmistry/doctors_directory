@@ -189,7 +189,6 @@ export function ConsultationRichForm({
           readOnly={emailLocked}
           autoComplete="email"
           maxLength={255}
-          className={emailLocked ? 'bg-gray-50 text-gray-600' : undefined}
         />
       </Field>
       {emailLocked && (

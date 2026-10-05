@@ -22,8 +22,9 @@ export interface NamedValue {
 
 /**
  * Marketing-site (consentz.com WordPress) slice of the same GA4 property.
- * Every hit from that site carries the event param `site=main`; the directory
- * app sends `site=directory`. All figures here are filtered to `site=main`.
+ * Hits from that site are tagged `site=main` and the directory's `site=directory`,
+ * but the param can be stripped by Consent Mode, so the split is by
+ * `SITE_DIRECTORY` (site param OR `/directory` path) and its inverse.
  */
 export interface MainSiteStats {
   pageViews: number
@@ -93,8 +94,27 @@ function andGroup(...expressions: GaFilterExpression[]): GaFilterExpression {
   return { andGroup: { expressions } }
 }
 
-/** `site=main` — the marketing-site slice of the shared GA4 property. */
-const SITE_MAIN = exactFilter("customEvent:site", "main")
+function orGroup(...expressions: GaFilterExpression[]): GaFilterExpression {
+  return { orGroup: { expressions } }
+}
+
+/**
+ * Directory slice of the shared GA4 property. `site=directory` alone misses hits
+ * where Consent Mode stripped the custom param, so anything under the
+ * `/directory` base path counts too. Server-side (Measurement Protocol) events
+ * have no page path but always carry `site=directory`.
+ */
+const SITE_DIRECTORY = orGroup(
+  exactFilter("customEvent:site", "directory"),
+  { filter: { fieldName: "pagePath", stringFilter: { value: "/directory", matchType: "BEGINS_WITH" } } },
+)
+
+/**
+ * Marketing-site slice — everything that isn't the directory. Filtering on
+ * `site=main` directly drops hits whose `site` param never arrived (e.g. the
+ * landing page_view sent before consent was granted).
+ */
+const SITE_MAIN: GaFilterExpression = { notExpression: SITE_DIRECTORY }
 
 function emptyMainSite(): MainSiteStats {
   return {
@@ -187,12 +207,14 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
         { name: "screenPageViews" },
         { name: "totalRevenue" },
       ],
+      dimensionFilter: SITE_DIRECTORY,
     },
     // 1 — every event's count (feeds KPIs, funnels, and the events table)
     {
       dateRanges,
       dimensions: [{ name: "eventName" }],
       metrics: [{ name: "eventCount" }],
+      dimensionFilter: SITE_DIRECTORY,
       orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
       limit: 100,
     },
@@ -201,7 +223,7 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
       dateRanges,
       dimensions: [{ name: "customEvent:source_bucket" }],
       metrics: [{ name: "eventCount" }],
-      dimensionFilter: eventNameFilter(["sign_up"]),
+      dimensionFilter: andGroup(SITE_DIRECTORY, eventNameFilter(["sign_up"])),
       orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
     },
     // 3 — acquisition channels
@@ -209,6 +231,7 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
       dateRanges,
       dimensions: [{ name: "sessionDefaultChannelGroup" }],
       metrics: [{ name: "sessions" }, { name: "keyEvents" }],
+      dimensionFilter: SITE_DIRECTORY,
       orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
       limit: 12,
     },
@@ -217,6 +240,7 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
       dateRanges,
       dimensions: [{ name: "pagePath" }],
       metrics: [{ name: "screenPageViews" }],
+      dimensionFilter: SITE_DIRECTORY,
       orderBys: [{ metric: { metricName: "screenPageViews" }, desc: true }],
       limit: 10,
     },
@@ -225,6 +249,7 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
       dateRanges,
       dimensions: [{ name: "deviceCategory" }],
       metrics: [{ name: "sessions" }],
+      dimensionFilter: SITE_DIRECTORY,
       orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
     },
     // 6 — daily trend
@@ -232,11 +257,12 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
       dateRanges,
       dimensions: [{ name: "date" }],
       metrics: [{ name: "sessions" }, { name: "keyEvents" }],
+      dimensionFilter: SITE_DIRECTORY,
       orderBys: [{ dimension: { dimensionName: "date" } }],
       keepEmptyRows: true,
     },
 
-    // ---- Main site (consentz.com WordPress) — all filtered to site=main ----
+    // ---- Main site (consentz.com WordPress) — everything outside SITE_DIRECTORY ----
     // 7 — headline
     {
       dateRanges,
@@ -345,9 +371,9 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
       revenue: scalar(totals, 3),
       signUpStarts: counts.sign_up_start ?? 0,
       signUps: counts.sign_up ?? 0,
-      // Both surfaces fire `generate_lead` — subtract the marketing-site ones
-      // (book_demo / register) so this stays a patient-lead count.
-      leads: Math.max(0, (counts.generate_lead ?? 0) - mainSiteLeads),
+      // `counts` is already scoped to the directory, so the marketing site's
+      // book_demo / register `generate_lead`s aren't in here.
+      leads: counts.generate_lead ?? 0,
       enquiries: counts.enquiry_submitted ?? 0,
       bookings: (counts.booking_complete ?? 0) + (counts.call_booking_complete ?? 0),
       chats: counts.chat_open ?? 0,
