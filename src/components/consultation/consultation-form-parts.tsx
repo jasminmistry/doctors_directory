@@ -71,7 +71,7 @@ interface IconInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: boolean
 }
 
-export function IconInput({ icon, error, className, ...props }: IconInputProps) {
+export function IconInput({ icon, error, className, readOnly, ...props }: IconInputProps) {
   return (
     <div className="relative">
       {icon && (
@@ -81,13 +81,22 @@ export function IconInput({ icon, error, className, ...props }: IconInputProps) 
       )}
       <input
         {...props}
+        readOnly={readOnly}
+        aria-readonly={readOnly || undefined}
         className={cn(
-          'w-full rounded-lg border bg-white py-2.5 text-sm text-gray-900 placeholder:text-gray-400',
-          'transition-colors focus:outline-none focus:ring-2',
+          'w-full rounded-lg border py-2.5 text-sm placeholder:text-gray-400',
+          'transition-colors focus:outline-none',
           icon ? 'pl-9 pr-3' : 'px-3',
-          error
-            ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
-            : 'border-gray-200 focus:border-gray-400 focus:ring-gray-100',
+          // Read-only fields keep a static, muted look — no focus ring/border
+          // shift or caret on click, so they don't read as editable.
+          readOnly
+            ? 'cursor-not-allowed border-gray-200 bg-gray-50 text-gray-600 caret-transparent focus:border-gray-200'
+            : cn(
+                'bg-white text-gray-900 focus:ring-2',
+                error
+                  ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
+                  : 'border-gray-200 focus:border-gray-400 focus:ring-gray-100',
+              ),
           className,
         )}
       />
