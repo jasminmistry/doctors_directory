@@ -1,6 +1,7 @@
 // Central config + feature flags for the Google Business Profile connector.
 
-export const GBP_ENABLED = process.env.GBP_ENABLED === 'true'
+// On by default; set GBP_ENABLED=false to switch the connector off.
+export const GBP_ENABLED = process.env.GBP_ENABLED !== 'false'
 export const GBP_MOCK = process.env.GBP_MOCK === 'true'
 export const GBP_REGION_CODE = process.env.GBP_REGION_CODE || 'GB'
 
