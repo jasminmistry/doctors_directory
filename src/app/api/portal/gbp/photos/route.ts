@@ -58,6 +58,7 @@ export async function POST(request: Request) {
   })
 
   await mirrorHeroPhoto(guard.clinicId, parsed.data.category, parsed.data.url)
+  if (parsed.data.category === 'PROFILE' || parsed.data.category === 'COVER') await invalidateSearchCache()
   return NextResponse.json({ photo }, { status: 201 })
 }
 
@@ -104,8 +105,19 @@ export async function DELETE(request: Request) {
   const id = Number(new URL(request.url).searchParams.get('id'))
   if (!Number.isInteger(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
 
-  const result = await prisma.clinicPhoto.deleteMany({ where: { id, clinicId: guard.clinicId } })
-  if (result.count === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  const photo = await prisma.clinicPhoto.findFirst({
+    where: { id, clinicId: guard.clinicId },
+    select: { url: true },
+  })
+  if (!photo) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  await prisma.clinicPhoto.delete({ where: { id } })
+
+  // Don't leave the profile/cover image pointing at a photo that was removed.
+  const [image, cover] = await prisma.$transaction([
+    prisma.clinic.updateMany({ where: { id: guard.clinicId, image: photo.url }, data: { image: null } }),
+    prisma.clinic.updateMany({ where: { id: guard.clinicId, coverImage: photo.url }, data: { coverImage: null } }),
+  ])
+  if (image.count || cover.count) await invalidateSearchCache()
   return NextResponse.json({ ok: true })
 }
 
