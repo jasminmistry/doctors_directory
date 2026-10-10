@@ -343,6 +343,7 @@ Admin:
 | `EMAIL_TRACKING_SECRET` | HMAC signing for the email open-tracking pixel token (`src/lib/email-open-tracking.ts`) |
 | `INTERNAL_CRON_SECRET` | Bearer secret for the internal purge-deletions cron endpoint |
 | `GA4_MP_API_SECRET` / `GA4_PROPERTY_ID` | Server-side GA4 Measurement Protocol events + admin GA analytics dashboard |
+| `GA4_APP_PROPERTY_ID` | Optional. Numeric id of the Consentz app (control.consentz.com / ConsentzLive) GA4 property — feeds the "Consentz app" section of the admin GA4 report (`src/lib/analytics/ga-app-dashboard.ts`). Same service account, needs Viewer on it |
 | `SMS_PROVIDER` | `plivo` (default) \| `twilio` \| `off` — selects the lead-notification SMS backend (`src/lib/sms/`) |
 | `PLIVO_AUTH_ID` / `PLIVO_AUTH_TOKEN` + a sender (`PLIVO_POWERPACK_UUID` preferred, or `PLIVO_FROM_NUMBER`) | Plivo provider creds. Absent ⇒ every send is a logged no-op |
 | `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` + a sender (`TWILIO_MESSAGING_SERVICE_SID` preferred, or `TWILIO_FROM_NUMBER`) | Twilio provider creds. Absent ⇒ every send is a logged no-op |
