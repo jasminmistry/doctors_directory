@@ -120,6 +120,7 @@ export const getNationalTreatmentClinics = cache(async (treatmentSlug: string): 
 
   const clinics = await prisma.clinic.findMany({
     where: {
+      isHidden: false,
       treatments: {
         some: {
           treatmentId,

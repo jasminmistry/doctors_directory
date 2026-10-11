@@ -36,6 +36,7 @@ export function getCityPractitionersFromJson(citySlug: string): Practitioner[] {
 export const getCityClinicsBySlug = cache(async (citySlug: string): Promise<Clinic[]> => {
   const clinics = await prisma.clinic.findMany({
     where: {
+      isHidden: false,
       city: {
         slug: citySlug,
       },
