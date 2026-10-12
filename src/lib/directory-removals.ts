@@ -57,6 +57,11 @@ export const NHS_REMOVED_CLINIC_SLUGS = [
   "dr-abhijit-banerjee",
   "dr-mohana-krishnan-mbbs-mrcgp-dipderm",
   "awbeautician-beauty-therapy",
+  "dr-suchitra-chinthapalli",
+  "hamid-tehrani",
+  "dr-john-reed",
+  "private-walk-in-clinic",
+  "cosmetic-doctors",
 ]
 
 const REMOVED_CLINIC_SLUGS = new Set([
