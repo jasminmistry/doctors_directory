@@ -3,7 +3,8 @@ import { prisma } from '@/lib/db'
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 
-export async function PUT(req: NextRequest, { params }: { params: { slug: string; id: string } }) {
+export async function PUT(req: NextRequest, props: { params: Promise<{ slug: string; id: string }> }) {
+  const params = await props.params;
   const clinic = await prisma.clinic.findUnique({ where: { slug: params.slug }, select: { id: true } })
   if (!clinic) return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
 
@@ -43,7 +44,11 @@ export async function PUT(req: NextRequest, { params }: { params: { slug: string
   return NextResponse.json({ booking })
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { slug: string; id: string } }) {
+export async function DELETE(
+  _req: NextRequest,
+  props: { params: Promise<{ slug: string; id: string }> }
+) {
+  const params = await props.params;
   const clinic = await prisma.clinic.findUnique({ where: { slug: params.slug }, select: { id: true } })
   if (!clinic) return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
 

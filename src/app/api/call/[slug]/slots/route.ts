@@ -9,10 +9,8 @@ function getCoreLiteBase() {
   return `${new URL(authUrl).origin}/api/core-lite`
 }
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { slug: string } },
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const clinic = await prisma.clinic.findUnique({
       where: { slug: params.slug },
@@ -23,7 +21,7 @@ export async function GET(
 
     if (!clinic) return NextResponse.json({ slots: [] })
 
-    if (!await isClinicScheduleConfigured(clinic.id)) {
+    if (!(await isClinicScheduleConfigured(clinic.id))) {
       return NextResponse.json(SCHEDULE_NOT_CONFIGURED_RESPONSE, { status: 422 })
     }
 

@@ -25,13 +25,14 @@ import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 
 interface ProfilePageProps {
-  params: {
+  params: Promise<{
     brand: string;
     slug: string;
-  };
+  }>;
 }
 
-export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage(props: Readonly<ProfilePageProps>) {
+  const params = await props.params;
   const { slug } = params;
 
   if (isRemovedProductSlug(slug)) {
@@ -155,7 +156,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 //   };
 // }
 
-export async function generateMetadata({ params }: ProfilePageProps) {
+export async function generateMetadata(props: ProfilePageProps) {
+  const params = await props.params;
   const clinic = await getProductBySlug(params.slug);
   const brandSlug = decodeURIComponent(params.brand).toLowerCase();
   const productSlug = decodeURIComponent(params.slug).toLowerCase();

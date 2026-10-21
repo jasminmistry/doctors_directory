@@ -25,15 +25,11 @@ describe('AccreditedPractitionersPage rendering', () => {
 
   test.each(city_accreditations)(
     'Page test: $accreditation / $cityslug',
-    ({ accreditation, cityslug }) => {
+    async ({ accreditation, cityslug }) => {
       let renderFlag = false;
       let cardFlag = false;
       try {
-        const { unmount } = render(
-          <TestAccreditedPractitioners
-            params={{ accreditation, cityslug }}
-          />
-        );
+        const { unmount } = render(await TestAccreditedPractitioners({ params: { accreditation, cityslug } }));
 
         const PractitionersList = screen.getAllByTestId('practitioner-card');
 

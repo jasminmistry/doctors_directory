@@ -28,12 +28,13 @@ import { IconArrowNarrowLeft } from "@tabler/icons-react"
 export const dynamic = "force-dynamic"
 
 interface AccreditedClinicsPageProps {
-  params: {
+  params: Promise<{
     accreditation: string
-  }
+  }>
 }
 
-export default async function AccreditedClinicsPage({ params }: Readonly<AccreditedClinicsPageProps>) {
+export default async function AccreditedClinicsPage(props: Readonly<AccreditedClinicsPageProps>) {
+  const params = await props.params;
   const accreditation = normalizeAccreditationSlug(params.accreditation)
   if (!isKnownAccreditation(accreditation)) {
     notFound()
@@ -133,7 +134,8 @@ export default async function AccreditedClinicsPage({ params }: Readonly<Accredi
   )
 }
 
-export async function generateMetadata({ params }: AccreditedClinicsPageProps) {
+export async function generateMetadata(props: AccreditedClinicsPageProps) {
+  const params = await props.params;
   const accreditation = normalizeAccreditationSlug(params.accreditation)
   if (!isKnownAccreditation(accreditation)) {
     notFound()

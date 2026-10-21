@@ -4,10 +4,8 @@ import { validateTreatment } from '@/lib/admin/validators'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const treatment = await getTreatmentBySlug(params.slug)
     if (!treatment) {
@@ -20,10 +18,8 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function PUT(request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const data = await request.json()
     const validation = validateTreatment(data)
@@ -65,10 +61,8 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function DELETE(request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     await deleteTreatment(params.slug)
     return NextResponse.json({ success: true })

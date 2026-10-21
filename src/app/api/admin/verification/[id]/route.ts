@@ -37,7 +37,8 @@ async function purgeVerificationFiles(files: Array<string | null>): Promise<void
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = parseInt(params.id, 10)
   if (isNaN(id)) {
     return NextResponse.json({ error: 'Invalid ID' }, { status: 400 })

@@ -29,12 +29,13 @@ const credentialIndex = new Map(
   credentialsData.map(c => [c.slug!.replace(/[^a-z0-9-]/g, ''), c])
 )
 interface ProfilePageProps {
-  params: {
+  params: Promise<{
     cred: string;
-  };
+  }>;
 }
 
-export default async function ProfilePage({ params }: ProfilePageProps) {
+export default async function ProfilePage(props: ProfilePageProps) {
+  const params = await props.params;
   const practitioners = await getAllPractitionersForSearch();
 
   const { cred } = params;
@@ -169,7 +170,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 //   }
 // }
 
-export async function generateMetadata({ params }: ProfilePageProps) {
+export async function generateMetadata(props: ProfilePageProps) {
+  const params = await props.params;
   const credSlug = decodeURIComponent(params.cred).toLowerCase();
   const displayCredential = decodeURIComponent(params.cred).replaceAll("-", " ");
   const robots = getPractitionerDirectoryRobots();

@@ -25,11 +25,12 @@ function formatSlotDate(isoStr: string): string {
   }
 }
 
-export default async function EventBookingSuccessPage({
-  searchParams,
-}: {
-  searchParams: { session_id?: string }
-}) {
+export default async function EventBookingSuccessPage(
+  props: {
+    searchParams: Promise<{ session_id?: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
   const sessionId = searchParams.session_id
   if (!sessionId) redirect('/')
 

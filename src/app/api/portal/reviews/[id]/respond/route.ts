@@ -9,7 +9,8 @@ const schema = z.object({
   response: z.string().min(1).max(2000),
 })
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const user = await getPortalUser()
   if (!user?.clinicId) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 

@@ -26,7 +26,8 @@ async function resolvePractitionerConsentzId(slug: string) {
   return claim?.consentzUserId ?? null
 }
 
-export async function GET(_req: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const consentzId = await resolvePractitionerConsentzId(params.slug)
   if (!consentzId) return NextResponse.json({ schedule: [], noConsentzId: true })
 
@@ -44,7 +45,8 @@ export async function GET(_req: NextRequest, { params }: { params: { slug: strin
   }
 }
 
-export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
+export async function POST(req: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const body = await req.json()
   const parsed = z.array(daySchema).min(1).safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })

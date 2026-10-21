@@ -4,8 +4,9 @@ import { getPatientClaims } from '@/lib/patient-auth'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { slug: string; sessionId: string } },
+  props: { params: Promise<{ slug: string; sessionId: string }> }
 ) {
+  const params = await props.params;
   try {
     const visitorToken = req.nextUrl.searchParams.get('visitorToken') ?? ''
     const id = parseInt(params.sessionId, 10)

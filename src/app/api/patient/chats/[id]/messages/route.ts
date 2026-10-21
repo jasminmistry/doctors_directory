@@ -9,10 +9,8 @@ const postSchema = z.object({
   content: z.string().min(1).max(2000),
 })
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { patient, error } = await requirePatient(req)
   if (error) return error
 
@@ -48,10 +46,8 @@ export async function GET(
   return NextResponse.json({ session, messages }, { headers: { 'Cache-Control': 'no-store' } })
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { patient, error } = await requirePatient(req)
   if (error) return error
 

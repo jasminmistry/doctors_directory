@@ -37,16 +37,17 @@ import { toUrlSlug } from '@/lib/utils'
 import { IconArrowNarrowLeft } from '@tabler/icons-react'
 
 type PageProps = {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 const MIN_TREATMENT_CLINICS = 3
 
 export const revalidate = 300
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   if (isDeindexedStandaloneSlug(params.slug)) {
     return {
       title: 'Page Not Found',
@@ -116,7 +117,8 @@ export function generateMetadata({ params }: PageProps): Metadata {
   }
 }
 
-export default function StandaloneDirectoryPage({ params }: PageProps) {
+export default async function StandaloneDirectoryPage(props: PageProps) {
+  const params = await props.params;
   if (isDeindexedStandaloneSlug(params.slug)) {
     notFound()
   }

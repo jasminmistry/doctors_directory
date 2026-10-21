@@ -4,10 +4,11 @@ import { resolveClinicTimezone } from '@/lib/core-api'
 import { AdminCalendarView } from '@/components/admin/admin-calendar-view'
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
-export default async function AdminClinicCalendarPage({ params }: Props) {
+export default async function AdminClinicCalendarPage(props: Props) {
+  const params = await props.params;
   const clinic = await prisma.clinic.findUnique({
     where: { slug: params.slug },
     select: { id: true, name: true, slug: true, claimedPlan: true, coreClinicId: true },

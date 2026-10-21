@@ -18,7 +18,7 @@ import {
   hubTemplateDetailMetaTitle,
 } from "@/lib/b2b-hub/hub-page-metadata"
 
-type Props = { params: { category: string; slug: string } }
+type Props = { params: Promise<{ category: string; slug: string }> }
 
 function isTemplateCityExpansionRoute(templateSlug: string, secondSegment: string) {
   return isExpansionCitySlug(secondSegment) && !!getTemplateEntryBySlug(templateSlug)
@@ -31,7 +31,8 @@ export function generateStaticParams() {
   }))
 }
 
-export function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   if (isTemplateCityExpansionRoute(params.category, params.slug)) {
     const entry = getTemplateEntryBySlug(params.category)
     if (!entry) {
@@ -60,7 +61,8 @@ export function generateMetadata({ params }: Props): Metadata {
   })
 }
 
-export default function TemplateDetailPage({ params }: Props) {
+export default async function TemplateDetailPage(props: Props) {
+  const params = await props.params;
   if (isTemplateCityExpansionRoute(params.category, params.slug)) {
     const entry = getTemplateEntryBySlug(params.category)
     if (!entry) {

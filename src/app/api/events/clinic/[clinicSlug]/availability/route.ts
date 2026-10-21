@@ -7,10 +7,8 @@ function getCoreLiteBase() {
   return `${new URL(authUrl).origin}/api/core-lite`
 }
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { clinicSlug: string } },
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ clinicSlug: string }> }) {
+  const params = await props.params;
   const eventId = req.nextUrl.searchParams.get('eventId')
   const date = req.nextUrl.searchParams.get('date')
 

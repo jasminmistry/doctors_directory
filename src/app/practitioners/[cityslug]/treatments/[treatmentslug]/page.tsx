@@ -73,13 +73,14 @@ function getPopularTreatments(items: Clinic[]): string[] {
 }
 
 interface ProfilePageProps {
-  params: {
+  params: Promise<{
     cityslug: string;
    treatmentslug: string;
-  };
+  }>;
 }
 
-export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage(props: Readonly<ProfilePageProps>) {
+  const params = await props.params;
   const practitioners = getEnrichedPractitioners()
   const clinics = getClinics()
 
@@ -88,9 +89,9 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   const cityData: City = (readJsonFileSync<City[]>('city_data_processed.json')).find(
     (p) => p.City?.toLowerCase() === normalizedCitySlug
   )!;
-   const decodedCitySlug = decodeURIComponent(cityslug)
-  .toLowerCase()
-  .replace(/\s+/g, "");
+  const decodedCitySlug = decodeURIComponent(cityslug)
+ .toLowerCase()
+ .replace(/\s+/g, "");
   const decodedTreatmentSlug = decodeURIComponent(treatmentslug)
   .toLowerCase()
   .replace(/[\s-]+/g, "");
@@ -159,8 +160,8 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     })();
   const treatmentSlug = resolvedTreatmentName.charAt(0).toUpperCase() + resolvedTreatmentName.slice(1);
   const treatment = treatment_content[treatmentSlug as TreatmentSlug] as Record<string, any>;
-  
-  
+
+
   return (
     <main className="bg-white">
       <div className="mx-auto max-w-7xl md:px-4 py-4 md:py-12">
@@ -326,7 +327,8 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
   );
 }
 
-export async function generateMetadata({ params }: ProfilePageProps) {
+export async function generateMetadata(props: ProfilePageProps) {
+  const params = await props.params;
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const treatmentSlug = decodeURIComponent(params.treatmentslug).toLowerCase();
   const displayCityName = capitalize(citySlug);

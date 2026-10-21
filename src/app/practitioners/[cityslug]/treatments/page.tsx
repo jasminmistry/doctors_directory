@@ -25,12 +25,13 @@ import { getAllProducts as getAllProductsFromDb } from "@/lib/data-access/produc
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     cityslug: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata(props: PageProps) {
+  const params = await props.params;
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const displayCityName = capitalize(citySlug);
   const robots = getPractitionerDirectoryRobots();
@@ -45,7 +46,8 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-export default async function CityTreatmentsPage({ params }: PageProps) {
+export default async function CityTreatmentsPage(props: PageProps) {
+  const params = await props.params;
   const { cityslug } = params;
   const displayCityName = capitalize(cityslug);
   const normalizedCitySlug = decodeURIComponent(cityslug).toLowerCase();

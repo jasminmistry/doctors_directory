@@ -16,7 +16,7 @@ import {
 } from "@/lib/b2b-hub/hub-page-metadata"
 import { buildTreatmentOperationalInsight } from "@/lib/b2b-hub/operational-insight"
 
-type Props = { params: { slug: string } }
+type Props = { params: Promise<{ slug: string }> }
 
 export const revalidate = 300
 
@@ -32,7 +32,8 @@ function findTreatmentLabel(treatmentSlug: string) {
   return match?.label
 }
 
-export function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const parsed = parseTreatmentPageSlug(params.slug)
   if (!parsed) return { title: "Treatments" }
   const label = findTreatmentLabel(parsed.treatmentSlug)
@@ -47,7 +48,8 @@ export function generateMetadata({ params }: Props): Metadata {
   })
 }
 
-export default function BusinessTreatmentDetailPage({ params }: Props) {
+export default async function BusinessTreatmentDetailPage(props: Props) {
+  const params = await props.params;
   const parsed = parseTreatmentPageSlug(params.slug)
   if (!parsed) notFound()
   const label = findTreatmentLabel(parsed.treatmentSlug)

@@ -22,14 +22,12 @@ const nextConfig = {
   // geoip-lite reads its .dat files via fs relative to __dirname — webpack bundling
   // for route handlers moves the code without copying those binary data files, so it
   // must stay external and be require()'d from node_modules at runtime instead.
-  experimental: {
-    serverComponentsExternalPackages: ['geoip-lite'],
-    // With output: 'standalone', nft traces geoip-lite's JS but not its ~110 MB of
-    // binary .dat files (they're read via fs at runtime, not require()'d). Force them
-    // into the standalone bundle so geo lookups work in the container.
-    outputFileTracingIncludes: {
-      '/**/*': ['./node_modules/geoip-lite/data/**/*'],
-    },
+  serverExternalPackages: ['geoip-lite'],
+  // With output: 'standalone', nft traces geoip-lite's JS but not its ~110 MB of
+  // binary .dat files (they're read via fs at runtime, not require()'d). Force them
+  // into the standalone bundle so geo lookups work in the container.
+  outputFileTracingIncludes: {
+    '/**/*': ['./node_modules/geoip-lite/data/**/*'],
   },
   async redirects() {
     // Bare-path redirects (basePath: false) catch old indexed / external URLs

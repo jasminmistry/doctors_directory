@@ -31,7 +31,7 @@ type FAQProps = {
 function renderValue(
   value: string | string[] | Record<string, any>,
   stripCitations: boolean
-): JSX.Element {
+): React.JSX.Element {
   if (typeof value === "string") {
     return <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
       {stripCitations ? cleanText(value) : value}
@@ -83,7 +83,7 @@ export function FAQ({ data, stripCitations = true }: FAQProps) {
     setExpandedItems(newExpanded);
   };
 
-  const handleToggle = (key: string) => (e: React.MouseEvent<HTMLDetailsElement>) => {
+  const handleToggle = (key: string) => (e: React.SyntheticEvent<HTMLDetailsElement>) => {
     const details = e.currentTarget;
     const isOpen = details.open;
     toggleExpanded(key);

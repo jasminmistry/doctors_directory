@@ -44,13 +44,14 @@ function mergeBoxplotDataFromDict(
 }
 
 interface ProfilePageProps {
-  params: {
+  params: Promise<{
     cityslug: string;
     slug: string;
-  };
+  }>;
 }
 
-export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage(props: Readonly<ProfilePageProps>) {
+  const params = await props.params;
   const { slug } = params;
 
   if (isRemovedPractitionerSlug(slug)) {
@@ -276,7 +277,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   );
 }
 
-export async function generateMetadata({ params }: ProfilePageProps) {
+export async function generateMetadata(props: ProfilePageProps) {
+  const params = await props.params;
   if (isRemovedPractitionerSlug(params.slug)) {
     notFound();
   }

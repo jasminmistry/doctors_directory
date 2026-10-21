@@ -16,7 +16,7 @@ import {
   hubTemplateCategoryMetaTitle,
 } from "@/lib/b2b-hub/hub-page-metadata"
 
-type Props = { params: { category: string } }
+type Props = { params: Promise<{ category: string }> }
 
 export function generateStaticParams() {
   return (
@@ -30,7 +30,8 @@ export function generateStaticParams() {
   ).map((category) => ({ category }))
 }
 
-export function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   if (!isTemplateCategory(params.category)) {
     return { title: "Templates" }
   }
@@ -42,7 +43,8 @@ export function generateMetadata({ params }: Props): Metadata {
   })
 }
 
-export default function TemplateCategoryPage({ params }: Props) {
+export default async function TemplateCategoryPage(props: Props) {
+  const params = await props.params;
   if (!isTemplateCategory(params.category)) {
     notFound()
   }

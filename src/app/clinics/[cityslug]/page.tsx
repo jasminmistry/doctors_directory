@@ -38,10 +38,10 @@ import { IconArrowNarrowLeft } from "@tabler/icons-react";
 import { compareClinicListingOrder } from "@/lib/consentz-customers";
 import { applyPrestigeToClinic } from "@/lib/prestige-accreditations";
 interface ProfilePageProps {
-  params: {
+  params: Promise<{
     cityslug: string;
     slug: string;
-  };
+  }>;
 }
 
 export const revalidate = 300
@@ -92,7 +92,8 @@ function getPopularTreatments(items: Clinic[]): string[] {
     .map(([treatment]) => treatment);
 }
 
-export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage(props: Readonly<ProfilePageProps>) {
+  const params = await props.params;
   const citySlug = params.cityslug;
   const displayCityName = capitalize(citySlug);
   const normalizedCitySlug = decodeURIComponent(citySlug).toLowerCase();
@@ -265,7 +266,8 @@ export default function ProfilePage({ params }: Readonly<ProfilePageProps>) {
 //   }))
 // }
 
-export async function generateMetadata({ params }: ProfilePageProps) {
+export async function generateMetadata(props: ProfilePageProps) {
+  const params = await props.params;
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const displayCityName = capitalize(citySlug);
   const canonicalUrl = toDirectoryCanonical(`/clinics/${citySlug}`);

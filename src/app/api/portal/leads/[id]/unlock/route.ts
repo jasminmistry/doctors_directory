@@ -33,7 +33,8 @@ function resolveDirectoryBaseUrl(): string {
 
 const DIRECTORY_BASE_URL = resolveDirectoryBaseUrl()
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const user = await getPortalUser()
   if (!user || !user.clinicId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

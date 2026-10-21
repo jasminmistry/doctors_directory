@@ -19,15 +19,11 @@ describe('TreatmentsPage rendering', () => {
 
   test.each(treatment_tests)(
     'Page test: $slug',
-    ({ slug }) => {
+    async ({ slug }) => {
       let renderFlag = false;
       let cardFlag = false;
       try {
-        const { unmount } = render(
-          <TestTreatments
-            params={{ slug }}
-          />
-        );
+        const { unmount } = render(await TestTreatments({ params: { slug } }));
 
         const ClinicsList = screen.getAllByTestId('practitioner-card');
 

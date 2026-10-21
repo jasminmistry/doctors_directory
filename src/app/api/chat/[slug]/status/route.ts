@@ -15,10 +15,8 @@ const DOW_MAP: Record<number, string> = {
   6: 'Saturday',
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { slug: string } },
-) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const clinic = await prisma.clinic.findUnique({
       where: { slug: params.slug },

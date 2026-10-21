@@ -17,13 +17,14 @@ import { toDisplayTitle } from "@/lib/b2b-hub/text";
 import { hubSegmentIndexPageMetadata } from "@/lib/b2b-hub/hub-page-metadata";
 import { HubPricingCalculator } from "@/components/b2b-hub/hub-pricing-calculator";
 
-type Props = { params: { segment: string } };
+type Props = { params: Promise<{ segment: string }> };
 
 export function generateStaticParams() {
   return HUB_SEGMENTS.map((segment) => ({ segment }));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   if (!isHubSegment(params.segment)) {
     return { title: "Buyer hub" };
   }
@@ -52,7 +53,8 @@ function buildFaq(segment: HubSegment) {
   ];
 }
 
-export default function BusinessSegmentIndexPage({ params }: Props) {
+export default async function BusinessSegmentIndexPage(props: Props) {
+  const params = await props.params;
   if (!isHubSegment(params.segment)) {
     notFound();
   }

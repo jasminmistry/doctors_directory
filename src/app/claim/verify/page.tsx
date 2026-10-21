@@ -11,10 +11,11 @@ const ERROR_MESSAGES: Record<string, string> = {
 }
 
 interface Props {
-  searchParams: { error?: string; token?: string }
+  searchParams: Promise<{ error?: string; token?: string }>
 }
 
-export default function ClaimVerifyPage({ searchParams }: Readonly<Props>) {
+export default async function ClaimVerifyPage(props: Readonly<Props>) {
+  const searchParams = await props.searchParams;
   if (searchParams.token) {
     redirect(`/api/claim/verify-email?token=${searchParams.token}`)
   }

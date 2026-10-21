@@ -20,7 +20,8 @@ const bodySchema = z.object({
   videoCall: z.boolean().optional(),
 })
 
-export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
+export async function POST(req: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const { patient, error: authError } = await requirePatient(req)
   if (authError) return authError
 
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
   })
 
   if (!clinic) return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
-  if (!await isClinicScheduleConfigured(clinic.id)) {
+  if (!(await isClinicScheduleConfigured(clinic.id))) {
     return NextResponse.json(SCHEDULE_NOT_CONFIGURED_RESPONSE, { status: 422 })
   }
   if (!clinic.coreClinicId) return NextResponse.json({ error: 'Online booking not available for this clinic' }, { status: 422 })

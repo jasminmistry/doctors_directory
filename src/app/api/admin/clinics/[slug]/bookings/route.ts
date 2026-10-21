@@ -7,7 +7,8 @@ import { generateConsentzPassword, getConsentzToken, initConsentzPatient } from 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(req: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const clinic = await prisma.clinic.findUnique({
     where: { slug: params.slug },
     select: { id: true, claimedPlan: true },
@@ -39,7 +40,8 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
   return NextResponse.json({ bookings, plan: clinic.claimedPlan })
 }
 
-export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
+export async function POST(req: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const clinic = await prisma.clinic.findUnique({
     where: { slug: params.slug },
     select: {

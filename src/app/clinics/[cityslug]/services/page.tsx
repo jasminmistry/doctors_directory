@@ -17,12 +17,13 @@ import { toDirectoryCanonical } from "@/lib/seo";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     cityslug: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata(props: PageProps) {
+  const params = await props.params;
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const displayCityName = capitalize(citySlug);
 
@@ -35,7 +36,8 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-export default function CityServicesPage({ params }: PageProps) {
+export default async function CityServicesPage(props: PageProps) {
+  const params = await props.params;
   const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const products: Array<{ product_category: string; category: string }> = readJsonFileSync('products_processed_new.json');
 

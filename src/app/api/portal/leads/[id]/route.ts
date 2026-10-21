@@ -7,10 +7,8 @@ import { getPortalUser } from '@/lib/portal'
 const VALID_STATUSES = ['new', 'contacted', 'booked', 'lost', 'spam', 'archived', 'closed'] as const
 type PipelineStatus = typeof VALID_STATUSES[number]
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const user = await getPortalUser()
   if (!user || !user.clinicId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

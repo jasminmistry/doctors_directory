@@ -29,10 +29,8 @@ async function resolveSession(sessionId: string, clinicId: number) {
   })
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { sessionId: string } },
-) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ sessionId: string }> }) {
+  const params = await props.params;
   try {
     const user = await getPortalUser()
     if (!user?.clinicId) {
@@ -68,10 +66,8 @@ export async function GET(
   }
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { sessionId: string } },
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ sessionId: string }> }) {
+  const params = await props.params;
   try {
     const user = await getPortalUser()
     if (!user?.clinicId) {

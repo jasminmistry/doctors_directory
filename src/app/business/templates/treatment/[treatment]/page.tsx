@@ -17,13 +17,14 @@ import {
 import { templatePageHref } from "@/lib/b2b-hub/templates-registry"
 import { toDisplayTitle } from "@/lib/b2b-hub/text"
 
-type Props = { params: { treatment: string } }
+type Props = { params: Promise<{ treatment: string }> }
 
 export function generateStaticParams() {
   return TEMPLATE_TREATMENT_GROUPS.map((g) => ({ treatment: g.slug }))
 }
 
-export function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   if (!isTemplateTreatmentSlug(params.treatment)) {
     return { title: "Templates" }
   }
@@ -36,7 +37,8 @@ export function generateMetadata({ params }: Props): Metadata {
   })
 }
 
-export default function TemplateTreatmentIndexPage({ params }: Props) {
+export default async function TemplateTreatmentIndexPage(props: Props) {
+  const params = await props.params;
   if (!isTemplateTreatmentSlug(params.treatment)) {
     notFound()
   }

@@ -18,8 +18,9 @@ function toDateStr(d: Date): string {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { entity: string; slug: string } }
+  props: { params: Promise<{ entity: string; slug: string }> }
 ) {
+  const params = await props.params;
   const { entity, slug } = params
 
   if (entity !== 'clinic' && entity !== 'practitioner') {
