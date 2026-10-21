@@ -17,3 +17,26 @@ if (typeof global.ResizeObserver === 'undefined') {
     disconnect() {}
   };
 }
+// Next 15+ app-router hooks throw ("expected app router to be mounted") when no router
+// is mounted, where Next 14 returned null. Page tests render outside a router, so stub
+// the hooks; notFound()/redirect() keep their real (throwing) behaviour.
+jest.mock('next/navigation', () => {
+  const actual = jest.requireActual('next/navigation');
+  const router = {
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+  };
+  return {
+    ...actual,
+    useRouter: () => router,
+    usePathname: () => '/',
+    useSearchParams: () => new URLSearchParams(),
+    useParams: () => ({}),
+    useSelectedLayoutSegment: () => null,
+    useSelectedLayoutSegments: () => [],
+  };
+});
