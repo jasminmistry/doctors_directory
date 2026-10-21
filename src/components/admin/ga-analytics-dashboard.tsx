@@ -10,6 +10,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import type { AppStats } from "@/lib/analytics/ga-app-dashboard"
+import { cn } from "@/lib/utils"
 
 interface NamedValue {
   label: string
@@ -18,7 +19,6 @@ interface NamedValue {
 
 interface GaDashboardResponse {
   configured: boolean
-  demo?: boolean
   message?: string
   error?: string
   range: { startDate: string; endDate: string }
@@ -72,7 +72,18 @@ function apiBase(): string {
 }
 
 function parseRange(value: string | null): Range {
-  return value === "7d" || value === "90d" ? value : "28d"
+  return value === "28d" || value === "90d" ? value : "7d"
+}
+
+type Tab = "directory" | "main" | "app"
+const TABS: { value: Tab; label: string }[] = [
+  { value: "directory", label: "Directory" },
+  { value: "main", label: "Main site" },
+  { value: "app", label: "Consentz app" },
+]
+
+function parseTab(value: string | null): Tab {
+  return value === "main" || value === "app" ? value : "directory"
 }
 
 function nf(n: number): string {
@@ -211,7 +222,7 @@ function AppSection({ app }: { app: AppStats }) {
           Consentz app (control.consentz.com)
           <InfoTooltip
             label="Consentz app"
-            text="How clinics use the Consentz practice-management app itself — logins, appointments, invoices, purchases and other key actions. This comes from the app's own Google Analytics property, separate from the directory and main website above."
+            text="How clinics use the Consentz practice-management app itself — logins, appointments, invoices, purchases and other key actions. This comes from the app's own Google Analytics property, separate from the directory and main website tabs."
           />
         </div>
         <p className="mt-1 text-xs text-gray-500">
@@ -458,7 +469,7 @@ export function GaAnalyticsDashboard() {
   const searchParams = useSearchParams()
 
   const range = useMemo(() => parseRange(searchParams.get("range")), [searchParams])
-  const demo = searchParams.get("demo") === "1"
+  const tab = useMemo(() => parseTab(searchParams.get("tab")), [searchParams])
   const [data, setData] = useState<GaDashboardResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -472,6 +483,15 @@ export function GaAnalyticsDashboard() {
     [router, pathname, searchParams],
   )
 
+  const setTab = useCallback(
+    (next: Tab) => {
+      const sp = new URLSearchParams(searchParams.toString())
+      sp.set("tab", next)
+      router.replace(`${pathname}?${sp.toString()}`, { scroll: false })
+    },
+    [router, pathname, searchParams],
+  )
+
   useEffect(() => {
     let cancelled = false
     const load = async () => {
@@ -479,7 +499,7 @@ export function GaAnalyticsDashboard() {
       setError(null)
       try {
         const res = await fetch(
-          `${apiBase()}/api/admin/ga-analytics/?range=${range}${demo ? "&demo=1" : ""}`,
+          `${apiBase()}/api/admin/ga-analytics/?range=${range}`,
         )
         const body = (await res.json()) as GaDashboardResponse
         if (cancelled) return
@@ -502,7 +522,7 @@ export function GaAnalyticsDashboard() {
     return () => {
       cancelled = true
     }
-  }, [range, demo])
+  }, [range])
 
   const funnelMax = Math.max(1, ...(data?.signUpFunnel ?? []).map((s) => s.count))
   const bookingFunnelMax = Math.max(1, ...(data?.bookingFunnel ?? []).map((s) => s.count))
@@ -514,17 +534,6 @@ export function GaAnalyticsDashboard() {
     <TooltipProvider>
     <AdminLayout title="GA4 analytics">
       <div className="space-y-6">
-        {data?.demo && (
-          <div className="rounded-lg border border-purple-200 bg-purple-50 px-4 py-3 text-sm text-purple-900">
-            <p className="font-medium">Sample data — for demonstration only</p>
-            <p className="mt-1">
-              These numbers are synthetic and illustrate the dashboard layout before GA4 is
-              connected. Remove <code>?demo=1</code> from the URL to see the real (or
-              not-yet-connected) state.
-            </p>
-          </div>
-        )}
-
         <div className="flex flex-wrap items-start justify-between gap-3">
           <p className="max-w-2xl text-sm text-gray-600">
             Live numbers from Google Analytics. We're also still running the older{" "}
@@ -577,6 +586,28 @@ export function GaAnalyticsDashboard() {
 
         {data?.configured && (
           <>
+            <div role="tablist" aria-label="Analytics source" className="flex gap-1 border-b border-gray-200">
+              {TABS.map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === t.value}
+                  onClick={() => setTab(t.value)}
+                  className={cn(
+                    "-mb-px border-b-2 px-4 py-2 text-sm font-medium",
+                    tab === t.value
+                      ? "border-gray-900 text-gray-900"
+                      : "border-transparent text-gray-500 hover:text-gray-700",
+                  )}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {tab === "directory" && (
+            <>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {([
                 ["Sessions", nf(data.kpis.sessions), "How many visits there were to the website(s) in this date range. One person visiting twice counts as two sessions."],
@@ -857,15 +888,21 @@ export function GaAnalyticsDashboard() {
                 tooltip="What kind of device visitors used to browse the site — phone, computer, or tablet."
               />
             </div>
+            </>
+            )}
 
-            {data.mainSite && (
+            {tab === "main" && !data.mainSite && (
+              <div className="text-sm text-gray-500">No main site data available.</div>
+            )}
+
+            {tab === "main" && data.mainSite && (
               <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                 <div>
                   <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-800">
                     Main site (consentz.com)
                     <InfoTooltip
                       label="Main site (consentz.com)"
-                      text="Everything in this section is activity on our main marketing website, consentz.com — separate from the clinic directory figures above."
+                      text="Everything in this section is activity on our main marketing website, consentz.com — separate from the clinic directory figures on the Directory tab."
                     />
                   </div>
                   <p className="mt-1 text-xs text-gray-500">
@@ -880,7 +917,7 @@ export function GaAnalyticsDashboard() {
                     ["Users", nf(data.mainSite.users), "How many different people visited the main consentz.com website."],
                     ["Content clicks", nf(data.mainSite.contentClicks), "How many times someone clicked a link inside a blog post or article on the main website."],
                     ["Form starts", nf(data.mainSite.formStarts), "How many times someone started filling in a form on the main website, whether or not they finished it."],
-                    ["Demo / register leads", nf(data.mainSite.leads), "How many people asked for a demo or registered interest on the main website. This is separate from patient leads on the clinic directory, shown above."],
+                    ["Demo / register leads", nf(data.mainSite.leads), "How many people asked for a demo or registered interest on the main website. This is separate from patient leads on the clinic directory (Directory tab)."],
                     ["Login clicks", nf(data.mainSite.logins), "How many times someone clicked a login link on the main website."],
                   ] as [string, string, string][]).map(([label, value, tooltip]) => (
                     <div key={label} className="rounded-lg border border-gray-200 bg-white p-3">
@@ -970,7 +1007,12 @@ export function GaAnalyticsDashboard() {
               </div>
             )}
 
-            {data.app && <AppSection app={data.app} />}
+            {tab === "app" &&
+              (data.app ? (
+                <AppSection app={data.app} />
+              ) : (
+                <div className="text-sm text-gray-500">No Consentz app data available.</div>
+              ))}
           </>
         )}
       </div>
