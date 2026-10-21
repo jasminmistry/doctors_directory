@@ -12,7 +12,7 @@ async function saveFile(file: File, dir: string): Promise<string> {
   const ext = file.name.split('.').pop() ?? 'bin'
   const filename = `${randomUUID()}.${ext}`
   const buffer = Buffer.from(await file.arrayBuffer())
-  await writeFile(join(dir, filename), buffer)
+  await writeFile(join(/* turbopackIgnore: true */ dir, filename), buffer)
   return filename
 }
 

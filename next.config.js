@@ -14,7 +14,18 @@ const nextConfig = {
       formats: ["image/avif", "image/webp"], // enable AVIF + WebP
       minimumCacheTTL: 60 * 60 * 24 * 365,
 
-    domains: ['dynamic-media-cdn.tripadvisor.com','media-cdn.tripadvisor.com','encrypted-tbn0.gstatic.com','www.jccp.org.uk', 'lh3.googleusercontent.com','www.doctify.com','cdn.doctify.com','streetviewpixels-pa.googleapis.com','www.consentz.com'],
+    // Next 16 removed images.domains — remotePatterns is the replacement.
+    remotePatterns: [
+      { protocol: 'https', hostname: 'dynamic-media-cdn.tripadvisor.com' },
+      { protocol: 'https', hostname: 'media-cdn.tripadvisor.com' },
+      { protocol: 'https', hostname: 'encrypted-tbn0.gstatic.com' },
+      { protocol: 'https', hostname: 'www.jccp.org.uk' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'www.doctify.com' },
+      { protocol: 'https', hostname: 'cdn.doctify.com' },
+      { protocol: 'https', hostname: 'streetviewpixels-pa.googleapis.com' },
+      { protocol: 'https', hostname: 'www.consentz.com' },
+    ],
     
   },
   basePath: '/directory',
