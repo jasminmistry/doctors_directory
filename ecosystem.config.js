@@ -21,7 +21,7 @@ module.exports = {
         NEXT_TELEMETRY_DISABLED: '1',
         REDIS_URL: process.env.REDIS_URL || 'redis://redis:6379',
       },
-      error_file: '/dev/stderr',
+      error_file: '/dev/null',        // pm2-runtime streams logs to the container; opening /dev/stderr fails with ENXIO
       out_file: '/dev/null',
       log_file: '/dev/null',
       merge_logs: false,
