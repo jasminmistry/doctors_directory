@@ -64,6 +64,10 @@ export async function persistGbpFields(
             update: { hours: displayMap[day] },
           })
         }
+      } else {
+        // Hours cleared — drop the legacy mirror too, otherwise the public profile and the
+        // online-status check keep using the old hours.
+        await tx.clinicHour.deleteMany({ where: { clinicId } })
       }
     }
 

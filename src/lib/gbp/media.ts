@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db'
-import { gbpFetch } from '@/lib/gbp/client'
+import { gbpFetch, getGbpAccessToken } from '@/lib/gbp/client'
 import { GBP_V4_BASE, GBP_MOCK } from '@/lib/gbp/config'
 
 // Photo upload to GBP via the v4 Media API. Uses a bytes upload (startUpload -> PUT bytes
@@ -63,7 +63,11 @@ export async function uploadPendingPhotos(
       const bytes = Buffer.from(await imgRes.arrayBuffer())
       const putRes = await fetch(
         `https://mybusiness.googleapis.com/upload/v1/media/${start.resourceName}?upload_type=media`,
-        { method: 'POST', body: bytes },
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${await getGbpAccessToken(connectionId)}` },
+          body: bytes,
+        },
       )
       if (!putRes.ok) throw new Error(`bytes upload ${putRes.status}`)
 

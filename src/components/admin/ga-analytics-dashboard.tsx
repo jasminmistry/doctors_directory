@@ -9,6 +9,8 @@ import { IconInfoCircle } from "@tabler/icons-react"
 import { AdminLayout } from "@/components/admin/AdminLayout"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import type { AppStats } from "@/lib/analytics/ga-app-dashboard"
+import { cn } from "@/lib/utils"
 
 interface NamedValue {
   label: string
@@ -17,7 +19,6 @@ interface NamedValue {
 
 interface GaDashboardResponse {
   configured: boolean
-  demo?: boolean
   message?: string
   error?: string
   range: { startDate: string; endDate: string }
@@ -55,6 +56,7 @@ interface GaDashboardResponse {
     topArticleClicks: NamedValue[]
     leadFunnel: { formName: string; label: string; starts: number; leads: number }[]
   }
+  app?: AppStats
 }
 
 type Range = "7d" | "28d" | "90d"
@@ -70,7 +72,18 @@ function apiBase(): string {
 }
 
 function parseRange(value: string | null): Range {
-  return value === "7d" || value === "90d" ? value : "28d"
+  return value === "28d" || value === "90d" ? value : "7d"
+}
+
+type Tab = "directory" | "main" | "app"
+const TABS: { value: Tab; label: string }[] = [
+  { value: "directory", label: "Directory" },
+  { value: "main", label: "Main site" },
+  { value: "app", label: "Consentz app" },
+]
+
+function parseTab(value: string | null): Tab {
+  return value === "main" || value === "app" ? value : "directory"
 }
 
 function nf(n: number): string {
@@ -174,13 +187,289 @@ function ListCard({
   )
 }
 
+function KpiTile({ label, value, tooltip }: { label: string; value: string; tooltip: string }) {
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-3">
+      <div className="flex items-center gap-1 text-[11px] uppercase text-gray-600">
+        {label}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button type="button" aria-label={`What does "${label}" measure?`} className="shrink-0 normal-case text-gray-400 hover:text-gray-600">
+              <IconInfoCircle className="h-3.5 w-3.5" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>{tooltip}</TooltipContent>
+        </Tooltip>
+      </div>
+      <div className="mt-1 text-xl font-semibold tabular-nums">{value}</div>
+    </div>
+  )
+}
+
+function AppSection({ app }: { app: AppStats }) {
+  const [openArea, setOpenArea] = useState<string | null>(null)
+  const actionAreas = app.areas.filter((a) => a.area !== "calendar")
+  const calendarArea = app.areas.find((a) => a.area === "calendar")
+  const areaMax = Math.max(1, ...actionAreas.map((a) => a.total))
+  const trendMax = Math.max(1, ...app.trend.flatMap((t) => [t.users, t.keyEvents]))
+  const eventMax = Math.max(1, ...app.events.map((e) => e.count))
+  const checkoutRate = app.checkout.begun > 0 ? Math.round((app.checkout.purchased / app.checkout.begun) * 100) : null
+
+  return (
+    <div className="space-y-4 rounded-lg border border-cyan-200 bg-cyan-50/40 p-4">
+      <div>
+        <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-800">
+          Consentz app (control.consentz.com)
+          <InfoTooltip
+            label="Consentz app"
+            text="How clinics use the Consentz practice-management app itself — logins, appointments, invoices, purchases and other key actions. This comes from the app's own Google Analytics property, separate from the directory and main website tabs."
+          />
+        </div>
+        <p className="mt-1 text-xs text-gray-500">
+          How clinics use the Consentz app. Actions are only counted when they succeeded. No patient
+          data is sent to Google — screens are tracked by name, not URL.
+        </p>
+      </div>
+
+      {!app.configured && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <p className="font-medium">App analytics not connected yet</p>
+          <p className="mt-1">
+            Set <code>GA4_APP_PROPERTY_ID</code> to the numeric ID of the Consentz app GA4 property
+            (measurement ID G-HBK6JB62H4), and give the same service account Viewer access to it.
+          </p>
+        </div>
+      )}
+
+      {app.error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          Couldn&apos;t load app analytics: {app.error}
+        </div>
+      )}
+
+      {app.configured && !app.error && (
+        <>
+          <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-5">
+            {([
+              ["Active users", nf(app.users), "How many different clinic staff used the app in this date range."],
+              ["Active clinics", nf(app.activeClinics), "How many different clinics did at least one thing in the app (not just opening a page)."],
+              ["Sessions", nf(app.sessions), "How many visits there were to the app. One person visiting twice counts as two sessions."],
+              ["Screens viewed", nf(app.pageViews), "How many app screens were opened in total."],
+              ["Logins", nf(app.logins), "How many times a clinic user logged in with their password."],
+              ["New clinic sign-ups", nf(app.signUps), "How many new clinics created a Consentz account — on the website or via the directory."],
+              ["Key actions", nf(app.keyActions), "Total successful actions across the app — appointments, notes, invoices, messages, setup and so on. Calendar clicks, logins and sign-ups aren't included."],
+              ["Appointments booked", nf(app.appointmentsCreated), "How many appointments clinics created in the app's calendar."],
+              ["Invoices paid", nf(app.invoicesPaid), "Invoices marked as paid in the app, including card-terminal payments."],
+              ["Consentz purchases", nf(app.purchases), "SMS / AI plans, phone numbers and extra features clinics bought from Consentz."],
+            ] as [string, string, string][]).map(([label, value, tooltip]) => (
+              <KpiTile key={label} label={label} value={value} tooltip={tooltip} />
+            ))}
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+              Feature usage by area
+              <InfoTooltip
+                label="Feature usage by area"
+                text="Successful actions in each part of the app. Click an area to see the individual actions."
+              />
+            </div>
+            <p className="mb-3 text-xs text-gray-500">Click an area to see the actions inside it.</p>
+            <div className="space-y-2">
+              {actionAreas.map((area) => {
+                const open = openArea === area.area
+                return (
+                  <div key={area.area} className="rounded border border-gray-100">
+                    <button
+                      type="button"
+                      aria-expanded={open}
+                      onClick={() => setOpenArea(open ? null : area.area)}
+                      className="w-full space-y-1 px-2 py-1.5 text-left hover:bg-gray-50"
+                    >
+                      <div className="flex items-baseline justify-between gap-3 text-sm">
+                        <span className="text-gray-700">
+                          <span className="mr-1 inline-block w-3 text-gray-400">{open ? "▾" : "▸"}</span>
+                          {area.label}
+                        </span>
+                        <span className="font-medium tabular-nums">{nf(area.total)}</span>
+                      </div>
+                      <Bar value={area.total} max={areaMax} className="bg-cyan-600" />
+                    </button>
+                    {open && (
+                      <table className="mb-2 ml-6 w-[calc(100%-2rem)] text-left text-sm">
+                        <tbody>
+                          {[...area.events]
+                            .sort((a, b) => b.count - a.count)
+                            .map((ev) => (
+                              <tr key={ev.name} className="border-t border-gray-100">
+                                <td className="py-1.5 pr-4 text-gray-600">
+                                  {ev.label} <span className="font-mono text-[11px] text-gray-400">{ev.name}</span>
+                                </td>
+                                <td className="py-1.5 text-right tabular-nums">{nf(ev.count)}</td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="grid gap-4 xl:grid-cols-2">
+            <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <div className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                Consentz purchase checkout
+                <InfoTooltip
+                  label="Consentz purchase checkout"
+                  text="Clinics buying SMS plans, AI plans or phone numbers: how many started a checkout, how many paid, and how many cancelled."
+                />
+              </div>
+              <p className="mb-3 text-xs text-gray-500">
+                SMS / AI plans and phone numbers.
+                {checkoutRate !== null && ` ${checkoutRate}% of started checkouts were paid.`}
+              </p>
+              <div className="space-y-3">
+                {([
+                  ["Checkout started", app.checkout.begun, "bg-gray-900"],
+                  ["Paid", app.checkout.purchased, "bg-emerald-500"],
+                  ["Cancelled", app.checkout.cancelled, "bg-red-400"],
+                ] as [string, number, string][]).map(([label, count, color]) => (
+                  <div key={label} className="space-y-1">
+                    <div className="flex items-baseline justify-between text-sm">
+                      <span className="text-gray-600">{label}</span>
+                      <span className="font-medium tabular-nums">{nf(count)}</span>
+                    </div>
+                    <Bar value={count} max={Math.max(1, app.checkout.begun, app.checkout.purchased)} className={color} />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <ListCard
+              title="New clinic sign-ups by source"
+              items={app.signUpsBySource}
+              tooltip="Where new clinics came from before creating a Consentz account — the Consentz website, the directory (website link or a claim pushed through the API), another site, or directly."
+            />
+            <ListCard
+              title="New clinic sign-ups by program"
+              items={app.signUpsByProgram}
+              tooltip="The sign-up program saved on the clinic's account: Direct, Referral (FirstPromoter), PartnerStack or Directory."
+            />
+            <ListCard
+              title="Most active clinics"
+              items={app.topClinics}
+              tooltip="Clinics with the most actions in the app (page opens not counted). Names are shown when the clinic is linked to a directory listing; otherwise it's the app's clinic ID."
+            />
+            <ListCard
+              title="Most-used screens"
+              items={app.topScreens}
+              tooltip="The app screens opened the most. Shown by internal screen name, because real URLs (which can contain patient IDs) are never sent to Google."
+            />
+            <ListCard
+              title="Users by role"
+              items={app.roles}
+              tooltip="How many active users had each role in the app."
+            />
+            <ListCard
+              title="Calendar views used"
+              items={app.calendarViews}
+              tooltip="Which calendar layout clinic users switched to (day, week, month, list)."
+            />
+            <ListCard
+              title="Patient payment links clicked"
+              items={app.paymentLinks}
+              tooltip="Clicks on Stripe or GoCardless payment links inside the app, by provider."
+            />
+          </div>
+
+          {calendarArea && (
+            <ListCard
+              title="Calendar usage (clicks)"
+              items={calendarArea.events.map((e) => ({ label: e.label, value: e.count }))}
+              tooltip="How clinic users interact with the calendar — opening appointments, clicking empty slots, switching views and moving between days."
+            />
+          )}
+
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+              Daily app activity
+              <InfoTooltip
+                label="Daily app activity"
+                text="Active users per day, compared with key events (sign-ups, purchases, appointments booked, invoices paid and other events marked as key in GA)."
+              />
+            </div>
+            <div className="mt-3 max-h-[360px] space-y-2 overflow-y-auto">
+              {app.trend.length === 0 && <div className="text-sm text-gray-500">No data yet</div>}
+              {app.trend.map((point) => (
+                <div key={point.date} className="space-y-1">
+                  <div className="text-xs text-gray-500">{point.date}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-16 text-xs text-gray-500">Users</span>
+                    <Bar value={point.users} max={trendMax} className="bg-cyan-600" />
+                    <span className="w-10 text-right text-xs tabular-nums">{point.users}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-16 text-xs text-gray-500">Results</span>
+                    <Bar value={point.keyEvents} max={trendMax} className="bg-emerald-500" />
+                    <span className="w-10 text-right text-xs tabular-nums">{point.keyEvents}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <div className="mb-3 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+              All app events
+              <InfoTooltip label="All app events" text="Every event Google Analytics recorded in the app in this date range." />
+            </div>
+            <div className="max-h-[420px] overflow-y-auto">
+              <table className="min-w-full text-left text-sm">
+                <thead className="sticky top-0 bg-white text-xs uppercase text-gray-500">
+                  <tr>
+                    <th className="py-2 pr-4">Event</th>
+                    <th className="py-2 pr-4 text-right">Count</th>
+                    <th className="w-1/3 py-2" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {app.events.length === 0 && (
+                    <tr>
+                      <td colSpan={3} className="py-3 text-gray-500">
+                        No events recorded yet
+                      </td>
+                    </tr>
+                  )}
+                  {app.events.map((ev) => (
+                    <tr key={ev.name} className="border-t border-gray-100">
+                      <td className="py-2 pr-4">
+                        <div className="font-mono text-xs">{ev.name}</div>
+                        <div className="text-xs text-gray-500">{ev.label ?? eventDescription(ev.name)}</div>
+                      </td>
+                      <td className="py-2 pr-4 text-right tabular-nums">{nf(ev.count)}</td>
+                      <td className="py-2">
+                        <Bar value={ev.count} max={eventMax} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 export function GaAnalyticsDashboard() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
   const range = useMemo(() => parseRange(searchParams.get("range")), [searchParams])
-  const demo = searchParams.get("demo") === "1"
+  const tab = useMemo(() => parseTab(searchParams.get("tab")), [searchParams])
   const [data, setData] = useState<GaDashboardResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -194,6 +483,15 @@ export function GaAnalyticsDashboard() {
     [router, pathname, searchParams],
   )
 
+  const setTab = useCallback(
+    (next: Tab) => {
+      const sp = new URLSearchParams(searchParams.toString())
+      sp.set("tab", next)
+      router.replace(`${pathname}?${sp.toString()}`, { scroll: false })
+    },
+    [router, pathname, searchParams],
+  )
+
   useEffect(() => {
     let cancelled = false
     const load = async () => {
@@ -201,7 +499,7 @@ export function GaAnalyticsDashboard() {
       setError(null)
       try {
         const res = await fetch(
-          `${apiBase()}/api/admin/ga-analytics/?range=${range}${demo ? "&demo=1" : ""}`,
+          `${apiBase()}/api/admin/ga-analytics/?range=${range}`,
         )
         const body = (await res.json()) as GaDashboardResponse
         if (cancelled) return
@@ -224,7 +522,7 @@ export function GaAnalyticsDashboard() {
     return () => {
       cancelled = true
     }
-  }, [range, demo])
+  }, [range])
 
   const funnelMax = Math.max(1, ...(data?.signUpFunnel ?? []).map((s) => s.count))
   const bookingFunnelMax = Math.max(1, ...(data?.bookingFunnel ?? []).map((s) => s.count))
@@ -236,17 +534,6 @@ export function GaAnalyticsDashboard() {
     <TooltipProvider>
     <AdminLayout title="GA4 analytics">
       <div className="space-y-6">
-        {data?.demo && (
-          <div className="rounded-lg border border-purple-200 bg-purple-50 px-4 py-3 text-sm text-purple-900">
-            <p className="font-medium">Sample data — for demonstration only</p>
-            <p className="mt-1">
-              These numbers are synthetic and illustrate the dashboard layout before GA4 is
-              connected. Remove <code>?demo=1</code> from the URL to see the real (or
-              not-yet-connected) state.
-            </p>
-          </div>
-        )}
-
         <div className="flex flex-wrap items-start justify-between gap-3">
           <p className="max-w-2xl text-sm text-gray-600">
             Live numbers from Google Analytics. We're also still running the older{" "}
@@ -299,6 +586,28 @@ export function GaAnalyticsDashboard() {
 
         {data?.configured && (
           <>
+            <div role="tablist" aria-label="Analytics source" className="flex gap-1 border-b border-gray-200">
+              {TABS.map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === t.value}
+                  onClick={() => setTab(t.value)}
+                  className={cn(
+                    "-mb-px border-b-2 px-4 py-2 text-sm font-medium",
+                    tab === t.value
+                      ? "border-gray-900 text-gray-900"
+                      : "border-transparent text-gray-500 hover:text-gray-700",
+                  )}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {tab === "directory" && (
+            <>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {([
                 ["Sessions", nf(data.kpis.sessions), "How many visits there were to the website(s) in this date range. One person visiting twice counts as two sessions."],
@@ -579,15 +888,21 @@ export function GaAnalyticsDashboard() {
                 tooltip="What kind of device visitors used to browse the site — phone, computer, or tablet."
               />
             </div>
+            </>
+            )}
 
-            {data.mainSite && (
+            {tab === "main" && !data.mainSite && (
+              <div className="text-sm text-gray-500">No main site data available.</div>
+            )}
+
+            {tab === "main" && data.mainSite && (
               <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                 <div>
                   <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-800">
                     Main site (consentz.com)
                     <InfoTooltip
                       label="Main site (consentz.com)"
-                      text="Everything in this section is activity on our main marketing website, consentz.com — separate from the clinic directory figures above."
+                      text="Everything in this section is activity on our main marketing website, consentz.com — separate from the clinic directory figures on the Directory tab."
                     />
                   </div>
                   <p className="mt-1 text-xs text-gray-500">
@@ -602,7 +917,7 @@ export function GaAnalyticsDashboard() {
                     ["Users", nf(data.mainSite.users), "How many different people visited the main consentz.com website."],
                     ["Content clicks", nf(data.mainSite.contentClicks), "How many times someone clicked a link inside a blog post or article on the main website."],
                     ["Form starts", nf(data.mainSite.formStarts), "How many times someone started filling in a form on the main website, whether or not they finished it."],
-                    ["Demo / register leads", nf(data.mainSite.leads), "How many people asked for a demo or registered interest on the main website. This is separate from patient leads on the clinic directory, shown above."],
+                    ["Demo / register leads", nf(data.mainSite.leads), "How many people asked for a demo or registered interest on the main website. This is separate from patient leads on the clinic directory (Directory tab)."],
                     ["Login clicks", nf(data.mainSite.logins), "How many times someone clicked a login link on the main website."],
                   ] as [string, string, string][]).map(([label, value, tooltip]) => (
                     <div key={label} className="rounded-lg border border-gray-200 bg-white p-3">
@@ -691,6 +1006,13 @@ export function GaAnalyticsDashboard() {
                 </div>
               </div>
             )}
+
+            {tab === "app" &&
+              (data.app ? (
+                <AppSection app={data.app} />
+              ) : (
+                <div className="text-sm text-gray-500">No Consentz app data available.</div>
+              ))}
           </>
         )}
       </div>

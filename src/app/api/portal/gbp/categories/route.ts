@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
       do {
         const url =
           `${GBP_BUSINESS_INFO_BASE}/categories?regionCode=${GBP_REGION_CODE}` +
-          `&languageCode=en&view=BASIC&pageSize=1000${pageToken ? `&pageToken=${pageToken}` : ''}`
+          `&languageCode=en&view=BASIC&pageSize=1000${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`
         const data = (await gbpFetch(conn.id, url)) as {
           categories?: GbpCategory[]
           nextPageToken?: string

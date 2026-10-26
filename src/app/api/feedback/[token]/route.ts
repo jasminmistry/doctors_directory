@@ -9,7 +9,12 @@ import { buildGoogleReviewUrl } from '@/lib/gbp/place-id'
 export const dynamic = 'force-dynamic'
 
 // Silent-success payload — used for honeypot / dwell drops so bots get no signal.
-const SILENT_OK = NextResponse.json({ ok: true, googleReviewUrl: null })
+// Built per request: a Response body can only be sent once.
+const silentOk = () => NextResponse.json({ ok: true, googleReviewUrl: null })
+
+// Patients may leave the form open a while before submitting; the review token is
+// single-use anyway, so the dwell check only needs to stop instant bot posts.
+const DWELL_MAX_MS = 24 * 60 * 60 * 1000
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params
@@ -40,9 +45,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
   const data = parsed.data
 
   // Honeypot: real users never fill this hidden field.
-  if (data.company && data.company.trim() !== '') return SILENT_OK
+  if (data.company && data.company.trim() !== '') return silentOk()
   // Dwell time: submitted too fast (bot) or too late (stale/replayed).
-  if (!data.dwell || !verifyDwellToken(data.dwell)) return SILENT_OK
+  if (!data.dwell || !verifyDwellToken(data.dwell, { maxMs: DWELL_MAX_MS })) return silentOk()
 
   const reviewRequest = await prisma.reviewRequest.findUnique({
     where: { tokenHash },

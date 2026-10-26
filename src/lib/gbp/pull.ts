@@ -38,6 +38,7 @@ export function buildPullPayload(
     hourPeriodCount: number
     serviceCount: number
     hasAddress: boolean
+    hasServiceArea: boolean
   },
   overwrite: boolean,
 ): GbpFieldsInput {
@@ -84,7 +85,7 @@ export function buildPullPayload(
     }))
   }
 
-  if (incoming.serviceArea && (overwrite || true)) {
+  if (incoming.serviceArea && (overwrite || !current.hasServiceArea)) {
     payload.serviceArea = incoming.serviceArea as GbpFieldsInput['serviceArea']
   }
 
@@ -112,6 +113,7 @@ export async function pullFromGbp(
       gbpPrimaryCategoryId: true,
       gbpPrimaryCategoryName: true,
       address: true,
+      gbpServiceArea: true,
       _count: { select: { hourPeriods: true, services: true } },
     },
   })
@@ -144,6 +146,7 @@ export async function pullFromGbp(
         hourPeriodCount: clinic._count.hourPeriods,
         serviceCount: clinic._count.services,
         hasAddress: !!clinic.address,
+        hasServiceArea: !!clinic.gbpServiceArea,
       },
       opts.overwrite,
     )

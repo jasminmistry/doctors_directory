@@ -44,12 +44,12 @@ export async function syncClinicToGbp(
     throw new Error('No connected GBP location')
   }
 
-  const hasNameOrAddress = !!clinic.name || !!clinic.address
-  if (hasNameOrAddress && !opts.confirmNameAddress) {
-    const needsConfirm: ('name' | 'address')[] = []
+  // Name/address edits can push the listing into re-verification, so they are only sent
+  // once confirmed. Everything else syncs either way; needsConfirm tells the UI to ask.
+  const needsConfirm: ('name' | 'address')[] = []
+  if (!opts.confirmNameAddress) {
     if (clinic.name) needsConfirm.push('name')
     if (clinic.address) needsConfirm.push('address')
-    return { ok: false, needsConfirm, fieldResults: {} }
   }
 
   const data: ClinicSyncData = {
@@ -137,5 +137,10 @@ export async function syncClinicToGbp(
   })
   await invalidateSearchCache()
 
-  return { ok: !anyError, fieldResults, photos }
+  return {
+    ok: !anyError,
+    ...(needsConfirm.length ? { needsConfirm } : {}),
+    fieldResults,
+    photos,
+  }
 }

@@ -313,12 +313,9 @@ function SyncButton({ onDone }: { onDone: () => void }) {
         toast.error(d?.error === 'reauth_required' ? 'Reconnect Google to continue' : d?.error ?? 'Sync failed')
         return
       }
-      if (d.needsConfirm?.length) {
-        setConfirmOpen(true)
-        return
-      }
       toast[d.ok ? 'success' : 'warning'](d.ok ? 'Synced to Google' : 'Synced with some warnings')
-      setConfirmOpen(false)
+      // Other fields are synced at this point; name/address wait for confirmation.
+      setConfirmOpen(!!d.needsConfirm?.length)
       onDone()
     } finally {
       setRunning(false)

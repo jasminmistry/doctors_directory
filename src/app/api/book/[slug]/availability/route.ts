@@ -83,7 +83,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
 
   const clinic = await prisma.clinic.findUnique({
     where: { slug: params.slug },
-    select: { id: true, coreClinicId: true, claimedPlan: true },
+    select: { id: true, name: true, coreClinicId: true, claimedPlan: true },
   })
 
   console.log(`[book/availability] clinic=${JSON.stringify(clinic)}`)
@@ -119,13 +119,16 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       console.log('[book/availability] Core auth failed — falling back to local schedule')
       const claim = await prisma.claimRequest.findFirst({
         where: { clinicId: clinic.id, status: 'approved', scheduleConfigured: true },
-        select: { scheduleJson: true, consentzUserId: true, consentzUsername: true },
+        select: { scheduleJson: true, consentzUserId: true },
         orderBy: { createdAt: 'desc' },
       })
 
       if (claim?.scheduleJson) {
         const practitionerId = claim.consentzUserId ?? 0
-        const practitionerName = claim.consentzUsername ?? ''
+        // consentzUsername is the claimer's Consentz *login*, not a human-facing
+        // name — never display it. The clinic name is the only reliable label
+        // we have in this degraded (Core-unreachable) path.
+        const practitionerName = clinic.name ?? 'the clinic'
         const result = computeLocalSlots(claim.scheduleJson, date, practitionerId, practitionerName)
         if (result) {
           console.log(`[book/availability] local fallback returned ${result.available.length} slots`)

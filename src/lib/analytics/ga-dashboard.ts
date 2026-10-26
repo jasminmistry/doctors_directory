@@ -1,4 +1,5 @@
 import { sourceBucketLabel } from "@/lib/attribution"
+import { emptyAppStats, getAppStats, type AppStats } from "@/lib/analytics/ga-app-dashboard"
 import {
   batchRunReports,
   getGa4Config,
@@ -66,6 +67,8 @@ export interface GaDashboard {
   /** Every event GA4 recorded in the range, highest count first. */
   events: { name: string; count: number }[]
   mainSite: MainSiteStats
+  /** Consentz app (control.consentz.com) — separate GA4 property, see `ga-app-dashboard.ts`. */
+  app: AppStats
 }
 
 const FUNNEL_STAGES: { event: string; label: string }[] = [
@@ -171,6 +174,17 @@ function blank(params: GaDashboardParams): GaDashboard {
     trend: [],
     events: [],
     mainSite: emptyMainSite(),
+    app: emptyAppStats(false),
+  }
+}
+
+/** The app section is a different property — its failure shouldn't take the dashboard down. */
+async function loadAppStats(params: GaDashboardParams): Promise<AppStats> {
+  try {
+    return await getAppStats(params)
+  } catch (error) {
+    console.error("[ga-dashboard] app property report failed:", error)
+    return emptyAppStats(true, error instanceof Error ? error.message : "GA4 app report failed")
   }
 }
 
@@ -340,7 +354,7 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
     },
   ]
 
-  const reports = await batchRunReports(requests)
+  const [reports, app] = await Promise.all([batchRunReports(requests), loadAppStats(params)])
   const [
     totals,
     events,
@@ -424,5 +438,6 @@ export async function getGaDashboard(params: GaDashboardParams): Promise<GaDashb
       topArticleClicks: keyed(msArticleClicks).map((r) => ({ label: r.key, value: r.value })),
       leadFunnel: buildLeadFunnel(msFunnel),
     },
+    app,
   }
 }

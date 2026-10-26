@@ -9,6 +9,9 @@ import { createSign } from "node:crypto"
  * Required env: `GA4_PROPERTY_ID` (numeric, e.g. "123456789"), plus either
  * `GA4_SA_CREDENTIALS` or `GSC_SERVICE_ACCOUNT_CREDENTIALS` (service-account JSON).
  * The service account must have "Viewer" on the GA4 property.
+ *
+ * Optional `GA4_APP_PROPERTY_ID` points at the separate Consentz app property
+ * (control.consentz.com, ConsentzLive) — same service account, needs Viewer there too.
  */
 
 interface ServiceAccountCredentials {
@@ -24,8 +27,8 @@ export interface Ga4Config {
   credentials: ServiceAccountCredentials
 }
 
-export function getGa4Config(): Ga4Config | null {
-  const propertyId = process.env.GA4_PROPERTY_ID?.trim()
+export function getGa4Config(propertyIdVar = "GA4_PROPERTY_ID"): Ga4Config | null {
+  const propertyId = process.env[propertyIdVar]?.trim()
   const raw = process.env.GA4_SA_CREDENTIALS || process.env.GSC_SERVICE_ACCOUNT_CREDENTIALS
   if (!propertyId || !raw) return null
   try {
@@ -39,6 +42,11 @@ export function getGa4Config(): Ga4Config | null {
 
 export function isGa4Configured(): boolean {
   return getGa4Config() !== null
+}
+
+/** Consentz app (control.consentz.com) property — a different GA4 property from the directory's. */
+export function getGa4AppConfig(): Ga4Config | null {
+  return getGa4Config("GA4_APP_PROPERTY_ID")
 }
 
 let tokenCache: { token: string; expiresAt: number } | null = null
@@ -142,9 +150,14 @@ async function runReport(
   return (await res.json()) as GaReport
 }
 
-/** Run several reports in one HTTP round-trip (GA4 allows up to 5 per batch). */
-export async function batchRunReports(requests: GaReportRequest[]): Promise<GaReport[]> {
-  const config = getGa4Config()
+/**
+ * Run several reports in one HTTP round-trip (GA4 allows up to 5 per batch).
+ * Defaults to the directory property; pass `getGa4AppConfig()` for the app one.
+ */
+export async function batchRunReports(
+  requests: GaReportRequest[],
+  config: Ga4Config | null = getGa4Config(),
+): Promise<GaReport[]> {
   if (!config) throw new Error("GA4 not configured")
 
   const token = await getAccessToken(config.credentials)

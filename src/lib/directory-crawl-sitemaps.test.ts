@@ -54,9 +54,17 @@ describe('directory crawl sitemaps', () => {
       expect.arrayContaining([
         '/directory/admin/',
         '/directory/api/',
-        '/directory/practitioners/*/profile/',
       ])
     )
+  })
+
+  test('does not block practitioner pages so crawlers can read their noindex', () => {
+    expect(getDirectoryRobotsDisallowPaths()).not.toContain('/directory/practitioners/*/profile/')
+  })
+
+  test('does not submit practitioner directory sitemaps', () => {
+    const files = getB2cSitemapIndexFiles()
+    expect(files.some((f) => f.startsWith('practitioners-') || f.startsWith('accredited-practitioners'))).toBe(false)
   })
 
   test('exposes filtered B2C index file list', () => {
