@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM node:24-alpine3.23 AS base
+FROM node:24.22.1-alpine3.23 AS base
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -43,7 +43,7 @@ RUN --mount=type=cache,target=/app/.next/cache \
 	npx prisma generate && npm run build
 
 # ── runner: production image ──────────────────────────────────────────────────
-FROM node:24-alpine3.23 AS runner
+FROM node:24.22.1-alpine3.23 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
