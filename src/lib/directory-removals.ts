@@ -70,6 +70,7 @@ const REMOVED_CLINIC_SLUGS = new Set([
   "dr-dan-dhunna-cosmetic-clinic-solihull",
   "dorset-trichology",
   "melissa-aesthetics-clinic-sunderland-medical-aesthetics",
+  "dr-nisha-rishi-arujuna",
   ...NHS_REMOVED_CLINIC_SLUGS,
 ])
 
