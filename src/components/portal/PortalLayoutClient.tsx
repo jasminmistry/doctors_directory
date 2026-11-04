@@ -45,6 +45,7 @@ export function PortalLayoutClient({
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [wizardVisible, setWizardVisible] = useState(false);
   const [wizardHasConsentzId, setWizardHasConsentzId] = useState(false);
+  const [wizardIdVerified, setWizardIdVerified] = useState(false);
 
   // Check whether to show the welcome wizard on first visit
   useEffect(() => {
@@ -54,6 +55,7 @@ export function PortalLayoutClient({
         if (!data) return;
         if (!data.done) {
           setWizardHasConsentzId(data.hasConsentzId ?? false);
+          setWizardIdVerified(data.idVerified ?? false);
           setWizardVisible(true);
         }
       })
@@ -641,6 +643,7 @@ export function PortalLayoutClient({
         <WelcomeWizard
           entityName={entityName}
           hasConsentzId={wizardHasConsentzId}
+          idVerified={wizardIdVerified}
           onDone={() => setWizardVisible(false)}
         />
       )}

@@ -49,6 +49,7 @@ const CLINIC_EDIT_SELECT = {
   coreClinicId: true,
   coreUnlinkRequestedAt: true,
   placeId: true,
+  treatments: { select: { treatmentId: true } },
 }
 
 export async function GET(
@@ -63,9 +64,9 @@ export async function GET(
     if (!clinic) {
       return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
     }
-    const { city, id: _id, ...rest } = clinic
+    const { city, treatments, id: _id, ...rest } = clinic
     const consentzUsername = await getLinkedConsentzUsername(clinic.coreClinicId)
-    return NextResponse.json({ ...rest, citySlug: city?.slug ?? null, cityName: city?.name ?? null, rating: rest.rating ? Number(rest.rating) : null, consentzUsername })
+    return NextResponse.json({ ...rest, treatmentIds: treatments.map((t) => t.treatmentId), citySlug: city?.slug ?? null, cityName: city?.name ?? null, rating: rest.rating ? Number(rest.rating) : null, consentzUsername })
   } catch (error) {
     console.error('Failed to read clinic:', error)
     return NextResponse.json({ error: 'Failed to read clinic' }, { status: 500 })
@@ -117,9 +118,28 @@ export async function PUT(
       )
     }
 
-    const clinic = await prisma.clinic.update({
+    const { treatmentIds, ...clinicFields } = validation.data as any
+
+    await prisma.$transaction(async (tx) => {
+      const updated = await tx.clinic.update({
+        where: { slug: params.slug },
+        data: { ...clinicFields, cityId: cityRecord!.id },
+        select: { id: true },
+      })
+      if (treatmentIds !== undefined) {
+        // notIn: [] matches every existing row, so an empty list clears all treatments
+        await tx.clinicTreatment.deleteMany({ where: { clinicId: updated.id, treatmentId: { notIn: treatmentIds } } })
+        if (treatmentIds.length > 0) {
+          await tx.clinicTreatment.createMany({
+            data: treatmentIds.map((treatmentId: number) => ({ clinicId: updated.id, treatmentId })),
+            skipDuplicates: true,
+          })
+        }
+      }
+    })
+
+    const clinic = await prisma.clinic.findUniqueOrThrow({
       where: { slug: params.slug },
-      data: { ...(validation.data as any), cityId: cityRecord!.id },
       select: CLINIC_EDIT_SELECT,
     })
 
@@ -129,8 +149,8 @@ export async function PUT(
     }
 
     await invalidateSearchCache()
-    const { id: _id, city, ...clinicRest } = clinic
-    return NextResponse.json({ ...clinicRest, citySlug: city?.slug ?? null, cityName: city?.name ?? null, rating: clinic.rating ? Number(clinic.rating) : null, consentzUsername })
+    const { id: _id, city, treatments, ...clinicRest } = clinic
+    return NextResponse.json({ ...clinicRest, treatmentIds: treatments.map((t) => t.treatmentId), citySlug: city?.slug ?? null, cityName: city?.name ?? null, rating: clinic.rating ? Number(clinic.rating) : null, consentzUsername })
   } catch (error) {
     console.error('Failed to update clinic:', error)
     if ((error as any).code === 'P2025') {
@@ -138,6 +158,9 @@ export async function PUT(
     }
     if ((error as any).code === 'P2000') {
       return NextResponse.json({ error: 'One of the fields is too long' }, { status: 400 })
+    }
+    if ((error as any).code === 'P2003') {
+      return NextResponse.json({ error: 'One or more selected treatments do not exist' }, { status: 400 })
     }
     return NextResponse.json({ error: 'Failed to update clinic' }, { status: 500 })
   }

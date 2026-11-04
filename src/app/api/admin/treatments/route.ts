@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server'
-import { getAllTreatments, createTreatment } from '@/lib/data-access/treatments'
+import { getAllTreatments, getAllTreatmentIdOptions, createTreatment } from '@/lib/data-access/treatments'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const treatments = await getAllTreatments()
+    // ?select=options returns just {id, name, slug} — used by the clinic
+    // treatments multi-select so it doesn't fetch every rich-content field.
+    const isOptionsOnly = new URL(request.url).searchParams.get('select') === 'options'
+    const treatments = isOptionsOnly ? await getAllTreatmentIdOptions() : await getAllTreatments()
     return NextResponse.json(treatments)
   } catch (error) {
     console.error('Failed to read treatments:', error)
