@@ -22,12 +22,13 @@ import { notFound } from "next/navigation";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 interface ProfilePageProps {
-  params: {
+  params: Promise<{
     brand: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
+export async function generateMetadata(props: Readonly<ProfilePageProps>) {
+  const params = await props.params;
   const brandSlug = decodeURIComponent(params.brand).toLowerCase();
   const brandName = decodeURIComponent(params.brand).replaceAll("-", " ");
 
@@ -55,7 +56,8 @@ export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
   };
 }
 
-export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage(props: Readonly<ProfilePageProps>) {
+  const params = await props.params;
   const rawBrand = decodeURIComponent(params.brand).replaceAll('%20', " ");
 
   if (isRemovedBrandHub(rawBrand)) {

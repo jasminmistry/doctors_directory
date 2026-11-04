@@ -12,7 +12,7 @@ import {
   hubCityPageMetaTitle,
 } from "@/lib/b2b-hub/hub-page-metadata";
 
-type Props = { params: { city: string; slug: string } };
+type Props = { params: Promise<{ city: string; slug: string }> };
 
 export const revalidate = 300;
 
@@ -25,7 +25,8 @@ function slugToTitle(slug: string) {
   return toDisplayTitle(slug.replaceAll("-", " "));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   if (!CITY_LOCAL_PAGE_SLUGS.includes(params.slug as (typeof CITY_LOCAL_PAGE_SLUGS)[number])) {
     return { title: "By City" };
   }
@@ -43,7 +44,8 @@ export function generateMetadata({ params }: Props): Metadata {
   });
 }
 
-export default function BusinessCityScaledPageRoute({ params }: Props) {
+export default async function BusinessCityScaledPageRoute(props: Props) {
+  const params = await props.params;
   if (!CITY_LOCAL_PAGE_SLUGS.includes(params.slug as (typeof CITY_LOCAL_PAGE_SLUGS)[number])) {
     notFound();
   }

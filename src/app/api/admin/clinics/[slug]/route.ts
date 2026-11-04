@@ -51,10 +51,8 @@ const CLINIC_EDIT_SELECT = {
   placeId: true,
 }
 
-export async function GET(
-  _request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(_request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const clinic = await prisma.clinic.findUnique({
       where: { slug: params.slug },
@@ -72,10 +70,8 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function PUT(request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const body = await request.json()
     // Strip the slug, citySlug and consentzUsername from body — none is a Clinic
@@ -143,10 +139,8 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  _request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function DELETE(_request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     await deleteClinic(params.slug)
     await invalidateSearchCache()

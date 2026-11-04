@@ -5,10 +5,8 @@ import { prisma } from '@/lib/db'
 import { requirePatient } from '@/lib/patient-auth'
 import { getConsentzToken, fetchConsentzBooking, cancelConsentzBooking } from '@/lib/patient-consentz'
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { patient, error } = await requirePatient(req)
   if (error) return error
 
@@ -89,10 +87,8 @@ export async function GET(
   return NextResponse.json({ booking }, { headers: { 'Cache-Control': 'no-store' } })
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { patient, error } = await requirePatient(req)
   if (error) return error
 

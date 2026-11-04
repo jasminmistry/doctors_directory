@@ -9,8 +9,9 @@ function getCoreLiteBase() {
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { practitionerSlug: string } },
+  props: { params: Promise<{ practitionerSlug: string }> }
 ) {
+  const params = await props.params;
   try {
     const row = await prisma.practitioner.findUnique({
       where: { slug: params.practitionerSlug },

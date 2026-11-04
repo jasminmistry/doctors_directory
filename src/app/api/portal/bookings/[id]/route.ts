@@ -6,7 +6,8 @@ import { getPortalUser } from '@/lib/portal'
 
 const UK_PHONE_RE = /^(\+44|0)[0-9]{9,10}$/
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const user = await getPortalUser()
   if (!user?.clinicId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -50,7 +51,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json({ booking })
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const user = await getPortalUser()
   if (!user?.clinicId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

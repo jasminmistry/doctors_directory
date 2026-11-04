@@ -4,10 +4,11 @@ import { prisma } from '@/lib/db'
 import { getPortalUser } from '@/lib/portal'
 
 interface Props {
-  params: { entityType: string; slug: string }
+  params: Promise<{ entityType: string; slug: string }>
 }
 
-export default async function VerifyProfilePage({ params }: Readonly<Props>) {
+export default async function VerifyProfilePage(props: Readonly<Props>) {
+  const params = await props.params;
   const { entityType, slug } = params
 
   if (entityType !== 'clinic' && entityType !== 'practitioner') notFound()

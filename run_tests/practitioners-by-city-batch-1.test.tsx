@@ -19,15 +19,11 @@ describe('PractitionersByCityPage rendering', () => {
 
   test.each(city_tests)(
     'Page test: $cityslug',
-    ({ cityslug }) => {
+    async ({ cityslug }) => {
       let renderFlag = false;
       let cardFlag = false;
       try {
-        const { unmount } = render(
-          <TestPractitionersByCity
-            params={{ cityslug, slug: 'test-slug' }}
-          />
-        );
+        const { unmount } = render(await TestPractitionersByCity({ params: { cityslug, slug: 'test-slug' } }));
 
         const PractitionersList = screen.getAllByTestId('practitioner-card');
 

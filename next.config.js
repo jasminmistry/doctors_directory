@@ -14,7 +14,18 @@ const nextConfig = {
       formats: ["image/avif", "image/webp"], // enable AVIF + WebP
       minimumCacheTTL: 60 * 60 * 24 * 365,
 
-    domains: ['dynamic-media-cdn.tripadvisor.com','media-cdn.tripadvisor.com','encrypted-tbn0.gstatic.com','www.jccp.org.uk', 'lh3.googleusercontent.com','www.doctify.com','cdn.doctify.com','streetviewpixels-pa.googleapis.com','www.consentz.com'],
+    // Next 16 removed images.domains — remotePatterns is the replacement.
+    remotePatterns: [
+      { protocol: 'https', hostname: 'dynamic-media-cdn.tripadvisor.com' },
+      { protocol: 'https', hostname: 'media-cdn.tripadvisor.com' },
+      { protocol: 'https', hostname: 'encrypted-tbn0.gstatic.com' },
+      { protocol: 'https', hostname: 'www.jccp.org.uk' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'www.doctify.com' },
+      { protocol: 'https', hostname: 'cdn.doctify.com' },
+      { protocol: 'https', hostname: 'streetviewpixels-pa.googleapis.com' },
+      { protocol: 'https', hostname: 'www.consentz.com' },
+    ],
     
   },
   basePath: '/directory',
@@ -22,14 +33,12 @@ const nextConfig = {
   // geoip-lite reads its .dat files via fs relative to __dirname — webpack bundling
   // for route handlers moves the code without copying those binary data files, so it
   // must stay external and be require()'d from node_modules at runtime instead.
-  experimental: {
-    serverComponentsExternalPackages: ['geoip-lite'],
-    // With output: 'standalone', nft traces geoip-lite's JS but not its ~110 MB of
-    // binary .dat files (they're read via fs at runtime, not require()'d). Force them
-    // into the standalone bundle so geo lookups work in the container.
-    outputFileTracingIncludes: {
-      '/**/*': ['./node_modules/geoip-lite/data/**/*'],
-    },
+  serverExternalPackages: ['geoip-lite'],
+  // With output: 'standalone', nft traces geoip-lite's JS but not its ~110 MB of
+  // binary .dat files (they're read via fs at runtime, not require()'d). Force them
+  // into the standalone bundle so geo lookups work in the container.
+  outputFileTracingIncludes: {
+    '/**/*': ['./node_modules/geoip-lite/data/**/*'],
   },
   async redirects() {
     // Bare-path redirects (basePath: false) catch old indexed / external URLs

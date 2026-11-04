@@ -19,15 +19,11 @@ describe('PractitionerCredentialsPage rendering', () => {
 
   test.each(credentials.map((cred) => ({ cred })))(
     'Page test: $cred',
-    ({ cred }) => {
+    async ({ cred }) => {
       let renderFlag = false;
       let cardFlag = false;
       try {
-        const { unmount } = render(
-          <TestPractitionerCredentials
-            params={{ cred }}
-          />
-        );
+        const { unmount } = render(await TestPractitionerCredentials({ params: { cred } }));
 
         const PractitionersList = screen.getAllByTestId('practitioner-card');
 

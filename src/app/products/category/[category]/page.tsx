@@ -17,12 +17,13 @@ import { CategoryProductsGrid } from "./CategoryProductsGrid";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 interface ProfilePageProps {
-  params: {
+  params: Promise<{
     category: string;
-  };
+  }>;
 }
 
-export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage(props: Readonly<ProfilePageProps>) {
+  const params = await props.params;
   let { category } = params;
   const resolvedCategory =
     product_categories.find((c) => toUrlSlug(c) === category) ??
@@ -104,7 +105,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 //   }));
 // }
 
-export async function generateMetadata({ params }: ProfilePageProps) {
+export async function generateMetadata(props: ProfilePageProps) {
+  const params = await props.params;
   const { category } = params;
   const canonicalCategory = decodeURIComponent(category).toLowerCase();
 

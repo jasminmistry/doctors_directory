@@ -71,10 +71,8 @@ async function hasSubscriptionPlan(user: Awaited<ReturnType<typeof getPortalUser
   return false
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { eventId: string } },
-) {
+export async function PUT(req: NextRequest, props: { params: Promise<{ eventId: string }> }) {
+  const params = await props.params;
   const user = await getPortalUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -116,10 +114,8 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { eventId: string } },
-) {
+export async function DELETE(_req: NextRequest, props: { params: Promise<{ eventId: string }> }) {
+  const params = await props.params;
   const user = await getPortalUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

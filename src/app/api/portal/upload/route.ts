@@ -40,18 +40,18 @@ export async function POST(req: NextRequest) {
     const ext = normalizeImageExt(file.name)
     const filename = `${randomUUID()}.${ext}`
     const uploadDir = getUploadImagesDir()
-    const dest = path.join(uploadDir, filename)
+    const dest = path.join(/* turbopackIgnore: true */ uploadDir, filename)
 
     await mkdir(uploadDir, { recursive: true })
     await writeFile(dest, buffer)
 
     const publicDir = getPublicUploadsDir()
     try {
-      const uploadReal = await realpath(uploadDir).catch(() => uploadDir)
-      const publicReal = await realpath(publicDir).catch(() => publicDir)
+      const uploadReal = await realpath(/* turbopackIgnore: true */ uploadDir).catch(() => uploadDir)
+      const publicReal = await realpath(/* turbopackIgnore: true */ publicDir).catch(() => publicDir)
       if (uploadReal !== publicReal) {
         await mkdir(publicDir, { recursive: true })
-        await writeFile(path.join(publicDir, filename), buffer)
+        await writeFile(path.join(/* turbopackIgnore: true */ publicDir, filename), buffer)
       }
     } catch (mirrorErr) {
       console.error('[portal/upload] public mirror failed:', mirrorErr)

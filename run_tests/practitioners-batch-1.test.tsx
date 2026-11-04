@@ -28,7 +28,7 @@ describe('PractitionerPage rendering', () => {
     global.gc();
   }
 });
-  test.each(practitioners as Practitioner[])('Page test: $practitioner_name', (clinic) => {
+  test.each(practitioners as Practitioner[])('Page test: $practitioner_name', async (clinic) => {
   //all city/clinic combinations render without crashing'
       
 
@@ -48,10 +48,7 @@ describe('PractitionerPage rendering', () => {
       let paymentsflag = false
       
 
-        const { unmount } = render(
-          <TestPractitionerCount params={{ cityslug, slug }} />
-          
-        );
+        const { unmount } = render(await TestPractitionerCount({ params: { cityslug, slug } }));
         flag = true
 
         console.log(`/directory/practitioners/${cityslug}/profile/${slug} rendered successfully`);

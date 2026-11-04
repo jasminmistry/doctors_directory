@@ -25,14 +25,15 @@ const UniqueTreatments = (await import("./UniqueTreatments")).default;
 const Locations = (await import("./Locations")).default;
 
 interface ProfilePageProps {
-  params: {
+  params: Promise<{
     category: string;
     slug: string;
-  };
+  }>;
 }
 
 
-export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage(props: Readonly<ProfilePageProps>) {
+  const params = await props.params;
   const { slug, category } = params;
 
   if (isRemovedProductSlug(slug)) {
@@ -138,7 +139,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 //   }));
 // }
 
-export async function generateMetadata({ params }: ProfilePageProps) {
+export async function generateMetadata(props: ProfilePageProps) {
+  const params = await props.params;
   const clinic = await getProductBySlug(params.slug);
   const canonicalCategory = decodeURIComponent(params.category).toLowerCase();
   const canonicalSlug = decodeURIComponent(params.slug).toLowerCase();

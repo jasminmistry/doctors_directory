@@ -137,8 +137,9 @@ function isOwnedByRequester(session: { patientId: number | null }, req: NextRequ
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { slug: string; sessionId: string } },
+  props: { params: Promise<{ slug: string; sessionId: string }> }
 ) {
+  const params = await props.params;
   try {
     const visitorToken = req.nextUrl.searchParams.get('visitorToken') ?? ''
     const session = await resolveSession(params.slug, params.sessionId, visitorToken)
@@ -185,8 +186,9 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { slug: string; sessionId: string } },
+  props: { params: Promise<{ slug: string; sessionId: string }> }
 ) {
+  const params = await props.params;
   try {
     const body = bodySchema.safeParse(await req.json())
     if (!body.success) {

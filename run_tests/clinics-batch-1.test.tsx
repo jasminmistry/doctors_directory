@@ -30,7 +30,7 @@ describe('PractitionerPage rendering', () => {
     global.gc();
   }
 });
-  test.each(clinics as Clinic[])('Page test: $slug', (clinic) => {
+  test.each(clinics as Clinic[])('Page test: $slug', async (clinic) => {
   //all city/clinic combinations render without crashing'
    
       let flag = false
@@ -43,10 +43,7 @@ describe('PractitionerPage rendering', () => {
       let hoursflag = false
       let paymentsflag = false
 
-        const { unmount } = render(
-          <TestClinicsCount params={{ cityslug, slug }} />
-          
-        );
+        const { unmount } = render(await TestClinicsCount({ params: { cityslug, slug } }));
         flag = true
 
         console.log(`/directory/clinics/${cityslug}/clinic/${slug} rendered successfully`);

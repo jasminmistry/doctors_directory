@@ -26,7 +26,7 @@ import { isCoreConsentHubSlug } from "@/lib/b2b-hub/consent-hub-nav-links";
 import { getAutomationToolOfficialUrl } from "@/lib/b2b-hub/automation-tool-entries";
 import { hubDetailPageMetadata } from "@/lib/b2b-hub/hub-page-metadata";
 
-type Props = { params: { segment: string; slug: string } };
+type Props = { params: Promise<{ segment: string; slug: string }> };
 
 export function generateStaticParams() {
   return HUB_ENTRIES.map((e) => ({
@@ -35,7 +35,8 @@ export function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   if (!isHubSegment(params.segment)) {
     return { title: "Buyer hub" };
   }
@@ -47,7 +48,8 @@ export function generateMetadata({ params }: Props): Metadata {
   return hubDetailPageMetadata(seg, entry);
 }
 
-export default function BusinessDetailPage({ params }: Props) {
+export default async function BusinessDetailPage(props: Props) {
+  const params = await props.params;
   if (!isHubSegment(params.segment)) {
     notFound();
   }

@@ -4,13 +4,19 @@ import { isAllowedCqcAccreditedCity } from '@/lib/accredited-city-filter'
 
 type Props = {
   children: ReactNode
-  params: {
+  params: Promise<{
     accreditation: string
     cityslug: string
-  }
+  }>
 }
 
-export default function AccreditedClinicCityLayout({ children, params }: Readonly<Props>) {
+export default async function AccreditedClinicCityLayout(props: Readonly<Props>) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   if (
     params.accreditation.toLowerCase() === 'cqc' &&
     !isAllowedCqcAccreditedCity(params.cityslug)

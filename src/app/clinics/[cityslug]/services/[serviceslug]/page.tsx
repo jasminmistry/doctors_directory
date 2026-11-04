@@ -28,16 +28,17 @@ import { resolveDirectoryPageMeta } from "@/lib/directory-page-meta";
 import { toDirectoryCanonical } from "@/lib/seo";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 interface ProfilePageProps {
-  params: {
+  params: Promise<{
     cityslug: string;
     serviceslug: string;
-  };
+  }>;
 }
 type TreatmentSlug = keyof typeof treatment_content
 // Object.keys(treatment_content).forEach(key => {
 //   console.log(Object.entries(treatment_content[key as TreatmentSlug])[10])
 // })
-export default function ProfilePage({ params }: ProfilePageProps) {
+export default async function ProfilePage(props: ProfilePageProps) {
+  const params = await props.params;
   const clinics: Clinic[] = readJsonFileSync('clinics_processed_new_data.json');
   const { cityslug, serviceslug } = params;
   const cityDisplayName = capitalize(cityslug);
@@ -245,7 +246,8 @@ const serviceMatch = categories.some((cat: string) =>
 //     title: `${clinicName} - Healthcare Directory`,
 //     description: `View the profile of ${clinicName}, a qualified ${clinic.category} offering professional healthcare services. Read reviews and book appointments.`,
 //   }
-export async function generateMetadata({ params }: ProfilePageProps) {
+export async function generateMetadata(props: ProfilePageProps) {
+  const params = await props.params;
   const citySlug = decodeURIComponent(params.cityslug).toLowerCase();
   const serviceSlug = decodeURIComponent(params.serviceslug).toLowerCase();
   const displayCityName = capitalize(citySlug);

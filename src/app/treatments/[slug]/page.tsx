@@ -30,9 +30,9 @@ import { IconArrowNarrowLeft } from "@tabler/icons-react";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staging.consentz.com'
 
 interface ProfilePageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 const getTreatmentContentValue = (
   treatmentData: Record<string, unknown> | undefined | null,
@@ -263,7 +263,8 @@ const getPractitionerCount = (practitioners: Clinic['Practitioners']) => {
   return 0;
 };
 
-export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage(props: Readonly<ProfilePageProps>) {
+  const params = await props.params;
   const allClinics = getClinics();
   const practitionerProfiles: Practitioner[] = readJsonFileSync('derms_processed_new_5403.json');
   const { slug } = params;
@@ -480,7 +481,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
   );
 }
 
-export async function generateMetadata({ params }: ProfilePageProps): Promise<Metadata> {
+export async function generateMetadata(props: ProfilePageProps): Promise<Metadata> {
+  const params = await props.params;
   const { slug } = params;
 
   const resolvedTreatmentName =

@@ -23,7 +23,7 @@ function clearAuthAndRedirect(request: NextRequest, pathname: string, loginPath:
 
 const PATIENT_COOKIE = 'patient_session'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   const clinicProfileMatch = pathname.match(/^\/clinics\/[^/]+\/clinic\/([^/]+)\/?$/)

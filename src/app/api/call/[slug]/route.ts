@@ -28,10 +28,8 @@ const bodySchema = z.object({
     .refine((v) => !v || UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
 })
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { slug: string } },
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const clinic = await prisma.clinic.findUnique({
       where: { slug: params.slug },
@@ -42,7 +40,7 @@ export async function POST(
       return NextResponse.json({ error: 'Clinic not found' }, { status: 404 })
     }
 
-    if (!await isClinicScheduleConfigured(clinic.id)) {
+    if (!(await isClinicScheduleConfigured(clinic.id))) {
       return NextResponse.json(SCHEDULE_NOT_CONFIGURED_RESPONSE, { status: 422 })
     }
 

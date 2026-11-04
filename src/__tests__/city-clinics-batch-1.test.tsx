@@ -36,7 +36,7 @@ describe('CityClinicsPage rendering', () => {
 
   test.each(locations)(
     'Page test: %s',
-    (cityslug) => {
+    async (cityslug) => {
       let renderFlag = false;
       let cardFlag = false;
       let populationFlag = false;
@@ -63,11 +63,7 @@ describe('CityClinicsPage rendering', () => {
       let airportProximityFlag = false;
       let medicalTourismViabilityFlag = false;
       try {
-        const { unmount } = render(
-          <TestCityClinics
-            params={{ cityslug, slug: "123" }}
-          />
-        );
+        const { unmount } = render(await TestCityClinics({ params: { cityslug, slug: "123" } }));
 
         const ClinicsList = screen.getAllByTestId('practitioner-card');
 

@@ -28,10 +28,11 @@ function getConsentzLoginUrl(): string {
 }
 
 interface Props {
-  searchParams: { step?: string; claimId?: string }
+  searchParams: Promise<{ step?: string; claimId?: string }>
 }
 
-export default function RegisterClinicPage({ searchParams }: Readonly<Props>) {
+export default async function RegisterClinicPage(props: Readonly<Props>) {
+  const searchParams = await props.searchParams;
   return (
     <main className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto px-4 py-10">

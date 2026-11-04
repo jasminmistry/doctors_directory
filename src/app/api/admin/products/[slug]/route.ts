@@ -51,10 +51,8 @@ const PRODUCT_EDIT_SELECT = {
   verificationSources: true, allPrices: true,
 }
 
-export async function GET(
-  _request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(_request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const product = await prisma.product.findUnique({
       where: { slug: params.slug },
@@ -70,10 +68,8 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function PUT(request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const body = await request.json()
     const { slug: _slug, ...rest } = body
@@ -97,10 +93,8 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  _request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function DELETE(_request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     await prisma.product.delete({ where: { slug: params.slug } })
     await invalidateSearchCache()

@@ -15,15 +15,15 @@ import { resolveDirectoryPageMeta } from '@/lib/directory-page-meta'
 import { toDirectoryCanonical } from '@/lib/seo'
 
 type PageProps = {
-  params: {
+  params: Promise<{
     slug: string
     city: string
-  }
+  }>
 }
 
 export const revalidate = 300
 
-function resolvePage(params: PageProps['params']) {
+function resolvePage(params: Awaited<PageProps['params']>) {
   const serviceEntry = getServiceCityEntry(params.slug, params.city)
   if (serviceEntry) {
     return { kind: 'service' as const, serviceEntry }
@@ -35,7 +35,8 @@ function resolvePage(params: PageProps['params']) {
   return null
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   if (isReservedSlugCityFirstSegment(params.slug)) {
     return {
       title: 'Page Not Found',
@@ -87,7 +88,8 @@ export function generateMetadata({ params }: PageProps): Metadata {
   }
 }
 
-export default function SlugCityPage({ params }: PageProps) {
+export default async function SlugCityPage(props: PageProps) {
+  const params = await props.params;
   if (params.slug === 'software') {
     redirect(`/business/uk/${params.city}/aesthetic-clinic-software/`)
   }

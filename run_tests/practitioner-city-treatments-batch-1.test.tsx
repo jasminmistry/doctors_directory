@@ -37,17 +37,13 @@ describe('PractTreatmentPage rendering', () => {
 
   test.each(city_treatments)(
     'Page test: $cityslug / $treatmentslug',
-    ({ cityslug, treatmentslug }) => {
+    async ({ cityslug, treatmentslug }) => {
 
       let renderFlag = false;
       let cardFlag = false
 
       try {
-        const { unmount } = render(
-          <TestTreatmentCount
-            params={{ cityslug, treatmentslug }}
-          />
-        );
+        const { unmount } = render(await TestTreatmentCount({ params: { cityslug, treatmentslug } }));
 
         const ClinicsList = screen.getAllByTestId('practitioner-card');
         cardFlag = true

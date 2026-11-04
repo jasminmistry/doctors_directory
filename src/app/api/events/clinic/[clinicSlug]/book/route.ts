@@ -25,10 +25,8 @@ const bodySchema = z.object({
     .refine((v) => !v || UK_PHONE_RE.test(v.replace(/\s/g, '')), 'Please enter a valid UK phone number.'),
 })
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { clinicSlug: string } },
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ clinicSlug: string }> }) {
+  const params = await props.params;
   const { patient, error: authError } = await requirePatient(req)
   if (authError) return authError
 

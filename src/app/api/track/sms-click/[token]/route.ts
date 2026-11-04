@@ -8,7 +8,8 @@ import { sendMpEvents, syntheticClientId } from '@/lib/analytics/measurement-pro
  * `notificationSmsReadAt` (the SMS analogue of the email open pixel), then
  * redirects the clinic on to where they can act on the lead.
  */
-export async function GET(_req: NextRequest, { params }: { params: { token: string } }) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ token: string }> }) {
+  const params = await props.params;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
   const fallback = `${baseUrl}/directory/portal/clinic/prospects`
 

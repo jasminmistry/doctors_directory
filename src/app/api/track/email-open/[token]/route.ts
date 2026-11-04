@@ -15,7 +15,8 @@ function pixelResponse() {
   })
 }
 
-export async function GET(_req: NextRequest, { params }: { params: { token: string } }) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ token: string }> }) {
+  const params = await props.params;
   const claims = verifyEmailTrackingToken(params.token)
 
   if (claims) {

@@ -58,10 +58,8 @@ function flattenPractitioner<
   }
 }
 
-export async function GET(
-  _request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(_request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const practitioner = await prisma.practitioner.findUnique({
       where: { slug: params.slug },
@@ -77,10 +75,8 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function PUT(request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const body = await request.json()
     const { slug: _slug, clinicId: rawClinicId, ...rest } = body
@@ -135,10 +131,8 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  _request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function DELETE(_request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     await prisma.practitioner.delete({ where: { slug: params.slug } })
     await invalidateSearchCache()

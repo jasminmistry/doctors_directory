@@ -16,9 +16,10 @@ import { getHubEntry, hubSegmentCollectionHref } from '@/lib/b2b-hub/registry'
 
 export const revalidate = 300
 
-type Props = { params: { segment: string; slug: string; city: string } }
+type Props = { params: Promise<{ segment: string; slug: string; city: string }> }
 
-export function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const route = validateExpansionRoute(params)
   if (!route) {
     return { title: 'Not found' }
@@ -30,7 +31,8 @@ export function generateMetadata({ params }: Props): Metadata {
   return hubExpansionCityMetadata(route.segment, entry, route.citySlug)
 }
 
-export default function BusinessExpansionCityPage({ params }: Props) {
+export default async function BusinessExpansionCityPage(props: Props) {
+  const params = await props.params;
   const route = validateExpansionRoute(params)
   if (!route) {
     notFound()

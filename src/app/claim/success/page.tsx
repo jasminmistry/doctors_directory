@@ -8,7 +8,7 @@ import { prisma } from '@/lib/db'
 export const dynamic = 'force-dynamic'
 
 interface Props {
-  searchParams: { session_id?: string }
+  searchParams: Promise<{ session_id?: string }>
 }
 
 type VerifyResult =
@@ -54,7 +54,8 @@ async function verifySession(sessionId: string | undefined): Promise<VerifyResul
   }
 }
 
-export default async function ClaimSuccessPage({ searchParams }: Readonly<Props>) {
+export default async function ClaimSuccessPage(props: Readonly<Props>) {
+  const searchParams = await props.searchParams;
   const result = await verifySession(searchParams.session_id)
   const sessionId = searchParams.session_id?.trim() ?? ''
 

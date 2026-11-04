@@ -22,9 +22,9 @@ import { toDirectoryCanonical } from "@/lib/seo";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 const allTreatmentNames = Object.keys(treatmentContent as Record<string, unknown>);
@@ -41,7 +41,8 @@ export function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+export async function generateMetadata(props: CategoryPageProps): Promise<Metadata> {
+  const params = await props.params;
   const categoryLabel = getTreatmentCategoryFromSlug(params.slug);
   const canonicalSlug = decodeURIComponent(params.slug).toLowerCase();
   const canonicalUrl = toDirectoryCanonical(`/treatments/category/${canonicalSlug}`);
@@ -64,7 +65,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   };
 }
 
-export default function TreatmentCategoryPage({ params }: Readonly<CategoryPageProps>) {
+export default async function TreatmentCategoryPage(props: Readonly<CategoryPageProps>) {
+  const params = await props.params;
   const categoryLabel = getTreatmentCategoryFromSlug(params.slug);
 
   if (!categoryLabel) {

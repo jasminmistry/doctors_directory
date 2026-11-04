@@ -58,10 +58,10 @@ function mergeBoxplotDataFromDict(
 }
 
 interface ProfilePageProps {
-  params: {
+  params: Promise<{
     cityslug: string;
     slug: string;
-  };
+  }>;
 }
 
 // Lightweight converter for SearchClinic (city sidebar / related clinics)
@@ -161,7 +161,8 @@ function convertDbClinicToOldType(dbClinic: any): Clinic {
   } as Clinic);
 }
 
-export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+export default async function ProfilePage(props: Readonly<ProfilePageProps>) {
+  const params = await props.params;
   const { cityslug, slug } = params;
   if (isRemovedClinicSlug(slug)) {
     notFound();
@@ -480,7 +481,8 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 //   }));
 // }
 
-export async function generateMetadata({ params }: ProfilePageProps) {
+export async function generateMetadata(props: ProfilePageProps) {
+  const params = await props.params;
   if (isRemovedClinicSlug(params.slug)) {
     notFound();
   }

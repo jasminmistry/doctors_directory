@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { cancelScheduledDeletion } from '@/lib/account-deletion'
 
-export async function POST(req: NextRequest, { params }: { params: { type: string; slug: string } }) {
+export async function POST(
+  req: NextRequest,
+  props: { params: Promise<{ type: string; slug: string }> }
+) {
+  const params = await props.params;
   if (params.type !== 'clinic' && params.type !== 'practitioner') {
     return NextResponse.json({ error: 'Invalid entity type' }, { status: 400 })
   }

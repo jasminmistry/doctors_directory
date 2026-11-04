@@ -40,10 +40,8 @@ const bodySchema = z.object({
   cancel_url: z.string().url().optional(),
 })
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { clinicSlug: string } },
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ clinicSlug: string }> }) {
+  const params = await props.params;
   const { patient, error: authError } = await requirePatient(req)
   if (authError) return authError
 

@@ -16,11 +16,12 @@ function getConsentzLoginUrl(): string {
 }
 
 interface Props {
-  params: { slug: string }
-  searchParams: { step?: string; claimId?: string }
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ step?: string; claimId?: string }>
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata(props: Props) {
+  const params = await props.params;
   const clinic = await prisma.clinic.findUnique({
     where: { slug: params.slug },
     select: { name: true },
@@ -36,7 +37,9 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-export default async function ClaimPage({ params, searchParams }: Readonly<Props>) {
+export default async function ClaimPage(props: Readonly<Props>) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const clinic = await prisma.clinic.findUnique({
     where: { slug: params.slug },
     select: {
