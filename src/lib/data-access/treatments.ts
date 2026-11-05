@@ -53,6 +53,18 @@ export async function getAllTreatments() {
   return await prisma.treatment.findMany({ orderBy: { name: 'asc' } })
 }
 
+export type TreatmentIdOption = { id: number; name: string; slug: string }
+
+// Lightweight id/name/slug list for admin pickers (e.g. the clinic treatments
+// multi-select) — avoids shipping every treatment's ~17 rich-content JSON
+// fields just to populate a dropdown.
+export async function getAllTreatmentIdOptions(): Promise<TreatmentIdOption[]> {
+  return await prisma.treatment.findMany({
+    select: { id: true, name: true, slug: true },
+    orderBy: { name: 'asc' },
+  })
+}
+
 export async function createTreatment(data: Prisma.TreatmentCreateInput) {
   return await prisma.treatment.create({ data })
 }

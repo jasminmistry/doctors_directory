@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     if (!name) fieldErrors.name = 'Clinic name is required'
     if (!citySlug) fieldErrors.citySlug = 'City is required'
 
-    const { slug: _s, name: _n, citySlug: _c, consentzUsername: rawConsentzUsername, ...rest } = body
+    const { slug: _s, name: _n, citySlug: _c, consentzUsername: rawConsentzUsername, treatmentIds: rawTreatmentIds, ...rest } = body
     const validation = clinicEditSchema.safeParse(rest)
     if (!validation.success) {
       for (const issue of validation.error.errors) {
@@ -93,6 +93,10 @@ export async function POST(request: Request) {
       )
     }
 
+    const treatmentIds = Array.isArray(rawTreatmentIds)
+      ? rawTreatmentIds.map((id: unknown) => Number(id)).filter((id: number) => Number.isInteger(id) && id > 0)
+      : []
+
     const clinic = await prisma.clinic.create({
       data: {
         slug,
@@ -101,6 +105,13 @@ export async function POST(request: Request) {
         ...omitNullish((validation.success ? validation.data : {}) as Record<string, unknown>),
       } as any,
     })
+
+    if (treatmentIds.length > 0) {
+      await prisma.clinicTreatment.createMany({
+        data: treatmentIds.map((treatmentId) => ({ clinicId: clinic.id, treatmentId })),
+        skipDuplicates: true,
+      })
+    }
 
     if (clinic.coreClinicId) {
       await syncConsentzLinkClaim(clinic, clinic.coreClinicId, consentzUsername)
@@ -113,6 +124,9 @@ export async function POST(request: Request) {
     console.error('Failed to create clinic:', error)
     if ((error as any).code === 'P2002') {
       return NextResponse.json({ error: 'A clinic with this slug already exists', fieldErrors: { slug: 'This slug is already taken' } }, { status: 409 })
+    }
+    if ((error as any).code === 'P2003') {
+      return NextResponse.json({ error: 'One or more selected treatments do not exist' }, { status: 400 })
     }
     return NextResponse.json({ error: 'Failed to create clinic' }, { status: 500 })
   }

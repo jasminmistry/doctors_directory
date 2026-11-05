@@ -96,3 +96,15 @@ export async function getPortalUser(): Promise<PortalUser | null> {
     clinics,
   }
 }
+
+/** Whether the entity behind this portal user has completed ID verification. */
+export async function isPortalEntityIdVerified(user: PortalUser): Promise<boolean> {
+  if (user.entityType === 'clinic') {
+    if (!user.clinicId) return false
+    const clinic = await prisma.clinic.findUnique({ where: { id: user.clinicId }, select: { idVerified: true } })
+    return clinic?.idVerified ?? false
+  }
+  if (!user.practitionerId) return false
+  const practitioner = await prisma.practitioner.findUnique({ where: { id: user.practitionerId }, select: { idVerified: true } })
+  return practitioner?.idVerified ?? false
+}

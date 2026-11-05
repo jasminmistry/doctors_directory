@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { getPortalUser } from '@/lib/portal'
+import { getPortalUser, isPortalEntityIdVerified } from '@/lib/portal'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,6 +27,7 @@ export async function GET() {
   return NextResponse.json({
     done: claim?.scheduleWizardDone ?? false,
     hasConsentzId,
+    idVerified: await isPortalEntityIdVerified(user),
   })
 }
 

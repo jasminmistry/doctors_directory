@@ -8,6 +8,7 @@ import { ScheduleEditor, DEFAULT_SCHEDULE, DAYS, type DaySchedule } from '@/comp
 interface Props {
   entityName: string
   hasConsentzId: boolean
+  idVerified: boolean
   onDone: () => void
 }
 
@@ -16,7 +17,7 @@ function mergeIntoDefaults(fetched: DaySchedule[]): DaySchedule[] {
   return DAYS.map((day) => byDay[day] ?? DEFAULT_SCHEDULE.find((d) => d.day === day)!)
 }
 
-export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
+export function WelcomeWizard({ entityName, hasConsentzId, idVerified, onDone }: Props) {
   const [step, setStep] = useState<'welcome' | 'schedule'>('welcome')
   const [schedule, setSchedule] = useState<DaySchedule[]>(DEFAULT_SCHEDULE)
   const [loadingSchedule, setLoadingSchedule] = useState(false)
@@ -86,7 +87,7 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
             </p>
 
             <div className="mt-8 flex flex-col gap-3">
-              {hasConsentzId ? (
+              {hasConsentzId && idVerified ? (
                 <button
                   type="button"
                   disabled={loadingSchedule}
@@ -97,9 +98,13 @@ export function WelcomeWizard({ entityName, hasConsentzId, onDone }: Props) {
                     ? <><IconLoader2 stroke={1.5} className="h-4 w-4 animate-spin" /> Loading your schedule…</>
                     : <>{schedule !== DEFAULT_SCHEDULE ? 'Review & update schedule' : 'Set up schedule'}<IconChevronRight stroke={1.5} className="h-4 w-4" /></>}
                 </button>
-              ) : (
+              ) : !hasConsentzId ? (
                 <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
                   Your account is still being provisioned. You can set up your schedule once an admin completes your setup.
+                </p>
+              ) : (
+                <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+                  Verify your identity to set up your schedule — this keeps the hours patients see accurate and trustworthy.
                 </p>
               )}
               <button

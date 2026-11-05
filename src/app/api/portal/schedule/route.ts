@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
-import { getPortalUser } from '@/lib/portal'
+import { getPortalUser, isPortalEntityIdVerified } from '@/lib/portal'
 import { getCoreSchedule, setCoreSchedule, resolveClinicTimezone } from '@/lib/core-api'
 
 export const dynamic = 'force-dynamic'
@@ -39,9 +39,10 @@ export async function GET() {
   const claim = await getClaimIds(user)
   const consentzUserId = claim?.consentzUserId
   const timezone = await resolveClinicTimezone(claim?.consentzClinicId ?? null)
+  const idVerified = await isPortalEntityIdVerified(user)
   console.log(`[portal/schedule] GET user=${user.claimerEmail} consentzUserId=${consentzUserId ?? 'none'} timezone=${timezone}`)
 
-  if (!consentzUserId) return NextResponse.json({ schedule: [], timezone })
+  if (!consentzUserId) return NextResponse.json({ schedule: [], timezone, idVerified })
 
   try {
     const fetchedSchedule = await getCoreSchedule(consentzUserId)
@@ -55,16 +56,20 @@ export async function GET() {
       }).catch(() => {})
     }
 
-    return NextResponse.json({ schedule: fetchedSchedule, timezone })
+    return NextResponse.json({ schedule: fetchedSchedule, timezone, idVerified })
   } catch (err) {
     console.error('[portal/schedule] GET unexpected error:', err)
-    return NextResponse.json({ schedule: [], timezone })
+    return NextResponse.json({ schedule: [], timezone, idVerified })
   }
 }
 
 export async function POST(req: NextRequest) {
   const user = await getPortalUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  if (!(await isPortalEntityIdVerified(user))) {
+    return NextResponse.json({ error: 'Profile editing requires ID verification' }, { status: 403 })
+  }
 
   const parsed = scheduleBodySchema.safeParse(await req.json())
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
@@ -77,11 +82,20 @@ export async function POST(req: NextRequest) {
   console.log(`[portal/schedule] POST user=${user.claimerEmail} consentzUserId=${consentzUserId ?? 'none'} days=${schedule.length}`)
 
   if (!consentzUserId) {
-    console.log('[portal/schedule] POST no consentzUserId — skipping Core, saving wizard flag only')
+    // wizardComplete-only calls (the "Skip for now"-adjacent welcome-wizard path) are a
+    // deliberate no-op — there's no schedule to persist yet, just dismiss the prompt.
+    // Anything else reaching here (e.g. a race where Core linkage dropped mid-session)
+    // must not report success for a schedule that was never actually saved anywhere.
     if (wizardComplete) {
+      console.log('[portal/schedule] POST no consentzUserId — skipping Core, saving wizard flag only')
       await prisma.claimRequest.update({ where: { id: claim.id }, data: { scheduleWizardDone: true } })
+      return NextResponse.json({ success: true, schedule: [] })
     }
-    return NextResponse.json({ success: true, schedule: [] })
+    console.error('[portal/schedule] POST no consentzUserId — refusing to fake-save a real schedule')
+    return NextResponse.json(
+      { error: 'Your Consentz account is still being provisioned — schedule changes can\'t be saved until that completes.' },
+      { status: 409 }
+    )
   }
 
   console.log(`[portal/schedule] POST payload: ${JSON.stringify(schedule)}`)

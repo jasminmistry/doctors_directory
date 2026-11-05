@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { IconLoader2, IconClock, IconInfoCircle, IconCalendar, IconRefresh, IconVideo, IconEye, IconWorld } from '@tabler/icons-react'
+import { IconLoader2, IconClock, IconInfoCircle, IconCalendar, IconRefresh, IconVideo, IconEye, IconWorld, IconShieldCheck } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { formatTimezoneAbbr } from '@/lib/utils'
 import { ScheduleEditor, DEFAULT_SCHEDULE, DAYS, type DaySchedule } from '@/components/portal/schedule-editor'
@@ -13,11 +14,14 @@ function mergeIntoDefaults(fetched: DaySchedule[]): DaySchedule[] {
 }
 
 export function PortalScheduleView() {
+  const pathname = usePathname()
+  const isPractitioner = pathname?.startsWith('/portal/practitioner')
   const [schedule, setSchedule] = useState<DaySchedule[]>(DEFAULT_SCHEDULE)
   const [timezone, setTimezone] = useState('Europe/London')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [hasConsentzId, setHasConsentzId] = useState<boolean | null>(null)
+  const [idVerified, setIdVerified] = useState(true)
 
   useEffect(() => {
     async function load() {
@@ -31,6 +35,7 @@ export function PortalScheduleView() {
 
         if (schedRes.ok) {
           const data = await schedRes.json()
+          setIdVerified(data?.idVerified ?? false)
           if (data?.schedule?.length) {
             setSchedule(mergeIntoDefaults(data.schedule as DaySchedule[]))
           }
@@ -97,6 +102,26 @@ export function PortalScheduleView() {
 
   return (
     <div className="max-w-xl space-y-6">
+      {!idVerified && (
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+          <div className="flex items-start gap-3">
+            <IconShieldCheck stroke={1.5} className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-emerald-800">Verify your identity to edit your schedule</p>
+              <p className="mt-1 text-sm text-emerald-700">
+                You can preview your current hours below, but saving changes requires ID verification first.
+              </p>
+              <a
+                href={isPractitioner ? '/directory/portal/practitioner' : '/directory/portal/clinic'}
+                className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-emerald-800 hover:text-emerald-900 underline"
+              >
+                Go verify your identity
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center gap-1.5 text-xs text-gray-600">
         <IconWorld stroke={1.5} className="h-3.5 w-3.5 shrink-0" />
         <span>
@@ -105,7 +130,7 @@ export function PortalScheduleView() {
         </span>
       </div>
 
-      <ScheduleEditor value={schedule} onChange={setSchedule} disabled={saving} />
+      <ScheduleEditor value={schedule} onChange={setSchedule} disabled={saving || !idVerified} />
 
       <div className="flex justify-end">
         <Button
@@ -113,7 +138,7 @@ export function PortalScheduleView() {
           size="lg"
           variant="default"
           onClick={handleSave}
-          disabled={saving}
+          disabled={saving || !idVerified}
         >
           {saving && <IconLoader2 stroke={1.5} className="h-3.5 w-3.5 animate-spin" />}
           {saving ? 'Saving…' : 'Save schedule'}

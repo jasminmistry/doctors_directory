@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { IconArrowNarrowLeft, IconBuildingHospital, IconExternalLink,  IconFileText, IconWand, IconSparkles, IconDeviceFloppy, IconShieldCheck, IconShare3, IconStar, IconLink, IconMapPin } from '@tabler/icons-react';
+import { IconArrowNarrowLeft, IconBuildingHospital, IconExternalLink,  IconFileText, IconWand, IconSparkles, IconDeviceFloppy, IconShieldCheck, IconShare3, IconStar, IconLink, IconMapPin, IconStethoscope } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ImageUpload } from '@/components/admin/ImageUpload'
@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormSection, Field } from './FormSection'
 import { CityCombobox } from './city-combobox'
+import { TreatmentsMultiSelect } from './treatments-multiselect'
 import { cn } from '@/lib/utils'
 
 type ClinicData = {
@@ -54,6 +55,7 @@ type ClinicData = {
   coreClinicId: number | null
   consentzUsername: string | null
   placeId: string | null
+  treatmentIds: number[]
 }
 
 const EMPTY: ClinicData = {
@@ -64,7 +66,7 @@ const EMPTY: ClinicData = {
   isSaveFace: false, isDoctor: false, isJccp: false, jccpUrl: null, isCqc: false, cqcUrl: null,
   isHiw: false, hiwUrl: null, isHis: false, hisUrl: null, isRqia: false, rqiaUrl: null,
   coverImage: null, cqcStatus: null, avgReplyTime: null, coreClinicId: null, consentzUsername: null,
-  placeId: null,
+  placeId: null, treatmentIds: [],
 }
 
 // Converts stored Python-list / JSON-array strings to newline-separated display text
@@ -449,6 +451,16 @@ export function ClinicForm({ fetchUrl, saveUrl, mode, disabled, onSaved }: Clini
           </div>
         </div>
       </FormSection>
+
+      {/* Treatments — admin-only; portal editing isn't wired up yet (see PUT /api/portal/clinic) */}
+      {!isPortal && (
+        <FormSection title="Treatments" icon={IconStethoscope} description="Shown on the clinic's public profile, only while the clinic is claimed">
+          <TreatmentsMultiSelect
+            value={data.treatmentIds}
+            onChange={(treatmentIds) => set('treatmentIds', treatmentIds)}
+          />
+        </FormSection>
+      )}
 
       {/* Content */}
       <FormSection title="Content" icon={IconFileText}>

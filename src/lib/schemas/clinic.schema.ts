@@ -94,6 +94,9 @@ export const clinicEditSchema = z.object({
   avgReplyTime: z.enum(['within_24hrs', 'within_48hrs', 'more_than_48hrs']).optional().nullable(),
   coreClinicId: z.coerce.number().int().positive().optional().nullable(),
   placeId: maxStr(255, 'Google Place ID'),
+  // IDs of Treatment rows to link via ClinicTreatment — synced separately,
+  // not a Clinic column (see src/app/api/admin/clinics/[slug]/route.ts)
+  treatmentIds: z.array(z.coerce.number().int().positive()).optional(),
 })
 
 export type ClinicEditInput = z.infer<typeof clinicEditSchema>

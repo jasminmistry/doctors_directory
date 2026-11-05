@@ -46,3 +46,30 @@ export function formatPortalScheduleForDisplay(scheduleJson: string | null | und
   }
   return result
 }
+
+const DOW_MAP: Record<number, string> = {
+  0: 'Sunday', 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday',
+}
+
+/**
+ * Whether today is an enabled booking day per the portal schedule — same priority
+ * as formatPortalScheduleForDisplay (the booking schedule wins over legacy ClinicHour
+ * when configured). Returns null when no schedule is configured, so the caller can
+ * fall back to ClinicHour; this mirrors the "is clinic open" check the public profile's
+ * online-status indicator relies on, not just display formatting.
+ */
+export function isTodayEnabledInPortalSchedule(scheduleJson: string | null | undefined): boolean | null {
+  if (!scheduleJson) return null
+
+  let schedule: PortalDaySchedule[]
+  try {
+    schedule = JSON.parse(scheduleJson)
+  } catch {
+    return null
+  }
+  if (!Array.isArray(schedule) || schedule.length === 0) return null
+
+  const today = DOW_MAP[new Date().getDay()]
+  const entry = schedule.find((e) => e.day === today)
+  return entry?.enabled ?? false
+}

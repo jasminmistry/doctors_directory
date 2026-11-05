@@ -87,11 +87,13 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json()
-    // Strip fields portal users cannot change
+    // Strip fields portal users cannot change — treatmentIds is admin-only for now
+    // (no ClinicTreatment sync logic here; see PUT /api/admin/clinics/[slug])
     const { slug: _slug, citySlug: _city, rating: _rating, reviewCount: _rc,
       isSaveFace: _sf, isDoctor: _doc, isJccp: _jccp, jccpUrl: _jccpUrl,
       isCqc: _cqc, cqcUrl: _cqcUrl, isHiw: _hiw, hiwUrl: _hiwUrl,
       isHis: _his, hisUrl: _hisUrl, isRqia: _rqia, rqiaUrl: _rqiaUrl,
+      treatmentIds: _treatmentIds,
       ...editable } = body
 
     const validation = clinicEditSchema.safeParse(editable)
