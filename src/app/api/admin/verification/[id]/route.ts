@@ -71,12 +71,13 @@ export async function PUT(req: NextRequest, props: { params: Promise<{ id: strin
         govIdFile: null,
         selfieFile: null,
         proofFile: null,
+        insuranceFile: null,
       },
     })
 
     // Best-effort disk cleanup — a filesystem error here must not fail the review.
     try {
-      await purgeVerificationFiles([vr.govIdFile, vr.selfieFile, vr.proofFile])
+      await purgeVerificationFiles([vr.govIdFile, vr.selfieFile, vr.proofFile, vr.insuranceFile])
     } catch (cleanupError) {
       console.error(`Failed to purge verification files for request ${id}:`, cleanupError)
     }

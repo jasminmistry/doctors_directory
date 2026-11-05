@@ -20,6 +20,7 @@ interface VerificationRequest {
   selfieFile: string | null
   proofType: string | null
   proofFile: string | null
+  insuranceFile: string | null
   status: 'pending' | 'approved' | 'rejected'
   adminNotes: string | null
   createdAt: string
@@ -181,6 +182,7 @@ export default function AdminVerificationPage() {
                   { label: 'Government ID', file: selected.govIdFile },
                   { label: 'Selfie', file: selected.selfieFile },
                   { label: PROOF_LABELS[selected.proofType ?? ''] ?? 'Proof', file: selected.proofFile },
+                  { label: 'Insurance certificate', file: selected.insuranceFile },
                 ].filter((d) => d.file).map((doc) => {
                   const fileUrl = `/directory/api/admin/verification/file?path=${encodeURIComponent(doc.file!)}`
                   const isImage = /\.(jpe?g|png|webp|gif)$/i.test(doc.file!)

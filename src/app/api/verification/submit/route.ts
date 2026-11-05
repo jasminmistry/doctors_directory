@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
     const govIdFile = formData.get('govId') as File | null
     const selfieFile = formData.get('selfie') as File | null
     const proofFile = formData.get('proof') as File | null
+    const insuranceFile = formData.get('insurance') as File | null
 
     if (!govIdFile) {
       return NextResponse.json({ error: 'Government ID is required.' }, { status: 400 })
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest) {
     const govIdFilename = await saveFile(govIdFile, uploadDir)
     const selfieFilename = selfieFile && selfieFile.size > 0 ? await saveFile(selfieFile, uploadDir) : null
     const proofFilename = proofFile && proofFile.size > 0 ? await saveFile(proofFile, uploadDir) : null
+    const insuranceFilename = insuranceFile && insuranceFile.size > 0 ? await saveFile(insuranceFile, uploadDir) : null
 
     const record = await prisma.verificationRequest.create({
       data: {
@@ -71,6 +73,7 @@ export async function POST(req: NextRequest) {
         selfieFile: selfieFilename ? `${uploadDir.split('/uploads/verification/')[1]}/${selfieFilename}` : null,
         proofType: proofType ?? null,
         proofFile: proofFilename ? `${uploadDir.split('/uploads/verification/')[1]}/${proofFilename}` : null,
+        insuranceFile: insuranceFilename ? `${uploadDir.split('/uploads/verification/')[1]}/${insuranceFilename}` : null,
       },
     })
 
