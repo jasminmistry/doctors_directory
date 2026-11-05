@@ -147,6 +147,11 @@ export async function POST(req: NextRequest) {
 
     // Resolve patient from session — link lead and autosave profile fields
     let patientId: number | undefined
+    // Falls back to the logged-in patient's own name when the form didn't collect one
+    // (the simplified unclaimed-clinic enquiry never asks for it) — a registered patient
+    // already has a name on file (e.g. from Google/Apple sign-in), so a lead shouldn't
+    // show as nameless just because this particular form skipped the field.
+    let resolvedPatientName = patientName
 
     if (claims) {
       const dobDate = dateOfBirth ? new Date(dateOfBirth) : undefined
@@ -158,16 +163,21 @@ export async function POST(req: NextRequest) {
           ...(cleanPhone ? { phone: cleanPhone } : {}),
           ...(dobDate ? { dateOfBirth: dobDate } : {}),
         },
-        select: { id: true },
+        select: { id: true, firstName: true, lastName: true },
       }).catch(() => null)
 
-      if (updated) patientId = updated.id
+      if (updated) {
+        patientId = updated.id
+        if (!resolvedPatientName) {
+          resolvedPatientName = [updated.firstName, updated.lastName].filter(Boolean).join(' ').trim() || null
+        }
+      }
     }
 
     const lead = await prisma.consultationLead.create({
       data: {
         clinicId: clinic.id,
-        patientName,
+        patientName: resolvedPatientName,
         patientPhone: cleanPhone || null,
         patientEmail,
         treatment: treatmentValue,
@@ -221,7 +231,7 @@ export async function POST(req: NextRequest) {
           await sendGhostLeadHook({
             to: clinic.email,
             clinicName: clinic.name ?? clinicSlug,
-            patientFirstName: firstName ?? undefined,
+            patientFirstName: firstName ?? resolvedPatientName?.split(' ')[0] ?? undefined,
             location: location ?? '',
             pendingCount,
             claimUrl: `${baseUrl}/directory/claim/${clinicSlug}`,
@@ -235,7 +245,7 @@ export async function POST(req: NextRequest) {
           await sendLeadNotificationEmail({
             to: clinic.email,
             clinicName: clinic.name ?? clinicSlug,
-            patientName: patientName ?? '',
+            patientName: resolvedPatientName ?? '',
             contact: patientEmail,
             treatment: treatmentValue,
             location,
