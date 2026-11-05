@@ -194,6 +194,22 @@ export function StepIdVerification({ entityType, entitySlug, claimerName, claime
         {fieldErrors.govId && <p className="text-xs text-destructive">{fieldErrors.govId}</p>}
       </div>
 
+      {/* Insurance */}
+      <div className="flex flex-col gap-2">
+        <Label>
+          Malpractice / public liability insurance{' '}
+          <span className="text-muted-foreground font-normal">(optional, but highly recommended)</span>
+        </Label>
+        <p className="text-xs text-muted-foreground">
+          A current certificate of insurance helps us verify you&apos;re properly covered.
+        </p>
+        <FileDropZone
+          file={insurance}
+          accept="image/*,.pdf"
+          onChange={setInsurance}
+        />
+      </div>
+
       {/* Selfie */}
       <div className="flex flex-col gap-2">
         <Label>
@@ -235,22 +251,6 @@ export function StepIdVerification({ entityType, entitySlug, claimerName, claime
             onChange={setProof}
           />
         )}
-      </div>
-
-      {/* Insurance */}
-      <div className="flex flex-col gap-2">
-        <Label>
-          Malpractice / public liability insurance{' '}
-          <span className="text-muted-foreground font-normal">(optional, but highly recommended)</span>
-        </Label>
-        <p className="text-xs text-muted-foreground">
-          A current certificate of insurance helps us verify you&apos;re properly covered.
-        </p>
-        <FileDropZone
-          file={insurance}
-          accept="image/*,.pdf"
-          onChange={setInsurance}
-        />
       </div>
 
       {formError && <p className="text-sm text-destructive">{formError}</p>}
