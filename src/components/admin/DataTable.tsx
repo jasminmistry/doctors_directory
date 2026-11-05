@@ -10,7 +10,7 @@ import { IconChevronDown, IconChevronLeft, IconChevronRight, IconChevronUp, Icon
 
 export interface Column<T> {
   key: keyof T | string
-  label: string
+  label: React.ReactNode
   sortable?: boolean
   searchable?: boolean
   render?: (value: any, item: T) => React.ReactNode
