@@ -114,16 +114,21 @@ export function BookingWidget({ slug, clinicName, hasCoreCalendar, defaultValues
         practitioner: { name: string }
         video_call: VideoCall | null
       }
+      // booking.practitioner?.name is the real Core response — trust it first.
+      // selectedSlot.practitioner can be a degraded local-fallback label (see
+      // src/app/api/book/[slug]/availability/route.ts), so clinicName is the
+      // safer last resort rather than trusting that slot-derived string.
+      const confirmedPractitionerName = booking.practitioner?.name ?? selectedSlot.practitioner ?? clinicName
       setConfirmation({
         slotStart: booking.slot_start,
-        practitionerName: booking.practitioner?.name ?? selectedSlot.practitioner,
+        practitionerName: confirmedPractitionerName,
         patientEmail: data.email,
         videoCall: booking.video_call,
       })
       track('booking_complete', {
         clinic_slug: slug,
         booking_type: videoCall ? 'video' : 'in_person',
-        practitioner: booking.practitioner?.name ?? selectedSlot.practitioner,
+        practitioner: confirmedPractitionerName,
       })
       setStep('confirmation')
     } catch {
