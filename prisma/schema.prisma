@@ -844,6 +844,9 @@ model VerificationRequest {
   proofType  String? @db.VarChar(50) // work_email|contract|website|letter
   proofFile  String? @db.VarChar(255)
 
+  // Malpractice / public liability insurance — optional but recommended
+  insuranceFile String? @db.VarChar(255)
+
   status     VerificationStatus @default(pending)
   adminNotes String?            @db.Text
   reviewedAt DateTime?
