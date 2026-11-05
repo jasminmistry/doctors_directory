@@ -6,7 +6,10 @@ export const dynamic = 'force-dynamic'
 export async function GET() {
   try {
     const leads = await prisma.consultationLead.findMany({
-      include: { clinic: { select: { slug: true, name: true, claimedPlan: true } } },
+      include: {
+        clinic: { select: { slug: true, name: true, claimedPlan: true } },
+        patient: { select: { id: true, email: true } },
+      },
       orderBy: { createdAt: 'desc' },
       take: 1000,
     })
